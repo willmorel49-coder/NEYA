@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 320" fill="none">
+  <ellipse cx="100" cy="210" rx="38" ry="55" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <path d="M88 165 Q95 140 100 125" stroke="rgba(255,255,255,0.12)" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <ellipse cx="101" cy="118" rx="16" ry="13" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <path d="M91 108 Q80 88 74 70 M74 70 Q68 58 60 52 M74 70 Q76 60 82 55" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <path d="M111 108 Q120 88 126 70 M126 70 Q132 58 140 52 M126 70 Q124 60 118 55" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <line x1="80" y1="260" x2="76" y2="305" stroke="rgba(255,255,255,0.1)" stroke-width="6" stroke-linecap="round"/>
+  <line x1="94" y1="262" x2="92" y2="307" stroke="rgba(255,255,255,0.1)" stroke-width="6" stroke-linecap="round"/>
+  <line x1="108" y1="262" x2="110" y2="307" stroke="rgba(255,255,255,0.1)" stroke-width="6" stroke-linecap="round"/>
+  <line x1="122" y1="260" x2="126" y2="305" stroke="rgba(255,255,255,0.1)" stroke-width="6" stroke-linecap="round"/>
+</svg>
