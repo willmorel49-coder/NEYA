@@ -1,9 +1,12 @@
 # NÉYA V1 — Design Spec
 
 **Date** : 2026-05-07
-**North star** : "Cette app me comprend."
+**North star** : "Cet endroit laisse exister ce que je ressens."
 **Philosophie centrale** : "Tu n'as pas besoin d'être vu pour exister."
 **Anti-pitch** : Ce n'est pas un outil. C'est un lieu numérique émotionnel.
+
+> Note interne : "Cette app me comprend" est une direction de session, pas la vérité produit.
+> NÉYA ne comprend pas — il laisse exister. La nuance protège contre le piège IA/thérapeute.
 
 ---
 
@@ -109,6 +112,8 @@ Transition entre steps : 600ms, respiration douce.
 - "Silence" représenté par une vague plate (conceptuellement plus fort que les autres)
 - Exigences audio : sons texturés et imparfaits, volume très bas, loops non mécaniques, beaucoup d'air dans les samples
 - Le son sélectionné continue en fond très bas dans le monde révélé — il laisse une trace émotionnelle
+- **Mode muet natif** : désactiver le son ne dégrade pas l'expérience — tout le sens passe aussi par le visuel
+- **Interdit** : piano émotionnel, relaxation app, sound design méditation cliché. Le silence doit parfois être plus fort que les ambiances.
 
 **Objet résultant :**
 ```js
@@ -141,6 +146,9 @@ L'animal était **déjà là**. Il n'apparaît pas. Il existait avant l'utilisat
 
 V1 : **cerf** (présence douce, ancienne, non-menaçante).
 
+**Rôle** : L'animal ne représente pas une personnalité. Il reflète un état de présence émotionnelle.
+Protège contre la dérive : tests de personnalité, matching émotionnel, logique avatar, "quel animal es-tu ?"
+
 Direction artistique non-négociable :
 - Sculpturale, éditoriale — penser galerie contemporaine, campagne photo, hoodie ÇA VA? dos
 - Posture = expression émotionnelle. Un animal anxieux n'a pas "l'air stressé" — il a une posture tendue imperceptible, des mouvements retenus, une présence vigilante.
@@ -159,7 +167,10 @@ Direction artistique non-négociable :
 
 Exemples validés :
 - *"Quelque chose en toi cherche le calme."*
-- *"Tu portes quelque chose de lourd aujourd'hui. C'est réel."*
+- *"On dirait que tout pèse un peu plus aujourd'hui."*
+- *"Quelque chose ralentit en toi aujourd'hui."*
+- *"Tu peux rester ici sans résoudre quoi que ce soit."*
+- *"Il n'y a rien à résoudre pour l'instant."*
 
 En bas, très discret : lien **Espace Vrai** — pas un bouton.
 
@@ -204,14 +215,23 @@ const WORLDS = {
     animationSpeed: "slow",
     phrases: [
       "Quelque chose en toi cherche le calme.",
-      "Tu portes quelque chose de lourd aujourd'hui. C'est réel.",
+      "On dirait que tout pèse un peu plus aujourd'hui.",
+      "Quelque chose ralentit en toi aujourd'hui.",
+      "Tu peux rester ici sans résoudre quoi que ce soit.",
       "Il n'y a rien à résoudre pour l'instant.",
       "Tu peux rester ici un moment.",
-      // ...
     ]
   }
 }
 ```
+
+**Note Brume — éviter la mélancolie uniforme**
+Brume n'est pas que bleu, lent et sombre. Il faut :
+- Des respirations lumineuses (variations subtiles de luminosité)
+- Des moments plus chauds (touches ambrées selon ritual.color)
+- Des micro tensions et relâchements dans les animations
+- Des contrastes qui empêchent l'émotion de devenir monotone
+La mélancolie constante fatigue émotionnellement.
 
 ---
 
@@ -238,3 +258,5 @@ Le rituel quotidien devient l'ouverture d'une fenêtre intérieure, pas la déco
 - **Rythme volontaire** : on perd des utilisateurs impatients. C'est acceptable. On ne détruit pas l'identité émotionnelle pour optimiser la rétention.
 - **Traversée continue** : pas des pages, une expérience. Le fond évolue, l'espace respire.
 - **Ambiguïté préservée** : jamais de labels émotionnels explicites. La projection personnelle dépend de l'espace laissé.
+- **Motion sans démonstration** : aucune animation ne doit chercher à impressionner. Le motion doit évoquer une respiration, jamais une performance visuelle. Les animations doivent parfois être presque imperceptibles. L'utilisateur ne doit jamais sentir "l'effet".
+- **Pas de rétention artificielle** : l'utilisateur ne doit jamais avoir l'impression que l'app essaie de le retenir. Pas de notifications de rappel agressives, pas de streaks culpabilisants, pas de dark patterns d'engagement. Ce principe influence chaque micro-décision produit.
