@@ -652,6 +652,14 @@ export default function App() {
 
   return (
     <div className="w-full h-full bg-[#050810] relative overflow-hidden font-inter text-white">
+      {/* Bouton mute — présent sur tous les écrans */}
+      <button
+        onClick={() => setMuted(m => !m)}
+        aria-label={muted ? 'Activer le son' : 'Couper le son'}
+        className="absolute top-5 right-5 z-50 font-sora text-white/20 text-xs tracking-widest hover:text-white/50 transition-colors duration-500 select-none"
+      >
+        {muted ? '○' : '●'}
+      </button>
       {screen === 'onboarding' && (
         <Onboarding step={step} onNext={handleOnboardingNext} />
       )}

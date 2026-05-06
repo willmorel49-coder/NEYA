@@ -18,3 +18,8 @@ CLAUDE.local.md
 
 # Worktrees
 .worktrees/
+
+# Node / Vite
+node_modules/
+dist/
+.vite/
