@@ -6,9 +6,9 @@
 
 **NÉYA** — App de bien-être émotionnel gamifiée, prolongement digital de la marque ÇA VA?.
 
-- **Repo** : `<TODO: github.com/...>`
-- **Prod** : `<TODO>`
-- **Owner** : Will
+- **Repo** : `# ← à remplir (github.com/...)`
+- **Prod** : `# ← à remplir`
+- **Owner** : Will · macOS · VS Code · réponses en français
 - **Statut** : MVP en cours
 
 **Philosophie produit non-négociable** : Espace émotionnel esthétique, premium et humain — adulte, poétique, épique. Jamais clinique ni infantilisant. Gamification non-toxique : présence récompensée, pas performance. Pas de classement, pas de comparaison.
@@ -17,33 +17,23 @@
 
 | Couche | Tech |
 |---|---|
-| Frontend | React (JSX single-file, `neya-final.jsx`) |
-| Backend | `<TODO>` |
-| BDD | `<TODO>` |
-| Tests | `<TODO>` |
-| Lint | `<TODO>` |
-| CI | `<TODO>` |
-| Hébergement | `<TODO>` |
+| Frontend | React (JSX single-file web, `neya-final.jsx`) |
+| Backend | Aucun (MVP) |
+| BDD | Aucune (MVP) |
+| Tests | Aucun (MVP) |
+| Lint | `# ← à remplir` |
+| CI | Aucune |
+| Hébergement | `# ← à remplir` |
 
 ## 3. Variables d'environnement
 
-```
-# À compléter selon backend
-```
-
-Pas de secret en clair ici. `.env.example` à la racine si besoin.
+Aucune pour l'instant (pas de backend).
 
 ## 4. Commandes
 
 ```bash
 # Dev local
-<TODO>
-
-# Build
-<TODO>
-
-# Lint / types
-<TODO>
+# ← à remplir (Vite ? npx serve ? autre ?)
 ```
 
 ## 5. Stratégie git
@@ -90,6 +80,8 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - Ne jamais refactoriser en multi-fichiers sans accord explicite de Will
 - Ton jamais clinique, médicalisé ou startup générique
 - Pas de mécaniques de classement, comparaison ou validation publique
+- Ne pas ajouter de features non demandées (scope discipline stricte)
+- Ne pas proposer de réécriture complète — toujours itérer sur `neya-final.jsx`
 
 ## 9. État actuel
 
@@ -97,7 +89,7 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-07
 **Branche** : `claude/harmonize-robot-memory`
-**Phase** : Setup mémoire Robot-Memory
+**Phase** : Setup mémoire Robot-Memory — prêt à coder
 
 ### Features actives (`neya-final.jsx`)
 - Onboarding narratif (silhouette fille cheveux bleus, vue de dos)
@@ -108,7 +100,8 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - Mode crise
 
 ### Backlog code
-- [ ] `<à compléter>`
+- [ ] `# ← à remplir`
 
 ### Actions Will (hors code)
-- [ ] `<à compléter>`
+- [ ] Ajouter URL repo + prod dans §1
+- [ ] Renseigner commande dev local dans §4
