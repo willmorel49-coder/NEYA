@@ -155,6 +155,248 @@ function OnboardingScreen2({ onEnter }) {
   )
 }
 
+// ─── AUDIO ───────────────────────────────────────────────────────────────────
+
+function startAmbience(type, volume = 0.08) {
+  if (type === 'silence') return () => {}
+
+  const ctx = new (window.AudioContext || window.webkitAudioContext)()
+  const gainNode = ctx.createGain()
+  gainNode.gain.setValueAtTime(0, ctx.currentTime)
+  gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 1.5)
+  gainNode.connect(ctx.destination)
+
+  const bufferSize = ctx.sampleRate * 4
+  const buf = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
+  const data = buf.getChannelData(0)
+  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1
+
+  const source = ctx.createBufferSource()
+  source.buffer = buf
+  source.loop = true
+
+  const filter = ctx.createBiquadFilter()
+
+  if (type === 'pluie') {
+    filter.type = 'highpass'
+    filter.frequency.value = 2000
+  } else if (type === 'vent') {
+    filter.type = 'bandpass'
+    filter.frequency.value = 400
+    filter.Q.value = 0.5
+  } else if (type === 'feu') {
+    filter.type = 'lowpass'
+    filter.frequency.value = 300
+  }
+
+  source.connect(filter)
+  filter.connect(gainNode)
+  source.start()
+
+  return () => {
+    gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.8)
+    setTimeout(() => { try { ctx.close() } catch(e) {} }, 1000)
+  }
+}
+
+// ─── RITUAL ───────────────────────────────────────────────────────────────────
+
+function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
+  return (
+    <div className="w-full h-full absolute inset-0 flex flex-col items-center justify-center">
+      {/* Fond réactif — teinte subtile selon la couleur choisie */}
+      <div
+        className="absolute inset-0 transition-all duration-1000 ease-out"
+        style={{
+          background: ritual.color
+            ? `radial-gradient(ellipse at center, ${ritual.color}18 0%, #050810 70%)`
+            : '#050810',
+        }}
+      />
+      <Fade key={step} className="w-full h-full flex items-center justify-center relative z-10">
+        {step === 0 && (
+          <RitualColor
+            selected={ritual.color}
+            onSelect={color => onChange({ ...ritual, color })}
+            onNext={() => onComplete(0)}
+          />
+        )}
+        {step === 1 && (
+          <RitualTexture
+            selected={ritual.texture}
+            onSelect={texture => onChange({ ...ritual, texture })}
+            onNext={() => onComplete(1)}
+          />
+        )}
+        {step === 2 && (
+          <RitualSound
+            selected={ritual.sound}
+            onSelect={sound => onChange({ ...ritual, sound })}
+            onNext={() => onComplete(2)}
+            muted={muted}
+          />
+        )}
+      </Fade>
+    </div>
+  )
+}
+
+function RitualColor({ selected, onSelect, onNext }) {
+  const positions = [
+    { top: '18%', left: '22%' },
+    { top: '14%', left: '55%' },
+    { top: '28%', left: '78%' },
+    { top: '45%', left: '82%' },
+    { top: '62%', left: '70%' },
+    { top: '68%', left: '38%' },
+    { top: '55%', left: '15%' },
+    { top: '35%', left: '10%' },
+  ]
+
+  return (
+    <div className="w-full h-full relative flex items-center justify-center">
+      <p className="absolute top-12 left-1/2 -translate-x-1/2 font-sora text-white/20 text-xs tracking-[0.25em] uppercase">
+        une couleur
+      </p>
+      {RITUAL_COLORS.map((c, i) => (
+        <button
+          key={c.hex}
+          onClick={() => onSelect(c.hex)}
+          aria-label={c.label}
+          className="absolute rounded-full transition-all duration-500"
+          style={{
+            ...positions[i],
+            width: selected === c.hex ? 52 : 38,
+            height: selected === c.hex ? 52 : 38,
+            background: c.hex,
+            opacity: selected && selected !== c.hex ? 0.3 : 0.85,
+            boxShadow: selected === c.hex ? `0 0 24px ${c.hex}60` : 'none',
+            transform: selected === c.hex ? 'scale(1.15)' : 'scale(1)',
+            filter: 'saturate(0.7) brightness(0.85)',
+          }}
+        />
+      ))}
+      {selected && (
+        <Fade className="absolute bottom-14 left-1/2 -translate-x-1/2">
+          <button
+            onClick={onNext}
+            className="font-sora text-white/35 text-xs tracking-[0.3em] uppercase hover:text-white/60 transition-colors duration-500"
+          >
+            continuer
+          </button>
+        </Fade>
+      )}
+    </div>
+  )
+}
+
+function RitualTexture({ selected, onSelect, onNext }) {
+  const [isolated, setIsolated] = useState(null)
+
+  const handleSelect = (word) => {
+    onSelect(word)
+    setIsolated(word)
+    setTimeout(() => setIsolated(null), 800)
+  }
+
+  return (
+    <div className="w-full h-full relative flex items-center justify-center">
+      <p className="absolute top-12 left-1/2 -translate-x-1/2 font-sora text-white/20 text-xs tracking-[0.25em] uppercase">
+        une sensation
+      </p>
+      {isolated ? (
+        <Fade key={isolated} className="flex items-center justify-center w-full">
+          <p className="font-sora font-light text-white/80 text-4xl tracking-widest">
+            {isolated}
+          </p>
+        </Fade>
+      ) : (
+        <div className="flex flex-col gap-8 items-center">
+          {RITUAL_TEXTURES.map((word) => (
+            <button
+              key={word}
+              onClick={() => handleSelect(word)}
+              className="font-sora font-light text-2xl tracking-[0.2em] transition-all duration-500"
+              style={{
+                color: selected === word ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.25)',
+                transform: selected === word ? 'scale(1.08)' : 'scale(1)',
+              }}
+            >
+              {word}
+            </button>
+          ))}
+        </div>
+      )}
+      {selected && !isolated && (
+        <Fade className="absolute bottom-14 left-1/2 -translate-x-1/2">
+          <button
+            onClick={onNext}
+            className="font-sora text-white/35 text-xs tracking-[0.3em] uppercase hover:text-white/60 transition-colors duration-500"
+          >
+            continuer
+          </button>
+        </Fade>
+      )}
+    </div>
+  )
+}
+
+function RitualSound({ selected, onSelect, onNext, muted }) {
+  const stopRef = useRef(() => {})
+
+  const handleSelect = (sound) => {
+    stopRef.current()
+    onSelect(sound)
+    if (!muted && sound !== 'silence') {
+      stopRef.current = startAmbience(sound, 0.06)
+    } else {
+      stopRef.current = () => {}
+    }
+  }
+
+  useEffect(() => () => stopRef.current(), [])
+
+  const soundLabels = {
+    pluie: '〰 pluie',
+    vent: '∿ vent',
+    feu: '◦ feu',
+    silence: '— silence',
+  }
+
+  return (
+    <div className="w-full h-full relative flex items-center justify-center">
+      <p className="absolute top-12 left-1/2 -translate-x-1/2 font-sora text-white/20 text-xs tracking-[0.25em] uppercase">
+        un son
+      </p>
+      <div className="flex flex-col gap-10 items-center">
+        {RITUAL_SOUNDS.map((sound) => (
+          <button
+            key={sound}
+            onClick={() => handleSelect(sound)}
+            className="font-sora font-light text-xl tracking-[0.2em] transition-all duration-500"
+            style={{
+              color: selected === sound ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.22)',
+              transform: selected === sound ? 'scale(1.08)' : 'scale(1)',
+            }}
+          >
+            {soundLabels[sound]}
+          </button>
+        ))}
+      </div>
+      {selected && (
+        <Fade className="absolute bottom-14 left-1/2 -translate-x-1/2">
+          <button
+            onClick={onNext}
+            className="font-sora text-white/35 text-xs tracking-[0.3em] uppercase hover:text-white/60 transition-colors duration-500"
+          >
+            entrer dans le monde
+          </button>
+        </Fade>
+      )}
+    </div>
+  )
+}
+
 // ─── APP ──────────────────────────────────────────────────────────────────────
 
 const INITIAL_RITUAL = { color: null, texture: null, sound: null, completedAt: null }
@@ -172,6 +414,19 @@ export default function App() {
 
   const world = WORLDS.brume
 
+  const handleRitualChange = useCallback((updated) => {
+    setRitual(updated)
+  }, [])
+
+  const handleRitualStepComplete = useCallback((completedStep) => {
+    if (completedStep < 2) {
+      setStep(s => s + 1)
+    } else {
+      setRitual(r => ({ ...r, completedAt: new Date() }))
+      goTo('world')
+    }
+  }, [goTo])
+
   const handleOnboardingNext = useCallback(() => {
     if (step < 2) {
       setStep(s => s + 1)
@@ -186,7 +441,13 @@ export default function App() {
         <Onboarding step={step} onNext={handleOnboardingNext} />
       )}
       {screen === 'ritual' && (
-        <div className="p-8 font-sora text-white/40">ritual step {step}</div>
+        <RitualFlow
+          step={step}
+          ritual={ritual}
+          onChange={handleRitualChange}
+          onComplete={handleRitualStepComplete}
+          muted={muted}
+        />
       )}
       {screen === 'world' && (
         <div className="p-8 font-sora text-white/40">world</div>
