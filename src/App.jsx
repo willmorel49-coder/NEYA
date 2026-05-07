@@ -1558,14 +1558,15 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {worldKey === 'vide'   && phase !== 'black' && <VidePulse />}
       {worldKey === 'brume'  && phase !== 'black' && <BrumeMist />}
 
-      {/* Watermark NÉYA — très transparent, crée de la profondeur */}
+      {/* Watermark NÉYA — très transparent, respire doucement */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 2 }}>
-        <p style={{ fontFamily: 'Sora', fontSize: 'min(28vw, 200px)', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.025)', userSelect: 'none', lineHeight: 1 }}>
+        <p style={{ fontFamily: 'Sora', fontSize: 'min(28vw, 200px)', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.025)', userSelect: 'none', lineHeight: 1, animation: 'neywatermark 55s ease-in-out infinite' }}>
           NÉYA
         </p>
       </div>
 
       <style>{`
+        @keyframes neywatermark { 0%,100%{color:rgba(255,255,255,0.025)} 50%{color:rgba(255,255,255,0.042)} }
         @keyframes worldBreathe {
           0%, 100% { transform: scale(1); }
           50%       { transform: scale(1.04); }
