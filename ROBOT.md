@@ -17,13 +17,13 @@
 
 | Couche | Tech |
 |---|---|
-| Frontend | React (JSX single-file web, `neya-final.jsx`) |
+| Frontend | React 18 + Vite 5 (JSX single-file, `src/App.jsx`) |
 | Backend | Aucun (MVP) |
 | BDD | Aucune (MVP) |
 | Tests | Aucun (MVP) |
-| Lint | `# ← à remplir` |
+| Lint | Aucun (MVP) |
 | CI | Aucune |
-| Hébergement | `# ← à remplir` |
+| Hébergement | Vercel (à configurer) |
 
 ## 3. Variables d'environnement
 
@@ -33,7 +33,13 @@ Aucune pour l'instant (pas de backend).
 
 ```bash
 # Dev local
-# ← à remplir (Vite ? npx serve ? autre ?)
+npm run dev   # http://localhost:5173
+
+# Build prod
+npm run build
+
+# Preview build
+npm run preview
 ```
 
 ## 5. Stratégie git
@@ -88,16 +94,14 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 > Mettre à jour à chaque savepoint.
 
 **Date** : 2026-05-07
-**Branche** : `claude/harmonize-robot-memory`
-**Phase** : Setup mémoire Robot-Memory — prêt à coder
+**Branche** : `feat/neya-v1`
+**Phase** : V1 complète — onboarding + rituel + Brume + Espace Vrai
 
-### Features actives (`neya-final.jsx`)
-- Onboarding narratif (silhouette fille cheveux bleus, vue de dos)
-- 6 mondes émotionnels + 6 esprits animaux
-- 4 écrans : Aventure, Habitudes, Communauté, Profil
-- Espace Vrai (feed anonyme 24h)
-- Boutique ÇA VA? avec pass 3 niveaux
-- Mode crise
+### Features actives (`src/App.jsx`)
+- Onboarding narratif 3 écrans (silhouette cerf, fille de dos à venir)
+- Rituel sensoriel : couleur → texture → son (Web Audio API)
+- Monde Brume : fond animé, cerf SVG placeholder, phrase personnalisée
+- Espace Vrai : flux anonyme de présences colorées, mouvement organique
 
 ### Backlog code
 - [ ] `# ← à remplir`
