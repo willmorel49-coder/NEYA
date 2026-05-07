@@ -756,6 +756,24 @@ function startAmbience(type, volume = 0.07) {
     source.connect(filter)
     filter.connect(flameGain)
     flameGain.connect(gainNode)
+    // Crépitement — bruit haute fréquence modulé par tremolo irrégulier
+    const crackFilter = ctx.createBiquadFilter()
+    crackFilter.type = 'bandpass'
+    crackFilter.frequency.value = 1900
+    crackFilter.Q.value = 5
+    const crackTremolo = ctx.createOscillator()
+    const crackTremoloGain = ctx.createGain()
+    crackTremolo.type = 'sawtooth'
+    crackTremolo.frequency.value = 4.6
+    crackTremoloGain.gain.value = 0.07
+    const crackGain = ctx.createGain()
+    crackGain.gain.value = 0.09
+    crackTremolo.connect(crackTremoloGain)
+    crackTremoloGain.connect(crackGain.gain)
+    crackTremolo.start()
+    source.connect(crackFilter)
+    crackFilter.connect(crackGain)
+    crackGain.connect(gainNode)
   }
 
   source.start()
@@ -855,11 +873,11 @@ function RitualColor({ selected, onSelect, onNext }) {
         ${RITUAL_COLORS.map((c, i) => `
           @keyframes colorBreathe${i} {
             0%, 100% { box-shadow: none; transform: translate(-50%, -50%) scale(1); }
-            50%       { box-shadow: 0 0 18px ${c.hex}44; transform: translate(-50%, -50%) scale(1.06); }
+            50%       { box-shadow: 0 0 18px ${c.hex}44; transform: translate(-50%, -50%) scale(1.08); }
           }
           @keyframes selectedGlow${i} {
             0%, 100% { box-shadow: 0 0 28px ${c.hex}66, 0 0 10px ${c.hex}44; }
-            50%       { box-shadow: 0 0 48px ${c.hex}99, 0 0 22px ${c.hex}66; }
+            50%       { box-shadow: 0 0 52px ${c.hex}99, 0 0 24px ${c.hex}66; }
           }
         `).join('')}
       `}</style>
@@ -883,7 +901,6 @@ function RitualColor({ selected, onSelect, onNext }) {
 
       {RITUAL_COLORS.map((c, i) => {
         const isSelected = selected === c.hex
-        const size = isSelected ? baseSizes[i] + 16 : baseSizes[i]
         return (
           <button
             key={c.hex}
@@ -893,13 +910,13 @@ function RitualColor({ selected, onSelect, onNext }) {
               position: 'absolute',
               top: positions[i].top,
               left: positions[i].left,
-              width: size,
-              height: size,
+              width: baseSizes[i],
+              height: baseSizes[i],
               borderRadius: '50%',
               background: c.hex,
               opacity: selected && !isSelected ? 0.15 : 0.82,
               boxShadow: isSelected ? `0 0 32px ${c.hex}80, 0 0 12px ${c.hex}50` : 'none',
-              transform: isSelected ? 'scale(1.1) translate(-8px, -8px)' : undefined,
+              transform: `translate(-50%, -50%) scale(${isSelected ? 1.42 : 1})`,
               filter: 'saturate(0.6) brightness(0.88)',
               animation: isSelected
                 ? `selectedGlow${i} ${breathePeriods[i] * 0.6}s ease-in-out infinite`
@@ -1161,6 +1178,12 @@ function ForetRays() {
           }} />
         )
       })}
+      {/* Brume de sol — lumière diffuse verte au sol */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%',
+        background: 'linear-gradient(to top, rgba(160,220,140,0.06) 0%, transparent 100%)',
+        mixBlendMode: 'screen',
+      }} />
     </div>
   )
 }
