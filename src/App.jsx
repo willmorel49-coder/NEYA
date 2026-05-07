@@ -1810,7 +1810,10 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
             fill={p.color}
             opacity={p.opacity}
             filter="url(#phistory)"
-            style={p.id === 'h0' ? { animation: 'h0pulse 3.8s ease-in-out infinite', transformBox: 'fill-box', transformOrigin: 'center' } : undefined}
+            style={p.id === 'h0' ? { animation: 'h0pulse 3.8s ease-in-out infinite', transformBox: 'fill-box', transformOrigin: 'center' }
+              : p.id === 'h1' ? { animation: 'h1pulse 4.6s 0.9s ease-in-out infinite', transformBox: 'fill-box', transformOrigin: 'center' }
+              : p.id === 'h2' ? { animation: 'h2pulse 5.4s 2.1s ease-in-out infinite', transformBox: 'fill-box', transformOrigin: 'center' }
+              : undefined}
           />
         ))}
 
@@ -1850,6 +1853,14 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
           @keyframes h0pulse {
             0%, 100% { transform: scale(1);   opacity: 0.16; }
             50%       { transform: scale(2.6); opacity: 0.09; }
+          }
+          @keyframes h1pulse {
+            0%, 100% { transform: scale(1);   opacity: 0.14; }
+            50%       { transform: scale(1.9); opacity: 0.07; }
+          }
+          @keyframes h2pulse {
+            0%, 100% { transform: scale(1);   opacity: 0.12; }
+            50%       { transform: scale(1.5); opacity: 0.06; }
           }
           @keyframes userRipple {
             0%   { r: 8px; opacity: 0.22; }
