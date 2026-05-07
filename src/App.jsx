@@ -278,6 +278,23 @@ const WORLD_MAP = {
   silence: { lourd:'brume',  léger:'vide',   rugueux:'brume',  doux:'vide',  chaud:'vide',  froid:'brume' },
 }
 
+const WORLD_NAMES = { brume:'brume', foret:'forêt', cosmos:'cosmos', feu:'feu', eau:'eau', vide:'vide' }
+
+// ─── HISTOIRE SILENCIEUSE ─────────────────────────────────────────────────────
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem('neya_history') || '[]') } catch { return [] }
+}
+
+function saveToHistory(ritual, worldKey) {
+  try {
+    const h = loadHistory()
+    h.unshift({ ts: Date.now(), color: ritual.color, texture: ritual.texture, sound: ritual.sound, world: worldKey })
+    if (h.length > 90) h.splice(90)
+    localStorage.setItem('neya_history', JSON.stringify(h))
+  } catch {}
+}
+
 function selectWorld(ritual) {
   if (!ritual.sound || !ritual.texture) return 'brume'
   return WORLD_MAP[ritual.sound]?.[ritual.texture] ?? 'brume'
@@ -291,7 +308,7 @@ function selectPhrase(ritual, world) {
   return pool[Math.abs(colorIdx) % pool.length]
 }
 
-// ─── LOGO NÉYA ────────────────────────────────────────────────────────────────
+// ─── LOGO NÉYA + SPLASH ───────────────────────────────────────────────────────
 
 function NeyaLogo({ size = 'sm', opacity = 1, className = '' }) {
   const scales = {
@@ -319,6 +336,25 @@ function NeyaLogo({ size = 'sm', opacity = 1, className = '' }) {
       >
         NÉYA
       </span>
+    </div>
+  )
+}
+
+function NeyaSplash({ onDone }) {
+  const [visible, setVisible] = useState(false)
+  const [fading, setFading] = useState(false)
+  useEffect(() => {
+    const t1 = setTimeout(() => setVisible(true), 200)
+    const t2 = setTimeout(() => setFading(true), 2100)
+    const t3 = setTimeout(() => onDone(), 3000)
+    return () => [t1, t2, t3].forEach(clearTimeout)
+  }, [onDone])
+  return (
+    <div className="absolute inset-0 flex items-center justify-center z-50"
+      style={{ background: '#050810', opacity: fading ? 0 : 1, transition: 'opacity 900ms ease' }}>
+      <div style={{ opacity: visible ? 1 : 0, transition: 'opacity 1200ms ease' }}>
+        <NeyaLogo size="lg" />
+      </div>
     </div>
   )
 }
@@ -832,8 +868,8 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
 
 // ─── WORLD REVEAL ─────────────────────────────────────────────────────────────
 
-function WorldReveal({ ritual, world, onGoVrai, muted }) {
-  const [phase, setPhase] = useState('black')
+function WorldReveal({ ritual, world, worldKey, onGoVrai, muted }) {
+  const [phase, setPhase] = useState('black') // black → world → name → phrase
   const [displayedPhrase, setDisplayedPhrase] = useState('')
   const fullPhrase = selectPhrase(ritual, world)
   const stopSoundRef = useRef(() => {})
@@ -844,9 +880,10 @@ function WorldReveal({ ritual, world, onGoVrai, muted }) {
       if (!muted && ritual.sound && ritual.sound !== 'silence') {
         stopSoundRef.current = startAmbience(ritual.sound, 0.04)
       }
-    }, 900)
-    const t2 = setTimeout(() => setPhase('phrase'), 3200)
-    return () => { clearTimeout(t1); clearTimeout(t2); stopSoundRef.current() }
+    }, 1000)
+    const t2 = setTimeout(() => setPhase('name'), 2800)
+    const t3 = setTimeout(() => setPhase('phrase'), 4600)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); stopSoundRef.current() }
   }, []) // eslint-disable-line
 
   useEffect(() => {
@@ -868,87 +905,62 @@ function WorldReveal({ ritual, world, onGoVrai, muted }) {
   return (
     <div
       className="w-full h-full absolute inset-0"
-      style={{
-        opacity: phase === 'black' ? 0 : 1,
-        transition: 'opacity 900ms ease',
-      }}
+      style={{ opacity: phase === 'black' ? 0 : 1, transition: 'opacity 1100ms ease' }}
     >
       {/* Image de fond du monde */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: world.bgImage,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          animation: `worldBreathe ${speed} ease-in-out infinite`,
-        }}
-      />
+      <div className="absolute inset-0" style={{ backgroundImage: world.bgImage, backgroundSize: 'cover', backgroundPosition: 'center', animation: `worldBreathe ${speed} ease-in-out infinite` }} />
 
       {/* Voile coloré selon ritual */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: ritual.color
-            ? `radial-gradient(ellipse at 50% 75%, ${ritual.color}30 0%, transparent 58%)`
-            : 'transparent',
-          transition: 'background 2s ease',
-        }}
-      />
+      <div className="absolute inset-0" style={{ background: ritual.color ? `radial-gradient(ellipse at 50% 75%, ${ritual.color}30 0%, transparent 58%)` : 'transparent', transition: 'background 2s ease' }} />
 
-      {/* Voile Brume — donne la palette */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `linear-gradient(to top, ${world.palette[0]}f2 0%, ${world.palette[0]}aa 30%, ${world.palette[1]}66 65%, rgba(13,27,42,0.2) 100%)`,
-        }}
-      />
+      {/* Voile monde — palette */}
+      <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}f2 0%, ${world.palette[0]}aa 30%, ${world.palette[1]}66 65%, rgba(13,27,42,0.2) 100%)` }} />
 
       <style>{`
         @keyframes worldBreathe {
-          0%, 100% { transform: scale(1);    filter: brightness(1); }
-          50%       { transform: scale(1.04); filter: brightness(1.08); }
+          0%, 100% { transform: scale(1); }
+          50%       { transform: scale(1.04); }
         }
         @keyframes cerfdrift {
-          0%, 100% { transform: translate(0px,  0px); }
-          33%       { transform: translate(5px,  -4px); }
-          66%       { transform: translate(-3px,  4px); }
+          0%, 100% { transform: translate(0px,  0px) scale(1); }
+          33%       { transform: translate(5px,  -4px) scale(1.016); }
+          66%       { transform: translate(-3px,  4px) scale(0.986); }
+        }
+        @keyframes worldnameappear {
+          from { opacity: 0; letter-spacing: 0.65em; }
+          to   { opacity: 1; letter-spacing: 0.5em; }
         }
       `}</style>
 
       {/* Logo NÉYA */}
       {phase !== 'black' && (
-        <Fade duration={1400} className="absolute top-12 left-1/2 -translate-x-1/2">
+        <Fade duration={1600} className="absolute top-12 left-1/2 -translate-x-1/2">
           <NeyaLogo size="sm" />
         </Fade>
       )}
 
+      {/* Nom du monde — révélé au centre avant la phrase */}
+      {(phase === 'name' || phase === 'phrase') && (
+        <div className="absolute" style={{ top: '30%', left: '50%', transform: 'translateX(-50%)' }}>
+          <p style={{
+            fontFamily: 'Sora', fontSize: 9, textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.20)', whiteSpace: 'nowrap',
+            animation: 'worldnameappear 1400ms ease forwards',
+          }}>
+            {WORLD_NAMES[worldKey] || worldKey}
+          </p>
+        </div>
+      )}
+
       {/* Cerf — l'animal qui était déjà là */}
-      <div
-        className="absolute inset-0 flex items-end justify-center pointer-events-none"
-        style={{ paddingBottom: '5%', animation: 'cerfdrift 24s ease-in-out infinite' }}
-      >
-        <img
-          src="/cerf.svg"
-          alt=""
-          aria-hidden="true"
-          style={{ width: '55vw', maxWidth: 280, opacity: 0.6, filter: world.animalFilter }}
-        />
+      <div className="absolute inset-0 flex items-end justify-center pointer-events-none" style={{ paddingBottom: '5%', animation: 'cerfdrift 26s ease-in-out infinite' }}>
+        <img src="/cerf.svg" alt="" aria-hidden="true" style={{ width: '55vw', maxWidth: 280, opacity: 0.6, filter: world.animalFilter }} />
       </div>
 
       {/* Phrase */}
       {phase === 'phrase' && (
-        <Fade duration={700} className="absolute inset-0 flex items-center justify-center px-10" style={{ paddingBottom: '20%' }}>
-          <p
-            style={{
-              fontFamily: 'Sora',
-              fontWeight: 300,
-              fontSize: 17,
-              color: 'rgba(255,255,255,0.62)',
-              textAlign: 'center',
-              lineHeight: 1.9,
-              letterSpacing: '0.06em',
-            }}
-          >
+        <Fade duration={700} className="absolute inset-0 flex items-center justify-center px-10" style={{ paddingBottom: '18%' }}>
+          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.9, letterSpacing: '0.06em' }}>
             {displayedPhrase}
           </p>
         </Fade>
@@ -957,21 +969,9 @@ function WorldReveal({ ritual, world, onGoVrai, muted }) {
       {/* Lien Espace Vrai */}
       {phase === 'phrase' && displayedPhrase.length === fullPhrase.length && (
         <Fade duration={1400} className="absolute bottom-10 left-1/2 -translate-x-1/2">
-          <button
-            onClick={onGoVrai}
-            style={{
-              fontFamily: 'Sora',
-              fontSize: 10,
-              letterSpacing: '0.32em',
-              color: 'rgba(255,255,255,0.18)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'color 600ms ease',
-            }}
+          <button onClick={onGoVrai} style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.18)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease' }}
             onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.48)'}
-            onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.18)'}
-          >
+            onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.18)'}>
             espace vrai →
           </button>
         </Fade>
@@ -1016,71 +1016,72 @@ function generateFakeFlux(userColor) {
   return entries
 }
 
-function EspaceVrai({ ritual, world, onRestart }) {
+function EspaceVrai({ ritual, world, worldKey, history, onRestart }) {
   const flux = useRef(generateFakeFlux(ritual.color)).current
   const [showRestart, setShowRestart] = useState(false)
 
-  // Affiche le bouton restart après 12s — discret, pas pressant
   useEffect(() => {
     const t = setTimeout(() => setShowRestart(true), 12000)
     return () => clearTimeout(t)
   }, [])
 
-  return (
-    <Fade className="w-full h-full absolute inset-0" duration={1600}>
-      {/* Image de fond */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: 'url(/bg-vrai.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      {/* Voile Brume + opacification */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `linear-gradient(to top, ${world.palette[0]}f8 0%, ${world.palette[0]}d0 35%, ${world.palette[1]}88 70%, ${world.palette[0]}99 100%)`,
-        }}
-      />
+  // Histoire silencieuse — présences fantômes des rituels passés
+  const historyDots = history.slice(0, 40).map((entry, i) => ({
+    id: `h${i}`,
+    color: entry.color || '#4f46e5',
+    x: 5 + ((i * 23 + Math.round(Math.sin(i * 1.7) * 900)) % 90 + 90) % 90,
+    y: 8 + ((i * 17 + Math.round(Math.cos(i * 1.3) * 700)) % 82 + 82) % 82,
+    size: 1.4 + (i % 3) * 0.6,
+    opacity: 0.05 + Math.min(i * 0.003, 0.12),
+  }))
 
-      {/* Flux de présences SVG */}
+  return (
+    <Fade className="w-full h-full absolute inset-0" duration={1800}>
+      {/* Image de fond du monde — très opacifiée, transcende le monde */}
+      <div className="absolute inset-0" style={{ backgroundImage: world.bgImage, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+
+      {/* Voile très épais — l'espace vrai est au-delà du monde */}
+      <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}fd 0%, ${world.palette[0]}ee 35%, ${world.palette[1]}cc 75%, ${world.palette[0]}bb 100%)` }} />
+
+      {/* SVG — histoire silencieuse + flux de présences */}
       <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
         <defs>
           <filter id="psoft"><feGaussianBlur stdDeviation="2.2"/></filter>
           <filter id="puser"><feGaussianBlur stdDeviation="3.5"/></filter>
+          <filter id="phistory"><feGaussianBlur stdDeviation="1.0"/></filter>
         </defs>
+
+        {/* Présences passées — traces silencieuses */}
+        {historyDots.map(p => (
+          <circle key={p.id} cx={`${p.x}%`} cy={`${p.y}%`} r={p.size} fill={p.color} opacity={p.opacity} filter="url(#phistory)" />
+        ))}
+
+        {/* Flux anonyme live */}
         {flux.map(p => (
-          <circle
-            key={p.id}
-            cx={`${p.x}%`}
-            cy={`${p.y}%`}
-            r={p.size}
-            fill={p.color}
-            opacity={p.opacity}
+          <circle key={p.id} cx={`${p.x}%`} cy={`${p.y}%`} r={p.size} fill={p.color} opacity={p.opacity}
             filter={p.id === 99 ? 'url(#puser)' : 'url(#psoft)'}
-            style={{
-              animation: p.immobile
-                ? 'none'
-                : `drift-${p.id} ${p.period}s ${p.delay}s ease-in-out infinite`,
-            }}
-          />
+            style={{ animation: p.immobile ? 'none' : `drift-${p.id} ${p.period}s ${p.delay}s ease-in-out infinite` }} />
         ))}
         <style>
-          {flux
-            .filter(p => !p.immobile)
-            .map(p => `
-              @keyframes drift-${p.id} {
-                0%,100% { transform:translate(0,0); }
-                25%     { transform:translate(${p.driftX * 0.35}px,${p.driftY * 0.25}px); }
-                50%     { transform:translate(${p.driftX}px,${p.driftY}px); }
-                75%     { transform:translate(${p.driftX * 0.55}px,${p.driftY * 0.75}px); }
-              }
-            `)
-            .join('')}
+          {flux.filter(p => !p.immobile).map(p => `
+            @keyframes drift-${p.id} {
+              0%,100% { transform:translate(0,0); }
+              25%     { transform:translate(${p.driftX * 0.35}px,${p.driftY * 0.25}px); }
+              50%     { transform:translate(${p.driftX}px,${p.driftY}px); }
+              75%     { transform:translate(${p.driftX * 0.55}px,${p.driftY * 0.75}px); }
+            }
+          `).join('')}
         </style>
       </svg>
+
+      {/* Compteur de présences passées — ultra-discret */}
+      {history.length > 1 && (
+        <Fade duration={2000} delay={5000} className="absolute" style={{ top: '22%', left: '50%', transform: 'translateX(-50%)' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
+            {history.length} présences
+          </p>
+        </Fade>
+      )}
 
       {/* Message implicite */}
       <Fade duration={2400} delay={800} className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center">
@@ -1089,24 +1090,12 @@ function EspaceVrai({ ritual, world, onRestart }) {
         </p>
       </Fade>
 
-      {/* Bouton nouveau rituel — apparaît après 12s */}
+      {/* Bouton nouveau rituel */}
       {showRestart && (
         <Fade duration={1200} className="absolute bottom-8 left-1/2 -translate-x-1/2">
-          <button
-            onClick={onRestart}
-            style={{
-              fontFamily: 'Sora',
-              fontSize: 9,
-              letterSpacing: '0.3em',
-              color: 'rgba(255,255,255,0.14)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'color 600ms ease',
-            }}
+          <button onClick={onRestart} style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.14)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease' }}
             onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.4)'}
-            onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.14)'}
-          >
+            onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.14)'}>
             nouveau rituel
           </button>
         </Fade>
@@ -1125,10 +1114,11 @@ function EspaceVrai({ ritual, world, onRestart }) {
 const INITIAL_RITUAL = { color: null, texture: null, sound: null, completedAt: null }
 
 export default function App() {
-  const [screen, setScreen] = useState('onboarding')
+  const [screen, setScreen] = useState('splash')
   const [step, setStep] = useState(0)
   const [ritual, setRitual] = useState(INITIAL_RITUAL)
   const [muted, setMuted] = useState(false)
+  const [history, setHistory] = useState(() => loadHistory())
 
   const goTo = useCallback((nextScreen, nextStep = 0) => {
     setScreen(nextScreen)
@@ -1144,10 +1134,14 @@ export default function App() {
     if (completedStep < 2) {
       setStep(s => s + 1)
     } else {
-      setRitual(r => ({ ...r, completedAt: new Date() }))
+      const completed = { ...ritual, completedAt: new Date() }
+      const wk = selectWorld(completed)
+      saveToHistory(completed, wk)
+      setHistory(loadHistory())
+      setRitual(completed)
       goTo('world')
     }
-  }, [goTo])
+  }, [ritual, goTo])
 
   const handleOnboardingNext = useCallback(() => {
     if (step < 2) setStep(s => s + 1)
@@ -1156,68 +1150,30 @@ export default function App() {
 
   const handleGoVrai = useCallback(() => goTo('vrai'), [goTo])
 
-  // Nouveau rituel — repart du rituel, pas de l'onboarding
   const handleRestart = useCallback(() => {
     setRitual(INITIAL_RITUAL)
     goTo('ritual', 0)
   }, [goTo])
 
   return (
-    <div
-      className="w-full h-full relative overflow-hidden"
-      style={{ background: '#050810', fontFamily: 'Inter, sans-serif', color: 'white' }}
-    >
-      {/* Bouton mute — présent partout */}
+    <div className="w-full h-full relative overflow-hidden" style={{ background: '#050810', fontFamily: 'Inter, sans-serif', color: 'white' }}>
+
+      {/* Bouton mute */}
       <button
         onClick={() => setMuted(m => !m)}
         aria-label={muted ? 'Activer le son' : 'Couper le son'}
-        style={{
-          position: 'absolute',
-          top: 20,
-          right: 20,
-          zIndex: 50,
-          fontFamily: 'Sora',
-          fontSize: 11,
-          color: 'rgba(255,255,255,0.18)',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          letterSpacing: '0.1em',
-          transition: 'color 400ms ease',
-        }}
+        style={{ position: 'absolute', top: 20, right: 20, zIndex: 50, fontFamily: 'Sora', fontSize: 11, color: 'rgba(255,255,255,0.18)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.1em', transition: 'color 400ms ease' }}
         onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.5)'}
         onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.18)'}
       >
         {muted ? '○' : '●'}
       </button>
 
-      {screen === 'onboarding' && (
-        <Onboarding step={step} onNext={handleOnboardingNext} />
-      )}
-      {screen === 'ritual' && (
-        <RitualFlow
-          step={step}
-          ritual={ritual}
-          onChange={handleRitualChange}
-          onComplete={handleRitualStepComplete}
-          muted={muted}
-        />
-      )}
-      {screen === 'world' && (
-        <WorldReveal
-          ritual={ritual}
-          world={world}
-          muted={muted}
-          onGoVrai={handleGoVrai}
-        />
-      )}
-      {screen === 'vrai' && (
-        <EspaceVrai
-          ritual={ritual}
-          world={world}
-          onRestart={handleRestart}
-        />
-      )}
+      {screen === 'splash'     && <NeyaSplash onDone={() => goTo('onboarding')} />}
+      {screen === 'onboarding' && <Onboarding step={step} onNext={handleOnboardingNext} />}
+      {screen === 'ritual'     && <RitualFlow step={step} ritual={ritual} onChange={handleRitualChange} onComplete={handleRitualStepComplete} muted={muted} />}
+      {screen === 'world'      && <WorldReveal ritual={ritual} world={world} worldKey={worldKey} muted={muted} onGoVrai={handleGoVrai} />}
+      {screen === 'vrai'       && <EspaceVrai ritual={ritual} world={world} worldKey={worldKey} history={history} onRestart={handleRestart} />}
     </div>
   )
 }
