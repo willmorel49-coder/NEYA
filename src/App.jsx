@@ -1688,11 +1688,17 @@ function getDominantColor(history) {
   return top && top[1] >= 3 ? top[0] : null
 }
 
-function generateFakeFlux(userColor) {
+function generateFakeFlux(userColor, worldKey) {
   const colors = RITUAL_COLORS.map(c => c.hex)
+  const worldPalette = WORLDS[worldKey]?.palette ?? []
+  const pickColor = (i) => {
+    if (worldPalette.length > 0 && Math.random() < 0.38)
+      return worldPalette[Math.floor(Math.random() * worldPalette.length)]
+    return colors[i % colors.length]
+  }
   const entries = Array.from({ length: 22 }, (_, i) => ({
     id: i,
-    color: colors[i % colors.length],
+    color: pickColor(i),
     x: 6 + Math.random() * 88,
     y: 6 + Math.random() * 88,
     size: 4 + Math.random() * 10,
@@ -1723,7 +1729,7 @@ function generateFakeFlux(userColor) {
 }
 
 function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistory }) {
-  const flux = useRef(generateFakeFlux(ritual.color)).current
+  const flux = useRef(generateFakeFlux(ritual.color, worldKey)).current
   const pulseDur = { pluie: '3.8s', vent: '5.4s', feu: '2.8s', silence: '6.2s' }[ritual.sound] || '4.2s'
   const rippleDur = { pluie: '5.5s', vent: '9s', feu: '4.2s', silence: '8s' }[ritual.sound] || '7s'
   const [showRestart, setShowRestart] = useState(false)
