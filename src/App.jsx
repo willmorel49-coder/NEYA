@@ -574,8 +574,10 @@ function OnboardingScreen1() {
   ]
 
   return (
-    <Fade className="w-full h-full flex flex-col items-center justify-center px-10">
-      <div className="flex flex-col items-center gap-5">
+    <Fade className="w-full h-full flex flex-col items-center justify-center px-10 relative">
+      {/* Profondeur — halo central très subtil */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 42%, rgba(30,45,90,0.35) 0%, transparent 65%)' }} />
+      <div className="flex flex-col items-center gap-5 relative z-10">
         {lines.map((line, i) => (
           <p
             key={i}
@@ -1095,6 +1097,15 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
             >
               <span style={{ fontSize: 13, opacity: 0.45 }}>{symbol}</span>
               <span>{label}</span>
+              {/* Silence — trois points qui respirent */}
+              {isSelected && key === 'silence' && (
+                <span style={{ display: 'flex', gap: 4, alignItems: 'center', marginLeft: 8 }}>
+                  <style>{`@keyframes silencedot{0%,100%{opacity:0.12}50%{opacity:0.38}}`}</style>
+                  {[0, 1, 2].map(i => (
+                    <span key={i} style={{ width: 2.5, height: 2.5, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', animation: `silencedot 2.4s ${i * 0.8}s ease-in-out infinite`, display: 'inline-block' }} />
+                  ))}
+                </span>
+              )}
               {/* Indicateur sonore animé */}
               {isSelected && key !== 'silence' && !muted && (
                 <span style={{ display: 'flex', gap: 3, alignItems: 'flex-end', height: 12, marginLeft: 4 }}>
@@ -1260,6 +1271,19 @@ function EauRipples() {
           fill="none" stroke={r.stroke} strokeWidth={r.sw}
           style={{ animation: `ripple${i} ${r.period}s ${r.delay} ease-out infinite` }} />
       ))}
+      {/* Reflet de surface — ligne lumineuse horizontale */}
+      <style>{`@keyframes eausurface{0%,100%{opacity:0.5}50%{opacity:1}}`}</style>
+      <line x1="8%" y1="54%" x2="92%" y2="54%"
+        stroke="url(#eauGrad)" strokeWidth="0.7"
+        style={{ animation: 'eausurface 11s ease-in-out infinite' }} />
+      <defs>
+        <linearGradient id="eauGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="rgba(80,200,220,0)" />
+          <stop offset="40%" stopColor="rgba(80,200,220,0.18)" />
+          <stop offset="60%" stopColor="rgba(80,200,220,0.18)" />
+          <stop offset="100%" stopColor="rgba(80,200,220,0)" />
+        </linearGradient>
+      </defs>
     </svg>
   )
 }
@@ -1938,7 +1962,7 @@ export default function App() {
     return () => window.removeEventListener('keydown', handler)
   }, [screen, handleOnboardingNext])
 
-  const handleGoVrai = useCallback(() => goTo('vrai', 0, true), [goTo])
+  const handleGoVrai = useCallback(() => { haptic([4]); goTo('vrai', 0, true) }, [goTo])
 
   const handleAmbienceStart = useCallback((stopFn) => {
     stopAmbienceRef.current = stopFn
