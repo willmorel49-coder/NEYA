@@ -3,7 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NÉYA</title>
+  <title>NÉYA — Et toi, ça va vraiment ?</title>
+  <meta name="description" content="Un espace pour ce que tu ressens vraiment. Pas une appli de méditation. Pas un journal. Juste toi." />
+  <meta name="theme-color" content="#050810" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="NÉYA" />
+  <meta property="og:description" content="Et toi, ça va vraiment ?" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/bg-onboarding.png" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NÉYA" />
+  <meta name="twitter:description" content="Et toi, ça va vraiment ?" />
+  <meta name="twitter:image" content="/bg-onboarding.png" />
+
+  <!-- PWA basics -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="NÉYA" />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,8 +47,8 @@
 
   <style>
     * { -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; background: #050810; overflow: hidden; }
-    #root { width: 100vw; height: 100vh; }
+    html, body { margin: 0; background: #050810; overflow: hidden; height: 100%; }
+    #root { width: 100vw; height: 100dvh; }
   </style>
 </head>
 <body>

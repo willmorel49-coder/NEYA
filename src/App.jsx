@@ -340,27 +340,44 @@ function NeyaLogo({ size = 'sm', opacity = 1, className = '' }) {
   )
 }
 
-function NeyaSplash({ onDone }) {
+function NeyaSplash({ onDone, hasHistory }) {
   const [visible, setVisible] = useState(false)
   const [fading, setFading] = useState(false)
+  const [showReturn, setShowReturn] = useState(false)
+
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 200)
-    const t2 = setTimeout(() => setFading(true), 2200)
-    const t3 = setTimeout(() => onDone(), 3100)
-    return () => [t1, t2, t3].forEach(clearTimeout)
-  }, [onDone])
+    const t2 = setTimeout(() => setShowReturn(hasHistory), 900)
+    const t3 = setTimeout(() => setFading(true), 2200)
+    const t4 = setTimeout(() => onDone(), 3100)
+    return () => [t1, t2, t3, t4].forEach(clearTimeout)
+  }, [onDone, hasHistory])
+
   return (
-    <div className="absolute inset-0 flex items-center justify-center z-50"
+    <div className="absolute inset-0 flex flex-col items-center justify-center z-50"
       style={{ background: '#050810', opacity: fading ? 0 : 1, transition: 'opacity 900ms ease' }}>
       <style>{`
         @keyframes splashpulse {
           0%, 100% { opacity: 0.72; transform: scale(1); }
           50%       { opacity: 1;    transform: scale(1.03); }
         }
+        @keyframes returnfade {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
       <div style={{ opacity: visible ? 1 : 0, transition: 'opacity 1400ms ease', animation: visible ? 'splashpulse 3.5s ease-in-out infinite' : 'none' }}>
         <NeyaLogo size="lg" />
       </div>
+      {showReturn && (
+        <p style={{
+          fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.3em',
+          color: 'rgba(255,255,255,0.18)', marginTop: 28,
+          animation: 'returnfade 1000ms ease forwards',
+        }}>
+          tu es revenu·e
+        </p>
+      )}
     </div>
   )
 }
@@ -1222,7 +1239,7 @@ export default function App() {
         {muted ? '○' : '●'}
       </button>
 
-      {screen === 'splash'     && <NeyaSplash onDone={() => goTo('onboarding')} />}
+      {screen === 'splash'     && <NeyaSplash hasHistory={history.length > 0} onDone={() => history.length > 0 ? goTo('ritual', 0, true) : goTo('onboarding')} />}
       {screen === 'onboarding' && <Onboarding step={step} onNext={handleOnboardingNext} />}
       {screen === 'ritual'     && <RitualFlow step={step} ritual={ritual} onChange={handleRitualChange} onComplete={handleRitualStepComplete} muted={muted} />}
       {screen === 'world'      && <WorldReveal ritual={ritual} world={world} worldKey={worldKey} muted={muted} onGoVrai={handleGoVrai} onAmbienceStart={handleAmbienceStart} />}
