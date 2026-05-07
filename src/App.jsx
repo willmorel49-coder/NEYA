@@ -1304,6 +1304,10 @@ function VidePulse() {
           0%,100% { opacity:0.015; transform:scale(1); }
           50%      { opacity:0.04;  transform:scale(1.08); }
         }
+        @keyframes videpulse2 {
+          0%,100% { opacity:0.006; transform:scale(1.12); }
+          50%      { opacity:0.018; transform:scale(1); }
+        }
         ${motes.map((m, i) => `
           @keyframes mote${i} {
             0%   { transform:translate(0,0); opacity:0; }
@@ -1317,6 +1321,11 @@ function VidePulse() {
         position: 'absolute', inset: 0,
         background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.12) 0%, transparent 55%)',
         animation: 'videpulse 12s ease-in-out infinite',
+      }} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse at 48% 52%, rgba(200,200,255,0.07) 0%, transparent 45%)',
+        animation: 'videpulse2 19s 6s ease-in-out infinite',
       }} />
       <svg className="absolute inset-0 w-full h-full">
         {motes.map((m, i) => (
@@ -1647,7 +1656,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
   const longPressTimer = useRef()
 
   useEffect(() => {
-    const t1 = setTimeout(() => setShowRestart(true), 12000)
+    const t1 = setTimeout(() => { setShowRestart(true); haptic([2, 80, 2]) }, 12000)
     const t2 = setTimeout(() => setShowTakingTime(true), 30000)
     const t3 = setTimeout(() => { setShowAdieu(true); haptic([8, 60, 8]) }, 90000)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
@@ -1816,11 +1825,18 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         </Fade>
       )}
 
-      {/* Longue présence — reconnaissance discrète de l'ancrage */}
+      {/* Longue présence — reconnaissance discrète de l'ancrage, spécifique au monde */}
       {showTakingTime && !showAdieu && (
         <Fade slide duration={2200} delay={0} className="absolute text-center" style={{ top: '35%', left: '50%', transform: 'translateX(-50%)' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.40em', color: 'rgba(255,255,255,0.06)', whiteSpace: 'nowrap' }}>
-            tu prends ton temps
+            {({
+              brume: "tu t'attardes dans la brume",
+              foret: 'la forêt apprécie ta présence',
+              cosmos: "le cosmos t'accueille longtemps",
+              feu: 'la flamme brûle encore',
+              eau: "l'eau garde ton empreinte",
+              vide: "le vide t'appartient",
+            }[worldKey] || 'tu prends ton temps')}
           </p>
         </Fade>
       )}
