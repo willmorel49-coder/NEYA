@@ -1912,6 +1912,10 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
 const INITIAL_RITUAL = { color: null, texture: null, sound: null, completedAt: null }
 
+const WORLD_BLACKOUT = {
+  brume: '#060f18', foret: '#040b05', cosmos: '#08061e', feu: '#110300', eau: '#030d16', vide: '#080808',
+}
+
 export default function App() {
   const [screen, setScreen] = useState('splash')
   const [step, setStep] = useState(0)
@@ -1919,6 +1923,7 @@ export default function App() {
   const [muted, setMuted] = useState(false)
   const [history, setHistory] = useState(() => loadHistory())
   const [blackout, setBlackout] = useState(false)
+  const [blackoutBg, setBlackoutBg] = useState('#050810')
   const blackoutTimer = useRef()
   const stopAmbienceRef = useRef(() => {})
 
@@ -1957,6 +1962,7 @@ export default function App() {
       haptic([12, 60, 18])
       const completed = { ...ritual, completedAt: new Date() }
       const wk = selectWorld(completed)
+      setBlackoutBg(WORLD_BLACKOUT[wk] ?? '#050810')
       saveToHistory(completed, wk)
       setHistory(loadHistory())
       setRitual(completed)
@@ -2004,6 +2010,7 @@ export default function App() {
     haptic([6])
     stopAmbienceRef.current()
     stopAmbienceRef.current = () => {}
+    setBlackoutBg('#050810')
     setRitual(INITIAL_RITUAL)
     goTo('ritual', 0, true)
   }, [goTo])
@@ -2025,8 +2032,8 @@ export default function App() {
         backgroundSize: '300px 300px',
       }} />
 
-      {/* Transition noire cinématique */}
-      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 45, background: '#050810', opacity: blackout ? 1 : 0, transition: `opacity ${blackout ? 380 : 700}ms ease` }} />
+      {/* Transition cinématique — teintée par le monde */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 45, background: blackoutBg, opacity: blackout ? 1 : 0, transition: `opacity ${blackout ? 380 : 700}ms ease` }} />
 
       {/* Bouton mute */}
       <button
