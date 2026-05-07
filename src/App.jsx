@@ -651,8 +651,8 @@ function startAmbience(type, volume = 0.07) {
   }
   const ctx = new (window.AudioContext || window.webkitAudioContext)()
   const gainNode = ctx.createGain()
-  gainNode.gain.setValueAtTime(0, ctx.currentTime)
-  gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 2)
+  gainNode.gain.setValueAtTime(0.0001, ctx.currentTime)
+  gainNode.gain.setTargetAtTime(volume, ctx.currentTime, 0.7)
   gainNode.connect(ctx.destination)
   // Réverbe atmosphérique — send parallèle 14% wet
   const reverb = createReverb(ctx)
@@ -716,11 +716,11 @@ function startAmbience(type, volume = 0.07) {
 
   source.start()
   const stop = () => {
-    gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
-    setTimeout(() => { try { ctx.close() } catch (e) {} }, 1200)
+    gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.3)
+    setTimeout(() => { try { ctx.close() } catch (e) {} }, 1500)
   }
   stop.setVolume = (v, dur = 2) => {
-    gainNode.gain.linearRampToValueAtTime(v, ctx.currentTime + dur)
+    gainNode.gain.setTargetAtTime(v, ctx.currentTime, dur / 4)
   }
   return stop
 }
