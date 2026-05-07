@@ -327,6 +327,20 @@ function getWeekDots() {
   return result
 }
 
+function getPresenceProgress(savedAt, routinesDone, quetesDone, arch) {
+  const dayScore = Math.min((savedAt ? daysSince(savedAt) : 0) / 21, 1) * 0.4
+  const rScore = (routinesDone.filter(Boolean).length / Math.max(arch.routines.length, 1)) * 0.35
+  const qScore = (quetesDone.filter(Boolean).length / Math.max(arch.quetes.length, 1)) * 0.25
+  return Math.min(1, dayScore + rScore + qScore)
+}
+
+function getPresenceLabel(p) {
+  if (p < 0.25) return 'Présence naissante'
+  if (p < 0.5) return 'Lumière qui s\'éveille'
+  if (p < 0.75) return 'Flamme qui grandit'
+  return 'Éclat intérieur'
+}
+
 function loadProfile() {
   try { return JSON.parse(localStorage.getItem('neya_profile') || 'null') } catch { return null }
 }
@@ -422,6 +436,22 @@ function BgScreen({ bg, overlay = 'rgba(5,8,16,0.48)', breathe = false, children
   )
 }
 
+// ─── PRESENCE RING ────────────────────────────────────────────────────────────
+
+function PresenceRing({ progress, color, size = 130 }) {
+  const r = 52
+  const circ = 2 * Math.PI * r
+  const dash = Math.max(0, Math.min(1, progress)) * circ
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" style={{ transform: 'rotate(-90deg)' }}>
+      <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
+      <circle cx="60" cy="60" r={r} fill="none" stroke={color} strokeWidth="2.5"
+        strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
+        style={{ filter: `drop-shadow(0 0 5px ${color})`, transition: 'stroke-dasharray 1.6s cubic-bezier(0.22,1,0.36,1)' }} />
+    </svg>
+  )
+}
+
 // ─── SPLASH ───────────────────────────────────────────────────────────────────
 
 function SplashScreen({ onStart }) {
@@ -439,7 +469,6 @@ function SplashScreen({ onStart }) {
 
   return (
     <BgScreen bg="bg-onboarding.png" overlay="rgba(5,8,16,0.40)" breathe>
-      {/* Étoiles */}
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
         {STARS.map((s, i) => (
           <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill="white"
@@ -469,7 +498,7 @@ function SplashScreen({ onStart }) {
   )
 }
 
-// ─── INTRO (3 phrases narratives selon spec) ──────────────────────────────────
+// ─── INTRO ────────────────────────────────────────────────────────────────────
 
 function IntroScreen({ onStart }) {
   const [screenVis, setScreenVis] = useState(false)
@@ -524,7 +553,7 @@ function IntroScreen({ onStart }) {
   )
 }
 
-// ─── QUIZ (avec crossfade bg) ─────────────────────────────────────────────────
+// ─── QUIZ ─────────────────────────────────────────────────────────────────────
 
 function QuizScreen({ onComplete }) {
   const [idx, setIdx] = useState(0)
@@ -655,6 +684,127 @@ function TransitionScreen({ onReveal }) {
   )
 }
 
+// ─── PATRONUS REVEAL ──────────────────────────────────────────────────────────
+
+function PatronusReveal({ arch, onDone }) {
+  const [step, setStep] = useState(0)
+  // 0: dark  1: point  2: rings  3: animal  4: flash  5: text  6: btn
+
+  useEffect(() => {
+    const tt = [
+      setTimeout(() => setStep(1), 260),
+      setTimeout(() => setStep(2), 960),
+      setTimeout(() => setStep(3), 1900),
+      setTimeout(() => setStep(4), 2620),
+      setTimeout(() => setStep(5), 3600),
+      setTimeout(() => setStep(6), 5600),
+    ]
+    return () => tt.forEach(clearTimeout)
+  }, [])
+
+  const rings = [
+    { color: arch.color, delay: 0, dur: 1.45 },
+    { color: 'rgba(255,255,255,0.88)', delay: 0.14, dur: 1.62 },
+    { color: arch.color, delay: 0.28, dur: 1.78 },
+    { color: 'rgba(255,255,255,0.65)', delay: 0.44, dur: 1.96 },
+    { color: arch.color, delay: 0.62, dur: 2.15 },
+  ]
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+      {/* Radial bg glow */}
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at center, ${arch.color}14 0%, transparent 65%)`, transition: 'opacity 1s ease', opacity: step >= 3 ? 1 : 0.3 }} />
+
+      {/* White flash on animal arrival */}
+      {step >= 4 && (
+        <div style={{ position: 'absolute', inset: 0, background: 'white', animation: 'lightFlash 1.6s ease forwards', pointerEvents: 'none', zIndex: 5 }} />
+      )}
+
+      {/* Deep glow orb behind animal */}
+      {step >= 3 && (
+        <div style={{
+          position: 'absolute',
+          width: 260, height: 260,
+          borderRadius: '50%',
+          background: `radial-gradient(circle, ${arch.color}42 0%, ${arch.color}18 40%, transparent 70%)`,
+          animation: 'presencePulse 2.6s ease-in-out infinite',
+          zIndex: 6,
+        }} />
+      )}
+
+      {/* Patronus rings */}
+      {step >= 2 && rings.map((ring, i) => (
+        <div key={i} style={{
+          position: 'absolute',
+          width: 110, height: 110,
+          borderRadius: '50%',
+          border: `1.5px solid ${ring.color}`,
+          animation: `patronusRing ${ring.dur}s ease-out ${ring.delay}s forwards`,
+          opacity: 0,
+          zIndex: 4,
+        }} />
+      ))}
+
+      {/* Initial light point */}
+      {step >= 1 && step < 3 && (
+        <div style={{
+          width: step >= 2 ? 22 : 7,
+          height: step >= 2 ? 22 : 7,
+          borderRadius: '50%',
+          background: 'white',
+          boxShadow: `0 0 24px ${arch.color}, 0 0 60px white, 0 0 120px ${arch.color}`,
+          transition: 'all 0.9s ease',
+          position: 'absolute',
+          zIndex: 8,
+        }} />
+      )}
+
+      {/* The animal */}
+      {step >= 3 && (
+        <div style={{ position: 'relative', zIndex: 10, animation: 'patronusAnimal 2.4s ease forwards' }}>
+          {/* Inner aura */}
+          <div style={{ position: 'absolute', inset: -28, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 65%)`, animation: 'presencePulse 2.8s ease-in-out infinite 0.6s' }} />
+          <img
+            src={`${B}cerf.svg`}
+            alt=""
+            style={{
+              width: 210, height: 210,
+              display: 'block',
+              filter: `drop-shadow(0 0 28px ${arch.color}) drop-shadow(0 0 55px rgba(255,255,255,0.8)) drop-shadow(0 0 90px ${arch.color}99)`,
+              animation: 'cerfdrift 11s ease-in-out infinite 2.5s',
+            }}
+          />
+        </div>
+      )}
+
+      {/* Text reveal */}
+      {step >= 5 && (
+        <div style={{ position: 'absolute', bottom: '27%', textAlign: 'center', zIndex: 12, animation: 'fadeIn 1.4s ease forwards' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.34em', textTransform: 'uppercase', margin: '0 0 12px' }}>
+            Ton animal guide
+          </p>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 6vw, 28px)', color: 'white', margin: '0 0 7px', textShadow: `0 0 48px ${arch.shadow}, 0 0 24px rgba(255,255,255,0.4)` }}>
+            {arch.animal}
+          </p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.40)', margin: 0, fontStyle: 'italic', letterSpacing: '0.06em' }}>
+            {arch.profil}
+          </p>
+        </div>
+      )}
+
+      {/* CTA button */}
+      {step >= 6 && (
+        <button
+          onClick={() => { haptic([20, 60, 20]); onDone() }}
+          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: 'rgba(255,255,255,0.08)', border: `1px solid ${arch.color}88`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', zIndex: 12, animation: 'fadeIn 1.0s ease forwards', boxShadow: `0 4px 28px ${arch.color}44` }}
+        >
+          Découvrir mon profil
+        </button>
+      )}
+    </div>
+  )
+}
+
 // ─── RÉSULTAT ─────────────────────────────────────────────────────────────────
 
 function ResultScreen({ archetypeKey, onContinue }) {
@@ -682,27 +832,24 @@ function ResultScreen({ archetypeKey, onContinue }) {
     } else { onContinue() }
   }
 
+  // Phase 0 : révélation patronus plein écran
+  if (phase === 0) {
+    return (
+      <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.28)" breathe>
+        <PatronusReveal arch={arch} onDone={() => {
+          setPhaseVis(false)
+          setTimeout(() => { setPhase(1); setPhaseVis(true) }, 300)
+        }} />
+      </BgScreen>
+    )
+  }
+
   return (
     <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.48)" breathe>
       <div style={{ padding: '60px 28px 52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', width: '100%' }}>
         <NeyaLogo size="sm" />
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, width: '100%', textAlign: 'center', opacity: phaseVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
-
-          {phase === 0 && (
-            <>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 104, height: 104 }}>
-                <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `1px solid ${arch.color}55`, animation: 'pulsering 3.2s ease-in-out infinite' }} />
-                <div style={{ position: 'absolute', inset: -14, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 3.2s ease-in-out infinite 1.6s' }} />
-                <img src={`${B}cerf.svg`} alt="" style={{ width: 80, height: 80, opacity: 0.82, filter: `drop-shadow(0 0 32px ${arch.shadow})`, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative', zIndex: 1 }} />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', margin: 0, textTransform: 'uppercase' }}>Profil mental</p>
-                <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(26px, 6.5vw, 33px)', color: 'white', margin: 0, lineHeight: 1.2, textShadow: `0 0 48px ${arch.shadow}` }}>{arch.profil}</h1>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.4)', margin: 0, letterSpacing: '0.06em', fontStyle: 'italic' }}>{arch.animal}</p>
-              </div>
-            </>
-          )}
 
           {phase === 1 && (
             <>
@@ -730,7 +877,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
         </div>
 
         <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : 'rgba(255,255,255,0.11)', border: phase === 2 ? 'none' : '1px solid rgba(255,255,255,0.26)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.2em', color: 'white', textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : 'none', transition: 'all 0.45s ease' }}>
-          {['Découvrir mes forces', 'Lire mon message', 'Entrer dans mon espace'][phase]}
+          {['', 'Lire mon message', 'Entrer dans mon espace'][phase]}
         </button>
       </div>
     </BgScreen>
@@ -801,10 +948,12 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [intentionReady, setIntentionReady] = useState(false)
+  const [ringReady, setRingReady] = useState(false)
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 80)
     const t2 = setTimeout(() => setIntentionReady(true), 600)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
+    const t3 = setTimeout(() => setRingReady(true), 350)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
   const intention = getDailyIntention(archetypeKey)
@@ -814,6 +963,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const quetesCount = quetesDone.filter(Boolean).length
   const weekDots = getWeekDots()
   const days = savedAt ? daysSince(savedAt) : 0
+  const presenceProgress = ringReady ? getPresenceProgress(savedAt, routinesDone, quetesDone, arch) : 0
 
   const returningMsg = () => {
     if (days <= 0) return null
@@ -827,25 +977,41 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   return (
     <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 16, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease' }}>
 
-      <div style={{ textAlign: 'center', marginBottom: 4 }}>
+      {/* ── Cocoon header ── */}
+      <div style={{ textAlign: 'center', paddingBottom: 6 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', margin: '0 0 2px', textTransform: 'capitalize' }}>{greetingStr()}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.18)', letterSpacing: '0.07em', margin: '0 0 14px', textTransform: 'capitalize' }}>{dateStr}</p>
-        <NeyaLogo size="sm" onTap={() => { haptic([6, 80, 6]); onOpenVrai() }} />
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.18)', letterSpacing: '0.07em', margin: '0 0 18px', textTransform: 'capitalize' }}>{dateStr}</p>
+
+        {/* Presence ring wrapping the animal — tap for espace vrai */}
+        <div
+          onClick={() => { haptic([6, 80, 6]); onOpenVrai() }}
+          style={{ position: 'relative', width: 130, height: 130, margin: '0 auto 16px', cursor: 'pointer' }}
+        >
+          <div style={{ position: 'absolute', inset: 0 }}>
+            <PresenceRing progress={presenceProgress} color={arch.color} size={130} />
+          </div>
+          {/* Soft glow center */}
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}20 0%, transparent 72%)`, animation: 'presencePulse 3.8s ease-in-out infinite' }} />
+            <img
+              src={`${B}cerf.svg`}
+              alt=""
+              style={{ width: 74, height: 74, opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative', zIndex: 1 }}
+            />
+          </div>
+        </div>
+
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 5px', textShadow: `0 0 22px ${arch.color}55` }}>{arch.profil}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress)}</p>
+
         {msg ? (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em', margin: '8px 0 0', fontStyle: 'italic' }}>{msg}</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em', margin: '4px 0 0', fontStyle: 'italic' }}>{msg}</p>
         ) : (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.12)', letterSpacing: '0.12em', margin: '7px 0 0' }}>touche le logo · instant de présence</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.12em', margin: '4px 0 0' }}>touche · instant de présence</p>
         )}
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.055)', border: `1px solid ${arch.color}44`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
-        <img src={`${B}cerf.svg`} alt="" style={{ width: 40, height: 40, opacity: 0.62, filter: `drop-shadow(0 0 12px ${arch.shadow})`, animation: 'cerfdrift 10s ease-in-out infinite', flexShrink: 0 }} />
-        <div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.22em', margin: '0 0 3px', textTransform: 'uppercase' }}>Ton profil</p>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: 'white', margin: 0 }}>{arch.profil}</p>
-        </div>
-      </div>
-
+      {/* ── Intention du jour ── */}
       <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 14, padding: '20px 18px', minHeight: 92 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '0 0 12px', textTransform: 'uppercase' }}>Intention du jour</p>
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.86)', lineHeight: 1.68, fontStyle: 'italic' }}>
@@ -853,12 +1019,23 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+      {/* ── Graines de présence (7 jours) ── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
         {weekDots.map((active, i) => (
-          <div key={i} style={{ width: active ? 7 : 5, height: active ? 7 : 5, borderRadius: '50%', background: active ? arch.color : 'rgba(255,255,255,0.12)', boxShadow: active ? `0 0 7px ${arch.color}99` : 'none', transition: 'all 0.4s ease' }} />
+          <div key={i} style={{
+            width: active ? 8.5 : 5.5,
+            height: active ? 8.5 : 5.5,
+            borderRadius: '50%',
+            background: active ? arch.color : 'rgba(255,255,255,0.10)',
+            boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44` : 'none',
+            transition: 'all 0.5s ease',
+            animation: active ? 'seedPulse 3.5s ease-in-out infinite' : 'none',
+            animationDelay: `${i * 0.42}s`,
+          }} />
         ))}
       </div>
 
+      {/* ── Progression du jour ── */}
       <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '2px 0 0', textTransform: 'uppercase' }}>Aujourd'hui</p>
       <div style={{ display: 'flex', gap: 10 }}>
         {[
@@ -1040,11 +1217,21 @@ export default function App() {
     const style = document.createElement('style')
     style.id = 'neya-css'
     style.textContent = `
-      @keyframes bgbreathe   { 0%,100%{transform:scale(1)}        50%{transform:scale(1.04)} }
-      @keyframes pulsering   { 0%,100%{transform:scale(1);opacity:0.42} 50%{transform:scale(1.24);opacity:0.88} }
-      @keyframes cursorblink { 0%,100%{opacity:0}                  45%,55%{opacity:1} }
-      @keyframes startwinkle { 0%,100%{opacity:0.18}              50%{opacity:0.88} }
-      @keyframes cerfdrift   { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-6px)} }
+      @keyframes bgbreathe    { 0%,100%{transform:scale(1)}                   50%{transform:scale(1.04)} }
+      @keyframes pulsering    { 0%,100%{transform:scale(1);opacity:0.42}       50%{transform:scale(1.24);opacity:0.88} }
+      @keyframes cursorblink  { 0%,100%{opacity:0}                             45%,55%{opacity:1} }
+      @keyframes startwinkle  { 0%,100%{opacity:0.18}                         50%{opacity:0.88} }
+      @keyframes cerfdrift    { 0%,100%{transform:translateY(0)}               50%{transform:translateY(-6px)} }
+      @keyframes patronusRing { 0%{transform:scale(0.06);opacity:0.96}        100%{transform:scale(5.8);opacity:0} }
+      @keyframes patronusAnimal {
+        0%   { opacity:0; transform:scale(0.28); filter:blur(22px) brightness(4.5); }
+        52%  { opacity:1; transform:scale(1.12); filter:blur(0px)  brightness(2.8); }
+        100% { opacity:0.88; transform:scale(1); filter:blur(0px)  brightness(1.35); }
+      }
+      @keyframes lightFlash   { 0%{opacity:0} 18%{opacity:0.74} 100%{opacity:0} }
+      @keyframes presencePulse{ 0%,100%{opacity:0.7;transform:scale(1)}       50%{opacity:1;transform:scale(1.07)} }
+      @keyframes seedPulse    { 0%,100%{opacity:0.62;transform:scale(1)}      50%{opacity:1;transform:scale(1.32)} }
+      @keyframes fadeIn       { 0%{opacity:0}                                  100%{opacity:1} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
