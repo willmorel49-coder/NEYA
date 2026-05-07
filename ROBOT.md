@@ -95,29 +95,74 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-07
 **Branche** : `main`
-**Phase** : V1 visuelle complète — DA intégrée, vraies images de fond, logo, esprit animal
+**Phase** : V1.1 — Univers complet 6 mondes, histoire silencieuse, overlays atmosphériques
 
 ### Features actives (`src/App.jsx`)
-- Onboarding 3 écrans : image de fond réelle (fille de dos + grotte mandalas), texte séquentiel
-- Rituel sensoriel : couleur → texture (spatiale) → son (Web Audio API)
-- Monde Brume : image de fond réelle (fille + loup-esprit), logo NÉYA, cerf SVG lumineux
-- Espace Vrai : image de fond réelle (fille dans l'eau), flux anonyme organique
-- Logo NÉYA (étoile + wordmark) présent sur WorldReveal et Espace Vrai
-- Cerf redesigné : silhouette éthérée avec bois ramifiés lumineux et particules
-- Grain texture sur les fonds rituel
-- Skill files DA + Structure créés dans `.claude/skills/`
+
+**Core flow :**
+- Splash screen : logo NÉYA pulse, 3s, bypass onboarding si returning user ("tu es revenu·e")
+- Onboarding 3 écrans : bg-onboarding.png, texte séquentiel, hint "toucher"
+- Rituel : couleur (8 orbes respirants + flash label) → texture spatiale (teinte rituel) → son (Web Audio API + soundbar)
+- Indicateur de progression 3 points discrets en bas du rituel
+
+**6 Mondes (sélection automatique sound × texture) :**
+- Brume (pluie + lourd/froid/rugueux) : `bg-brume.png`
+- Forêt (vent + lourd/froid/rugueux) : `bg-foret.png` + rayons de lumière SVG
+- Cosmos (vent + léger/doux/chaud) : `bg-cosmos.png` + 38 étoiles scintillantes
+- Feu (feu + lourd/chaud/rugueux) : `bg-feu.png` + shimmer chaleur animé
+- Eau (pluie + léger/doux/chaud) : `bg-eau.png` + ondulations SVG
+- Vide (silence + léger/doux/chaud) : `bg-vide.png` + pouls radial
+
+**WorldReveal :**
+- Phases : black → world (1s) → name (2.8s) → phrase (4.6s)
+- Nom du monde révélé avec animation letterSpacing
+- Watermark NÉYA très transparent en fond
+- Cerf teinté par monde (CSS filter), drift + breathing animation
+- Overlays atmosphériques par monde
+- Ambiance sonore démarre et persiste vers EspaceVrai
+
+**EspaceVrai :**
+- Fond du monde actif (très opacifié)
+- Flux anonyme de présences (22 orbes + présence utilisateur)
+- Histoire silencieuse : traces fantômes des rituels passés (localStorage)
+- Cerf fantôme dans le coin (opacity 0.07)
+- Compteur de présences (ultra-discret après 5s)
+- Whisper du monde (phrase spécifique au monde après 4.5s)
+- Résumé rituel (couleur · texture · son en bas à droite)
+- "tu n'es pas seul·e" + whisper du monde
+- Bouton "nouveau rituel" après 12s
+- Long-press sur logo → reset histoire avec confirmation
+
+**Transitions :**
+- Blackout 380ms entre onboarding→rituel, rituel→monde, monde→espace vrai
+- Grain texture global (SVG data URI, mix-blend-mode overlay)
+
+**Histoire silencieuse :**
+- `localStorage['neya_history']` : max 90 entrées {ts, color, texture, sound, world}
+- Chargée au démarrage, sauvée après chaque rituel
+- Visualisée dans EspaceVrai en points fantômes
 
 ### Assets dans `public/`
-- `cerf.svg` — esprit animal redesigné, lumineux
-- `bg-onboarding.png` — fille de dos, grotte avec eau et mandalas bleus
-- `bg-brume.png` — fille face au loup-esprit dans une grotte
-- `bg-vrai.png` — fille debout dans l'eau avec orbes lumineux
+- `cerf.svg` — esprit animal lumineux, silhouette éthérée
+- `bg-onboarding.png` — fille de dos, grotte + mandalas bleus
+- `bg-brume.png` — fille face au loup-esprit lumineux
+- `bg-foret.png` — arche végétale dorée
+- `bg-cosmos.png` — fille sur falaise, épique
+- `bg-feu.png` — falaise avec anneau solaire doré
+- `bg-eau.png` — piscine circulaire, lanternes, étoiles
+- `bg-vide.png` — chambre minimaliste, lumière solaire
+- `bg-vrai.png` — non utilisé (remplacé par fond du monde actif)
+
+### Déploiement
+- `vercel.json` configuré
+- `npm run build` → `dist/` fonctionnel
+- Déploiement Vercel : **à faire par Will** (`vercel --prod` ou import sur vercel.com)
 
 ### Backlog code
-- [ ] Transition retour au rituel depuis Espace Vrai (nouvelle session)
-- [ ] V1.1 : histoire silencieuse (`history: []`)
-- [ ] Déploiement Vercel
+- [ ] Déploiement Vercel (URL prod à renseigner dans §1)
+- [ ] V1.2 : histoire silencieuse améliorée (visualisation temporelle)
+- [ ] Tests de régression avant chaque session
 
 ### Actions Will (hors code)
-- [ ] Ajouter URL repo + prod dans §1
-- [ ] Choisir d'autres fonds parmi `NÉYA/image fond app/` pour les prochains mondes
+- [ ] Déployer sur Vercel + ajouter URL prod dans §1
+- [ ] Valider visuellement les 6 mondes sur mobile
