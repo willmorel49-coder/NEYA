@@ -505,7 +505,6 @@ function OnboardingScreen2({ onEnter }) {
           fontSize: 11,
           letterSpacing: '0.4em',
           color: 'rgba(255,255,255,0.32)',
-          borderBottom: '1px solid rgba(255,255,255,0.12)',
           paddingBottom: 4,
           background: 'none',
           border: 'none',
