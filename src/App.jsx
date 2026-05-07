@@ -388,8 +388,8 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
   const [showReturn, setShowReturn] = useState(false)
   const [showWorld, setShowWorld] = useState(false)
 
-  const daysSince = lastTs ? (Date.now() - lastTs) / 86400000 : 0
-  const returnText = daysSince >= 7 ? 'tu es de retour' : 'tu es revenu·e'
+  const hoursSince = lastTs ? (Date.now() - lastTs) / 3600000 : 0
+  const returnText = hoursSince < 4 ? 'tu es encore là' : hoursSince < 168 ? 'tu es revenu·e' : 'tu es de retour'
 
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 200)
@@ -644,12 +644,11 @@ function createReverb(ctx) {
 }
 
 function startAmbience(type, volume = 0.07) {
-  if (type === 'silence') {
-    const noop = () => {}
-    noop.setVolume = () => {}
-    return noop
-  }
-  const ctx = new (window.AudioContext || window.webkitAudioContext)()
+  const noop = () => {}
+  noop.setVolume = () => {}
+  if (type === 'silence') return noop
+  let ctx
+  try { ctx = new (window.AudioContext || window.webkitAudioContext)() } catch { return noop }
   const gainNode = ctx.createGain()
   gainNode.gain.setValueAtTime(0.0001, ctx.currentTime)
   gainNode.gain.setTargetAtTime(volume, ctx.currentTime, 0.7)
@@ -1695,6 +1694,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {ritual.color && ritual.texture && ritual.sound && (
         <Fade slide duration={1800} delay={2500} className="absolute" style={{ bottom: '13%', right: '6%' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.07)', textAlign: 'right', lineHeight: 2 }}>
+            {WORLD_NAMES[worldKey] || worldKey}<br />
             {RITUAL_COLORS.find(c => c.hex === ritual.color)?.label}<br />
             {ritual.texture} · {ritual.sound}
           </p>
