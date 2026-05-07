@@ -19,11 +19,10 @@ const RITUAL_SOUNDS = ['pluie', 'vent', 'feu', 'silence']
 const WORLDS = {
   brume: {
     palette: ['#0d1b2a', '#1b2d4f', '#2e4a7a'],
-    animal: 'cerf',
+    bgImage: 'url(/bg-brume.png)',
+    animalFilter: 'brightness(1.4) blur(0.3px)',
     animationSpeed: 'slow',
     phrases: {
-      // Indexées par (colorLabel, textureLabel) → phrase
-      // Fallback par texture seule si pas de correspondance exacte
       byTexture: {
         lourd:   [
           "On dirait que tout pèse un peu plus aujourd'hui.",
@@ -59,6 +58,229 @@ const WORLDS = {
       default: "Tu peux rester ici un moment.",
     },
   },
+
+  foret: {
+    palette: ['#0a1a0e', '#162a18', '#1e3d24'],
+    bgImage: 'url(/bg-foret.png)',
+    animalFilter: 'hue-rotate(110deg) saturate(0.9) brightness(1.3) blur(0.3px)',
+    animationSpeed: 'slow',
+    phrases: {
+      byTexture: {
+        lourd:   [
+          "La forêt accueille aussi ce qui est lourd.",
+          "Certaines racines s'enfoncent dans l'obscurité.",
+          "Être dense, c'est aussi une forme de vie.",
+        ],
+        léger:   [
+          "Quelque chose pousse ici, silencieusement.",
+          "Même l'air entre les arbres a de l'espace.",
+          "Il y a une légèreté dans ce qui persiste.",
+        ],
+        rugueux: [
+          "Rugueux, comme l'écorce. Ça tient quand même.",
+          "Ce qui résiste a aussi ses textures.",
+          "Pas besoin d'être lisse pour traverser.",
+        ],
+        doux:    [
+          "Le sol de la forêt amortit les pas.",
+          "Il y a une douceur dans ce qui dure.",
+          "Certains endroits existent pour accueillir.",
+        ],
+        chaud:   [
+          "Quelque chose grandit en toi, même sous l'ombre.",
+          "Une chaleur intérieure, comme la sève qui monte.",
+          "Être vivant, ça chauffe parfois.",
+        ],
+        froid:   [
+          "Le froid de la forêt est vieux et patient.",
+          "Rien n'est pressé ici.",
+          "Le calme peut être une forme de force.",
+        ],
+      },
+      default: "Certains endroits existent pour accueillir.",
+    },
+  },
+
+  cosmos: {
+    palette: ['#0a0818', '#160d3a', '#1e1050'],
+    bgImage: 'url(/bg-cosmos.png)',
+    animalFilter: 'hue-rotate(270deg) saturate(0.85) brightness(1.6) blur(0.3px)',
+    animationSpeed: 'slow',
+    phrases: {
+      byTexture: {
+        lourd:   [
+          "Même les étoiles portent leur propre poids.",
+          "Loin du sol, quelque chose reste.",
+          "L'espace n'allège pas tout — il donne de la place.",
+        ],
+        léger:   [
+          "Quelque chose en toi sait flotter.",
+          "Il y a de l'infini dans ce moment.",
+          "Léger comme ce qui ne cherche plus à se justifier.",
+        ],
+        rugueux: [
+          "Même le cosmos a ses aspérités invisibles.",
+          "Ce qui accroche peut aussi guider.",
+          "La rugosité n'empêche pas le vol.",
+        ],
+        doux:    [
+          "Là-haut, tout est plus silencieux.",
+          "L'espace entre les étoiles n'est pas vide.",
+          "Il y a une douceur dans l'immensité.",
+        ],
+        chaud:   [
+          "Quelque chose brûle ici, depuis longtemps.",
+          "Il y a de la chaleur même dans l'espace.",
+          "Un feu lointain qui dure.",
+        ],
+        froid:   [
+          "Le froid du cosmos est pur, pas hostile.",
+          "Quelque chose se cristallise quand tout ralentit.",
+          "La distance peut être une forme de clarté.",
+        ],
+      },
+      default: "Il y a de l'infini dans ce moment.",
+    },
+  },
+
+  feu: {
+    palette: ['#1a0800', '#2e1000', '#4a1c00'],
+    bgImage: 'url(/bg-feu.png)',
+    animalFilter: 'hue-rotate(30deg) saturate(1.2) brightness(1.6) blur(0.3px)',
+    animationSpeed: 'fast',
+    phrases: {
+      byTexture: {
+        lourd:   [
+          "Ce qui brûle en toi n'est pas un défaut.",
+          "Quelque chose est intense aujourd'hui. C'est réel.",
+          "Le poids du feu est différent — il consume, il libère.",
+        ],
+        léger:   [
+          "Le feu peut aussi danser.",
+          "Il y a une légèreté dans ce qui brûle vraiment.",
+          "Quelque chose se consume pour laisser de la place.",
+        ],
+        rugueux: [
+          "Brut, direct, vif — c'est une façon d'être présent.",
+          "Ce qui frotte peut s'enflammer.",
+          "L'intensité a ses propres textures.",
+        ],
+        doux:    [
+          "Même le feu a ses braises douces.",
+          "Il y a un feu calme dans les choses qui durent.",
+          "Ce qui couve n'a pas besoin d'exploser.",
+        ],
+        chaud:   [
+          "Quelque chose t'habite pleinement en ce moment.",
+          "Cette chaleur-là, tu peux lui faire confiance.",
+          "Être habité, c'est être vivant.",
+        ],
+        froid:   [
+          "Même quand le froid vient, la braise reste.",
+          "Quelque chose résiste sous la surface.",
+          "Le froid ne tue pas ce qui est vraiment allumé.",
+        ],
+      },
+      default: "Ce qui brûle en toi n'est pas un défaut.",
+    },
+  },
+
+  eau: {
+    palette: ['#04121c', '#081e30', '#0c2e44'],
+    bgImage: 'url(/bg-eau.png)',
+    animalFilter: 'hue-rotate(190deg) saturate(1.1) brightness(1.5) blur(0.3px)',
+    animationSpeed: 'slow',
+    phrases: {
+      byTexture: {
+        lourd:   [
+          "L'eau porte aussi ce qui est lourd.",
+          "Quelque chose coule mais ne disparaît pas.",
+          "Même dense, tu flottes.",
+        ],
+        léger:   [
+          "L'eau sait comment être légère.",
+          "Quelque chose en toi cherche sa surface.",
+          "Il y a une fluidité dans les jours qui passent.",
+        ],
+        rugueux: [
+          "L'eau adoucit ce qui résiste, avec le temps.",
+          "Même rugueux, le fond peut être traversé.",
+          "Quelque chose érode doucement.",
+        ],
+        doux:    [
+          "L'eau se souvient des formes qu'elle a traversées.",
+          "Il y a une douceur dans ce qui s'écoule.",
+          "Laisser couler n'est pas renoncer.",
+        ],
+        chaud:   [
+          "Quelque chose est vivant et en mouvement.",
+          "Cette chaleur-là, l'eau la garde longtemps.",
+          "Ce qui coule garde sa propre température.",
+        ],
+        froid:   [
+          "Une fraîcheur qui réveille sans brusquer.",
+          "L'eau froide est honnête.",
+          "Ce froid-là nettoie quelque chose.",
+        ],
+      },
+      default: "Laisser couler n'est pas renoncer.",
+    },
+  },
+
+  vide: {
+    palette: ['#0c0c0c', '#141414', '#1e1e1e'],
+    bgImage: 'url(/bg-vide.png)',
+    animalFilter: 'saturate(0) brightness(1.8) blur(0.3px)',
+    animationSpeed: 'slow',
+    phrases: {
+      byTexture: {
+        lourd:   [
+          "Le vide accueille même ce qui est lourd.",
+          "Ici, le poids n'a pas besoin de se justifier.",
+          "Silence total. C'est suffisant.",
+        ],
+        léger:   [
+          "Il n'y a rien à faire ici.",
+          "Le vide n'est pas une absence — c'est un espace.",
+          "Quelque chose respire quand tout s'arrête.",
+        ],
+        rugueux: [
+          "Même dans le vide, tu existes.",
+          "Ce qui résiste peut aussi se poser.",
+          "Pas de lissage nécessaire ici.",
+        ],
+        doux:    [
+          "Il n'y a rien à tenir.",
+          "La paix n'est pas l'absence de quelque chose.",
+          "Tu peux ne rien être pour un moment.",
+        ],
+        chaud:   [
+          "Même dans le silence, quelque chose couve.",
+          "Une chaleur intérieure qui n'a pas besoin de se montrer.",
+          "Être, simplement.",
+        ],
+        froid:   [
+          "Le silence froid est l'un des plus honnêtes.",
+          "Rien ne bouge. C'est bien comme ça.",
+          "Ce moment ne demande rien.",
+        ],
+      },
+      default: "Il n'y a rien à faire ici.",
+    },
+  },
+}
+
+// sound × texture → monde émotionnel
+const WORLD_MAP = {
+  pluie:   { lourd:'brume',  léger:'eau',   rugueux:'brume',  doux:'eau',   chaud:'eau',   froid:'brume' },
+  vent:    { lourd:'foret',  léger:'cosmos', rugueux:'foret',  doux:'cosmos', chaud:'cosmos', froid:'foret' },
+  feu:     { lourd:'feu',    léger:'foret',  rugueux:'feu',    doux:'foret',  chaud:'feu',   froid:'foret' },
+  silence: { lourd:'brume',  léger:'vide',   rugueux:'brume',  doux:'vide',  chaud:'vide',  froid:'brume' },
+}
+
+function selectWorld(ritual) {
+  if (!ritual.sound || !ritual.texture) return 'brume'
+  return WORLD_MAP[ritual.sound]?.[ritual.texture] ?? 'brume'
 }
 
 function selectPhrase(ritual, world) {
@@ -651,11 +873,11 @@ function WorldReveal({ ritual, world, onGoVrai, muted }) {
         transition: 'opacity 900ms ease',
       }}
     >
-      {/* Image de fond Brume */}
+      {/* Image de fond du monde */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: 'url(/bg-brume.png)',
+          backgroundImage: world.bgImage,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           animation: `worldBreathe ${speed} ease-in-out infinite`,
@@ -709,7 +931,7 @@ function WorldReveal({ ritual, world, onGoVrai, muted }) {
           src="/cerf.svg"
           alt=""
           aria-hidden="true"
-          style={{ width: '55vw', maxWidth: 280, opacity: 0.6, filter: 'brightness(1.4) blur(0.3px)' }}
+          style={{ width: '55vw', maxWidth: 280, opacity: 0.6, filter: world.animalFilter }}
         />
       </div>
 
@@ -913,7 +1135,8 @@ export default function App() {
     setStep(nextStep)
   }, [])
 
-  const world = WORLDS.brume
+  const worldKey = selectWorld(ritual)
+  const world = WORLDS[worldKey] ?? WORLDS.brume
 
   const handleRitualChange = useCallback((updated) => setRitual(updated), [])
 
