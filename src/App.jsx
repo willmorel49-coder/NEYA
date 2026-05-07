@@ -395,8 +395,8 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
     const t1 = setTimeout(() => setVisible(true), 200)
     const t2 = setTimeout(() => setShowReturn(hasHistory), 900)
     const t3 = setTimeout(() => setShowWorld(hasHistory && !!lastWorld), 1500)
-    const t4 = setTimeout(() => setFading(true), 2200)
-    const t5 = setTimeout(() => onDone(), 3100)
+    const t4 = setTimeout(() => setFading(true), hasHistory ? 3200 : 2200)
+    const t5 = setTimeout(() => onDone(), hasHistory ? 4300 : 3100)
     return () => [t1, t2, t3, t4, t5].forEach(clearTimeout)
   }, [onDone, hasHistory, lastWorld])
 
@@ -614,8 +614,10 @@ function OnboardingScreen2({ onEnter }) {
           cursor: 'pointer',
           transition: 'color 600ms ease',
         }}
-        onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.65)'}
-        onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.32)'}
+        onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+        onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.32)'}
+        onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+        onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.32)'}
       >
         ENTRER
       </button>
@@ -740,12 +742,14 @@ function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
       />
 
       {/* Indicateur de progression — 3 points */}
+      <style>{`@keyframes dotpulse{0%,100%{opacity:0.35}50%{opacity:0.7}}`}</style>
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5" style={{ zIndex: 20 }}>
         {[0, 1, 2].map(i => (
           <div key={i} style={{
             width: 3, height: 3, borderRadius: '50%',
             background: i <= step ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.1)',
             transition: 'background 600ms ease',
+            animation: i === step ? 'dotpulse 2.8s ease-in-out infinite' : 'none',
           }} />
         ))}
       </div>
@@ -1247,12 +1251,14 @@ function BrumeMist() {
         @keyframes mist1 { 0%,100%{transform:translateX(5px);opacity:0.05}  50%{transform:translateX(-14px);opacity:0.09} }
         @keyframes mist2 { 0%,100%{transform:translateX(-6px);opacity:0.06} 50%{transform:translateX(12px);opacity:0.10} }
         @keyframes mist3 { 0%,100%{transform:translateX(8px);opacity:0.04}  50%{transform:translateX(-10px);opacity:0.07} }
+        @keyframes mist4 { 0%,100%{transform:translateX(-14px);opacity:0.03} 50%{transform:translateX(18px);opacity:0.06} }
       `}</style>
       {[
         { left: '5%',  top: '52%', w: 320, h: 90,  anim: 'mist0 20s ease-in-out infinite',      bg: 'rgba(160,190,220,0.18)' },
         { left: '-8%', top: '38%', w: 260, h: 75,  anim: 'mist1 26s 8s ease-in-out infinite',   bg: 'rgba(140,175,215,0.15)' },
         { left: '28%', top: '62%', w: 380, h: 100, anim: 'mist2 18s 3s ease-in-out infinite',   bg: 'rgba(175,200,225,0.16)' },
         { left: '-5%', top: '22%', w: 280, h: 65,  anim: 'mist3 32s 14s ease-in-out infinite',  bg: 'rgba(120,155,200,0.12)' },
+        { left: '15%', top: '-4%', w: 360, h: 55,  anim: 'mist4 48s 28s ease-in-out infinite',  bg: 'rgba(100,135,190,0.09)' },
       ].map((p, i) => (
         <div key={i} style={{
           position: 'absolute', left: p.left, top: p.top, width: p.w, height: p.h,
@@ -1294,11 +1300,20 @@ function CosmosParticles() {
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3, overflow: 'hidden' }}>
       <defs>
         <filter id="starGlow"><feGaussianBlur stdDeviation="0.8"/></filter>
+        <filter id="nebulaBlur"><feGaussianBlur stdDeviation="18"/></filter>
         <linearGradient id="shootGrad" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="rgba(200,220,255,0)" />
           <stop offset="100%" stopColor="rgba(200,220,255,0.85)" />
         </linearGradient>
       </defs>
+      <style>{`@keyframes nebulaPulse{0%,100%{opacity:0.55}50%{opacity:1}}`}</style>
+      {/* Nébuleuse — halo violet très doux derrière les étoiles */}
+      <ellipse cx="48%" cy="36%" rx="35%" ry="22%"
+        fill="rgba(99,102,241,0.07)" filter="url(#nebulaBlur)"
+        style={{ animation: 'nebulaPulse 28s ease-in-out infinite' }} />
+      <ellipse cx="62%" cy="55%" rx="22%" ry="14%"
+        fill="rgba(139,92,246,0.05)" filter="url(#nebulaBlur)"
+        style={{ animation: 'nebulaPulse 36s 12s ease-in-out infinite' }} />
       <style>
         {stars.map(s => `
           @keyframes startwinkle${s.id} {
@@ -1445,8 +1460,12 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {/* Phrase */}
       {phase === 'phrase' && (
         <Fade duration={700} slide className="absolute inset-0 flex items-center justify-center px-10" style={{ paddingBottom: '18%' }}>
+          <style>{`@keyframes cursorblink{0%,100%{opacity:0}50%{opacity:0.35}}`}</style>
           <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.9, letterSpacing: '0.06em' }}>
             {displayedPhrase}
+            {displayedPhrase.length < fullPhrase.length && (
+              <span style={{ animation: 'cursorblink 0.75s ease-in-out infinite', fontWeight: 300 }}>|</span>
+            )}
           </p>
         </Fade>
       )}
@@ -1890,13 +1909,15 @@ export default function App() {
         onClick={() => setMuted(m => !m)}
         aria-label={muted ? 'Activer le son' : 'Couper le son'}
         style={{ position: 'absolute', top: 20, right: 20, zIndex: 50, fontFamily: 'Sora', fontSize: 11, color: 'rgba(255,255,255,0.18)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.1em', transition: 'color 400ms ease' }}
-        onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.5)'}
-        onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.18)'}
+        onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+        onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.18)'}
+        onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+        onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.18)'}
       >
         {muted ? '○' : '●'}
       </button>
 
-      {screen === 'splash'     && <NeyaSplash hasHistory={history.length > 0} lastWorld={history[0]?.world} lastTs={history[0]?.ts} onDone={() => history.length > 0 ? goTo('ritual', 0, true) : goTo('onboarding')} />}
+      {screen === 'splash'     && <NeyaSplash hasHistory={history.length > 0} lastWorld={history[0]?.world} lastTs={history[0]?.ts} onDone={() => { if (history.length > 0) { haptic([4]); goTo('ritual', 0, true) } else goTo('onboarding') }} />}
       {screen === 'onboarding' && <Onboarding step={step} onNext={handleOnboardingNext} />}
       {screen === 'ritual'     && <RitualFlow step={step} ritual={ritual} onChange={handleRitualChange} onComplete={handleRitualStepComplete} muted={muted} />}
       {screen === 'world'      && <WorldReveal ritual={ritual} world={world} worldKey={worldKey} muted={muted} onGoVrai={handleGoVrai} onAmbienceStart={handleAmbienceStart} />}
