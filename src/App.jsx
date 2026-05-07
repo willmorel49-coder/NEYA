@@ -1314,9 +1314,9 @@ function FeuShimmer() {
 
 function EauRipples() {
   const ripples = [
-    { cx: 50, cy: 58, delay: '0s',   period: 9,  maxR: 130, sw: 0.6, stroke: 'rgba(80,180,210,0.35)' },
-    { cx: 50, cy: 58, delay: '3s',   period: 9,  maxR: 130, sw: 0.4, stroke: 'rgba(80,180,210,0.28)' },
-    { cx: 50, cy: 58, delay: '6s',   period: 9,  maxR: 130, sw: 0.3, stroke: 'rgba(80,180,210,0.22)' },
+    { cx: 50, cy: 57, delay: '0s',   period: 9,  maxR: 130, sw: 0.6, stroke: 'rgba(80,180,210,0.35)' },
+    { cx: 49, cy: 59, delay: '3s',   period: 9,  maxR: 128, sw: 0.4, stroke: 'rgba(80,180,210,0.28)' },
+    { cx: 51, cy: 58, delay: '6s',   period: 9,  maxR: 125, sw: 0.3, stroke: 'rgba(80,180,210,0.22)' },
     { cx: 35, cy: 70, delay: '1.5s', period: 12, maxR: 80,  sw: 0.5, stroke: 'rgba(80,200,180,0.30)' },
     { cx: 68, cy: 50, delay: '4.5s', period: 11, maxR: 70,  sw: 0.4, stroke: 'rgba(100,190,220,0.25)' },
   ]
@@ -1920,7 +1920,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       <style>{`@keyframes whisperbreathe{0%,100%{opacity:0.09}50%{opacity:0.14}}`}</style>
       {world.whisper && (
         <Fade slide duration={2000} delay={4500} className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center">
-          <p style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.28em', color: 'rgba(255,255,255,0.09)', animation: 'whisperbreathe 14s ease-in-out infinite' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.28em', color: 'rgba(255,255,255,0.09)', animation: 'whisperbreathe 14s ease-in-out infinite', textShadow: `0 0 24px ${world.palette[2]}2a` }}>
             {world.whisper}
           </p>
         </Fade>
