@@ -619,7 +619,6 @@ function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
 }
 
 function RitualColor({ selected, onSelect, onNext }) {
-  // Positions organiques — pas de grille
   const positions = [
     { top: '15%', left: '22%' },
     { top: '12%', left: '60%' },
@@ -631,9 +630,14 @@ function RitualColor({ selected, onSelect, onNext }) {
     { top: '34%', left: '9%' },
   ]
   const baseSizes = [40, 36, 48, 38, 44, 42, 34, 46]
-
-  // Périodes de respiration différentes par couleur — organic
   const breathePeriods = [14, 18, 12, 20, 16, 22, 15, 19]
+  const [flashLabel, setFlashLabel] = useState(null)
+
+  const handleSelect = (hex, label) => {
+    onSelect(hex)
+    setFlashLabel(label)
+    setTimeout(() => setFlashLabel(null), 1200)
+  }
 
   return (
     <div className="w-full h-full relative">
@@ -653,13 +657,23 @@ function RitualColor({ selected, onSelect, onNext }) {
         UNE COULEUR
       </p>
 
+      {/* Flash du label couleur */}
+      {flashLabel && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 2 }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 11, letterSpacing: '0.35em', color: 'rgba(255,255,255,0.28)', animation: 'colorlabelfade 1200ms ease forwards' }}>
+            {flashLabel}
+          </p>
+        </div>
+      )}
+      <style>{`@keyframes colorlabelfade { 0%{opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{opacity:0} }`}</style>
+
       {RITUAL_COLORS.map((c, i) => {
         const isSelected = selected === c.hex
         const size = isSelected ? baseSizes[i] + 16 : baseSizes[i]
         return (
           <button
             key={c.hex}
-            onClick={() => onSelect(c.hex)}
+            onClick={() => handleSelect(c.hex, c.label)}
             aria-label={c.label}
             style={{
               position: 'absolute',
@@ -1112,6 +1126,11 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart }) {
         </style>
       </svg>
 
+      {/* Cerf fantôme — l'animal était là avant, il est encore là */}
+      <Fade duration={3000} delay={1200} className="absolute inset-0 flex items-end justify-end pointer-events-none" style={{ paddingBottom: '8%', paddingRight: '4%' }}>
+        <img src="/cerf.svg" alt="" aria-hidden="true" style={{ width: '28vw', maxWidth: 130, opacity: 0.07, filter: world.animalFilter }} />
+      </Fade>
+
       {/* Compteur de présences passées — ultra-discret */}
       {history.length > 1 && (
         <Fade duration={2000} delay={5000} className="absolute" style={{ top: '22%', left: '50%', transform: 'translateX(-50%)' }}>
@@ -1169,8 +1188,8 @@ export default function App() {
       blackoutTimer.current = setTimeout(() => {
         setScreen(nextScreen)
         setStep(nextStep)
-        setBlackout(false)
-      }, 600)
+        setTimeout(() => setBlackout(false), 80)
+      }, 380)
     } else {
       setScreen(nextScreen)
       setStep(nextStep)
@@ -1226,7 +1245,7 @@ export default function App() {
       }} />
 
       {/* Transition noire cinématique */}
-      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 45, background: '#050810', opacity: blackout ? 1 : 0, transition: 'opacity 600ms ease' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 45, background: '#050810', opacity: blackout ? 1 : 0, transition: `opacity ${blackout ? 380 : 700}ms ease` }} />
 
       {/* Bouton mute */}
       <button
