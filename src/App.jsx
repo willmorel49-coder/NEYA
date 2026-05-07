@@ -402,7 +402,7 @@ function NeyaSplash({ onDone, hasHistory, lastWorld }) {
 
 // ─── COMPOSANT FADE ───────────────────────────────────────────────────────────
 
-function Fade({ children, duration = 800, delay = 0, className = '', style = {} }) {
+function Fade({ children, duration = 800, delay = 0, className = '', style = {}, slide = false }) {
   const [visible, setVisible] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => {
@@ -411,15 +411,14 @@ function Fade({ children, duration = 800, delay = 0, className = '', style = {} 
     return () => clearTimeout(t)
   }, [delay])
   return (
-    <div
-      className={className}
-      style={{
+    <div className={className} style={style}>
+      <div style={{
         opacity: visible ? 1 : 0,
-        transition: `opacity ${duration}ms ease`,
-        ...style,
-      }}
-    >
-      {children}
+        transform: slide ? (visible ? 'translateY(0)' : 'translateY(7px)') : undefined,
+        transition: `opacity ${duration}ms ease${slide ? `, transform ${duration}ms ease` : ''}`,
+      }}>
+        {children}
+      </div>
     </div>
   )
 }
@@ -1128,6 +1127,18 @@ function EauRipples() {
 }
 
 function VidePulse() {
+  const motes = useRef(
+    Array.from({ length: 20 }, (_, i) => ({
+      x: 15 + Math.random() * 70,
+      y: 20 + Math.random() * 60,
+      r: 0.6 + Math.random() * 0.9,
+      duration: 14 + Math.random() * 18,
+      delay: Math.random() * 12,
+      driftX: (Math.random() - 0.5) * 18,
+      driftY: -8 - Math.random() * 20,
+    }))
+  ).current
+
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 3 }}>
       <style>{`
@@ -1135,12 +1146,27 @@ function VidePulse() {
           0%,100% { opacity:0.015; transform:scale(1); }
           50%      { opacity:0.04;  transform:scale(1.08); }
         }
+        ${motes.map((m, i) => `
+          @keyframes mote${i} {
+            0%   { transform:translate(0,0); opacity:0; }
+            10%  { opacity:${0.04 + Math.random() * 0.06}; }
+            90%  { opacity:${0.02 + Math.random() * 0.04}; }
+            100% { transform:translate(${m.driftX}px,${m.driftY}px); opacity:0; }
+          }
+        `).join('')}
       `}</style>
       <div style={{
         position: 'absolute', inset: 0,
         background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.12) 0%, transparent 55%)',
         animation: 'videpulse 12s ease-in-out infinite',
       }} />
+      <svg className="absolute inset-0 w-full h-full">
+        {motes.map((m, i) => (
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r}
+            fill="rgba(255,252,240,0.9)"
+            style={{ animation: `mote${i} ${m.duration}s ${m.delay}s ease-in-out infinite` }} />
+        ))}
+      </svg>
     </div>
   )
 }
@@ -1341,7 +1367,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
 
       {/* Phrase */}
       {phase === 'phrase' && (
-        <Fade duration={700} className="absolute inset-0 flex items-center justify-center px-10" style={{ paddingBottom: '18%' }}>
+        <Fade duration={700} slide className="absolute inset-0 flex items-center justify-center px-10" style={{ paddingBottom: '18%' }}>
           <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.9, letterSpacing: '0.06em' }}>
             {displayedPhrase}
           </p>
@@ -1350,7 +1376,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
 
       {/* Lien Espace Vrai */}
       {phase === 'phrase' && displayedPhrase.length === fullPhrase.length && (
-        <Fade duration={1400} className="absolute bottom-10 left-1/2 -translate-x-1/2">
+        <Fade slide duration={1400} className="absolute bottom-10 left-1/2 -translate-x-1/2">
           <button onClick={onGoVrai} style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.18)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease' }}
             onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.48)'}
             onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.18)'}>
@@ -1363,6 +1389,14 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
 }
 
 // ─── ESPACE VRAI ──────────────────────────────────────────────────────────────
+
+function getDominantWorld(history) {
+  if (history.length < 5) return null
+  const counts = {}
+  history.forEach(e => { if (e.world) counts[e.world] = (counts[e.world] || 0) + 1 })
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]
+  return top && top[1] >= 3 ? top[0] : null
+}
 
 function generateFakeFlux(userColor) {
   const colors = RITUAL_COLORS.map(c => c.hex)
@@ -1494,7 +1528,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Compteur de présences passées — ultra-discret */}
       {history.length > 1 && (
-        <Fade duration={2000} delay={5000} className="absolute" style={{ top: '22%', left: '50%', transform: 'translateX(-50%)' }}>
+        <Fade slide duration={2000} delay={5000} className="absolute" style={{ top: '22%', left: '50%', transform: 'translateX(-50%)' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
             {history.length} présences
           </p>
@@ -1502,7 +1536,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       )}
 
       {/* Message universel */}
-      <Fade duration={2400} delay={800} className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center">
+      <Fade slide duration={2400} delay={800} className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center">
         <p style={{ fontFamily: 'Sora', fontSize: 11, letterSpacing: '0.22em', color: 'rgba(255,255,255,0.16)' }}>
           tu n'es pas seul·e
         </p>
@@ -1510,16 +1544,25 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Whisper du monde — spécifique à l'univers */}
       {world.whisper && (
-        <Fade duration={2000} delay={4500} className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center">
+        <Fade slide duration={2000} delay={4500} className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center">
           <p style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.28em', color: 'rgba(255,255,255,0.09)' }}>
             {world.whisper}
           </p>
         </Fade>
       )}
 
+      {/* Insight silencieux — si ce monde est le monde dominant de l'histoire */}
+      {getDominantWorld(history) === worldKey && (
+        <Fade slide duration={2500} delay={8500} className="absolute text-center" style={{ bottom: '32%', left: '50%', transform: 'translateX(-50%)' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.06)', whiteSpace: 'nowrap' }}>
+            tu reviens souvent ici
+          </p>
+        </Fade>
+      )}
+
       {/* Résumé du rituel — trace silencieuse */}
       {ritual.color && ritual.texture && ritual.sound && (
-        <Fade duration={1800} delay={2500} className="absolute" style={{ bottom: '13%', right: '6%' }}>
+        <Fade slide duration={1800} delay={2500} className="absolute" style={{ bottom: '13%', right: '6%' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.07)', textAlign: 'right', lineHeight: 2 }}>
             {RITUAL_COLORS.find(c => c.hex === ritual.color)?.label}<br />
             {ritual.texture} · {ritual.sound}
@@ -1546,7 +1589,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Bouton nouveau rituel */}
       {showRestart && !showAdieu && (
-        <Fade duration={1200} className="absolute bottom-8 left-1/2 -translate-x-1/2">
+        <Fade slide duration={1200} className="absolute bottom-8 left-1/2 -translate-x-1/2">
           <button onClick={onRestart} style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.14)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease' }}
             onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.4)'}
             onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.14)'}>
@@ -1664,6 +1707,11 @@ export default function App() {
   const handleAmbienceStart = useCallback((stopFn) => {
     stopAmbienceRef.current = stopFn
   }, [])
+
+  // Mute/unmute affect l'ambiance en cours
+  useEffect(() => {
+    stopAmbienceRef.current?.setVolume?.(muted ? 0 : 0.04, 0.6)
+  }, [muted])
 
   // Fade ambient sound to near-silence when "à demain" appears after 90s
   useEffect(() => {
