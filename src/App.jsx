@@ -1582,6 +1582,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
             fontFamily: 'Sora', fontSize: 9, textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.20)', whiteSpace: 'nowrap',
             animation: 'worldnameappear 1400ms ease forwards',
+            textShadow: '0 0 16px rgba(255,255,255,0.08)',
           }}>
             {WORLD_NAMES[worldKey] || worldKey}
           </p>
@@ -1829,8 +1830,9 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       )}
 
       {/* Message universel */}
+      <style>{`@keyframes solbreathe{0%,100%{opacity:0.16}50%{opacity:0.23}}`}</style>
       <Fade slide duration={2400} delay={800} className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center">
-        <p style={{ fontFamily: 'Sora', fontSize: 11, letterSpacing: '0.22em', color: 'rgba(255,255,255,0.16)' }}>
+        <p style={{ fontFamily: 'Sora', fontSize: 11, letterSpacing: '0.22em', color: 'rgba(255,255,255,0.16)', animation: 'solbreathe 22s ease-in-out infinite' }}>
           tu n'es pas seul·e
         </p>
       </Fade>
@@ -1939,6 +1941,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
           onMouseUp={e => { e.currentTarget.style.opacity = '1'; clearTimeout(longPressTimer.current) }}
           onMouseLeave={e => { e.currentTarget.style.opacity = '1'; clearTimeout(longPressTimer.current) }}
           onTouchStart={e => { e.currentTarget.style.opacity = '0.55'; longPressTimer.current = setTimeout(() => setShowResetConfirm(true), 1800) }}
+          onTouchMove={e => { e.currentTarget.style.opacity = '1'; clearTimeout(longPressTimer.current) }}
           onTouchEnd={e => { e.currentTarget.style.opacity = '1'; clearTimeout(longPressTimer.current) }}
           style={{ cursor: 'default', transition: 'opacity 200ms ease' }}
         >
