@@ -998,6 +998,8 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
             <button
               key={word}
               onClick={() => handleSelect(word)}
+              onTouchStart={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.88)' }}
+              onTouchEnd={e => { e.currentTarget.style.color = selected === word ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.2)' }}
               style={{
                 position: 'absolute',
                 top: pos.top,
@@ -1012,6 +1014,7 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'color 0.4s ease',
+                padding: '10px 14px', margin: '-10px -14px',
               }}
             >
               {word}
@@ -1389,6 +1392,13 @@ function CosmosParticles() {
   ]).current
 
   return (
+    <>
+    {/* Aurora borealis — lumières du nord, très subtiles */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 2 }}>
+      <style>{`@keyframes aurorashift{0%,100%{transform:translateY(0) scaleX(1);opacity:0.6}50%{transform:translateY(-10px) scaleX(1.05);opacity:1}}`}</style>
+      <div style={{ position: 'absolute', top: '4%', left: '-15%', right: '-15%', height: '28%', background: 'linear-gradient(to bottom, rgba(20,184,166,0.07) 0%, rgba(99,102,241,0.04) 55%, transparent 100%)', animation: 'aurorashift 34s ease-in-out infinite', mixBlendMode: 'screen', filter: 'blur(22px)' }} />
+      <div style={{ position: 'absolute', top: '10%', left: '-10%', right: '-10%', height: '18%', background: 'linear-gradient(to bottom, rgba(139,92,246,0.05) 0%, rgba(20,184,166,0.03) 60%, transparent 100%)', animation: 'aurorashift 50s 20s ease-in-out infinite', mixBlendMode: 'screen', filter: 'blur(28px)' }} />
+    </div>
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3, overflow: 'hidden' }}>
       <defs>
         <filter id="starGlow"><feGaussianBlur stdDeviation="0.8"/></filter>
@@ -1435,6 +1445,7 @@ function CosmosParticles() {
           style={{ animation: `shoot${i} ${s.period}s ${s.delay}s ease-in infinite` }} />
       ))}
     </svg>
+    </>
   )
 }
 
@@ -1831,17 +1842,22 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         <Fade duration={9000} className="absolute inset-0 pointer-events-none" style={{ zIndex: 24, background: `${world.palette[0]}6e` }} />
       )}
 
-      {/* Message "à demain" après longue présence */}
-      {showAdieu && (
-        <Fade slide duration={3000} className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ zIndex: 25 }}>
-          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 15, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.28)', textAlign: 'center', marginBottom: 12 }}>
-            à demain
-          </p>
-          <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.10)', textAlign: 'center' }}>
-            tu peux partir maintenant
-          </p>
-        </Fade>
-      )}
+      {/* Message de congé après longue présence — adapté à l'heure */}
+      {showAdieu && (() => {
+        const h = new Date().getHours()
+        const main = (h >= 22 || h < 5) ? 'bonne nuit' : (h < 12) ? 'à tout à l\'heure' : 'à demain'
+        const sub = (h >= 22 || h < 5) ? 'le sommeil mérite aussi sa place' : 'tu peux partir maintenant'
+        return (
+          <Fade slide duration={3000} className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ zIndex: 25 }}>
+            <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 15, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.28)', textAlign: 'center', marginBottom: 12 }}>
+              {main}
+            </p>
+            <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.10)', textAlign: 'center' }}>
+              {sub}
+            </p>
+          </Fade>
+        )
+      })()}
 
       {/* Bouton nouveau rituel */}
       {showRestart && !showAdieu && (
@@ -1947,7 +1963,7 @@ export default function App() {
   }, [ritual, goTo])
 
   const handleOnboardingNext = useCallback(() => {
-    if (step < 2) setStep(s => s + 1)
+    if (step < 2) goTo('onboarding', step + 1, true)
     else goTo('ritual', 0, true)
   }, [step, goTo])
 
