@@ -95,84 +95,76 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-07
 **Branche** : `main`
-**Phase** : V1.4 — Audio riche multi-couche, polish sensoriel complet, micro-interactions mobiles
+**Phase** : V1.5 — Session nocturne autonome · polish sensoriel profond · histoire silencieuse enrichie
 
-### Features actives (`src/App.jsx`) — build 201 kB (62 kB gzip)
+### Features actives (`src/App.jsx`) — build 205 kB (62.8 kB gzip)
 
 **Splash :**
-- 12 étoiles ultra-discrètes (splashtw breathing)
-- Returning user : 4.3s vs 3.1s new user · haptic [4] sur départ
-- Texte retour : "tu es encore là" (<4h) / "tu es revenu·e" (<7j) / "tu es de retour" (≥7j) + nom du dernier monde
+- 15 étoiles (splashtw) dont 3 dans la moitié basse (y:52-68%) · returning user : 4.3s / new : 3.1s
+- Texte retour : "tu es encore là" (<4h) / "tu es revenu·e" (<7j) / "tu es de retour" (≥7j) + monde
+- Whisper temporel pour returning : "ce matin / cet après-midi / ce soir / cette nuit" à 2000ms (opacity 0.05)
+- Haptic [4] sur départ returning user
 
 **Onboarding :**
-- 3 écrans avec blackout cinématique entre chaque
+- 3 écrans · blackout cinématique entre chaque · haptic [4] sur entrée rituel
 - Screen0 : bg-onboarding.png · hint slide-in à 5.5s
-- Screen1 : texte séquentiel · halo de profondeur · hint slide-in à 5.2s
-- Screen2 : slide fade in
+- Screen1 : texte séquentiel · halo profondeur · hint à 5.2s · Screen2 : slide fade
 
 **Rituel :**
-- Couleur : 8 orbes positionnés via `translate(-50%,-50%)` (bug centering fixed) · selectedGlow pulse · label flash 12px slide-up-exit · vignette radiale
-- Texture : mots épars · isolation avec textzoom bloom (scale 0.92→1) · touch feedback + hit area élargi
-- Son : 4 sons · soundbar par signature sonore (pluie/vent/feu) · silence 3 dots · symboles animés par type · ENTRER touch + hit area
-- Progression 3 points : dot actif pulse (dotpulse 2.8s)
-- Haptics : [6] step · [12,60,18] complétion · blackout teinté par monde (WORLD_BLACKOUT)
+- Haptic [3] sur chaque sélection (couleur, texture, son) · ritualbg 9s breathing quand couleur choisie
+- Couleur : orbes `translate(-50%,-50%)` (bug fixé) · CONTINUER stagger 600ms · glow pulse
+- Texture : textzoom bloom · CONTINUER stagger 400ms · touch feedback élargi
+- Son : soundbar par signature · silence 3 dots · symboles animés · preview respecte le mute global (bugfix)
+- Progression : 3 dots · actif pulse (dotpulse 2.8s) · haptic [6] step · [12,60,18] complétion
 
 **6 Mondes :**
-- Brume : 5 couches mist (dont 1 haute très lente 48s)
-- Forêt : 6 God-rays (1 doré) + brume de sol verte (screen)
-- Cosmos : 38 étoiles + 2 nébuleuses + aurora borealis 2 couches (34s/50s) + 3 étoiles filantes
-- Feu : shimmer + 14 braises + crépitement bandpass(1900Hz)
-- Eau : 5 ondulations + reflet de surface (eauGrad shimmer 11s)
-- Vide : pouls radial + 20 motes
+- Brume : 5 couches mist (dont haute 48s, mixBlendMode screen)
+- Forêt : 6 god-rays (1 doré) + sol renforcé 0.09 + bande 12% mousse
+- Cosmos : 38 étoiles + 3 nébuleuses (indigo/violet/teal) + aurora 3 couches (34s/50s/70s) + Voie Lactée + 3 filantes
+- Feu : shimmer 0.06-0.10 + 14 braises + crépitement bandpass(1900Hz)
+- Eau : 5 ondulations + 2 reflets surface (54%/56%) + profondeur radiale teal
+- Vide : 2 pulsations radiales (12s/19s contre-phase) + 25 motes
 
 **Audio (Web Audio API) :**
-- Pluie : highpass(2200)→lowpass(9000) + basse lowpass(110Hz) 12%
+- Pluie : highpass(2200)→lowpass(9000) + sub lowpass(110Hz) 12%
 - Vent : bandpass(380) + LFO 0.08Hz + harmonique bandpass(760Hz) 28%
-- Feu : lowpass(320) + sawtooth LFO 0.35Hz + crépitement bandpass(1900) sawtooth 4.6Hz 9%
-- Silence : noop · Réverbe : ConvolverNode 2.2s, 14% wet
-- Audio bridge : démarre à 0.022 dès WorldReveal, fade→0.04 à 1s (ponts le gap rituel→monde)
-- Fade-in exp (tc=0.7s) · Fade-out exp (tc=0.3s) · setVolume exp · À 90s : →0.008
+- Feu : lowpass(320) + LFO sawtooth 0.35Hz + crépitement bandpass(1900) 9%
+- Silence : noop · Réverbe ConvolverNode 2.2s 14% wet · bridge 0.022→0.04 · À 90s : →0.008
 
 **WorldReveal :**
-- Audio démarre immédiatement (bridge gap depuis rituel)
-- Cursor | clignotant pendant frappe · haptic [2] sur nom du monde
-- Arrow "→" drifts 4px (arrowdrift 2.2s) sur "espace vrai →"
-- Haptic [4] sur entrée EspaceVrai
+- Cerf : période spécifique par monde (vide:52s, feu:16s, cosmos:38s, eau:30s, brume:22s, foret:20s)
+- Phrase : ombre teintée `world.palette[2]` + glow blanc · nom du monde : textShadow discret
+- Cursor | pendant frappe · haptic [2] nom du monde · arrow → drifts 4px · haptic [4] EspaceVrai
 
 **EspaceVrai :**
-- User presence : pulse + 2 cercles ripple (userRipple 7s staggerés)
-- "tu prends ton temps" à 30s
-- Insight monde dominant : phrase spécifique par monde (6 variantes)
-- Adieu time-aware : bonne nuit (22h-5h) / à tout à l'heure (matin) / à demain (jour)
-- Long-press logo : feedback visuel opacity 0.55 pendant pression
-- "encore ici" à top:13% (évite overlap compteur)
+- Présence user : ripple 2 cercles (r max 58px) + pulse · "encore ici" top:13% delay 2600ms letterSpacing 0.50em
+- "tu prends ton temps" → 6 variants monde-spécifiques à 30s · haptic [2,80,2] à 12s
+- Cerf fantôme : période x1.5 selon monde (vide:80s, feu:24s, cosmos:62s…)
+- BG breathe : monde-spécifique (vide:72s, feu:22s, cosmos:58s…)
+- "tu n'es pas seul·e" : solbreathe 22s (0.16→0.23) · whisper : whisperbreathe 14s (0.09→0.14)
+- Adieu time-aware : bonne nuit / la journée t'attend doucement / tu peux revenir quand tu veux
+- Long-press logo : clears sur touchmove (bugfix drag) · résumé rituel delay 4000ms
+- h0pulse bloom 0.09 · dominantShimmer 0.6→1 · "première présence" à 5000ms
 
-**Transitions :**
-- Blackout 380ms teinté par le monde de destination (WORLD_BLACKOUT)
-- Grain texture global (SVG data URI, mix-blend-mode overlay 0.038)
-- Fade component : slide=true (translateY 7px) · delay prop disponible
+**Transitions :** blackout 380ms teinté par monde · grain SVG overlay 0.038 · Fade slide+delay
 
 **Histoire silencieuse :**
-- `localStorage['neya_history']` : max 90 entrées {ts, color, texture, sound, world}
-- Chargée au démarrage, sauvée après chaque rituel
-- Spirale Fibonacci dans EspaceVrai (angle d'or 2.3998 rad)
-- getDominantColor() : 4+ rituels, 3+ même couleur
-- getDominantWorld() : 5+ rituels, 3+ même monde
+- `localStorage['neya_history']` max 90 entrées {ts, color, texture, sound, world}
+- Spirale Fibonacci · getDominantColor (4+ rituels, 3+ couleur) · getDominantWorld (5+ rituels, 3+ monde)
 
 ### Assets dans `public/`
-`cerf.svg` · `bg-onboarding.png` · `bg-brume.png` · `bg-foret.png` · `bg-cosmos.png` · `bg-feu.png` · `bg-eau.png` · `bg-vide.png` · `bg-vrai.png` (non utilisé)
+`cerf.svg` · `bg-onboarding.png` · `bg-brume.png` · `bg-foret.png` · `bg-cosmos.png` · `bg-feu.png` · `bg-eau.png` · `bg-vide.png`
 
 ### Déploiement
-- `vercel.json` configuré
-- `npm run build` → `dist/` fonctionnel
-- Déploiement Vercel : **à faire par Will** (`vercel --prod` ou import sur vercel.com)
+- `vercel.json` configuré · `npm run build` → `dist/` fonctionnel
+- Déploiement Vercel : **à faire par Will**
 
 ### Backlog code
 - [ ] Déploiement Vercel (URL prod à renseigner dans §1)
-- [ ] Valider performance sur mobile (animations CSS nombreuses)
+- [ ] Valider performance mobile (animations nombreuses en EspaceVrai)
 - [ ] Tests de régression avant chaque session
 
 ### Actions Will (hors code)
 - [ ] Déployer sur Vercel + ajouter URL prod dans §1
 - [ ] Valider visuellement les 6 mondes sur mobile
-- [ ] Valider haptic feedback sur iOS (navigator.vibrate)
+- [ ] Valider haptic feedback sur iOS
