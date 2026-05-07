@@ -346,18 +346,20 @@ function NeyaLogo({ size = 'sm', opacity = 1, className = '' }) {
   )
 }
 
-function NeyaSplash({ onDone, hasHistory }) {
+function NeyaSplash({ onDone, hasHistory, lastWorld }) {
   const [visible, setVisible] = useState(false)
   const [fading, setFading] = useState(false)
   const [showReturn, setShowReturn] = useState(false)
+  const [showWorld, setShowWorld] = useState(false)
 
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 200)
     const t2 = setTimeout(() => setShowReturn(hasHistory), 900)
-    const t3 = setTimeout(() => setFading(true), 2200)
-    const t4 = setTimeout(() => onDone(), 3100)
-    return () => [t1, t2, t3, t4].forEach(clearTimeout)
-  }, [onDone, hasHistory])
+    const t3 = setTimeout(() => setShowWorld(hasHistory && !!lastWorld), 1500)
+    const t4 = setTimeout(() => setFading(true), 2200)
+    const t5 = setTimeout(() => onDone(), 3100)
+    return () => [t1, t2, t3, t4, t5].forEach(clearTimeout)
+  }, [onDone, hasHistory, lastWorld])
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center z-50"
@@ -382,6 +384,16 @@ function NeyaSplash({ onDone, hasHistory }) {
           animation: 'returnfade 1000ms ease forwards',
         }}>
           tu es revenu·e
+        </p>
+      )}
+      {showWorld && (
+        <p style={{
+          fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.45em',
+          color: 'rgba(255,255,255,0.07)', marginTop: 10,
+          animation: 'returnfade 1200ms ease forwards',
+          textTransform: 'uppercase',
+        }}>
+          {WORLD_NAMES[lastWorld] || lastWorld}
         </p>
       )}
     </div>
@@ -559,15 +571,44 @@ function OnboardingScreen2({ onEnter }) {
   )
 }
 
+// ─── HAPTIC ───────────────────────────────────────────────────────────────────
+
+function haptic(pattern = [10]) {
+  try { navigator.vibrate?.(pattern) } catch {}
+}
+
 // ─── AUDIO ───────────────────────────────────────────────────────────────────
 
+function createReverb(ctx) {
+  const len = ctx.sampleRate * 2.2
+  const buf = ctx.createBuffer(2, len, ctx.sampleRate)
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch)
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 1.6)
+  }
+  const conv = ctx.createConvolver()
+  conv.buffer = buf
+  return conv
+}
+
 function startAmbience(type, volume = 0.07) {
-  if (type === 'silence') return () => {}
+  if (type === 'silence') {
+    const noop = () => {}
+    noop.setVolume = () => {}
+    return noop
+  }
   const ctx = new (window.AudioContext || window.webkitAudioContext)()
   const gainNode = ctx.createGain()
   gainNode.gain.setValueAtTime(0, ctx.currentTime)
   gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 2)
   gainNode.connect(ctx.destination)
+  // Réverbe atmosphérique — send parallèle 14% wet
+  const reverb = createReverb(ctx)
+  const reverbGain = ctx.createGain()
+  reverbGain.gain.value = 0.14
+  gainNode.connect(reverb)
+  reverb.connect(reverbGain)
+  reverbGain.connect(ctx.destination)
 
   const bufferSize = ctx.sampleRate * 4
   const buf = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
@@ -622,10 +663,14 @@ function startAmbience(type, volume = 0.07) {
   }
 
   source.start()
-  return () => {
+  const stop = () => {
     gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
     setTimeout(() => { try { ctx.close() } catch (e) {} }, 1200)
   }
+  stop.setVolume = (v, dur = 2) => {
+    gainNode.gain.linearRampToValueAtTime(v, ctx.currentTime + dur)
+  }
+  return stop
 }
 
 // ─── RITUAL ───────────────────────────────────────────────────────────────────
@@ -1010,20 +1055,48 @@ function ForetRays() {
 }
 
 function FeuShimmer() {
+  const embers = useRef(
+    Array.from({ length: 14 }, (_, i) => ({
+      x: 20 + Math.random() * 60,
+      size: 1.2 + Math.random() * 2.2,
+      duration: 4 + Math.random() * 5,
+      delay: Math.random() * 6,
+      drift: (Math.random() - 0.5) * 40,
+    }))
+  ).current
+
   return (
-    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 3 }}>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
       <style>{`
         @keyframes feushimmer {
           0%,100% { transform:scaleX(1) skewX(0deg); opacity:0.04; }
           25%      { transform:scaleX(1.008) skewX(0.4deg); opacity:0.07; }
           75%      { transform:scaleX(0.994) skewX(-0.3deg); opacity:0.05; }
         }
+        ${embers.map((e, i) => `
+          @keyframes ember${i} {
+            0%   { transform:translate(0,0) scale(1); opacity:0.7; }
+            60%  { opacity:0.3; }
+            100% { transform:translate(${e.drift}px,-120px) scale(0.2); opacity:0; }
+          }
+        `).join('')}
       `}</style>
       <div style={{
         position: 'absolute', inset: 0,
         background: 'radial-gradient(ellipse at 50% 80%, rgba(255,140,0,0.12) 0%, transparent 60%)',
         animation: 'feushimmer 2.8s ease-in-out infinite',
       }} />
+      {embers.map((e, i) => (
+        <div key={i} style={{
+          position: 'absolute',
+          left: `${e.x}%`, bottom: '10%',
+          width: e.size, height: e.size,
+          borderRadius: '50%',
+          background: `rgba(255, ${100 + Math.round(Math.random() * 80)}, 0, 0.8)`,
+          boxShadow: `0 0 ${e.size * 2}px rgba(255,120,0,0.4)`,
+          animation: `ember${i} ${e.duration}s ${e.delay}s ease-out infinite`,
+        }} />
+      ))}
     </div>
   )
 }
@@ -1072,6 +1145,29 @@ function VidePulse() {
   )
 }
 
+function BrumeMist() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
+      <style>{`
+        @keyframes mist0 { 0%,100%{transform:translateX(-10px);opacity:0.07} 50%{transform:translateX(18px);opacity:0.12} }
+        @keyframes mist1 { 0%,100%{transform:translateX(5px);opacity:0.05}  50%{transform:translateX(-14px);opacity:0.09} }
+        @keyframes mist2 { 0%,100%{transform:translateX(-6px);opacity:0.06} 50%{transform:translateX(12px);opacity:0.10} }
+      `}</style>
+      {[
+        { left: '5%',  top: '52%', w: 320, h: 90,  anim: 'mist0 20s ease-in-out infinite' },
+        { left: '-8%', top: '38%', w: 260, h: 75,  anim: 'mist1 26s 8s ease-in-out infinite' },
+        { left: '28%', top: '62%', w: 380, h: 100, anim: 'mist2 18s 3s ease-in-out infinite' },
+      ].map((p, i) => (
+        <div key={i} style={{
+          position: 'absolute', left: p.left, top: p.top, width: p.w, height: p.h,
+          background: 'radial-gradient(ellipse at center, rgba(160,190,220,0.18) 0%, transparent 70%)',
+          filter: 'blur(14px)', animation: p.anim, mixBlendMode: 'screen',
+        }} />
+      ))}
+    </div>
+  )
+}
+
 // ─── PARTICULES COSMOS ────────────────────────────────────────────────────────
 
 function CosmosParticles() {
@@ -1087,21 +1183,48 @@ function CosmosParticles() {
     }))
   ).current
 
+  const shooters = useRef([
+    { x: 18, y: 12, period: 32, delay: 6 },
+    { x: 55, y:  6, period: 45, delay: 21 },
+    { x: 78, y: 18, period: 38, delay: 14 },
+  ]).current
+
   return (
-    <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3 }}>
+    <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3, overflow: 'hidden' }}>
       <defs>
         <filter id="starGlow"><feGaussianBlur stdDeviation="0.8"/></filter>
+        <linearGradient id="shootGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="rgba(200,220,255,0)" />
+          <stop offset="100%" stopColor="rgba(200,220,255,0.85)" />
+        </linearGradient>
       </defs>
-      <style>{stars.map(s => `
-        @keyframes startwinkle${s.id} {
-          0%,100% { opacity:${s.opacity * 0.4}; }
-          50%      { opacity:${s.opacity}; }
-        }
-      `).join('')}</style>
+      <style>
+        {stars.map(s => `
+          @keyframes startwinkle${s.id} {
+            0%,100% { opacity:${s.opacity * 0.4}; }
+            50%      { opacity:${s.opacity}; }
+          }
+        `).join('')}
+        {shooters.map((s, i) => `
+          @keyframes shoot${i} {
+            0%,90%{ opacity:0; transform:translate(0,0); }
+            91%  { opacity:0; transform:translate(0,0); }
+            93%  { opacity:0.85; }
+            100% { opacity:0; transform:translate(190px,95px); }
+          }
+        `).join('')}
+      </style>
       {stars.map(s => (
         <circle key={s.id} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r}
           fill="rgba(200,220,255,1)" filter="url(#starGlow)"
           style={{ animation: `startwinkle${s.id} ${s.period}s ${s.delay}s ease-in-out infinite` }} />
+      ))}
+      {shooters.map((s, i) => (
+        <line key={`shoot${i}`}
+          x1={`${s.x}%`} y1={`${s.y}%`}
+          x2={`${s.x + 3.5}%`} y2={`${s.y + 1.8}%`}
+          stroke="url(#shootGrad)" strokeWidth="1.2" strokeLinecap="round"
+          style={{ animation: `shoot${i} ${s.period}s ${s.delay}s ease-in infinite` }} />
       ))}
     </svg>
   )
@@ -1166,6 +1289,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {worldKey === 'feu'    && phase !== 'black' && <FeuShimmer />}
       {worldKey === 'eau'    && phase !== 'black' && <EauRipples />}
       {worldKey === 'vide'   && phase !== 'black' && <VidePulse />}
+      {worldKey === 'brume'  && phase !== 'black' && <BrumeMist />}
 
       {/* Watermark NÉYA — très transparent, crée de la profondeur */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 2 }}>
@@ -1287,15 +1411,19 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
 
-  // Histoire silencieuse — présences fantômes des rituels passés
-  const historyDots = history.slice(0, 40).map((entry, i) => ({
-    id: `h${i}`,
-    color: entry.color || '#4f46e5',
-    x: 5 + ((i * 23 + Math.round(Math.sin(i * 1.7) * 900)) % 90 + 90) % 90,
-    y: 8 + ((i * 17 + Math.round(Math.cos(i * 1.3) * 700)) % 82 + 82) % 82,
-    size: 1.4 + (i % 3) * 0.6,
-    opacity: 0.05 + Math.min(i * 0.003, 0.12),
-  }))
+  // Histoire silencieuse — spirale de Fibonacci temporelle (plus récent = centre, plus vieux = bords)
+  const historyDots = history.slice(0, 50).map((entry, i) => {
+    const angle = i * 2.3998  // angle d'or en radians
+    const radius = Math.sqrt(i + 1) * 6.2
+    return {
+      id: `h${i}`,
+      color: entry.color || '#4f46e5',
+      x: Math.max(4, Math.min(94, 50 + radius * Math.cos(angle) * 0.88)),
+      y: Math.max(8, Math.min(90, 50 + radius * Math.sin(angle) * 0.62)),
+      size: Math.max(0.7, 2.2 - i * 0.028),
+      opacity: Math.max(0.02, 0.16 - i * 0.003),
+    }
+  })
 
   return (
     <Fade className="w-full h-full absolute inset-0" duration={1800}>
@@ -1318,6 +1446,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {worldKey === 'feu'    && <FeuShimmer />}
       {worldKey === 'eau'    && <EauRipples />}
       {worldKey === 'vide'   && <VidePulse />}
+      {worldKey === 'brume'  && <BrumeMist />}
 
       {/* SVG — histoire silencieuse + flux de présences */}
       <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
@@ -1336,7 +1465,11 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         {flux.map(p => (
           <circle key={p.id} cx={`${p.x}%`} cy={`${p.y}%`} r={p.size} fill={p.color} opacity={p.opacity}
             filter={p.id === 99 ? 'url(#puser)' : 'url(#psoft)'}
-            style={{ animation: p.immobile ? 'none' : `drift-${p.id} ${p.period}s ${p.delay}s ease-in-out infinite` }} />
+            style={{ animation: p.immobile ? 'none' :
+              p.id === 99
+                ? `drift-${p.id} ${p.period}s ${p.delay}s ease-in-out infinite, userPresencePulse 4.2s ease-in-out infinite`
+                : `drift-${p.id} ${p.period}s ${p.delay}s ease-in-out infinite`
+            }} />
         ))}
         <style>
           {flux.filter(p => !p.immobile).map(p => `
@@ -1347,6 +1480,10 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
               75%     { transform:translate(${p.driftX * 0.55}px,${p.driftY * 0.75}px); }
             }
           `).join('')}
+          {`@keyframes userPresencePulse {
+            0%, 100% { opacity: 0.50; }
+            50%       { opacity: 0.72; }
+          }`}
         </style>
       </svg>
 
@@ -1390,17 +1527,25 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         </Fade>
       )}
 
+      {/* Voile nocturne — s'étend doucement quand "à demain" arrive */}
+      {showAdieu && (
+        <Fade duration={9000} className="absolute inset-0 pointer-events-none" style={{ zIndex: 24, background: 'rgba(0,0,0,0.42)' }} />
+      )}
+
       {/* Message "à demain" après longue présence */}
       {showAdieu && (
-        <Fade duration={3000} className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 25 }}>
-          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 15, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.22)', textAlign: 'center' }}>
+        <Fade duration={3000} className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ zIndex: 25 }}>
+          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 15, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.28)', textAlign: 'center', marginBottom: 12 }}>
             à demain
+          </p>
+          <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.10)', textAlign: 'center' }}>
+            tu peux partir maintenant
           </p>
         </Fade>
       )}
 
       {/* Bouton nouveau rituel */}
-      {showRestart && (
+      {showRestart && !showAdieu && (
         <Fade duration={1200} className="absolute bottom-8 left-1/2 -translate-x-1/2">
           <button onClick={onRestart} style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.14)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease' }}
             onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.4)'}
@@ -1489,6 +1634,7 @@ export default function App() {
     if (completedStep < 2) {
       setStep(s => s + 1)
     } else {
+      haptic([12, 60, 18])
       const completed = { ...ritual, completedAt: new Date() }
       const wk = selectWorld(completed)
       saveToHistory(completed, wk)
@@ -1518,6 +1664,15 @@ export default function App() {
   const handleAmbienceStart = useCallback((stopFn) => {
     stopAmbienceRef.current = stopFn
   }, [])
+
+  // Fade ambient sound to near-silence when "à demain" appears after 90s
+  useEffect(() => {
+    if (screen !== 'vrai') return
+    const t = setTimeout(() => {
+      stopAmbienceRef.current?.setVolume?.(0.008, 8)
+    }, 90000)
+    return () => clearTimeout(t)
+  }, [screen])
 
   const handleRestart = useCallback(() => {
     stopAmbienceRef.current()
@@ -1557,7 +1712,7 @@ export default function App() {
         {muted ? '○' : '●'}
       </button>
 
-      {screen === 'splash'     && <NeyaSplash hasHistory={history.length > 0} onDone={() => history.length > 0 ? goTo('ritual', 0, true) : goTo('onboarding')} />}
+      {screen === 'splash'     && <NeyaSplash hasHistory={history.length > 0} lastWorld={history[0]?.world} onDone={() => history.length > 0 ? goTo('ritual', 0, true) : goTo('onboarding')} />}
       {screen === 'onboarding' && <Onboarding step={step} onNext={handleOnboardingNext} />}
       {screen === 'ritual'     && <RitualFlow step={step} ritual={ritual} onChange={handleRitualChange} onComplete={handleRitualStepComplete} muted={muted} />}
       {screen === 'world'      && <WorldReveal ritual={ritual} world={world} worldKey={worldKey} muted={muted} onGoVrai={handleGoVrai} onAmbienceStart={handleAmbienceStart} />}
