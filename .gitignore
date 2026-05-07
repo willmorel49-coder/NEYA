@@ -1,0 +1,25 @@
+# --- Robot-Memory snippet ---
+
+# Mémoire / notes locales (ne pas committer)
+ROBOT.local.md
+CLAUDE.local.md
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Claude Code state local
+.claude/cache/
+.claude/.tmp/
+
+# macOS
+.DS_Store
+
+# Worktrees
+.worktrees/
+
+# Node / Vite
+node_modules/
+dist/
+.vite/
