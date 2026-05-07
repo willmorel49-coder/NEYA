@@ -866,6 +866,7 @@ function RitualColor({ selected, onSelect, onNext }) {
   const [flashLabel, setFlashLabel] = useState(null)
 
   const handleSelect = (hex, label) => {
+    haptic([3])
     onSelect(hex)
     setFlashLabel(label)
     setTimeout(() => setFlashLabel(null), 1200)
@@ -953,6 +954,7 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
   const [isolated, setIsolated] = useState(null)
 
   const handleSelect = (word) => {
+    haptic([3])
     onSelect(word)
     setIsolated(word)
     setTimeout(() => setIsolated(null), 850)
@@ -1041,6 +1043,7 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
   const stopRef = useRef(() => {})
 
   const handleSelect = (sound) => {
+    haptic([3])
     stopRef.current()
     onSelect(sound)
     if (!muted && sound !== 'silence') {
@@ -1877,7 +1880,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {showAdieu && (() => {
         const h = new Date().getHours()
         const main = (h >= 22 || h < 5) ? 'bonne nuit' : (h < 12) ? 'à tout à l\'heure' : 'à demain'
-        const sub = (h >= 22 || h < 5) ? 'le sommeil mérite aussi sa place' : 'tu peux partir maintenant'
+        const sub = (h >= 22 || h < 5) ? 'le sommeil mérite aussi sa place' : (h < 12) ? 'la journée t\'attend doucement' : 'tu peux revenir quand tu veux'
         return (
           <Fade slide duration={3000} className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ zIndex: 25 }}>
             <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 15, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.28)', textAlign: 'center', marginBottom: 12 }}>
@@ -2001,7 +2004,7 @@ export default function App() {
 
   const handleOnboardingNext = useCallback(() => {
     if (step < 2) goTo('onboarding', step + 1, true)
-    else goTo('ritual', 0, true)
+    else { haptic([4]); goTo('ritual', 0, true) }
   }, [step, goTo])
 
   // Navigation clavier globale
