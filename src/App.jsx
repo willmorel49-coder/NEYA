@@ -911,13 +911,13 @@ function RitualColor({ selected, onSelect, onNext }) {
   ]
   const baseSizes = [40, 36, 48, 38, 44, 42, 34, 46]
   const breathePeriods = [14, 18, 12, 20, 16, 22, 15, 19]
-  const [flashLabel, setFlashLabel] = useState(null)
+  const [flashData, setFlashData] = useState(null)
 
   const handleSelect = (hex, label) => {
     haptic([3])
     onSelect(hex)
-    setFlashLabel(label)
-    setTimeout(() => setFlashLabel(null), 1200)
+    setFlashData({ hex, label })
+    setTimeout(() => setFlashData(null), 1200)
   }
 
   return (
@@ -942,11 +942,11 @@ function RitualColor({ selected, onSelect, onNext }) {
         UNE COULEUR
       </p>
 
-      {/* Flash du label couleur */}
-      {flashLabel && (
+      {/* Flash du label couleur — avec lueur de la couleur choisie */}
+      {flashData && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 2 }}>
-          <p style={{ fontFamily: 'Sora', fontSize: 12, letterSpacing: '0.35em', color: 'rgba(255,255,255,0.28)', animation: 'colorlabelfade 1200ms ease forwards' }}>
-            {flashLabel}
+          <p style={{ fontFamily: 'Sora', fontSize: 12, letterSpacing: '0.35em', color: 'rgba(255,255,255,0.28)', animation: 'colorlabelfade 1200ms ease forwards', textShadow: `0 0 38px ${flashData.hex}77, 0 0 80px ${flashData.hex}33` }}>
+            {flashData.label}
           </p>
         </div>
       )}
