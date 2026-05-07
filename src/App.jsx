@@ -1798,7 +1798,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
           }
           @keyframes userRipple {
             0%   { r: 8px; opacity: 0.22; }
-            100% { r: 48px; opacity: 0; }
+            100% { r: 58px; opacity: 0; }
           }`}
         </style>
       </svg>
@@ -1848,7 +1848,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {/* Retour au même monde — reconnaissance subtile */}
       {history.length >= 2 && history[1]?.world === worldKey && (
         <Fade slide duration={2200} delay={2600} className="absolute text-center" style={{ top: '13%', left: '50%', transform: 'translateX(-50%)' }}>
-          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.42em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.50em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
             encore ici
           </p>
         </Fade>
@@ -1888,7 +1888,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Résumé du rituel — trace silencieuse */}
       {ritual.color && ritual.texture && ritual.sound && (
-        <Fade slide duration={1800} delay={2500} className="absolute" style={{ bottom: '13%', right: '6%' }}>
+        <Fade slide duration={1800} delay={4000} className="absolute" style={{ bottom: '13%', right: '6%' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.07)', textAlign: 'right', lineHeight: 2 }}>
             {WORLD_NAMES[worldKey] || worldKey}<br />
             {RITUAL_COLORS.find(c => c.hex === ritual.color)?.label}<br />
