@@ -6,8 +6,8 @@
 
 **NÉYA** — App de bien-être émotionnel gamifiée, prolongement digital de la marque ÇA VA?.
 
-- **Repo** : `# ← à remplir (github.com/...)`
-- **Prod** : `# ← à remplir`
+- **Repo** : `https://github.com/willmorel49-coder/NEYA`
+- **Prod** : `# ← à remplir (Vercel, après déploiement)`
 - **Owner** : Will · macOS · VS Code · réponses en français
 - **Statut** : MVP en cours
 
