@@ -95,52 +95,75 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-07
 **Branche** : `main`
-**Phase** : V1.1 — Univers complet 6 mondes, histoire silencieuse, overlays atmosphériques
+**Phase** : V1.2 — Audio premium, overlays complets, intelligence émotionnelle silencieuse
 
 ### Features actives (`src/App.jsx`)
 
 **Core flow :**
-- Splash screen : logo NÉYA pulse, 3s, bypass onboarding si returning user ("tu es revenu·e")
+- Splash screen : logo NÉYA pulse, 3s, bypass onboarding si returning user
+  - Retour récent (<7j) : "tu es revenu·e" + nom du dernier monde
+  - Absence longue (≥7j) : "tu es de retour"
 - Onboarding 3 écrans : bg-onboarding.png, texte séquentiel, hint "toucher"
 - Rituel : couleur (8 orbes respirants + flash label) → texture spatiale (teinte rituel) → son (Web Audio API + soundbar)
 - Indicateur de progression 3 points discrets en bas du rituel
+- Haptic feedback [12,60,18] à la complétion du rituel
 
 **6 Mondes (sélection automatique sound × texture) :**
-- Brume (pluie + lourd/froid/rugueux) : `bg-brume.png`
-- Forêt (vent + lourd/froid/rugueux) : `bg-foret.png` + rayons de lumière SVG
-- Cosmos (vent + léger/doux/chaud) : `bg-cosmos.png` + 38 étoiles scintillantes
-- Feu (feu + lourd/chaud/rugueux) : `bg-feu.png` + shimmer chaleur animé
-- Eau (pluie + léger/doux/chaud) : `bg-eau.png` + ondulations SVG
-- Vide (silence + léger/doux/chaud) : `bg-vide.png` + pouls radial
+- Brume (pluie + lourd/froid/rugueux) : `bg-brume.png` + brume dérivante SVG
+- Forêt (vent + lourd/froid/rugueux) : `bg-foret.png` + God-rays soft blur
+- Cosmos (vent + léger/doux/chaud) : `bg-cosmos.png` + 38 étoiles + 3 étoiles filantes
+- Feu (feu + lourd/chaud/rugueux) : `bg-feu.png` + shimmer + 14 braises montantes
+- Eau (pluie + léger/doux/chaud) : `bg-eau.png` + 5 ondulations concentriques
+- Vide (silence + léger/doux/chaud) : `bg-vide.png` + pouls radial + 20 motes flottantes
+
+**Audio :**
+- Pluie : bruit blanc highpass(2200) → lowpass(9000)
+- Vent : bruit bandpass(380) + LFO 0.08Hz (vent qui varie)
+- Feu : bruit lowpass(320) + LFO sawtooth 0.35Hz (fluctuations)
+- Silence : noop (pas de son)
+- Réverbe atmosphérique sur tous les sons : ConvolverNode 2.2s, send parallèle 14% wet
+- setVolume() exposé sur fn stop — fade à 90s, réaction au mute
+- Mute/unmute fadent l'ambiance en cours (0.6s)
 
 **WorldReveal :**
 - Phases : black → world (1s) → name (2.8s) → phrase (4.6s)
+- Typing effect pour la phrase (44ms/char)
 - Nom du monde révélé avec animation letterSpacing
 - Watermark NÉYA très transparent en fond
 - Cerf teinté par monde (CSS filter), drift + breathing animation
 - Overlays atmosphériques par monde
-- Ambiance sonore démarre et persiste vers EspaceVrai
+- Ambiance sonore démarre et persiste vers EspaceVrai (stopAmbienceRef)
+- Transitions cinématiques (slide) sur phrase et bouton "espace vrai"
 
 **EspaceVrai :**
 - Fond du monde actif (très opacifié)
-- Flux anonyme de présences (22 orbes + présence utilisateur)
-- Histoire silencieuse : traces fantômes des rituels passés (localStorage)
+- Teinte personnelle quasi-imperceptible (couleur dominante de l'histoire, 4% opacity)
+- Flux anonyme de présences (22 orbes + présence utilisateur qui pulse)
+- Histoire silencieuse : spirale de Fibonacci temporelle (or angle 137.5°)
+  - Plus récent = centre, plus vieux = bords
+  - Taille et opacité décroissantes avec l'âge
 - Cerf fantôme dans le coin (opacity 0.07)
-- Compteur de présences (ultra-discret après 5s)
-- Whisper du monde (phrase spécifique au monde après 4.5s)
-- Résumé rituel (couleur · texture · son en bas à droite)
-- "tu n'es pas seul·e" + whisper du monde
-- Bouton "nouveau rituel" après 12s
+- Compteur de présences (ultra-discret après 5s, slide)
+- Whisper du monde (phrase spécifique après 4.5s, slide)
+- "encore ici" si retour dans le même monde que la visite précédente (3.2s)
+- Résumé rituel (couleur · texture · son en bas à droite, slide)
+- "tu n'es pas seul·e" (slide) + whisper du monde (slide)
+- Insight "tu reviens souvent ici" si monde dominant dans l'histoire (8.5s, slide)
+- "getDominantWorld" : besoin 5+ rituels, 3+ dans un monde
+- Bouton "nouveau rituel" après 12s (caché si "à demain" actif)
 - Long-press sur logo → reset histoire avec confirmation
+- À 90s : voile nocturne (9s fade) + "à demain" + "tu peux partir maintenant" + fade audio
 
 **Transitions :**
 - Blackout 380ms entre onboarding→rituel, rituel→monde, monde→espace vrai
 - Grain texture global (SVG data URI, mix-blend-mode overlay)
+- Fade component : prop `slide=true` pour entrance cinematique (translateY 7px)
 
 **Histoire silencieuse :**
 - `localStorage['neya_history']` : max 90 entrées {ts, color, texture, sound, world}
 - Chargée au démarrage, sauvée après chaque rituel
-- Visualisée dans EspaceVrai en points fantômes
+- Spirale Fibonacci dans EspaceVrai
+- getDominantColor() + getDominantWorld() : analyse patterns à 4-5+ rituels
 
 ### Assets dans `public/`
 - `cerf.svg` — esprit animal lumineux, silhouette éthérée
@@ -160,9 +183,10 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 ### Backlog code
 - [ ] Déploiement Vercel (URL prod à renseigner dans §1)
-- [ ] V1.2 : histoire silencieuse améliorée (visualisation temporelle)
+- [ ] Valider performance sur mobile (animations CSS nombreuses)
 - [ ] Tests de régression avant chaque session
 
 ### Actions Will (hors code)
 - [ ] Déployer sur Vercel + ajouter URL prod dans §1
 - [ ] Valider visuellement les 6 mondes sur mobile
+- [ ] Valider haptic feedback sur iOS (navigator.vibrate)

@@ -1059,12 +1059,13 @@ function ForetRays() {
 
 function FeuShimmer() {
   const embers = useRef(
-    Array.from({ length: 14 }, (_, i) => ({
+    Array.from({ length: 14 }, () => ({
       x: 20 + Math.random() * 60,
       size: 1.2 + Math.random() * 2.2,
       duration: 4 + Math.random() * 5,
       delay: Math.random() * 6,
       drift: (Math.random() - 0.5) * 40,
+      g: 100 + Math.round(Math.random() * 80),
     }))
   ).current
 
@@ -1095,7 +1096,7 @@ function FeuShimmer() {
           left: `${e.x}%`, bottom: '10%',
           width: e.size, height: e.size,
           borderRadius: '50%',
-          background: `rgba(255, ${100 + Math.round(Math.random() * 80)}, 0, 0.8)`,
+          background: `rgba(255, ${e.g}, 0, 0.8)`,
           boxShadow: `0 0 ${e.size * 2}px rgba(255,120,0,0.4)`,
           animation: `ember${i} ${e.duration}s ${e.delay}s ease-out infinite`,
         }} />
@@ -1134,7 +1135,7 @@ function EauRipples() {
 
 function VidePulse() {
   const motes = useRef(
-    Array.from({ length: 20 }, (_, i) => ({
+    Array.from({ length: 20 }, () => ({
       x: 15 + Math.random() * 70,
       y: 20 + Math.random() * 60,
       r: 0.6 + Math.random() * 0.9,
@@ -1142,6 +1143,8 @@ function VidePulse() {
       delay: Math.random() * 12,
       driftX: (Math.random() - 0.5) * 18,
       driftY: -8 - Math.random() * 20,
+      op10: parseFloat((0.04 + Math.random() * 0.06).toFixed(3)),
+      op90: parseFloat((0.02 + Math.random() * 0.04).toFixed(3)),
     }))
   ).current
 
@@ -1155,8 +1158,8 @@ function VidePulse() {
         ${motes.map((m, i) => `
           @keyframes mote${i} {
             0%   { transform:translate(0,0); opacity:0; }
-            10%  { opacity:${0.04 + Math.random() * 0.06}; }
-            90%  { opacity:${0.02 + Math.random() * 0.04}; }
+            10%  { opacity:${m.op10}; }
+            90%  { opacity:${m.op90}; }
             100% { transform:translate(${m.driftX}px,${m.driftY}px); opacity:0; }
           }
         `).join('')}
@@ -1404,6 +1407,14 @@ function getDominantWorld(history) {
   return top && top[1] >= 3 ? top[0] : null
 }
 
+function getDominantColor(history) {
+  if (history.length < 4) return null
+  const counts = {}
+  history.forEach(e => { if (e.color) counts[e.color] = (counts[e.color] || 0) + 1 })
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]
+  return top && top[1] >= 3 ? top[0] : null
+}
+
 function generateFakeFlux(userColor) {
   const colors = RITUAL_COLORS.map(c => c.hex)
   const entries = Array.from({ length: 22 }, (_, i) => ({
@@ -1472,6 +1483,11 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Voile très épais — l'espace vrai est au-delà du monde */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}fd 0%, ${world.palette[0]}ee 35%, ${world.palette[1]}cc 75%, ${world.palette[0]}bb 100%)` }} />
+
+      {/* Teinte personnelle — couleur dominante de l'histoire, quasi-imperceptible */}
+      {getDominantColor(history) && (
+        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2, background: `radial-gradient(ellipse at 50% 45%, ${getDominantColor(history)}0a 0%, transparent 65%)` }} />
+      )}
 
       {/* Nom du monde en fond géant — présence silencieuse */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 1 }}>
