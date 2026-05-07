@@ -624,46 +624,66 @@ function OnboardingScreen1() {
 }
 
 function OnboardingScreen2({ onEnter }) {
+  const [visibleLines, setVisibleLines] = useState(0)
+  const [showButton, setShowButton] = useState(false)
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setVisibleLines(1), 600),
+      setTimeout(() => setVisibleLines(2), 1500),
+      setTimeout(() => setVisibleLines(3), 2400),
+      setTimeout(() => setShowButton(true), 4000),
+    ]
+    return () => timers.forEach(clearTimeout)
+  }, [])
+
+  const lines = [
+    { text: "T'as pas besoin", weight: 300, size: 20, opacity: 'rgba(255,255,255,0.40)' },
+    { text: "d'aller bien",    weight: 300, size: 20, opacity: 'rgba(255,255,255,0.40)' },
+    { text: 'pour commencer.', weight: 300, size: 22, opacity: 'rgba(255,255,255,0.72)' },
+  ]
+
   return (
     <Fade
       slide
-      className="w-full h-full flex flex-col items-center justify-center px-10 gap-16"
+      className="w-full h-full flex flex-col items-center justify-center px-10"
       style={{ background: 'linear-gradient(to bottom, #050810 0%, #060c10 100%)' }}
     >
-      <p
-        style={{
-          fontFamily: 'Sora, sans-serif',
-          fontWeight: 300,
-          fontSize: 20,
-          color: 'rgba(255,255,255,0.62)',
-          lineHeight: 2,
-          letterSpacing: '0.04em',
-          textAlign: 'center',
-        }}
-      >
-        T'as pas besoin<br />d'aller bien<br />pour commencer.
-      </p>
-      <button
-        onClick={e => { e.stopPropagation(); onEnter() }}
-        style={{
-          fontFamily: 'Sora, sans-serif',
-          fontSize: 11,
-          letterSpacing: '0.4em',
-          color: 'rgba(255,255,255,0.32)',
-          paddingBottom: 4,
-          background: 'none',
-          border: 'none',
-          borderBottom: '1px solid rgba(255,255,255,0.12)',
-          cursor: 'pointer',
-          transition: 'color 600ms ease',
-        }}
-        onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
-        onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.32)'}
-        onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
-        onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.32)'}
-      >
-        ENTRER
-      </button>
+      {/* Halo central très subtil */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.06) 0%, transparent 62%)' }} />
+
+      <div className="flex flex-col items-center relative z-10" style={{ gap: 24, marginBottom: 72 }}>
+        {lines.map((line, i) => (
+          <p key={i} style={{
+            fontFamily: 'Sora, sans-serif', fontWeight: line.weight,
+            fontSize: line.size, color: line.opacity,
+            letterSpacing: '0.04em', textAlign: 'center',
+            opacity: visibleLines > i ? 1 : 0,
+            transform: visibleLines > i ? 'translateY(0)' : 'translateY(6px)',
+            transition: 'opacity 900ms ease, transform 900ms ease',
+          }}>
+            {line.text}
+          </p>
+        ))}
+      </div>
+
+      <div style={{ position: 'absolute', bottom: '14%', left: '50%', transform: 'translateX(-50%)', opacity: showButton ? 1 : 0, transition: 'opacity 1200ms ease' }}>
+        <button
+          onClick={e => { e.stopPropagation(); onEnter() }}
+          style={{
+            fontFamily: 'Sora, sans-serif', fontSize: 11, letterSpacing: '0.4em',
+            color: 'rgba(255,255,255,0.32)', paddingBottom: 4,
+            background: 'none', border: 'none',
+            borderBottom: '1px solid rgba(255,255,255,0.12)',
+            cursor: 'pointer', transition: 'color 600ms ease', whiteSpace: 'nowrap',
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.32)'}
+          onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+          onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.32)'}
+        >
+          ENTRER
+        </button>
+      </div>
     </Fade>
   )
 }
