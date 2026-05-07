@@ -1424,11 +1424,11 @@ function BrumeMist() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
       <style>{`
-        @keyframes mist0 { 0%,100%{transform:translateX(-10px);opacity:0.07} 50%{transform:translateX(18px);opacity:0.12} }
-        @keyframes mist1 { 0%,100%{transform:translateX(5px);opacity:0.05}  50%{transform:translateX(-14px);opacity:0.09} }
-        @keyframes mist2 { 0%,100%{transform:translateX(-6px);opacity:0.06} 50%{transform:translateX(12px);opacity:0.10} }
-        @keyframes mist3 { 0%,100%{transform:translateX(8px);opacity:0.04}  50%{transform:translateX(-10px);opacity:0.07} }
-        @keyframes mist4 { 0%,100%{transform:translateX(-14px);opacity:0.03} 50%{transform:translateX(18px);opacity:0.06} }
+        @keyframes mist0 { 0%,100%{transform:translateX(-10px) translateY(-3px);opacity:0.07} 50%{transform:translateX(18px) translateY(4px);opacity:0.12} }
+        @keyframes mist1 { 0%,100%{transform:translateX(5px) translateY(4px);opacity:0.05}  50%{transform:translateX(-14px) translateY(-2px);opacity:0.09} }
+        @keyframes mist2 { 0%,100%{transform:translateX(-6px) translateY(2px);opacity:0.06} 50%{transform:translateX(12px) translateY(-5px);opacity:0.10} }
+        @keyframes mist3 { 0%,100%{transform:translateX(8px) translateY(-4px);opacity:0.04}  50%{transform:translateX(-10px) translateY(3px);opacity:0.07} }
+        @keyframes mist4 { 0%,100%{transform:translateX(-14px) translateY(5px);opacity:0.03} 50%{transform:translateX(18px) translateY(-3px);opacity:0.06} }
       `}</style>
       {[
         { left: '5%',  top: '52%', w: 320, h: 90,  anim: 'mist0 20s ease-in-out infinite',      bg: 'rgba(160,190,220,0.18)' },
