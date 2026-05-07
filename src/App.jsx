@@ -413,6 +413,9 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
     { x: 38, y: 35, r: 0.5, op: 0.08, period: 6.9, delay: 1.8 },
     { x: 22, y: 42, r: 0.4, op: 0.06, period: 7.5, delay: 3.5 },
     { x: 60, y: 38, r: 0.6, op: 0.08, period: 5.3, delay: 2.6 },
+    { x: 15, y: 58, r: 0.4, op: 0.05, period: 8.2, delay: 1.4 },
+    { x: 72, y: 52, r: 0.3, op: 0.04, period: 6.8, delay: 4.8 },
+    { x: 48, y: 68, r: 0.5, op: 0.05, period: 9.1, delay: 0.7 },
   ]
 
   return (
@@ -1831,10 +1834,11 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         </p>
       </Fade>
 
-      {/* Whisper du monde — spécifique à l'univers */}
+      {/* Whisper du monde — spécifique à l'univers, respire doucement */}
+      <style>{`@keyframes whisperbreathe{0%,100%{opacity:0.09}50%{opacity:0.14}}`}</style>
       {world.whisper && (
         <Fade slide duration={2000} delay={4500} className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center">
-          <p style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.28em', color: 'rgba(255,255,255,0.09)' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.28em', color: 'rgba(255,255,255,0.09)', animation: 'whisperbreathe 14s ease-in-out infinite' }}>
             {world.whisper}
           </p>
         </Fade>
@@ -1842,7 +1846,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Retour au même monde — reconnaissance subtile */}
       {history.length >= 2 && history[1]?.world === worldKey && (
-        <Fade slide duration={2200} delay={3200} className="absolute text-center" style={{ top: '13%', left: '50%', transform: 'translateX(-50%)' }}>
+        <Fade slide duration={2200} delay={2600} className="absolute text-center" style={{ top: '13%', left: '50%', transform: 'translateX(-50%)' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.42em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
             encore ici
           </p>
