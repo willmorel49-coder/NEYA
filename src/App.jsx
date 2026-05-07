@@ -1000,6 +1000,8 @@ function RitualColor({ selected, onSelect, onNext }) {
 
 function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
   const [isolated, setIsolated] = useState(null)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t) }, [])
 
   const handleSelect = (word) => {
     haptic([3])
@@ -1040,8 +1042,9 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
           </p>
         </Fade>
       ) : (
-        RITUAL_TEXTURES.map(word => {
+        RITUAL_TEXTURES.map((word, wi) => {
           const pos = posMap[word]
+          const staggerDelay = `${wi * 85}ms`
           return (
             <button
               key={word}
@@ -1052,17 +1055,18 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
                 position: 'absolute',
                 top: pos.top,
                 left: pos.left,
-                transform: `translateX(${pos.tx})`,
+                transform: `translateX(${pos.tx}) translateY(${mounted ? 0 : 5}px)`,
                 fontFamily: 'Sora',
                 fontWeight: 300,
                 fontSize: 22,
                 letterSpacing: '0.18em',
                 color: selected === word ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.2)',
                 textShadow: (selected === word && ritualColor) ? `0 0 32px ${ritualColor}55, 0 0 64px ${ritualColor}22` : 'none',
+                opacity: mounted ? 1 : 0,
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                transition: 'color 0.4s ease, text-shadow 0.4s ease',
+                transition: `opacity 500ms ${staggerDelay} ease, transform 500ms ${staggerDelay} ease, color 0.4s ease, text-shadow 0.4s ease`,
                 padding: '10px 14px', margin: '-10px -14px',
               }}
             >
