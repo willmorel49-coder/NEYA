@@ -388,6 +388,7 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
   const [showReturn, setShowReturn] = useState(false)
   const [showWorld, setShowWorld] = useState(false)
   const [showTimeWhisper, setShowTimeWhisper] = useState(false)
+  const lastWorldData = lastWorld ? WORLDS[lastWorld] : null
 
   const hoursSince = lastTs ? (Date.now() - lastTs) / 3600000 : 0
   const returnText = hoursSince < 4 ? 'tu es encore là' : hoursSince < 168 ? 'tu es revenu·e' : 'tu es de retour'
@@ -440,6 +441,13 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
         }
         @keyframes splashtw { 0%,100%{opacity:0.6} 50%{opacity:1} }
       `}</style>
+      {/* Teinte monde passé — très subtile, pour les returning users */}
+      {showWorld && lastWorldData && (
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: `radial-gradient(ellipse at 50% 80%, ${lastWorldData.palette[1]}18 0%, transparent 60%)`,
+          opacity: 1, transition: 'opacity 2s ease',
+        }} />
+      )}
       {/* Champ d'étoiles — l'univers attend */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'hidden' }}>
         {splashStars.map((s, i) => (
@@ -529,12 +537,14 @@ function OnboardingScreen0() {
   }, [])
   return (
     <Fade className="w-full h-full relative overflow-hidden">
+      <style>{`@keyframes ob0breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.028)}}`}</style>
       <div
         className="absolute inset-0"
         style={{
           backgroundImage: 'url(/bg-onboarding.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 20%',
+          animation: 'ob0breathe 42s ease-in-out infinite',
         }}
       />
       {/* Voile bas pour la question */}
