@@ -20,15 +20,28 @@ Issue de l'identité ÇA VA? (modèle récurrent dans toutes les collections).
 - Posture calme, contemplative, rarement debout/active
 - Présente sur l'écran 0 de l'onboarding, en arrière-plan du monde
 
-**Fichiers de référence** (dans `NÉYA/image fond app/`) :
-- `bg-onboarding.png` — fille meditant sur rocher, grotte avec eau et mandalas bleus *(sélectionné pour onboarding-0)*
-- `bg-brume.png` — fille face au loup-esprit lumineux dans une grotte *(sélectionné pour monde Brume)*
-- `bg-vrai.png` — fille debout dans l'eau avec orbes lumineux *(sélectionné pour Espace Vrai)*
-- `2D6KeuIim-tSKHyM9Y_Hv.png` — fille au portail circulaire, forêt nocturne
-- `JX30pc2e27rSsRUqw_ssG.png` — pont de pierre lavande avec lanternes
-- `ZR4Kl5vvJgf1CR90O8tMw.png` — salle sombre avec livres flottants et lumière bleue
-- `IroVYJ4E5Lq7K80e2m0yg.png` — corridor arrondi avec le mot "brume" flottant (NÉYA concept)
-- `-4zvjzPXD7BSHUJWHfxp0.png` — fille de profil avec énergie cosmique
+**Assets actifs dans `public/`** :
+| Fichier | Usage actuel | Description |
+|---|---|---|
+| `bg-onboarding.png` | Onboarding écran 0 | Fille de dos méditant, grotte + mandalas bleus |
+| `bg-brume.png` | Monde Brume (V1) | Fille face au loup-esprit lumineux dans une grotte |
+| `bg-vrai.png` | Espace Vrai | Fille debout dans l'eau avec orbes lumineux |
+| `bg-foret.png` | Monde Forêt (futur) | Arche végétale dorée, lierre, lucioles au lever du soleil |
+| `bg-cosmos.png` | Monde Cosmos (futur) | Fille sur falaise surplombant vallée épique ("NÉYA" watermark) |
+| `bg-feu.png` | Monde Feu/Lumière (futur) | Fille sur falaise avec anneau solaire doré, nuages |
+| `bg-eau.png` | Monde Eau/Sérénité (futur) | Fille méditant face à piscine circulaire, lanternes, étoiles |
+| `bg-vide.png` | Monde Vide/Blanc (futur) | Fille dans chambre minimaliste crème, lumière solaire |
+| `bg-cosmos-alt.png` | Alternative Cosmos | Fille sur montagne avec orbes géométriques flottants (bleu, rouge, or) |
+
+**Autres images notables dans `NÉYA/image fond app/`** :
+- `IroVYJ4E5Lq7K80e2m0yg.png` — corridor arrondi avec "brume" flottant (concept NÉYA spécifique)
+- `JX30pc2e27rSsRUqw_ssG.png` — pont de pierre lavande avec lanternes violettes
+- `aY7isf7xUuqfEdr8ubbvI.png` — fille face à un arbre géant lumineux bleu (logo arbre-cerveau vivant)
+- `ZR4Kl5vvJgf1CR90O8tMw.png` — salle sombre avec livres flottants, lumière bleue
+- `ACevtnBtvNSsVXC-tNRcC.png` — mur de pierre avec centaines de fenêtres jaune-or (Feu/Lumière alt)
+- `0m5ZgslVw6biW1oH4vrTC.png` — bibliothèque circulaire géante avec dôme étoilé (rituel texture)
+- `AmIsEsacWY-u8477PzYZL.png` — salle avec faces-masques luminescentes neon (Espace Vrai alt)
+- `GGv5YU89k5uKhO3cIBcq2.png` — fille devant anneau géant lumineux blanc (Vide alt)
 
 ---
 
