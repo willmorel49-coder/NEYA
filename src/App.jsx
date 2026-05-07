@@ -830,7 +830,7 @@ function RitualColor({ selected, onSelect, onNext }) {
           </p>
         </div>
       )}
-      <style>{`@keyframes colorlabelfade { 0%{opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{opacity:0} }`}</style>
+      <style>{`@keyframes colorlabelfade { 0%{opacity:0;transform:translateY(4px)} 20%{opacity:1;transform:translateY(0)} 80%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-4px)} }`}</style>
 
       {RITUAL_COLORS.map((c, i) => {
         const isSelected = selected === c.hex
@@ -1032,7 +1032,7 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
               {/* Indicateur sonore animé */}
               {isSelected && key !== 'silence' && !muted && (
                 <span style={{ display: 'flex', gap: 3, alignItems: 'flex-end', height: 12, marginLeft: 4 }}>
-                  {[1, 0.6, 0.8, 0.5, 0.9].map((h, i) => (
+                  {({ pluie: [0.5, 0.9, 0.4, 0.8, 0.6], vent: [0.6, 0.4, 0.9, 0.5, 0.7], feu: [0.9, 0.7, 1.0, 0.8, 0.5] }[key] || [1, 0.6, 0.8, 0.5, 0.9]).map((h, i) => (
                     <span
                       key={i}
                       style={{
