@@ -820,7 +820,7 @@ function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
         ))}
       </div>
 
-      <Fade key={step} duration={600} className="w-full h-full flex items-center justify-center relative z-10">
+      <Fade key={step} duration={600} delay={80} className="w-full h-full flex items-center justify-center relative z-10">
         {step === 0 && (
           <RitualColor
             selected={ritual.color}
@@ -1458,7 +1458,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       setPhase('world')
       stopSoundRef.current?.setVolume?.(0.04, 1.2)
     }, 1000)
-    const t2 = setTimeout(() => setPhase('name'), 2800)
+    const t2 = setTimeout(() => { setPhase('name'); haptic([2]) }, 2800)
     const t3 = setTimeout(() => setPhase('phrase'), 4600)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, []) // eslint-disable-line
@@ -1567,12 +1567,13 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {/* Lien Espace Vrai */}
       {phase === 'phrase' && displayedPhrase.length === fullPhrase.length && (
         <Fade slide duration={1400} className="absolute bottom-10 left-1/2 -translate-x-1/2">
+          <style>{`@keyframes arrowdrift{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}`}</style>
           <button onClick={onGoVrai} style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.18)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease', padding: '14px 20px', margin: '-14px -20px' }}
             onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.48)'}
             onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.18)'}
             onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.48)'}
             onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.18)'}>
-            espace vrai →
+            espace vrai <span style={{ display: 'inline-block', animation: 'arrowdrift 2.2s ease-in-out infinite' }}>→</span>
           </button>
         </Fade>
       )}
