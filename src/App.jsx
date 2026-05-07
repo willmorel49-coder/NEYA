@@ -1058,10 +1058,11 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
                 fontSize: 22,
                 letterSpacing: '0.18em',
                 color: selected === word ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.2)',
+                textShadow: (selected === word && ritualColor) ? `0 0 32px ${ritualColor}55, 0 0 64px ${ritualColor}22` : 'none',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                transition: 'color 0.4s ease',
+                transition: 'color 0.4s ease, text-shadow 0.4s ease',
                 padding: '10px 14px', margin: '-10px -14px',
               }}
             >
@@ -2124,14 +2125,17 @@ export default function App() {
     stopAmbienceRef.current?.setVolume?.(muted ? 0 : 0.04, 0.6)
   }, [muted])
 
-  // Fade ambient sound to near-silence when "à demain" appears after 90s
+  // Légère présence audio à l'entrée de l'espace vrai, puis fade long à 90s
   useEffect(() => {
     if (screen !== 'vrai') return
-    const t = setTimeout(() => {
+    const t1 = setTimeout(() => {
+      if (!muted) stopAmbienceRef.current?.setVolume?.(0.055, 3)
+    }, 1600)
+    const t2 = setTimeout(() => {
       stopAmbienceRef.current?.setVolume?.(0.008, 8)
     }, 90000)
-    return () => clearTimeout(t)
-  }, [screen])
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [screen]) // eslint-disable-line
 
   const handleRestart = useCallback(() => {
     haptic([6])
