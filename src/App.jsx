@@ -387,6 +387,7 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
   const [fading, setFading] = useState(false)
   const [showReturn, setShowReturn] = useState(false)
   const [showWorld, setShowWorld] = useState(false)
+  const [showTimeWhisper, setShowTimeWhisper] = useState(false)
 
   const hoursSince = lastTs ? (Date.now() - lastTs) / 3600000 : 0
   const returnText = hoursSince < 4 ? 'tu es encore là' : hoursSince < 168 ? 'tu es revenu·e' : 'tu es de retour'
@@ -397,9 +398,10 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
     const t1 = setTimeout(() => setVisible(true), 200)
     const t2 = setTimeout(() => setShowReturn(hasHistory), 900)
     const t3 = setTimeout(() => setShowWorld(hasHistory && !!lastWorld), 1500)
+    const t3b = setTimeout(() => setShowTimeWhisper(hasHistory), 2000)
     const t4 = setTimeout(() => setFading(true), hasHistory ? 3200 : 2200)
     const t5 = setTimeout(() => onDone(), hasHistory ? 4300 : 3100)
-    return () => [t1, t2, t3, t4, t5].forEach(clearTimeout)
+    return () => [t1, t2, t3, t3b, t4, t5].forEach(clearTimeout)
   }, [onDone, hasHistory, lastWorld])
 
   const splashStars = [
@@ -468,7 +470,7 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
           {WORLD_NAMES[lastWorld] || lastWorld}
         </p>
       )}
-      {hasHistory && (
+      {showTimeWhisper && (
         <p style={{
           fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.40em',
           color: 'rgba(255,255,255,0.05)', marginTop: 20,
@@ -1609,7 +1611,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {phase === 'phrase' && (
         <Fade duration={700} slide className="absolute inset-0 flex items-center justify-center px-10" style={{ paddingBottom: '18%' }}>
           <style>{`@keyframes cursorblink{0%,100%{opacity:0}50%{opacity:0.35}}`}</style>
-          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.9, letterSpacing: '0.06em', textShadow: '0 0 28px rgba(255,255,255,0.10)' }}>
+          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.9, letterSpacing: '0.06em', textShadow: `0 0 28px ${world.palette[2]}60, 0 0 60px rgba(255,255,255,0.06)` }}>
             {displayedPhrase}
             {displayedPhrase.length < fullPhrase.length && (
               <span style={{ animation: 'cursorblink 0.75s ease-in-out infinite', fontWeight: 300 }}>|</span>
@@ -1825,7 +1827,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {/* Compteur de présences passées — ultra-discret */}
       {history.length > 1 && (
         <Fade slide duration={2000} delay={5000} className="absolute" style={{ top: '22%', left: '50%', transform: 'translateX(-50%)' }}>
-          <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
             {history.length} présences
           </p>
         </Fade>
