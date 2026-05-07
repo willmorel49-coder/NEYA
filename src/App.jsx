@@ -1124,6 +1124,13 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {worldKey === 'eau'    && phase !== 'black' && <EauRipples />}
       {worldKey === 'vide'   && phase !== 'black' && <VidePulse />}
 
+      {/* Watermark NÉYA — très transparent, crée de la profondeur */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 2 }}>
+        <p style={{ fontFamily: 'Sora', fontSize: '28vw', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.025)', userSelect: 'none', lineHeight: 1 }}>
+          NÉYA
+        </p>
+      </div>
+
       <style>{`
         @keyframes worldBreathe {
           0%, 100% { transform: scale(1); }
@@ -1315,6 +1322,16 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart }) {
         <Fade duration={2000} delay={4500} className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center">
           <p style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.28em', color: 'rgba(255,255,255,0.09)' }}>
             {world.whisper}
+          </p>
+        </Fade>
+      )}
+
+      {/* Résumé du rituel — trace silencieuse */}
+      {ritual.color && ritual.texture && ritual.sound && (
+        <Fade duration={1800} delay={2500} className="absolute" style={{ bottom: '13%', right: '6%' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.07)', textAlign: 'right', lineHeight: 2 }}>
+            {RITUAL_COLORS.find(c => c.hex === ritual.color)?.label}<br />
+            {ritual.texture} · {ritual.sound}
           </p>
         </Fade>
       )}
