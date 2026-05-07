@@ -938,7 +938,7 @@ function RitualColor({ selected, onSelect, onNext }) {
       })}
 
       {selected && (
-        <Fade slide className="absolute bottom-14 left-1/2 -translate-x-1/2">
+        <Fade slide delay={600} className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
             onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
@@ -1596,7 +1596,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {phase === 'phrase' && (
         <Fade duration={700} slide className="absolute inset-0 flex items-center justify-center px-10" style={{ paddingBottom: '18%' }}>
           <style>{`@keyframes cursorblink{0%,100%{opacity:0}50%{opacity:0.35}}`}</style>
-          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.9, letterSpacing: '0.06em' }}>
+          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.9, letterSpacing: '0.06em', textShadow: '0 0 28px rgba(255,255,255,0.10)' }}>
             {displayedPhrase}
             {displayedPhrase.length < fullPhrase.length && (
               <span style={{ animation: 'cursorblink 0.75s ease-in-out infinite', fontWeight: 300 }}>|</span>
@@ -1820,7 +1820,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Première présence — marqueur invisible pour le nouvel utilisateur */}
       {history.length === 1 && (
-        <Fade slide duration={2800} delay={7000} className="absolute" style={{ top: '48%', left: '56%' }}>
+        <Fade slide duration={2800} delay={5000} className="absolute" style={{ top: '48%', left: '56%' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }}>
             première présence
           </p>
