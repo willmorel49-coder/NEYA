@@ -610,6 +610,7 @@ function OnboardingScreen1() {
 function OnboardingScreen2({ onEnter }) {
   return (
     <Fade
+      slide
       className="w-full h-full flex flex-col items-center justify-center px-10 gap-16"
       style={{ background: 'linear-gradient(to bottom, #050810 0%, #060c10 100%)' }}
     >
@@ -977,10 +978,12 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
 
       {isolated ? (
         <Fade slide key={isolated} className="absolute inset-0 flex items-center justify-center">
+          <style>{`@keyframes textzoom{from{transform:scale(0.92)}to{transform:scale(1)}}`}</style>
           <p style={{
             fontFamily: 'Sora', fontWeight: 300, fontSize: 40, letterSpacing: '0.2em',
             color: ritualColor ? `color-mix(in srgb, ${ritualColor} 20%, rgba(255,255,255,0.82))` : 'rgba(255,255,255,0.82)',
             textShadow: ritualColor ? `0 0 40px ${ritualColor}55` : 'none',
+            animation: 'textzoom 500ms ease forwards',
           }}>
             {isolated}
           </p>
@@ -1086,7 +1089,12 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
                 transition: 'all 0.45s ease',
               }}
             >
-              <span style={{ fontSize: 13, opacity: 0.45 }}>{symbol}</span>
+              <style>{`
+                @keyframes raindropsym{0%,100%{transform:translateY(0)}50%{transform:translateY(2.5px)}}
+                @keyframes windsym{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+                @keyframes feusym{0%,100%{transform:scale(1);opacity:0.45}50%{transform:scale(1.35);opacity:0.7}}
+              `}</style>
+              <span style={{ fontSize: 13, opacity: 0.45, animation: key === 'pluie' ? 'raindropsym 1.9s ease-in-out infinite' : key === 'vent' ? 'windsym 2.6s ease-in-out infinite' : key === 'feu' ? 'feusym 1.6s ease-in-out infinite' : 'none', display: 'inline-block' }}>{symbol}</span>
               <span>{label}</span>
               {/* Silence — trois points qui respirent */}
               {isSelected && key === 'silence' && (
@@ -1857,12 +1865,12 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {/* Logo discret — long-press pour réinitialiser l'histoire */}
       <Fade duration={2000} delay={400} className="absolute top-10 left-1/2 -translate-x-1/2">
         <div
-          onMouseDown={() => { longPressTimer.current = setTimeout(() => setShowResetConfirm(true), 1800) }}
-          onMouseUp={() => clearTimeout(longPressTimer.current)}
-          onMouseLeave={() => clearTimeout(longPressTimer.current)}
-          onTouchStart={() => { longPressTimer.current = setTimeout(() => setShowResetConfirm(true), 1800) }}
-          onTouchEnd={() => clearTimeout(longPressTimer.current)}
-          style={{ cursor: 'default' }}
+          onMouseDown={e => { e.currentTarget.style.opacity = '0.55'; longPressTimer.current = setTimeout(() => setShowResetConfirm(true), 1800) }}
+          onMouseUp={e => { e.currentTarget.style.opacity = '1'; clearTimeout(longPressTimer.current) }}
+          onMouseLeave={e => { e.currentTarget.style.opacity = '1'; clearTimeout(longPressTimer.current) }}
+          onTouchStart={e => { e.currentTarget.style.opacity = '0.55'; longPressTimer.current = setTimeout(() => setShowResetConfirm(true), 1800) }}
+          onTouchEnd={e => { e.currentTarget.style.opacity = '1'; clearTimeout(longPressTimer.current) }}
+          style={{ cursor: 'default', transition: 'opacity 200ms ease' }}
         >
           <NeyaLogo size="sm" opacity={0.22} />
         </div>
