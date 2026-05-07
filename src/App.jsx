@@ -345,14 +345,20 @@ function NeyaSplash({ onDone }) {
   const [fading, setFading] = useState(false)
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 200)
-    const t2 = setTimeout(() => setFading(true), 2100)
-    const t3 = setTimeout(() => onDone(), 3000)
+    const t2 = setTimeout(() => setFading(true), 2200)
+    const t3 = setTimeout(() => onDone(), 3100)
     return () => [t1, t2, t3].forEach(clearTimeout)
   }, [onDone])
   return (
     <div className="absolute inset-0 flex items-center justify-center z-50"
       style={{ background: '#050810', opacity: fading ? 0 : 1, transition: 'opacity 900ms ease' }}>
-      <div style={{ opacity: visible ? 1 : 0, transition: 'opacity 1200ms ease' }}>
+      <style>{`
+        @keyframes splashpulse {
+          0%, 100% { opacity: 0.72; transform: scale(1); }
+          50%       { opacity: 1;    transform: scale(1.03); }
+        }
+      `}</style>
+      <div style={{ opacity: visible ? 1 : 0, transition: 'opacity 1400ms ease', animation: visible ? 'splashpulse 3.5s ease-in-out infinite' : 'none' }}>
         <NeyaLogo size="lg" />
       </div>
     </div>
@@ -1118,10 +1124,23 @@ export default function App() {
   const [ritual, setRitual] = useState(INITIAL_RITUAL)
   const [muted, setMuted] = useState(false)
   const [history, setHistory] = useState(() => loadHistory())
+  const [blackout, setBlackout] = useState(false)
+  const blackoutTimer = useRef()
 
-  const goTo = useCallback((nextScreen, nextStep = 0) => {
-    setScreen(nextScreen)
-    setStep(nextStep)
+  // Transition noire cinématique entre les écrans majeurs
+  const goTo = useCallback((nextScreen, nextStep = 0, withBlackout = false) => {
+    if (withBlackout) {
+      setBlackout(true)
+      clearTimeout(blackoutTimer.current)
+      blackoutTimer.current = setTimeout(() => {
+        setScreen(nextScreen)
+        setStep(nextStep)
+        setBlackout(false)
+      }, 600)
+    } else {
+      setScreen(nextScreen)
+      setStep(nextStep)
+    }
   }, [])
 
   const worldKey = selectWorld(ritual)
@@ -1138,16 +1157,16 @@ export default function App() {
       saveToHistory(completed, wk)
       setHistory(loadHistory())
       setRitual(completed)
-      goTo('world')
+      goTo('world', 0, true)
     }
   }, [ritual, goTo])
 
   const handleOnboardingNext = useCallback(() => {
     if (step < 2) setStep(s => s + 1)
-    else goTo('ritual')
+    else goTo('ritual', 0, true)
   }, [step, goTo])
 
-  const handleGoVrai = useCallback(() => goTo('vrai'), [goTo])
+  const handleGoVrai = useCallback(() => goTo('vrai', 0, true), [goTo])
 
   const handleRestart = useCallback(() => {
     setRitual(INITIAL_RITUAL)
@@ -1156,6 +1175,18 @@ export default function App() {
 
   return (
     <div className="w-full h-full relative overflow-hidden" style={{ background: '#050810', fontFamily: 'Inter, sans-serif', color: 'white' }}>
+
+      {/* Grain texture — matière picturale (DA) */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        zIndex: 40,
+        opacity: 0.038,
+        mixBlendMode: 'overlay',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        backgroundSize: '300px 300px',
+      }} />
+
+      {/* Transition noire cinématique */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 45, background: '#050810', opacity: blackout ? 1 : 0, transition: 'opacity 600ms ease' }} />
 
       {/* Bouton mute */}
       <button
