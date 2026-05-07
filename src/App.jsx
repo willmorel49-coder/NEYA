@@ -1820,11 +1820,18 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         </Fade>
       )}
 
-      {/* Insight silencieux — si ce monde est le monde dominant de l'histoire */}
+      {/* Insight profond — spécifique au monde dominant de l'histoire */}
       {getDominantWorld(history) === worldKey && (
         <Fade slide duration={2500} delay={8500} className="absolute text-center" style={{ bottom: '32%', left: '50%', transform: 'translateX(-50%)' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.06)', whiteSpace: 'nowrap' }}>
-            tu reviens souvent ici
+            {({
+              brume: 'la brume te reconnaît',
+              foret: 'ces racines se souviennent',
+              cosmos: "l'immensité t'accueille",
+              feu: 'cette flamme te connaît',
+              eau: "l'eau garde ta trace",
+              vide: "le silence t'appartient",
+            }[worldKey] || 'tu reviens souvent ici')}
           </p>
         </Fade>
       )}
