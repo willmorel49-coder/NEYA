@@ -543,7 +543,7 @@ function OnboardingScreen0() {
           Et toi, ça va vraiment&nbsp;?
         </p>
       </div>
-      <div style={{ position: 'absolute', bottom: '9%', left: '50%', transform: 'translateX(-50%)', opacity: showHint ? 1 : 0, transition: 'opacity 1400ms ease' }}>
+      <div style={{ position: 'absolute', bottom: '9%', left: '50%', transform: showHint ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(4px)', opacity: showHint ? 1 : 0, transition: 'opacity 1400ms ease, transform 1400ms ease' }}>
         <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.15)', whiteSpace: 'nowrap' }}>
           toucher pour continuer
         </p>
@@ -598,7 +598,7 @@ function OnboardingScreen1() {
       </div>
 
       {/* Hint "toucher" — apparaît après que toutes les lignes sont visibles */}
-      <div style={{ position: 'absolute', bottom: '10%', left: '50%', transform: 'translateX(-50%)', opacity: showHint ? 1 : 0, transition: 'opacity 1200ms ease' }}>
+      <div style={{ position: 'absolute', bottom: '10%', left: '50%', transform: showHint ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(4px)', opacity: showHint ? 1 : 0, transition: 'opacity 1200ms ease, transform 1200ms ease' }}>
         <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.35em', color: 'rgba(255,255,255,0.18)' }}>
           toucher pour continuer
         </p>
@@ -935,15 +935,9 @@ function RitualColor({ selected, onSelect, onNext }) {
         <Fade slide className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
-            style={{
-              fontFamily: 'Sora',
-              fontSize: 10,
-              letterSpacing: '0.32em',
-              color: 'rgba(255,255,255,0.3)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-            }}
+            onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+            onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.3)'}
+            style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.3)', background: 'none', border: 'none', cursor: 'pointer', padding: '12px 18px', margin: '-12px -18px' }}
           >
             CONTINUER
           </button>
@@ -1027,15 +1021,9 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
         <Fade slide className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
-            style={{
-              fontFamily: 'Sora',
-              fontSize: 10,
-              letterSpacing: '0.32em',
-              color: 'rgba(255,255,255,0.3)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-            }}
+            onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+            onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.3)'}
+            style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.3)', background: 'none', border: 'none', cursor: 'pointer', padding: '12px 18px', margin: '-12px -18px' }}
           >
             CONTINUER
           </button>
@@ -1140,15 +1128,9 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
         <Fade slide className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
-            style={{
-              fontFamily: 'Sora',
-              fontSize: 10,
-              letterSpacing: '0.32em',
-              color: 'rgba(255,255,255,0.3)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-            }}
+            onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+            onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.3)'}
+            style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.3)', background: 'none', border: 'none', cursor: 'pointer', padding: '12px 18px', margin: '-12px -18px' }}
           >
             ENTRER DANS LE MONDE
           </button>
@@ -1810,8 +1792,8 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Retour au même monde — reconnaissance subtile */}
       {history.length >= 2 && history[1]?.world === worldKey && (
-        <Fade slide duration={2200} delay={3200} className="absolute text-center" style={{ top: '18%', left: '50%', transform: 'translateX(-50%)' }}>
-          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.42em', color: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }}>
+        <Fade slide duration={2200} delay={3200} className="absolute text-center" style={{ top: '13%', left: '50%', transform: 'translateX(-50%)' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.42em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
             encore ici
           </p>
         </Fade>
