@@ -596,6 +596,18 @@ function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
         className="absolute inset-0 transition-all duration-[1400ms] ease-out"
         style={{ background: bgColor }}
       />
+
+      {/* Indicateur de progression — 3 points */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5" style={{ zIndex: 20 }}>
+        {[0, 1, 2].map(i => (
+          <div key={i} style={{
+            width: 3, height: 3, borderRadius: '50%',
+            background: i <= step ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.1)',
+            transition: 'background 600ms ease',
+          }} />
+        ))}
+      </div>
+
       <Fade key={step} duration={600} className="w-full h-full flex items-center justify-center relative z-10">
         {step === 0 && (
           <RitualColor
@@ -973,6 +985,50 @@ function FeuShimmer() {
   )
 }
 
+function EauRipples() {
+  const ripples = [
+    { cx: 30, cy: 65, delay: '0s',  period: 8,  maxR: 120 },
+    { cx: 60, cy: 45, delay: '3s',  period: 10, maxR: 90  },
+    { cx: 72, cy: 72, delay: '6s',  period: 12, maxR: 100 },
+  ]
+  return (
+    <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3, overflow: 'visible' }}>
+      <style>
+        {ripples.map((r, i) => `
+          @keyframes ripple${i} {
+            0%   { r:0;       opacity:0.15; }
+            60%  { opacity:0.06; }
+            100% { r:${r.maxR}; opacity:0; }
+          }
+        `).join('')}
+      </style>
+      {ripples.map((r, i) => (
+        <circle key={i} cx={`${r.cx}%`} cy={`${r.cy}%`} r="0"
+          fill="none" stroke="rgba(100,200,220,0.3)" strokeWidth="0.8"
+          style={{ animation: `ripple${i} ${r.period}s ${r.delay} ease-out infinite` }} />
+      ))}
+    </svg>
+  )
+}
+
+function VidePulse() {
+  return (
+    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 3 }}>
+      <style>{`
+        @keyframes videpulse {
+          0%,100% { opacity:0.015; transform:scale(1); }
+          50%      { opacity:0.04;  transform:scale(1.08); }
+        }
+      `}</style>
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.12) 0%, transparent 55%)',
+        animation: 'videpulse 12s ease-in-out infinite',
+      }} />
+    </div>
+  )
+}
+
 // ─── PARTICULES COSMOS ────────────────────────────────────────────────────────
 
 function CosmosParticles() {
@@ -1065,6 +1121,8 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {worldKey === 'cosmos' && phase !== 'black' && <CosmosParticles />}
       {worldKey === 'foret'  && phase !== 'black' && <ForetRays />}
       {worldKey === 'feu'    && phase !== 'black' && <FeuShimmer />}
+      {worldKey === 'eau'    && phase !== 'black' && <EauRipples />}
+      {worldKey === 'vide'   && phase !== 'black' && <VidePulse />}
 
       <style>{`
         @keyframes worldBreathe {
@@ -1197,6 +1255,8 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart }) {
       {worldKey === 'cosmos' && <CosmosParticles />}
       {worldKey === 'foret'  && <ForetRays />}
       {worldKey === 'feu'    && <FeuShimmer />}
+      {worldKey === 'eau'    && <EauRipples />}
+      {worldKey === 'vide'   && <VidePulse />}
 
       {/* SVG — histoire silencieuse + flux de présences */}
       <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
