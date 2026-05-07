@@ -1054,6 +1054,7 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
   }
 
   useEffect(() => () => stopRef.current(), [])
+  useEffect(() => { stopRef.current?.setVolume?.(muted ? 0 : 0.055, 0.3) }, [muted])
 
   const soundItems = [
     { key: 'pluie',   symbol: '〰', label: 'pluie' },
@@ -1704,7 +1705,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       <style>{`@keyframes espacebreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.022)}}`}</style>
 
       {/* Image de fond du monde — très opacifiée, transcende le monde */}
-      <div className="absolute inset-0" style={{ backgroundImage: world.bgImage, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'espacebreathe 38s ease-in-out infinite' }} />
+      <div className="absolute inset-0" style={{ backgroundImage: world.bgImage, backgroundSize: 'cover', backgroundPosition: 'center', animation: `espacebreathe ${{ cosmos:'58s', vide:'72s', feu:'22s', eau:'44s', brume:'38s', foret:'32s' }[worldKey] || '38s'} ease-in-out infinite` }} />
 
       {/* Voile très épais — l'espace vrai est au-delà du monde */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}fd 0%, ${world.palette[0]}ee 35%, ${world.palette[1]}cc 75%, ${world.palette[0]}bb 100%)` }} />
@@ -1789,7 +1790,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
           }
           @keyframes h0pulse {
             0%, 100% { transform: scale(1);   opacity: 0.16; }
-            50%       { transform: scale(2.6); opacity: 0.06; }
+            50%       { transform: scale(2.6); opacity: 0.09; }
           }
           @keyframes userRipple {
             0%   { r: 8px; opacity: 0.22; }
