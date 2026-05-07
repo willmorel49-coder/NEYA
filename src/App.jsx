@@ -1278,11 +1278,13 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
   const flux = useRef(generateFakeFlux(ritual.color)).current
   const [showRestart, setShowRestart] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [showAdieu, setShowAdieu] = useState(false)
   const longPressTimer = useRef()
 
   useEffect(() => {
-    const t = setTimeout(() => setShowRestart(true), 12000)
-    return () => clearTimeout(t)
+    const t1 = setTimeout(() => setShowRestart(true), 12000)
+    const t2 = setTimeout(() => setShowAdieu(true), 90000)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
 
   // Histoire silencieuse — présences fantômes des rituels passés
@@ -1302,6 +1304,13 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Voile très épais — l'espace vrai est au-delà du monde */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}fd 0%, ${world.palette[0]}ee 35%, ${world.palette[1]}cc 75%, ${world.palette[0]}bb 100%)` }} />
+
+      {/* Nom du monde en fond géant — présence silencieuse */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 1 }}>
+        <p style={{ fontFamily: 'Sora', fontSize: '32vw', fontWeight: 600, color: 'rgba(255,255,255,0.018)', userSelect: 'none', letterSpacing: '0.05em', lineHeight: 1 }}>
+          {WORLD_NAMES[worldKey] || worldKey}
+        </p>
+      </div>
 
       {/* Overlays atmosphériques dans l'espace vrai */}
       {worldKey === 'cosmos' && <CosmosParticles />}
@@ -1377,6 +1386,15 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.07)', textAlign: 'right', lineHeight: 2 }}>
             {RITUAL_COLORS.find(c => c.hex === ritual.color)?.label}<br />
             {ritual.texture} · {ritual.sound}
+          </p>
+        </Fade>
+      )}
+
+      {/* Message "à demain" après longue présence */}
+      {showAdieu && (
+        <Fade duration={3000} className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 25 }}>
+          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 15, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.22)', textAlign: 'center' }}>
+            à demain
           </p>
         </Fade>
       )}
