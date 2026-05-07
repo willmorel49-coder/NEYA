@@ -861,7 +861,8 @@ function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
         {[0, 1, 2].map(i => (
           <div key={i} style={{
             width: 3, height: 3, borderRadius: '50%',
-            background: i <= step ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.1)',
+            background: (i === 0 && step > 0 && ritual.color) ? ritual.color + 'cc'
+              : (i <= step) ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.1)',
             transition: 'background 600ms ease',
             animation: i === step ? 'dotpulse 2.8s ease-in-out infinite' : 'none',
           }} />
