@@ -1999,10 +1999,10 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         const sub = (h >= 22 || h < 5) ? 'le sommeil mérite aussi sa place' : (h < 12) ? 'la journée t\'attend doucement' : 'tu peux revenir quand tu veux'
         return (
           <Fade slide duration={3000} className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ zIndex: 25 }}>
-            <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 15, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.28)', textAlign: 'center', marginBottom: 12 }}>
+            <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 15, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.28)', textAlign: 'center', marginBottom: 12, textShadow: `0 0 40px ${world.palette[2]}30` }}>
               {main}
             </p>
-            <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.10)', textAlign: 'center' }}>
+            <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.10)', textAlign: 'center', textShadow: `0 0 28px ${world.palette[2]}20` }}>
               {sub}
             </p>
           </Fade>
