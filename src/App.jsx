@@ -799,10 +799,11 @@ function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
 
   return (
     <div className="w-full h-full absolute inset-0">
-      {/* Fond réactif */}
+      {/* Fond réactif — respiration subtile quand couleur sélectionnée */}
+      <style>{`@keyframes ritualbg{0%,100%{opacity:0.82}50%{opacity:1}}`}</style>
       <div
         className="absolute inset-0 transition-all duration-[1400ms] ease-out"
-        style={{ background: bgColor }}
+        style={{ background: bgColor, animation: ritual.color ? 'ritualbg 9s ease-in-out infinite' : 'none' }}
       />
       {/* Vignette — profondeur picturale */}
       <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1, background: 'radial-gradient(ellipse at 50% 48%, transparent 38%, rgba(5,8,16,0.52) 100%)' }} />
