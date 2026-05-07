@@ -1724,6 +1724,8 @@ function generateFakeFlux(userColor) {
 
 function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistory }) {
   const flux = useRef(generateFakeFlux(ritual.color)).current
+  const pulseDur = { pluie: '3.8s', vent: '5.4s', feu: '2.8s', silence: '6.2s' }[ritual.sound] || '4.2s'
+  const rippleDur = { pluie: '5.5s', vent: '9s', feu: '4.2s', silence: '8s' }[ritual.sound] || '7s'
   const [showRestart, setShowRestart] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [showAdieu, setShowAdieu] = useState(false)
@@ -1812,7 +1814,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
             filter={p.id === 99 ? 'url(#puser)' : 'url(#psoft)'}
             style={{ animation: p.immobile ? 'none' :
               p.id === 99
-                ? `drift-${p.id} ${p.period}s ${p.delay}s ease-in-out infinite, userPresencePulse 4.2s ease-in-out infinite`
+                ? `drift-${p.id} ${p.period}s ${p.delay}s ease-in-out infinite, userPresencePulse ${pulseDur} ease-in-out infinite`
                 : `drift-${p.id} ${p.period}s ${p.delay}s ease-in-out infinite`
             }} />
         ))}
@@ -1823,7 +1825,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
           return [0, 1].map(i => (
             <circle key={`ur${i}`} cx={`${u.x}%`} cy={`${u.y}%`} r="0"
               fill="none" stroke={u.color} strokeWidth="0.5"
-              style={{ animation: `userRipple 7s ${i * 3.5}s ease-out infinite` }} />
+              style={{ animation: `userRipple ${rippleDur} ${i * (parseFloat(rippleDur) / 2)}s ease-out infinite` }} />
           ))
         })()}
         <style>
