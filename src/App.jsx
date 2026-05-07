@@ -1094,6 +1094,8 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
 
 function RitualSound({ selected, onSelect, onNext, muted }) {
   const stopRef = useRef(() => {})
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t) }, [])
 
   const handleSelect = (sound) => {
     haptic([3])
@@ -1125,8 +1127,9 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
         UN SON
       </p>
       <div className="flex flex-col gap-10 items-center">
-        {soundItems.map(({ key, symbol, label }) => {
+        {soundItems.map(({ key, symbol, label }, si) => {
           const isSelected = selected === key
+          const delay = `${si * 90}ms`
           return (
             <button
               key={key}
@@ -1137,14 +1140,15 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
                 fontSize: 20,
                 letterSpacing: '0.18em',
                 color: isSelected ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.2)',
+                opacity: mounted ? 1 : 0,
                 display: 'flex',
                 alignItems: 'baseline',
                 gap: 14,
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                transform: isSelected ? 'scale(1.06)' : 'scale(1)',
-                transition: 'all 0.45s ease',
+                transform: isSelected ? 'scale(1.06)' : (mounted ? 'scale(1) translateY(0)' : 'scale(1) translateY(5px)'),
+                transition: `opacity 500ms ${delay} ease, transform 500ms ${delay} ease, color 0.45s ease`,
               }}
             >
               <style>{`
