@@ -1213,6 +1213,7 @@ function ForetRays() {
     { x: 84, angle:   7, opacity: 0.05, width: 60,  delay: '3.5s' },
     { x: 42, angle:  -2, opacity: 0.03, width: 200, delay: '11s' },
   ]
+  const drifts = [7, -5, 4, -8, 5, -3]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
       <style>{`
@@ -1220,6 +1221,12 @@ function ForetRays() {
           0%,100% { opacity: var(--ray-op); }
           50%      { opacity: calc(var(--ray-op) * 1.7); }
         }
+        ${rays.map((r, i) => `
+          @keyframes raydrift${i} {
+            0%,100% { transform: translateX(0); }
+            50%     { transform: translateX(${drifts[i]}px); }
+          }
+        `).join('')}
       `}</style>
       {rays.map((r, i) => {
         const col = i === 2 ? [255, 210, 100] : [200, 240, 160]
@@ -1227,13 +1234,18 @@ function ForetRays() {
           <div key={i} style={{
             position: 'absolute', top: '-20%', left: `${r.x}%`,
             width: r.width, height: '140%',
-            background: `linear-gradient(to bottom, rgba(${col},0) 0%, rgba(${col},0.22) 35%, rgba(${col},0.12) 65%, rgba(${col},0) 100%)`,
-            transform: `rotate(${r.angle}deg) translateX(-50%)`,
-            '--ray-op': r.opacity,
-            animation: `rayshift ${14 + i * 3}s ${r.delay} ease-in-out infinite`,
-            mixBlendMode: 'screen',
-            filter: 'blur(3px)',
-          }} />
+            animation: `raydrift${i} ${28 + i * 6}s ${r.delay} ease-in-out infinite`,
+          }}>
+            <div style={{
+              width: '100%', height: '100%',
+              background: `linear-gradient(to bottom, rgba(${col},0) 0%, rgba(${col},0.22) 35%, rgba(${col},0.12) 65%, rgba(${col},0) 100%)`,
+              transform: `rotate(${r.angle}deg) translateX(-50%)`,
+              '--ray-op': r.opacity,
+              animation: `rayshift ${14 + i * 3}s ${r.delay} ease-in-out infinite`,
+              mixBlendMode: 'screen',
+              filter: 'blur(3px)',
+            }} />
+          </div>
         )
       })}
       {/* Brume de sol — lumière diffuse verte au sol */}
