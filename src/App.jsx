@@ -22,6 +22,7 @@ const WORLDS = {
     bgImage: 'url(/bg-brume.png)',
     animalFilter: 'brightness(1.4) blur(0.3px)',
     animationSpeed: 'slow',
+    whisper: 'quelque chose te relie',
     phrases: {
       byTexture: {
         lourd:   [
@@ -64,6 +65,7 @@ const WORLDS = {
     bgImage: 'url(/bg-foret.png)',
     animalFilter: 'hue-rotate(110deg) saturate(0.9) brightness(1.3) blur(0.3px)',
     animationSpeed: 'slow',
+    whisper: 'les racines tiennent',
     phrases: {
       byTexture: {
         lourd:   [
@@ -106,6 +108,7 @@ const WORLDS = {
     bgImage: 'url(/bg-cosmos.png)',
     animalFilter: 'hue-rotate(270deg) saturate(0.85) brightness(1.6) blur(0.3px)',
     animationSpeed: 'slow',
+    whisper: 'tu fais partie de l\'immensité',
     phrases: {
       byTexture: {
         lourd:   [
@@ -148,6 +151,7 @@ const WORLDS = {
     bgImage: 'url(/bg-feu.png)',
     animalFilter: 'hue-rotate(30deg) saturate(1.2) brightness(1.6) blur(0.3px)',
     animationSpeed: 'fast',
+    whisper: 'cette intensité est toi',
     phrases: {
       byTexture: {
         lourd:   [
@@ -190,6 +194,7 @@ const WORLDS = {
     bgImage: 'url(/bg-eau.png)',
     animalFilter: 'hue-rotate(190deg) saturate(1.1) brightness(1.5) blur(0.3px)',
     animationSpeed: 'slow',
+    whisper: 'tu peux laisser couler',
     phrases: {
       byTexture: {
         lourd:   [
@@ -232,6 +237,7 @@ const WORLDS = {
     bgImage: 'url(/bg-vide.png)',
     animalFilter: 'saturate(0) brightness(1.8) blur(0.3px)',
     animationSpeed: 'slow',
+    whisper: 'rien n\'est requis de toi',
     phrases: {
       byTexture: {
         lourd:   [
@@ -915,6 +921,58 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
   )
 }
 
+// ─── OVERLAYS ATMOSPHÉRIQUES ──────────────────────────────────────────────────
+
+function ForetRays() {
+  const rays = [
+    { x: 18, angle: -8, opacity: 0.06, width: 60, delay: '0s' },
+    { x: 35, angle: -3, opacity: 0.04, width: 90, delay: '4s' },
+    { x: 52, angle:  2, opacity: 0.07, width: 50, delay: '2s' },
+    { x: 68, angle: -5, opacity: 0.05, width: 70, delay: '6s' },
+    { x: 82, angle:  6, opacity: 0.04, width: 55, delay: '3s' },
+  ]
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
+      <style>{`
+        @keyframes rayshift {
+          0%,100% { opacity: var(--ray-op); }
+          50%      { opacity: calc(var(--ray-op) * 1.6); }
+        }
+      `}</style>
+      {rays.map((r, i) => (
+        <div key={i} style={{
+          position: 'absolute', top: '-20%', left: `${r.x}%`,
+          width: r.width, height: '140%',
+          background: 'linear-gradient(to bottom, rgba(180,230,140,0) 0%, rgba(180,230,140,0.18) 40%, rgba(180,230,140,0) 100%)',
+          transform: `rotate(${r.angle}deg) translateX(-50%)`,
+          '--ray-op': r.opacity,
+          animation: `rayshift ${12 + i * 4}s ${r.delay} ease-in-out infinite`,
+          mixBlendMode: 'screen',
+        }} />
+      ))}
+    </div>
+  )
+}
+
+function FeuShimmer() {
+  return (
+    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 3 }}>
+      <style>{`
+        @keyframes feushimmer {
+          0%,100% { transform:scaleX(1) skewX(0deg); opacity:0.04; }
+          25%      { transform:scaleX(1.008) skewX(0.4deg); opacity:0.07; }
+          75%      { transform:scaleX(0.994) skewX(-0.3deg); opacity:0.05; }
+        }
+      `}</style>
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse at 50% 80%, rgba(255,140,0,0.12) 0%, transparent 60%)',
+        animation: 'feushimmer 2.8s ease-in-out infinite',
+      }} />
+    </div>
+  )
+}
+
 // ─── PARTICULES COSMOS ────────────────────────────────────────────────────────
 
 function CosmosParticles() {
@@ -1003,8 +1061,10 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {/* Voile monde — palette */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}f2 0%, ${world.palette[0]}aa 30%, ${world.palette[1]}66 65%, rgba(13,27,42,0.2) 100%)` }} />
 
-      {/* Particules cosmos */}
+      {/* Overlays atmosphériques par monde */}
       {worldKey === 'cosmos' && phase !== 'black' && <CosmosParticles />}
+      {worldKey === 'foret'  && phase !== 'black' && <ForetRays />}
+      {worldKey === 'feu'    && phase !== 'black' && <FeuShimmer />}
 
       <style>{`
         @keyframes worldBreathe {
@@ -1133,8 +1193,10 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart }) {
       {/* Voile très épais — l'espace vrai est au-delà du monde */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}fd 0%, ${world.palette[0]}ee 35%, ${world.palette[1]}cc 75%, ${world.palette[0]}bb 100%)` }} />
 
-      {/* Particules cosmos dans l'espace vrai aussi */}
+      {/* Overlays atmosphériques dans l'espace vrai */}
       {worldKey === 'cosmos' && <CosmosParticles />}
+      {worldKey === 'foret'  && <ForetRays />}
+      {worldKey === 'feu'    && <FeuShimmer />}
 
       {/* SVG — histoire silencieuse + flux de présences */}
       <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
@@ -1181,12 +1243,21 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart }) {
         </Fade>
       )}
 
-      {/* Message implicite */}
-      <Fade duration={2400} delay={800} className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center">
+      {/* Message universel */}
+      <Fade duration={2400} delay={800} className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center">
         <p style={{ fontFamily: 'Sora', fontSize: 11, letterSpacing: '0.22em', color: 'rgba(255,255,255,0.16)' }}>
           tu n'es pas seul·e
         </p>
       </Fade>
+
+      {/* Whisper du monde — spécifique à l'univers */}
+      {world.whisper && (
+        <Fade duration={2000} delay={4500} className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center">
+          <p style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.28em', color: 'rgba(255,255,255,0.09)' }}>
+            {world.whisper}
+          </p>
+        </Fade>
+      )}
 
       {/* Bouton nouveau rituel */}
       {showRestart && (
