@@ -616,6 +616,7 @@ function OnboardingScreen1() {
               textAlign: 'center',
               opacity: visibleLines > i ? 1 : 0,
               transition: 'opacity 700ms ease',
+              textShadow: i === 3 ? '0 0 38px rgba(99,102,241,0.22)' : 'none',
             }}
           >
             {line.text}
@@ -1620,8 +1621,9 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       )}
 
       {/* Nom du monde — révélé au centre avant la phrase */}
+      <style>{`@keyframes worldnamebreathe{0%,100%{opacity:1}50%{opacity:0.74}}`}</style>
       {(phase === 'name' || phase === 'phrase') && (
-        <div className="absolute" style={{ top: '30%', left: '50%', transform: 'translateX(-50%)' }}>
+        <div className="absolute" style={{ top: '30%', left: '50%', transform: 'translateX(-50%)', animation: 'worldnamebreathe 18s 1.6s ease-in-out infinite' }}>
           <p style={{
             fontFamily: 'Sora', fontSize: 9, textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.20)', whiteSpace: 'nowrap',
