@@ -905,7 +905,7 @@ function RitualColor({ selected, onSelect, onNext }) {
 
       <p
         className="absolute top-14 left-1/2 -translate-x-1/2"
-        style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.18)' }}
+        style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.40em', color: 'rgba(255,255,255,0.18)' }}
       >
         UNE COULEUR
       </p>
@@ -990,7 +990,7 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
     <div className="w-full h-full relative">
       <p
         className="absolute top-14 left-1/2 -translate-x-1/2"
-        style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.18)' }}
+        style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.40em', color: 'rgba(255,255,255,0.18)' }}
       >
         UNE SENSATION
       </p>
@@ -1083,7 +1083,7 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
     <div className="w-full h-full relative flex items-center justify-center">
       <p
         className="absolute top-14 left-1/2 -translate-x-1/2"
-        style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.18)' }}
+        style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.40em', color: 'rgba(255,255,255,0.18)' }}
       >
         UN SON
       </p>
@@ -1406,7 +1406,7 @@ function BrumeMist() {
 
 function CosmosParticles() {
   const stars = useRef(
-    Array.from({ length: 38 }, (_, i) => {
+    Array.from({ length: 42 }, (_, i) => {
       const t = Math.random()
       const color = t < 0.25 ? 'rgba(255,235,180,1)' : t < 0.5 ? 'rgba(180,210,255,1)' : 'rgba(200,220,255,1)'
       return {
@@ -1887,7 +1887,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Insight profond — spécifique au monde dominant de l'histoire */}
       {getDominantWorld(history) === worldKey && (
-        <Fade slide duration={2500} delay={8500} className="absolute text-center" style={{ bottom: '32%', left: '50%', transform: 'translateX(-50%)' }}>
+        <Fade slide duration={2500} delay={7500} className="absolute text-center" style={{ bottom: '32%', left: '50%', transform: 'translateX(-50%)' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.06)', whiteSpace: 'nowrap' }}>
             {({
               brume: 'la brume te reconnaît',
