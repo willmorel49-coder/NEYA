@@ -466,12 +466,14 @@ function OnboardingScreen0() {
 
 function OnboardingScreen1() {
   const [visibleLines, setVisibleLines] = useState(0)
+  const [showHint, setShowHint] = useState(false)
   useEffect(() => {
     const timers = [
       setTimeout(() => setVisibleLines(1), 500),
       setTimeout(() => setVisibleLines(2), 1600),
       setTimeout(() => setVisibleLines(3), 2700),
       setTimeout(() => setVisibleLines(4), 4000),
+      setTimeout(() => setShowHint(true), 5200),
     ]
     return () => timers.forEach(clearTimeout)
   }, [])
@@ -503,6 +505,13 @@ function OnboardingScreen1() {
             {line.text}
           </p>
         ))}
+      </div>
+
+      {/* Hint "toucher" — apparaît après que toutes les lignes sont visibles */}
+      <div style={{ position: 'absolute', bottom: '10%', left: '50%', transform: 'translateX(-50%)', opacity: showHint ? 1 : 0, transition: 'opacity 1200ms ease' }}>
+        <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.35em', color: 'rgba(255,255,255,0.18)' }}>
+          toucher pour continuer
+        </p>
       </div>
     </Fade>
   )
@@ -1393,6 +1402,12 @@ export default function App() {
   const [blackout, setBlackout] = useState(false)
   const blackoutTimer = useRef()
   const stopAmbienceRef = useRef(() => {})
+
+  // Préchargement de toutes les images monde
+  useEffect(() => {
+    const srcs = ['/bg-onboarding.png', '/bg-brume.png', '/bg-foret.png', '/bg-cosmos.png', '/bg-feu.png', '/bg-eau.png', '/bg-vide.png', '/bg-vrai.png', '/cerf.svg']
+    srcs.forEach(src => { const img = new Image(); img.src = src })
+  }, [])
 
   // Transition noire cinématique entre les écrans majeurs
   const goTo = useCallback((nextScreen, nextStep = 0, withBlackout = false) => {
