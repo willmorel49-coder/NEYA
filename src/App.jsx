@@ -1189,7 +1189,13 @@ function ForetRays() {
       {/* Brume de sol — lumière diffuse verte au sol */}
       <div style={{
         position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%',
-        background: 'linear-gradient(to top, rgba(160,220,140,0.06) 0%, transparent 100%)',
+        background: 'linear-gradient(to top, rgba(160,220,140,0.09) 0%, transparent 100%)',
+        mixBlendMode: 'screen',
+      }} />
+      {/* Sol forestier — fine bande de mousse lumineuse à l'extrême bas */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: '12%',
+        background: 'linear-gradient(to top, rgba(100,200,80,0.06) 0%, transparent 100%)',
         mixBlendMode: 'screen',
       }} />
     </div>
@@ -1268,11 +1274,22 @@ function EauRipples() {
           fill="none" stroke={r.stroke} strokeWidth={r.sw}
           style={{ animation: `ripple${i} ${r.period}s ${r.delay} ease-out infinite` }} />
       ))}
+      {/* Profondeur sous-marine — halo teal très bas */}
+      <defs>
+        <radialGradient id="eauDepth" cx="50%" cy="70%" r="55%">
+          <stop offset="0%" stopColor="rgba(20,180,170,0.06)" />
+          <stop offset="100%" stopColor="rgba(20,180,170,0)" />
+        </radialGradient>
+      </defs>
+      <rect x="0" y="55%" width="100%" height="45%" fill="url(#eauDepth)" />
       {/* Reflet de surface — ligne lumineuse horizontale */}
-      <style>{`@keyframes eausurface{0%,100%{opacity:0.5}50%{opacity:1}}`}</style>
+      <style>{`@keyframes eausurface{0%,100%{opacity:0.5}50%{opacity:1}}@keyframes eausurface2{0%,100%{opacity:0.28}50%{opacity:0.55}}`}</style>
       <line x1="8%" y1="54%" x2="92%" y2="54%"
         stroke="url(#eauGrad)" strokeWidth="0.7"
         style={{ animation: 'eausurface 11s ease-in-out infinite' }} />
+      <line x1="12%" y1="56%" x2="88%" y2="56%"
+        stroke="url(#eauGrad)" strokeWidth="0.4"
+        style={{ animation: 'eausurface2 16s 5s ease-in-out infinite' }} />
       <defs>
         <linearGradient id="eauGrad" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="rgba(80,200,220,0)" />
