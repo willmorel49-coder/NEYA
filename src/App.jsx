@@ -578,12 +578,49 @@ function startAmbience(type, volume = 0.07) {
   source.loop = true
 
   const filter = ctx.createBiquadFilter()
-  if (type === 'pluie')        { filter.type = 'highpass';  filter.frequency.value = 2200 }
-  else if (type === 'vent')    { filter.type = 'bandpass';  filter.frequency.value = 380; filter.Q.value = 0.4 }
-  else if (type === 'feu')     { filter.type = 'lowpass';   filter.frequency.value = 280 }
 
-  source.connect(filter)
-  filter.connect(gainNode)
+  if (type === 'pluie') {
+    filter.type = 'highpass'
+    filter.frequency.value = 2200
+    const filter2 = ctx.createBiquadFilter()
+    filter2.type = 'lowpass'
+    filter2.frequency.value = 9000
+    source.connect(filter)
+    filter.connect(filter2)
+    filter2.connect(gainNode)
+  } else if (type === 'vent') {
+    filter.type = 'bandpass'
+    filter.frequency.value = 380
+    filter.Q.value = 0.4
+    // LFO qui module la fréquence — vent qui varie
+    const lfo = ctx.createOscillator()
+    const lfoGain = ctx.createGain()
+    lfo.frequency.value = 0.08
+    lfoGain.gain.value = 90
+    lfo.connect(lfoGain)
+    lfoGain.connect(filter.frequency)
+    lfo.start()
+    source.connect(filter)
+    filter.connect(gainNode)
+  } else if (type === 'feu') {
+    filter.type = 'lowpass'
+    filter.frequency.value = 320
+    // LFO sawtooth pour fluctuations du feu
+    const flameLFO = ctx.createOscillator()
+    const flameLFOGain = ctx.createGain()
+    flameLFO.type = 'sawtooth'
+    flameLFO.frequency.value = 0.35
+    flameLFOGain.gain.value = 0.38
+    const flameGain = ctx.createGain()
+    flameGain.gain.value = 0.62
+    flameLFO.connect(flameLFOGain)
+    flameLFOGain.connect(flameGain.gain)
+    flameLFO.start()
+    source.connect(filter)
+    filter.connect(flameGain)
+    flameGain.connect(gainNode)
+  }
+
   source.start()
   return () => {
     gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
