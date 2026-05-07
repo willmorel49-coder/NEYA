@@ -95,78 +95,62 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-07
 **Branche** : `main`
-**Phase** : V1.3 — Micro-polish sensoriel complet, audio exponentiel, animations organiques
+**Phase** : V1.4 — Audio riche multi-couche, polish sensoriel complet, micro-interactions mobiles
 
-### Features actives (`src/App.jsx`)
+### Features actives (`src/App.jsx`) — build 201 kB (62 kB gzip)
 
-**Core flow :**
-- Splash screen : logo NÉYA pulse adaptatif (3.5s new user / 4.8s returning — plus intime)
-  - Retour récent (<7j) : "tu es revenu·e" + nom du dernier monde (ultra-discret)
-  - Absence longue (≥7j) : "tu es de retour"
-  - Hint "toucher" sur Screen0 onboarding après 5.5s
-- Onboarding 3 écrans : bg-onboarding.png, texte séquentiel, hint "toucher"
-- Rituel : couleur (8 orbes respirants + selectedGlow sur sélectionné) → texture (flash isolé + slide) → son (Web Audio API + soundbar + slide)
-- CONTINUER / ENTRER DANS LE MONDE : slide entrance
-- Indicateur de progression 3 points discrets en bas du rituel
-- Haptic : [6] steps 0→1 et 1→2 · [12,60,18] complétion
-- Raccourci M : mute/unmute clavier
+**Splash :**
+- 12 étoiles ultra-discrètes (splashtw breathing)
+- Returning user : 4.3s vs 3.1s new user · haptic [4] sur départ
+- Texte retour : "tu es encore là" (<4h) / "tu es revenu·e" (<7j) / "tu es de retour" (≥7j) + nom du dernier monde
 
-**6 Mondes (sélection automatique sound × texture) :**
-- Brume : `bg-brume.png` + brume dérivante 4 couches (hauteur variée)
-- Forêt : `bg-foret.png` + 6 God-rays (incl. 1 doré + 1 panoramique large)
-- Cosmos : `bg-cosmos.png` + 38 étoiles (couleurs chaudes/froides/neutres) + 3 étoiles filantes
-- Feu : `bg-feu.png` + shimmer + 14 braises montantes (couleurs 100-180 vert)
-- Eau : `bg-eau.png` + 5 ondulations (stroke teal pour periph.)
-- Vide : `bg-vide.png` + pouls radial + 20 motes flottantes
+**Onboarding :**
+- 3 écrans avec blackout cinématique entre chaque
+- Screen0 : bg-onboarding.png · hint slide-in à 5.5s
+- Screen1 : texte séquentiel · halo de profondeur · hint slide-in à 5.2s
+- Screen2 : slide fade in
 
-**Phrases :**
-- 4 variantes par texture × monde (total 144 phrases)
-- Sélection déterministe par couleur (colorIdx % 4) — pas aléatoire
-- Typing speed adapté au monde : feu=30ms, cosmos=38ms, brume=44ms, eau=46ms, forêt=50ms, vide=64ms
+**Rituel :**
+- Couleur : 8 orbes positionnés via `translate(-50%,-50%)` (bug centering fixed) · selectedGlow pulse · label flash 12px slide-up-exit · vignette radiale
+- Texture : mots épars · isolation avec textzoom bloom (scale 0.92→1) · touch feedback + hit area élargi
+- Son : 4 sons · soundbar par signature sonore (pluie/vent/feu) · silence 3 dots · symboles animés par type · ENTRER touch + hit area
+- Progression 3 points : dot actif pulse (dotpulse 2.8s)
+- Haptics : [6] step · [12,60,18] complétion · blackout teinté par monde (WORLD_BLACKOUT)
+
+**6 Mondes :**
+- Brume : 5 couches mist (dont 1 haute très lente 48s)
+- Forêt : 6 God-rays (1 doré) + brume de sol verte (screen)
+- Cosmos : 38 étoiles + 2 nébuleuses + aurora borealis 2 couches (34s/50s) + 3 étoiles filantes
+- Feu : shimmer + 14 braises + crépitement bandpass(1900Hz)
+- Eau : 5 ondulations + reflet de surface (eauGrad shimmer 11s)
+- Vide : pouls radial + 20 motes
 
 **Audio (Web Audio API) :**
-- Pluie : bruit blanc highpass(2200) → lowpass(9000)
-- Vent : bruit bandpass(380) + LFO 0.08Hz (vent qui varie)
-- Feu : bruit lowpass(320) + LFO sawtooth 0.35Hz (fluctuations)
-- Silence : noop (pas de son)
-- Réverbe atmosphérique : ConvolverNode 2.2s, send parallèle 14% wet
-- Fade-in : setTargetAtTime(volume, t, 0.7) — courbe exponentielle naturelle
-- Fade-out : setTargetAtTime(0, t, 0.3) — exponentiel, ctx.close() à 1.5s
-- setVolume() : setTargetAtTime() — fondu naturel (tc = dur/4)
-- Mute/unmute : exponentiel (tc=0.15s)
-- À 90s : fade vers 0.008 (tc=2s) — audio quasi-silence
+- Pluie : highpass(2200)→lowpass(9000) + basse lowpass(110Hz) 12%
+- Vent : bandpass(380) + LFO 0.08Hz + harmonique bandpass(760Hz) 28%
+- Feu : lowpass(320) + sawtooth LFO 0.35Hz + crépitement bandpass(1900) sawtooth 4.6Hz 9%
+- Silence : noop · Réverbe : ConvolverNode 2.2s, 14% wet
+- Audio bridge : démarre à 0.022 dès WorldReveal, fade→0.04 à 1s (ponts le gap rituel→monde)
+- Fade-in exp (tc=0.7s) · Fade-out exp (tc=0.3s) · setVolume exp · À 90s : →0.008
 
 **WorldReveal :**
-- Phases : black → world (1s) → name (2.8s) → phrase (4.6s)
-- Typing effect par monde (30–64ms/char)
-- worldBreathe adapté à la texture (speed variable)
-- cerfdrift : rotation organique ±0.8°
-- Overlays atmosphériques par monde
-- Ambiance persist vers EspaceVrai (stopAmbienceRef)
-- Slide sur phrase + "espace vrai →" (touch feedback mobile)
+- Audio démarre immédiatement (bridge gap depuis rituel)
+- Cursor | clignotant pendant frappe · haptic [2] sur nom du monde
+- Arrow "→" drifts 4px (arrowdrift 2.2s) sur "espace vrai →"
+- Haptic [4] sur entrée EspaceVrai
 
 **EspaceVrai :**
-- Fond du monde actif : espacebreathe 38s (respiration subtile)
-- Teinte personnelle (dominantColor, ~4%) + dominantShimmer 28s
-- Nom du monde géant : worldnamepulse 45s (0.018→0.026 opacity)
-- Flux anonyme (22 orbes + présence utilisateur pulse)
-- Histoire silencieuse : spirale Fibonacci, h0pulse 3.8s sur dot actuel
-- Cerf fantôme : cerfdrift-ghost 42s + rotation organique ±0.6°
-- Compteur de présences (après 5s, slide)
-- "première présence" pour 1er utilisateur (7s, ultra-discret)
-- Whisper du monde (4.5s, slide)
-- "encore ici" si même monde que visite précédente (3.2s)
-- Résumé rituel (2.5s, slide)
-- "tu n'es pas seul·e" (0.8s, slide)
-- Insight "tu reviens souvent ici" si monde dominant (8.5s)
-- Bouton "nouveau rituel" après 12s + touch feedback mobile
-- Long-press logo → reset histoire avec confirmation
-- À 90s : voile nocturne teinté par monde.palette[0]6e + haptic [8,60,8] + "à demain" slide + fade audio
+- User presence : pulse + 2 cercles ripple (userRipple 7s staggerés)
+- "tu prends ton temps" à 30s
+- Insight monde dominant : phrase spécifique par monde (6 variantes)
+- Adieu time-aware : bonne nuit (22h-5h) / à tout à l'heure (matin) / à demain (jour)
+- Long-press logo : feedback visuel opacity 0.55 pendant pression
+- "encore ici" à top:13% (évite overlap compteur)
 
 **Transitions :**
-- Blackout 380ms entre les écrans majeurs
+- Blackout 380ms teinté par le monde de destination (WORLD_BLACKOUT)
 - Grain texture global (SVG data URI, mix-blend-mode overlay 0.038)
-- Fade component : slide=true (translateY 7px)
+- Fade component : slide=true (translateY 7px) · delay prop disponible
 
 **Histoire silencieuse :**
 - `localStorage['neya_history']` : max 90 entrées {ts, color, texture, sound, world}
