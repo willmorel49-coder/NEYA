@@ -400,6 +400,21 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
     return () => [t1, t2, t3, t4, t5].forEach(clearTimeout)
   }, [onDone, hasHistory, lastWorld])
 
+  const splashStars = [
+    { x: 12, y: 8,  r: 0.8, op: 0.14, period: 4.2, delay: 0 },
+    { x: 28, y: 15, r: 0.5, op: 0.09, period: 6.1, delay: 1.5 },
+    { x: 45, y: 6,  r: 0.7, op: 0.11, period: 5.0, delay: 2.8 },
+    { x: 67, y: 11, r: 0.6, op: 0.08, period: 7.3, delay: 0.8 },
+    { x: 82, y: 19, r: 0.9, op: 0.13, period: 4.8, delay: 3.2 },
+    { x: 91, y: 7,  r: 0.5, op: 0.07, period: 6.6, delay: 1.0 },
+    { x: 8,  y: 28, r: 0.6, op: 0.10, period: 5.4, delay: 2.2 },
+    { x: 55, y: 22, r: 0.4, op: 0.07, period: 8.0, delay: 0.5 },
+    { x: 75, y: 30, r: 0.7, op: 0.09, period: 5.7, delay: 4.0 },
+    { x: 38, y: 35, r: 0.5, op: 0.08, period: 6.9, delay: 1.8 },
+    { x: 22, y: 42, r: 0.4, op: 0.06, period: 7.5, delay: 3.5 },
+    { x: 60, y: 38, r: 0.6, op: 0.08, period: 5.3, delay: 2.6 },
+  ]
+
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center z-50"
       style={{ background: '#050810', opacity: fading ? 0 : 1, transition: 'opacity 900ms ease' }}>
@@ -416,7 +431,16 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
           from { opacity: 0; transform: translateY(4px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes splashtw { 0%,100%{opacity:0.6} 50%{opacity:1} }
       `}</style>
+      {/* Champ d'étoiles — l'univers attend */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'hidden' }}>
+        {splashStars.map((s, i) => (
+          <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r}
+            fill={`rgba(255,255,255,${s.op})`}
+            style={{ animation: `splashtw ${s.period}s ${s.delay}s ease-in-out infinite` }} />
+        ))}
+      </svg>
       <div style={{ opacity: visible ? 1 : 0, transition: 'opacity 1400ms ease', animation: visible ? (hasHistory ? 'splashpulsereturning 4.8s ease-in-out infinite' : 'splashpulse 3.5s ease-in-out infinite') : 'none' }}>
         <NeyaLogo size="lg" />
       </div>
@@ -682,6 +706,15 @@ function startAmbience(type, volume = 0.07) {
     source.connect(filter)
     filter.connect(filter2)
     filter2.connect(gainNode)
+    // Basse fréquence — terre mouillée, corps de la pluie
+    const bassFilter = ctx.createBiquadFilter()
+    bassFilter.type = 'lowpass'
+    bassFilter.frequency.value = 110
+    const bassGain = ctx.createGain()
+    bassGain.gain.value = 0.12
+    source.connect(bassFilter)
+    bassFilter.connect(bassGain)
+    bassGain.connect(gainNode)
   } else if (type === 'vent') {
     filter.type = 'bandpass'
     filter.frequency.value = 380
@@ -696,6 +729,16 @@ function startAmbience(type, volume = 0.07) {
     lfo.start()
     source.connect(filter)
     filter.connect(gainNode)
+    // Harmonique — sifflement du vent dans les branches
+    const harmFilter = ctx.createBiquadFilter()
+    harmFilter.type = 'bandpass'
+    harmFilter.frequency.value = 760
+    harmFilter.Q.value = 0.3
+    const harmGain = ctx.createGain()
+    harmGain.gain.value = 0.28
+    source.connect(harmFilter)
+    harmFilter.connect(harmGain)
+    harmGain.connect(gainNode)
   } else if (type === 'feu') {
     filter.type = 'lowpass'
     filter.frequency.value = 320
@@ -740,6 +783,8 @@ function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
         className="absolute inset-0 transition-all duration-[1400ms] ease-out"
         style={{ background: bgColor }}
       />
+      {/* Vignette — profondeur picturale */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1, background: 'radial-gradient(ellipse at 50% 48%, transparent 38%, rgba(5,8,16,0.52) 100%)' }} />
 
       {/* Indicateur de progression — 3 points */}
       <style>{`@keyframes dotpulse{0%,100%{opacity:0.35}50%{opacity:0.7}}`}</style>
@@ -1630,6 +1675,16 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
                 : `drift-${p.id} ${p.period}s ${p.delay}s ease-in-out infinite`
             }} />
         ))}
+        {/* Ripple émanant de la présence utilisateur */}
+        {(() => {
+          const u = flux.find(p => p.id === 99)
+          if (!u) return null
+          return [0, 1].map(i => (
+            <circle key={`ur${i}`} cx={`${u.x}%`} cy={`${u.y}%`} r="0"
+              fill="none" stroke={u.color} strokeWidth="0.5"
+              style={{ animation: `userRipple 7s ${i * 3.5}s ease-out infinite` }} />
+          ))
+        })()}
         <style>
           {flux.filter(p => !p.immobile).map(p => `
             @keyframes drift-${p.id} {
@@ -1646,6 +1701,10 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
           @keyframes h0pulse {
             0%, 100% { transform: scale(1);   opacity: 0.16; }
             50%       { transform: scale(2.6); opacity: 0.06; }
+          }
+          @keyframes userRipple {
+            0%   { r: 8px; opacity: 0.22; }
+            100% { r: 48px; opacity: 0; }
           }`}
         </style>
       </svg>
