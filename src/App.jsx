@@ -1027,7 +1027,7 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
       )}
 
       {selected && !isolated && (
-        <Fade slide className="absolute bottom-14 left-1/2 -translate-x-1/2">
+        <Fade slide delay={400} className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
             onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
@@ -1308,7 +1308,7 @@ function EauRipples() {
 
 function VidePulse() {
   const motes = useRef(
-    Array.from({ length: 20 }, () => ({
+    Array.from({ length: 25 }, () => ({
       x: 15 + Math.random() * 70,
       y: 20 + Math.random() * 60,
       r: 0.6 + Math.random() * 0.9,
@@ -1426,6 +1426,7 @@ function CosmosParticles() {
       <style>{`@keyframes aurorashift{0%,100%{transform:translateY(0) scaleX(1);opacity:0.6}50%{transform:translateY(-10px) scaleX(1.05);opacity:1}}`}</style>
       <div style={{ position: 'absolute', top: '4%', left: '-15%', right: '-15%', height: '28%', background: 'linear-gradient(to bottom, rgba(20,184,166,0.07) 0%, rgba(99,102,241,0.04) 55%, transparent 100%)', animation: 'aurorashift 34s ease-in-out infinite', mixBlendMode: 'screen', filter: 'blur(22px)' }} />
       <div style={{ position: 'absolute', top: '10%', left: '-10%', right: '-10%', height: '18%', background: 'linear-gradient(to bottom, rgba(139,92,246,0.05) 0%, rgba(20,184,166,0.03) 60%, transparent 100%)', animation: 'aurorashift 50s 20s ease-in-out infinite', mixBlendMode: 'screen', filter: 'blur(28px)' }} />
+      <div style={{ position: 'absolute', top: '18%', left: '-20%', right: '-20%', height: '12%', background: 'linear-gradient(to bottom, rgba(245,158,11,0.025) 0%, rgba(99,102,241,0.015) 70%, transparent 100%)', animation: 'aurorashift 70s 38s ease-in-out infinite', mixBlendMode: 'screen', filter: 'blur(32px)' }} />
     </div>
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3, overflow: 'hidden' }}>
       <defs>
