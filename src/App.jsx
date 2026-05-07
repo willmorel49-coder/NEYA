@@ -29,31 +29,37 @@ const WORLDS = {
           "On dirait que tout pèse un peu plus aujourd'hui.",
           "Quelque chose alourdit l'air autour de toi.",
           "Tu portes quelque chose que tu n'as pas nommé.",
+          "Ce qui pèse mérite aussi d'être vu.",
         ],
         léger:   [
           "Quelque chose en toi cherche le calme.",
           "Il y a une légèreté qui commence à revenir.",
           "Quelque chose s'allège, doucement.",
+          "Il y a une clarté qui revient, peu à peu.",
         ],
         rugueux: [
           "Quelque chose résiste en toi aujourd'hui.",
           "Ça frotte, quelque part. C'est normal.",
           "Il n'y a rien à lisser pour l'instant.",
+          "Ça peut être rugueux et vrai en même temps.",
         ],
         doux:    [
           "Tu peux rester ici un moment.",
           "Il y a une douceur possible, même maintenant.",
           "Quelque chose en toi sait se ménager.",
+          "La douceur n'est pas une faiblesse ici.",
         ],
         chaud:   [
           "Quelque chose couve, intérieurement.",
           "Il y a de la vie là-dedans, même si c'est tendu.",
           "Tu n'es pas obligé·e de refroidir.",
+          "Cette chaleur-là, garde-la.",
         ],
         froid:   [
           "Quelque chose ralentit en toi aujourd'hui.",
           "Tu peux rester ici sans résoudre quoi que ce soit.",
           "Il n'y a rien à résoudre pour l'instant.",
+          "Le froid aussi sait tenir compagnie.",
         ],
       },
       default: "Tu peux rester ici un moment.",
@@ -72,31 +78,37 @@ const WORLDS = {
           "La forêt accueille aussi ce qui est lourd.",
           "Certaines racines s'enfoncent dans l'obscurité.",
           "Être dense, c'est aussi une forme de vie.",
+          "Même les plus vieilles forêts portent leurs morts.",
         ],
         léger:   [
           "Quelque chose pousse ici, silencieusement.",
           "Même l'air entre les arbres a de l'espace.",
           "Il y a une légèreté dans ce qui persiste.",
+          "Les arbres poussent lentement. Ça fait partie.",
         ],
         rugueux: [
           "Rugueux, comme l'écorce. Ça tient quand même.",
           "Ce qui résiste a aussi ses textures.",
           "Pas besoin d'être lisse pour traverser.",
+          "L'écorce protège ce qui est tendre à l'intérieur.",
         ],
         doux:    [
           "Le sol de la forêt amortit les pas.",
           "Il y a une douceur dans ce qui dure.",
           "Certains endroits existent pour accueillir.",
+          "Ici, le temps est différent. Moins exigeant.",
         ],
         chaud:   [
           "Quelque chose grandit en toi, même sous l'ombre.",
           "Une chaleur intérieure, comme la sève qui monte.",
           "Être vivant, ça chauffe parfois.",
+          "Ce qui grandit en silence finit par fleurir.",
         ],
         froid:   [
           "Le froid de la forêt est vieux et patient.",
           "Rien n'est pressé ici.",
           "Le calme peut être une forme de force.",
+          "Le silence d'hiver prépare quelque chose.",
         ],
       },
       default: "Certains endroits existent pour accueillir.",
@@ -115,31 +127,37 @@ const WORLDS = {
           "Même les étoiles portent leur propre poids.",
           "Loin du sol, quelque chose reste.",
           "L'espace n'allège pas tout — il donne de la place.",
+          "La gravité s'applique aussi aux grandes choses.",
         ],
         léger:   [
           "Quelque chose en toi sait flotter.",
           "Il y a de l'infini dans ce moment.",
           "Léger comme ce qui ne cherche plus à se justifier.",
+          "Ce moment existe, et c'est déjà quelque chose.",
         ],
         rugueux: [
           "Même le cosmos a ses aspérités invisibles.",
           "Ce qui accroche peut aussi guider.",
           "La rugosité n'empêche pas le vol.",
+          "Même l'espace a ses turbulences.",
         ],
         doux:    [
           "Là-haut, tout est plus silencieux.",
           "L'espace entre les étoiles n'est pas vide.",
           "Il y a une douceur dans l'immensité.",
+          "La lumière des étoiles voyage longtemps avant d'arriver.",
         ],
         chaud:   [
           "Quelque chose brûle ici, depuis longtemps.",
           "Il y a de la chaleur même dans l'espace.",
           "Un feu lointain qui dure.",
+          "Quelque chose dans l'univers se souvient de toi.",
         ],
         froid:   [
           "Le froid du cosmos est pur, pas hostile.",
           "Quelque chose se cristallise quand tout ralentit.",
           "La distance peut être une forme de clarté.",
+          "L'absolu froid de l'espace n'empêche pas d'exister.",
         ],
       },
       default: "Il y a de l'infini dans ce moment.",
@@ -158,31 +176,37 @@ const WORLDS = {
           "Ce qui brûle en toi n'est pas un défaut.",
           "Quelque chose est intense aujourd'hui. C'est réel.",
           "Le poids du feu est différent — il consume, il libère.",
+          "Le feu aussi porte ses cendres.",
         ],
         léger:   [
           "Le feu peut aussi danser.",
           "Il y a une légèreté dans ce qui brûle vraiment.",
           "Quelque chose se consume pour laisser de la place.",
+          "La flamme qui danse n'a pas à se justifier.",
         ],
         rugueux: [
           "Brut, direct, vif — c'est une façon d'être présent.",
           "Ce qui frotte peut s'enflammer.",
           "L'intensité a ses propres textures.",
+          "Ce qui est âpre peut aussi être vif.",
         ],
         doux:    [
           "Même le feu a ses braises douces.",
           "Il y a un feu calme dans les choses qui durent.",
           "Ce qui couve n'a pas besoin d'exploser.",
+          "Même le feu sait être doux, parfois.",
         ],
         chaud:   [
           "Quelque chose t'habite pleinement en ce moment.",
           "Cette chaleur-là, tu peux lui faire confiance.",
           "Être habité, c'est être vivant.",
+          "Tu n'as pas à te refroidir pour les autres.",
         ],
         froid:   [
           "Même quand le froid vient, la braise reste.",
           "Quelque chose résiste sous la surface.",
           "Le froid ne tue pas ce qui est vraiment allumé.",
+          "Sous la surface froide, il y a toujours de la chaleur.",
         ],
       },
       default: "Ce qui brûle en toi n'est pas un défaut.",
@@ -201,31 +225,37 @@ const WORLDS = {
           "L'eau porte aussi ce qui est lourd.",
           "Quelque chose coule mais ne disparaît pas.",
           "Même dense, tu flottes.",
+          "Le fond de l'eau est lourd, et c'est normal.",
         ],
         léger:   [
           "L'eau sait comment être légère.",
           "Quelque chose en toi cherche sa surface.",
           "Il y a une fluidité dans les jours qui passent.",
+          "Quelque chose en toi trouve sa surface.",
         ],
         rugueux: [
           "L'eau adoucit ce qui résiste, avec le temps.",
           "Même rugueux, le fond peut être traversé.",
           "Quelque chose érode doucement.",
+          "L'eau finit par polir ce qui résiste.",
         ],
         doux:    [
           "L'eau se souvient des formes qu'elle a traversées.",
           "Il y a une douceur dans ce qui s'écoule.",
           "Laisser couler n'est pas renoncer.",
+          "Ce qui coule s'adapte. C'est une force.",
         ],
         chaud:   [
           "Quelque chose est vivant et en mouvement.",
           "Cette chaleur-là, l'eau la garde longtemps.",
           "Ce qui coule garde sa propre température.",
+          "Cette eau-là garde quelque chose de vivant.",
         ],
         froid:   [
           "Une fraîcheur qui réveille sans brusquer.",
           "L'eau froide est honnête.",
           "Ce froid-là nettoie quelque chose.",
+          "L'eau froide est franche, directe, réelle.",
         ],
       },
       default: "Laisser couler n'est pas renoncer.",
@@ -244,31 +274,37 @@ const WORLDS = {
           "Le vide accueille même ce qui est lourd.",
           "Ici, le poids n'a pas besoin de se justifier.",
           "Silence total. C'est suffisant.",
+          "Même dans le vide, tu existes pleinement.",
         ],
         léger:   [
           "Il n'y a rien à faire ici.",
           "Le vide n'est pas une absence — c'est un espace.",
           "Quelque chose respire quand tout s'arrête.",
+          "L'absence de bruit est aussi une présence.",
         ],
         rugueux: [
           "Même dans le vide, tu existes.",
           "Ce qui résiste peut aussi se poser.",
           "Pas de lissage nécessaire ici.",
+          "Même dans le silence, tu peux être brut.",
         ],
         doux:    [
           "Il n'y a rien à tenir.",
           "La paix n'est pas l'absence de quelque chose.",
           "Tu peux ne rien être pour un moment.",
+          "Ce n'est pas vide — c'est espace.",
         ],
         chaud:   [
           "Même dans le silence, quelque chose couve.",
           "Une chaleur intérieure qui n'a pas besoin de se montrer.",
           "Être, simplement.",
+          "Quelque chose de chaud résiste dans le calme absolu.",
         ],
         froid:   [
           "Le silence froid est l'un des plus honnêtes.",
           "Rien ne bouge. C'est bien comme ça.",
           "Ce moment ne demande rien.",
+          "Ce silence-là est propre, sans résidu.",
         ],
       },
       default: "Il n'y a rien à faire ici.",
@@ -372,12 +408,16 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
           0%, 100% { opacity: 0.72; transform: scale(1); }
           50%       { opacity: 1;    transform: scale(1.03); }
         }
+        @keyframes splashpulsereturning {
+          0%, 100% { opacity: 0.68; transform: scale(1); }
+          50%       { opacity: 0.92; transform: scale(1.014); }
+        }
         @keyframes returnfade {
           from { opacity: 0; transform: translateY(4px); }
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-      <div style={{ opacity: visible ? 1 : 0, transition: 'opacity 1400ms ease', animation: visible ? 'splashpulse 3.5s ease-in-out infinite' : 'none' }}>
+      <div style={{ opacity: visible ? 1 : 0, transition: 'opacity 1400ms ease', animation: visible ? (hasHistory ? 'splashpulsereturning 4.8s ease-in-out infinite' : 'splashpulse 3.5s ease-in-out infinite') : 'none' }}>
         <NeyaLogo size="lg" />
       </div>
       {showReturn && (
@@ -759,6 +799,10 @@ function RitualColor({ selected, onSelect, onNext }) {
             0%, 100% { box-shadow: none; transform: translate(-50%, -50%) scale(1); }
             50%       { box-shadow: 0 0 18px ${c.hex}44; transform: translate(-50%, -50%) scale(1.06); }
           }
+          @keyframes selectedGlow${i} {
+            0%, 100% { box-shadow: 0 0 28px ${c.hex}66, 0 0 10px ${c.hex}44; }
+            50%       { box-shadow: 0 0 48px ${c.hex}99, 0 0 22px ${c.hex}66; }
+          }
         `).join('')}
       `}</style>
 
@@ -799,7 +843,9 @@ function RitualColor({ selected, onSelect, onNext }) {
               boxShadow: isSelected ? `0 0 32px ${c.hex}80, 0 0 12px ${c.hex}50` : 'none',
               transform: isSelected ? 'scale(1.1) translate(-8px, -8px)' : undefined,
               filter: 'saturate(0.6) brightness(0.88)',
-              animation: !isSelected && !selected ? `colorBreathe${i} ${breathePeriods[i]}s ease-in-out infinite` : 'none',
+              animation: isSelected
+                ? `selectedGlow${i} ${breathePeriods[i] * 0.6}s ease-in-out infinite`
+                : !selected ? `colorBreathe${i} ${breathePeriods[i]}s ease-in-out infinite` : 'none',
               transition: 'opacity 0.55s ease, box-shadow 0.55s ease, transform 0.55s ease',
               cursor: 'pointer',
               border: 'none',
@@ -809,7 +855,7 @@ function RitualColor({ selected, onSelect, onNext }) {
       })}
 
       {selected && (
-        <Fade className="absolute bottom-14 left-1/2 -translate-x-1/2">
+        <Fade slide className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
             style={{
@@ -859,7 +905,7 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
       </p>
 
       {isolated ? (
-        <Fade key={isolated} className="absolute inset-0 flex items-center justify-center">
+        <Fade slide key={isolated} className="absolute inset-0 flex items-center justify-center">
           <p style={{
             fontFamily: 'Sora', fontWeight: 300, fontSize: 40, letterSpacing: '0.2em',
             color: ritualColor ? `color-mix(in srgb, ${ritualColor} 20%, rgba(255,255,255,0.82))` : 'rgba(255,255,255,0.82)',
@@ -898,7 +944,7 @@ function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
       )}
 
       {selected && !isolated && (
-        <Fade className="absolute bottom-14 left-1/2 -translate-x-1/2">
+        <Fade slide className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
             style={{
@@ -1002,7 +1048,7 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
         }
       `}</style>
       {selected && (
-        <Fade className="absolute bottom-14 left-1/2 -translate-x-1/2">
+        <Fade slide className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
             style={{
@@ -1027,11 +1073,12 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
 
 function ForetRays() {
   const rays = [
-    { x: 15, angle: -10, opacity: 0.07, width: 55, delay: '0s' },
+    { x: 15, angle: -10, opacity: 0.07, width: 55,  delay: '0s' },
     { x: 32, angle:  -4, opacity: 0.05, width: 100, delay: '5s' },
-    { x: 50, angle:   2, opacity: 0.08, width: 45, delay: '2s' },
-    { x: 67, angle:  -6, opacity: 0.06, width: 80, delay: '7s' },
-    { x: 84, angle:   7, opacity: 0.05, width: 60, delay: '3.5s' },
+    { x: 50, angle:   2, opacity: 0.08, width: 45,  delay: '2s' },
+    { x: 67, angle:  -6, opacity: 0.06, width: 80,  delay: '7s' },
+    { x: 84, angle:   7, opacity: 0.05, width: 60,  delay: '3.5s' },
+    { x: 42, angle:  -2, opacity: 0.03, width: 200, delay: '11s' },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
@@ -1107,11 +1154,11 @@ function FeuShimmer() {
 
 function EauRipples() {
   const ripples = [
-    { cx: 50, cy: 58, delay: '0s',  period: 9,  maxR: 130, sw: 0.6 },
-    { cx: 50, cy: 58, delay: '3s',  period: 9,  maxR: 130, sw: 0.4 },
-    { cx: 50, cy: 58, delay: '6s',  period: 9,  maxR: 130, sw: 0.3 },
-    { cx: 35, cy: 70, delay: '1.5s', period: 12, maxR: 80,  sw: 0.5 },
-    { cx: 68, cy: 50, delay: '4.5s', period: 11, maxR: 70,  sw: 0.4 },
+    { cx: 50, cy: 58, delay: '0s',   period: 9,  maxR: 130, sw: 0.6, stroke: 'rgba(80,180,210,0.35)' },
+    { cx: 50, cy: 58, delay: '3s',   period: 9,  maxR: 130, sw: 0.4, stroke: 'rgba(80,180,210,0.28)' },
+    { cx: 50, cy: 58, delay: '6s',   period: 9,  maxR: 130, sw: 0.3, stroke: 'rgba(80,180,210,0.22)' },
+    { cx: 35, cy: 70, delay: '1.5s', period: 12, maxR: 80,  sw: 0.5, stroke: 'rgba(80,200,180,0.30)' },
+    { cx: 68, cy: 50, delay: '4.5s', period: 11, maxR: 70,  sw: 0.4, stroke: 'rgba(100,190,220,0.25)' },
   ]
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3, overflow: 'visible' }}>
@@ -1126,7 +1173,7 @@ function EauRipples() {
       </style>
       {ripples.map((r, i) => (
         <circle key={i} cx={`${r.cx}%`} cy={`${r.cy}%`} r="0"
-          fill="none" stroke="rgba(80,180,210,0.35)" strokeWidth={r.sw}
+          fill="none" stroke={r.stroke} strokeWidth={r.sw}
           style={{ animation: `ripple${i} ${r.period}s ${r.delay} ease-out infinite` }} />
       ))}
     </svg>
@@ -1187,15 +1234,17 @@ function BrumeMist() {
         @keyframes mist0 { 0%,100%{transform:translateX(-10px);opacity:0.07} 50%{transform:translateX(18px);opacity:0.12} }
         @keyframes mist1 { 0%,100%{transform:translateX(5px);opacity:0.05}  50%{transform:translateX(-14px);opacity:0.09} }
         @keyframes mist2 { 0%,100%{transform:translateX(-6px);opacity:0.06} 50%{transform:translateX(12px);opacity:0.10} }
+        @keyframes mist3 { 0%,100%{transform:translateX(8px);opacity:0.04}  50%{transform:translateX(-10px);opacity:0.07} }
       `}</style>
       {[
-        { left: '5%',  top: '52%', w: 320, h: 90,  anim: 'mist0 20s ease-in-out infinite' },
-        { left: '-8%', top: '38%', w: 260, h: 75,  anim: 'mist1 26s 8s ease-in-out infinite' },
-        { left: '28%', top: '62%', w: 380, h: 100, anim: 'mist2 18s 3s ease-in-out infinite' },
+        { left: '5%',  top: '52%', w: 320, h: 90,  anim: 'mist0 20s ease-in-out infinite',      bg: 'rgba(160,190,220,0.18)' },
+        { left: '-8%', top: '38%', w: 260, h: 75,  anim: 'mist1 26s 8s ease-in-out infinite',   bg: 'rgba(140,175,215,0.15)' },
+        { left: '28%', top: '62%', w: 380, h: 100, anim: 'mist2 18s 3s ease-in-out infinite',   bg: 'rgba(175,200,225,0.16)' },
+        { left: '-5%', top: '22%', w: 280, h: 65,  anim: 'mist3 32s 14s ease-in-out infinite',  bg: 'rgba(120,155,200,0.12)' },
       ].map((p, i) => (
         <div key={i} style={{
           position: 'absolute', left: p.left, top: p.top, width: p.w, height: p.h,
-          background: 'radial-gradient(ellipse at center, rgba(160,190,220,0.18) 0%, transparent 70%)',
+          background: `radial-gradient(ellipse at center, ${p.bg} 0%, transparent 70%)`,
           filter: 'blur(14px)', animation: p.anim, mixBlendMode: 'screen',
         }} />
       ))}
@@ -1207,15 +1256,20 @@ function BrumeMist() {
 
 function CosmosParticles() {
   const stars = useRef(
-    Array.from({ length: 38 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      r: 0.5 + Math.random() * 1.2,
-      opacity: 0.1 + Math.random() * 0.35,
-      period: 3 + Math.random() * 6,
-      delay: Math.random() * 5,
-    }))
+    Array.from({ length: 38 }, (_, i) => {
+      const t = Math.random()
+      const color = t < 0.25 ? 'rgba(255,235,180,1)' : t < 0.5 ? 'rgba(180,210,255,1)' : 'rgba(200,220,255,1)'
+      return {
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        r: 0.5 + Math.random() * 1.2,
+        opacity: 0.1 + Math.random() * 0.35,
+        period: 3 + Math.random() * 6,
+        delay: Math.random() * 5,
+        color,
+      }
+    })
   ).current
 
   const shooters = useRef([
@@ -1251,7 +1305,7 @@ function CosmosParticles() {
       </style>
       {stars.map(s => (
         <circle key={s.id} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r}
-          fill="rgba(200,220,255,1)" filter="url(#starGlow)"
+          fill={s.color} filter="url(#starGlow)"
           style={{ animation: `startwinkle${s.id} ${s.period}s ${s.delay}s ease-in-out infinite` }} />
       ))}
       {shooters.map((s, i) => (
@@ -1290,14 +1344,16 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
 
   useEffect(() => {
     if (phase !== 'phrase') return
+    const speeds = { feu: 30, cosmos: 38, brume: 44, eau: 46, foret: 50, vide: 64 }
+    const msPerChar = speeds[worldKey] ?? 44
     let i = 0
     const interval = setInterval(() => {
       setDisplayedPhrase(fullPhrase.slice(0, i + 1))
       i++
       if (i >= fullPhrase.length) clearInterval(interval)
-    }, 44)
+    }, msPerChar)
     return () => clearInterval(interval)
-  }, [phase, fullPhrase])
+  }, [phase, fullPhrase, worldKey])
 
   const textureSpeed = {
     lourd: '18s', léger: '28s', rugueux: '12s', doux: '22s', chaud: '20s', froid: '25s',
@@ -1458,7 +1514,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
   useEffect(() => {
     const t1 = setTimeout(() => setShowRestart(true), 12000)
-    const t2 = setTimeout(() => setShowAdieu(true), 90000)
+    const t2 = setTimeout(() => { setShowAdieu(true); haptic([8, 60, 8]) }, 90000)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
 
@@ -1478,8 +1534,10 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
   return (
     <Fade className="w-full h-full absolute inset-0" duration={1800}>
+      <style>{`@keyframes espacebreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.022)}}`}</style>
+
       {/* Image de fond du monde — très opacifiée, transcende le monde */}
-      <div className="absolute inset-0" style={{ backgroundImage: world.bgImage, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+      <div className="absolute inset-0" style={{ backgroundImage: world.bgImage, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'espacebreathe 38s ease-in-out infinite' }} />
 
       {/* Voile très épais — l'espace vrai est au-delà du monde */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}fd 0%, ${world.palette[0]}ee 35%, ${world.palette[1]}cc 75%, ${world.palette[0]}bb 100%)` }} />
@@ -1514,7 +1572,15 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
         {/* Présences passées — traces silencieuses */}
         {historyDots.map(p => (
-          <circle key={p.id} cx={`${p.x}%`} cy={`${p.y}%`} r={p.size} fill={p.color} opacity={p.opacity} filter="url(#phistory)" />
+          <circle
+            key={p.id}
+            cx={`${p.x}%`} cy={`${p.y}%`}
+            r={p.size}
+            fill={p.color}
+            opacity={p.opacity}
+            filter="url(#phistory)"
+            style={p.id === 'h0' ? { animation: 'h0pulse 3.8s ease-in-out infinite', transformBox: 'fill-box', transformOrigin: 'center' } : undefined}
+          />
         ))}
 
         {/* Flux anonyme live */}
@@ -1539,13 +1605,19 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
           {`@keyframes userPresencePulse {
             0%, 100% { opacity: 0.50; }
             50%       { opacity: 0.72; }
+          }
+          @keyframes h0pulse {
+            0%, 100% { transform: scale(1);   opacity: 0.16; }
+            50%       { transform: scale(2.6); opacity: 0.06; }
           }`}
         </style>
       </svg>
 
+      <style>{`@keyframes cerfdrift-ghost{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(-4px,-3px) scale(1.008)}75%{transform:translate(3px,3px) scale(0.993)}}`}</style>
+
       {/* Cerf fantôme — l'animal était là avant, il est encore là */}
       <Fade duration={3000} delay={1200} className="absolute inset-0 flex items-end justify-end pointer-events-none" style={{ paddingBottom: '8%', paddingRight: '4%' }}>
-        <img src="/cerf.svg" alt="" aria-hidden="true" style={{ width: '28vw', maxWidth: 130, opacity: 0.07, filter: world.animalFilter }} />
+        <img src="/cerf.svg" alt="" aria-hidden="true" style={{ width: '28vw', maxWidth: 130, opacity: 0.07, filter: world.animalFilter, animation: 'cerfdrift-ghost 42s ease-in-out infinite' }} />
       </Fade>
 
       {/* Compteur de présences passées — ultra-discret */}
@@ -1553,6 +1625,15 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         <Fade slide duration={2000} delay={5000} className="absolute" style={{ top: '22%', left: '50%', transform: 'translateX(-50%)' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
             {history.length} présences
+          </p>
+        </Fade>
+      )}
+
+      {/* Première présence — marqueur invisible pour le nouvel utilisateur */}
+      {history.length === 1 && (
+        <Fade slide duration={2800} delay={7000} className="absolute" style={{ top: '48%', left: '56%' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }}>
+            première présence
           </p>
         </Fade>
       )}
@@ -1601,14 +1682,14 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         </Fade>
       )}
 
-      {/* Voile nocturne — s'étend doucement quand "à demain" arrive */}
+      {/* Voile nocturne — teinté par le monde, descend doucement */}
       {showAdieu && (
-        <Fade duration={9000} className="absolute inset-0 pointer-events-none" style={{ zIndex: 24, background: 'rgba(0,0,0,0.42)' }} />
+        <Fade duration={9000} className="absolute inset-0 pointer-events-none" style={{ zIndex: 24, background: `${world.palette[0]}6e` }} />
       )}
 
       {/* Message "à demain" après longue présence */}
       {showAdieu && (
-        <Fade duration={3000} className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ zIndex: 25 }}>
+        <Fade slide duration={3000} className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ zIndex: 25 }}>
           <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 15, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.28)', textAlign: 'center', marginBottom: 12 }}>
             à demain
           </p>
@@ -1706,6 +1787,7 @@ export default function App() {
 
   const handleRitualStepComplete = useCallback((completedStep) => {
     if (completedStep < 2) {
+      haptic([6])
       setStep(s => s + 1)
     } else {
       haptic([12, 60, 18])
@@ -1726,6 +1808,7 @@ export default function App() {
   // Navigation clavier globale
   useEffect(() => {
     const handler = (e) => {
+      if (e.key === 'm' || e.key === 'M') { setMuted(m => !m); return }
       if (e.key !== 'Enter' && e.key !== ' ') return
       if (screen === 'onboarding') handleOnboardingNext()
     }
@@ -1754,6 +1837,7 @@ export default function App() {
   }, [screen])
 
   const handleRestart = useCallback(() => {
+    haptic([6])
     stopAmbienceRef.current()
     stopAmbienceRef.current = () => {}
     setRitual(INITIAL_RITUAL)
