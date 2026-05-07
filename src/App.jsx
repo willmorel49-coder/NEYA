@@ -482,6 +482,11 @@ function Onboarding({ step, onNext }) {
 }
 
 function OnboardingScreen0() {
+  const [showHint, setShowHint] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setShowHint(true), 5500)
+    return () => clearTimeout(t)
+  }, [])
   return (
     <Fade className="w-full h-full relative overflow-hidden">
       <div
@@ -512,6 +517,11 @@ function OnboardingScreen0() {
           }}
         >
           Et toi, ça va vraiment&nbsp;?
+        </p>
+      </div>
+      <div style={{ position: 'absolute', bottom: '9%', left: '50%', transform: 'translateX(-50%)', opacity: showHint ? 1 : 0, transition: 'opacity 1400ms ease' }}>
+        <p style={{ fontFamily: 'Sora', fontSize: 8, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.15)', whiteSpace: 'nowrap' }}>
+          toucher pour continuer
         </p>
       </div>
     </Fade>
@@ -1445,9 +1455,11 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {/* Lien Espace Vrai */}
       {phase === 'phrase' && displayedPhrase.length === fullPhrase.length && (
         <Fade slide duration={1400} className="absolute bottom-10 left-1/2 -translate-x-1/2">
-          <button onClick={onGoVrai} style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.18)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease' }}
-            onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.48)'}
-            onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.18)'}>
+          <button onClick={onGoVrai} style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.32em', color: 'rgba(255,255,255,0.18)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease', padding: '14px 20px', margin: '-14px -20px' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.48)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.18)'}
+            onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.48)'}
+            onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.18)'}>
             espace vrai →
           </button>
         </Fade>
@@ -1709,9 +1721,11 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {/* Bouton nouveau rituel */}
       {showRestart && !showAdieu && (
         <Fade slide duration={1200} className="absolute bottom-8 left-1/2 -translate-x-1/2">
-          <button onClick={onRestart} style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.14)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease' }}
-            onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.4)'}
-            onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.14)'}>
+          <button onClick={onRestart} style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.14)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 600ms ease', padding: '12px 16px', margin: '-12px -16px' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.14)'}
+            onTouchStart={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
+            onTouchEnd={e => e.currentTarget.style.color = 'rgba(255,255,255,0.14)'}>
             nouveau rituel
           </button>
         </Fade>
