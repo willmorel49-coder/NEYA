@@ -406,21 +406,21 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
   }, [onDone, hasHistory, lastWorld])
 
   const splashStars = [
-    { x: 12, y: 8,  r: 0.8, op: 0.14, period: 4.2, delay: 0 },
-    { x: 28, y: 15, r: 0.5, op: 0.09, period: 6.1, delay: 1.5 },
-    { x: 45, y: 6,  r: 0.7, op: 0.11, period: 5.0, delay: 2.8 },
-    { x: 67, y: 11, r: 0.6, op: 0.08, period: 7.3, delay: 0.8 },
-    { x: 82, y: 19, r: 0.9, op: 0.13, period: 4.8, delay: 3.2 },
-    { x: 91, y: 7,  r: 0.5, op: 0.07, period: 6.6, delay: 1.0 },
-    { x: 8,  y: 28, r: 0.6, op: 0.10, period: 5.4, delay: 2.2 },
-    { x: 55, y: 22, r: 0.4, op: 0.07, period: 8.0, delay: 0.5 },
-    { x: 75, y: 30, r: 0.7, op: 0.09, period: 5.7, delay: 4.0 },
-    { x: 38, y: 35, r: 0.5, op: 0.08, period: 6.9, delay: 1.8 },
-    { x: 22, y: 42, r: 0.4, op: 0.06, period: 7.5, delay: 3.5 },
-    { x: 60, y: 38, r: 0.6, op: 0.08, period: 5.3, delay: 2.6 },
-    { x: 15, y: 58, r: 0.4, op: 0.05, period: 8.2, delay: 1.4 },
-    { x: 72, y: 52, r: 0.3, op: 0.04, period: 6.8, delay: 4.8 },
-    { x: 48, y: 68, r: 0.5, op: 0.05, period: 9.1, delay: 0.7 },
+    { x: 12, y: 8,  r: 0.8, op: 0.14, period: 4.2, delay: 0,   rgb: '255,235,180' },
+    { x: 28, y: 15, r: 0.5, op: 0.09, period: 6.1, delay: 1.5, rgb: '220,235,255' },
+    { x: 45, y: 6,  r: 0.7, op: 0.11, period: 5.0, delay: 2.8, rgb: '255,255,255' },
+    { x: 67, y: 11, r: 0.6, op: 0.08, period: 7.3, delay: 0.8, rgb: '220,235,255' },
+    { x: 82, y: 19, r: 0.9, op: 0.13, period: 4.8, delay: 3.2, rgb: '255,235,180' },
+    { x: 91, y: 7,  r: 0.5, op: 0.07, period: 6.6, delay: 1.0, rgb: '255,255,255' },
+    { x: 8,  y: 28, r: 0.6, op: 0.10, period: 5.4, delay: 2.2, rgb: '220,235,255' },
+    { x: 55, y: 22, r: 0.4, op: 0.07, period: 8.0, delay: 0.5, rgb: '255,255,255' },
+    { x: 75, y: 30, r: 0.7, op: 0.09, period: 5.7, delay: 4.0, rgb: '255,235,180' },
+    { x: 38, y: 35, r: 0.5, op: 0.08, period: 6.9, delay: 1.8, rgb: '220,235,255' },
+    { x: 22, y: 42, r: 0.4, op: 0.06, period: 7.5, delay: 3.5, rgb: '255,255,255' },
+    { x: 60, y: 38, r: 0.6, op: 0.08, period: 5.3, delay: 2.6, rgb: '220,235,255' },
+    { x: 15, y: 58, r: 0.4, op: 0.05, period: 8.2, delay: 1.4, rgb: '255,255,255' },
+    { x: 72, y: 52, r: 0.3, op: 0.04, period: 6.8, delay: 4.8, rgb: '255,235,180' },
+    { x: 48, y: 68, r: 0.5, op: 0.05, period: 9.1, delay: 0.7, rgb: '220,235,255' },
   ]
 
   return (
@@ -452,7 +452,7 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'hidden' }}>
         {splashStars.map((s, i) => (
           <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r}
-            fill={`rgba(255,255,255,${s.op})`}
+            fill={`rgba(${s.rgb},${s.op})`}
             style={{ animation: `splashtw ${s.period}s ${s.delay}s ease-in-out infinite` }} />
         ))}
       </svg>
