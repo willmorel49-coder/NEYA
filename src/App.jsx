@@ -14,7 +14,6 @@ const RITUAL_COLORS = [
 ]
 
 const RITUAL_TEXTURES = ['lourd', 'léger', 'rugueux', 'doux', 'chaud', 'froid']
-
 const RITUAL_SOUNDS = ['pluie', 'vent', 'feu', 'silence']
 
 const WORLDS = {
@@ -40,24 +39,65 @@ function selectPhrase(ritual, world) {
   return world.phrases[idx]
 }
 
+// ─── LOGO NÉYA ────────────────────────────────────────────────────────────────
+
+function NeyaLogo({ size = 'sm', className = '' }) {
+  const scales = { sm: { star: 14, text: 11 }, md: { star: 18, text: 13 }, lg: { star: 24, text: 16 } }
+  const s = scales[size]
+  return (
+    <div className={`flex flex-col items-center gap-1.5 select-none ${className}`}>
+      <svg width={s.star} height={s.star} viewBox="0 0 24 24" fill="none">
+        <path
+          d="M12 2 L12.8 9.5 L19.5 6.5 L14.5 12 L21 14.5 L13.5 13.5 L15 21 L12 14.5 L9 21 L10.5 13.5 L3 14.5 L9.5 12 L4.5 6.5 L11.2 9.5 Z"
+          fill="rgba(255,255,255,0.65)"
+          style={{ filter: 'blur(0.4px)' }}
+        />
+      </svg>
+      <span
+        className="font-sora tracking-[0.35em] uppercase"
+        style={{ fontSize: s.text, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.35em' }}
+      >
+        NÉYA
+      </span>
+    </div>
+  )
+}
+
+// ─── GRAIN FILTER ─────────────────────────────────────────────────────────────
+
+function GrainFilter() {
+  return (
+    <svg style={{ display: 'none', position: 'absolute' }}>
+      <defs>
+        <filter id="grain" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.68"
+            numOctaves="4"
+            stitchTiles="stitch"
+            result="noise"
+          />
+          <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise" />
+          <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay" result="blend" />
+          <feComposite in="blend" in2="SourceGraphic" operator="in" />
+        </filter>
+      </defs>
+    </svg>
+  )
+}
+
 // ─── COMPOSANT FADE ───────────────────────────────────────────────────────────
 
 function Fade({ children, duration = 800, className = '', style = {} }) {
   const [visible, setVisible] = useState(false)
-
   useEffect(() => {
     const t = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(t)
   }, [])
-
   return (
     <div
       className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transition: `opacity ${duration}ms ease`,
-        ...style,
-      }}
+      style={{ opacity: visible ? 1 : 0, transition: `opacity ${duration}ms ease`, ...style }}
     >
       {children}
     </div>
@@ -81,52 +121,62 @@ function Onboarding({ step, onNext }) {
 
 function OnboardingScreen0() {
   return (
-    <Fade className="w-full h-full flex flex-col items-center justify-center relative">
-      <img
-        src="/cerf.svg"
-        alt=""
-        aria-hidden="true"
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 opacity-30 pointer-events-none"
-        style={{ filter: 'blur(0.5px)' }}
+    <Fade className="w-full h-full relative overflow-hidden">
+      {/* Image de fond — fille de dos dans grotte avec mandalas bleus */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'url(/bg-onboarding.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+        }}
       />
-      <p
-        className="font-sora font-light text-white/70 text-xl text-center px-8 relative z-10"
-        style={{ letterSpacing: '0.15em' }}
-      >
-        Et toi, ça va vraiment&nbsp;?
-      </p>
+      {/* Voile sombre pour lisibilité */}
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #050810 8%, rgba(5,8,16,0.55) 50%, rgba(5,8,16,0.2) 100%)' }} />
+      {/* Question */}
+      <div className="absolute inset-0 flex flex-col items-center justify-end pb-24 px-8">
+        <p
+          className="font-sora font-light text-white/70 text-xl text-center"
+          style={{ letterSpacing: '0.12em', lineHeight: 1.7 }}
+        >
+          Et toi, ça va vraiment&nbsp;?
+        </p>
+      </div>
     </Fade>
   )
 }
 
 function OnboardingScreen1() {
   const [visibleLines, setVisibleLines] = useState(0)
-
   useEffect(() => {
     const timers = [
       setTimeout(() => setVisibleLines(1), 400),
-      setTimeout(() => setVisibleLines(2), 1200),
-      setTimeout(() => setVisibleLines(3), 2000),
-      setTimeout(() => setVisibleLines(4), 3200),
+      setTimeout(() => setVisibleLines(2), 1400),
+      setTimeout(() => setVisibleLines(3), 2400),
+      setTimeout(() => setVisibleLines(4), 3600),
     ]
     return () => timers.forEach(clearTimeout)
   }, [])
 
   const lines = [
-    { text: "Pas une appli de méditation.", font: 'font-inter', size: 'text-base', color: 'text-white/45' },
-    { text: "Pas un journal.", font: 'font-inter', size: 'text-base', color: 'text-white/45' },
-    { text: "Pas un thérapeute.", font: 'font-inter', size: 'text-base', color: 'text-white/45' },
-    { text: "Un espace pour ce que tu ressens vraiment.", font: 'font-sora', size: 'text-lg', color: 'text-white/80' },
+    { text: "Pas une appli de méditation.", size: 'text-base', opacity: 0.4 },
+    { text: "Pas un journal.", size: 'text-base', opacity: 0.4 },
+    { text: "Pas un thérapeute.", size: 'text-base', opacity: 0.4 },
+    { text: "Un espace pour ce que tu ressens vraiment.", size: 'text-lg', opacity: 0.75 },
   ]
 
   return (
     <Fade className="w-full h-full flex flex-col items-center justify-center px-10 gap-6">
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-5">
         {lines.map((line, i) => (
           <p
             key={i}
-            className={`${line.font} font-light ${line.size} ${line.color} text-center transition-opacity duration-700`}
-            style={{ opacity: visibleLines > i ? 1 : 0 }}
+            className={`font-sora font-light ${line.size} text-center transition-opacity duration-700`}
+            style={{
+              opacity: visibleLines > i ? line.opacity : 0,
+              color: 'white',
+              letterSpacing: '0.05em',
+            }}
           >
             {line.text}
           </p>
@@ -139,17 +189,21 @@ function OnboardingScreen1() {
 function OnboardingScreen2({ onEnter }) {
   return (
     <Fade
-      className="w-full h-full flex flex-col items-center justify-center px-10 gap-12"
-      style={{ background: 'linear-gradient(to bottom, #050810, #0d0e0a)' }}
+      className="w-full h-full flex flex-col items-center justify-center px-10 gap-14"
+      style={{ background: 'linear-gradient(to bottom, #050810, #060b0e)' }}
     >
-      <p className="font-sora font-light text-white/70 text-xl text-center leading-relaxed">
+      <p
+        className="font-sora font-light text-white/65 text-xl text-center"
+        style={{ lineHeight: 1.9, letterSpacing: '0.05em' }}
+      >
         T'as pas besoin<br />d'aller bien<br />pour commencer.
       </p>
       <button
         onClick={e => { e.stopPropagation(); onEnter() }}
-        className="font-sora text-white/40 text-sm tracking-[0.3em] uppercase hover:text-white/70 transition-colors duration-500 border-b border-white/15 pb-1"
+        className="font-sora text-white/35 text-xs hover:text-white/65 transition-colors duration-700"
+        style={{ letterSpacing: '0.35em', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 4 }}
       >
-        Entrer
+        ENTRER
       </button>
     </Fade>
   )
@@ -157,45 +211,33 @@ function OnboardingScreen2({ onEnter }) {
 
 // ─── AUDIO ───────────────────────────────────────────────────────────────────
 
-function startAmbience(type, volume = 0.08) {
+function startAmbience(type, volume = 0.07) {
   if (type === 'silence') return () => {}
-
   const ctx = new (window.AudioContext || window.webkitAudioContext)()
   const gainNode = ctx.createGain()
   gainNode.gain.setValueAtTime(0, ctx.currentTime)
-  gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 1.5)
+  gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 2)
   gainNode.connect(ctx.destination)
 
   const bufferSize = ctx.sampleRate * 4
   const buf = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
   const data = buf.getChannelData(0)
   for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1
-
   const source = ctx.createBufferSource()
   source.buffer = buf
   source.loop = true
 
   const filter = ctx.createBiquadFilter()
-
-  if (type === 'pluie') {
-    filter.type = 'highpass'
-    filter.frequency.value = 2000
-  } else if (type === 'vent') {
-    filter.type = 'bandpass'
-    filter.frequency.value = 400
-    filter.Q.value = 0.5
-  } else if (type === 'feu') {
-    filter.type = 'lowpass'
-    filter.frequency.value = 300
-  }
+  if (type === 'pluie') { filter.type = 'highpass'; filter.frequency.value = 2200 }
+  else if (type === 'vent') { filter.type = 'bandpass'; filter.frequency.value = 380; filter.Q.value = 0.4 }
+  else if (type === 'feu') { filter.type = 'lowpass'; filter.frequency.value = 280 }
 
   source.connect(filter)
   filter.connect(gainNode)
   source.start()
-
   return () => {
-    gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.8)
-    setTimeout(() => { try { ctx.close() } catch(e) {} }, 1000)
+    gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
+    setTimeout(() => { try { ctx.close() } catch (e) {} }, 1200)
   }
 }
 
@@ -204,14 +246,18 @@ function startAmbience(type, volume = 0.08) {
 function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
   return (
     <div className="w-full h-full absolute inset-0 flex flex-col items-center justify-center">
-      {/* Fond réactif — teinte subtile selon la couleur choisie */}
       <div
-        className="absolute inset-0 transition-all duration-1000 ease-out"
+        className="absolute inset-0 transition-all duration-[1200ms] ease-out"
         style={{
           background: ritual.color
-            ? `radial-gradient(ellipse at center, ${ritual.color}18 0%, #050810 70%)`
+            ? `radial-gradient(ellipse at center 40%, ${ritual.color}20 0%, #050810 65%)`
             : '#050810',
         }}
+      />
+      {/* Grain léger sur le fond ritual */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px' }}
       />
       <Fade key={step} className="w-full h-full flex items-center justify-center relative z-10">
         {step === 0 && (
@@ -243,36 +289,38 @@ function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
 
 function RitualColor({ selected, onSelect, onNext }) {
   const positions = [
-    { top: '18%', left: '22%' },
-    { top: '14%', left: '55%' },
-    { top: '28%', left: '78%' },
-    { top: '45%', left: '82%' },
-    { top: '62%', left: '70%' },
-    { top: '68%', left: '38%' },
-    { top: '55%', left: '15%' },
-    { top: '35%', left: '10%' },
+    { top: '15%', left: '20%' },
+    { top: '11%', left: '58%' },
+    { top: '26%', left: '80%' },
+    { top: '44%', left: '84%' },
+    { top: '63%', left: '72%' },
+    { top: '70%', left: '35%' },
+    { top: '57%', left: '12%' },
+    { top: '33%', left: '8%' },
   ]
+  const sizes = [42, 36, 48, 38, 44, 40, 34, 46]
 
   return (
     <div className="w-full h-full relative flex items-center justify-center">
-      <p className="absolute top-12 left-1/2 -translate-x-1/2 font-sora text-white/20 text-xs tracking-[0.25em] uppercase">
-        une couleur
+      <p className="absolute top-12 left-1/2 -translate-x-1/2 font-sora text-white/18 text-xs" style={{ letterSpacing: '0.28em' }}>
+        UNE COULEUR
       </p>
       {RITUAL_COLORS.map((c, i) => (
         <button
           key={c.hex}
           onClick={() => onSelect(c.hex)}
           aria-label={c.label}
-          className="absolute rounded-full transition-all duration-500"
+          className="absolute rounded-full transition-all duration-600"
           style={{
             ...positions[i],
-            width: selected === c.hex ? 52 : 38,
-            height: selected === c.hex ? 52 : 38,
+            width: selected === c.hex ? sizes[i] + 14 : sizes[i],
+            height: selected === c.hex ? sizes[i] + 14 : sizes[i],
             background: c.hex,
-            opacity: selected && selected !== c.hex ? 0.3 : 0.85,
-            boxShadow: selected === c.hex ? `0 0 24px ${c.hex}60` : 'none',
-            transform: selected === c.hex ? 'scale(1.15)' : 'scale(1)',
-            filter: 'saturate(0.7) brightness(0.85)',
+            opacity: selected && selected !== c.hex ? 0.22 : 0.8,
+            boxShadow: selected === c.hex ? `0 0 28px ${c.hex}70, 0 0 8px ${c.hex}40` : 'none',
+            transform: selected === c.hex ? 'scale(1.12)' : 'scale(1)',
+            filter: 'saturate(0.65) brightness(0.9)',
+            transition: 'all 0.5s ease',
           }}
         />
       ))}
@@ -280,9 +328,10 @@ function RitualColor({ selected, onSelect, onNext }) {
         <Fade className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
-            className="font-sora text-white/35 text-xs tracking-[0.3em] uppercase hover:text-white/60 transition-colors duration-500"
+            className="font-sora text-white/30 text-xs hover:text-white/60 transition-colors duration-500"
+            style={{ letterSpacing: '0.3em' }}
           >
-            continuer
+            CONTINUER
           </button>
         </Fade>
       )}
@@ -299,41 +348,55 @@ function RitualTexture({ selected, onSelect, onNext }) {
     setTimeout(() => setIsolated(null), 800)
   }
 
+  // Positions spatiales — pas une grille parfaite
+  const positions = [
+    { top: '18%', left: '50%', translateX: '-50%' },
+    { top: '30%', left: '72%', translateX: '0' },
+    { top: '44%', left: '25%', translateX: '0' },
+    { top: '54%', left: '65%', translateX: '0' },
+    { top: '67%', left: '38%', translateX: '0' },
+    { top: '78%', left: '58%', translateX: '0' },
+  ]
+
   return (
     <div className="w-full h-full relative flex items-center justify-center">
-      <p className="absolute top-12 left-1/2 -translate-x-1/2 font-sora text-white/20 text-xs tracking-[0.25em] uppercase">
-        une sensation
+      <p className="absolute top-12 left-1/2 -translate-x-1/2 font-sora text-white/18 text-xs" style={{ letterSpacing: '0.28em' }}>
+        UNE SENSATION
       </p>
       {isolated ? (
         <Fade key={isolated} className="flex items-center justify-center w-full">
-          <p className="font-sora font-light text-white/80 text-4xl tracking-widest">
+          <p className="font-sora font-light text-white/80 text-4xl" style={{ letterSpacing: '0.2em' }}>
             {isolated}
           </p>
         </Fade>
       ) : (
-        <div className="flex flex-col gap-8 items-center">
-          {RITUAL_TEXTURES.map((word) => (
+        <>
+          {RITUAL_TEXTURES.map((word, i) => (
             <button
               key={word}
               onClick={() => handleSelect(word)}
-              className="font-sora font-light text-2xl tracking-[0.2em] transition-all duration-500"
+              className="absolute font-sora font-light text-2xl transition-all duration-500"
               style={{
-                color: selected === word ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.25)',
-                transform: selected === word ? 'scale(1.08)' : 'scale(1)',
+                top: positions[i].top,
+                left: positions[i].left,
+                transform: `translateX(${positions[i].translateX})`,
+                color: selected === word ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.22)',
+                letterSpacing: '0.18em',
               }}
             >
               {word}
             </button>
           ))}
-        </div>
+        </>
       )}
       {selected && !isolated && (
         <Fade className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
-            className="font-sora text-white/35 text-xs tracking-[0.3em] uppercase hover:text-white/60 transition-colors duration-500"
+            className="font-sora text-white/30 text-xs hover:text-white/60 transition-colors duration-500"
+            style={{ letterSpacing: '0.3em' }}
           >
-            continuer
+            CONTINUER
           </button>
         </Fade>
       )}
@@ -348,7 +411,7 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
     stopRef.current()
     onSelect(sound)
     if (!muted && sound !== 'silence') {
-      stopRef.current = startAmbience(sound, 0.06)
+      stopRef.current = startAmbience(sound, 0.055)
     } else {
       stopRef.current = () => {}
     }
@@ -356,30 +419,32 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
 
   useEffect(() => () => stopRef.current(), [])
 
-  const soundLabels = {
-    pluie: '〰 pluie',
-    vent: '∿ vent',
-    feu: '◦ feu',
-    silence: '— silence',
-  }
+  const soundItems = [
+    { key: 'pluie',   symbol: '〰', label: 'pluie' },
+    { key: 'vent',    symbol: '∿', label: 'vent' },
+    { key: 'feu',     symbol: '◦', label: 'feu' },
+    { key: 'silence', symbol: '—', label: 'silence' },
+  ]
 
   return (
     <div className="w-full h-full relative flex items-center justify-center">
-      <p className="absolute top-12 left-1/2 -translate-x-1/2 font-sora text-white/20 text-xs tracking-[0.25em] uppercase">
-        un son
+      <p className="absolute top-12 left-1/2 -translate-x-1/2 font-sora text-white/18 text-xs" style={{ letterSpacing: '0.28em' }}>
+        UN SON
       </p>
       <div className="flex flex-col gap-10 items-center">
-        {RITUAL_SOUNDS.map((sound) => (
+        {soundItems.map(({ key, symbol, label }) => (
           <button
-            key={sound}
-            onClick={() => handleSelect(sound)}
-            className="font-sora font-light text-xl tracking-[0.2em] transition-all duration-500"
+            key={key}
+            onClick={() => handleSelect(key)}
+            className="font-sora font-light text-xl flex items-baseline gap-4 transition-all duration-500"
             style={{
-              color: selected === sound ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.22)',
-              transform: selected === sound ? 'scale(1.08)' : 'scale(1)',
+              color: selected === key ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.2)',
+              letterSpacing: '0.18em',
+              transform: selected === key ? 'scale(1.06)' : 'scale(1)',
             }}
           >
-            {soundLabels[sound]}
+            <span className="opacity-50 text-sm">{symbol}</span>
+            <span>{label}</span>
           </button>
         ))}
       </div>
@@ -387,9 +452,10 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
         <Fade className="absolute bottom-14 left-1/2 -translate-x-1/2">
           <button
             onClick={onNext}
-            className="font-sora text-white/35 text-xs tracking-[0.3em] uppercase hover:text-white/60 transition-colors duration-500"
+            className="font-sora text-white/30 text-xs hover:text-white/60 transition-colors duration-500"
+            style={{ letterSpacing: '0.3em' }}
           >
-            entrer dans le monde
+            ENTRER DANS LE MONDE
           </button>
         </Fade>
       )}
@@ -411,13 +477,9 @@ function WorldReveal({ ritual, world, onGoVrai, muted }) {
       if (!muted && ritual.sound && ritual.sound !== 'silence') {
         stopSoundRef.current = startAmbience(ritual.sound, 0.04)
       }
-    }, 800)
-    const t2 = setTimeout(() => setPhase('phrase'), 2800)
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      stopSoundRef.current()
-    }
+    }, 900)
+    const t2 = setTimeout(() => setPhase('phrase'), 3000)
+    return () => { clearTimeout(t1); clearTimeout(t2); stopSoundRef.current() }
   }, []) // eslint-disable-line
 
   useEffect(() => {
@@ -427,69 +489,100 @@ function WorldReveal({ ritual, world, onGoVrai, muted }) {
       setDisplayedPhrase(fullPhrase.slice(0, i + 1))
       i++
       if (i >= fullPhrase.length) clearInterval(interval)
-    }, 40)
+    }, 42)
     return () => clearInterval(interval)
   }, [phase, fullPhrase])
 
   const textureModifier = {
-    lourd:  { speed: '15s', opacity: '0.7' },
-    léger:  { speed: '25s', opacity: '0.5' },
-    rugueux:{ speed: '10s', opacity: '0.8' },
-    doux:   { speed: '20s', opacity: '0.55' },
-    chaud:  { speed: '18s', opacity: '0.65' },
-    froid:  { speed: '22s', opacity: '0.6' },
+    lourd:   { speed: '18s', brightness: 0.82 },
+    léger:   { speed: '28s', brightness: 1.05 },
+    rugueux: { speed: '12s', brightness: 0.78 },
+    doux:    { speed: '22s', brightness: 0.95 },
+    chaud:   { speed: '20s', brightness: 0.92 },
+    froid:   { speed: '25s', brightness: 0.88 },
   }
   const mod = textureModifier[ritual.texture] || textureModifier.doux
 
   return (
     <div
-      className="w-full h-full absolute inset-0 transition-opacity duration-700"
+      className="w-full h-full absolute inset-0 transition-opacity duration-[900ms]"
       style={{ opacity: phase === 'black' ? 0 : 1 }}
     >
-      {/* Fond Brume */}
+      {/* Image de fond Brume */}
       <div
         className="absolute inset-0"
         style={{
-          background: `
-            radial-gradient(ellipse at 30% 40%, ${world.palette[2]}cc 0%, transparent 55%),
-            radial-gradient(ellipse at 70% 60%, ${world.palette[1]}99 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 80%, ${ritual.color || world.palette[0]}22 0%, transparent 40%),
-            ${world.palette[0]}
-          `,
+          backgroundImage: 'url(/bg-brume.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           animation: `breathe ${mod.speed} ease-in-out infinite`,
+        }}
+      />
+      {/* Voile coloré selon ritual.color */}
+      <div
+        className="absolute inset-0 transition-all duration-[2000ms]"
+        style={{
+          background: ritual.color
+            ? `radial-gradient(ellipse at 50% 80%, ${ritual.color}28 0%, transparent 60%)`
+            : 'transparent',
+        }}
+      />
+      {/* Voile sombre Brume par-dessus */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `linear-gradient(to top, ${world.palette[0]}ee 0%, ${world.palette[0]}99 35%, ${world.palette[1]}66 70%, transparent 100%)`,
+          filter: `brightness(${mod.brightness})`,
         }}
       />
 
       <style>{`
         @keyframes breathe {
-          0%, 100% { filter: brightness(1); }
-          50% { filter: brightness(1.08); }
+          0%, 100% { transform: scale(1); filter: brightness(1); }
+          50% { transform: scale(1.03); filter: brightness(1.07); }
         }
-        @keyframes driftXY {
+        @keyframes cerfdrift {
           0%, 100% { transform: translate(0px, 0px); }
-          33% { transform: translate(8px, -5px); }
-          66% { transform: translate(-4px, 6px); }
+          30% { transform: translate(6px, -4px); }
+          70% { transform: translate(-4px, 5px); }
+        }
+        @keyframes phraseReveal {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
-      {/* Cerf — déjà là */}
+      {/* Logo NÉYA */}
+      {phase !== 'black' && (
+        <Fade className="absolute top-10 left-1/2 -translate-x-1/2" duration={1200}>
+          <NeyaLogo size="sm" />
+        </Fade>
+      )}
+
+      {/* Cerf — déjà là, l'animal qui existait avant */}
       <div
-        className="absolute inset-0 flex items-end justify-center pointer-events-none"
-        style={{ animation: 'driftXY 18s ease-in-out infinite' }}
+        className="absolute inset-0 flex items-end justify-center pointer-events-none pb-6"
+        style={{ animation: 'cerfdrift 22s ease-in-out infinite' }}
       >
         <img
           src="/cerf.svg"
           alt=""
           aria-hidden="true"
-          className="w-72 max-w-[60vw]"
-          style={{ opacity: mod.opacity, filter: 'blur(0.3px)' }}
+          className="w-64 max-w-[55vw]"
+          style={{ opacity: 0.55, filter: 'blur(0.3px) brightness(1.3)' }}
         />
       </div>
 
       {/* Phrase */}
       {phase === 'phrase' && (
-        <div className="absolute inset-0 flex items-center justify-center px-10 pb-24">
-          <p className="font-sora font-light text-white/65 text-lg text-center leading-relaxed tracking-wide">
+        <div
+          className="absolute inset-0 flex items-center justify-center px-10 pb-28"
+          style={{ animation: 'phraseReveal 0.8s ease forwards' }}
+        >
+          <p
+            className="font-sora font-light text-white/60 text-lg text-center"
+            style={{ lineHeight: 1.85, letterSpacing: '0.06em' }}
+          >
             {displayedPhrase}
           </p>
         </div>
@@ -497,10 +590,11 @@ function WorldReveal({ ritual, world, onGoVrai, muted }) {
 
       {/* Lien Espace Vrai */}
       {phase === 'phrase' && displayedPhrase.length === fullPhrase.length && (
-        <Fade className="absolute bottom-10 left-1/2 -translate-x-1/2">
+        <Fade className="absolute bottom-10 left-1/2 -translate-x-1/2" duration={1200}>
           <button
             onClick={onGoVrai}
-            className="font-sora text-white/20 text-xs tracking-[0.3em] uppercase hover:text-white/50 transition-colors duration-700"
+            className="font-sora text-white/18 text-xs hover:text-white/45 transition-colors duration-700"
+            style={{ letterSpacing: '0.3em' }}
           >
             espace vrai →
           </button>
@@ -514,31 +608,31 @@ function WorldReveal({ ritual, world, onGoVrai, muted }) {
 
 function generateFakeFlux(userColor) {
   const colors = RITUAL_COLORS.map(c => c.hex)
-  const entries = Array.from({ length: 18 }, (_, i) => ({
+  const entries = Array.from({ length: 20 }, (_, i) => ({
     id: i,
     color: colors[i % colors.length],
-    x: 10 + Math.random() * 80,
-    y: 10 + Math.random() * 80,
-    size: 6 + Math.random() * 8,
-    opacity: 0.2 + Math.random() * 0.45,
-    driftX: (Math.random() - 0.5) * 30,
-    driftY: (Math.random() - 0.5) * 20,
-    period: 12 + Math.random() * 20,
-    delay: Math.random() * 10,
-    immobile: Math.random() < 0.25,
+    x: 8 + Math.random() * 84,
+    y: 8 + Math.random() * 84,
+    size: 5 + Math.random() * 9,
+    opacity: 0.15 + Math.random() * 0.4,
+    driftX: (Math.random() - 0.5) * 28,
+    driftY: (Math.random() - 0.5) * 18,
+    period: 14 + Math.random() * 22,
+    delay: Math.random() * 12,
+    immobile: Math.random() < 0.28,
   }))
 
   entries.push({
     id: 99,
     color: userColor || '#4f46e5',
-    x: 30 + Math.random() * 40,
-    y: 30 + Math.random() * 40,
-    size: 9,
-    opacity: 0.55,
-    driftX: (Math.random() - 0.5) * 20,
-    driftY: (Math.random() - 0.5) * 15,
-    period: 16 + Math.random() * 8,
-    delay: 1.5,
+    x: 35 + Math.random() * 30,
+    y: 35 + Math.random() * 30,
+    size: 10,
+    opacity: 0.6,
+    driftX: (Math.random() - 0.5) * 18,
+    driftY: (Math.random() - 0.5) * 12,
+    period: 18 + Math.random() * 6,
+    delay: 1.8,
     immobile: false,
   })
 
@@ -549,25 +643,32 @@ function EspaceVrai({ ritual, world }) {
   const flux = useRef(generateFakeFlux(ritual.color)).current
 
   return (
-    <Fade className="w-full h-full absolute inset-0">
-      {/* Fond monde atténué */}
+    <Fade className="w-full h-full absolute inset-0" duration={1400}>
+      {/* Image de fond Espace Vrai */}
       <div
         className="absolute inset-0"
         style={{
-          background: `
-            radial-gradient(ellipse at 30% 40%, ${world.palette[2]}55 0%, transparent 55%),
-            radial-gradient(ellipse at 70% 60%, ${world.palette[1]}33 0%, transparent 50%),
-            ${world.palette[0]}
-          `,
+          backgroundImage: 'url(/bg-vrai.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}
       />
-      <div className="absolute inset-0 bg-[#050810]/40" />
+      {/* Voile monde Brume par-dessus */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `linear-gradient(to top, ${world.palette[0]}f5 0%, ${world.palette[0]}cc 40%, ${world.palette[1]}99 80%, ${world.palette[0]}bb 100%)`,
+        }}
+      />
 
-      {/* Présences */}
+      {/* Présences — flux SVG */}
       <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
         <defs>
-          <filter id="presence-blur">
-            <feGaussianBlur stdDeviation="1.5" />
+          <filter id="presence-soft">
+            <feGaussianBlur stdDeviation="2" />
+          </filter>
+          <filter id="presence-user">
+            <feGaussianBlur stdDeviation="3" />
           </filter>
         </defs>
         {flux.map(p => (
@@ -578,7 +679,7 @@ function EspaceVrai({ ritual, world }) {
             r={p.size}
             fill={p.color}
             opacity={p.opacity}
-            filter="url(#presence-blur)"
+            filter={p.id === 99 ? 'url(#presence-user)' : 'url(#presence-soft)'}
             style={{
               animation: p.immobile
                 ? 'none'
@@ -592,8 +693,9 @@ function EspaceVrai({ ritual, world }) {
             .map(p => `
               @keyframes drift-${p.id} {
                 0%, 100% { transform: translate(0, 0); }
-                33% { transform: translate(${p.driftX * 0.6}px, ${p.driftY * 0.4}px); }
-                66% { transform: translate(${p.driftX}px, ${p.driftY}px); }
+                25% { transform: translate(${p.driftX * 0.4}px, ${p.driftY * 0.3}px); }
+                50% { transform: translate(${p.driftX}px, ${p.driftY}px); }
+                75% { transform: translate(${p.driftX * 0.6}px, ${p.driftY * 0.8}px); }
               }
             `)
             .join('')}
@@ -601,10 +703,15 @@ function EspaceVrai({ ritual, world }) {
       </svg>
 
       {/* Message implicite */}
-      <Fade className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center" duration={2000}>
-        <p className="font-sora text-white/12 text-xs tracking-[0.2em]">
+      <Fade className="absolute bottom-12 left-1/2 -translate-x-1/2 text-center" duration={2500}>
+        <p className="font-sora text-white/15 text-xs" style={{ letterSpacing: '0.22em' }}>
           tu n'es pas seul·e
         </p>
+      </Fade>
+
+      {/* Logo discret en bas */}
+      <Fade className="absolute bottom-5 left-1/2 -translate-x-1/2" duration={2000}>
+        <NeyaLogo size="sm" className="opacity-25" />
       </Fade>
     </Fade>
   )
@@ -627,9 +734,7 @@ export default function App() {
 
   const world = WORLDS.brume
 
-  const handleRitualChange = useCallback((updated) => {
-    setRitual(updated)
-  }, [])
+  const handleRitualChange = useCallback((updated) => setRitual(updated), [])
 
   const handleRitualStepComplete = useCallback((completedStep) => {
     if (completedStep < 2) {
@@ -641,25 +746,26 @@ export default function App() {
   }, [goTo])
 
   const handleOnboardingNext = useCallback(() => {
-    if (step < 2) {
-      setStep(s => s + 1)
-    } else {
-      goTo('ritual')
-    }
+    if (step < 2) setStep(s => s + 1)
+    else goTo('ritual')
   }, [step, goTo])
 
   const handleGoVrai = useCallback(() => goTo('vrai'), [goTo])
 
   return (
     <div className="w-full h-full bg-[#050810] relative overflow-hidden font-inter text-white">
-      {/* Bouton mute — présent sur tous les écrans */}
+      <GrainFilter />
+
+      {/* Bouton mute */}
       <button
         onClick={() => setMuted(m => !m)}
         aria-label={muted ? 'Activer le son' : 'Couper le son'}
-        className="absolute top-5 right-5 z-50 font-sora text-white/20 text-xs tracking-widest hover:text-white/50 transition-colors duration-500 select-none"
+        className="absolute top-5 right-5 z-50 font-sora text-white/18 text-xs hover:text-white/45 transition-colors duration-500 select-none"
+        style={{ letterSpacing: '0.1em' }}
       >
         {muted ? '○' : '●'}
       </button>
+
       {screen === 'onboarding' && (
         <Onboarding step={step} onNext={handleOnboardingNext} />
       )}

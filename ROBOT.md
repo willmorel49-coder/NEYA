@@ -94,18 +94,30 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 > Mettre à jour à chaque savepoint.
 
 **Date** : 2026-05-07
-**Branche** : `feat/neya-v1`
-**Phase** : V1 complète — onboarding + rituel + Brume + Espace Vrai
+**Branche** : `main`
+**Phase** : V1 visuelle complète — DA intégrée, vraies images de fond, logo, esprit animal
 
 ### Features actives (`src/App.jsx`)
-- Onboarding narratif 3 écrans (silhouette cerf, fille de dos à venir)
-- Rituel sensoriel : couleur → texture → son (Web Audio API)
-- Monde Brume : fond animé, cerf SVG placeholder, phrase personnalisée
-- Espace Vrai : flux anonyme de présences colorées, mouvement organique
+- Onboarding 3 écrans : image de fond réelle (fille de dos + grotte mandalas), texte séquentiel
+- Rituel sensoriel : couleur → texture (spatiale) → son (Web Audio API)
+- Monde Brume : image de fond réelle (fille + loup-esprit), logo NÉYA, cerf SVG lumineux
+- Espace Vrai : image de fond réelle (fille dans l'eau), flux anonyme organique
+- Logo NÉYA (étoile + wordmark) présent sur WorldReveal et Espace Vrai
+- Cerf redesigné : silhouette éthérée avec bois ramifiés lumineux et particules
+- Grain texture sur les fonds rituel
+- Skill files DA + Structure créés dans `.claude/skills/`
+
+### Assets dans `public/`
+- `cerf.svg` — esprit animal redesigné, lumineux
+- `bg-onboarding.png` — fille de dos, grotte avec eau et mandalas bleus
+- `bg-brume.png` — fille face au loup-esprit dans une grotte
+- `bg-vrai.png` — fille debout dans l'eau avec orbes lumineux
 
 ### Backlog code
-- [ ] `# ← à remplir`
+- [ ] Transition retour au rituel depuis Espace Vrai (nouvelle session)
+- [ ] V1.1 : histoire silencieuse (`history: []`)
+- [ ] Déploiement Vercel
 
 ### Actions Will (hors code)
 - [ ] Ajouter URL repo + prod dans §1
-- [ ] Renseigner commande dev local dans §4
+- [ ] Choisir d'autres fonds parmi `NÉYA/image fond app/` pour les prochains mondes
