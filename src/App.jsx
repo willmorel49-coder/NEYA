@@ -619,6 +619,7 @@ function RitualFlow({ step, ritual, onChange, onComplete, muted }) {
         {step === 1 && (
           <RitualTexture
             selected={ritual.texture}
+            ritualColor={ritual.color}
             onSelect={texture => onChange({ ...ritual, texture })}
             onNext={() => onComplete(1)}
           />
@@ -736,7 +737,7 @@ function RitualColor({ selected, onSelect, onNext }) {
   )
 }
 
-function RitualTexture({ selected, onSelect, onNext }) {
+function RitualTexture({ selected, onSelect, onNext, ritualColor }) {
   const [isolated, setIsolated] = useState(null)
 
   const handleSelect = (word) => {
@@ -766,15 +767,11 @@ function RitualTexture({ selected, onSelect, onNext }) {
 
       {isolated ? (
         <Fade key={isolated} className="absolute inset-0 flex items-center justify-center">
-          <p
-            style={{
-              fontFamily: 'Sora',
-              fontWeight: 300,
-              fontSize: 40,
-              color: 'rgba(255,255,255,0.82)',
-              letterSpacing: '0.2em',
-            }}
-          >
+          <p style={{
+            fontFamily: 'Sora', fontWeight: 300, fontSize: 40, letterSpacing: '0.2em',
+            color: ritualColor ? `color-mix(in srgb, ${ritualColor} 20%, rgba(255,255,255,0.82))` : 'rgba(255,255,255,0.82)',
+            textShadow: ritualColor ? `0 0 40px ${ritualColor}55` : 'none',
+          }}>
             {isolated}
           </p>
         </Fade>
@@ -1231,9 +1228,11 @@ function generateFakeFlux(userColor) {
   return entries
 }
 
-function EspaceVrai({ ritual, world, worldKey, history, onRestart }) {
+function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistory }) {
   const flux = useRef(generateFakeFlux(ritual.color)).current
   const [showRestart, setShowRestart] = useState(false)
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const longPressTimer = useRef()
 
   useEffect(() => {
     const t = setTimeout(() => setShowRestart(true), 12000)
@@ -1347,10 +1346,36 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart }) {
         </Fade>
       )}
 
-      {/* Logo discret */}
+      {/* Logo discret — long-press pour réinitialiser l'histoire */}
       <Fade duration={2000} delay={400} className="absolute top-10 left-1/2 -translate-x-1/2">
-        <NeyaLogo size="sm" opacity={0.22} />
+        <div
+          onMouseDown={() => { longPressTimer.current = setTimeout(() => setShowResetConfirm(true), 1800) }}
+          onMouseUp={() => clearTimeout(longPressTimer.current)}
+          onMouseLeave={() => clearTimeout(longPressTimer.current)}
+          onTouchStart={() => { longPressTimer.current = setTimeout(() => setShowResetConfirm(true), 1800) }}
+          onTouchEnd={() => clearTimeout(longPressTimer.current)}
+          style={{ cursor: 'default' }}
+        >
+          <NeyaLogo size="sm" opacity={0.22} />
+        </div>
       </Fade>
+
+      {/* Confirmation reset histoire */}
+      {showResetConfirm && (
+        <Fade className="absolute inset-0 flex flex-col items-center justify-center" style={{ zIndex: 30, background: 'rgba(5,8,16,0.88)' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 11, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.45)', marginBottom: 28 }}>
+            effacer toutes les présences ?
+          </p>
+          <div className="flex gap-8">
+            <button onClick={() => setShowResetConfirm(false)} style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.22)', background: 'none', border: 'none', cursor: 'pointer' }}>
+              annuler
+            </button>
+            <button onClick={() => { onResetHistory(); setShowResetConfirm(false) }} style={{ fontFamily: 'Sora', fontSize: 9, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.5)', background: 'none', border: 'none', cursor: 'pointer' }}>
+              effacer
+            </button>
+          </div>
+        </Fade>
+      )}
     </Fade>
   )
 }
@@ -1431,6 +1456,11 @@ export default function App() {
     goTo('ritual', 0, true)
   }, [goTo])
 
+  const handleResetHistory = useCallback(() => {
+    try { localStorage.removeItem('neya_history') } catch {}
+    setHistory([])
+  }, [])
+
   return (
     <div className="w-full h-full relative overflow-hidden" style={{ background: '#050810', fontFamily: 'Inter, sans-serif', color: 'white' }}>
 
@@ -1461,7 +1491,7 @@ export default function App() {
       {screen === 'onboarding' && <Onboarding step={step} onNext={handleOnboardingNext} />}
       {screen === 'ritual'     && <RitualFlow step={step} ritual={ritual} onChange={handleRitualChange} onComplete={handleRitualStepComplete} muted={muted} />}
       {screen === 'world'      && <WorldReveal ritual={ritual} world={world} worldKey={worldKey} muted={muted} onGoVrai={handleGoVrai} onAmbienceStart={handleAmbienceStart} />}
-      {screen === 'vrai'       && <EspaceVrai ritual={ritual} world={world} worldKey={worldKey} history={history} onRestart={handleRestart} />}
+      {screen === 'vrai'       && <EspaceVrai ritual={ritual} world={world} worldKey={worldKey} history={history} onRestart={handleRestart} onResetHistory={handleResetHistory} />}
     </div>
   )
 }
