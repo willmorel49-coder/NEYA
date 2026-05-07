@@ -1544,6 +1544,7 @@ function CosmosParticles() {
 function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart }) {
   const [phase, setPhase] = useState('black') // black → world → name → phrase
   const [displayedPhrase, setDisplayedPhrase] = useState('')
+  const [typingDone, setTypingDone] = useState(false)
   const fullPhrase = selectPhrase(ritual, world)
   const stopSoundRef = useRef(() => {})
 
@@ -1571,7 +1572,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
     const interval = setInterval(() => {
       setDisplayedPhrase(fullPhrase.slice(0, i + 1))
       i++
-      if (i >= fullPhrase.length) clearInterval(interval)
+      if (i >= fullPhrase.length) { clearInterval(interval); setTypingDone(true) }
     }, msPerChar)
     return () => clearInterval(interval)
   }, [phase, fullPhrase, worldKey])
@@ -1657,8 +1658,8 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       {/* Phrase */}
       {phase === 'phrase' && (
         <Fade duration={700} slide className="absolute inset-0 flex items-center justify-center px-10" style={{ paddingBottom: '18%' }}>
-          <style>{`@keyframes cursorblink{0%,100%{opacity:0}50%{opacity:0.35}}`}</style>
-          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.9, letterSpacing: '0.06em', textShadow: `0 0 28px ${world.palette[2]}60, 0 0 60px rgba(255,255,255,0.06)` }}>
+          <style>{`@keyframes cursorblink{0%,100%{opacity:0}50%{opacity:0.35}} @keyframes phrasebreathe{0%,100%{opacity:1}50%{opacity:0.86}}`}</style>
+          <p style={{ fontFamily: 'Sora', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.62)', textAlign: 'center', lineHeight: 1.9, letterSpacing: '0.06em', textShadow: `0 0 28px ${world.palette[2]}60, 0 0 60px rgba(255,255,255,0.06)`, animation: typingDone ? 'phrasebreathe 22s ease-in-out infinite' : 'none' }}>
             {displayedPhrase}
             {displayedPhrase.length < fullPhrase.length && (
               <span style={{ animation: 'cursorblink 0.75s ease-in-out infinite', fontWeight: 300 }}>|</span>
@@ -1929,7 +1930,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {/* Retour au même monde — reconnaissance subtile */}
       {history.length >= 2 && history[1]?.world === worldKey && (
         <Fade slide duration={2200} delay={2600} className="absolute text-center" style={{ top: '13%', left: '50%', transform: 'translateX(-50%)' }}>
-          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.50em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.50em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap', textShadow: `0 0 20px ${world.palette[2]}22` }}>
             encore ici
           </p>
         </Fade>
@@ -1954,7 +1955,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {/* Insight profond — spécifique au monde dominant de l'histoire */}
       {getDominantWorld(history) === worldKey && (
         <Fade slide duration={2500} delay={7500} className="absolute text-center" style={{ bottom: '32%', left: '50%', transform: 'translateX(-50%)' }}>
-          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.06)', whiteSpace: 'nowrap' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.38em', color: 'rgba(255,255,255,0.06)', whiteSpace: 'nowrap', textShadow: `0 0 22px ${world.palette[2]}25` }}>
             {({
               brume: 'la brume te reconnaît',
               foret: 'ces racines se souviennent',
