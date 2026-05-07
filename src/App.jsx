@@ -390,6 +390,8 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
 
   const hoursSince = lastTs ? (Date.now() - lastTs) / 3600000 : 0
   const returnText = hoursSince < 4 ? 'tu es encore là' : hoursSince < 168 ? 'tu es revenu·e' : 'tu es de retour'
+  const h = new Date().getHours()
+  const timeWhisper = h >= 5 && h < 12 ? 'ce matin' : h >= 12 && h < 18 ? 'cet après-midi' : h >= 18 && h < 22 ? 'ce soir' : 'cette nuit'
 
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 200)
@@ -464,6 +466,15 @@ function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
           textTransform: 'uppercase',
         }}>
           {WORLD_NAMES[lastWorld] || lastWorld}
+        </p>
+      )}
+      {hasHistory && (
+        <p style={{
+          fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.40em',
+          color: 'rgba(255,255,255,0.05)', marginTop: 20,
+          animation: 'returnfade 1400ms ease forwards',
+        }}>
+          {timeWhisper}
         </p>
       )}
     </div>
@@ -1547,7 +1558,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
 
       {/* Watermark NÉYA — très transparent, crée de la profondeur */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 2 }}>
-        <p style={{ fontFamily: 'Sora', fontSize: '28vw', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.025)', userSelect: 'none', lineHeight: 1 }}>
+        <p style={{ fontFamily: 'Sora', fontSize: 'min(28vw, 200px)', fontWeight: 600, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.025)', userSelect: 'none', lineHeight: 1 }}>
           NÉYA
         </p>
       </div>
@@ -1715,7 +1726,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {/* Voile très épais — l'espace vrai est au-delà du monde */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}fd 0%, ${world.palette[0]}ee 35%, ${world.palette[1]}cc 75%, ${world.palette[0]}bb 100%)` }} />
 
-      <style>{`@keyframes dominantShimmer{0%,100%{opacity:0.7}50%{opacity:1}}`}</style>
+      <style>{`@keyframes dominantShimmer{0%,100%{opacity:0.6}50%{opacity:1}}`}</style>
 
       {/* Teinte personnelle — couleur dominante de l'histoire, quasi-imperceptible */}
       {getDominantColor(history) && (
