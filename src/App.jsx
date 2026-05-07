@@ -1088,18 +1088,21 @@ function ForetRays() {
           50%      { opacity: calc(var(--ray-op) * 1.7); }
         }
       `}</style>
-      {rays.map((r, i) => (
-        <div key={i} style={{
-          position: 'absolute', top: '-20%', left: `${r.x}%`,
-          width: r.width, height: '140%',
-          background: 'linear-gradient(to bottom, rgba(200,240,160,0) 0%, rgba(200,240,160,0.22) 35%, rgba(200,240,160,0.12) 65%, rgba(200,240,160,0) 100%)',
-          transform: `rotate(${r.angle}deg) translateX(-50%)`,
-          '--ray-op': r.opacity,
-          animation: `rayshift ${14 + i * 3}s ${r.delay} ease-in-out infinite`,
-          mixBlendMode: 'screen',
-          filter: 'blur(3px)',
-        }} />
-      ))}
+      {rays.map((r, i) => {
+        const col = i === 2 ? [255, 210, 100] : [200, 240, 160]
+        return (
+          <div key={i} style={{
+            position: 'absolute', top: '-20%', left: `${r.x}%`,
+            width: r.width, height: '140%',
+            background: `linear-gradient(to bottom, rgba(${col},0) 0%, rgba(${col},0.22) 35%, rgba(${col},0.12) 65%, rgba(${col},0) 100%)`,
+            transform: `rotate(${r.angle}deg) translateX(-50%)`,
+            '--ray-op': r.opacity,
+            animation: `rayshift ${14 + i * 3}s ${r.delay} ease-in-out infinite`,
+            mixBlendMode: 'screen',
+            filter: 'blur(3px)',
+          }} />
+        )
+      })}
     </div>
   )
 }
@@ -1395,9 +1398,9 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
           50%       { transform: scale(1.04); }
         }
         @keyframes cerfdrift {
-          0%, 100% { transform: translate(0px,  0px) scale(1); }
-          33%       { transform: translate(5px,  -4px) scale(1.016); }
-          66%       { transform: translate(-3px,  4px) scale(0.986); }
+          0%, 100% { transform: translate(0px,   0px) scale(1)     rotate(0deg); }
+          33%       { transform: translate(5px,  -4px) scale(1.016) rotate(0.8deg); }
+          66%       { transform: translate(-3px,  4px) scale(0.986) rotate(-0.5deg); }
         }
         @keyframes worldnameappear {
           from { opacity: 0; letter-spacing: 0.65em; }
@@ -1542,14 +1545,18 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
       {/* Voile très épais — l'espace vrai est au-delà du monde */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}fd 0%, ${world.palette[0]}ee 35%, ${world.palette[1]}cc 75%, ${world.palette[0]}bb 100%)` }} />
 
+      <style>{`@keyframes dominantShimmer{0%,100%{opacity:0.7}50%{opacity:1}}`}</style>
+
       {/* Teinte personnelle — couleur dominante de l'histoire, quasi-imperceptible */}
       {getDominantColor(history) && (
-        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2, background: `radial-gradient(ellipse at 50% 45%, ${getDominantColor(history)}0a 0%, transparent 65%)` }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2, background: `radial-gradient(ellipse at 50% 45%, ${getDominantColor(history)}0a 0%, transparent 65%)`, animation: 'dominantShimmer 28s ease-in-out infinite' }} />
       )}
+
+      <style>{`@keyframes worldnamepulse{0%,100%{color:rgba(255,255,255,0.018)}50%{color:rgba(255,255,255,0.026)}}`}</style>
 
       {/* Nom du monde en fond géant — présence silencieuse */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 1 }}>
-        <p style={{ fontFamily: 'Sora', fontSize: '32vw', fontWeight: 600, color: 'rgba(255,255,255,0.018)', userSelect: 'none', letterSpacing: '0.05em', lineHeight: 1 }}>
+        <p style={{ fontFamily: 'Sora', fontSize: '32vw', fontWeight: 600, color: 'rgba(255,255,255,0.018)', userSelect: 'none', letterSpacing: '0.05em', lineHeight: 1, animation: 'worldnamepulse 45s ease-in-out infinite' }}>
           {WORLD_NAMES[worldKey] || worldKey}
         </p>
       </div>
@@ -1613,7 +1620,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         </style>
       </svg>
 
-      <style>{`@keyframes cerfdrift-ghost{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(-4px,-3px) scale(1.008)}75%{transform:translate(3px,3px) scale(0.993)}}`}</style>
+      <style>{`@keyframes cerfdrift-ghost{0%,100%{transform:translate(0,0) scale(1) rotate(0deg)}40%{transform:translate(-4px,-3px) scale(1.008) rotate(-0.6deg)}75%{transform:translate(3px,3px) scale(0.993) rotate(0.4deg)}}`}</style>
 
       {/* Cerf fantôme — l'animal était là avant, il est encore là */}
       <Fade duration={3000} delay={1200} className="absolute inset-0 flex items-end justify-end pointer-events-none" style={{ paddingBottom: '8%', paddingRight: '4%' }}>
