@@ -346,11 +346,14 @@ function NeyaLogo({ size = 'sm', opacity = 1, className = '' }) {
   )
 }
 
-function NeyaSplash({ onDone, hasHistory, lastWorld }) {
+function NeyaSplash({ onDone, hasHistory, lastWorld, lastTs }) {
   const [visible, setVisible] = useState(false)
   const [fading, setFading] = useState(false)
   const [showReturn, setShowReturn] = useState(false)
   const [showWorld, setShowWorld] = useState(false)
+
+  const daysSince = lastTs ? (Date.now() - lastTs) / 86400000 : 0
+  const returnText = daysSince >= 7 ? 'tu es de retour' : 'tu es revenu·e'
 
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 200)
@@ -383,7 +386,7 @@ function NeyaSplash({ onDone, hasHistory, lastWorld }) {
           color: 'rgba(255,255,255,0.18)', marginTop: 28,
           animation: 'returnfade 1000ms ease forwards',
         }}>
-          tu es revenu·e
+          {returnText}
         </p>
       )}
       {showWorld && (
@@ -1024,29 +1027,30 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
 
 function ForetRays() {
   const rays = [
-    { x: 18, angle: -8, opacity: 0.06, width: 60, delay: '0s' },
-    { x: 35, angle: -3, opacity: 0.04, width: 90, delay: '4s' },
-    { x: 52, angle:  2, opacity: 0.07, width: 50, delay: '2s' },
-    { x: 68, angle: -5, opacity: 0.05, width: 70, delay: '6s' },
-    { x: 82, angle:  6, opacity: 0.04, width: 55, delay: '3s' },
+    { x: 15, angle: -10, opacity: 0.07, width: 55, delay: '0s' },
+    { x: 32, angle:  -4, opacity: 0.05, width: 100, delay: '5s' },
+    { x: 50, angle:   2, opacity: 0.08, width: 45, delay: '2s' },
+    { x: 67, angle:  -6, opacity: 0.06, width: 80, delay: '7s' },
+    { x: 84, angle:   7, opacity: 0.05, width: 60, delay: '3.5s' },
   ]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
       <style>{`
         @keyframes rayshift {
           0%,100% { opacity: var(--ray-op); }
-          50%      { opacity: calc(var(--ray-op) * 1.6); }
+          50%      { opacity: calc(var(--ray-op) * 1.7); }
         }
       `}</style>
       {rays.map((r, i) => (
         <div key={i} style={{
           position: 'absolute', top: '-20%', left: `${r.x}%`,
           width: r.width, height: '140%',
-          background: 'linear-gradient(to bottom, rgba(180,230,140,0) 0%, rgba(180,230,140,0.18) 40%, rgba(180,230,140,0) 100%)',
+          background: 'linear-gradient(to bottom, rgba(200,240,160,0) 0%, rgba(200,240,160,0.22) 35%, rgba(200,240,160,0.12) 65%, rgba(200,240,160,0) 100%)',
           transform: `rotate(${r.angle}deg) translateX(-50%)`,
           '--ray-op': r.opacity,
-          animation: `rayshift ${12 + i * 4}s ${r.delay} ease-in-out infinite`,
+          animation: `rayshift ${14 + i * 3}s ${r.delay} ease-in-out infinite`,
           mixBlendMode: 'screen',
+          filter: 'blur(3px)',
         }} />
       ))}
     </div>
@@ -1102,24 +1106,26 @@ function FeuShimmer() {
 
 function EauRipples() {
   const ripples = [
-    { cx: 30, cy: 65, delay: '0s',  period: 8,  maxR: 120 },
-    { cx: 60, cy: 45, delay: '3s',  period: 10, maxR: 90  },
-    { cx: 72, cy: 72, delay: '6s',  period: 12, maxR: 100 },
+    { cx: 50, cy: 58, delay: '0s',  period: 9,  maxR: 130, sw: 0.6 },
+    { cx: 50, cy: 58, delay: '3s',  period: 9,  maxR: 130, sw: 0.4 },
+    { cx: 50, cy: 58, delay: '6s',  period: 9,  maxR: 130, sw: 0.3 },
+    { cx: 35, cy: 70, delay: '1.5s', period: 12, maxR: 80,  sw: 0.5 },
+    { cx: 68, cy: 50, delay: '4.5s', period: 11, maxR: 70,  sw: 0.4 },
   ]
   return (
     <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3, overflow: 'visible' }}>
       <style>
         {ripples.map((r, i) => `
           @keyframes ripple${i} {
-            0%   { r:0;       opacity:0.15; }
-            60%  { opacity:0.06; }
+            0%   { r:0;        opacity:0.18; }
+            40%  { opacity:0.08; }
             100% { r:${r.maxR}; opacity:0; }
           }
         `).join('')}
       </style>
       {ripples.map((r, i) => (
         <circle key={i} cx={`${r.cx}%`} cy={`${r.cy}%`} r="0"
-          fill="none" stroke="rgba(100,200,220,0.3)" strokeWidth="0.8"
+          fill="none" stroke="rgba(80,180,210,0.35)" strokeWidth={r.sw}
           style={{ animation: `ripple${i} ${r.period}s ${r.delay} ease-out infinite` }} />
       ))}
     </svg>
@@ -1551,6 +1557,15 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         </Fade>
       )}
 
+      {/* Retour au même monde — reconnaissance subtile */}
+      {history.length >= 2 && history[1]?.world === worldKey && (
+        <Fade slide duration={2200} delay={3200} className="absolute text-center" style={{ top: '18%', left: '50%', transform: 'translateX(-50%)' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.42em', color: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }}>
+            encore ici
+          </p>
+        </Fade>
+      )}
+
       {/* Insight silencieux — si ce monde est le monde dominant de l'histoire */}
       {getDominantWorld(history) === worldKey && (
         <Fade slide duration={2500} delay={8500} className="absolute text-center" style={{ bottom: '32%', left: '50%', transform: 'translateX(-50%)' }}>
@@ -1760,7 +1775,7 @@ export default function App() {
         {muted ? '○' : '●'}
       </button>
 
-      {screen === 'splash'     && <NeyaSplash hasHistory={history.length > 0} lastWorld={history[0]?.world} onDone={() => history.length > 0 ? goTo('ritual', 0, true) : goTo('onboarding')} />}
+      {screen === 'splash'     && <NeyaSplash hasHistory={history.length > 0} lastWorld={history[0]?.world} lastTs={history[0]?.ts} onDone={() => history.length > 0 ? goTo('ritual', 0, true) : goTo('onboarding')} />}
       {screen === 'onboarding' && <Onboarding step={step} onNext={handleOnboardingNext} />}
       {screen === 'ritual'     && <RitualFlow step={step} ritual={ritual} onChange={handleRitualChange} onComplete={handleRitualStepComplete} muted={muted} />}
       {screen === 'world'      && <WorldReveal ritual={ritual} world={world} worldKey={worldKey} muted={muted} onGoVrai={handleGoVrai} onAmbienceStart={handleAmbienceStart} />}
