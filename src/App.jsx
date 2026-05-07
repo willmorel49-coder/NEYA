@@ -895,7 +895,7 @@ function RitualColor({ selected, onSelect, onNext }) {
       {/* Flash du label couleur */}
       {flashLabel && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 2 }}>
-          <p style={{ fontFamily: 'Sora', fontSize: 11, letterSpacing: '0.35em', color: 'rgba(255,255,255,0.28)', animation: 'colorlabelfade 1200ms ease forwards' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 12, letterSpacing: '0.35em', color: 'rgba(255,255,255,0.28)', animation: 'colorlabelfade 1200ms ease forwards' }}>
             {flashLabel}
           </p>
         </div>
@@ -1448,17 +1448,18 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
   const stopSoundRef = useRef(() => {})
 
   useEffect(() => {
+    // Démarrage audio immédiat pour ponter le gap depuis le rituel
+    if (!muted && ritual.sound && ritual.sound !== 'silence') {
+      const stop = startAmbience(ritual.sound, 0.022)
+      stopSoundRef.current = stop
+      onAmbienceStart?.(stop)
+    }
     const t1 = setTimeout(() => {
       setPhase('world')
-      if (!muted && ritual.sound && ritual.sound !== 'silence') {
-        const stop = startAmbience(ritual.sound, 0.04)
-        stopSoundRef.current = stop
-        onAmbienceStart?.(stop)
-      }
+      stopSoundRef.current?.setVolume?.(0.04, 1.2)
     }, 1000)
     const t2 = setTimeout(() => setPhase('name'), 2800)
     const t3 = setTimeout(() => setPhase('phrase'), 4600)
-    // Ne pas stopper le son à l'unmount — App gère l'arrêt
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, []) // eslint-disable-line
 
@@ -1636,12 +1637,14 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
   const [showRestart, setShowRestart] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [showAdieu, setShowAdieu] = useState(false)
+  const [showTakingTime, setShowTakingTime] = useState(false)
   const longPressTimer = useRef()
 
   useEffect(() => {
     const t1 = setTimeout(() => setShowRestart(true), 12000)
-    const t2 = setTimeout(() => { setShowAdieu(true); haptic([8, 60, 8]) }, 90000)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
+    const t2 = setTimeout(() => setShowTakingTime(true), 30000)
+    const t3 = setTimeout(() => { setShowAdieu(true); haptic([8, 60, 8]) }, 90000)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
   // Histoire silencieuse — spirale de Fibonacci temporelle (plus récent = centre, plus vieux = bords)
@@ -1803,6 +1806,15 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
         <Fade slide duration={2200} delay={3200} className="absolute text-center" style={{ top: '13%', left: '50%', transform: 'translateX(-50%)' }}>
           <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.42em', color: 'rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>
             encore ici
+          </p>
+        </Fade>
+      )}
+
+      {/* Longue présence — reconnaissance discrète de l'ancrage */}
+      {showTakingTime && !showAdieu && (
+        <Fade slide duration={2200} delay={0} className="absolute text-center" style={{ top: '35%', left: '50%', transform: 'translateX(-50%)' }}>
+          <p style={{ fontFamily: 'Sora', fontSize: 7, letterSpacing: '0.40em', color: 'rgba(255,255,255,0.06)', whiteSpace: 'nowrap' }}>
+            tu prends ton temps
           </p>
         </Fade>
       )}
