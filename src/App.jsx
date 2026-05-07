@@ -1433,13 +1433,16 @@ function CosmosParticles() {
         </linearGradient>
       </defs>
       <style>{`@keyframes nebulaPulse{0%,100%{opacity:0.55}50%{opacity:1}}`}</style>
-      {/* Nébuleuse — halo violet très doux derrière les étoiles */}
+      {/* Nébuleuses — halos colorés derrière les étoiles */}
       <ellipse cx="48%" cy="36%" rx="35%" ry="22%"
         fill="rgba(99,102,241,0.07)" filter="url(#nebulaBlur)"
         style={{ animation: 'nebulaPulse 28s ease-in-out infinite' }} />
       <ellipse cx="62%" cy="55%" rx="22%" ry="14%"
         fill="rgba(139,92,246,0.05)" filter="url(#nebulaBlur)"
         style={{ animation: 'nebulaPulse 36s 12s ease-in-out infinite' }} />
+      <ellipse cx="24%" cy="68%" rx="18%" ry="11%"
+        fill="rgba(20,184,166,0.04)" filter="url(#nebulaBlur)"
+        style={{ animation: 'nebulaPulse 44s 8s ease-in-out infinite' }} />
       <style>
         {stars.map(s => `
           @keyframes startwinkle${s.id} {
@@ -1581,7 +1584,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
       )}
 
       {/* Cerf — l'animal qui était déjà là */}
-      <div className="absolute inset-0 flex items-end justify-center pointer-events-none" style={{ paddingBottom: '5%', animation: 'cerfdrift 26s ease-in-out infinite' }}>
+      <div className="absolute inset-0 flex items-end justify-center pointer-events-none" style={{ paddingBottom: '5%', animation: `cerfdrift ${{ cosmos:'38s', vide:'52s', feu:'16s', eau:'30s', brume:'22s', foret:'20s' }[worldKey] || '26s'} ease-in-out infinite` }}>
         <img src="/cerf.svg" alt="" aria-hidden="true" style={{ width: '55vw', maxWidth: 280, opacity: 0.6, filter: world.animalFilter }} />
       </div>
 
@@ -1799,7 +1802,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Cerf fantôme — l'animal était là avant, il est encore là */}
       <Fade duration={3000} delay={1200} className="absolute inset-0 flex items-end justify-end pointer-events-none" style={{ paddingBottom: '8%', paddingRight: '4%' }}>
-        <img src="/cerf.svg" alt="" aria-hidden="true" style={{ width: '28vw', maxWidth: 130, opacity: 0.07, filter: world.animalFilter, animation: 'cerfdrift-ghost 42s ease-in-out infinite' }} />
+        <img src="/cerf.svg" alt="" aria-hidden="true" style={{ width: '28vw', maxWidth: 130, opacity: 0.07, filter: world.animalFilter, animation: `cerfdrift-ghost ${{ cosmos:'62s', vide:'80s', feu:'24s', eau:'48s', brume:'36s', foret:'30s' }[worldKey] || '42s'} ease-in-out infinite` }} />
       </Fade>
 
       {/* Compteur de présences passées — ultra-discret */}
@@ -2086,7 +2089,7 @@ export default function App() {
 
       {/* Bouton mute */}
       <button
-        onClick={() => setMuted(m => !m)}
+        onClick={() => { haptic([2]); setMuted(m => !m) }}
         aria-label={muted ? 'Activer le son' : 'Couper le son'}
         style={{ position: 'absolute', top: 20, right: 20, zIndex: 50, fontFamily: 'Sora', fontSize: 11, color: 'rgba(255,255,255,0.18)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.1em', transition: 'color 400ms ease' }}
         onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
