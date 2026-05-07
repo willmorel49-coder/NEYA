@@ -915,6 +915,41 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
   )
 }
 
+// ─── PARTICULES COSMOS ────────────────────────────────────────────────────────
+
+function CosmosParticles() {
+  const stars = useRef(
+    Array.from({ length: 38 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      r: 0.5 + Math.random() * 1.2,
+      opacity: 0.1 + Math.random() * 0.35,
+      period: 3 + Math.random() * 6,
+      delay: Math.random() * 5,
+    }))
+  ).current
+
+  return (
+    <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3 }}>
+      <defs>
+        <filter id="starGlow"><feGaussianBlur stdDeviation="0.8"/></filter>
+      </defs>
+      <style>{stars.map(s => `
+        @keyframes startwinkle${s.id} {
+          0%,100% { opacity:${s.opacity * 0.4}; }
+          50%      { opacity:${s.opacity}; }
+        }
+      `).join('')}</style>
+      {stars.map(s => (
+        <circle key={s.id} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r}
+          fill="rgba(200,220,255,1)" filter="url(#starGlow)"
+          style={{ animation: `startwinkle${s.id} ${s.period}s ${s.delay}s ease-in-out infinite` }} />
+      ))}
+    </svg>
+  )
+}
+
 // ─── WORLD REVEAL ─────────────────────────────────────────────────────────────
 
 function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart }) {
@@ -967,6 +1002,9 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
 
       {/* Voile monde — palette */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}f2 0%, ${world.palette[0]}aa 30%, ${world.palette[1]}66 65%, rgba(13,27,42,0.2) 100%)` }} />
+
+      {/* Particules cosmos */}
+      {worldKey === 'cosmos' && phase !== 'black' && <CosmosParticles />}
 
       <style>{`
         @keyframes worldBreathe {
@@ -1095,6 +1133,9 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart }) {
       {/* Voile très épais — l'espace vrai est au-delà du monde */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${world.palette[0]}fd 0%, ${world.palette[0]}ee 35%, ${world.palette[1]}cc 75%, ${world.palette[0]}bb 100%)` }} />
 
+      {/* Particules cosmos dans l'espace vrai aussi */}
+      {worldKey === 'cosmos' && <CosmosParticles />}
+
       {/* SVG — histoire silencieuse + flux de présences */}
       <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
         <defs>
@@ -1218,6 +1259,16 @@ export default function App() {
     if (step < 2) setStep(s => s + 1)
     else goTo('ritual', 0, true)
   }, [step, goTo])
+
+  // Navigation clavier globale
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return
+      if (screen === 'onboarding') handleOnboardingNext()
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [screen, handleOnboardingNext])
 
   const handleGoVrai = useCallback(() => goTo('vrai', 0, true), [goTo])
 
