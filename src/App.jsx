@@ -1209,9 +1209,9 @@ function FeuShimmer() {
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 3 }}>
       <style>{`
         @keyframes feushimmer {
-          0%,100% { transform:scaleX(1) skewX(0deg); opacity:0.04; }
-          25%      { transform:scaleX(1.008) skewX(0.4deg); opacity:0.07; }
-          75%      { transform:scaleX(0.994) skewX(-0.3deg); opacity:0.05; }
+          0%,100% { transform:scaleX(1) skewX(0deg); opacity:0.06; }
+          25%      { transform:scaleX(1.008) skewX(0.4deg); opacity:0.10; }
+          75%      { transform:scaleX(0.994) skewX(-0.3deg); opacity:0.07; }
         }
         ${embers.map((e, i) => `
           @keyframes ember${i} {
@@ -1384,6 +1384,10 @@ function CosmosParticles() {
 
   return (
     <>
+    {/* Voie lactée — bande galactique, très subtile */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 1 }}>
+      <div style={{ position: 'absolute', top: '22%', left: '-8%', right: '-8%', height: '40%', background: 'linear-gradient(105deg, transparent 0%, rgba(160,170,255,0.04) 30%, rgba(200,210,255,0.06) 50%, rgba(160,170,255,0.03) 70%, transparent 100%)', filter: 'blur(18px)', transform: 'rotate(-18deg)', transformOrigin: 'center' }} />
+    </div>
     {/* Aurora borealis — lumières du nord, très subtiles */}
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 2 }}>
       <style>{`@keyframes aurorashift{0%,100%{transform:translateY(0) scaleX(1);opacity:0.6}50%{transform:translateY(-10px) scaleX(1.05);opacity:1}}`}</style>
