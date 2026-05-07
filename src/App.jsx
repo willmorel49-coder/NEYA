@@ -615,8 +615,20 @@ function RitualColor({ selected, onSelect, onNext }) {
   ]
   const baseSizes = [40, 36, 48, 38, 44, 42, 34, 46]
 
+  // Périodes de respiration différentes par couleur — organic
+  const breathePeriods = [14, 18, 12, 20, 16, 22, 15, 19]
+
   return (
     <div className="w-full h-full relative">
+      <style>{`
+        ${RITUAL_COLORS.map((c, i) => `
+          @keyframes colorBreathe${i} {
+            0%, 100% { box-shadow: none; transform: translate(-50%, -50%) scale(1); }
+            50%       { box-shadow: 0 0 18px ${c.hex}44; transform: translate(-50%, -50%) scale(1.06); }
+          }
+        `).join('')}
+      `}</style>
+
       <p
         className="absolute top-14 left-1/2 -translate-x-1/2"
         style={{ fontFamily: 'Sora', fontSize: 10, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.18)' }}
@@ -640,11 +652,12 @@ function RitualColor({ selected, onSelect, onNext }) {
               height: size,
               borderRadius: '50%',
               background: c.hex,
-              opacity: selected && !isSelected ? 0.18 : 0.82,
+              opacity: selected && !isSelected ? 0.15 : 0.82,
               boxShadow: isSelected ? `0 0 32px ${c.hex}80, 0 0 12px ${c.hex}50` : 'none',
-              transform: isSelected ? 'scale(1.1) translate(-8px, -8px)' : 'translate(-50%, -50%)',
+              transform: isSelected ? 'scale(1.1) translate(-8px, -8px)' : undefined,
               filter: 'saturate(0.6) brightness(0.88)',
-              transition: 'all 0.55s ease',
+              animation: !isSelected && !selected ? `colorBreathe${i} ${breathePeriods[i]}s ease-in-out infinite` : 'none',
+              transition: 'opacity 0.55s ease, box-shadow 0.55s ease, transform 0.55s ease',
               cursor: 'pointer',
               border: 'none',
             }}
@@ -873,7 +886,7 @@ function RitualSound({ selected, onSelect, onNext, muted }) {
 
 // ─── WORLD REVEAL ─────────────────────────────────────────────────────────────
 
-function WorldReveal({ ritual, world, worldKey, onGoVrai, muted }) {
+function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart }) {
   const [phase, setPhase] = useState('black') // black → world → name → phrase
   const [displayedPhrase, setDisplayedPhrase] = useState('')
   const fullPhrase = selectPhrase(ritual, world)
@@ -883,12 +896,15 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted }) {
     const t1 = setTimeout(() => {
       setPhase('world')
       if (!muted && ritual.sound && ritual.sound !== 'silence') {
-        stopSoundRef.current = startAmbience(ritual.sound, 0.04)
+        const stop = startAmbience(ritual.sound, 0.04)
+        stopSoundRef.current = stop
+        onAmbienceStart?.(stop)
       }
     }, 1000)
     const t2 = setTimeout(() => setPhase('name'), 2800)
     const t3 = setTimeout(() => setPhase('phrase'), 4600)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); stopSoundRef.current() }
+    // Ne pas stopper le son à l'unmount — App gère l'arrêt
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, []) // eslint-disable-line
 
   useEffect(() => {
@@ -1126,6 +1142,7 @@ export default function App() {
   const [history, setHistory] = useState(() => loadHistory())
   const [blackout, setBlackout] = useState(false)
   const blackoutTimer = useRef()
+  const stopAmbienceRef = useRef(() => {})
 
   // Transition noire cinématique entre les écrans majeurs
   const goTo = useCallback((nextScreen, nextStep = 0, withBlackout = false) => {
@@ -1168,9 +1185,15 @@ export default function App() {
 
   const handleGoVrai = useCallback(() => goTo('vrai', 0, true), [goTo])
 
+  const handleAmbienceStart = useCallback((stopFn) => {
+    stopAmbienceRef.current = stopFn
+  }, [])
+
   const handleRestart = useCallback(() => {
+    stopAmbienceRef.current()
+    stopAmbienceRef.current = () => {}
     setRitual(INITIAL_RITUAL)
-    goTo('ritual', 0)
+    goTo('ritual', 0, true)
   }, [goTo])
 
   return (
@@ -1202,7 +1225,7 @@ export default function App() {
       {screen === 'splash'     && <NeyaSplash onDone={() => goTo('onboarding')} />}
       {screen === 'onboarding' && <Onboarding step={step} onNext={handleOnboardingNext} />}
       {screen === 'ritual'     && <RitualFlow step={step} ritual={ritual} onChange={handleRitualChange} onComplete={handleRitualStepComplete} muted={muted} />}
-      {screen === 'world'      && <WorldReveal ritual={ritual} world={world} worldKey={worldKey} muted={muted} onGoVrai={handleGoVrai} />}
+      {screen === 'world'      && <WorldReveal ritual={ritual} world={world} worldKey={worldKey} muted={muted} onGoVrai={handleGoVrai} onAmbienceStart={handleAmbienceStart} />}
       {screen === 'vrai'       && <EspaceVrai ritual={ritual} world={world} worldKey={worldKey} history={history} onRestart={handleRestart} />}
     </div>
   )
