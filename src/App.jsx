@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+const B = import.meta.env.BASE_URL
+
 // ─── DONNÉES STATIQUES ────────────────────────────────────────────────────────
 
 const RITUAL_COLORS = [
@@ -19,7 +21,7 @@ const RITUAL_SOUNDS = ['pluie', 'vent', 'feu', 'silence']
 const WORLDS = {
   brume: {
     palette: ['#0d1b2a', '#1b2d4f', '#2e4a7a'],
-    bgImage: 'url(/bg-brume.png)',
+    bgImage: `url(${B}bg-brume.png)`,
     animalFilter: 'brightness(1.4) blur(0.3px)',
     animationSpeed: 'slow',
     whisper: 'quelque chose te relie',
@@ -68,7 +70,7 @@ const WORLDS = {
 
   foret: {
     palette: ['#0a1a0e', '#162a18', '#1e3d24'],
-    bgImage: 'url(/bg-foret.png)',
+    bgImage: `url(${B}bg-foret.png)`,
     animalFilter: 'hue-rotate(110deg) saturate(0.9) brightness(1.3) blur(0.3px)',
     animationSpeed: 'slow',
     whisper: 'les racines tiennent',
@@ -117,7 +119,7 @@ const WORLDS = {
 
   cosmos: {
     palette: ['#0a0818', '#160d3a', '#1e1050'],
-    bgImage: 'url(/bg-cosmos.png)',
+    bgImage: `url(${B}bg-cosmos.png)`,
     animalFilter: 'hue-rotate(270deg) saturate(0.85) brightness(1.6) blur(0.3px)',
     animationSpeed: 'slow',
     whisper: 'tu fais partie de l\'immensité',
@@ -166,7 +168,7 @@ const WORLDS = {
 
   feu: {
     palette: ['#1a0800', '#2e1000', '#4a1c00'],
-    bgImage: 'url(/bg-feu.png)',
+    bgImage: `url(${B}bg-feu.png)`,
     animalFilter: 'hue-rotate(30deg) saturate(1.2) brightness(1.6) blur(0.3px)',
     animationSpeed: 'fast',
     whisper: 'cette intensité est toi',
@@ -215,7 +217,7 @@ const WORLDS = {
 
   eau: {
     palette: ['#04121c', '#081e30', '#0c2e44'],
-    bgImage: 'url(/bg-eau.png)',
+    bgImage: `url(${B}bg-eau.png)`,
     animalFilter: 'hue-rotate(190deg) saturate(1.1) brightness(1.5) blur(0.3px)',
     animationSpeed: 'slow',
     whisper: 'tu peux laisser couler',
@@ -264,7 +266,7 @@ const WORLDS = {
 
   vide: {
     palette: ['#0c0c0c', '#141414', '#1e1e1e'],
-    bgImage: 'url(/bg-vide.png)',
+    bgImage: `url(${B}bg-vide.png)`,
     animalFilter: 'saturate(0) brightness(1.8) blur(0.3px)',
     animationSpeed: 'slow',
     whisper: 'rien n\'est requis de toi',
@@ -541,7 +543,7 @@ function OnboardingScreen0() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: 'url(/bg-onboarding.png)',
+          backgroundImage: `url(${B}bg-onboarding.png)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center 20%',
           animation: 'ob0breathe 42s ease-in-out infinite',
@@ -1660,7 +1662,7 @@ function WorldReveal({ ritual, world, worldKey, onGoVrai, muted, onAmbienceStart
 
       {/* Cerf — l'animal qui était déjà là */}
       <div className="absolute inset-0 flex items-end justify-center pointer-events-none" style={{ paddingBottom: '5%', animation: `cerfdrift ${{ cosmos:'38s', vide:'52s', feu:'16s', eau:'30s', brume:'22s', foret:'20s' }[worldKey] || '26s'} ease-in-out infinite` }}>
-        <img src="/cerf.svg" alt="" aria-hidden="true" style={{ width: '55vw', maxWidth: 280, opacity: 0.6, filter: world.animalFilter }} />
+        <img src={`${B}cerf.svg`} alt="" aria-hidden="true" style={{ width: '55vw', maxWidth: 280, opacity: 0.6, filter: world.animalFilter }} />
       </div>
 
       {/* Phrase */}
@@ -1896,7 +1898,7 @@ function EspaceVrai({ ritual, world, worldKey, history, onRestart, onResetHistor
 
       {/* Cerf fantôme — l'animal était là avant, il est encore là */}
       <Fade duration={3000} delay={1200} className="absolute inset-0 flex items-end justify-end pointer-events-none" style={{ paddingBottom: '8%', paddingRight: '4%' }}>
-        <img src="/cerf.svg" alt="" aria-hidden="true" style={{ width: '28vw', maxWidth: 130, opacity: 0.07, filter: world.animalFilter, animation: `cerfdrift-ghost ${{ cosmos:'62s', vide:'80s', feu:'24s', eau:'48s', brume:'36s', foret:'30s' }[worldKey] || '42s'} ease-in-out infinite` }} />
+        <img src={`${B}cerf.svg`} alt="" aria-hidden="true" style={{ width: '28vw', maxWidth: 130, opacity: 0.07, filter: world.animalFilter, animation: `cerfdrift-ghost ${{ cosmos:'62s', vide:'80s', feu:'24s', eau:'48s', brume:'36s', foret:'30s' }[worldKey] || '42s'} ease-in-out infinite` }} />
       </Fade>
 
       {/* Compteur de présences passées — ultra-discret */}
@@ -2078,7 +2080,7 @@ export default function App() {
 
   // Préchargement de toutes les images monde
   useEffect(() => {
-    const srcs = ['/bg-onboarding.png', '/bg-brume.png', '/bg-foret.png', '/bg-cosmos.png', '/bg-feu.png', '/bg-eau.png', '/bg-vide.png', '/bg-vrai.png', '/cerf.svg']
+    const srcs = ['bg-onboarding.png', 'bg-brume.png', 'bg-foret.png', 'bg-cosmos.png', 'bg-feu.png', 'bg-eau.png', 'bg-vide.png', 'bg-vrai.png', 'cerf.svg'].map(s => B + s)
     srcs.forEach(src => { const img = new Image(); img.src = src })
   }, [])
 

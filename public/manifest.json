@@ -2,14 +2,14 @@
   "name": "NÉYA",
   "short_name": "NÉYA",
   "description": "Et toi, ça va vraiment ?",
-  "start_url": "/",
+  "start_url": "/NEYA/",
   "display": "standalone",
   "background_color": "#050810",
   "theme_color": "#050810",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/bg-onboarding.png",
+      "src": "/NEYA/bg-onboarding.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
