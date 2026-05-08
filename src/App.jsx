@@ -258,6 +258,128 @@ const QUESTIONS = [
       { text: "Une paix intérieure rayonnante que je construis chaque jour", type: 'lumiere' },
     ],
   },
+  // ─── Questions tirées du MVP original ────────────────────────────────────────
+  {
+    bg: 'bg-foret.png',
+    title: "Quand une émotion forte surgit...",
+    text: "Un geste, une parole ou un regard éveille une émotion forte en toi. Comment choisis-tu de l'accueillir ?",
+    choices: [
+      { text: "Partager tout de suite — j'ai besoin de connexion", type: 'lumiere' },
+      { text: "En parler avec quelques proches de confiance", type: 'resilience' },
+      { text: "Garder en moi un moment, l'accueillir intérieurement", type: 'presence' },
+      { text: "Vivre pleinement l'émotion, sans besoin de la partager", type: 'sagesse' },
+    ],
+  },
+  {
+    bg: 'bg-eau.png',
+    title: "Face à une décision importante...",
+    text: "La dernière fois que tu as eu une grande décision à prendre, quelle a été ta boussole intérieure ?",
+    choices: [
+      { text: "Suivre la logique et les faits", type: 'resilience' },
+      { text: "Réfléchir rationnellement en écoutant aussi mes ressentis", type: 'presence' },
+      { text: "Me fier à mes émotions profondes", type: 'sagesse' },
+      { text: "Me laisser guider pleinement par mon cœur", type: 'lumiere' },
+    ],
+  },
+  {
+    bg: 'bg-brume.png',
+    title: "Dans un endroit nouveau...",
+    text: "Quand tu arrives dans un endroit totalement nouveau, que fais-tu en premier ?",
+    choices: [
+      { text: "Explorer sans attendre — j'ai besoin de découvrir", type: 'resilience' },
+      { text: "Prendre mes repères tranquillement", type: 'presence' },
+      { text: "Observer discrètement avant de bouger", type: 'sagesse' },
+      { text: "Chercher d'abord un espace qui me ressemble", type: 'lumiere' },
+    ],
+  },
+  {
+    bg: 'bg-vide.png',
+    title: "Face à une échéance...",
+    text: "Quand une échéance se profile, quelle est ta manière naturelle de l'aborder ?",
+    choices: [
+      { text: "Planifier avec clarté, étape par étape", type: 'resilience' },
+      { text: "Fixer un cadre souple, prêt à ajuster", type: 'presence' },
+      { text: "Avancer en accueillant les imprévus", type: 'sagesse' },
+      { text: "Vivre au jour le jour, en adaptant naturellement", type: 'lumiere' },
+    ],
+  },
+  {
+    bg: 'bg-eau.png',
+    title: "Retrouver son équilibre...",
+    text: "Quand tu as besoin de retrouver ton équilibre, que privilégies-tu ?",
+    choices: [
+      { text: "Mes projets — agir me ressource profondément", type: 'resilience' },
+      { text: "Mes liens de cœur et mes proches", type: 'presence' },
+      { text: "Ma connexion intérieure, seul·e avec moi-même", type: 'sagesse' },
+      { text: "L'aventure et l'imprévu pour retrouver ma vitalité", type: 'lumiere' },
+    ],
+  },
+  {
+    bg: 'bg-cosmos.png',
+    title: "Quand l'imprévu arrive...",
+    text: "Quel est ton réflexe naturel quand les choses ne se passent pas comme prévu ?",
+    choices: [
+      { text: "Reprendre rapidement la maîtrise", type: 'resilience' },
+      { text: "Ajuster le plan en gardant mon objectif", type: 'presence' },
+      { text: "Ressentir d'abord, avant d'agir", type: 'sagesse' },
+      { text: "Laisser évoluer et m'adapter sereinement", type: 'lumiere' },
+    ],
+  },
+  {
+    bg: 'bg-foret.png',
+    title: "En arrivant dans un lieu inconnu...",
+    text: "Quand tu arrives dans un lieu totalement nouveau, que captes-tu naturellement en premier ?",
+    choices: [
+      { text: "Les éléments marquants et l'ambiance générale", type: 'resilience' },
+      { text: "L'énergie invisible du lieu", type: 'presence' },
+      { text: "Les détails précis : sons, couleurs, atmosphère", type: 'sagesse' },
+      { text: "Les histoires possibles derrière ce que je perçois", type: 'lumiere' },
+    ],
+  },
+  {
+    bg: 'bg-brume.png',
+    title: "Une journée libre...",
+    text: "Quand tu as une journée entièrement libre, comment la vis-tu naturellement ?",
+    choices: [
+      { text: "Je planifie pour profiter au maximum", type: 'resilience' },
+      { text: "Je garde une idée vague et m'adapte", type: 'presence' },
+      { text: "Je me laisse guider par mes envies du moment", type: 'sagesse' },
+      { text: "Je me laisse totalement porter", type: 'lumiere' },
+    ],
+  },
+  {
+    bg: 'bg-cosmos.png',
+    title: "Ton moteur intérieur...",
+    text: "Quelle énergie intérieure te pousse à te lever chaque matin ?",
+    choices: [
+      { text: "L'envie de réaliser mes projets et d'avancer", type: 'resilience' },
+      { text: "Le désir de grandir et d'être vraiment présent·e", type: 'presence' },
+      { text: "La curiosité — comprendre et observer le monde", type: 'sagesse' },
+      { text: "L'élan créatif de partager ce qui m'anime", type: 'lumiere' },
+    ],
+  },
+  {
+    bg: 'bg-feu.png',
+    title: "Face au besoin de changement...",
+    text: "Quand une partie de toi sent qu'il est temps de changer, que fais-tu naturellement ?",
+    choices: [
+      { text: "Je saisis l'opportunité pour me renouveler", type: 'resilience' },
+      { text: "Je fais évoluer les choses à mon rythme", type: 'presence' },
+      { text: "Je réfléchis avant d'envisager un changement", type: 'sagesse' },
+      { text: "Je me laisse transformer par la vie", type: 'lumiere' },
+    ],
+  },
+  {
+    bg: 'bg-foret.png',
+    title: "À la rencontre d'une nouvelle personne...",
+    text: "Quand tu rencontres quelqu'un pour la première fois, quelle est ton attitude naturelle ?",
+    choices: [
+      { text: "Créer facilement une connexion — j'aime les gens", type: 'lumiere' },
+      { text: "Ressentir et observer tranquillement", type: 'presence' },
+      { text: "Garder une certaine distance au début", type: 'sagesse' },
+      { text: "Me protéger tant que la confiance n'est pas établie", type: 'resilience' },
+    ],
+  },
 ]
 
 // ─── ÉTOILES ──────────────────────────────────────────────────────────────────
@@ -602,7 +724,7 @@ function QuizIntroScreen({ onStart }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%' }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item1 ? 1 : 0, transform: item1 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
-            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em' }}>12</span>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em' }}>23</span>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65 }}>
               Questions conçues pour révéler ton chemin intérieur unique.
             </p>
