@@ -524,6 +524,100 @@ function GrainFilter() {
   )
 }
 
+// ─── SPIRIT ANIMALS ───────────────────────────────────────────────────────────
+
+function PhoenixSpirit({ size = 120, color = '#f59e0b', style: s }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
+      <ellipse cx="60" cy="68" rx="10" ry="16" fill={color} opacity="0.92" />
+      <path d="M50 70 C30 55 8 72 4 56 C12 44 34 52 50 62Z" fill={color} opacity="0.85" />
+      <path d="M50 72 C28 68 6 82 2 70 C10 58 32 64 50 68Z" fill={color} opacity="0.55" />
+      <path d="M70 70 C90 55 112 72 116 56 C108 44 86 52 70 62Z" fill={color} opacity="0.85" />
+      <path d="M70 72 C92 68 114 82 118 70 C110 58 88 64 70 68Z" fill={color} opacity="0.55" />
+      <path d="M55 84 C50 100 44 110 48 118 C54 106 58 96 60 86Z" fill={color} opacity="0.70" />
+      <path d="M60 84 C58 102 56 114 60 120 C64 114 62 102 60 86Z" fill={color} opacity="0.90" />
+      <path d="M65 84 C70 100 76 110 72 118 C66 106 62 96 60 86Z" fill={color} opacity="0.70" />
+      <ellipse cx="60" cy="50" rx="8" ry="10" fill={color} opacity="0.96" />
+      <path d="M56 42 C52 28 48 18 54 8 C58 20 58 32 60 40Z" fill={color} opacity="0.80" />
+      <path d="M60 40 C60 24 62 12 60 2 C62 14 64 28 60 40Z" fill={color} opacity="0.95" />
+      <path d="M64 42 C68 28 72 18 66 8 C62 20 62 32 60 40Z" fill={color} opacity="0.80" />
+      <ellipse cx="60" cy="60" rx="18" ry="22" fill="white" opacity="0.08" />
+    </svg>
+  )
+}
+
+function WolfSpirit({ size = 120, color = '#6366f1', style: s }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
+      <ellipse cx="60" cy="80" rx="24" ry="28" fill={color} opacity="0.18" />
+      <path d="M38 62 C38 40 82 40 82 62 C82 78 72 88 60 88 C48 88 38 78 38 62Z" fill={color} opacity="0.82" />
+      <path d="M44 52 C40 34 30 26 34 18 C42 28 46 42 48 52Z" fill={color} opacity="0.90" />
+      <path d="M76 52 C80 34 90 26 86 18 C78 28 74 42 72 52Z" fill={color} opacity="0.90" />
+      <path d="M45 50 C42 36 34 30 37 22 C43 32 46 43 48 50Z" fill="white" opacity="0.10" />
+      <path d="M75 50 C78 36 86 30 83 22 C77 32 74 43 72 50Z" fill="white" opacity="0.10" />
+      <ellipse cx="60" cy="74" rx="12" ry="8" fill={color} opacity="0.60" />
+      <ellipse cx="60" cy="72" rx="5" ry="3" fill={color} opacity="0.90" />
+      <ellipse cx="50" cy="60" rx="4" ry="4.5" fill="white" opacity="0.92" />
+      <ellipse cx="70" cy="60" rx="4" ry="4.5" fill="white" opacity="0.92" />
+      <ellipse cx="51" cy="60" rx="2" ry="2.5" fill={color} opacity="0.20" />
+      <ellipse cx="71" cy="60" rx="2" ry="2.5" fill={color} opacity="0.20" />
+      <path d="M84 82 C100 72 114 78 116 88 C104 94 92 88 82 84Z" fill={color} opacity="0.60" />
+      <rect x="46" y="88" width="10" height="22" rx="5" fill={color} opacity="0.55" />
+      <rect x="64" y="88" width="10" height="22" rx="5" fill={color} opacity="0.55" />
+    </svg>
+  )
+}
+
+function BearSpirit({ size = 120, color = '#ec4899', style: s }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
+      <ellipse cx="60" cy="80" rx="32" ry="30" fill={color} opacity="0.75" />
+      <ellipse cx="60" cy="52" rx="26" ry="24" fill={color} opacity="0.88" />
+      <circle cx="38" cy="34" r="11" fill={color} opacity="0.90" />
+      <circle cx="82" cy="34" r="11" fill={color} opacity="0.90" />
+      <circle cx="38" cy="34" r="7" fill="white" opacity="0.08" />
+      <circle cx="82" cy="34" r="7" fill="white" opacity="0.08" />
+      <ellipse cx="60" cy="60" rx="13" ry="9" fill={color} opacity="0.55" />
+      <ellipse cx="60" cy="59" rx="6" ry="4" fill={color} opacity="0.85" />
+      <ellipse cx="60" cy="56" rx="3.5" ry="2.5" fill="white" opacity="0.30" />
+      <circle cx="50" cy="48" r="5" fill="white" opacity="0.90" />
+      <circle cx="70" cy="48" r="5" fill="white" opacity="0.90" />
+      <circle cx="51" cy="48" r="2.5" fill={color} opacity="0.25" />
+      <circle cx="71" cy="48" r="2.5" fill={color} opacity="0.25" />
+      <ellipse cx="60" cy="60" rx="22" ry="20" fill="white" opacity="0.05" />
+      <ellipse cx="36" cy="104" rx="12" ry="10" fill={color} opacity="0.60" />
+      <ellipse cx="84" cy="104" rx="12" ry="10" fill={color} opacity="0.60" />
+    </svg>
+  )
+}
+
+function DeerSpirit({ size = 120, color = '#14b8a6', style: s }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
+      <ellipse cx="60" cy="82" rx="18" ry="26" fill={color} opacity="0.70" />
+      <rect x="54" y="56" width="12" height="22" rx="6" fill={color} opacity="0.80" />
+      <ellipse cx="60" cy="50" rx="14" ry="16" fill={color} opacity="0.88" />
+      <path d="M48 42 C44 28 36 20 30 10 M44 36 C38 26 28 22 22 14 M44 36 C42 24 38 14 36 4" stroke={color} strokeWidth="2.5" strokeLinecap="round" opacity="0.80" fill="none"/>
+      <path d="M72 42 C76 28 84 20 90 10 M76 36 C82 26 92 22 98 14 M76 36 C78 24 82 14 84 4" stroke={color} strokeWidth="2.5" strokeLinecap="round" opacity="0.80" fill="none"/>
+      <ellipse cx="60" cy="58" rx="8" ry="6" fill={color} opacity="0.55" />
+      <ellipse cx="60" cy="56" rx="3.5" ry="2.5" fill="white" opacity="0.20" />
+      <ellipse cx="52" cy="47" rx="4" ry="4.5" fill="white" opacity="0.90" />
+      <ellipse cx="68" cy="47" rx="4" ry="4.5" fill="white" opacity="0.90" />
+      <rect x="50" y="106" width="7" height="14" rx="3.5" fill={color} opacity="0.55" />
+      <rect x="63" y="106" width="7" height="14" rx="3.5" fill={color} opacity="0.55" />
+    </svg>
+  )
+}
+
+function SpiritAnimal({ archetype, size = 120, style: s }) {
+  const arch = ARCHETYPES[archetype] || ARCHETYPES.presence
+  const props = { size, color: arch.color, style: s }
+  if (archetype === 'resilience') return <PhoenixSpirit {...props} />
+  if (archetype === 'sagesse')    return <WolfSpirit    {...props} />
+  if (archetype === 'lumiere')    return <BearSpirit    {...props} />
+  return <DeerSpirit {...props} />
+}
+
 // ─── LOGO ─────────────────────────────────────────────────────────────────────
 
 function NeyaLogo({ size = 'md', onTap }) {
@@ -911,7 +1005,7 @@ function TransitionScreen({ onReveal }) {
             <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.14)', animation: 'pulsering 3.4s ease-in-out infinite' }} />
             <div style={{ width: 76, height: 76, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 68%)', animation: 'presencePulse 3.2s ease-in-out infinite' }} />
-              <img src={`${B}cerf.svg`} style={{ width: 40, height: 40, opacity: 0.78, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative' }} alt="" />
+              <SpiritAnimal archetype="presence" size={40} style={{ opacity: 0.78, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative' }} />
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
@@ -934,7 +1028,7 @@ function TransitionScreen({ onReveal }) {
 
 // ─── PATRONUS REVEAL ──────────────────────────────────────────────────────────
 
-function PatronusReveal({ arch, onDone }) {
+function PatronusReveal({ arch, archetypeKey, onDone }) {
   const [step, setStep] = useState(0)
   // 0: dark  1: point  2: rings  3: animal  4: flash  5: text  6: btn
 
@@ -1028,11 +1122,10 @@ function PatronusReveal({ arch, onDone }) {
         <div style={{ position: 'relative', zIndex: 10, animation: 'patronusAnimal 2.4s ease forwards' }}>
           {/* Inner aura */}
           <div style={{ position: 'absolute', inset: -28, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 65%)`, animation: 'presencePulse 2.8s ease-in-out infinite 0.6s' }} />
-          <img
-            src={`${B}cerf.svg`}
-            alt=""
+          <SpiritAnimal
+            archetype={archetypeKey}
+            size={210}
             style={{
-              width: 210, height: 210,
               display: 'block',
               filter: `drop-shadow(0 0 28px ${arch.color}) drop-shadow(0 0 55px rgba(255,255,255,0.8)) drop-shadow(0 0 90px ${arch.color}99)`,
               animation: 'cerfdrift 11s ease-in-out infinite 2.5s',
@@ -1100,7 +1193,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
   if (phase === 0) {
     return (
       <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.28)" breathe>
-        <PatronusReveal arch={arch} onDone={() => {
+        <PatronusReveal arch={arch} archetypeKey={archetypeKey} onDone={() => {
           setPhaseVis(false)
           setTimeout(() => { setPhase(1); setPhaseVis(true) }, 300)
         }} />
@@ -1296,10 +1389,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           {/* Soft glow center */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}20 0%, transparent 72%)`, animation: 'presencePulse 3.8s ease-in-out infinite' }} />
-            <img
-              src={`${B}cerf.svg`}
-              alt=""
-              style={{ width: 74, height: 74, opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative', zIndex: 1 }}
+            <SpiritAnimal
+              archetype={archetypeKey}
+              size={74}
+              style={{ opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative', zIndex: 1 }}
             />
           </div>
         </div>
@@ -1545,7 +1638,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const assets = ['bg-onboarding.png','bg-cosmos.png','bg-cosmos-alt.png','bg-feu.png','bg-eau.png','bg-foret.png','bg-brume.png','bg-vide.png','bg-vrai.png','cerf.svg']
+    const assets = ['bg-onboarding.png','bg-cosmos.png','bg-cosmos-alt.png','bg-feu.png','bg-eau.png','bg-foret.png','bg-brume.png','bg-vide.png','bg-vrai.png']
     assets.forEach(s => { const img = new Image(); img.src = B + s })
     const profile = loadProfile()
     if (profile?.archetype) {
