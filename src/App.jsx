@@ -484,6 +484,26 @@ function isTodayFirstVisit() {
   return !localStorage.getItem(`neya_visited_${todayKey()}`)
 }
 
+function getCurrentStreak() {
+  const today = new Date()
+  const todayDateStr = today.toISOString().split('T')[0]
+  let todayDone = false
+  try {
+    const td = JSON.parse(localStorage.getItem(`neya_routines_${todayDateStr}`) || '[]')
+    todayDone = td.some(Boolean)
+  } catch {}
+  let streak = 0
+  for (let i = todayDone ? 0 : 1; i < 366; i++) {
+    const d = new Date(today); d.setDate(d.getDate() - i)
+    const key = `neya_routines_${d.toISOString().split('T')[0]}`
+    try {
+      const data = JSON.parse(localStorage.getItem(key) || '[]')
+      if (data.some(Boolean)) { streak++ } else { break }
+    } catch { break }
+  }
+  return streak
+}
+
 function getTotalRoutinesDone() {
   let total = 0
   try {
@@ -1576,6 +1596,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const quetesCount = quetesDone.filter(Boolean).length
   const weekDots = getWeekDots()
   const days = savedAt ? daysSince(savedAt) : 0
+  const streak = getCurrentStreak()
   const totalDone = getTotalRoutinesDone()
   const presenceProgress = ringReady ? getPresenceProgress(savedAt, routinesDone, quetesDone, arch) : 0
 
@@ -1661,9 +1682,14 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {/* ── Graines de présence (7 jours) ── */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
-        {days > 0 && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 2px' }}>Jour {days}</p>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
+          {days > 0 && (
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0 }}>Jour {days}</p>
+          )}
+          {streak >= 2 && (
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}88`, letterSpacing: '0.12em', margin: 0 }}>· {streak} jours d'affilée</p>
+          )}
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
           {weekDots.map((active, i) => {
             const isToday = i === 6
