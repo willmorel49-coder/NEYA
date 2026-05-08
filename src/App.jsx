@@ -803,6 +803,7 @@ function SplashScreen({ onStart }) {
   const [titleVis, setTitleVis] = useState(false)
   const [subVis, setSubVis] = useState(false)
   const [whisperVis, setWhisperVis] = useState(false)
+  const [whisper2Vis, setWhisper2Vis] = useState(false)
   const [showBtn, setShowBtn] = useState(false)
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 100)
@@ -810,7 +811,8 @@ function SplashScreen({ onStart }) {
     const t3 = setTimeout(() => setSubVis(true), 1400)
     const t4 = setTimeout(() => setWhisperVis(true), 2000)
     const t5 = setTimeout(() => setShowBtn(true), 2800)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5) }
+    const t6 = setTimeout(() => setWhisper2Vis(true), 3500)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6) }
   }, [])
 
   const SPLASH_MOTES = [
@@ -859,6 +861,9 @@ function SplashScreen({ onStart }) {
           </p>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.20)', margin: 0, letterSpacing: '0.04em', fontStyle: 'italic', opacity: whisperVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1 }}>
             T'as pas besoin d'aller bien pour commencer.
+          </p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: 'rgba(255,255,255,0.09)', margin: '5px 0 0', letterSpacing: '0.06em', fontStyle: 'italic', opacity: whisper2Vis ? 1 : 0, transition: 'opacity 2s ease', position: 'relative', zIndex: 1 }}>
+            {(() => { const h = new Date().getHours(); if (h >= 22 || h < 5) return 'cette nuit, commence ici'; if (h < 9) return 'ce matin, commence ici'; if (h < 18) return 'cet après-midi, commence ici'; return 'ce soir, commence ici' })()}
           </p>
         </div>
 
@@ -1578,6 +1583,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   const ghostPeriod = EVRAI_GHOST_PERIODS[archetypeKey] || 36
 
   useEffect(() => {
+    const t0 = setTimeout(() => haptic([3, 50, 3]), 800)
     const t1 = setTimeout(() => setVis(true), 30)
     const t2 = setTimeout(() => setShowText(true), 600)
     const t3 = setTimeout(() => setShowSecond(true), 6000)
@@ -1585,7 +1591,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
     const t5 = setTimeout(() => haptic([2, 80, 2]), 12000)
     const t6 = setTimeout(() => setShowPatience(true), 30000)
     const t7 = setTimeout(() => setShowEncoreIci(true), 18000)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); clearTimeout(t7) }
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); clearTimeout(t7) }
   }, [])
 
   return (
@@ -1907,7 +1913,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         {(() => {
           const count = weekDots.filter(Boolean).length
           if (count === 0) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.14em', margin: 0 }}>ta présence cette semaine</p>
-          if (count === 7) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.14em', margin: 0, opacity: 0.8 }}>7 jours · semaine complète ✦</p>
+          if (count === 7) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.14em', margin: 0, opacity: 0.9, textShadow: `0 0 14px ${arch.color}88`, animation: 'milestoneGlow 3.8s ease-in-out infinite' }}>7 jours · semaine complète ✦</p>
           return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.26)', letterSpacing: '0.14em', margin: 0 }}>{count} jour{count > 1 ? 's' : ''} cette semaine</p>
         })()}
         {totalDone > 0 && (
