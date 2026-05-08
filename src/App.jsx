@@ -1086,7 +1086,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
             <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: `1px solid ${arch ? arch.color + '55' : 'rgba(255,255,255,0.14)'}`, animation: 'pulsering 3.4s ease-in-out infinite' }} />
             <div style={{ width: 76, height: 76, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 68%)', animation: 'presencePulse 3.2s ease-in-out infinite' }} />
-              <SpiritAnimal archetype="presence" size={40} style={{ opacity: 0.78, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', position: 'relative' }} />
+              <SpiritAnimal archetype={archetypeKey || 'presence'} size={40} style={{ opacity: 0.78, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', position: 'relative' }} />
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
@@ -1527,7 +1527,7 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
 
 // ─── HOME SCREEN ──────────────────────────────────────────────────────────────
 
-function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenVrai, savedAt }) {
+function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenVrai, onChangeTab, savedAt }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [intentionReady, setIntentionReady] = useState(false)
@@ -1638,7 +1638,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress)}</p>
 
         {msg ? (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: isMilestone ? 400 : 300, fontSize: isMilestone ? 12.5 : 11.5, color: isMilestone ? arch.color : 'rgba(255,255,255,0.3)', letterSpacing: isMilestone ? '0.04em' : '0.05em', margin: '4px 0 0', fontStyle: 'italic', animation: isMilestone ? 'fadeIn 1.2s ease both' : 'none', textShadow: isMilestone ? `0 0 18px ${arch.color}55` : 'none', transition: 'all 0.4s ease' }}>{msg}</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: isMilestone ? 400 : 300, fontSize: isMilestone ? 12.5 : 11.5, color: isMilestone ? arch.color : 'rgba(255,255,255,0.3)', letterSpacing: isMilestone ? '0.04em' : '0.05em', margin: '4px 0 0', fontStyle: 'italic', animation: isMilestone ? 'fadeIn 1.2s ease both, milestoneGlow 3.8s ease-in-out 1.4s infinite' : 'none', textShadow: isMilestone ? `0 0 18px ${arch.color}55` : 'none', transition: 'all 0.4s ease' }}>{msg}</p>
         ) : (
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.12em', margin: '4px 0 0' }}>touche · instant de présence</p>
         )}
@@ -1703,10 +1703,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '2px 0 0', textTransform: 'uppercase' }}>Aujourd'hui</p>
       <div style={{ display: 'flex', gap: 10 }}>
         {[
-          { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈' },
-          { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇' },
+          { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈', tab: 'routines' },
+          { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇', tab: 'quetes' },
         ].map((s, i) => (
-          <div key={i} style={{ flex: 1, background: s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s' }}>
+          <div key={i} onClick={() => { haptic(8); onChangeTab(s.tab) }} style={{ flex: 1, background: s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s', cursor: 'pointer' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 13, color: s.count > 0 ? arch.color : 'rgba(255,255,255,0.24)', transition: 'color 0.3s ease' }}>{s.icon}</span>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.26)' }}>{s.count}/{s.total}</span>
@@ -2053,7 +2053,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, background: `radial-gradient(ellipse at center, ${arch.color}0f 0%, transparent 65%)`, animation: `worldglow ${glowPeriod}s ease-in-out infinite` }} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 0.22s ease-out' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
-          {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} savedAt={savedAt} />}
+          {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} />}
           {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} />}
           {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
@@ -2104,6 +2104,8 @@ export default function App() {
       @keyframes forcespring  { 0%{transform:translateY(20px);opacity:0} 70%{transform:translateY(-4px);opacity:0.8} 100%{transform:translateY(0);opacity:1} }
       @keyframes choiceripple  { 0%{transform:scale(0);opacity:0.6}               100%{transform:scale(2.5);opacity:0} }
       @keyframes questionEnter { 0%{transform:translateY(12px);opacity:0}          100%{transform:translateY(0);opacity:1} }
+      @keyframes milestoneGlow  { 0%,100%{opacity:0.8;text-shadow:inherit}         50%{opacity:1;filter:brightness(1.18)} }
+      @keyframes lightFlash2    { 0%{opacity:0} 15%{opacity:0.06} 100%{opacity:0} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
