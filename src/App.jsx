@@ -674,13 +674,15 @@ function SplashScreen({ onStart }) {
   const [vis, setVis] = useState(false)
   const [titleVis, setTitleVis] = useState(false)
   const [subVis, setSubVis] = useState(false)
+  const [whisperVis, setWhisperVis] = useState(false)
   const [showBtn, setShowBtn] = useState(false)
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 100)
     const t2 = setTimeout(() => setTitleVis(true), 500)
     const t3 = setTimeout(() => setSubVis(true), 1400)
-    const t4 = setTimeout(() => setShowBtn(true), 2400)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
+    const t4 = setTimeout(() => setWhisperVis(true), 2000)
+    const t5 = setTimeout(() => setShowBtn(true), 2800)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5) }
   }, [])
 
   const SPLASH_MOTES = [
@@ -720,6 +722,9 @@ function SplashScreen({ onStart }) {
           </h1>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.7, opacity: subVis ? 1 : 0, transition: 'opacity 1.2s ease', position: 'relative', zIndex: 1 }}>
             Le plus beau chemin<br />commence en toi.
+          </p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.20)', margin: 0, letterSpacing: '0.04em', fontStyle: 'italic', opacity: whisperVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1 }}>
+            T'as pas besoin d'aller bien pour commencer.
           </p>
         </div>
 
@@ -832,6 +837,11 @@ function QuizIntroScreen({ onStart }) {
 
   return (
     <BgScreen bg="bg-cosmos.png" overlay="rgba(5,8,16,0.74)" breathe>
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
+        {STARS.slice(0, 8).map((s, i) => (
+          <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r * 0.7} fill="white" style={{ animation: `startwinkle ${s.dur}s ease-in-out infinite`, animationDelay: `${s.del}s` }} />
+        ))}
+      </svg>
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 28px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, textAlign: 'center' }}>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1848,7 +1858,12 @@ function BoutiqueScreen({ archetypeKey }) {
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase' }}>{col.subtitle}</p>
             {expandedKey === col.key && (
               <>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65 }}>{col.desc}</p>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                  <div style={{ opacity: 0.45, filter: `drop-shadow(0 0 10px ${col.color}66)`, animation: 'animalfloat 20s ease-in-out infinite', flexShrink: 0 }}>
+                    <SpiritAnimal archetype={col.key} size={40} />
+                  </div>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65 }}>{col.desc}</p>
+                </div>
                 <button onClick={(e) => { e.stopPropagation(); handleDiscover() }} style={{ width: '100%', padding: '13px 0', background: `rgba(${col.rgb},0.18)`, border: `1px solid ${col.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.2em', color: col.color, textTransform: 'uppercase' }}>
                   Découvrir
                 </button>
