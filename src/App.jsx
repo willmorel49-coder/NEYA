@@ -1854,18 +1854,27 @@ const CA_VA_COLLECTIONS = [
 function BoutiqueScreen({ archetypeKey }) {
   const [vis, setVis] = useState(false)
   const [expandedKey, setExpandedKey] = useState(null)
+  const [ctaToast, setCtaToast] = useState(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
 
   const myCollection = CA_VA_COLLECTIONS.find(c => c.key === archetypeKey)
   const otherCollections = CA_VA_COLLECTIONS.filter(c => c.key !== archetypeKey)
+  const arch = ARCHETYPES[archetypeKey]
 
   const handleDiscover = () => {
     haptic([10, 30, 10])
-    window.open('https://cava-brand.com', '_blank')
+    setCtaToast(true)
+    setTimeout(() => setCtaToast(false), 2600)
   }
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 20, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease' }}>
+
+      {ctaToast && (
+        <div style={{ position: 'fixed', top: 18, left: '50%', transform: 'translateX(-50%)', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '8px 20px', zIndex: 200, animation: 'fadeIn 0.5s ease both', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', pointerEvents: 'none', whiteSpace: 'nowrap' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.14em', margin: 0 }}>✦ Bientôt disponible</p>
+        </div>
+      )}
 
       <div style={{ textAlign: 'center', marginBottom: 4 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase' }}>LA MARQUE</p>
@@ -1934,10 +1943,15 @@ function BoutiqueScreen({ archetypeKey }) {
         </div>
       ))}
 
-      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.16)', textAlign: 'center', lineHeight: 1.7, margin: '8px 0 0' }}>
-        ÇA VA? × NÉYA<br />
-        <span style={{ fontSize: 10, letterSpacing: '0.06em' }}>Chaque vêtement porte une intention.</span>
-      </p>
+      <div style={{ textAlign: 'center', marginTop: 8 }}>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 10, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.18em', margin: '0 0 4px', textTransform: 'uppercase' }}>ÇA VA? × NÉYA</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.12)', letterSpacing: '0.06em', margin: 0, lineHeight: 1.7 }}>
+          Chaque vêtement porte une intention.
+        </p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.12em', margin: '6px 0 0', opacity: 0.4 }}>
+          Collection {myCollection?.name || 'bientôt'} · Lancement 2025
+        </p>
+      </div>
     </div>
   )
 }
