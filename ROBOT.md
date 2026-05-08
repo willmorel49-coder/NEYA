@@ -7,7 +7,7 @@
 **NÉYA** — App de bien-être émotionnel gamifiée, prolongement digital de la marque ÇA VA?.
 
 - **Repo** : `https://github.com/willmorel49-coder/NEYA`
-- **Prod** : `https://neya-kappa.vercel.app`
+- **Prod** : [https://neya-kappa.vercel.app](https://neya-kappa.vercel.app)
 - **Owner** : Will · macOS · VS Code · réponses en français
 - **Statut** : MVP en cours
 
@@ -93,11 +93,11 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 > Mettre à jour à chaque savepoint.
 
-**Date** : 2026-05-07
+**Date** : 2026-05-08
 **Branche** : `main`
-**Phase** : V1.6 — Session nocturne autonome · polish sensoriel profond · cohérence atmosphérique complète
+**Phase** : V1.7 — Animaux-esprits · Quiz tint · Boutique ÇA VA? · Animations & transitions organiques
 
-### Features actives (`src/App.jsx`) — build 209.9 kB (63.7 kB gzip)
+### Features actives (`src/App.jsx`) — build 227.47 kB (66.69 kB gzip)
 
 **Splash :**
 - 15 étoiles (splashtw) dont 3 dans la moitié basse (y:52-68%) · returning user : 4.3s / new : 3.1s
@@ -158,7 +158,29 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - Long-press logo : clears sur touchmove (bugfix drag) · résumé rituel delay 4000ms
 - h0pulse bloom 0.09 · dominantShimmer 0.6→1 · "première présence" à 5000ms
 
-**Transitions :** blackout 380ms teinté par monde · grain SVG overlay 0.038 · Fade slide+delay
+**Animaux-esprits :**
+- `SpiritAnimal` dispatcher → `PhoenixSpirit` (resilience) · `WolfSpirit` (sagesse) · `BearSpirit` (lumiere) · `DeerSpirit` (presence)
+- Utilisé dans : `TransitionScreen` (size 40) · `PatronusReveal` (size 210) · `HomeScreen` ring (size 74)
+
+**Quiz :**
+- Tint overlay par archétype au moment de la sélection : gold/teal/indigo/rose à 10% opacité
+- Ripple `choiceripple` (600ms) centré sur le bouton sélectionné — couleur de l'archétype du choix
+
+**Main App — 4 onglets :**
+- BottomNav étendu à 4 tabs : Accueil · Routines · Quêtes · Boutique
+- `BoutiqueScreen` : ta collection archétype mise en avant + 3 autres en accordion · CTA → cava-brand.com
+
+**Animations & Transitions (V1.7) :**
+- `animalfloat` 18s : translateY(-7px) + scale(1.028) + translateX(3px) — remplace cerfdrift mécanique
+- `animalbreathe` 22s : brightness 1→1.10 — sur PatronusReveal + TransitionScreen
+- `tabslideIn` 220ms : translateX(10px→0) à chaque changement d'onglet + boutique stagger 80ms
+- `forcespring` : overshoot à -4px sur les forces cards (ResultScreen), stagger 120ms
+- Blackout coloré : overlay archétype 8% pendant les transitions d'écran
+- `worldglow` : radial pulse centré, période monde-spécifique {feu:8s, foret:18s, brume:30s, eau:24s, cosmos:42s, vide:60s}
+- `ringshimmer` 8s : glint conique rotatif sur le PresenceRing (HomeScreen)
+- ResultScreen : scale(0.97→1) en plus de l'opacité sur chaque phase
+
+**Transitions :** blackout 380ms teinté archétype + monde · grain SVG overlay 0.038 · Fade slide+delay
 
 **Histoire silencieuse :**
 - `localStorage['neya_history']` max 90 entrées {ts, color, texture, sound, world}
@@ -169,14 +191,13 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 ### Déploiement
 - `vercel.json` configuré · `npm run build` → `dist/` fonctionnel
-- Déploiement Vercel : **à faire par Will**
+- Prod live : `https://neya-kappa.vercel.app` · Commit `21ce08a`
 
 ### Backlog code
-- [ ] Déploiement Vercel (URL prod à renseigner dans §1)
-- [ ] Valider performance mobile (animations nombreuses en EspaceVrai)
-- [ ] Tests de régression avant chaque session
+- [ ] Valider performance mobile (animations nombreuses — worldglow + ringshimmer + forcespring)
+- [ ] EspaceVrai : animalfloat/animalbreathe sur le cerf fantôme (actuellement cerfdrift x1.5)
 
 ### Actions Will (hors code)
-- [ ] Déployer sur Vercel + ajouter URL prod dans §1
-- [ ] Valider visuellement les 6 mondes sur mobile
+- [ ] Valider visuellement les animaux-esprits sur mobile (phoenix / wolf / bear / deer)
 - [ ] Valider haptic feedback sur iOS
+- [ ] Mettre à jour l'URL Boutique quand cava.fr est prêt (chercher `cava-brand.com` dans App.jsx)
