@@ -906,6 +906,10 @@ function IntroScreen({ onStart }) {
   if (step === 0) {
     return (
       <BgScreen bg="bg-onboarding.png" overlay="rgba(10,6,2,0.46)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
+        {/* Ghost phoenix — chaleur dorée de l'intro */}
+        <div style={{ position: 'absolute', bottom: '-5%', left: '-8%', pointerEvents: 'none', opacity: vis ? 0.034 : 0, transition: 'opacity 3s ease 1.2s', filter: 'blur(2.5px)', animation: vis ? 'animalfloat 28s ease-in-out infinite' : 'none', zIndex: 2 }}>
+          <PhoenixSpirit size={200} color="#f59e0b" />
+        </div>
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
           {[{x:15,y:22,r:1.8,dur:19,del:0.0},{x:82,y:18,r:1.2,dur:24,del:2.8},{x:66,y:72,r:2.2,dur:17,del:1.5},{x:30,y:80,r:1.5,dur:21,del:4.1},{x:90,y:55,r:1.0,dur:26,del:0.8}].map((m,i)=>(
             <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill="rgba(245,158,11,1)" style={{ opacity: 0.06, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
@@ -929,6 +933,12 @@ function IntroScreen({ onStart }) {
 
   return (
     <BgScreen bg="bg-foret.png" overlay="rgba(4,10,4,0.44)" breathe>
+      {/* Motes forêt — magenta doux */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}>
+        {[{x:14,y:74,size:2.5,dur:22,del:0},{x:78,y:62,size:3,dur:18,del:3.2},{x:54,y:84,size:2,dur:20,del:1.5},{x:36,y:68,size:3.5,dur:25,del:5.1},{x:88,y:78,size:2.2,dur:19,del:2.4}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.size} fill="rgba(236,72,153,1)" style={{ opacity: 0.07, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+        ))}
+      </svg>
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 32px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
         {/* Ghost animal — monde forêt = lumière = BearSpirit */}
         <div style={{ position: 'absolute', bottom: '18%', right: '6%', pointerEvents: 'none', opacity: line2 ? 0.055 : 0, transition: 'opacity 2.4s ease', filter: 'blur(2px)', animation: line2 ? 'animalfloat 28s ease-in-out infinite' : 'none' }}>
@@ -1190,7 +1200,7 @@ function QuizScreen({ onComplete }) {
         </div>
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 12, marginBottom: 24 }}>
-          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em', textShadow: '0 2px 24px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.08)', animation: contentVis ? 'questionEnter 0.38s ease both' : 'none' }}>{q.title}</h2>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em', textShadow: `0 2px 24px rgba(0,0,0,0.5), 0 0 60px ${(WORLD_TINTS[bgMain] || 'rgba(99,102,241,0.06)').replace(/[\d.]+\)$/, '0.16)')}`, animation: contentVis ? 'questionEnter 0.38s ease both' : 'none' }}>{q.title}</h2>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.65, padding: '0 4px', animation: contentVis ? 'questionEnter 0.42s ease 0.05s both' : 'none' }}>{q.text}</p>
         </div>
 
