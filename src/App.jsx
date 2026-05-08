@@ -719,6 +719,51 @@ function PresenceRing({ progress, color, size = 130 }) {
   )
 }
 
+// ─── RETURNING ────────────────────────────────────────────────────────────────
+
+function ReturningScreen({ archetypeKey, onDone }) {
+  const arch = ARCHETYPES[archetypeKey]
+  const [vis, setVis] = useState(false)
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setVis(true), 80)
+    const t2 = setTimeout(() => onDone(), 1700)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [onDone])
+
+  if (!arch) { onDone(); return null }
+
+  return (
+    <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.55)">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 28 }}>
+        {/* Spirit animal */}
+        <div style={{
+          opacity: vis ? 1 : 0,
+          transition: 'opacity 0.7s ease',
+          filter: `drop-shadow(0 0 24px ${arch.color}) drop-shadow(0 0 52px ${arch.color}55)`,
+          animation: vis ? 'animalfloat 18s ease-in-out infinite' : 'none',
+        }}>
+          <SpiritAnimal archetype={archetypeKey} size={130} />
+        </div>
+        {/* Animal name */}
+        <p style={{
+          fontFamily: 'Sora, sans-serif',
+          fontWeight: 300,
+          fontSize: 'clamp(16px,5vw,20px)',
+          color: 'rgba(255,255,255,0.82)',
+          letterSpacing: '0.08em',
+          margin: 0,
+          opacity: vis ? 1 : 0,
+          transition: 'opacity 0.9s ease 0.4s',
+          textShadow: `0 0 32px ${arch.shadow}`,
+        }}>
+          {arch.animal}
+        </p>
+      </div>
+    </BgScreen>
+  )
+}
+
 // ─── SPLASH ───────────────────────────────────────────────────────────────────
 
 function SplashScreen({ onStart }) {
@@ -2187,7 +2232,7 @@ export default function App() {
     if (profile?.archetype) {
       setArchetype(profile.archetype)
       setSavedAt(profile.savedAt || null)
-      setScreen('main')
+      setScreen('returning')
     }
   }, [])
 
@@ -2208,6 +2253,7 @@ export default function App() {
 
   return (
     <div style={{ width: '100vw', height: '100dvh', background: '#050810', overflow: 'hidden', position: 'fixed', inset: 0 }}>
+      {screen === 'returning'  && archetype && <ReturningScreen archetypeKey={archetype} onDone={() => go('main')} />}
       {screen === 'splash'     && <SplashScreen onStart={() => go('intro')} />}
       {screen === 'intro'      && <IntroScreen onStart={() => go('quiz-intro')} />}
       {screen === 'quiz-intro' && <QuizIntroScreen onStart={() => go('quiz')} />}
