@@ -12,6 +12,7 @@ const ARCHETYPES = {
     color: '#f59e0b',
     shadow: 'rgba(245,158,11,0.4)',
     rgb: '245,158,11',
+    element: 'Feu',
     forces: ['Courage', 'Transformation', 'Détermination', 'Force intérieure'],
     desc: `Tu avances même quand la route est difficile. En toi vit une flamme que rien n'éteint — une force tranquille qui transforme chaque obstacle en passage vers quelque chose de plus grand.\n\nTon chemin : nourrir ce feu intérieur sans te brûler, et offrir ta lumière à ceux qui en ont besoin.`,
     intentions: [
@@ -41,6 +42,7 @@ const ARCHETYPES = {
     color: '#14b8a6',
     shadow: 'rgba(20,184,166,0.4)',
     rgb: '20,184,166',
+    element: 'Eau',
     forces: ['Douceur', 'Harmonie', 'Ancrage', 'Empathie'],
     desc: `Tu es un·e bâtisseur·se de paix intérieure. Ton calme profond inspire ceux qui t'entourent. Doté·e d'une grande sagesse intuitive, tu sais écouter ce qui est essentiel, même dans le tumulte.\n\nTon chemin : préserver ton espace intérieur, et rayonner naturellement autour de toi.`,
     intentions: [
@@ -70,6 +72,7 @@ const ARCHETYPES = {
     color: '#6366f1',
     shadow: 'rgba(99,102,241,0.4)',
     rgb: '99,102,241',
+    element: 'Brume',
     forces: ['Intuition', 'Profondeur', 'Perception', 'Sagesse'],
     desc: `Tu lis ce que les autres ne voient pas. Dans le silence, tu captes des vérités que peu peuvent entendre. Ta profondeur est une forme rare et précieuse de lumière.\n\nTon chemin : faire confiance à ton intelligence intérieure — elle ne t'a jamais vraiment trompé·e.`,
     intentions: [
@@ -99,6 +102,7 @@ const ARCHETYPES = {
     color: '#ec4899',
     shadow: 'rgba(236,72,153,0.4)',
     rgb: '236,72,153',
+    element: 'Forêt',
     forces: ['Créativité', 'Joie', 'Confiance', 'Abondance'],
     desc: `Tu transformes tout ce que tu touches. Ta joie est contagieuse, ta créativité infinie. Là où tu passes, quelque chose de nouveau et de beau prend vie naturellement.\n\nTon chemin : ne jamais retenir ta lumière — le monde en a profondément besoin.`,
     intentions: [
@@ -469,6 +473,13 @@ function loadProfile() {
 function saveProfile(archetype) {
   localStorage.setItem('neya_profile', JSON.stringify({ archetype, savedAt: Date.now() }))
 }
+function markTodayVisited() {
+  localStorage.setItem(`neya_visited_${todayKey()}`, '1')
+}
+function isTodayFirstVisit() {
+  return !localStorage.getItem(`neya_visited_${todayKey()}`)
+}
+
 function loadRoutines() {
   try { return JSON.parse(localStorage.getItem(`neya_routines_${todayKey()}`) || '[]') } catch { return [] }
 }
@@ -1025,7 +1036,7 @@ function QuizScreen({ onComplete }) {
         </div>
 
         <div style={{ marginTop: 18, opacity: selected !== null ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: selected !== null ? 'all' : 'none' }}>
-          <button onClick={handleContinue} style={{ width: '100%', padding: '16px 0', background: 'rgba(99,102,241,0.72)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: '0 4px 22px rgba(99,102,241,0.32)', transition: 'all 0.3s ease' }}>
+          <button onClick={handleContinue} style={{ width: '100%', padding: '16px 0', background: selected ? `rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.72)` : 'rgba(99,102,241,0.72)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: selected ? `0 4px 22px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.38)` : '0 4px 22px rgba(99,102,241,0.32)', transition: 'all 0.4s ease' }}>
             {idx === QUESTIONS.length - 1 ? 'Terminer' : 'Continuer'}
           </button>
         </div>
@@ -1490,10 +1501,18 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [ringReady, setRingReady] = useState(false)
   const [intentionIdx, setIntentionIdx] = useState(0)
   const [intentionFade, setIntentionFade] = useState(true)
+  const [showPresenceToast, setShowPresenceToast] = useState(false)
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 80)
     const t2 = setTimeout(() => setIntentionReady(true), 600)
     const t3 = setTimeout(() => setRingReady(true), 350)
+    const isFirst = isTodayFirstVisit()
+    if (isFirst) {
+      markTodayVisited()
+      const t4 = setTimeout(() => setShowPresenceToast(true), 1400)
+      const t5 = setTimeout(() => setShowPresenceToast(false), 4200)
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5) }
+    }
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
@@ -1530,7 +1549,14 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const msg = returningMsg()
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 16, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease' }}>
+    <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 16, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
+
+      {/* ── Première visite du jour ── */}
+      {showPresenceToast && (
+        <div style={{ position: 'fixed', top: 18, left: '50%', transform: 'translateX(-50%)', background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}44`, borderRadius: 100, padding: '7px 18px', zIndex: 50, animation: 'fadeIn 0.6s ease both', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', pointerEvents: 'none', whiteSpace: 'nowrap' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.14em', margin: 0 }}>✦ Présence notée</p>
+        </div>
+      )}
 
       {/* ── Cocoon header ── */}
       <div style={{ textAlign: 'center', paddingBottom: 6 }}>
@@ -1560,7 +1586,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         </div>
 
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 4px', textShadow: `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` }}>{arch.profil}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}99`, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 4px', fontStyle: 'italic' }}>{arch.animal}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}99`, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px', fontStyle: 'italic' }}>{arch.animal}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px' }}>Élément · {arch.element}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress)}</p>
 
         {msg ? (
