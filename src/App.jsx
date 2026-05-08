@@ -7,7 +7,7 @@ const B = import.meta.env.BASE_URL
 const ARCHETYPES = {
   resilience: {
     profil: 'Porteur·se de Feu',
-    animal: 'L\'Aigle intérieur',
+    animal: 'Le Phénix intérieur',
     bg: 'bg-feu.png',
     color: '#f59e0b',
     shadow: 'rgba(245,158,11,0.4)',
@@ -1083,18 +1083,33 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
         <div style={{ position: 'absolute', inset: 0, background: 'white', animation: 'lightFlash 1.6s ease forwards', pointerEvents: 'none', zIndex: 5 }} />
       )}
 
-      {/* Birth particles — 6 radial dots SVG overlay */}
+      {/* Birth particles — 12 radial dots on 3 rings */}
       {step >= 4 && (
         <svg
-          width="200" height="200"
-          viewBox="0 0 200 200"
-          style={{ position: 'absolute', pointerEvents: 'none', zIndex: 7, animation: 'patronusParticles 1.8s ease-out forwards', opacity: 0 }}
+          width="260" height="260"
+          viewBox="0 0 260 260"
+          style={{ position: 'absolute', pointerEvents: 'none', zIndex: 7, animation: 'patronusParticles 2.2s ease-out forwards', opacity: 0 }}
         >
+          {/* Inner ring — 4 dots, arch color */}
+          {[0, 90, 180, 270].map((deg, i) => {
+            const rad = (deg * Math.PI) / 180
+            const cx = 130 + Math.round(Math.cos(rad) * 52)
+            const cy = 130 + Math.round(Math.sin(rad) * 52)
+            return <circle key={`i${i}`} cx={cx} cy={cy} r="3" fill={arch.color} opacity="0.95" />
+          })}
+          {/* Mid ring — 6 dots, white */}
           {[0, 60, 120, 180, 240, 300].map((deg, i) => {
             const rad = (deg * Math.PI) / 180
-            const cx = 100 + Math.round(Math.cos(rad) * 82)
-            const cy = 100 + Math.round(Math.sin(rad) * 82)
-            return <circle key={i} cx={cx} cy={cy} r="2.5" fill={arch.color} opacity="0.9" />
+            const cx = 130 + Math.round(Math.cos(rad) * 82)
+            const cy = 130 + Math.round(Math.sin(rad) * 82)
+            return <circle key={`m${i}`} cx={cx} cy={cy} r="2.2" fill="white" opacity="0.80" />
+          })}
+          {/* Outer ring — 2 large accent dots */}
+          {[30, 210].map((deg, i) => {
+            const rad = (deg * Math.PI) / 180
+            const cx = 130 + Math.round(Math.cos(rad) * 114)
+            const cy = 130 + Math.round(Math.sin(rad) * 114)
+            return <circle key={`o${i}`} cx={cx} cy={cy} r="3.5" fill={arch.color} opacity="0.70" />
           })}
         </svg>
       )}
@@ -1231,7 +1246,11 @@ function ResultScreen({ archetypeKey, onContinue }) {
 
           {phase === 1 && (
             <>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                <div style={{ position: 'relative', marginBottom: 2 }}>
+                  <div style={{ position: 'absolute', inset: -16, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}18 0%, transparent 70%)`, animation: 'presencePulse 4s ease-in-out infinite' }} />
+                  <SpiritAnimal archetype={archetypeKey} size={60} style={{ opacity: 0.70, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite' }} />
+                </div>
                 <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0 }}>Tes forces naturelles</h2>
                 <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px' }} />
               </div>
@@ -1286,11 +1305,28 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       <GrainFilter />
       {/* Halo de présence — chaleur colorée très subtile derrière le contenu central */}
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}0a 0%, transparent 65%)`, animation: 'presencePulse 5.8s ease-in-out infinite', pointerEvents: 'none' }} />
-      <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', gap: 30, textAlign: 'center' }}>
+      <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', gap: 24, textAlign: 'center' }}>
+
+        {/* Animal guide flottant — apparaît avant le texte */}
+        <div style={{ opacity: vis ? 1 : 0, transition: 'opacity 1.4s ease 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+          <div style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', inset: -20, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}1a 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite' }} />
+            <SpiritAnimal
+              archetype={archetypeKey}
+              size={88}
+              style={{ opacity: 0.72, filter: `drop-shadow(0 0 20px ${arch.color}88) drop-shadow(0 0 40px ${arch.color}33)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 24s ease-in-out infinite' }}
+            />
+          </div>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, opacity: 0.8, textShadow: `0 0 16px ${arch.color}44` }}>
+            {arch.animal}
+          </p>
+        </div>
+
+        <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto' }} />
+
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease', textShadow: `0 0 20px ${arch.color}44` }}>
           Espace de présence
         </p>
-        <div style={{ width: 1, height: 42, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto' }} />
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340 }}>
           {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} />}
         </div>
@@ -1433,7 +1469,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           </div>
         </div>
 
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 5px', textShadow: `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` }}>{arch.profil}</p>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 4px', textShadow: `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` }}>{arch.profil}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}99`, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 4px', fontStyle: 'italic' }}>{arch.animal}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress)}</p>
 
         {msg ? (
@@ -1508,9 +1545,16 @@ function RoutinesScreen({ archetypeKey, completed, onToggle }) {
       <div style={{ textAlign: 'center', marginBottom: 6 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase' }}>◈ Routines du jour</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2 }}>Tes pratiques<br />quotidiennes</h2>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.32)', margin: '10px 0 0' }}>
-          {allDone ? '✦ Toutes accomplies' : `${doneCount} / ${arch.routines.length} complétées`}
-        </p>
+
+        {/* Barre de progression globale */}
+        <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
+          <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${(doneCount / arch.routines.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none' }} />
+          </div>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease' }}>
+            {allDone ? '✦ Toutes accomplies' : `${doneCount} / ${arch.routines.length} complétées`}
+          </p>
+        </div>
       </div>
 
       {arch.routines.map((r, i) => {
@@ -1555,7 +1599,14 @@ function QuetesScreen({ archetypeKey, completed, onComplete }) {
       <div style={{ textAlign: 'center', marginBottom: 6 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase' }}>◇ Quêtes</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2 }}>Tes défis<br />bienveillants</h2>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.32)', margin: '10px 0 0' }}>{doneCount} / {arch.quetes.length} accomplies</p>
+        <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
+          <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${(doneCount / arch.quetes.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none' }} />
+          </div>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease' }}>
+            {allDone ? '✦ Quêtes accomplies' : `${doneCount} / ${arch.quetes.length} accomplies`}
+          </p>
+        </div>
       </div>
 
       {arch.quetes.map((q, i) => {
