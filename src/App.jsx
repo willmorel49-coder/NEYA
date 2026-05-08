@@ -1577,14 +1577,18 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const totalDone = getTotalRoutinesDone()
   const presenceProgress = ringReady ? getPresenceProgress(savedAt, routinesDone, quetesDone, arch) : 0
 
+  const MILESTONES = { 7: 'Sept jours de présence. Quelque chose prend racine.', 14: 'Deux semaines — tu construis quelque chose de réel.', 21: '21 jours, ton rythme prend forme.', 30: 'Un mois de présence — ta constance est belle.', 60: 'Deux mois. Tu avances avec profondeur.', 100: 'Cent jours. Ta lumière est durable.' }
   const returningMsg = () => {
     if (days <= 0) return null
+    if (MILESTONES[days]) return MILESTONES[days]
     if (days === 1) return 'Tu es revenu·e. C\'est bien.'
     if (days < 7) return `${days} jours avec toi.`
     if (days < 30) return `${days} jours ensemble.`
     return `${days} jours. Ta constance est belle.`
   }
   const msg = returningMsg()
+  const isMilestone = days > 0 && !!MILESTONES[days]
+  const jourComplète = routinesCount === arch.routines.length && quetesCount > 0
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 16, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
@@ -1629,7 +1633,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress)}</p>
 
         {msg ? (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em', margin: '4px 0 0', fontStyle: 'italic' }}>{msg}</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: isMilestone ? 400 : 300, fontSize: isMilestone ? 12.5 : 11.5, color: isMilestone ? arch.color : 'rgba(255,255,255,0.3)', letterSpacing: isMilestone ? '0.04em' : '0.05em', margin: '4px 0 0', fontStyle: 'italic', animation: isMilestone ? 'fadeIn 1.2s ease both' : 'none', textShadow: isMilestone ? `0 0 18px ${arch.color}55` : 'none', transition: 'all 0.4s ease' }}>{msg}</p>
         ) : (
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.12em', margin: '4px 0 0' }}>touche · instant de présence</p>
         )}
@@ -1655,19 +1659,25 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
           {weekDots.map((active, i) => {
             const isToday = i === 6
+            const FR_DOW = ['D','L','M','M','J','V','S']
+            const d = new Date(); d.setDate(d.getDate() - (6 - i))
+            const letter = FR_DOW[d.getDay()]
             return (
-              <div key={i} style={{
-                width: active ? 8.5 : isToday ? 5 : 4.5,
-                height: active ? 8.5 : isToday ? 5 : 4.5,
-                borderRadius: '50%',
-                background: active ? arch.color : 'rgba(255,255,255,0.07)',
-                boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : isToday ? `0 0 0 1.5px ${arch.color}66` : 'none',
-                transition: 'all 0.5s ease',
-                animation: active ? 'seedPulse 3.5s ease-in-out infinite' : 'none',
-                animationDelay: `${i * 0.42}s`,
-                outline: isToday && !active ? `1.5px solid ${arch.color}55` : 'none',
-                outlineOffset: '2px',
-              }} />
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                <div style={{
+                  width: active ? 8.5 : isToday ? 5 : 4.5,
+                  height: active ? 8.5 : isToday ? 5 : 4.5,
+                  borderRadius: '50%',
+                  background: active ? arch.color : 'rgba(255,255,255,0.07)',
+                  boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : isToday ? `0 0 0 1.5px ${arch.color}66` : 'none',
+                  transition: 'all 0.5s ease',
+                  animation: active ? 'seedPulse 3.5s ease-in-out infinite' : 'none',
+                  animationDelay: `${i * 0.42}s`,
+                  outline: isToday && !active ? `1.5px solid ${arch.color}55` : 'none',
+                  outlineOffset: '2px',
+                }} />
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 7.5, color: isToday ? `${arch.color}88` : 'rgba(255,255,255,0.16)', letterSpacing: '0.04em', lineHeight: 1 }}>{letter}</span>
+              </div>
             )
           })}
         </div>
@@ -1703,6 +1713,14 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           </div>
         ))}
       </div>
+
+      {/* ── Journée complète ── */}
+      {jourComplète && (
+        <div style={{ background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}44`, borderRadius: 14, padding: '18px 20px', textAlign: 'center', animation: 'fadeIn 0.9s ease both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: arch.color, margin: '0 0 5px', textShadow: `0 0 18px ${arch.color}66`, letterSpacing: '0.03em' }}>✦ Journée complète.</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.36)', margin: 0, fontStyle: 'italic', letterSpacing: '0.03em' }}>Tu rayonnes aujourd'hui.</p>
+        </div>
+      )}
 
       <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 4 }}>
         {typeof navigator !== 'undefined' && navigator.share && (
