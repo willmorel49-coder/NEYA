@@ -781,6 +781,10 @@ function IntroScreen({ onStart }) {
   return (
     <BgScreen bg="bg-foret.png" overlay="rgba(4,10,4,0.44)" breathe>
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 32px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
+        {/* Ghost animal — monde forêt = lumière = BearSpirit */}
+        <div style={{ position: 'absolute', bottom: '18%', right: '6%', pointerEvents: 'none', opacity: line2 ? 0.055 : 0, transition: 'opacity 2.4s ease', filter: 'blur(2px)', animation: line2 ? 'animalfloat 28s ease-in-out infinite' : 'none' }}>
+          <BearSpirit size={140} color="#ec4899" />
+        </div>
         <div />
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 22 }}>
           <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 'clamp(23px, 6vw, 30px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 32px rgba(0,0,0,0.5)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease' }}>
@@ -901,6 +905,14 @@ function QuizScreen({ onComplete }) {
     sagesse:    'rgba(99,102,241,0.10)',
     lumiere:    'rgba(236,72,153,0.10)',
   }
+  const WORLD_TINTS = {
+    'bg-cosmos.png': 'rgba(99,102,241,0.06)',
+    'bg-feu.png':    'rgba(245,158,11,0.06)',
+    'bg-eau.png':    'rgba(20,184,166,0.05)',
+    'bg-foret.png':  'rgba(236,72,153,0.05)',
+    'bg-brume.png':  'rgba(120,100,200,0.05)',
+    'bg-vide.png':   'rgba(200,200,240,0.04)',
+  }
 
   const q = QUESTIONS[idx]
   const progress = (idx + (selected !== null ? 0.5 : 0)) / QUESTIONS.length
@@ -956,6 +968,7 @@ function QuizScreen({ onComplete }) {
       )}
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.56)' }} />
       <GrainFilter />
+      <div style={{ position: 'absolute', inset: 0, background: WORLD_TINTS[q.bg] || 'transparent', transition: 'background 0.6s ease', pointerEvents: 'none', zIndex: 1 }} />
       <div style={{
         position: 'absolute',
         inset: 0,
@@ -966,7 +979,7 @@ function QuizScreen({ onComplete }) {
       }} />
 
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.07)', zIndex: 10 }}>
-        <div style={{ height: '100%', background: 'linear-gradient(90deg, rgba(99,102,241,0.7), rgba(255,255,255,0.5))', filter: 'blur(0.5px)', width: `${progress * 100}%`, transition: 'width 0.5s ease' }} />
+        <div style={{ height: '100%', background: `linear-gradient(90deg, ${(WORLD_TINTS[q.bg] || 'rgba(99,102,241,0.7)').replace(/[\d.]+\)$/, '0.85)')}, rgba(255,255,255,0.55))`, filter: 'blur(0.4px)', width: `${progress * 100}%`, transition: 'width 0.5s ease, background 0.6s ease' }} />
       </div>
 
       <div style={{ position: 'relative', zIndex: 1, padding: '50px 24px 36px', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', opacity: contentVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
@@ -1311,12 +1324,14 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [showText, setShowText] = useState(false)
+  const [showSecond, setShowSecond] = useState(false)
   const intention = getDailyIntention(archetypeKey)
 
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 30)
     const t2 = setTimeout(() => setShowText(true), 800)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
+    const t3 = setTimeout(() => setShowSecond(true), 6500)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
   return (
@@ -1354,6 +1369,11 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, fontStyle: 'italic', color: 'rgba(255,255,255,0.36)', margin: 0, letterSpacing: '0.06em', opacity: showText ? 1 : 0, transition: 'opacity 1.5s ease 3s', textShadow: '0 0 24px rgba(255,255,255,0.1)' }}>
           Tu n'es pas seul·e.
         </p>
+        {showSecond && (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}66`, letterSpacing: '0.10em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 1.8s ease forwards' }}>
+            {arch.intentions[1]}
+          </p>
+        )}
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.14)', margin: 0, position: 'absolute', bottom: 52, paddingBottom: 'env(safe-area-inset-bottom, 0px)', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both' }}>
           Appuie pour revenir
         </p>
@@ -1502,7 +1522,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {/* ── Intention du jour ── */}
-      <div style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}33`, borderRadius: 14, padding: '20px 18px', minHeight: 92, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+      <div style={{ position: 'relative', background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}33`, borderRadius: 14, padding: '20px 18px', minHeight: 92, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', left: 0, top: '18%', bottom: '18%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}bb, transparent)`, borderRadius: '0 2px 2px 0' }} />
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '0 0 12px', textTransform: 'uppercase' }}>Intention du jour</p>
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', lineHeight: 1.68, fontStyle: 'italic' }}>
           {intentionReady && <TypingText text={`"${intention}"`} delay={0} speed={34} />}
@@ -1510,19 +1531,27 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {/* ── Graines de présence (7 jours) ── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
-        {weekDots.map((active, i) => (
-          <div key={i} style={{
-            width: active ? 8.5 : 4.5,
-            height: active ? 8.5 : 4.5,
-            borderRadius: '50%',
-            background: active ? arch.color : 'rgba(255,255,255,0.07)',
-            boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : 'none',
-            transition: 'all 0.5s ease',
-            animation: active ? 'seedPulse 3.5s ease-in-out infinite' : 'none',
-            animationDelay: `${i * 0.42}s`,
-          }} />
-        ))}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
+          {weekDots.map((active, i) => (
+            <div key={i} style={{
+              width: active ? 8.5 : 4.5,
+              height: active ? 8.5 : 4.5,
+              borderRadius: '50%',
+              background: active ? arch.color : 'rgba(255,255,255,0.07)',
+              boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : 'none',
+              transition: 'all 0.5s ease',
+              animation: active ? 'seedPulse 3.5s ease-in-out infinite' : 'none',
+              animationDelay: `${i * 0.42}s`,
+            }} />
+          ))}
+        </div>
+        {(() => {
+          const count = weekDots.filter(Boolean).length
+          if (count === 0) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.14em', margin: 0 }}>ta présence cette semaine</p>
+          if (count === 7) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.14em', margin: 0, opacity: 0.8 }}>7 jours · semaine complète ✦</p>
+          return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.26)', letterSpacing: '0.14em', margin: 0 }}>{count} jour{count > 1 ? 's' : ''} cette semaine</p>
+        })()}
       </div>
 
       {/* ── Progression du jour ── */}
@@ -1532,7 +1561,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈' },
           { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇' },
         ].map((s, i) => (
-          <div key={i} style={{ flex: 1, background: s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease' }}>
+          <div key={i} style={{ flex: 1, background: s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 13, color: s.count > 0 ? arch.color : 'rgba(255,255,255,0.24)', transition: 'color 0.3s ease' }}>{s.icon}</span>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.26)' }}>{s.count}/{s.total}</span>
@@ -1738,7 +1767,12 @@ function BoutiqueScreen({ archetypeKey }) {
           <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${myCollection.bg})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.30) 0%, rgba(5,8,16,0.82) 100%)' }} />
           <div style={{ position: 'relative', zIndex: 1, padding: '22px 20px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, background: myCollection.color, color: '#050810', borderRadius: 100, padding: '3px 10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', alignSelf: 'flex-start' }}>Ta collection</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, background: myCollection.color, color: '#050810', borderRadius: 100, padding: '3px 10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase' }}>Ta collection</span>
+              <div style={{ opacity: 0.50, filter: `drop-shadow(0 0 12px ${myCollection.color}88)`, animation: 'animalfloat 18s ease-in-out infinite' }}>
+                <SpiritAnimal archetype={archetypeKey} size={44} />
+              </div>
+            </div>
             <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.15 }}>{myCollection.name}</h2>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase' }}>{myCollection.subtitle}</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65 }}>{myCollection.desc}</p>
