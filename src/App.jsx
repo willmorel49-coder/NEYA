@@ -1661,6 +1661,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {/* ── Graines de présence (7 jours) ── */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
+        {days > 0 && (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 2px' }}>Jour {days}</p>
+        )}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
           {weekDots.map((active, i) => {
             const isToday = i === 6
@@ -1746,7 +1749,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
 // ─── ROUTINES SCREEN ──────────────────────────────────────────────────────────
 
-function RoutinesScreen({ archetypeKey, completed, onToggle }) {
+function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
@@ -1789,9 +1792,16 @@ function RoutinesScreen({ archetypeKey, completed, onToggle }) {
       })}
 
       {allDone && (
-        <div style={{ background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '16px', textAlign: 'center', marginTop: 4 }}>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: arch.color, margin: '0 0 4px' }}>✦ Routines complètes.</p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.4)', margin: 0 }}>Ta constance est une force.</p>
+        <div style={{ background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '20px 16px', textAlign: 'center', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: arch.color, margin: '0 0 4px' }}>✦ Routines complètes.</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.4)', margin: 0 }}>Ta constance est une force.</p>
+          </div>
+          {onOpenVrai && (
+            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase' }}>
+              Entrer en Présence
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -2054,7 +2064,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, background: `radial-gradient(ellipse at center, ${arch.color}0f 0%, transparent 65%)`, animation: `worldglow ${glowPeriod}s ease-in-out infinite` }} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 0.22s ease-out' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} />}
-          {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} />}
+          {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} onOpenVrai={() => setVraiOpen(true)} />}
           {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} />}
           {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>
