@@ -1792,12 +1792,23 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
+  const [flash, setFlash] = useState(false)
+  const prevAllDone = useRef(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
   const doneCount = completed.filter(Boolean).length
   const allDone = doneCount === arch.routines.length
 
+  useEffect(() => {
+    if (allDone && !prevAllDone.current) {
+      setFlash(true)
+      setTimeout(() => setFlash(false), 700)
+    }
+    prevAllDone.current = allDone
+  }, [allDone])
+
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease' }}>
+    <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
+      {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase' }}>◈ Routines du jour</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2 }}>Tes pratiques<br />quotidiennes</h2>
