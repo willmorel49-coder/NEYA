@@ -1899,7 +1899,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {/* ── Intention du jour ── */}
       <div style={{ position: 'relative', background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}33`, borderRadius: 14, padding: '20px 18px', minHeight: 92, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', left: 0, top: '18%', bottom: '18%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}bb, transparent)`, borderRadius: '0 2px 2px 0' }} />
+        <div style={{ position: 'absolute', left: 0, top: '18%', bottom: '18%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}bb, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s ease-in-out infinite' }} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase' }}>
             Intention du jour
@@ -2113,9 +2113,9 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2 }}>Tes défis<br />bienveillants</h2>
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
           <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${(doneCount / arch.quetes.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none' }} />
+            <div style={{ height: '100%', width: `${(doneCount / arch.quetes.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: allDone ? `0 0 14px ${arch.color}cc, 0 0 28px ${arch.color}44` : doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : 'none' }} />
           </div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease', textShadow: allDone ? `0 0 14px ${arch.color}88` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : 'none' }}>
             {allDone ? '✦ Quêtes accomplies' : `${doneCount} / ${arch.quetes.length} accomplies`}
           </p>
         </div>
@@ -2232,10 +2232,11 @@ function BoutiqueScreen({ archetypeKey }) {
         </div>
       )}
 
-      <div style={{ textAlign: 'center', marginBottom: 4 }}>
+      <div style={{ textAlign: 'center', marginBottom: 4, position: 'relative' }}>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 200, height: 80, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 7s ease-in-out infinite' }} />
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase' }}>LA MARQUE</p>
-        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: '0 2px 30px rgba(0,0,0,0.5)' }}>ÇA VA?</h1>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65 }}>
+        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}14` }}>ÇA VA?</h1>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65, animation: 'solbreathe 18s ease-in-out infinite' }}>
           Des vêtements qui portent<br />ce que les mots ne disent pas.
         </p>
       </div>
