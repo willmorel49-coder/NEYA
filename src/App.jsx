@@ -484,6 +484,19 @@ function isTodayFirstVisit() {
   return !localStorage.getItem(`neya_visited_${todayKey()}`)
 }
 
+function getTotalRoutinesDone() {
+  let total = 0
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('neya_routines_')) {
+        const data = JSON.parse(localStorage.getItem(key) || '[]')
+        total += data.filter(Boolean).length
+      }
+    }
+  } catch {}
+  return total
+}
+
 function loadRoutines() {
   try { return JSON.parse(localStorage.getItem(`neya_routines_${todayKey()}`) || '[]') } catch { return [] }
 }
@@ -874,6 +887,7 @@ function QuizIntroScreen({ onStart }) {
           <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', lineHeight: 1.32, margin: 0 }}>
             Prêt·e pour ton<br />exploration intérieure ?
           </h1>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase' }}>~5 minutes · {QUESTIONS.length} questions</p>
           <div style={{ width: 32, height: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 1, margin: '4px auto 0', opacity: item1 ? 1 : 0, transition: 'opacity 1.4s ease' }} />
         </div>
 
@@ -1560,6 +1574,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const quetesCount = quetesDone.filter(Boolean).length
   const weekDots = getWeekDots()
   const days = savedAt ? daysSince(savedAt) : 0
+  const totalDone = getTotalRoutinesDone()
   const presenceProgress = ringReady ? getPresenceProgress(savedAt, routinesDone, quetesDone, arch) : 0
 
   const returningMsg = () => {
@@ -1624,7 +1639,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <div style={{ position: 'relative', background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}33`, borderRadius: 14, padding: '20px 18px', minHeight: 92, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', left: 0, top: '18%', bottom: '18%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}bb, transparent)`, borderRadius: '0 2px 2px 0' }} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase' }}>Intention du jour</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase' }}>
+            Intention du jour
+            {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9 }}>◎</span>}
+          </p>
           <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, transition: 'color 0.2s ease' }} title="Autre intention">↻</button>
         </div>
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', lineHeight: 1.68, fontStyle: 'italic', opacity: intentionFade ? 1 : 0, transition: 'opacity 0.2s ease' }}>
@@ -1659,6 +1677,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           if (count === 7) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.14em', margin: 0, opacity: 0.8 }}>7 jours · semaine complète ✦</p>
           return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.26)', letterSpacing: '0.14em', margin: 0 }}>{count} jour{count > 1 ? 's' : ''} cette semaine</p>
         })()}
+        {totalDone > 0 && (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: 'rgba(255,255,255,0.10)', letterSpacing: '0.12em', margin: 0 }}>
+            {totalDone} pratique{totalDone > 1 ? 's' : ''} au total
+          </p>
+        )}
       </div>
 
       {/* ── Progression du jour ── */}
