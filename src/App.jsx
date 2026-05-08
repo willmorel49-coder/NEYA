@@ -939,7 +939,11 @@ function QuizIntroScreen({ onStart }) {
 
   return (
     <BgScreen bg="bg-cosmos.png" overlay="rgba(5,8,16,0.74)" breathe>
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
+      {/* Ghost wolf — sagesse archetype, ultra-faint cosmic presence */}
+      <div style={{ position: 'absolute', bottom: '-6%', left: '-10%', pointerEvents: 'none', opacity: vis ? 0.038 : 0, transition: 'opacity 3s ease 1.5s', filter: 'blur(2px)', animation: vis ? 'animalfloat 34s ease-in-out infinite' : 'none', zIndex: 2 }}>
+        <WolfSpirit size={220} color="#6366f1" />
+      </div>
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
         {STARS.slice(0, 8).map((s, i) => (
           <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r * 0.7} fill="white" style={{ animation: `startwinkle ${s.dur}s ease-in-out infinite`, animationDelay: `${s.del}s` }} />
         ))}
@@ -1485,12 +1489,20 @@ const ESPACEACCOMPANY = {
   lumiere:    'Ta lumière est vivante ici.',
 }
 
+const PATIENCE_TEXTS = {
+  resilience: 'Ta force n\'est pas dans la vitesse.',
+  presence:   'L\'eau n\'est pas pressée. Toi non plus.',
+  sagesse:    'Le silence est ta langue native.',
+  lumiere:    'Rester, c\'est déjà beaucoup.',
+}
+
 function EspaceVraiModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [showText, setShowText] = useState(false)
   const [showSecond, setShowSecond] = useState(false)
   const [showAccompany, setShowAccompany] = useState(false)
+  const [showPatience, setShowPatience] = useState(false)
   const intention = getDailyIntention(archetypeKey)
 
   useEffect(() => {
@@ -1498,7 +1510,9 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
     const t2 = setTimeout(() => setShowText(true), 600)
     const t3 = setTimeout(() => setShowSecond(true), 6000)
     const t4 = setTimeout(() => setShowAccompany(true), 9500)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
+    const t5 = setTimeout(() => haptic([2, 80, 2]), 12000)
+    const t6 = setTimeout(() => setShowPatience(true), 30000)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6) }
   }, [])
 
   return (
@@ -1537,7 +1551,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340 }}>
           {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} />}
         </div>
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, fontStyle: 'italic', color: 'rgba(255,255,255,0.36)', margin: 0, letterSpacing: '0.06em', opacity: showText ? 1 : 0, transition: 'opacity 1.5s ease 3s', textShadow: '0 0 24px rgba(255,255,255,0.1)' }}>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, fontStyle: 'italic', color: 'white', margin: 0, letterSpacing: '0.06em', textShadow: `0 0 20px ${arch.color}2a`, animation: showText ? 'fadeIn 1.5s ease 3s both, solbreathe 22s ease-in-out infinite 4.5s' : 'none' }}>
           Tu n'es pas seul·e.
         </p>
         {showSecond && (
@@ -1548,6 +1562,11 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         {showAccompany && (
           <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12.5, color: `rgba(255,255,255,0.22)`, letterSpacing: '0.04em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 2.2s ease forwards', maxWidth: 280, lineHeight: 1.7 }}>
             {ESPACEACCOMPANY[archetypeKey]}
+          </p>
+        )}
+        {showPatience && (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.08em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3s ease forwards', maxWidth: 260, lineHeight: 1.75, textAlign: 'center' }}>
+            {PATIENCE_TEXTS[archetypeKey]}
           </p>
         )}
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.14)', margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both' }}>
@@ -2254,6 +2273,7 @@ export default function App() {
       @keyframes milestoneGlow  { 0%,100%{opacity:0.8;text-shadow:inherit}         50%{opacity:1;filter:brightness(1.18)} }
       @keyframes milestoneMote  { 0%{transform:translateY(0) scale(1);opacity:0.7} 100%{transform:translateY(-38px) scale(0.3);opacity:0} }
       @keyframes lightFlash2    { 0%{opacity:0} 15%{opacity:0.06} 100%{opacity:0} }
+      @keyframes solbreathe     { 0%,100%{opacity:0.16}                           50%{opacity:0.23} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
