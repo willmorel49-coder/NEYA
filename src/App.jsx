@@ -15,6 +15,7 @@ const ARCHETYPES = {
     element: 'Feu',
     forces: ['Courage', 'Transformation', 'Détermination', 'Force intérieure'],
     desc: `Tu avances même quand la route est difficile. En toi vit une flamme que rien n'éteint — une force tranquille qui transforme chaque obstacle en passage vers quelque chose de plus grand.\n\nTon chemin : nourrir ce feu intérieur sans te brûler, et offrir ta lumière à ceux qui en ont besoin.`,
+    worldInsight: 'Ton feu intérieur ne s\'éteint jamais. Il se transforme.',
     intentions: [
       "Ce que tu ne peux pas changer, transforme-le. Ce que tu peux changer, fais-le maintenant.",
       "Ta force n'est pas dans l'absence de peur, mais dans le choix d'avancer malgré elle.",
@@ -45,6 +46,7 @@ const ARCHETYPES = {
     element: 'Eau',
     forces: ['Douceur', 'Harmonie', 'Ancrage', 'Empathie'],
     desc: `Tu es un·e bâtisseur·se de paix intérieure. Ton calme profond inspire ceux qui t'entourent. Doté·e d'une grande sagesse intuitive, tu sais écouter ce qui est essentiel, même dans le tumulte.\n\nTon chemin : préserver ton espace intérieur, et rayonner naturellement autour de toi.`,
+    worldInsight: 'Chaque instant porte en lui sa propre profondeur — tu sais la voir.',
     intentions: [
       "Ta paix intérieure est ton plus grand cadeau au monde.",
       "Là où tu es vraiment présent·e, quelque chose de beau peut naître.",
@@ -75,6 +77,7 @@ const ARCHETYPES = {
     element: 'Brume',
     forces: ['Intuition', 'Profondeur', 'Perception', 'Sagesse'],
     desc: `Tu lis ce que les autres ne voient pas. Dans le silence, tu captes des vérités que peu peuvent entendre. Ta profondeur est une forme rare et précieuse de lumière.\n\nTon chemin : faire confiance à ton intelligence intérieure — elle ne t'a jamais vraiment trompé·e.`,
+    worldInsight: 'Dans le silence de la brume, tu perçois ce que d\'autres ne voient pas.',
     intentions: [
       "Ce que tu vois en silence, peu de gens peuvent le voir. Fais confiance à ta perception.",
       "La vraie connaissance de soi est un voyage sans destination. C'est ça, sa beauté.",
@@ -105,6 +108,7 @@ const ARCHETYPES = {
     element: 'Forêt',
     forces: ['Créativité', 'Joie', 'Confiance', 'Abondance'],
     desc: `Tu transformes tout ce que tu touches. Ta joie est contagieuse, ta créativité infinie. Là où tu passes, quelque chose de nouveau et de beau prend vie naturellement.\n\nTon chemin : ne jamais retenir ta lumière — le monde en a profondément besoin.`,
+    worldInsight: 'Ta forêt intérieure est un sanctuaire vivant — ta lumière y fait pousser quelque chose.',
     intentions: [
       "Ta joie est une forme de résistance. Ne la restreins jamais.",
       "Là où tu passes, quelque chose de beau prend vie. C'est ton don naturel.",
@@ -1010,7 +1014,9 @@ function QuizScreen({ onComplete }) {
 
       <div style={{ position: 'relative', zIndex: 1, padding: '50px 24px 36px', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', opacity: contentVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
         <div style={{ textAlign: 'center', marginBottom: 22 }}>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.28em' }}>{idx + 1} · {QUESTIONS.length}</span>
+          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.72)', letterSpacing: '0.02em' }}>{idx + 1}</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.14em', margin: '0 6px' }}>·</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.24)', letterSpacing: '0.08em' }}>{QUESTIONS.length}</span>
         </div>
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 12, marginBottom: 24 }}>
@@ -1336,6 +1342,13 @@ function ResultScreen({ archetypeKey, onContinue }) {
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 9px', opacity: 0.8 }}>Ton intention du jour</p>
                 <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>"{arch.intentions[0]}"</p>
               </div>
+
+              {/* World insight */}
+              {arch.worldInsight && (
+                <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `${arch.color}77`, letterSpacing: '0.06em', margin: '0 4px', lineHeight: 1.75, fontStyle: 'italic', textAlign: 'center' }}>
+                  {arch.worldInsight}
+                </p>
+              )}
             </div>
           )}
         </div>
