@@ -524,6 +524,100 @@ function GrainFilter() {
   )
 }
 
+// ─── SPIRIT ANIMALS ───────────────────────────────────────────────────────────
+
+const PhoenixSpirit = React.memo(function PhoenixSpirit({ size = 120, color = '#f59e0b', style: s }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
+      <ellipse cx="60" cy="68" rx="10" ry="16" fill={color} opacity="0.92" />
+      <path d="M50 70 C30 55 8 72 4 56 C12 44 34 52 50 62Z" fill={color} opacity="0.85" />
+      <path d="M50 72 C28 68 6 82 2 70 C10 58 32 64 50 68Z" fill={color} opacity="0.55" />
+      <path d="M70 70 C90 55 112 72 116 56 C108 44 86 52 70 62Z" fill={color} opacity="0.85" />
+      <path d="M70 72 C92 68 114 82 118 70 C110 58 88 64 70 68Z" fill={color} opacity="0.55" />
+      <path d="M55 84 C50 100 44 110 48 118 C54 106 58 96 60 86Z" fill={color} opacity="0.70" />
+      <path d="M60 84 C58 102 56 114 60 120 C64 114 62 102 60 86Z" fill={color} opacity="0.90" />
+      <path d="M65 84 C70 100 76 110 72 118 C66 106 62 96 60 86Z" fill={color} opacity="0.70" />
+      <ellipse cx="60" cy="50" rx="8" ry="10" fill={color} opacity="0.96" />
+      <path d="M56 42 C52 28 48 18 54 8 C58 20 58 32 60 40Z" fill={color} opacity="0.80" />
+      <path d="M60 40 C60 24 62 12 60 2 C62 14 64 28 60 40Z" fill={color} opacity="0.95" />
+      <path d="M64 42 C68 28 72 18 66 8 C62 20 62 32 60 40Z" fill={color} opacity="0.80" />
+      <ellipse cx="60" cy="60" rx="18" ry="22" fill="white" opacity="0.08" />
+    </svg>
+  )
+})
+
+const WolfSpirit = React.memo(function WolfSpirit({ size = 120, color = '#6366f1', style: s }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
+      <ellipse cx="60" cy="80" rx="24" ry="28" fill={color} opacity="0.18" />
+      <path d="M38 62 C38 40 82 40 82 62 C82 78 72 88 60 88 C48 88 38 78 38 62Z" fill={color} opacity="0.82" />
+      <path d="M44 52 C40 34 30 26 34 18 C42 28 46 42 48 52Z" fill={color} opacity="0.90" />
+      <path d="M76 52 C80 34 90 26 86 18 C78 28 74 42 72 52Z" fill={color} opacity="0.90" />
+      <path d="M45 50 C42 36 34 30 37 22 C43 32 46 43 48 50Z" fill="white" opacity="0.10" />
+      <path d="M75 50 C78 36 86 30 83 22 C77 32 74 43 72 50Z" fill="white" opacity="0.10" />
+      <ellipse cx="60" cy="74" rx="12" ry="8" fill={color} opacity="0.60" />
+      <ellipse cx="60" cy="72" rx="5" ry="3" fill={color} opacity="0.90" />
+      <ellipse cx="50" cy="60" rx="4" ry="4.5" fill="white" opacity="0.92" />
+      <ellipse cx="70" cy="60" rx="4" ry="4.5" fill="white" opacity="0.92" />
+      <ellipse cx="51" cy="60" rx="2" ry="2.5" fill={color} opacity="0.20" />
+      <ellipse cx="71" cy="60" rx="2" ry="2.5" fill={color} opacity="0.20" />
+      <path d="M84 82 C100 72 114 78 116 88 C104 94 92 88 82 84Z" fill={color} opacity="0.60" />
+      <rect x="46" y="88" width="10" height="22" rx="5" fill={color} opacity="0.55" />
+      <rect x="64" y="88" width="10" height="22" rx="5" fill={color} opacity="0.55" />
+    </svg>
+  )
+})
+
+const BearSpirit = React.memo(function BearSpirit({ size = 120, color = '#ec4899', style: s }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
+      <ellipse cx="60" cy="80" rx="32" ry="30" fill={color} opacity="0.75" />
+      <ellipse cx="60" cy="52" rx="26" ry="24" fill={color} opacity="0.88" />
+      <circle cx="38" cy="34" r="11" fill={color} opacity="0.90" />
+      <circle cx="82" cy="34" r="11" fill={color} opacity="0.90" />
+      <circle cx="38" cy="34" r="7" fill="white" opacity="0.08" />
+      <circle cx="82" cy="34" r="7" fill="white" opacity="0.08" />
+      <ellipse cx="60" cy="60" rx="13" ry="9" fill={color} opacity="0.55" />
+      <ellipse cx="60" cy="59" rx="6" ry="4" fill={color} opacity="0.85" />
+      <ellipse cx="60" cy="56" rx="3.5" ry="2.5" fill="white" opacity="0.30" />
+      <circle cx="50" cy="48" r="5" fill="white" opacity="0.90" />
+      <circle cx="70" cy="48" r="5" fill="white" opacity="0.90" />
+      <circle cx="51" cy="48" r="2.5" fill={color} opacity="0.25" />
+      <circle cx="71" cy="48" r="2.5" fill={color} opacity="0.25" />
+      <ellipse cx="60" cy="60" rx="22" ry="20" fill="white" opacity="0.05" />
+      <ellipse cx="36" cy="104" rx="12" ry="10" fill={color} opacity="0.60" />
+      <ellipse cx="84" cy="104" rx="12" ry="10" fill={color} opacity="0.60" />
+    </svg>
+  )
+})
+
+const DeerSpirit = React.memo(function DeerSpirit({ size = 120, color = '#14b8a6', style: s }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
+      <ellipse cx="60" cy="82" rx="18" ry="26" fill={color} opacity="0.70" />
+      <rect x="54" y="56" width="12" height="22" rx="6" fill={color} opacity="0.80" />
+      <ellipse cx="60" cy="50" rx="14" ry="16" fill={color} opacity="0.88" />
+      <path d="M48 42 C44 28 36 20 30 10 M44 36 C38 26 28 22 22 14 M44 36 C42 24 38 14 36 4" stroke={color} strokeWidth="2.5" strokeLinecap="round" opacity="0.80" fill="none"/>
+      <path d="M72 42 C76 28 84 20 90 10 M76 36 C82 26 92 22 98 14 M76 36 C78 24 82 14 84 4" stroke={color} strokeWidth="2.5" strokeLinecap="round" opacity="0.80" fill="none"/>
+      <ellipse cx="60" cy="58" rx="8" ry="6" fill={color} opacity="0.55" />
+      <ellipse cx="60" cy="56" rx="3.5" ry="2.5" fill="white" opacity="0.20" />
+      <ellipse cx="52" cy="47" rx="4" ry="4.5" fill="white" opacity="0.90" />
+      <ellipse cx="68" cy="47" rx="4" ry="4.5" fill="white" opacity="0.90" />
+      <rect x="50" y="106" width="7" height="14" rx="3.5" fill={color} opacity="0.55" />
+      <rect x="63" y="106" width="7" height="14" rx="3.5" fill={color} opacity="0.55" />
+    </svg>
+  )
+})
+
+const SpiritAnimal = React.memo(function SpiritAnimal({ archetype, size = 120, style: s }) {
+  const arch = ARCHETYPES[archetype] || ARCHETYPES.presence
+  const props = { size, color: arch.color, style: s }
+  if (archetype === 'resilience') return <PhoenixSpirit {...props} />
+  if (archetype === 'sagesse')    return <WolfSpirit    {...props} />
+  if (archetype === 'lumiere')    return <BearSpirit    {...props} />
+  return <DeerSpirit {...props} />
+})
+
 // ─── LOGO ─────────────────────────────────────────────────────────────────────
 
 function NeyaLogo({ size = 'md', onTap }) {
@@ -800,6 +894,13 @@ function QuizScreen({ onComplete }) {
   const [bgFade, setBgFade] = useState(null)
   const [bgFadeOp, setBgFadeOp] = useState(0)
 
+  const ARCHETYPE_TINTS = {
+    resilience: 'rgba(245,158,11,0.10)',
+    presence:   'rgba(20,184,166,0.10)',
+    sagesse:    'rgba(99,102,241,0.10)',
+    lumiere:    'rgba(236,72,153,0.10)',
+  }
+
   const q = QUESTIONS[idx]
   const progress = (idx + (selected !== null ? 0.5 : 0)) / QUESTIONS.length
 
@@ -854,6 +955,14 @@ function QuizScreen({ onComplete }) {
       )}
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.56)' }} />
       <GrainFilter />
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: selected ? ARCHETYPE_TINTS[selected] : 'transparent',
+        transition: 'background 0.5s ease',
+        pointerEvents: 'none',
+        zIndex: 2,
+      }} />
 
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.07)', zIndex: 10 }}>
         <div style={{ height: '100%', background: 'linear-gradient(90deg, rgba(99,102,241,0.7), rgba(255,255,255,0.5))', filter: 'blur(0.5px)', width: `${progress * 100}%`, transition: 'width 0.5s ease' }} />
@@ -911,7 +1020,7 @@ function TransitionScreen({ onReveal }) {
             <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.14)', animation: 'pulsering 3.4s ease-in-out infinite' }} />
             <div style={{ width: 76, height: 76, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 68%)', animation: 'presencePulse 3.2s ease-in-out infinite' }} />
-              <img src={`${B}cerf.svg`} style={{ width: 40, height: 40, opacity: 0.78, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative' }} alt="" />
+              <SpiritAnimal archetype="presence" size={40} style={{ opacity: 0.78, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative' }} />
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
@@ -934,7 +1043,7 @@ function TransitionScreen({ onReveal }) {
 
 // ─── PATRONUS REVEAL ──────────────────────────────────────────────────────────
 
-function PatronusReveal({ arch, onDone }) {
+function PatronusReveal({ arch, archetypeKey, onDone }) {
   const [step, setStep] = useState(0)
   // 0: dark  1: point  2: rings  3: animal  4: flash  5: text  6: btn
 
@@ -1028,11 +1137,10 @@ function PatronusReveal({ arch, onDone }) {
         <div style={{ position: 'relative', zIndex: 10, animation: 'patronusAnimal 2.4s ease forwards' }}>
           {/* Inner aura */}
           <div style={{ position: 'absolute', inset: -28, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 65%)`, animation: 'presencePulse 2.8s ease-in-out infinite 0.6s' }} />
-          <img
-            src={`${B}cerf.svg`}
-            alt=""
+          <SpiritAnimal
+            archetype={archetypeKey}
+            size={210}
             style={{
-              width: 210, height: 210,
               display: 'block',
               filter: `drop-shadow(0 0 28px ${arch.color}) drop-shadow(0 0 55px rgba(255,255,255,0.8)) drop-shadow(0 0 90px ${arch.color}99)`,
               animation: 'cerfdrift 11s ease-in-out infinite 2.5s',
@@ -1100,7 +1208,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
   if (phase === 0) {
     return (
       <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.28)" breathe>
-        <PatronusReveal arch={arch} onDone={() => {
+        <PatronusReveal arch={arch} archetypeKey={archetypeKey} onDone={() => {
           setPhaseVis(false)
           setTimeout(() => { setPhase(1); setPhaseVis(true) }, 300)
         }} />
@@ -1221,11 +1329,23 @@ function NavIconQuetes({ active, color }) {
   )
 }
 
+function NavIconBoutique({ active, color }) {
+  const c = active ? color : 'rgba(255,255,255,0.26)'
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke={c} strokeWidth="1.4" strokeLinejoin="round" fill={active ? color + '22' : 'none'} />
+      <line x1="3" y1="6" x2="21" y2="6" stroke={c} strokeWidth="1.4" />
+      <path d="M16 10a4 4 0 01-8 0" stroke={c} strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 function BottomNav({ tab, onChange, color }) {
   const tabs = [
-    { key: 'home', label: 'Accueil', Icon: NavIconHome },
+    { key: 'home',     label: 'Accueil',  Icon: NavIconHome },
     { key: 'routines', label: 'Routines', Icon: NavIconRoutines },
-    { key: 'quetes', label: 'Quêtes', Icon: NavIconQuetes },
+    { key: 'quetes',   label: 'Quêtes',   Icon: NavIconQuetes },
+    { key: 'boutique', label: 'Boutique', Icon: NavIconBoutique },
   ]
   return (
     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.80) 0%, rgba(5,8,16,0.95) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 -8px 32px rgba(5,8,16,0.6)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
@@ -1296,10 +1416,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           {/* Soft glow center */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}20 0%, transparent 72%)`, animation: 'presencePulse 3.8s ease-in-out infinite' }} />
-            <img
-              src={`${B}cerf.svg`}
-              alt=""
-              style={{ width: 74, height: 74, opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative', zIndex: 1 }}
+            <SpiritAnimal
+              archetype={archetypeKey}
+              size={74}
+              style={{ opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative', zIndex: 1 }}
             />
           </div>
         </div>
@@ -1315,9 +1435,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {/* ── Intention du jour ── */}
-      <div style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid ${arch.color}1a`, borderRadius: 14, padding: '20px 18px', minHeight: 92 }}>
+      <div style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}33`, borderRadius: 14, padding: '20px 18px', minHeight: 92, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '0 0 12px', textTransform: 'uppercase' }}>Intention du jour</p>
-        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.86)', lineHeight: 1.68, fontStyle: 'italic' }}>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', lineHeight: 1.68, fontStyle: 'italic' }}>
           {intentionReady && <TypingText text={`"${intention}"`} delay={0} speed={34} />}
         </div>
       </div>
@@ -1345,7 +1465,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈' },
           { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇' },
         ].map((s, i) => (
-          <div key={i} style={{ flex: 1, background: s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(${arch.rgb},0.05) 100%)` : 'rgba(255,255,255,0.05)', border: `1px solid ${s.count > 0 ? arch.color + '44' : 'rgba(255,255,255,0.07)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease' }}>
+          <div key={i} style={{ flex: 1, background: s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 13, color: s.count > 0 ? arch.color : 'rgba(255,255,255,0.24)', transition: 'color 0.3s ease' }}>{s.icon}</span>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.26)' }}>{s.count}/{s.total}</span>
@@ -1393,10 +1513,10 @@ function RoutinesScreen({ archetypeKey, completed, onToggle }) {
             </button>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease' }}>{r.title}</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease' }}>{r.title}</p>
                 <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', flexShrink: 0, marginLeft: 8 }}>{r.duration}</span>
               </div>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.6)', margin: 0, lineHeight: 1.62, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease' }}>{r.desc}</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.62, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease' }}>{r.desc}</p>
             </div>
           </div>
         )
@@ -1437,11 +1557,11 @@ function QuetesScreen({ archetypeKey, completed, onComplete }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 16, color: done ? arch.color : locked ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.42)' }}>{locked ? '◻' : q.icon}</span>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: done ? arch.color : locked ? 'rgba(255,255,255,0.26)' : 'white', margin: 0, transition: 'color 0.3s ease' }}>{q.title}</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16.5, color: done ? arch.color : locked ? 'rgba(255,255,255,0.26)' : 'white', margin: 0, transition: 'color 0.3s ease' }}>{q.title}</p>
               </div>
               {done && <span style={{ fontSize: 11, color: arch.color, flexShrink: 0, marginLeft: 8 }}>✓</span>}
             </div>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: locked ? 'rgba(255,255,255,0.18)' : done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.62)', margin: '0 0 14px', lineHeight: 1.62 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: locked ? 'rgba(255,255,255,0.18)' : done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.78)', margin: '0 0 14px', lineHeight: 1.62 }}>
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
             </p>
             {!done && !locked && (
@@ -1459,6 +1579,132 @@ function QuetesScreen({ archetypeKey, completed, onComplete }) {
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.42)', margin: 0 }}>Ta lumière grandit à chaque pas.</p>
         </div>
       )}
+    </div>
+  )
+}
+
+// ─── BOUTIQUE SCREEN ──────────────────────────────────────────────────────────
+
+const CA_VA_COLLECTIONS = [
+  {
+    key: 'resilience',
+    name: 'Collection Braise',
+    subtitle: 'Pour les Porteurs de Feu',
+    desc: 'Pièces qui incarnent la force tranquille et la transformation intérieure.',
+    bg: 'bg-feu.png',
+    color: '#f59e0b',
+    rgb: '245,158,11',
+    tags: ['Force', 'Courage', 'Mouvement'],
+  },
+  {
+    key: 'presence',
+    name: 'Collection Marée',
+    subtitle: 'Pour les Ancreurs de Présence',
+    desc: "Des silhouettes fluides qui épousent l'instant et cultivent la paix intérieure.",
+    bg: 'bg-eau.png',
+    color: '#14b8a6',
+    rgb: '20,184,166',
+    tags: ['Douceur', 'Calme', 'Harmonie'],
+  },
+  {
+    key: 'sagesse',
+    name: 'Collection Brume',
+    subtitle: 'Pour les Éveilleurs de Sens',
+    desc: "Des pièces habitées d'une profondeur silencieuse. Celles qui ont quelque chose à dire.",
+    bg: 'bg-brume.png',
+    color: '#6366f1',
+    rgb: '99,102,241',
+    tags: ['Profondeur', 'Intuition', 'Mystère'],
+  },
+  {
+    key: 'lumiere',
+    name: 'Collection Forêt',
+    subtitle: 'Pour les Créateurs de Lumière',
+    desc: "De l'éclat, de la joie, de la vie. Des vêtements qui rayonnent autant que toi.",
+    bg: 'bg-foret.png',
+    color: '#ec4899',
+    rgb: '236,72,153',
+    tags: ['Joie', 'Créativité', 'Lumière'],
+  },
+]
+
+function BoutiqueScreen({ archetypeKey }) {
+  const [vis, setVis] = useState(false)
+  const [expandedKey, setExpandedKey] = useState(null)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
+
+  const myCollection = CA_VA_COLLECTIONS.find(c => c.key === archetypeKey)
+  const otherCollections = CA_VA_COLLECTIONS.filter(c => c.key !== archetypeKey)
+
+  const handleDiscover = () => {
+    haptic([10, 30, 10])
+    window.open('https://cava-brand.com', '_blank')
+  }
+
+  return (
+    <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 20, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease' }}>
+
+      <div style={{ textAlign: 'center', marginBottom: 4 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase' }}>LA MARQUE</p>
+        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: '0 2px 30px rgba(0,0,0,0.5)' }}>ÇA VA?</h1>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65 }}>
+          Des vêtements qui portent<br />ce que les mots ne disent pas.
+        </p>
+      </div>
+
+      {myCollection && (
+        <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 18, border: `1px solid ${myCollection.color}55` }}>
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${myCollection.bg})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.30) 0%, rgba(5,8,16,0.82) 100%)' }} />
+          <div style={{ position: 'relative', zIndex: 1, padding: '22px 20px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, background: myCollection.color, color: '#050810', borderRadius: 100, padding: '3px 10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', alignSelf: 'flex-start' }}>Ta collection</span>
+            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.15 }}>{myCollection.name}</h2>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase' }}>{myCollection.subtitle}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65 }}>{myCollection.desc}</p>
+            <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
+              {myCollection.tags.map(tag => (
+                <span key={tag} style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, border: `1px solid ${myCollection.color}44`, borderRadius: 100, padding: '3px 10px', letterSpacing: '0.08em' }}>{tag}</span>
+              ))}
+            </div>
+            <button onClick={handleDiscover} style={{ marginTop: 4, width: '100%', padding: '15px 0', background: myCollection.color, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.22em', color: '#050810', textTransform: 'uppercase', boxShadow: `0 4px 24px rgba(${myCollection.rgb},0.40)` }}>
+              Découvrir la collection
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Autres collections</span>
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+      </div>
+
+      {otherCollections.map(col => (
+        <div key={col.key} onClick={() => setExpandedKey(expandedKey === col.key ? null : col.key)} style={{ position: 'relative', overflow: 'hidden', borderRadius: 14, border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}>
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${col.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.65)' }} />
+          <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: expandedKey === col.key ? 12 : 6 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'white', margin: 0 }}>{col.name}</h3>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: col.color }}>{expandedKey === col.key ? '▲' : '▼'}</span>
+            </div>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase' }}>{col.subtitle}</p>
+            {expandedKey === col.key && (
+              <>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65 }}>{col.desc}</p>
+                <button onClick={(e) => { e.stopPropagation(); handleDiscover() }} style={{ width: '100%', padding: '13px 0', background: `rgba(${col.rgb},0.18)`, border: `1px solid ${col.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.2em', color: col.color, textTransform: 'uppercase' }}>
+                  Découvrir
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      ))}
+
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.16)', textAlign: 'center', lineHeight: 1.7, margin: '8px 0 0' }}>
+        ÇA VA? × NÉYA<br />
+        <span style={{ fontSize: 10, letterSpacing: '0.06em' }}>Chaque vêtement porte une intention.</span>
+      </p>
     </div>
   )
 }
@@ -1499,6 +1745,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} savedAt={savedAt} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} />}
           {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} />}
+          {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>
         <BottomNav tab={tab} onChange={changeTab} color={arch.color} />
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
@@ -1545,7 +1792,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const assets = ['bg-onboarding.png','bg-cosmos.png','bg-cosmos-alt.png','bg-feu.png','bg-eau.png','bg-foret.png','bg-brume.png','bg-vide.png','bg-vrai.png','cerf.svg']
+    const assets = ['bg-onboarding.png','bg-cosmos.png','bg-cosmos-alt.png','bg-feu.png','bg-eau.png','bg-foret.png','bg-brume.png','bg-vide.png','bg-vrai.png']
     assets.forEach(s => { const img = new Image(); img.src = B + s })
     const profile = loadProfile()
     if (profile?.archetype) {
