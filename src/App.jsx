@@ -721,21 +721,24 @@ function PresenceRing({ progress, color, size = 130 }) {
 
 // ─── RETURNING ────────────────────────────────────────────────────────────────
 
-function ReturningScreen({ archetypeKey, onDone }) {
+function ReturningScreen({ archetypeKey, savedAt, onDone }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
 
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 80)
-    const t2 = setTimeout(() => onDone(), 1700)
+    const t2 = setTimeout(() => onDone(), 1900)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [onDone])
 
   if (!arch) { onDone(); return null }
 
+  const days = savedAt ? daysSince(savedAt) : 0
+  const whisper = days === 0 ? 'Tu es encore là.' : days < 7 ? 'Tu es revenu·e.' : 'Tu es de retour.'
+
   return (
     <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.55)">
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 28 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 22 }}>
         {/* Spirit animal */}
         <div style={{
           opacity: vis ? 1 : 0,
@@ -758,6 +761,20 @@ function ReturningScreen({ archetypeKey, onDone }) {
           textShadow: `0 0 32px ${arch.shadow}`,
         }}>
           {arch.animal}
+        </p>
+        {/* Whisper return text */}
+        <p style={{
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 300,
+          fontSize: 12,
+          color: `${arch.color}88`,
+          letterSpacing: '0.12em',
+          margin: 0,
+          fontStyle: 'italic',
+          opacity: vis ? 1 : 0,
+          transition: 'opacity 1.1s ease 0.8s',
+        }}>
+          {whisper}
         </p>
       </div>
     </BgScreen>
@@ -1828,7 +1845,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         })()}
         {totalDone > 0 && (
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: 'rgba(255,255,255,0.10)', letterSpacing: '0.12em', margin: 0 }}>
-            {totalDone} pratique{totalDone > 1 ? 's' : ''} au total
+            {totalDone} présence{totalDone > 1 ? 's' : ''} au total
           </p>
         )}
       </div>
@@ -2233,9 +2250,15 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
 // ─── APP ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const [screen, setScreen] = useState('splash')
-  const [archetype, setArchetype] = useState(null)
-  const [savedAt, setSavedAt] = useState(null)
+  const [screen, setScreen] = useState(() => {
+    try { const p = JSON.parse(localStorage.getItem('neya_profile') || 'null'); return p?.archetype ? 'returning' : 'splash' } catch { return 'splash' }
+  })
+  const [archetype, setArchetype] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('neya_profile') || 'null')?.archetype || null } catch { return null }
+  })
+  const [savedAt, setSavedAt] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('neya_profile') || 'null')?.savedAt || null } catch { return null }
+  })
   const [blackout, setBlackout] = useState(false)
   const goTimer = useRef(null)
 
@@ -2282,12 +2305,6 @@ export default function App() {
   useEffect(() => {
     const assets = ['bg-onboarding.png','bg-cosmos.png','bg-cosmos-alt.png','bg-feu.png','bg-eau.png','bg-foret.png','bg-brume.png','bg-vide.png','bg-vrai.png']
     assets.forEach(s => { const img = new Image(); img.src = B + s })
-    const profile = loadProfile()
-    if (profile?.archetype) {
-      setArchetype(profile.archetype)
-      setSavedAt(profile.savedAt || null)
-      setScreen('returning')
-    }
   }, [])
 
   const go = useCallback((nextScreen, fn) => {
@@ -2307,7 +2324,7 @@ export default function App() {
 
   return (
     <div style={{ width: '100vw', height: '100dvh', background: '#050810', overflow: 'hidden', position: 'fixed', inset: 0 }}>
-      {screen === 'returning'  && archetype && <ReturningScreen archetypeKey={archetype} onDone={() => go('main')} />}
+      {screen === 'returning'  && archetype && <ReturningScreen archetypeKey={archetype} savedAt={savedAt} onDone={() => go('main')} />}
       {screen === 'splash'     && <SplashScreen onStart={() => go('intro')} />}
       {screen === 'intro'      && <IntroScreen onStart={() => go('quiz-intro')} />}
       {screen === 'quiz-intro' && <QuizIntroScreen onStart={() => go('quiz')} />}
