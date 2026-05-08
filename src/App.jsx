@@ -1260,10 +1260,10 @@ function ResultScreen({ archetypeKey, onContinue }) {
 
   return (
     <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.48)" breathe>
-      <div style={{ padding: '60px 28px 52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', width: '100%' }}>
+      <div style={{ padding: '52px 28px 36px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', width: '100%', overflowY: 'auto' }}>
         <NeyaLogo size="sm" />
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, width: '100%', textAlign: 'center', opacity: phaseVis ? 1 : 0, transform: phaseVis ? 'scale(1)' : 'scale(0.97)', transition: 'opacity 0.32s ease, transform 0.32s ease' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, width: '100%', textAlign: 'center', opacity: phaseVis ? 1 : 0, transform: phaseVis ? 'scale(1)' : 'scale(0.97)', transition: 'opacity 0.32s ease, transform 0.32s ease', flex: 1, justifyContent: 'center', paddingBlock: 20 }}>
 
           {phase === 1 && (
             <>
@@ -1325,18 +1325,27 @@ function ResultScreen({ archetypeKey, onContinue }) {
 
 // ─── ESPACE VRAI MODAL ────────────────────────────────────────────────────────
 
+const ESPACEACCOMPANY = {
+  resilience: 'Continue d\'avancer, une respiration à la fois.',
+  presence:   'Tu es exactement là où tu dois être.',
+  sagesse:    'Le silence te parle doucement.',
+  lumiere:    'Ta lumière est vivante ici.',
+}
+
 function EspaceVraiModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [showText, setShowText] = useState(false)
   const [showSecond, setShowSecond] = useState(false)
+  const [showAccompany, setShowAccompany] = useState(false)
   const intention = getDailyIntention(archetypeKey)
 
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 30)
     const t2 = setTimeout(() => setShowText(true), 800)
     const t3 = setTimeout(() => setShowSecond(true), 6500)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+    const t4 = setTimeout(() => setShowAccompany(true), 10000)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, [])
 
   return (
@@ -1346,6 +1355,10 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       <GrainFilter />
       {/* Halo de présence — chaleur colorée très subtile derrière le contenu central */}
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}0a 0%, transparent 65%)`, animation: 'presencePulse 5.8s ease-in-out infinite', pointerEvents: 'none' }} />
+      {/* Ghost backdrop animal */}
+      <div style={{ position: 'absolute', bottom: '-8%', right: '-12%', pointerEvents: 'none', opacity: vis ? 0.048 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(3px)', animation: vis ? 'animalfloat 36s ease-in-out infinite' : 'none' }}>
+        <SpiritAnimal archetype={archetypeKey} size={280} />
+      </div>
       <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', gap: 24, textAlign: 'center' }}>
 
         {/* Animal guide flottant — apparaît avant le texte */}
@@ -1377,6 +1390,11 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         {showSecond && (
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}66`, letterSpacing: '0.10em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 1.8s ease forwards' }}>
             {arch.intentions[1]}
+          </p>
+        )}
+        {showAccompany && (
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12.5, color: `rgba(255,255,255,0.22)`, letterSpacing: '0.04em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 2.2s ease forwards', maxWidth: 280, lineHeight: 1.7 }}>
+            {ESPACEACCOMPANY[archetypeKey]}
           </p>
         )}
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.14)', margin: 0, position: 'absolute', bottom: 52, paddingBottom: 'env(safe-area-inset-bottom, 0px)', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both' }}>
