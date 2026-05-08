@@ -894,6 +894,13 @@ function QuizScreen({ onComplete }) {
   const [bgFade, setBgFade] = useState(null)
   const [bgFadeOp, setBgFadeOp] = useState(0)
 
+  const ARCHETYPE_TINTS = {
+    resilience: 'rgba(245,158,11,0.10)',
+    presence:   'rgba(20,184,166,0.10)',
+    sagesse:    'rgba(99,102,241,0.10)',
+    lumiere:    'rgba(236,72,153,0.10)',
+  }
+
   const q = QUESTIONS[idx]
   const progress = (idx + (selected !== null ? 0.5 : 0)) / QUESTIONS.length
 
@@ -948,6 +955,14 @@ function QuizScreen({ onComplete }) {
       )}
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.56)' }} />
       <GrainFilter />
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: selected ? ARCHETYPE_TINTS[selected] : 'transparent',
+        transition: 'background 0.5s ease',
+        pointerEvents: 'none',
+        zIndex: 2,
+      }} />
 
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.07)', zIndex: 10 }}>
         <div style={{ height: '100%', background: 'linear-gradient(90deg, rgba(99,102,241,0.7), rgba(255,255,255,0.5))', filter: 'blur(0.5px)', width: `${progress * 100}%`, transition: 'width 0.5s ease' }} />
