@@ -1047,7 +1047,8 @@ function QuizScreen({ onComplete }) {
 
 // ─── TRANSITION ───────────────────────────────────────────────────────────────
 
-function TransitionScreen({ onReveal }) {
+function TransitionScreen({ archetypeKey, onReveal }) {
+  const arch = archetypeKey ? ARCHETYPES[archetypeKey] : null
   const [vis, setVis] = useState(false)
   const [showBtn, setShowBtn] = useState(false)
   useEffect(() => {
@@ -1061,8 +1062,8 @@ function TransitionScreen({ onReveal }) {
         <NeyaLogo size="sm" />
         <div style={{ textAlign: 'center', opacity: vis ? 1 : 0, transition: 'opacity 1.6s ease', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 26 }}>
           <div style={{ position: 'relative', width: 76, height: 76 }}>
-            <div style={{ position: 'absolute', inset: -22, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.07)', animation: 'pulsering 4.8s ease-in-out infinite 1.6s' }} />
-            <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.14)', animation: 'pulsering 3.4s ease-in-out infinite' }} />
+            <div style={{ position: 'absolute', inset: -22, borderRadius: '50%', border: `1px solid ${arch ? arch.color + '33' : 'rgba(255,255,255,0.07)'}`, animation: 'pulsering 4.8s ease-in-out infinite 1.6s' }} />
+            <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: `1px solid ${arch ? arch.color + '55' : 'rgba(255,255,255,0.14)'}`, animation: 'pulsering 3.4s ease-in-out infinite' }} />
             <div style={{ width: 76, height: 76, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 68%)', animation: 'presencePulse 3.2s ease-in-out infinite' }} />
               <SpiritAnimal archetype="presence" size={40} style={{ opacity: 0.78, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', position: 'relative' }} />
@@ -1667,9 +1668,19 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         ))}
       </div>
 
-      <button onClick={() => { haptic(10); onRestart() }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: 'rgba(255,255,255,0.15)', letterSpacing: '0.05em', padding: '10px 0', marginTop: 4 }}>
-        Refaire le parcours
-      </button>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 4 }}>
+        {typeof navigator !== 'undefined' && navigator.share && (
+          <button onClick={() => {
+            haptic([8, 20, 8])
+            navigator.share({ title: 'Mon profil NÉYA', text: `Je suis ${arch.profil} — ${arch.animal}. Découvre ton guide intérieur avec NÉYA.`, url: 'https://neya-kappa.vercel.app' }).catch(() => {})
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.05em', padding: '10px 0' }}>
+            Partager mon profil
+          </button>
+        )}
+        <button onClick={() => { haptic(10); onRestart() }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: 'rgba(255,255,255,0.15)', letterSpacing: '0.05em', padding: '10px 0' }}>
+          Refaire le parcours
+        </button>
+      </div>
     </div>
   )
 }
@@ -1733,12 +1744,21 @@ function RoutinesScreen({ archetypeKey, completed, onToggle }) {
 function QuetesScreen({ archetypeKey, completed, onComplete }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
+  const [flash, setFlash] = useState(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
+
+  const handleComplete = (i) => {
+    haptic([20, 50, 30])
+    onComplete(i)
+    setFlash(true)
+    setTimeout(() => setFlash(false), 700)
+  }
   const doneCount = completed.filter(Boolean).length
   const allDone = doneCount === arch.quetes.length
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease' }}>
+    <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
+      {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase' }}>◇ Quêtes</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2 }}>Tes défis<br />bienveillants</h2>
@@ -1768,7 +1788,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete }) {
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
             </p>
             {!done && !locked && (
-              <button onClick={() => { haptic([20, 50, 30]); onComplete(i) }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}55`, borderRadius: 10, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.18em', color: arch.color, textTransform: 'uppercase' }}>
+              <button onClick={() => handleComplete(i)} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}55`, borderRadius: 10, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.18em', color: arch.color, textTransform: 'uppercase' }}>
                 Marquer accomplie
               </button>
             )}
@@ -2053,7 +2073,7 @@ export default function App() {
         const ts = Date.now()
         go('transition', () => { setArchetype(result); setSavedAt(ts) })
       }} />}
-      {screen === 'transition' && <TransitionScreen onReveal={() => go('result')} />}
+      {screen === 'transition' && <TransitionScreen archetypeKey={archetype} onReveal={() => go('result')} />}
       {screen === 'result'     && archetype && <ResultScreen archetypeKey={archetype} onContinue={() => go('main')} />}
       {screen === 'main'       && archetype && <MainApp archetypeKey={archetype} onRestart={handleRestart} savedAt={savedAt} />}
 
