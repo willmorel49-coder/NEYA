@@ -624,7 +624,7 @@ function NeyaLogo({ size = 'md', onTap }) {
   const cfg = { sm: [20, 13], md: [28, 17], lg: [36, 22] }[size]
   return (
     <div onClick={onTap} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: onTap ? 'pointer' : 'default' }}>
-      <svg width={cfg[0]} height={cfg[0]} viewBox="0 0 32 32" fill="none">
+      <svg width={cfg[0]} height={cfg[0]} viewBox="0 0 32 32" fill="none" style={{ animation: 'compassbreathe 7s ease-in-out infinite' }}>
         <ellipse cx="16" cy="26" rx="3" ry="6" fill="white" opacity="0.85" />
         <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" transform="rotate(-45 16 16)" />
         <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" transform="rotate(45 16 16)" />
@@ -1030,6 +1030,9 @@ function TransitionScreen({ onReveal }) {
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, opacity: vis ? 1 : 0, transition: 'opacity 1.4s ease 0.2s' }}>
+              {QUESTIONS.length} questions · Tes réponses ont été entendues.
+            </p>
             <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(24px, 6vw, 30px)', color: 'white', margin: 0, lineHeight: 1.3, textShadow: '0 2px 32px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.1)' }}>
               Ton guide intérieur<br />s'apprête à se révéler...
             </h1>
