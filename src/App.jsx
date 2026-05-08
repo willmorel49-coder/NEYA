@@ -1329,11 +1329,23 @@ function NavIconQuetes({ active, color }) {
   )
 }
 
+function NavIconBoutique({ active, color }) {
+  const c = active ? color : 'rgba(255,255,255,0.26)'
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke={c} strokeWidth="1.4" strokeLinejoin="round" fill={active ? color + '22' : 'none'} />
+      <line x1="3" y1="6" x2="21" y2="6" stroke={c} strokeWidth="1.4" />
+      <path d="M16 10a4 4 0 01-8 0" stroke={c} strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 function BottomNav({ tab, onChange, color }) {
   const tabs = [
-    { key: 'home', label: 'Accueil', Icon: NavIconHome },
+    { key: 'home',     label: 'Accueil',  Icon: NavIconHome },
     { key: 'routines', label: 'Routines', Icon: NavIconRoutines },
-    { key: 'quetes', label: 'Quêtes', Icon: NavIconQuetes },
+    { key: 'quetes',   label: 'Quêtes',   Icon: NavIconQuetes },
+    { key: 'boutique', label: 'Boutique', Icon: NavIconBoutique },
   ]
   return (
     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.80) 0%, rgba(5,8,16,0.95) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 -8px 32px rgba(5,8,16,0.6)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
@@ -1571,6 +1583,132 @@ function QuetesScreen({ archetypeKey, completed, onComplete }) {
   )
 }
 
+// ─── BOUTIQUE SCREEN ──────────────────────────────────────────────────────────
+
+const CA_VA_COLLECTIONS = [
+  {
+    key: 'resilience',
+    name: 'Collection Braise',
+    subtitle: 'Pour les Porteurs de Feu',
+    desc: 'Pièces qui incarnent la force tranquille et la transformation intérieure.',
+    bg: 'bg-feu.png',
+    color: '#f59e0b',
+    rgb: '245,158,11',
+    tags: ['Force', 'Courage', 'Mouvement'],
+  },
+  {
+    key: 'presence',
+    name: 'Collection Marée',
+    subtitle: 'Pour les Ancreurs de Présence',
+    desc: "Des silhouettes fluides qui épousent l'instant et cultivent la paix intérieure.",
+    bg: 'bg-eau.png',
+    color: '#14b8a6',
+    rgb: '20,184,166',
+    tags: ['Douceur', 'Calme', 'Harmonie'],
+  },
+  {
+    key: 'sagesse',
+    name: 'Collection Brume',
+    subtitle: 'Pour les Éveilleurs de Sens',
+    desc: "Des pièces habitées d'une profondeur silencieuse. Celles qui ont quelque chose à dire.",
+    bg: 'bg-brume.png',
+    color: '#6366f1',
+    rgb: '99,102,241',
+    tags: ['Profondeur', 'Intuition', 'Mystère'],
+  },
+  {
+    key: 'lumiere',
+    name: 'Collection Forêt',
+    subtitle: 'Pour les Créateurs de Lumière',
+    desc: "De l'éclat, de la joie, de la vie. Des vêtements qui rayonnent autant que toi.",
+    bg: 'bg-foret.png',
+    color: '#ec4899',
+    rgb: '236,72,153',
+    tags: ['Joie', 'Créativité', 'Lumière'],
+  },
+]
+
+function BoutiqueScreen({ archetypeKey }) {
+  const [vis, setVis] = useState(false)
+  const [expandedKey, setExpandedKey] = useState(null)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
+
+  const myCollection = CA_VA_COLLECTIONS.find(c => c.key === archetypeKey)
+  const otherCollections = CA_VA_COLLECTIONS.filter(c => c.key !== archetypeKey)
+
+  const handleDiscover = () => {
+    haptic([10, 30, 10])
+    window.open('https://cava-brand.com', '_blank')
+  }
+
+  return (
+    <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 20, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease' }}>
+
+      <div style={{ textAlign: 'center', marginBottom: 4 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase' }}>LA MARQUE</p>
+        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: '0 2px 30px rgba(0,0,0,0.5)' }}>ÇA VA?</h1>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65 }}>
+          Des vêtements qui portent<br />ce que les mots ne disent pas.
+        </p>
+      </div>
+
+      {myCollection && (
+        <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 18, border: `1px solid ${myCollection.color}55` }}>
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${myCollection.bg})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.30) 0%, rgba(5,8,16,0.82) 100%)' }} />
+          <div style={{ position: 'relative', zIndex: 1, padding: '22px 20px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, background: myCollection.color, color: '#050810', borderRadius: 100, padding: '3px 10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', alignSelf: 'flex-start' }}>Ta collection</span>
+            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.15 }}>{myCollection.name}</h2>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase' }}>{myCollection.subtitle}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65 }}>{myCollection.desc}</p>
+            <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
+              {myCollection.tags.map(tag => (
+                <span key={tag} style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, border: `1px solid ${myCollection.color}44`, borderRadius: 100, padding: '3px 10px', letterSpacing: '0.08em' }}>{tag}</span>
+              ))}
+            </div>
+            <button onClick={handleDiscover} style={{ marginTop: 4, width: '100%', padding: '15px 0', background: myCollection.color, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.22em', color: '#050810', textTransform: 'uppercase', boxShadow: `0 4px 24px rgba(${myCollection.rgb},0.40)` }}>
+              Découvrir la collection
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Autres collections</span>
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
+      </div>
+
+      {otherCollections.map(col => (
+        <div key={col.key} onClick={() => setExpandedKey(expandedKey === col.key ? null : col.key)} style={{ position: 'relative', overflow: 'hidden', borderRadius: 14, border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}>
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${col.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.65)' }} />
+          <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: expandedKey === col.key ? 12 : 6 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'white', margin: 0 }}>{col.name}</h3>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: col.color }}>{expandedKey === col.key ? '▲' : '▼'}</span>
+            </div>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase' }}>{col.subtitle}</p>
+            {expandedKey === col.key && (
+              <>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65 }}>{col.desc}</p>
+                <button onClick={(e) => { e.stopPropagation(); handleDiscover() }} style={{ width: '100%', padding: '13px 0', background: `rgba(${col.rgb},0.18)`, border: `1px solid ${col.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.2em', color: col.color, textTransform: 'uppercase' }}>
+                  Découvrir
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      ))}
+
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.16)', textAlign: 'center', lineHeight: 1.7, margin: '8px 0 0' }}>
+        ÇA VA? × NÉYA<br />
+        <span style={{ fontSize: 10, letterSpacing: '0.06em' }}>Chaque vêtement porte une intention.</span>
+      </p>
+    </div>
+  )
+}
+
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 
 function MainApp({ archetypeKey, onRestart, savedAt }) {
@@ -1607,6 +1745,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} savedAt={savedAt} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} />}
           {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} />}
+          {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>
         <BottomNav tab={tab} onChange={changeTab} color={arch.color} />
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
