@@ -95,9 +95,9 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-08
 **Branche** : `main`
-**Phase** : V1.7 — Animaux-esprits · Quiz tint · Boutique ÇA VA? · Animations & transitions organiques
+**Phase** : V1.8 — HomeScreen profondeur · Gamification non-toxique · Streak · Badges nav
 
-### Features actives (`src/App.jsx`) — build 227.47 kB (66.69 kB gzip)
+### Features actives (`src/App.jsx`) — build 247.57 kB (70.71 kB gzip)
 
 **Splash :**
 - 15 étoiles (splashtw) dont 3 dans la moitié basse (y:52-68%) · returning user : 4.3s / new : 3.1s
@@ -186,16 +186,31 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - `localStorage['neya_history']` max 90 entrées {ts, color, texture, sound, world}
 - Spirale Fibonacci · getDominantColor (4+ rituels, 3+ couleur) · getDominantWorld (5+ rituels, 3+ monde)
 
+**V1.8 — nouveautés (sprints 15-22) :**
+- HomeScreen : labels jours semaine (L/M/M/J/V/S/D) · "Jour X" · streak jours consécutifs · badge nav routines/quêtes
+- Milestones : glow + `milestoneGlow` + motes particules sur jours 7/14/21/30/60/100
+- Journée complète card quand toutes routines + ≥1 quête faites
+- Intention card : accent bar · cycle ↻ persisté · indicateur ◎
+- Stat cards cliquables → navigate tab · nextHint affiché sous la barre
+- RoutinesScreen + QuetesScreen : CTA "Entrer en Présence" quand allDone
+- TransitionScreen : animal de l'utilisateur (fix hardcode "presence")
+- BottomNav : dot badge quand items incomplets
+- BoutiqueScreen : année 2026, ring halo HomeScreen, will-change perf hints
+- EspaceVrai : safe-area-inset-bottom · timing texte amélioré
+- Quiz : re-sélection possible avant "Continuer"
+- `getCurrentStreak()` : streak consécutif basé sur localStorage
+
 ### Assets dans `public/`
-`cerf.svg` · `bg-onboarding.png` · `bg-brume.png` · `bg-foret.png` · `bg-cosmos.png` · `bg-feu.png` · `bg-eau.png` · `bg-vide.png`
+`cerf.svg` · `bg-onboarding.png` · `bg-brume.png` · `bg-foret.png` · `bg-cosmos.png` · `bg-feu.png` · `bg-eau.png` · `bg-vide.png` · `bg-vrai.png` · `bg-cosmos-alt.png`
 
 ### Déploiement
 - `vercel.json` configuré · `npm run build` → `dist/` fonctionnel
-- Prod live : `https://neya-kappa.vercel.app` · Commit `21ce08a`
+- Prod live : `https://neya-kappa.vercel.app` · Commit `5cfe8f4`
 
 ### Backlog code
 - [ ] Valider performance mobile (animations nombreuses — worldglow + ringshimmer + forcespring)
 - [ ] EspaceVrai : animalfloat/animalbreathe sur le cerf fantôme (actuellement cerfdrift x1.5)
+- [ ] Splash returning : afficher l'animal de l'utilisateur brièvement avant redirect → MainApp
 
 ### Actions Will (hors code)
 - [ ] Valider visuellement les animaux-esprits sur mobile (phoenix / wolf / bear / deer)
