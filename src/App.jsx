@@ -885,7 +885,7 @@ function IntroScreen({ onStart }) {
 
   if (step === 0) {
     return (
-      <BgScreen bg="bg-onboarding.png" overlay="rgba(10,6,2,0.46)" breathe>
+      <BgScreen bg="bg-onboarding.png" overlay="rgba(10,6,2,0.46)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
           {[{x:15,y:22,r:1.8,dur:19,del:0.0},{x:82,y:18,r:1.2,dur:24,del:2.8},{x:66,y:72,r:2.2,dur:17,del:1.5},{x:30,y:80,r:1.5,dur:21,del:4.1},{x:90,y:55,r:1.0,dur:26,del:0.8}].map((m,i)=>(
             <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill="rgba(245,158,11,1)" style={{ opacity: 0.06, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
@@ -1562,7 +1562,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
 
         <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto' }} />
 
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease', textShadow: `0 0 20px ${arch.color}44` }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease', textShadow: `0 0 20px ${arch.color}44, 0 0 44px ${arch.color}22` }}>
           Espace de présence
         </p>
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340 }}>
@@ -1586,8 +1586,8 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
             {PATIENCE_TEXTS[archetypeKey]}
           </p>
         )}
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.14)', margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both' }}>
-          Appuie pour revenir
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}44`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both' }}>
+          {(() => { const h = new Date().getHours(); if (h >= 22 || h < 5) return 'bonne nuit'; if (h < 18) return 'la journée t\'attend doucement'; return 'tu peux revenir quand tu veux' })()}
         </p>
       </div>
     </div>
