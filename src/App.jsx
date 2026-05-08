@@ -690,7 +690,7 @@ function NeyaLogo({ size = 'md', onTap }) {
 function BgScreen({ bg, overlay = 'rgba(5,8,16,0.48)', breathe = false, children }) {
   return (
     <div style={{ width: '100vw', height: '100dvh', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bg})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: breathe ? 'bgbreathe 26s ease-in-out infinite' : 'none', transformOrigin: 'center center' }} />
+      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bg})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: breathe ? 'bgbreathe 26s ease-in-out infinite' : 'none', transformOrigin: 'center center', willChange: breathe ? 'transform' : 'auto' }} />
       <div style={{ position: 'absolute', inset: 0, background: overlay }} />
       <GrainFilter />
       <div style={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -1414,9 +1414,9 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
 
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 30)
-    const t2 = setTimeout(() => setShowText(true), 800)
-    const t3 = setTimeout(() => setShowSecond(true), 6500)
-    const t4 = setTimeout(() => setShowAccompany(true), 10000)
+    const t2 = setTimeout(() => setShowText(true), 600)
+    const t3 = setTimeout(() => setShowSecond(true), 6000)
+    const t4 = setTimeout(() => setShowAccompany(true), 9500)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, [])
 
@@ -1469,7 +1469,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
             {ESPACEACCOMPANY[archetypeKey]}
           </p>
         )}
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.14)', margin: 0, position: 'absolute', bottom: 52, paddingBottom: 'env(safe-area-inset-bottom, 0px)', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.14)', margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both' }}>
           Appuie pour revenir
         </p>
       </div>
@@ -1639,7 +1639,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             <PresenceRing progress={presenceProgress} color={arch.color} size={130} />
           </div>
           <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', pointerEvents: 'none', opacity: 0.15, zIndex: 2 }}>
-            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'conic-gradient(transparent 0%, transparent 60%, rgba(255,255,255,0.9) 78%, transparent 84%, transparent 100%)', animation: 'ringshimmer 8s linear infinite' }} />
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'conic-gradient(transparent 0%, transparent 60%, rgba(255,255,255,0.9) 78%, transparent 84%, transparent 100%)', animation: 'ringshimmer 8s linear infinite', willChange: 'transform' }} />
           </div>
           {/* Soft glow center */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
