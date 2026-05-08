@@ -393,20 +393,21 @@ const QUESTIONS = [
 // ─── ÉTOILES ──────────────────────────────────────────────────────────────────
 
 const STARS = [
-  { x: 7,  y: 9,  r: 1.1, dur: 4.8, del: 0.0 },
-  { x: 83, y: 6,  r: 0.7, dur: 6.4, del: 1.2 },
-  { x: 63, y: 16, r: 1.3, dur: 5.2, del: 0.6 },
-  { x: 30, y: 8,  r: 0.8, dur: 7.0, del: 2.1 },
-  { x: 91, y: 29, r: 0.9, dur: 4.5, del: 1.7 },
-  { x: 17, y: 39, r: 0.6, dur: 6.8, del: 0.4 },
-  { x: 77, y: 53, r: 1.0, dur: 5.9, del: 3.0 },
-  { x: 46, y: 69, r: 0.8, dur: 4.9, del: 1.4 },
-  { x: 22, y: 63, r: 1.0, dur: 6.6, del: 0.9 },
-  { x: 69, y: 80, r: 0.7, dur: 5.6, del: 2.4 },
-  { x: 5,  y: 75, r: 0.9, dur: 7.3, del: 1.0 },
-  { x: 92, y: 72, r: 0.6, dur: 4.6, del: 2.8 },
-  { x: 55, y: 4,  r: 0.8, dur: 5.3, del: 3.5 },
-  { x: 38, y: 88, r: 0.7, dur: 6.1, del: 0.3 },
+  { x: 7,  y: 9,  r: 1.1, dur: 4.8, del: 0.0, fill: 'rgba(220,235,255,1)' },
+  { x: 83, y: 6,  r: 0.7, dur: 6.4, del: 1.2, fill: 'white' },
+  { x: 63, y: 16, r: 1.3, dur: 5.2, del: 0.6, fill: 'rgba(255,235,180,1)' },
+  { x: 30, y: 8,  r: 0.8, dur: 7.0, del: 2.1, fill: 'white' },
+  { x: 91, y: 29, r: 0.9, dur: 4.5, del: 1.7, fill: 'rgba(220,235,255,1)' },
+  { x: 17, y: 39, r: 0.6, dur: 6.8, del: 0.4, fill: 'white' },
+  { x: 77, y: 53, r: 1.0, dur: 5.9, del: 3.0, fill: 'rgba(255,235,180,1)' },
+  { x: 46, y: 69, r: 0.8, dur: 4.9, del: 1.4, fill: 'rgba(220,235,255,1)' },
+  { x: 22, y: 63, r: 1.0, dur: 6.6, del: 0.9, fill: 'white' },
+  { x: 69, y: 80, r: 0.7, dur: 5.6, del: 2.4, fill: 'rgba(255,235,180,1)' },
+  { x: 5,  y: 75, r: 0.9, dur: 7.3, del: 1.0, fill: 'white' },
+  { x: 92, y: 72, r: 0.6, dur: 4.6, del: 2.8, fill: 'rgba(220,235,255,1)' },
+  { x: 55, y: 4,  r: 0.8, dur: 5.3, del: 3.5, fill: 'white' },
+  { x: 38, y: 88, r: 0.7, dur: 6.1, del: 0.3, fill: 'rgba(255,235,180,1)' },
+  { x: 73, y: 57, r: 0.85, dur: 5.7, del: 2.2, fill: 'rgba(220,235,255,1)' },
 ]
 
 // ─── UTILS ────────────────────────────────────────────────────────────────────
@@ -542,7 +543,7 @@ function saveQuetes(archetypeKey, completed) {
 
 // ─── TYPING TEXT ──────────────────────────────────────────────────────────────
 
-function TypingText({ text, delay = 0, speed = 38, style: s }) {
+function TypingText({ text, delay = 0, speed = 38, style: s, onDone }) {
   const [len, setLen] = useState(0)
   const [done, setDone] = useState(false)
   useEffect(() => {
@@ -551,7 +552,7 @@ function TypingText({ text, delay = 0, speed = 38, style: s }) {
     const tid = setTimeout(() => {
       const iv = setInterval(() => {
         i++; setLen(i)
-        if (i >= text.length) { setDone(true); clearInterval(iv) }
+        if (i >= text.length) { setDone(true); clearInterval(iv); if (onDone) onDone() }
       }, speed)
       return () => clearInterval(iv)
     }, delay)
@@ -734,7 +735,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
 
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 80)
-    const t2 = setTimeout(() => onDone(), 1900)
+    const t2 = setTimeout(() => { haptic(4); onDone() }, 1900)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [onDone])
 
@@ -833,7 +834,7 @@ function SplashScreen({ onStart }) {
       <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 180, height: '70%', background: 'linear-gradient(to bottom, rgba(99,102,241,0.07) 0%, rgba(99,102,241,0.02) 60%, transparent 100%)', pointerEvents: 'none', zIndex: 2, animation: 'worldglow 34s ease-in-out infinite' }} />
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
         {STARS.map((s, i) => (
-          <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill="white"
+          <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill={s.fill || 'white'}
             style={{ animation: `startwinkle ${s.dur}s ease-in-out infinite`, animationDelay: `${s.del}s` }} />
         ))}
         {SPLASH_MOTES.map((m, i) => (
@@ -1066,6 +1067,15 @@ function QuizScreen({ onComplete }) {
     'bg-brume.png':  'rgba(120,100,200,0.05)',
     'bg-vide.png':   'rgba(200,200,240,0.04)',
   }
+  const WORLD_MOTES = {
+    'bg-cosmos.png': { color: '99,102,241', count: 5, op: 0.07 },
+    'bg-feu.png':    { color: '245,158,11', count: 4, op: 0.06 },
+    'bg-eau.png':    { color: '20,184,166', count: 4, op: 0.05 },
+    'bg-foret.png':  { color: '236,72,153', count: 4, op: 0.05 },
+    'bg-brume.png':  { color: '120,100,200', count: 5, op: 0.06 },
+    'bg-vide.png':   { color: '200,200,240', count: 3, op: 0.04 },
+  }
+  const worldMote = WORLD_MOTES[bgMain]
 
   const q = QUESTIONS[idx]
   const progress = (idx + (selected !== null ? 0.5 : 0)) / QUESTIONS.length
@@ -1147,6 +1157,22 @@ function QuizScreen({ onComplete }) {
         }} />
       )}
 
+      {worldMote && (
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 4 }}>
+          {Array.from({ length: worldMote.count }, (_, mi) => {
+            const motePosX = [8, 26, 52, 74, 90][mi] ?? (10 + mi * 18)
+            const motePosY = [14, 32, 8, 22, 18][mi] ?? (10 + mi * 8)
+            const moteDur = 16 + mi * 3.5
+            const moteDel = mi * 2.8
+            return (
+              <circle key={mi} cx={`${motePosX}%`} cy={`${motePosY}%`} r={2.2 + (mi % 2) * 0.8}
+                fill={`rgba(${worldMote.color},1)`}
+                style={{ opacity: worldMote.op, animation: `splashmote ${moteDur}s ease-in-out infinite`, animationDelay: `${moteDel}s` }} />
+            )
+          })}
+        </svg>
+      )}
+
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.07)', zIndex: 10 }}>
         <div style={{ height: '100%', background: `linear-gradient(90deg, ${(WORLD_TINTS[q.bg] || 'rgba(99,102,241,0.7)').replace(/[\d.]+\)$/, '0.85)')}, rgba(255,255,255,0.55))`, filter: 'blur(0.4px)', width: `${progress * 100}%`, transition: 'width 0.5s ease, background 0.6s ease' }} />
       </div>
@@ -1203,6 +1229,12 @@ function TransitionScreen({ archetypeKey, onReveal }) {
   }, [])
   return (
     <BgScreen bg="bg-cosmos-alt.png" overlay="rgba(5,8,16,0.62)" breathe>
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
+        {STARS.slice(0, 10).map((s, i) => (
+          <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r * 0.75} fill={s.fill || 'white'}
+            style={{ animation: `startwinkle ${s.dur}s ease-in-out infinite`, animationDelay: `${s.del + 0.6}s` }} />
+        ))}
+      </svg>
       <div style={{ padding: '60px 28px 52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', width: '100%' }}>
         <NeyaLogo size="sm" />
         <div style={{ textAlign: 'center', opacity: vis ? 1 : 0, transition: 'opacity 1.6s ease', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 26 }}>
@@ -1442,7 +1474,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   <div style={{ position: 'absolute', inset: -16, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}18 0%, transparent 70%)`, animation: 'presencePulse 4s ease-in-out infinite' }} />
                   <SpiritAnimal archetype={archetypeKey} size={60} style={{ opacity: 0.70, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite' }} />
                 </div>
-                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0 }}>Tes forces naturelles</h2>
+                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textShadow: `0 0 28px ${arch.color}33` }}>Tes forces naturelles</h2>
                 <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
@@ -1527,6 +1559,9 @@ const PATIENCE_TEXTS = {
   lumiere:    'Rester, c\'est déjà beaucoup.',
 }
 
+const EVRAI_BG_PERIODS    = { resilience: 22, presence: 34, sagesse: 48, lumiere: 28 }
+const EVRAI_GHOST_PERIODS = { resilience: 24, presence: 38, sagesse: 54, lumiere: 30 }
+
 function EspaceVraiModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
@@ -1534,7 +1569,11 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   const [showSecond, setShowSecond] = useState(false)
   const [showAccompany, setShowAccompany] = useState(false)
   const [showPatience, setShowPatience] = useState(false)
+  const [showEncoreIci, setShowEncoreIci] = useState(false)
+  const [typingDone, setTypingDone] = useState(false)
   const intention = getDailyIntention(archetypeKey)
+  const bgPeriod    = EVRAI_BG_PERIODS[archetypeKey]    || 28
+  const ghostPeriod = EVRAI_GHOST_PERIODS[archetypeKey] || 36
 
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 30)
@@ -1543,18 +1582,19 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
     const t4 = setTimeout(() => setShowAccompany(true), 9500)
     const t5 = setTimeout(() => haptic([2, 80, 2]), 12000)
     const t6 = setTimeout(() => setShowPatience(true), 30000)
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6) }
+    const t7 = setTimeout(() => setShowEncoreIci(true), 18000)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); clearTimeout(t7) }
   }, [])
 
   return (
     <div onClick={onClose} style={{ position: 'absolute', inset: 0, zIndex: 200, opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}bg-vrai.png)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'bgbreathe 28s ease-in-out infinite' }} />
+      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}bg-vrai.png)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: `bgbreathe ${bgPeriod}s ease-in-out infinite` }} />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.52)' }} />
       <GrainFilter />
       {/* Halo de présence — chaleur colorée très subtile derrière le contenu central */}
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}0a 0%, transparent 65%)`, animation: 'presencePulse 5.8s ease-in-out infinite', pointerEvents: 'none' }} />
       {/* Ghost backdrop animal */}
-      <div style={{ position: 'absolute', bottom: '-8%', right: '-12%', pointerEvents: 'none', opacity: vis ? 0.048 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(3px)', animation: vis ? 'animalfloat 36s ease-in-out infinite' : 'none' }}>
+      <div style={{ position: 'absolute', bottom: '-8%', right: '-12%', pointerEvents: 'none', opacity: vis ? 0.048 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(3px)', animation: vis ? `animalfloat ${ghostPeriod}s ease-in-out infinite` : 'none' }}>
         <SpiritAnimal archetype={archetypeKey} size={280} />
       </div>
       <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', gap: 24, textAlign: 'center' }}>
@@ -1579,8 +1619,8 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease', textShadow: `0 0 20px ${arch.color}44, 0 0 44px ${arch.color}22` }}>
           Espace de présence
         </p>
-        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340 }}>
-          {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} />}
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340, animation: typingDone ? 'phrasebreathe 22s ease-in-out infinite' : 'none' }}>
+          {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} onDone={() => setTypingDone(true)} />}
         </div>
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, fontStyle: 'italic', color: 'white', margin: 0, letterSpacing: '0.06em', textShadow: `0 0 20px ${arch.color}2a`, animation: showText ? 'fadeIn 1.5s ease 3s both, solbreathe 22s ease-in-out infinite 4.5s' : 'none' }}>
           Tu n'es pas seul·e.
@@ -1598,6 +1638,11 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         {showPatience && (
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.08em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3s ease forwards', maxWidth: 260, lineHeight: 1.75, textAlign: 'center' }}>
             {PATIENCE_TEXTS[archetypeKey]}
+          </p>
+        )}
+        {showEncoreIci && (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: `${arch.color}22`, letterSpacing: '0.28em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3.5s ease forwards', textShadow: `0 0 14px ${arch.color}18` }}>
+            encore ici
           </p>
         )}
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}44`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both' }}>
@@ -1732,8 +1777,14 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const presenceProgress = ringReady ? getPresenceProgress(savedAt, routinesDone, quetesDone, arch) : 0
 
   const MILESTONES = { 7: 'Sept jours de présence. Quelque chose prend racine.', 14: 'Deux semaines — tu construis quelque chose de réel.', 21: '21 jours, ton rythme prend forme.', 30: 'Un mois de présence — ta constance est belle.', 60: 'Deux mois. Tu avances avec profondeur.', 100: 'Cent jours. Ta lumière est durable.' }
+  const FIRST_DAY_MSGS = {
+    resilience: 'Ton feu commence ici.',
+    presence:   'Ton espace commence ici.',
+    sagesse:    'Ta brume commence ici.',
+    lumiere:    'Ta lumière commence ici.',
+  }
   const returningMsg = () => {
-    if (days <= 0) return null
+    if (days <= 0) return FIRST_DAY_MSGS[archetypeKey] || 'Ton voyage commence ici.'
     if (MILESTONES[days]) return MILESTONES[days]
     if (days === 1) return 'Tu es revenu·e. C\'est bien.'
     if (days < 7) return `${days} jours avec toi.`
@@ -2311,6 +2362,7 @@ export default function App() {
       @keyframes milestoneMote  { 0%{transform:translateY(0) scale(1);opacity:0.7} 100%{transform:translateY(-38px) scale(0.3);opacity:0} }
       @keyframes lightFlash2    { 0%{opacity:0} 15%{opacity:0.06} 100%{opacity:0} }
       @keyframes solbreathe     { 0%,100%{opacity:0.16}                           50%{opacity:0.23} }
+      @keyframes phrasebreathe  { 0%,100%{opacity:1}                               50%{opacity:0.86} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
