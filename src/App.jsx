@@ -526,7 +526,7 @@ function GrainFilter() {
 
 // ─── SPIRIT ANIMALS ───────────────────────────────────────────────────────────
 
-function PhoenixSpirit({ size = 120, color = '#f59e0b', style: s }) {
+const PhoenixSpirit = React.memo(function PhoenixSpirit({ size = 120, color = '#f59e0b', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
       <ellipse cx="60" cy="68" rx="10" ry="16" fill={color} opacity="0.92" />
@@ -544,9 +544,9 @@ function PhoenixSpirit({ size = 120, color = '#f59e0b', style: s }) {
       <ellipse cx="60" cy="60" rx="18" ry="22" fill="white" opacity="0.08" />
     </svg>
   )
-}
+})
 
-function WolfSpirit({ size = 120, color = '#6366f1', style: s }) {
+const WolfSpirit = React.memo(function WolfSpirit({ size = 120, color = '#6366f1', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
       <ellipse cx="60" cy="80" rx="24" ry="28" fill={color} opacity="0.18" />
@@ -566,9 +566,9 @@ function WolfSpirit({ size = 120, color = '#6366f1', style: s }) {
       <rect x="64" y="88" width="10" height="22" rx="5" fill={color} opacity="0.55" />
     </svg>
   )
-}
+})
 
-function BearSpirit({ size = 120, color = '#ec4899', style: s }) {
+const BearSpirit = React.memo(function BearSpirit({ size = 120, color = '#ec4899', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
       <ellipse cx="60" cy="80" rx="32" ry="30" fill={color} opacity="0.75" />
@@ -589,9 +589,9 @@ function BearSpirit({ size = 120, color = '#ec4899', style: s }) {
       <ellipse cx="84" cy="104" rx="12" ry="10" fill={color} opacity="0.60" />
     </svg>
   )
-}
+})
 
-function DeerSpirit({ size = 120, color = '#14b8a6', style: s }) {
+const DeerSpirit = React.memo(function DeerSpirit({ size = 120, color = '#14b8a6', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
       <ellipse cx="60" cy="82" rx="18" ry="26" fill={color} opacity="0.70" />
@@ -607,16 +607,16 @@ function DeerSpirit({ size = 120, color = '#14b8a6', style: s }) {
       <rect x="63" y="106" width="7" height="14" rx="3.5" fill={color} opacity="0.55" />
     </svg>
   )
-}
+})
 
-function SpiritAnimal({ archetype, size = 120, style: s }) {
+const SpiritAnimal = React.memo(function SpiritAnimal({ archetype, size = 120, style: s }) {
   const arch = ARCHETYPES[archetype] || ARCHETYPES.presence
   const props = { size, color: arch.color, style: s }
   if (archetype === 'resilience') return <PhoenixSpirit {...props} />
   if (archetype === 'sagesse')    return <WolfSpirit    {...props} />
   if (archetype === 'lumiere')    return <BearSpirit    {...props} />
   return <DeerSpirit {...props} />
-}
+})
 
 // ─── LOGO ─────────────────────────────────────────────────────────────────────
 
