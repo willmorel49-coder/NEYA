@@ -483,10 +483,10 @@ function SplashScreen({ onStart }) {
 
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
           <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(30px, 8vw, 40px)', color: 'white', lineHeight: 1.25, margin: 0, textShadow: '0 2px 40px rgba(0,0,0,0.55)', letterSpacing: '-0.01em', opacity: titleVis ? 1 : 0, transition: 'opacity 1.6s ease' }}>
-            Et toi, ça va<br />vraiment ?
+            Bienvenue dans<br />ton Grand Voyage...
           </h1>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.7, opacity: subVis ? 1 : 0, transition: 'opacity 1.2s ease' }}>
-            Un espace pour ce que tu ressens.<br />Vraiment.
+            Le plus beau chemin<br />commence en toi.
           </p>
         </div>
 
@@ -501,56 +501,141 @@ function SplashScreen({ onStart }) {
 // ─── INTRO ────────────────────────────────────────────────────────────────────
 
 function IntroScreen({ onStart }) {
-  const [screenVis, setScreenVis] = useState(false)
-  const [lines, setLines] = useState([false, false, false])
-  const [tagVis, setTagVis] = useState(false)
+  const [step, setStep] = useState(0)
+  const [vis, setVis] = useState(false)
+  const [line1, setLine1] = useState(false)
+  const [line2, setLine2] = useState(false)
   const [hintVis, setHintVis] = useState(false)
+
+  const resetAnimations = () => { setVis(false); setLine1(false); setLine2(false); setHintVis(false) }
+
+  useEffect(() => {
+    const t = [
+      setTimeout(() => setVis(true), 80),
+      setTimeout(() => setLine1(true), 700),
+      setTimeout(() => setLine2(true), 1700),
+      setTimeout(() => setHintVis(true), 3200),
+    ]
+    return () => t.forEach(clearTimeout)
+  }, [step])
+
+  const goStep1 = () => {
+    if (step !== 0) return
+    haptic(12)
+    resetAnimations()
+    setTimeout(() => setStep(1), 420)
+  }
+
+  if (step === 0) {
+    return (
+      <BgScreen bg="bg-onboarding.png" overlay="rgba(10,6,2,0.46)" breathe>
+        <div onClick={goStep1} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 32px', cursor: 'pointer', textAlign: 'center', gap: 22, opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(27px, 7vw, 36px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 44px rgba(0,0,0,0.6)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease' }}>
+            Ici commence<br />ton chemin...
+          </h1>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.62)', lineHeight: 1.72, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease' }}>
+            vers plus de calme,<br />d'équilibre et de clarté intérieure.
+          </p>
+          <p style={{ position: 'absolute', bottom: '9%', fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.20)', letterSpacing: '0.26em', margin: 0, opacity: hintVis ? 1 : 0, transition: 'opacity 1.2s ease' }}>
+            TOUCHER POUR CONTINUER
+          </p>
+        </div>
+      </BgScreen>
+    )
+  }
+
+  return (
+    <BgScreen bg="bg-foret.png" overlay="rgba(4,10,4,0.44)" breathe>
+      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 32px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
+        <div />
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 22 }}>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 'clamp(23px, 6vw, 30px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 32px rgba(0,0,0,0.5)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease' }}>
+            Ton monde intérieur<br />est vivant.
+          </h1>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.65)', lineHeight: 1.78, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease' }}>
+            À chaque pas, tu t'ouvres<br />un peu plus à toi-même.<br /><br />Continue d'avancer à ton rythme...
+          </p>
+        </div>
+        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.28)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 300, letterSpacing: '0.12em', color: 'white', opacity: line2 ? 1 : 0, transition: 'opacity 1s ease 0.5s' }}>
+          Poursuivre
+        </button>
+      </div>
+    </BgScreen>
+  )
+}
+
+// ─── QUIZ INTRO ───────────────────────────────────────────────────────────────
+
+function QuizIntroScreen({ onStart }) {
+  const [vis, setVis] = useState(false)
+  const [item1, setItem1] = useState(false)
+  const [item2, setItem2] = useState(false)
+  const [foot, setFoot] = useState(false)
   const [showBtn, setShowBtn] = useState(false)
 
   useEffect(() => {
     const t = [
-      setTimeout(() => setScreenVis(true), 80),
-      setTimeout(() => setLines(l => { const n=[...l]; n[0]=true; return n }), 700),
-      setTimeout(() => setLines(l => { const n=[...l]; n[1]=true; return n }), 1500),
-      setTimeout(() => setLines(l => { const n=[...l]; n[2]=true; return n }), 2300),
-      setTimeout(() => setTagVis(true), 3500),
-      setTimeout(() => setHintVis(true), 4800),
-      setTimeout(() => setShowBtn(true), 5200),
+      setTimeout(() => setVis(true), 100),
+      setTimeout(() => setItem1(true), 800),
+      setTimeout(() => setItem2(true), 1500),
+      setTimeout(() => setFoot(true), 2100),
+      setTimeout(() => setShowBtn(true), 2600),
     ]
     return () => t.forEach(clearTimeout)
   }, [])
 
-  const negLines = ["Pas une appli de méditation.", "Pas un journal.", "Pas un thérapeute."]
-
   return (
-    <BgScreen bg="bg-cosmos.png" overlay="rgba(5,8,16,0.80)" breathe>
-      <div style={{ padding: '60px 28px 52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', width: '100%', opacity: screenVis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
-        <NeyaLogo size="sm" />
+    <BgScreen bg="bg-cosmos.png" overlay="rgba(5,8,16,0.74)" breathe>
+      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 28px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, textAlign: 'center' }}>
+          <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="21" stroke="rgba(255,255,255,0.50)" strokeWidth="1.5"/>
+            <path d="M24 6v4M24 38v4M6 24h4M38 24h4" stroke="rgba(255,255,255,0.38)" strokeWidth="1.5" strokeLinecap="round"/>
+            <polygon points="24,9 26.4,21.2 24,25 21.6,21.2" fill="white" opacity="0.90"/>
+            <polygon points="24,39 21.6,26.8 24,23 26.4,26.8" fill="rgba(255,255,255,0.30)"/>
+            <circle cx="24" cy="24" r="2.8" fill="white" opacity="0.88"/>
+          </svg>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', lineHeight: 1.32, margin: 0 }}>
+            Prêt·e pour ton<br />exploration intérieure ?
+          </h1>
+        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, width: '100%', textAlign: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 36 }}>
-            {negLines.map((line, i) => (
-              <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.48)', margin: 0, lineHeight: 1.5, opacity: lines[i] ? 1 : 0, transition: 'opacity 1.1s ease' }}>
-                {line}
-              </p>
-            ))}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%' }}>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item1 ? 1 : 0, transform: item1 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em' }}>12</span>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65 }}>
+              Questions conçues pour révéler ton chemin intérieur unique.
+            </p>
           </div>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(20px, 5.5vw, 26px)', color: 'rgba(255,255,255,0.92)', margin: 0, lineHeight: 1.38, opacity: tagVis ? 1 : 0, transition: 'opacity 1.3s ease' }}>
-            Un espace pour ce que<br />tu ressens vraiment.
+          <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item2 ? 1 : 0, transform: item2 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65 }}>
+              Pas de bonne ou de mauvaise réponse — réponds avec ce qui résonne en toi.
+            </p>
+          </div>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.36)', textAlign: 'center', lineHeight: 1.72, margin: '4px 0 0', opacity: foot ? 1 : 0, transition: 'opacity 1s ease' }}>
+            Chaque réponse t'aidera à mieux te connaître<br />et à révéler ton chemin intérieur.
           </p>
         </div>
 
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.28)', textAlign: 'center', margin: 0, lineHeight: 1.65, opacity: hintVis ? 1 : 0, transition: 'opacity 1.0s ease' }}>
-            T'as pas besoin d'aller bien<br />pour commencer.
-          </p>
-          <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.72)', border: 'none', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', boxShadow: '0 4px 28px rgba(99,102,241,0.3)', opacity: showBtn ? 1 : 0, transition: 'opacity 0.9s ease' }}>
-            Entrer
-          </button>
-        </div>
+        <button onClick={() => { haptic([15, 40, 15]); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.78)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 500, letterSpacing: '0.28em', color: 'white', textTransform: 'uppercase', boxShadow: '0 6px 32px rgba(99,102,241,0.38)', opacity: showBtn ? 1 : 0, transition: 'opacity 1s ease' }}>
+          Commencer l'aventure
+        </button>
       </div>
     </BgScreen>
   )
+}
+
+// ─── CHOICE ICON ─────────────────────────────────────────────────────────────
+
+function ChoiceIcon({ type, active }) {
+  const c = active ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.42)'
+  const s = { width: 16, height: 16, flexShrink: 0, display: 'block' }
+  if (type === 'resilience') return <svg style={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+  if (type === 'presence')   return <svg style={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/></svg>
+  if (type === 'sagesse')    return <svg style={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+  if (type === 'lumiere')    return <svg style={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+  return null
 }
 
 // ─── QUIZ ─────────────────────────────────────────────────────────────────────
@@ -628,16 +713,16 @@ function QuizScreen({ onComplete }) {
           {q.choices.map((c, i) => {
             const sel = selected === c.type
             return (
-              <button key={i} onClick={() => { haptic(12); setSelected(c.type) }} style={{ width: '100%', padding: '13px 16px', background: sel ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 13, textAlign: 'left', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', transition: 'all 0.2s ease', transform: sel ? 'scale(1.012)' : 'scale(1)' }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', flexShrink: 0, background: sel ? 'white' : 'rgba(255,255,255,0.2)', transition: 'all 0.2s ease', boxShadow: sel ? '0 0 10px rgba(255,255,255,0.55)' : 'none' }} />
-                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.45, color: sel ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0.62)', transition: 'color 0.2s ease' }}>{c.text}</span>
+              <button key={i} onClick={() => { haptic(12); setSelected(c.type) }} style={{ width: '100%', padding: '14px 17px', background: sel ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'all 0.22s ease', transform: sel ? 'scale(1.014)' : 'scale(1)', boxShadow: sel ? '0 2px 18px rgba(255,255,255,0.06)' : 'none' }}>
+                <ChoiceIcon type={c.type} active={sel} />
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease' }}>{c.text}</span>
               </button>
             )
           })}
         </div>
 
         <div style={{ marginTop: 18, opacity: selected !== null ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: selected !== null ? 'all' : 'none' }}>
-          <button onClick={handleContinue} style={{ width: '100%', padding: '16px 0', background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.24)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 400, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
+          <button onClick={handleContinue} style={{ width: '100%', padding: '16px 0', background: 'rgba(99,102,241,0.72)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: '0 4px 22px rgba(99,102,241,0.32)', transition: 'all 0.3s ease' }}>
             {idx === QUESTIONS.length - 1 ? 'Terminer' : 'Continuer'}
           </button>
         </div>
@@ -1266,7 +1351,8 @@ export default function App() {
   return (
     <div style={{ width: '100vw', height: '100dvh', background: '#050810', overflow: 'hidden', position: 'fixed', inset: 0 }}>
       {screen === 'splash'     && <SplashScreen onStart={() => go('intro')} />}
-      {screen === 'intro'      && <IntroScreen onStart={() => go('quiz')} />}
+      {screen === 'intro'      && <IntroScreen onStart={() => go('quiz-intro')} />}
+      {screen === 'quiz-intro' && <QuizIntroScreen onStart={() => go('quiz')} />}
       {screen === 'quiz'       && <QuizScreen onComplete={(answers) => {
         const result = computeArchetype(answers)
         saveProfile(result)
