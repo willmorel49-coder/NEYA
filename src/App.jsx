@@ -887,6 +887,7 @@ function QuizScreen({ onComplete }) {
   const [idx, setIdx] = useState(0)
   const [answers, setAnswers] = useState(Array(QUESTIONS.length).fill(null))
   const [selected, setSelected] = useState(null)
+  const [rippleIdx, setRippleIdx] = useState(null)
   const [contentVis, setContentVis] = useState(true)
   const [choicesVis, setChoicesVis] = useState(false)
 
@@ -982,7 +983,12 @@ function QuizScreen({ onComplete }) {
           {q.choices.map((c, i) => {
             const sel = selected === c.type
             return (
-              <button key={i} onClick={() => { haptic(12); setSelected(c.type) }} style={{ width: '100%', padding: '14px 17px', background: sel ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transform: sel ? 'scale(1.014)' : 'scale(1)', boxShadow: sel ? '0 4px 28px rgba(255,255,255,0.09), inset 0 0 0 1px rgba(255,255,255,0.18)' : 'none', opacity: choicesVis ? 1 : 0, translate: choicesVis ? '0 0px' : '0 10px', transition: `background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease, opacity 0.45s ease ${i * 55}ms, translate 0.45s ease ${i * 55}ms` }}>
+              <button key={i} onClick={() => { if (selected !== null) return; haptic(12); setSelected(c.type); setRippleIdx(i); setTimeout(() => setRippleIdx(null), 620) }} style={{ position: 'relative', overflow: 'hidden', width: '100%', padding: '14px 17px', background: sel ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transform: sel ? 'scale(1.014)' : 'scale(1)', boxShadow: sel ? '0 4px 28px rgba(255,255,255,0.09), inset 0 0 0 1px rgba(255,255,255,0.18)' : 'none', opacity: choicesVis ? 1 : 0, translate: choicesVis ? '0 0px' : '0 10px', transition: `background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease, opacity 0.45s ease ${i * 55}ms, translate 0.45s ease ${i * 55}ms` }}>
+                {rippleIdx === i && (
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.4)', animation: 'choiceripple 0.6s ease-out forwards' }} />
+                  </div>
+                )}
                 <ChoiceIcon type={c.type} active={sel} />
                 <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease' }}>{c.text}</span>
               </button>
@@ -1020,7 +1026,7 @@ function TransitionScreen({ onReveal }) {
             <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.14)', animation: 'pulsering 3.4s ease-in-out infinite' }} />
             <div style={{ width: 76, height: 76, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 68%)', animation: 'presencePulse 3.2s ease-in-out infinite' }} />
-              <SpiritAnimal archetype="presence" size={40} style={{ opacity: 0.78, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative' }} />
+              <SpiritAnimal archetype="presence" size={40} style={{ opacity: 0.78, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', position: 'relative' }} />
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
@@ -1143,7 +1149,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
             style={{
               display: 'block',
               filter: `drop-shadow(0 0 28px ${arch.color}) drop-shadow(0 0 55px rgba(255,255,255,0.8)) drop-shadow(0 0 90px ${arch.color}99)`,
-              animation: 'cerfdrift 11s ease-in-out infinite 2.5s',
+              animation: 'animalfloat 18s ease-in-out infinite 2.5s, animalbreathe 22s ease-in-out infinite 2.5s',
             }}
           />
         </div>
@@ -1221,7 +1227,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
       <div style={{ padding: '60px 28px 52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', width: '100%' }}>
         <NeyaLogo size="sm" />
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, width: '100%', textAlign: 'center', opacity: phaseVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, width: '100%', textAlign: 'center', opacity: phaseVis ? 1 : 0, transform: phaseVis ? 'scale(1)' : 'scale(0.97)', transition: 'opacity 0.32s ease, transform 0.32s ease' }}>
 
           {phase === 1 && (
             <>
@@ -1231,7 +1237,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
                 {arch.forces.map((f, i) => (
-                  <div key={i} style={{ background: `radial-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid ${arch.color}55`, borderRadius: 12, padding: '20px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, opacity: forcesShown > i ? 1 : 0, transform: forcesShown > i ? 'translateY(0)' : 'translateY(20px)', transition: 'opacity 0.44s ease, transform 0.44s ease' }}>
+                  <div key={i} style={{ background: `radial-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid ${arch.color}55`, borderRadius: 12, padding: '20px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, animation: forcesShown > i ? 'forcespring 0.5s ease forwards' : 'none', animationDelay: forcesShown > i ? `${i * 120}ms` : '0ms', opacity: forcesShown > i ? 1 : 0 }}>
                     <span style={{ fontSize: 13, color: arch.color, textShadow: `0 0 10px ${arch.color}88` }}>◈</span>
                     <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'white', textAlign: 'center', lineHeight: 1.3 }}>{f}</span>
                   </div>
@@ -1413,13 +1419,16 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <div style={{ position: 'absolute', inset: 0 }}>
             <PresenceRing progress={presenceProgress} color={arch.color} size={130} />
           </div>
+          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', pointerEvents: 'none', opacity: 0.15, zIndex: 2 }}>
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'conic-gradient(transparent 0%, transparent 60%, rgba(255,255,255,0.9) 78%, transparent 84%, transparent 100%)', animation: 'ringshimmer 8s linear infinite' }} />
+          </div>
           {/* Soft glow center */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}20 0%, transparent 72%)`, animation: 'presencePulse 3.8s ease-in-out infinite' }} />
             <SpiritAnimal
               archetype={archetypeKey}
               size={74}
-              style={{ opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative', zIndex: 1 }}
+              style={{ opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'animalfloat 18s ease-in-out infinite', position: 'relative', zIndex: 1 }}
             />
           </div>
         </div>
@@ -1679,8 +1688,8 @@ function BoutiqueScreen({ archetypeKey }) {
         <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
       </div>
 
-      {otherCollections.map(col => (
-        <div key={col.key} onClick={() => setExpandedKey(expandedKey === col.key ? null : col.key)} style={{ position: 'relative', overflow: 'hidden', borderRadius: 14, border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer' }}>
+      {otherCollections.map((col, colIdx) => (
+        <div key={col.key} onClick={() => setExpandedKey(expandedKey === col.key ? null : col.key)} style={{ position: 'relative', overflow: 'hidden', borderRadius: 14, border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer', animation: 'tabslideIn 0.3s ease-out both', animationDelay: `${colIdx * 80}ms` }}>
           <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${col.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.65)' }} />
           <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: expandedKey === col.key ? 12 : 6 }}>
@@ -1737,11 +1746,14 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
   }
 
   const overlay = `linear-gradient(180deg, rgba(5,8,16,0.62) 0%, rgba(${arch.rgb},0.09) 100%)`
+  const WORLD_GLOW_PERIOD = { 'bg-brume.png': 30, 'bg-feu.png': 8, 'bg-foret.png': 18, 'bg-eau.png': 24, 'bg-cosmos.png': 42, 'bg-vide.png': 60 }
+  const glowPeriod = WORLD_GLOW_PERIOD[arch.bg] || 24
 
   return (
     <BgScreen bg={arch.bg} overlay={overlay} breathe>
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', opacity: tabVis ? 1 : 0, transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, background: `radial-gradient(ellipse at center, ${arch.color}0f 0%, transparent 65%)`, animation: `worldglow ${glowPeriod}s ease-in-out infinite` }} />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 0.22s ease-out' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} savedAt={savedAt} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} />}
           {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} />}
@@ -1771,7 +1783,8 @@ export default function App() {
       @keyframes pulsering    { 0%,100%{transform:scale(1);opacity:0.42}       50%{transform:scale(1.24);opacity:0.88} }
       @keyframes cursorblink  { 0%,100%{opacity:0}                             45%,55%{opacity:1} }
       @keyframes startwinkle  { 0%,100%{opacity:0.18}                         50%{opacity:0.88} }
-      @keyframes cerfdrift    { 0%,100%{transform:translateY(0)}               50%{transform:translateY(-6px)} }
+      @keyframes animalfloat  { 0%,100%{transform:translateY(0) scale(1) translateX(0)}  50%{transform:translateY(-7px) scale(1.028) translateX(3px)} }
+      @keyframes animalbreathe{ 0%,100%{filter:brightness(1)}                            50%{filter:brightness(1.10)} }
       @keyframes patronusRing { 0%{transform:scale(0.06);opacity:0.96}        100%{transform:scale(5.8);opacity:0} }
       @keyframes patronusAnimal {
         0%   { opacity:0; transform:scale(0.28); filter:blur(22px) brightness(4.5); }
@@ -1786,6 +1799,11 @@ export default function App() {
       @keyframes introlineappear { 0%{transform:scaleY(0);opacity:0}          100%{transform:scaleY(1);opacity:1} }
       @keyframes compassbreathe  { 0%,100%{transform:scale(1);opacity:0.88}    50%{transform:scale(1.06);opacity:1} }
       @keyframes splashmote      { 0%,100%{transform:translateY(0px)}          50%{transform:translateY(-28px)} }
+      @keyframes tabslideIn   { 0%{transform:translateX(10px);opacity:0}        100%{transform:translateX(0);opacity:1} }
+      @keyframes worldglow    { 0%,100%{opacity:0.5}                             50%{opacity:1} }
+      @keyframes ringshimmer  { 0%{transform:rotate(0deg)}                       100%{transform:rotate(360deg)} }
+      @keyframes forcespring  { 0%{transform:translateY(20px);opacity:0} 70%{transform:translateY(-4px);opacity:0.8} 100%{transform:translateY(0);opacity:1} }
+      @keyframes choiceripple { 0%{transform:scale(0);opacity:0.6}               100%{transform:scale(2.5);opacity:0} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
@@ -1833,6 +1851,9 @@ export default function App() {
       {screen === 'main'       && archetype && <MainApp archetypeKey={archetype} onRestart={handleRestart} savedAt={savedAt} />}
 
       <div style={{ position: 'fixed', inset: 0, background: '#050810', zIndex: 9999, opacity: blackout ? 1 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: blackout ? 'all' : 'none' }} />
+      {archetype && ARCHETYPES[archetype] && (
+        <div style={{ position: 'fixed', inset: 0, background: ARCHETYPES[archetype].color, zIndex: 10000, opacity: blackout ? 0.08 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: 'none' }} />
+      )}
     </div>
   )
 }
