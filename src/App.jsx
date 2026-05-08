@@ -589,12 +589,28 @@ function SplashScreen({ onStart }) {
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, [])
 
+  const SPLASH_MOTES = [
+    { x: 12, y: 78, size: 2.5, dur: 18, del: 0.0, op: 0.07 },
+    { x: 27, y: 65, size: 3.0, dur: 22, del: 2.4, op: 0.05 },
+    { x: 41, y: 82, size: 2.0, dur: 16, del: 5.1, op: 0.10 },
+    { x: 58, y: 71, size: 3.5, dur: 20, del: 1.3, op: 0.06 },
+    { x: 70, y: 88, size: 2.0, dur: 15, del: 7.8, op: 0.08 },
+    { x: 83, y: 60, size: 4.0, dur: 19, del: 3.6, op: 0.05 },
+    { x: 35, y: 90, size: 2.5, dur: 21, del: 9.2, op: 0.12 },
+    { x: 64, y: 76, size: 3.0, dur: 17, del: 4.7, op: 0.07 },
+  ]
+
   return (
     <BgScreen bg="bg-onboarding.png" overlay="rgba(5,8,16,0.40)" breathe>
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
         {STARS.map((s, i) => (
           <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill="white"
             style={{ animation: `startwinkle ${s.dur}s ease-in-out infinite`, animationDelay: `${s.del}s` }} />
+        ))}
+        {SPLASH_MOTES.map((m, i) => (
+          <circle key={`mote-${i}`} cx={`${m.x}%`} cy={`${m.y}%`} r={m.size}
+            fill="rgba(99,102,241,1)"
+            style={{ opacity: m.op, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
         ))}
       </svg>
 
@@ -603,16 +619,17 @@ function SplashScreen({ onStart }) {
           <NeyaLogo size="md" />
         </div>
 
-        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(30px, 8vw, 40px)', color: 'white', lineHeight: 1.25, margin: 0, textShadow: '0 2px 40px rgba(0,0,0,0.55)', letterSpacing: '-0.01em', opacity: titleVis ? 1 : 0, transition: 'opacity 1.6s ease' }}>
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, position: 'relative' }}>
+          <div style={{ position: 'absolute', inset: '-60px -80px', background: 'radial-gradient(ellipse at center, rgba(99,102,241,0.08) 0%, transparent 68%)', pointerEvents: 'none', zIndex: 0 }} />
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(30px, 8vw, 40px)', color: 'white', lineHeight: 1.25, margin: 0, textShadow: '0 2px 40px rgba(0,0,0,0.55), 0 0 80px rgba(99,102,241,0.18)', letterSpacing: '0.01em', opacity: titleVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1 }}>
             Bienvenue dans<br />ton Grand Voyage...
           </h1>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.7, opacity: subVis ? 1 : 0, transition: 'opacity 1.2s ease' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.7, opacity: subVis ? 1 : 0, transition: 'opacity 1.2s ease', position: 'relative', zIndex: 1 }}>
             Le plus beau chemin<br />commence en toi.
           </p>
         </div>
 
-        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.09)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', opacity: showBtn ? 1 : 0, transition: 'opacity 1.0s ease' }}>
+        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06))', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', opacity: showBtn ? 1 : 0, transition: 'opacity 1.4s ease' }}>
           Commencer
         </button>
       </div>
@@ -652,9 +669,10 @@ function IntroScreen({ onStart }) {
     return (
       <BgScreen bg="bg-onboarding.png" overlay="rgba(10,6,2,0.46)" breathe>
         <div onClick={goStep1} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 32px', cursor: 'pointer', textAlign: 'center', gap: 22, opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(27px, 7vw, 36px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 44px rgba(0,0,0,0.6)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease' }}>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(27px, 7vw, 36px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 44px rgba(0,0,0,0.6), 0 0 60px rgba(245,158,11,0.12)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease' }}>
             Ici commence<br />ton chemin...
           </h1>
+          <div style={{ width: 1, height: 38, background: 'rgba(255,255,255,0.18)', transformOrigin: 'top', animation: line1 ? 'introlineappear 0.9s ease forwards' : 'none', opacity: line1 ? 1 : 0 }} />
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.62)', lineHeight: 1.72, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease' }}>
             vers plus de calme,<br />d'équilibre et de clarté intérieure.
           </p>
@@ -674,11 +692,14 @@ function IntroScreen({ onStart }) {
           <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 'clamp(23px, 6vw, 30px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 32px rgba(0,0,0,0.5)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease' }}>
             Ton monde intérieur<br />est vivant.
           </h1>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.4em', margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease' }}>
+            ◈
+          </p>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.65)', lineHeight: 1.78, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease' }}>
             À chaque pas, tu t'ouvres<br />un peu plus à toi-même.<br /><br />Continue d'avancer à ton rythme...
           </p>
         </div>
-        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.28)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 300, letterSpacing: '0.12em', color: 'white', opacity: line2 ? 1 : 0, transition: 'opacity 1s ease 0.5s' }}>
+        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.28)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 300, letterSpacing: '0.12em', color: 'white', opacity: line2 ? 1 : 0, transition: 'opacity 1s ease 0.5s', boxShadow: '0 0 0 1px rgba(255,255,255,0.08)' }}>
           Poursuivre
         </button>
       </div>
@@ -710,21 +731,27 @@ function QuizIntroScreen({ onStart }) {
     <BgScreen bg="bg-cosmos.png" overlay="rgba(5,8,16,0.74)" breathe>
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 28px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, textAlign: 'center' }}>
-          <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="21" stroke="rgba(255,255,255,0.50)" strokeWidth="1.5"/>
-            <path d="M24 6v4M24 38v4M6 24h4M38 24h4" stroke="rgba(255,255,255,0.38)" strokeWidth="1.5" strokeLinecap="round"/>
-            <polygon points="24,9 26.4,21.2 24,25 21.6,21.2" fill="white" opacity="0.90"/>
-            <polygon points="24,39 21.6,26.8 24,23 26.4,26.8" fill="rgba(255,255,255,0.30)"/>
-            <circle cx="24" cy="24" r="2.8" fill="white" opacity="0.88"/>
-          </svg>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'absolute', width: 72, height: 72, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)', animation: 'compassbreathe 7s ease-in-out infinite' }} />
+            <div style={{ animation: 'compassbreathe 7s ease-in-out infinite', display: 'flex' }}>
+              <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="21" stroke="rgba(255,255,255,0.50)" strokeWidth="1.5"/>
+                <path d="M24 6v4M24 38v4M6 24h4M38 24h4" stroke="rgba(255,255,255,0.38)" strokeWidth="1.5" strokeLinecap="round"/>
+                <polygon points="24,9 26.4,21.2 24,25 21.6,21.2" fill="white" opacity="0.90"/>
+                <polygon points="24,39 21.6,26.8 24,23 26.4,26.8" fill="rgba(255,255,255,0.30)"/>
+                <circle cx="24" cy="24" r="2.8" fill="white" opacity="0.88"/>
+              </svg>
+            </div>
+          </div>
           <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', lineHeight: 1.32, margin: 0 }}>
             Prêt·e pour ton<br />exploration intérieure ?
           </h1>
+          <div style={{ width: 32, height: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 1, margin: '4px auto 0', opacity: item1 ? 1 : 0, transition: 'opacity 1.4s ease' }} />
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%' }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item1 ? 1 : 0, transform: item1 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
-            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em' }}>23</span>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em', boxShadow: '0 0 12px rgba(99,102,241,0.22)' }}>23</span>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65 }}>
               Questions conçues pour révéler ton chemin intérieur unique.
             </p>
@@ -740,7 +767,7 @@ function QuizIntroScreen({ onStart }) {
           </p>
         </div>
 
-        <button onClick={() => { haptic([15, 40, 15]); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.78)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 500, letterSpacing: '0.28em', color: 'white', textTransform: 'uppercase', boxShadow: '0 6px 32px rgba(99,102,241,0.38)', opacity: showBtn ? 1 : 0, transition: 'opacity 1s ease' }}>
+        <button onClick={() => { haptic([15, 40, 15]); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.78)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 500, letterSpacing: '0.28em', color: 'white', textTransform: 'uppercase', boxShadow: '0 6px 32px rgba(99,102,241,0.38)', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 1s ease, transform 0.3s ease' }}>
           Commencer l'aventure
         </button>
       </div>
@@ -767,6 +794,7 @@ function QuizScreen({ onComplete }) {
   const [answers, setAnswers] = useState(Array(QUESTIONS.length).fill(null))
   const [selected, setSelected] = useState(null)
   const [contentVis, setContentVis] = useState(true)
+  const [choicesVis, setChoicesVis] = useState(false)
 
   const [bgMain, setBgMain] = useState(QUESTIONS[0].bg)
   const [bgFade, setBgFade] = useState(null)
@@ -774,6 +802,16 @@ function QuizScreen({ onComplete }) {
 
   const q = QUESTIONS[idx]
   const progress = (idx + (selected !== null ? 0.5 : 0)) / QUESTIONS.length
+
+  // Déclenche le stagger d'entrée des choix dès que le contenu devient visible
+  useEffect(() => {
+    if (contentVis) {
+      const t = setTimeout(() => setChoicesVis(true), 60)
+      return () => clearTimeout(t)
+    } else {
+      setChoicesVis(false)
+    }
+  }, [contentVis])
 
   const handleContinue = () => {
     if (!selected) return
@@ -818,7 +856,7 @@ function QuizScreen({ onComplete }) {
       <GrainFilter />
 
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.07)', zIndex: 10 }}>
-        <div style={{ height: '100%', background: 'rgba(255,255,255,0.46)', width: `${progress * 100}%`, transition: 'width 0.5s ease' }} />
+        <div style={{ height: '100%', background: 'linear-gradient(90deg, rgba(99,102,241,0.7), rgba(255,255,255,0.5))', filter: 'blur(0.5px)', width: `${progress * 100}%`, transition: 'width 0.5s ease' }} />
       </div>
 
       <div style={{ position: 'relative', zIndex: 1, padding: '50px 24px 36px', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', opacity: contentVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
@@ -827,7 +865,7 @@ function QuizScreen({ onComplete }) {
         </div>
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 12, marginBottom: 24 }}>
-          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', margin: 0, lineHeight: 1.2, textShadow: '0 2px 24px rgba(0,0,0,0.5)' }}>{q.title}</h2>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em', textShadow: '0 2px 24px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.08)' }}>{q.title}</h2>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.65, padding: '0 4px' }}>{q.text}</p>
         </div>
 
@@ -835,7 +873,7 @@ function QuizScreen({ onComplete }) {
           {q.choices.map((c, i) => {
             const sel = selected === c.type
             return (
-              <button key={i} onClick={() => { haptic(12); setSelected(c.type) }} style={{ width: '100%', padding: '14px 17px', background: sel ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'all 0.22s ease', transform: sel ? 'scale(1.014)' : 'scale(1)', boxShadow: sel ? '0 2px 18px rgba(255,255,255,0.06)' : 'none' }}>
+              <button key={i} onClick={() => { haptic(12); setSelected(c.type) }} style={{ width: '100%', padding: '14px 17px', background: sel ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transform: sel ? 'scale(1.014)' : 'scale(1)', boxShadow: sel ? '0 4px 28px rgba(255,255,255,0.09), inset 0 0 0 1px rgba(255,255,255,0.18)' : 'none', opacity: choicesVis ? 1 : 0, translate: choicesVis ? '0 0px' : '0 10px', transition: `background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease, opacity 0.45s ease ${i * 55}ms, translate 0.45s ease ${i * 55}ms` }}>
                 <ChoiceIcon type={c.type} active={sel} />
                 <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease' }}>{c.text}</span>
               </button>
@@ -869,21 +907,24 @@ function TransitionScreen({ onReveal }) {
         <NeyaLogo size="sm" />
         <div style={{ textAlign: 'center', opacity: vis ? 1 : 0, transition: 'opacity 1.6s ease', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 26 }}>
           <div style={{ position: 'relative', width: 76, height: 76 }}>
+            <div style={{ position: 'absolute', inset: -22, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.07)', animation: 'pulsering 4.8s ease-in-out infinite 1.6s' }} />
             <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.14)', animation: 'pulsering 3.4s ease-in-out infinite' }} />
-            <div style={{ width: 76, height: 76, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)' }}>
-              <img src={`${B}cerf.svg`} style={{ width: 40, height: 40, opacity: 0.78, animation: 'cerfdrift 10s ease-in-out infinite' }} alt="" />
+            <div style={{ width: 76, height: 76, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
+              <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 68%)', animation: 'presencePulse 3.2s ease-in-out infinite' }} />
+              <img src={`${B}cerf.svg`} style={{ width: 40, height: 40, opacity: 0.78, animation: 'cerfdrift 10s ease-in-out infinite', position: 'relative' }} alt="" />
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(24px, 6vw, 30px)', color: 'white', margin: 0, lineHeight: 1.3 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
+            <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(24px, 6vw, 30px)', color: 'white', margin: 0, lineHeight: 1.3, textShadow: '0 2px 32px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.1)' }}>
               Ton guide intérieur<br />s'apprête à se révéler...
             </h1>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.72 }}>
+            <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.14)', borderRadius: 1, margin: '0 auto' }} />
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.72, opacity: vis ? 1 : 0, transition: 'opacity 1.0s ease 0.4s' }}>
               Il est l'écho de ta lumière unique.<br />Es-tu prêt·e à le rencontrer ?
             </p>
           </div>
         </div>
-        <button onClick={() => { haptic([30, 50, 20]); onReveal() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.26)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.2em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', opacity: showBtn ? 1 : 0, transition: 'opacity 1.0s ease' }}>
+        <button onClick={() => { haptic([30, 50, 20]); onReveal() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.26)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.2em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(10px)', transition: 'opacity 1.0s ease, transform 0.8s ease' }}>
           Découvrir mon guide
         </button>
       </div>
@@ -925,6 +966,22 @@ function PatronusReveal({ arch, onDone }) {
       {/* White flash on animal arrival */}
       {step >= 4 && (
         <div style={{ position: 'absolute', inset: 0, background: 'white', animation: 'lightFlash 1.6s ease forwards', pointerEvents: 'none', zIndex: 5 }} />
+      )}
+
+      {/* Birth particles — 6 radial dots SVG overlay */}
+      {step >= 4 && (
+        <svg
+          width="200" height="200"
+          viewBox="0 0 200 200"
+          style={{ position: 'absolute', pointerEvents: 'none', zIndex: 7, animation: 'patronusParticles 1.8s ease-out forwards', opacity: 0 }}
+        >
+          {[0, 60, 120, 180, 240, 300].map((deg, i) => {
+            const rad = (deg * Math.PI) / 180
+            const cx = 100 + Math.round(Math.cos(rad) * 82)
+            const cy = 100 + Math.round(Math.sin(rad) * 82)
+            return <circle key={i} cx={cx} cy={cy} r="2.5" fill={arch.color} opacity="0.9" />
+          })}
+        </svg>
       )}
 
       {/* Deep glow orb behind animal */}
@@ -986,14 +1043,14 @@ function PatronusReveal({ arch, onDone }) {
 
       {/* Text reveal */}
       {step >= 5 && (
-        <div style={{ position: 'absolute', bottom: '27%', textAlign: 'center', zIndex: 12, animation: 'fadeIn 1.4s ease forwards' }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.34em', textTransform: 'uppercase', margin: '0 0 12px' }}>
+        <div style={{ position: 'absolute', bottom: '27%', textAlign: 'center', zIndex: 12 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.34em', textTransform: 'uppercase', margin: '0 0 12px', opacity: 0, animation: 'fadeIn 0.8s ease 0.4s both' }}>
             Ton animal guide
           </p>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 6vw, 28px)', color: 'white', margin: '0 0 7px', textShadow: `0 0 48px ${arch.shadow}, 0 0 24px rgba(255,255,255,0.4)` }}>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 6vw, 28px)', color: 'white', margin: '0 0 7px', textShadow: `0 0 48px ${arch.shadow}, 0 0 24px rgba(255,255,255,0.4)`, opacity: 0, animation: 'fadeIn 1.0s ease 0.8s both' }}>
             {arch.animal}
           </p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.40)', margin: 0, fontStyle: 'italic', letterSpacing: '0.06em' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: `${arch.color}99`, margin: 0, fontStyle: 'italic', letterSpacing: '0.06em', opacity: 0, animation: 'fadeIn 1.0s ease 1.2s both' }}>
             {arch.profil}
           </p>
         </div>
@@ -1026,7 +1083,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
     if (phase === 1 && phaseVis) {
       setForcesShown(0)
       arch.forces.forEach((_, i) => {
-        setTimeout(() => setForcesShown(prev => Math.max(prev, i + 1)), 200 + i * 220)
+        setTimeout(() => setForcesShown(prev => Math.max(prev, i + 1)), 200 + i * 240)
       })
     }
   }, [phase, phaseVis])
@@ -1060,11 +1117,14 @@ function ResultScreen({ archetypeKey, onContinue }) {
 
           {phase === 1 && (
             <>
-              <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0 }}>Tes forces naturelles</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0 }}>Tes forces naturelles</h2>
+                <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px' }} />
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
                 {arch.forces.map((f, i) => (
-                  <div key={i} style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid ${arch.color}55`, borderRadius: 12, padding: '20px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, opacity: forcesShown > i ? 1 : 0, transform: forcesShown > i ? 'translateY(0)' : 'translateY(16px)', transition: 'opacity 0.44s ease, transform 0.44s ease' }}>
-                    <span style={{ fontSize: 13, color: arch.color }}>◈</span>
+                  <div key={i} style={{ background: `radial-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid ${arch.color}55`, borderRadius: 12, padding: '20px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, opacity: forcesShown > i ? 1 : 0, transform: forcesShown > i ? 'translateY(0)' : 'translateY(20px)', transition: 'opacity 0.44s ease, transform 0.44s ease' }}>
+                    <span style={{ fontSize: 13, color: arch.color, textShadow: `0 0 10px ${arch.color}88` }}>◈</span>
                     <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'white', textAlign: 'center', lineHeight: 1.3 }}>{f}</span>
                   </div>
                 ))}
@@ -1073,9 +1133,9 @@ function ResultScreen({ archetypeKey, onContinue }) {
           )}
 
           {phase === 2 && (
-            <div style={{ background: 'rgba(255,255,255,0.055)', border: `1px solid ${arch.color}44`, borderRadius: 16, padding: '26px 22px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ background: 'rgba(255,255,255,0.055)', border: `1px solid ${arch.color}44`, borderRadius: 16, padding: '26px 22px', display: 'flex', flexDirection: 'column', gap: 20, boxShadow: `0 8px 32px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.04)` }}>
               {arch.desc.split('\n\n').map((para, i) => (
-                <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: i === 0 ? 16 : 14, color: i === 0 ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.75, fontStyle: i === 0 ? 'italic' : 'normal' }}>
+                <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: i === 0 ? 16 : 14, color: i === 0 ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.75, fontStyle: i === 0 ? 'italic' : 'normal', textShadow: i === 0 ? '0 1px 20px rgba(0,0,0,0.3)' : 'none' }}>
                   {i === 0 ? `"${para}"` : para}
                 </p>
               ))}
@@ -1083,7 +1143,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
           )}
         </div>
 
-        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : 'rgba(255,255,255,0.11)', border: phase === 2 ? 'none' : '1px solid rgba(255,255,255,0.26)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.2em', color: 'white', textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : 'none', transition: 'all 0.45s ease' }}>
+        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : 'rgba(255,255,255,0.11)', border: phase === 2 ? 'none' : '1px solid rgba(255,255,255,0.26)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: phase === 2 ? 500 : 400, letterSpacing: '0.2em', color: phase === 2 ? '#050810' : 'white', textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : 'none', transition: 'all 0.45s ease' }}>
           {['', 'Lire mon message', 'Entrer dans mon espace'][phase]}
         </button>
       </div>
@@ -1110,17 +1170,20 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}bg-vrai.png)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'bgbreathe 28s ease-in-out infinite' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.52)' }} />
       <GrainFilter />
+      {/* Halo de présence — chaleur colorée très subtile derrière le contenu central */}
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}0a 0%, transparent 65%)`, animation: 'presencePulse 5.8s ease-in-out infinite', pointerEvents: 'none' }} />
       <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', gap: 30, textAlign: 'center' }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease', textShadow: `0 0 20px ${arch.color}44` }}>
           Espace de présence
         </p>
+        <div style={{ width: 1, height: 42, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto' }} />
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340 }}>
           {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} />}
         </div>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.3)', margin: 0, letterSpacing: '0.06em', opacity: showText ? 1 : 0, transition: 'opacity 1.5s ease 3s' }}>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, fontStyle: 'italic', color: 'rgba(255,255,255,0.36)', margin: 0, letterSpacing: '0.06em', opacity: showText ? 1 : 0, transition: 'opacity 1.5s ease 3s', textShadow: '0 0 24px rgba(255,255,255,0.1)' }}>
           Tu n'es pas seul·e.
         </p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.14)', margin: 0, position: 'absolute', bottom: 48, letterSpacing: '0.15em' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.14)', margin: 0, position: 'absolute', bottom: 52, paddingBottom: 'env(safe-area-inset-bottom, 0px)', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both' }}>
           Appuie pour revenir
         </p>
       </div>
@@ -1130,21 +1193,54 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
 
 // ─── BOTTOM NAV ───────────────────────────────────────────────────────────────
 
+function NavIconHome({ active, color }) {
+  const c = active ? color : 'rgba(255,255,255,0.26)'
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L14.4 9.6H22L15.8 14.4L18.2 22L12 17.2L5.8 22L8.2 14.4L2 9.6H9.6L12 2Z" stroke={c} strokeWidth="1.4" strokeLinejoin="round" fill={active ? color + '33' : 'none'} />
+    </svg>
+  )
+}
+
+function NavIconRoutines({ active, color }) {
+  const c = active ? color : 'rgba(255,255,255,0.26)'
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="8" stroke={c} strokeWidth="1.4" />
+      <path d="M12 8v8M8 12h8" stroke={c} strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function NavIconQuetes({ active, color }) {
+  const c = active ? color : 'rgba(255,255,255,0.26)'
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M12 3L21 12L12 21L3 12L12 3Z" stroke={c} strokeWidth="1.4" strokeLinejoin="round" fill={active ? color + '22' : 'none'} />
+    </svg>
+  )
+}
+
 function BottomNav({ tab, onChange, color }) {
   const tabs = [
-    { key: 'home', icon: '✦', label: 'Accueil' },
-    { key: 'routines', icon: '◈', label: 'Routines' },
-    { key: 'quetes', icon: '◇', label: 'Quêtes' },
+    { key: 'home', label: 'Accueil', Icon: NavIconHome },
+    { key: 'routines', label: 'Routines', Icon: NavIconRoutines },
+    { key: 'quetes', label: 'Quêtes', Icon: NavIconQuetes },
   ]
   return (
-    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(5,8,16,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      {tabs.map(t => (
-        <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '14px 0 11px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-          <span style={{ fontSize: 16, color: tab === t.key ? color : 'rgba(255,255,255,0.26)', transition: 'color 0.25s ease', display: 'block' }}>{t.icon}</span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.12em', color: tab === t.key ? color : 'rgba(255,255,255,0.22)', transition: 'color 0.25s ease', textTransform: 'uppercase' }}>{t.label}</span>
-          <div style={{ width: tab === t.key ? 16 : 4, height: 1.5, borderRadius: 1, background: tab === t.key ? color : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: tab === t.key ? `0 0 6px ${color}` : 'none' }} />
-        </button>
-      ))}
+    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.80) 0%, rgba(5,8,16,0.95) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 -8px 32px rgba(5,8,16,0.6)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      {tabs.map(t => {
+        const active = tab === t.key
+        return (
+          <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '14px 0 11px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.25s ease' }}>
+              <t.Icon active={active} color={color} />
+            </span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.12em', color: active ? color : 'rgba(255,255,255,0.22)', transition: 'color 0.25s ease', textTransform: 'uppercase' }}>{t.label}</span>
+            <div style={{ width: active ? 20 : 3, height: 1.5, borderRadius: 1, background: active ? color : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 8px ${color}, 0 0 16px ${color}66` : 'none' }} />
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -1186,8 +1282,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {/* ── Cocoon header ── */}
       <div style={{ textAlign: 'center', paddingBottom: 6 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', margin: '0 0 2px', textTransform: 'capitalize' }}>{greetingStr()}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.18)', letterSpacing: '0.07em', margin: '0 0 18px', textTransform: 'capitalize' }}>{dateStr}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', margin: '0 0 2px', textTransform: 'capitalize', textShadow: `0 0 20px ${arch.color}22` }}>{greetingStr()}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.07em', margin: '0 0 18px', textTransform: 'capitalize' }}>{dateStr}</p>
 
         {/* Presence ring wrapping the animal — tap for espace vrai */}
         <div
@@ -1208,7 +1304,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           </div>
         </div>
 
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 5px', textShadow: `0 0 22px ${arch.color}55` }}>{arch.profil}</p>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 5px', textShadow: `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` }}>{arch.profil}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress)}</p>
 
         {msg ? (
@@ -1219,7 +1315,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {/* ── Intention du jour ── */}
-      <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 14, padding: '20px 18px', minHeight: 92 }}>
+      <div style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid ${arch.color}1a`, borderRadius: 14, padding: '20px 18px', minHeight: 92 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '0 0 12px', textTransform: 'uppercase' }}>Intention du jour</p>
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.86)', lineHeight: 1.68, fontStyle: 'italic' }}>
           {intentionReady && <TypingText text={`"${intention}"`} delay={0} speed={34} />}
@@ -1230,11 +1326,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
         {weekDots.map((active, i) => (
           <div key={i} style={{
-            width: active ? 8.5 : 5.5,
-            height: active ? 8.5 : 5.5,
+            width: active ? 8.5 : 4.5,
+            height: active ? 8.5 : 4.5,
             borderRadius: '50%',
-            background: active ? arch.color : 'rgba(255,255,255,0.10)',
-            boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44` : 'none',
+            background: active ? arch.color : 'rgba(255,255,255,0.07)',
+            boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : 'none',
             transition: 'all 0.5s ease',
             animation: active ? 'seedPulse 3.5s ease-in-out infinite' : 'none',
             animationDelay: `${i * 0.42}s`,
@@ -1249,7 +1345,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈' },
           { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇' },
         ].map((s, i) => (
-          <div key={i} style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: `1px solid ${s.count > 0 ? arch.color + '44' : 'rgba(255,255,255,0.07)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease' }}>
+          <div key={i} style={{ flex: 1, background: s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(${arch.rgb},0.05) 100%)` : 'rgba(255,255,255,0.05)', border: `1px solid ${s.count > 0 ? arch.color + '44' : 'rgba(255,255,255,0.07)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 13, color: s.count > 0 ? arch.color : 'rgba(255,255,255,0.24)', transition: 'color 0.3s ease' }}>{s.icon}</span>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.26)' }}>{s.count}/{s.total}</span>
@@ -1436,9 +1532,13 @@ export default function App() {
         100% { opacity:0.88; transform:scale(1); filter:blur(0px)  brightness(1.35); }
       }
       @keyframes lightFlash   { 0%{opacity:0} 18%{opacity:0.74} 100%{opacity:0} }
+      @keyframes patronusParticles { 0%{opacity:0;transform:scale(0)} 30%{opacity:0.7} 100%{opacity:0;transform:scale(1.8)} }
       @keyframes presencePulse{ 0%,100%{opacity:0.7;transform:scale(1)}       50%{opacity:1;transform:scale(1.07)} }
       @keyframes seedPulse    { 0%,100%{opacity:0.62;transform:scale(1)}      50%{opacity:1;transform:scale(1.32)} }
       @keyframes fadeIn       { 0%{opacity:0}                                  100%{opacity:1} }
+      @keyframes introlineappear { 0%{transform:scaleY(0);opacity:0}          100%{transform:scaleY(1);opacity:1} }
+      @keyframes compassbreathe  { 0%,100%{transform:scale(1);opacity:0.88}    50%{transform:scale(1.06);opacity:1} }
+      @keyframes splashmote      { 0%,100%{transform:translateY(0px)}          50%{transform:translateY(-28px)} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
