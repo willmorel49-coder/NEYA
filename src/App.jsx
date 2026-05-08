@@ -763,6 +763,20 @@ function ReturningScreen({ archetypeKey, onDone }) {
         }}>
           <SpiritAnimal archetype={archetypeKey} size={130} />
         </div>
+        {/* Time-of-day greeting */}
+        <p style={{
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 300,
+          fontSize: 10,
+          color: `${arch.color}55`,
+          letterSpacing: '0.18em',
+          margin: 0,
+          fontStyle: 'italic',
+          opacity: vis ? 1 : 0,
+          transition: 'opacity 1s ease 0.2s',
+        }}>
+          {(() => { const h = new Date().getHours(); if (h >= 22 || h < 5) return 'cette nuit'; if (h < 9) return 'ce matin'; if (h < 18) return 'cet après-midi'; return 'ce soir' })()}
+        </p>
         {/* Animal name */}
         <p style={{
           fontFamily: 'Sora, sans-serif',
@@ -1632,7 +1646,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           </p>
         </div>
 
-        <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto' }} />
+        <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto', animation: 'worldglow 6s ease-in-out infinite' }} />
 
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease', textShadow: `0 0 20px ${arch.color}44, 0 0 44px ${arch.color}22`, animation: typingDone ? 'milestoneGlow 4.2s ease-in-out infinite' : 'none' }}>
           Espace de présence
@@ -1751,6 +1765,19 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   })
   const [intentionFade, setIntentionFade] = useState(true)
   const [showPresenceToast, setShowPresenceToast] = useState(false)
+  const [restartPending, setRestartPending] = useState(false)
+  const restartTimer = useRef(null)
+
+  const handleRestartClick = () => {
+    if (restartPending) {
+      clearTimeout(restartTimer.current)
+      haptic(10); onRestart()
+    } else {
+      haptic(8); setRestartPending(true)
+      restartTimer.current = setTimeout(() => setRestartPending(false), 3000)
+    }
+  }
+
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 80)
     const t2 = setTimeout(() => setIntentionReady(true), 600)
@@ -1981,8 +2008,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             Partager mon profil
           </button>
         )}
-        <button onClick={() => { haptic(10); onRestart() }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: 'rgba(255,255,255,0.15)', letterSpacing: '0.05em', padding: '10px 0' }}>
-          Refaire le parcours
+        <button onClick={handleRestartClick} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: restartPending ? 'rgba(236,72,153,0.55)' : 'rgba(255,255,255,0.15)', letterSpacing: '0.05em', padding: '10px 0', transition: 'color 0.3s ease' }}>
+          {restartPending ? 'Toucher encore pour confirmer' : 'Refaire le parcours'}
         </button>
       </div>
     </div>
