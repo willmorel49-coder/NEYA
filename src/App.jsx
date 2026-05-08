@@ -1224,6 +1224,9 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: `${arch.color}99`, margin: 0, fontStyle: 'italic', letterSpacing: '0.06em', opacity: 0, animation: 'fadeIn 1.0s ease 1.2s both' }}>
             {arch.profil}
           </p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: '8px 0 0', opacity: 0, animation: 'fadeIn 1.0s ease 1.6s both' }}>
+            Élément · {arch.element}
+          </p>
         </div>
       )}
 
@@ -1499,7 +1502,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [vis, setVis] = useState(false)
   const [intentionReady, setIntentionReady] = useState(false)
   const [ringReady, setRingReady] = useState(false)
-  const [intentionIdx, setIntentionIdx] = useState(0)
+  const [intentionIdx, setIntentionIdx] = useState(() => {
+    try { return parseInt(localStorage.getItem(`neya_intentionIdx_${archetypeKey}`) || '0', 10) } catch { return 0 }
+  })
   const [intentionFade, setIntentionFade] = useState(true)
   const [showPresenceToast, setShowPresenceToast] = useState(false)
   useEffect(() => {
@@ -1527,7 +1532,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
     haptic(8)
     setIntentionFade(false)
     setTimeout(() => {
-      setIntentionIdx(i => (i + 1) % pool.length)
+      setIntentionIdx(i => {
+        const next = (i + 1) % pool.length
+        try { localStorage.setItem(`neya_intentionIdx_${archetypeKey}`, String(next)) } catch {}
+        return next
+      })
       setIntentionFade(true)
     }, 200)
   }
@@ -1612,18 +1621,23 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {/* ── Graines de présence (7 jours) ── */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
-          {weekDots.map((active, i) => (
-            <div key={i} style={{
-              width: active ? 8.5 : 4.5,
-              height: active ? 8.5 : 4.5,
-              borderRadius: '50%',
-              background: active ? arch.color : 'rgba(255,255,255,0.07)',
-              boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : 'none',
-              transition: 'all 0.5s ease',
-              animation: active ? 'seedPulse 3.5s ease-in-out infinite' : 'none',
-              animationDelay: `${i * 0.42}s`,
-            }} />
-          ))}
+          {weekDots.map((active, i) => {
+            const isToday = i === 6
+            return (
+              <div key={i} style={{
+                width: active ? 8.5 : isToday ? 5 : 4.5,
+                height: active ? 8.5 : isToday ? 5 : 4.5,
+                borderRadius: '50%',
+                background: active ? arch.color : 'rgba(255,255,255,0.07)',
+                boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : isToday ? `0 0 0 1.5px ${arch.color}66` : 'none',
+                transition: 'all 0.5s ease',
+                animation: active ? 'seedPulse 3.5s ease-in-out infinite' : 'none',
+                animationDelay: `${i * 0.42}s`,
+                outline: isToday && !active ? `1.5px solid ${arch.color}55` : 'none',
+                outlineOffset: '2px',
+              }} />
+            )
+          })}
         </div>
         {(() => {
           const count = weekDots.filter(Boolean).length
@@ -1928,6 +1942,8 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
   const toggleRoutine = (i) => {
     const next = [...routinesDone]; next[i] = !next[i]
     setRoutinesDone(next); saveRoutines(next)
+    const nowAllDone = next.every(Boolean)
+    if (nowAllDone) haptic([20, 50, 20, 50, 40])
   }
 
   const completeQuete = (i) => {
