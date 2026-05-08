@@ -1659,7 +1659,12 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress)}</p>
 
         {msg ? (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: isMilestone ? 400 : 300, fontSize: isMilestone ? 12.5 : 11.5, color: isMilestone ? arch.color : 'rgba(255,255,255,0.3)', letterSpacing: isMilestone ? '0.04em' : '0.05em', margin: '4px 0 0', fontStyle: 'italic', animation: isMilestone ? 'fadeIn 1.2s ease both, milestoneGlow 3.8s ease-in-out 1.4s infinite' : 'none', textShadow: isMilestone ? `0 0 18px ${arch.color}55` : 'none', transition: 'all 0.4s ease' }}>{msg}</p>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            {isMilestone && [0,1,2,3,4].map(i => (
+              <div key={i} style={{ position: 'absolute', bottom: '100%', left: `${18 + i * 14}%`, width: 4, height: 4, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.4 + i * 0.3}s ease-out ${0.8 + i * 0.18}s both` }} />
+            ))}
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: isMilestone ? 400 : 300, fontSize: isMilestone ? 12.5 : 11.5, color: isMilestone ? arch.color : 'rgba(255,255,255,0.3)', letterSpacing: isMilestone ? '0.04em' : '0.05em', margin: '4px 0 0', fontStyle: 'italic', animation: isMilestone ? 'fadeIn 1.2s ease both, milestoneGlow 3.8s ease-in-out 1.4s infinite' : 'none', textShadow: isMilestone ? `0 0 18px ${arch.color}55` : 'none', transition: 'all 0.4s ease' }}>{msg}</p>
+          </div>
         ) : (
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.12em', margin: '4px 0 0' }}>touche · instant de présence</p>
         )}
@@ -1760,7 +1765,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         {typeof navigator !== 'undefined' && navigator.share && (
           <button onClick={() => {
             haptic([8, 20, 8])
-            navigator.share({ title: 'Mon profil NÉYA', text: `Je suis ${arch.profil} — ${arch.animal}. Découvre ton guide intérieur avec NÉYA.`, url: 'https://neya-kappa.vercel.app' }).catch(() => {})
+            navigator.share({ title: 'Mon profil NÉYA', text: `Je suis ${arch.profil} — ${arch.animal} · Élément ${arch.element}.${streak >= 2 ? ` ${streak} jours d'affilée.` : ''} Découvre ton guide intérieur avec NÉYA.`, url: 'https://neya-kappa.vercel.app' }).catch(() => {})
           }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.05em', padding: '10px 0' }}>
             Partager mon profil
           </button>
@@ -1836,7 +1841,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
 
 // ─── QUÊTES SCREEN ────────────────────────────────────────────────────────────
 
-function QuetesScreen({ archetypeKey, completed, onComplete }) {
+function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [flash, setFlash] = useState(false)
@@ -1892,9 +1897,16 @@ function QuetesScreen({ archetypeKey, completed, onComplete }) {
       })}
 
       {allDone && (
-        <div style={{ background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '18px 16px', textAlign: 'center', marginTop: 4 }}>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: arch.color, margin: '0 0 6px' }}>✦ Toutes tes quêtes accomplies.</p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.42)', margin: 0 }}>Ta lumière grandit à chaque pas.</p>
+        <div style={{ background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '20px 16px', textAlign: 'center', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: arch.color, margin: '0 0 6px' }}>✦ Toutes tes quêtes accomplies.</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.42)', margin: 0 }}>Ta lumière grandit à chaque pas.</p>
+          </div>
+          {onOpenVrai && (
+            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase' }}>
+              Entrer en Présence
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -2091,7 +2103,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 0.22s ease-out' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} onOpenVrai={() => setVraiOpen(true)} />}
-          {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} />}
+          {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} onOpenVrai={() => setVraiOpen(true)} />}
           {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>
         <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ routines: routinesDone.filter(Boolean).length < arch.routines.length, quetes: quetesDone.filter(Boolean).length < arch.quetes.length }} />
@@ -2141,6 +2153,7 @@ export default function App() {
       @keyframes choiceripple  { 0%{transform:scale(0);opacity:0.6}               100%{transform:scale(2.5);opacity:0} }
       @keyframes questionEnter { 0%{transform:translateY(12px);opacity:0}          100%{transform:translateY(0);opacity:1} }
       @keyframes milestoneGlow  { 0%,100%{opacity:0.8;text-shadow:inherit}         50%{opacity:1;filter:brightness(1.18)} }
+      @keyframes milestoneMote  { 0%{transform:translateY(0) scale(1);opacity:0.7} 100%{transform:translateY(-38px) scale(0.3);opacity:0} }
       @keyframes lightFlash2    { 0%{opacity:0} 15%{opacity:0.06} 100%{opacity:0} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
