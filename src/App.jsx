@@ -1498,7 +1498,7 @@ function NavIconBoutique({ active, color }) {
   )
 }
 
-function BottomNav({ tab, onChange, color }) {
+function BottomNav({ tab, onChange, color, badges = {} }) {
   const tabs = [
     { key: 'home',     label: 'Accueil',  Icon: NavIconHome },
     { key: 'routines', label: 'Routines', Icon: NavIconRoutines },
@@ -1509,10 +1509,12 @@ function BottomNav({ tab, onChange, color }) {
     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.80) 0%, rgba(5,8,16,0.95) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 -8px 32px rgba(5,8,16,0.6)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {tabs.map(t => {
         const active = tab === t.key
+        const badged = !active && !!badges[t.key]
         return (
           <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '14px 0 11px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.25s ease' }}>
+            <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.25s ease' }}>
               <t.Icon active={active} color={color} />
+              {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85 }} />}
             </span>
             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.12em', color: active ? color : 'rgba(255,255,255,0.22)', transition: 'color 0.25s ease', textTransform: 'uppercase' }}>{t.label}</span>
             <div style={{ width: active ? 20 : 3, height: 1.5, borderRadius: 1, background: active ? color : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 8px ${color}, 0 0 16px ${color}66` : 'none' }} />
@@ -1606,9 +1608,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.07em', margin: '0 0 18px', textTransform: 'capitalize' }}>{dateStr}</p>
 
         {/* Presence ring wrapping the animal — tap for espace vrai */}
+        <div style={{ position: 'relative', width: 130, height: 130, margin: '0 auto 16px' }}>
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 220, height: 220, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}0d 0%, transparent 68%)`, animation: 'presencePulse 6s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
         <div
           onClick={() => { haptic([6, 80, 6]); onOpenVrai() }}
-          style={{ position: 'relative', width: 130, height: 130, margin: '0 auto 16px', cursor: 'pointer' }}
+          style={{ position: 'relative', width: 130, height: 130, cursor: 'pointer', zIndex: 1 }}
         >
           <div style={{ position: 'absolute', inset: 0 }}>
             <PresenceRing progress={presenceProgress} color={arch.color} size={130} />
@@ -1625,6 +1629,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
               style={{ opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'animalfloat 18s ease-in-out infinite', position: 'relative', zIndex: 1 }}
             />
           </div>
+        </div>
         </div>
 
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 4px', textShadow: `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` }}>{arch.profil}</p>
@@ -2003,7 +2008,7 @@ function BoutiqueScreen({ archetypeKey }) {
           Chaque vêtement porte une intention.
         </p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.12em', margin: '6px 0 0', opacity: 0.4 }}>
-          Collection {myCollection?.name || 'bientôt'} · Lancement 2025
+          Collection {myCollection?.name || 'bientôt'} · Lancement 2026
         </p>
       </div>
     </div>
@@ -2053,7 +2058,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
           {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} />}
           {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>
-        <BottomNav tab={tab} onChange={changeTab} color={arch.color} />
+        <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ routines: routinesDone.filter(Boolean).length < arch.routines.length, quetes: quetesDone.filter(Boolean).length < arch.quetes.length }} />
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
       </div>
     </BgScreen>
