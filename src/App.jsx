@@ -690,10 +690,10 @@ function NeyaLogo({ size = 'md', onTap }) {
 
 // ─── BG SCREEN ────────────────────────────────────────────────────────────────
 
-function BgScreen({ bg, overlay = 'rgba(5,8,16,0.48)', breathe = false, children }) {
+function BgScreen({ bg, overlay = 'rgba(5,8,16,0.48)', breathe = false, breatheAnim = 'bgbreathe 26s ease-in-out infinite', children }) {
   return (
     <div style={{ width: '100vw', height: '100dvh', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bg})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: breathe ? 'bgbreathe 26s ease-in-out infinite' : 'none', transformOrigin: 'center center', willChange: breathe ? 'transform' : 'auto' }} />
+      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bg})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: breathe ? breatheAnim : 'none', transformOrigin: 'center center', willChange: breathe ? 'transform' : 'auto' }} />
       <div style={{ position: 'absolute', inset: 0, background: overlay }} />
       <GrainFilter />
       <div style={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -793,8 +793,14 @@ function SplashScreen({ onStart }) {
   ]
 
   return (
-    <BgScreen bg="bg-onboarding.png" overlay="rgba(5,8,16,0.40)" breathe>
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
+    <BgScreen bg="bg-onboarding.png" overlay="rgba(5,8,16,0.40)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
+      {/* Ghost spirit — welcoming presence, ultra-faint */}
+      <div style={{ position: 'absolute', bottom: '-4%', right: '-8%', pointerEvents: 'none', opacity: vis ? 0.042 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(2.5px)', animation: vis ? 'animalfloat 32s ease-in-out infinite' : 'none', zIndex: 2 }}>
+        <DeerSpirit size={240} color="#6366f1" />
+      </div>
+      {/* Ambient vertical light column */}
+      <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 180, height: '70%', background: 'linear-gradient(to bottom, rgba(99,102,241,0.07) 0%, rgba(99,102,241,0.02) 60%, transparent 100%)', pointerEvents: 'none', zIndex: 2, animation: 'worldglow 34s ease-in-out infinite' }} />
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
         {STARS.map((s, i) => (
           <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill="white"
             style={{ animation: `startwinkle ${s.dur}s ease-in-out infinite`, animationDelay: `${s.del}s` }} />
@@ -1029,6 +1035,13 @@ function QuizScreen({ onComplete }) {
   const q = QUESTIONS[idx]
   const progress = (idx + (selected !== null ? 0.5 : 0)) / QUESTIONS.length
 
+  // Dominant archetype from previous answers — builds ambient atmosphere
+  const answerTally = {}
+  answers.filter(Boolean).forEach(a => { answerTally[a] = (answerTally[a] || 0) + 1 })
+  const dominantArch = Object.keys(answerTally).sort((a, b) => answerTally[b] - answerTally[a])[0]
+  const dominantCount = dominantArch ? answerTally[dominantArch] : 0
+  const dominantRgb = dominantArch ? ARCHETYPES[dominantArch].rgb : null
+
   // Déclenche le stagger d'entrée des choix dès que le contenu devient visible
   useEffect(() => {
     if (contentVis) {
@@ -1089,6 +1102,15 @@ function QuizScreen({ onComplete }) {
         pointerEvents: 'none',
         zIndex: 2,
       }} />
+      {/* Ambient archetype glow — grows as user's profile emerges */}
+      {dominantRgb && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: `radial-gradient(ellipse at 50% 105%, rgba(${dominantRgb},${Math.min(0.13, dominantCount * 0.028)}) 0%, transparent 62%)`,
+          transition: 'background 1.4s ease',
+          pointerEvents: 'none', zIndex: 3,
+        }} />
+      )}
 
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.07)', zIndex: 10 }}>
         <div style={{ height: '100%', background: `linear-gradient(90deg, ${(WORLD_TINTS[q.bg] || 'rgba(99,102,241,0.7)').replace(/[\d.]+\)$/, '0.85)')}, rgba(255,255,255,0.55))`, filter: 'blur(0.4px)', width: `${progress * 100}%`, transition: 'width 0.5s ease, background 0.6s ease' }} />
@@ -1431,6 +1453,17 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   {arch.worldInsight}
                 </p>
               )}
+
+              {/* Routines preview */}
+              <div style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 14, padding: '18px 18px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0 }}>Tes 3 pratiques quotidiennes</p>
+                {arch.routines.map((r, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.4 }}>{r.title}</span>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `${arch.color}88`, whiteSpace: 'nowrap', flexShrink: 0 }}>{r.duration}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -2192,6 +2225,7 @@ export default function App() {
     style.id = 'neya-css'
     style.textContent = `
       @keyframes bgbreathe    { 0%,100%{transform:scale(1)}                   50%{transform:scale(1.04)} }
+      @keyframes ob0breathe   { 0%,100%{transform:scale(1)}                   50%{transform:scale(1.028)} }
       @keyframes pulsering    { 0%,100%{transform:scale(1);opacity:0.42}       50%{transform:scale(1.24);opacity:0.88} }
       @keyframes cursorblink  { 0%,100%{opacity:0}                             45%,55%{opacity:1} }
       @keyframes startwinkle  { 0%,100%{opacity:0.18}                         50%{opacity:0.88} }
