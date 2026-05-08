@@ -95,9 +95,9 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-08
 **Branche** : `main`
-**Phase** : V1.8 — HomeScreen profondeur · Gamification non-toxique · Streak · Badges nav
+**Phase** : V1.9 — Returning UX · Atmosphère profonde · Personnalisation avancée
 
-### Features actives (`src/App.jsx`) — build 247.57 kB (70.71 kB gzip)
+### Features actives (`src/App.jsx`) — build 253.45 kB (72.0 kB gzip)
 
 **Splash :**
 - 15 étoiles (splashtw) dont 3 dans la moitié basse (y:52-68%) · returning user : 4.3s / new : 3.1s
@@ -200,17 +200,27 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - Quiz : re-sélection possible avant "Continuer"
 - `getCurrentStreak()` : streak consécutif basé sur localStorage
 
+**V1.9 — nouveautés (sprints 23-37) :**
+- Sprints 23-24 : jourComplète boxShadow · stat card arrows · greetingStr 7 créneaux · RoutinesScreen flash allDone
+- Sprint 25 : suppression Tailwind CDN inutile · fix manifest start_url + icon path
+- Sprint 26 : `ReturningScreen` — micro-splash avec spirit animal (1.9s) avant MainApp · fix flash useState lazy init
+- Sprints 27-29 : SplashScreen `ob0breathe 42s` + ghost DeerSpirit + colonne lumière · BgScreen `breatheAnim` prop · QuizScreen ambient archétype dominant · ResultScreen phase 2 routines preview
+- Sprints 31-33 : EspaceVrai haptic [2,80,2] à 12s + patience texts archétype à 30s · QuizIntroScreen ghost WolfSpirit · `solbreathe 22s` sur "Tu n'es pas seul·e"
+- Sprint 34 : fix flash returning user (useState lazy init depuis localStorage)
+- Sprint 35 : ReturningScreen whisper time-aware (neya_visited) · "présences au total"
+- Sprint 36 : EspaceVrai adieu time-aware (bonne nuit / journée / revenir) · IntroScreen `ob0breathe` · glow label EspaceVrai
+- Sprint 37 : `PRESENCE_LABELS` archétype-spécifiques · whisper last-visit fix
+
 ### Assets dans `public/`
 `cerf.svg` · `bg-onboarding.png` · `bg-brume.png` · `bg-foret.png` · `bg-cosmos.png` · `bg-feu.png` · `bg-eau.png` · `bg-vide.png` · `bg-vrai.png` · `bg-cosmos-alt.png`
 
 ### Déploiement
 - `vercel.json` configuré · `npm run build` → `dist/` fonctionnel
-- Prod live : `https://neya-kappa.vercel.app` · Commit `5cfe8f4`
+- Prod live : `https://neya-kappa.vercel.app` · Commit `4d15cb8`
 
 ### Backlog code
 - [ ] Valider performance mobile (animations nombreuses — worldglow + ringshimmer + forcespring)
-- [ ] EspaceVrai : animalfloat/animalbreathe sur le cerf fantôme (actuellement cerfdrift x1.5)
-- [ ] Splash returning : afficher l'animal de l'utilisateur brièvement avant redirect → MainApp
+- [ ] Mettre à jour l'URL Boutique quand cava.fr est prêt (chercher `cava-brand.com` dans App.jsx)
 
 ### Actions Will (hors code)
 - [ ] Valider visuellement les animaux-esprits sur mobile (phoenix / wolf / bear / deer)
