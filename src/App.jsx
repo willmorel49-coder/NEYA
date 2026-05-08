@@ -1062,7 +1062,7 @@ function QuizScreen({ onComplete }) {
           {q.choices.map((c, i) => {
             const sel = selected === c.type
             return (
-              <button key={i} onClick={() => { if (selected !== null) return; haptic(12); setSelected(c.type); setRippleIdx(i); setTimeout(() => setRippleIdx(null), 620) }} style={{ position: 'relative', overflow: 'hidden', width: '100%', padding: '14px 17px', background: sel ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transform: sel ? 'scale(1.014)' : 'scale(1)', boxShadow: sel ? '0 4px 28px rgba(255,255,255,0.09), inset 0 0 0 1px rgba(255,255,255,0.18)' : 'none', opacity: choicesVis ? 1 : 0, translate: choicesVis ? '0 0px' : '0 10px', transition: `background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease, opacity 0.45s ease ${i * 55}ms, translate 0.45s ease ${i * 55}ms` }}>
+              <button key={i} onClick={() => { haptic(sel ? 6 : 12); setSelected(c.type); if (!sel) { setRippleIdx(i); setTimeout(() => setRippleIdx(null), 620) } }} style={{ position: 'relative', overflow: 'hidden', width: '100%', padding: '14px 17px', background: sel ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transform: sel ? 'scale(1.014)' : 'scale(1)', boxShadow: sel ? '0 4px 28px rgba(255,255,255,0.09), inset 0 0 0 1px rgba(255,255,255,0.18)' : 'none', opacity: choicesVis ? 1 : 0, translate: choicesVis ? '0 0px' : '0 10px', transition: `background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease, opacity 0.45s ease ${i * 55}ms, translate 0.45s ease ${i * 55}ms` }}>
                 {rippleIdx === i && (
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
                     <div style={{ width: 40, height: 40, borderRadius: '50%', background: ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.4)', animation: 'choiceripple 0.6s ease-out forwards' }} />
@@ -1737,8 +1737,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '2px 0 0', textTransform: 'uppercase' }}>Aujourd'hui</p>
       <div style={{ display: 'flex', gap: 10 }}>
         {[
-          { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈', tab: 'routines' },
-          { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇', tab: 'quetes' },
+          { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈', tab: 'routines', nextHint: routinesCount < arch.routines.length ? arch.routines[routinesCount]?.title : null },
+          { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇', tab: 'quetes', nextHint: quetesCount < arch.quetes.length ? arch.quetes.find((q, qi) => !quetesDone[qi])?.title : null },
         ].map((s, i) => (
           <div key={i} onClick={() => { haptic(8); onChangeTab(s.tab) }} style={{ flex: 1, background: s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s', cursor: 'pointer' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1749,6 +1749,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
               <div style={{ height: '100%', background: arch.color, borderRadius: 1, width: `${(s.count / s.total) * 100}%`, transition: 'width 0.5s ease', boxShadow: s.count > 0 ? `0 0 7px ${arch.color}88` : 'none' }} />
             </div>
             <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12.5, color: 'rgba(255,255,255,0.52)' }}>{s.label}</span>
+            {s.nextHint && s.count < s.total && (
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.04em', lineHeight: 1.3, marginTop: -2 }}>{s.nextHint}</span>
+            )}
           </div>
         ))}
       </div>
