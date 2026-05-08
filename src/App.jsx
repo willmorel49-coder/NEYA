@@ -849,7 +849,7 @@ function QuizIntroScreen({ onStart }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%' }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item1 ? 1 : 0, transform: item1 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
-            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em', boxShadow: '0 0 12px rgba(99,102,241,0.22)' }}>23</span>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em', boxShadow: '0 0 12px rgba(99,102,241,0.22)' }}>{QUESTIONS.length}</span>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65 }}>
               Questions conçues pour révéler ton chemin intérieur unique.
             </p>
@@ -988,8 +988,8 @@ function QuizScreen({ onComplete }) {
         </div>
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 12, marginBottom: 24 }}>
-          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em', textShadow: '0 2px 24px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.08)' }}>{q.title}</h2>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.65, padding: '0 4px' }}>{q.text}</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em', textShadow: '0 2px 24px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.08)', animation: contentVis ? 'questionEnter 0.38s ease both' : 'none' }}>{q.title}</h2>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.65, padding: '0 4px', animation: contentVis ? 'questionEnter 0.42s ease 0.05s both' : 'none' }}>{q.text}</p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
@@ -1455,6 +1455,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [vis, setVis] = useState(false)
   const [intentionReady, setIntentionReady] = useState(false)
   const [ringReady, setRingReady] = useState(false)
+  const [intentionIdx, setIntentionIdx] = useState(0)
+  const [intentionFade, setIntentionFade] = useState(true)
   useEffect(() => {
     const t1 = setTimeout(() => setVis(true), 80)
     const t2 = setTimeout(() => setIntentionReady(true), 600)
@@ -1462,7 +1464,21 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
-  const intention = getDailyIntention(archetypeKey)
+  const pool = arch.intentions
+  const baseIdx = (() => {
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000)
+    return dayOfYear % pool.length
+  })()
+  const intention = pool[(baseIdx + intentionIdx) % pool.length]
+
+  const cycleIntention = () => {
+    haptic(8)
+    setIntentionFade(false)
+    setTimeout(() => {
+      setIntentionIdx(i => (i + 1) % pool.length)
+      setIntentionFade(true)
+    }, 200)
+  }
   const today = new Date()
   const dateStr = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
   const routinesCount = routinesDone.filter(Boolean).length
@@ -1524,9 +1540,12 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {/* ── Intention du jour ── */}
       <div style={{ position: 'relative', background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}33`, borderRadius: 14, padding: '20px 18px', minHeight: 92, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', left: 0, top: '18%', bottom: '18%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}bb, transparent)`, borderRadius: '0 2px 2px 0' }} />
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '0 0 12px', textTransform: 'uppercase' }}>Intention du jour</p>
-        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', lineHeight: 1.68, fontStyle: 'italic' }}>
-          {intentionReady && <TypingText text={`"${intention}"`} delay={0} speed={34} />}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase' }}>Intention du jour</p>
+          <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, transition: 'color 0.2s ease' }} title="Autre intention">↻</button>
+        </div>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', lineHeight: 1.68, fontStyle: 'italic', opacity: intentionFade ? 1 : 0, transition: 'opacity 0.2s ease' }}>
+          {intentionReady && <TypingText key={intentionIdx} text={`"${intention}"`} delay={0} speed={34} />}
         </div>
       </div>
 
@@ -1909,7 +1928,8 @@ export default function App() {
       @keyframes worldglow    { 0%,100%{opacity:0.5}                             50%{opacity:1} }
       @keyframes ringshimmer  { 0%{transform:rotate(0deg)}                       100%{transform:rotate(360deg)} }
       @keyframes forcespring  { 0%{transform:translateY(20px);opacity:0} 70%{transform:translateY(-4px);opacity:0.8} 100%{transform:translateY(0);opacity:1} }
-      @keyframes choiceripple { 0%{transform:scale(0);opacity:0.6}               100%{transform:scale(2.5);opacity:0} }
+      @keyframes choiceripple  { 0%{transform:scale(0);opacity:0.6}               100%{transform:scale(2.5);opacity:0} }
+      @keyframes questionEnter { 0%{transform:translateY(12px);opacity:0}          100%{transform:translateY(0);opacity:1} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
