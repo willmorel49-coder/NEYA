@@ -467,11 +467,18 @@ function getPresenceProgress(savedAt, routinesDone, quetesDone, arch) {
   return Math.min(1, dayScore + rScore + qScore)
 }
 
-function getPresenceLabel(p) {
-  if (p < 0.25) return 'Présence naissante'
-  if (p < 0.5) return 'Lumière qui s\'éveille'
-  if (p < 0.75) return 'Flamme qui grandit'
-  return 'Éclat intérieur'
+const PRESENCE_LABELS = {
+  resilience: ['Feu naissant', 'Flamme qui s\'éveille', 'Feu en mouvement', 'Éclat du Phénix'],
+  presence:   ['Eau naissante', 'Courant qui s\'étire', 'Profondeur en éveil', 'Présence incarnée'],
+  sagesse:    ['Brume légère', 'Profondeur qui s\'ouvre', 'Sagesse en éveil', 'Écho intérieur'],
+  lumiere:    ['Étincelle naissante', 'Lumière qui s\'éveille', 'Rayonnement en cours', 'Éclat de Lumière'],
+}
+function getPresenceLabel(p, archetypeKey) {
+  const labels = (archetypeKey && PRESENCE_LABELS[archetypeKey]) || ['Présence naissante', 'Lumière qui s\'éveille', 'Flamme qui grandit', 'Éclat intérieur']
+  if (p < 0.25) return labels[0]
+  if (p < 0.5)  return labels[1]
+  if (p < 0.75) return labels[2]
+  return labels[3]
 }
 
 function loadProfile() {
@@ -721,7 +728,7 @@ function PresenceRing({ progress, color, size = 130 }) {
 
 // ─── RETURNING ────────────────────────────────────────────────────────────────
 
-function ReturningScreen({ archetypeKey, savedAt, onDone }) {
+function ReturningScreen({ archetypeKey, onDone }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
 
@@ -733,8 +740,15 @@ function ReturningScreen({ archetypeKey, savedAt, onDone }) {
 
   if (!arch) { onDone(); return null }
 
-  const days = savedAt ? daysSince(savedAt) : 0
-  const whisper = days === 0 ? 'Tu es encore là.' : days < 7 ? 'Tu es revenu·e.' : 'Tu es de retour.'
+  const whisper = (() => {
+    try {
+      const todayStr = new Date().toISOString().split('T')[0]
+      const yesterStr = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+      if (localStorage.getItem(`neya_visited_${todayStr}`)) return 'Tu es encore là.'
+      if (localStorage.getItem(`neya_visited_${yesterStr}`)) return 'Tu es revenu·e.'
+      return 'Tu es de retour.'
+    } catch { return 'Tu es encore là.' }
+  })()
 
   return (
     <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.55)">
@@ -1773,7 +1787,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 4px', textShadow: `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` }}>{arch.profil}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}99`, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px', fontStyle: 'italic' }}>{arch.animal}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px' }}>Élément · {arch.element}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress)}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress, archetypeKey)}</p>
 
         {msg ? (
           <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -2324,7 +2338,7 @@ export default function App() {
 
   return (
     <div style={{ width: '100vw', height: '100dvh', background: '#050810', overflow: 'hidden', position: 'fixed', inset: 0 }}>
-      {screen === 'returning'  && archetype && <ReturningScreen archetypeKey={archetype} savedAt={savedAt} onDone={() => go('main')} />}
+      {screen === 'returning'  && archetype && <ReturningScreen archetypeKey={archetype} onDone={() => go('main')} />}
       {screen === 'splash'     && <SplashScreen onStart={() => go('intro')} />}
       {screen === 'intro'      && <IntroScreen onStart={() => go('quiz-intro')} />}
       {screen === 'quiz-intro' && <QuizIntroScreen onStart={() => go('quiz')} />}
