@@ -1266,12 +1266,30 @@ function ResultScreen({ archetypeKey, onContinue }) {
           )}
 
           {phase === 2 && (
-            <div style={{ background: 'rgba(255,255,255,0.055)', border: `1px solid ${arch.color}44`, borderRadius: 16, padding: '26px 22px', display: 'flex', flexDirection: 'column', gap: 20, boxShadow: `0 8px 32px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.04)` }}>
-              {arch.desc.split('\n\n').map((para, i) => (
-                <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: i === 0 ? 16 : 14, color: i === 0 ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.75, fontStyle: i === 0 ? 'italic' : 'normal', textShadow: i === 0 ? '0 1px 20px rgba(0,0,0,0.3)' : 'none' }}>
-                  {i === 0 ? `"${para}"` : para}
-                </p>
-              ))}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, width: '100%' }}>
+              {/* Animal guide label */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0 2px' }}>
+                <SpiritAnimal archetype={archetypeKey} size={34} style={{ opacity: 0.65, filter: `drop-shadow(0 0 10px ${arch.color}66)`, animation: 'animalfloat 20s ease-in-out infinite' }} />
+                <div>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 2px', opacity: 0.8 }}>Ton guide intérieur</p>
+                  <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'white', margin: 0 }}>{arch.animal}</p>
+                </div>
+              </div>
+
+              {/* Description card */}
+              <div style={{ background: 'rgba(255,255,255,0.055)', border: `1px solid ${arch.color}44`, borderRadius: 16, padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 18, boxShadow: `0 8px 32px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.04)` }}>
+                {arch.desc.split('\n\n').map((para, i) => (
+                  <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: i === 0 ? 16 : 14, color: i === 0 ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.75, fontStyle: i === 0 ? 'italic' : 'normal', textShadow: i === 0 ? '0 1px 20px rgba(0,0,0,0.3)' : 'none' }}>
+                    {i === 0 ? `"${para}"` : para}
+                  </p>
+                ))}
+              </div>
+
+              {/* Intention aperçu */}
+              <div style={{ background: `rgba(${arch.rgb},0.07)`, border: `1px solid ${arch.color}33`, borderRadius: 12, padding: '16px 18px' }}>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 9px', opacity: 0.8 }}>Ton intention du jour</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>"{arch.intentions[0]}"</p>
+              </div>
             </div>
           )}
         </div>
