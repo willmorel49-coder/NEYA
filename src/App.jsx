@@ -863,7 +863,7 @@ function SplashScreen({ onStart }) {
   return (
     <BgScreen bg="bg-onboarding.png" overlay="rgba(5,8,16,0.40)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
       {/* Ghost spirit — welcoming presence, ultra-faint */}
-      <div style={{ position: 'absolute', bottom: '-4%', right: '-8%', pointerEvents: 'none', opacity: vis ? 0.042 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(2.5px)', animation: vis ? 'animalfloat 32s ease-in-out infinite' : 'none', zIndex: 2 }}>
+      <div style={{ position: 'absolute', bottom: '-4%', right: '-8%', pointerEvents: 'none', opacity: vis ? 0.042 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(2.5px)', animation: vis ? 'animalfloat 32s ease-in-out infinite, animalbreathe 48s ease-in-out infinite' : 'none', zIndex: 2 }}>
         <DeerSpirit size={240} color="#6366f1" />
       </div>
       {/* Ambient vertical light column */}
@@ -941,7 +941,7 @@ function IntroScreen({ onStart }) {
     return (
       <BgScreen bg="bg-onboarding.png" overlay="rgba(10,6,2,0.46)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
         {/* Ghost phoenix — chaleur dorée de l'intro */}
-        <div style={{ position: 'absolute', bottom: '-5%', left: '-8%', pointerEvents: 'none', opacity: vis ? 0.034 : 0, transition: 'opacity 3s ease 1.2s', filter: 'blur(2.5px)', animation: vis ? 'animalfloat 28s ease-in-out infinite' : 'none', zIndex: 2 }}>
+        <div style={{ position: 'absolute', bottom: '-5%', left: '-8%', pointerEvents: 'none', opacity: vis ? 0.034 : 0, transition: 'opacity 3s ease 1.2s', filter: 'blur(2.5px)', animation: vis ? 'animalfloat 28s ease-in-out infinite, animalbreathe 44s ease-in-out infinite' : 'none', zIndex: 2 }}>
           <PhoenixSpirit size={200} color="#f59e0b" />
         </div>
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
@@ -975,7 +975,7 @@ function IntroScreen({ onStart }) {
       </svg>
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 32px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
         {/* Ghost animal — monde forêt = lumière = BearSpirit */}
-        <div style={{ position: 'absolute', bottom: '18%', right: '6%', pointerEvents: 'none', opacity: line2 ? 0.055 : 0, transition: 'opacity 2.4s ease', filter: 'blur(2px)', animation: line2 ? 'animalfloat 28s ease-in-out infinite' : 'none' }}>
+        <div style={{ position: 'absolute', bottom: '18%', right: '6%', pointerEvents: 'none', opacity: line2 ? 0.055 : 0, transition: 'opacity 2.4s ease', filter: 'blur(2px)', animation: line2 ? 'animalfloat 28s ease-in-out infinite, animalbreathe 44s ease-in-out infinite' : 'none' }}>
           <BearSpirit size={140} color="#ec4899" />
         </div>
         <div />
@@ -1021,7 +1021,7 @@ function QuizIntroScreen({ onStart }) {
   return (
     <BgScreen bg="bg-cosmos.png" overlay="rgba(5,8,16,0.74)" breathe>
       {/* Ghost wolf — sagesse archetype, ultra-faint cosmic presence */}
-      <div style={{ position: 'absolute', bottom: '-6%', left: '-10%', pointerEvents: 'none', opacity: vis ? 0.038 : 0, transition: 'opacity 3s ease 1.5s', filter: 'blur(2px)', animation: vis ? 'animalfloat 34s ease-in-out infinite' : 'none', zIndex: 2 }}>
+      <div style={{ position: 'absolute', bottom: '-6%', left: '-10%', pointerEvents: 'none', opacity: vis ? 0.038 : 0, transition: 'opacity 3s ease 1.5s', filter: 'blur(2px)', animation: vis ? 'animalfloat 34s ease-in-out infinite, animalbreathe 52s ease-in-out infinite' : 'none', zIndex: 2 }}>
         <WolfSpirit size={220} color="#6366f1" />
       </div>
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
@@ -1250,7 +1250,7 @@ function QuizScreen({ onComplete }) {
                   </div>
                 )}
                 <ChoiceIcon type={c.type} active={sel} />
-                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease' }}>{c.text}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease', animation: sel ? 'phrasebreathe 16s ease-in-out infinite' : 'none' }}>{c.text}</span>
               </button>
             )
           })}
@@ -1678,6 +1678,12 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       <div style={{ position: 'absolute', bottom: '-8%', right: '-12%', pointerEvents: 'none', opacity: vis ? 0.048 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(3px)', animation: vis ? `animalfloat ${ghostPeriod}s ease-in-out infinite` : 'none' }}>
         <SpiritAnimal archetype={archetypeKey} size={280} />
       </div>
+      {/* Per-archetype ambient motes */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}>
+        {[{x:8,y:18,r:2.2,dur:32,del:0},{x:88,y:12,r:1.8,dur:38,del:5.2},{x:22,y:76,r:2.8,dur:28,del:2.1},{x:74,y:68,r:2.0,dur:42,del:8.4},{x:48,y:88,r:1.6,dur:36,del:3.7},{x:91,y:44,r:2.4,dur:26,del:6.6},{x:14,y:54,r:1.4,dur:44,del:1.8},{x:62,y:22,r:1.8,dur:34,del:11.3}].map((m,i) => (
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.06, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+        ))}
+      </svg>
       <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', gap: 24, textAlign: 'center' }}>
 
         {/* Animal guide flottant — apparaît avant le texte */}
@@ -2035,7 +2041,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
               <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12.5, color: s.count === s.total ? 'rgba(255,255,255,0.72)' : 'rgba(255,255,255,0.52)', transition: 'color 0.4s ease' }}>{s.label}</span>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 8, color: s.count === s.total ? `${arch.color}88` : 'rgba(255,255,255,0.14)', letterSpacing: '0.04em', transition: 'color 0.4s ease' }}>✦</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 8, color: s.count === s.total ? `${arch.color}88` : 'rgba(255,255,255,0.14)', letterSpacing: '0.04em', transition: 'color 0.4s ease', animation: s.count === s.total ? 'seedPulse 3.2s ease-in-out infinite' : 'none' }}>✦</span>
             </div>
             {s.nextHint && s.count < s.total && (
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.04em', lineHeight: 1.3, marginTop: -2, animation: 'phrasebreathe 36s ease-in-out infinite' }}>{s.nextHint}</span>
@@ -2066,7 +2072,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             Partager mon profil
           </button>
         )}
-        <button onClick={handleRestartClick} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: restartPending ? 'rgba(236,72,153,0.55)' : 'rgba(255,255,255,0.15)', letterSpacing: '0.05em', padding: '10px 0', transition: 'color 0.3s ease' }}>
+        <button onClick={handleRestartClick} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: restartPending ? 'rgba(236,72,153,0.55)' : 'rgba(255,255,255,0.15)', letterSpacing: '0.05em', padding: '10px 0', transition: 'color 0.3s ease', animation: restartPending ? 'milestoneGlow 2s ease-in-out infinite' : 'none' }}>
           {restartPending ? 'Toucher encore pour confirmer' : 'Refaire le parcours'}
         </button>
       </div>
