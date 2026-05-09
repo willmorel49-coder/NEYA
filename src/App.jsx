@@ -1947,7 +1947,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: isMilestone ? 400 : 300, fontSize: isMilestone ? 12.5 : 11.5, color: isMilestone ? arch.color : 'rgba(255,255,255,0.3)', letterSpacing: isMilestone ? '0.04em' : '0.05em', margin: '4px 0 0', fontStyle: 'italic', animation: isMilestone ? 'fadeIn 1.2s ease both, milestoneGlow 3.8s ease-in-out 1.4s infinite' : 'none', textShadow: isMilestone ? `0 0 18px ${arch.color}55` : 'none', transition: 'all 0.4s ease' }}>{msg}</p>
           </div>
         ) : (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.12em', margin: '4px 0 0' }}>touche · instant de présence</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.12em', margin: '4px 0 0', animation: 'phrasebreathe 24s ease-in-out infinite' }}>touche · instant de présence</p>
         )}
       </div>
 
@@ -2093,7 +2093,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
     <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase' }}>◈ Routines du jour</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase', animation: 'phrasebreathe 18s ease-in-out infinite' }}>◈ Routines du jour</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2 }}>Tes pratiques<br />quotidiennes</h2>
 
         {/* Barre de progression globale */}
@@ -2191,7 +2191,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
             </p>
             {!done && !locked && (
-              <button onClick={() => handleComplete(i)} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}66`, borderRadius: 10, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.18em', color: arch.color, textTransform: 'uppercase', boxShadow: `0 2px 16px rgba(${arch.rgb},0.20), 0 0 0 1px ${arch.color}22` }}>
+              <button onClick={() => handleComplete(i)} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}66`, borderRadius: 10, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.18em', color: arch.color, textTransform: 'uppercase', boxShadow: `0 2px 16px rgba(${arch.rgb},0.20), 0 0 0 1px ${arch.color}22`, animation: 'milestoneGlow 5s ease-in-out infinite' }}>
                 Marquer accomplie
               </button>
             )}
