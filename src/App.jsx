@@ -1073,7 +1073,7 @@ function QuizIntroScreen({ onStart }) {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item2 ? 1 : 0, transform: item2 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2, filter: showBtn ? 'drop-shadow(0 0 6px rgba(255,255,255,0.28))' : 'none', transition: 'filter 1s ease' }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65, animation: item2 ? 'phrasebreathe 36s ease-in-out 2s infinite' : 'none' }}>
               Pas de bonne ou de mauvaise réponse — réponds avec ce qui résonne en toi.
             </p>
@@ -1243,8 +1243,8 @@ function QuizScreen({ onComplete }) {
 
       <div style={{ position: 'relative', zIndex: 1, padding: '50px 24px 36px', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', opacity: contentVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
         <div style={{ textAlign: 'center', marginBottom: 22 }}>
-          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.72)', letterSpacing: '0.02em', animation: 'phrasebreathe 18s ease-in-out infinite' }}>{idx + 1}</span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.14em', margin: '0 6px', animation: 'phrasebreathe 12s ease-in-out infinite' }}>·</span>
+          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: dominantCount >= 3 ? ARCHETYPES[dominantArch].color : 'rgba(255,255,255,0.72)', letterSpacing: '0.02em', animation: dominantCount >= 3 ? 'phrasebreathe 18s ease-in-out infinite, milestoneGlow 6s ease-in-out infinite' : 'phrasebreathe 18s ease-in-out infinite', textShadow: dominantCount >= 3 ? `0 0 14px ${ARCHETYPES[dominantArch].color}66` : 'none', transition: 'color 1.2s ease, text-shadow 1.2s ease' }}>{idx + 1}</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: dominantCount >= 3 ? `${ARCHETYPES[dominantArch].color}55` : 'rgba(255,255,255,0.22)', letterSpacing: '0.14em', margin: '0 6px', animation: 'phrasebreathe 12s ease-in-out infinite', transition: 'color 1.2s ease' }}>·</span>
           <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.24)', letterSpacing: '0.08em', animation: 'phrasebreathe 20s ease-in-out infinite' }}>{QUESTIONS.length}</span>
         </div>
 
@@ -1484,7 +1484,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
       {/* Text reveal */}
       {step >= 5 && (
         <div style={{ position: 'absolute', bottom: '27%', textAlign: 'center', zIndex: 12 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.34em', textTransform: 'uppercase', margin: '0 0 12px', opacity: 0, animation: 'fadeIn 0.8s ease 0.4s both, phrasebreathe 22s ease-in-out 2s infinite' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.34em', textTransform: 'uppercase', margin: '0 0 12px', opacity: 0, animation: 'fadeIn 0.8s ease 0.4s both, phrasebreathe 22s ease-in-out 2s infinite, milestoneGlow 5s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}66` }}>
             Ton animal guide
           </p>
           <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 6vw, 28px)', color: 'white', margin: '0 0 7px', textShadow: `0 0 48px ${arch.shadow}, 0 0 24px rgba(255,255,255,0.4)`, opacity: 0, animation: 'fadeIn 1.0s ease 0.8s both, phrasebreathe 24s ease-in-out 2s infinite, milestoneGlow 6s ease-in-out 2.5s infinite' }}>
@@ -1585,7 +1585,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0 2px' }}>
                 <SpiritAnimal archetype={archetypeKey} size={34} style={{ opacity: 0.65, filter: `drop-shadow(0 0 10px ${arch.color}66)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 32s ease-in-out infinite' }} />
                 <div>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 2px', opacity: 0.8, animation: 'phrasebreathe 22s ease-in-out infinite' }}>Ton guide intérieur</p>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 2px', opacity: 0.85, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 7s ease-in-out 2s infinite', textShadow: `0 0 12px ${arch.color}44` }}>Ton guide intérieur</p>
                   <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'white', margin: 0, animation: 'phrasebreathe 28s ease-in-out infinite' }}>{arch.animal}</p>
                 </div>
               </div>
@@ -1618,8 +1618,8 @@ function ResultScreen({ archetypeKey, onContinue }) {
               )}
 
               {/* Routines preview */}
-              <div style={{ position: 'relative', background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 14, padding: '18px 18px 14px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2, background: `linear-gradient(180deg, transparent, ${arch.color}66, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 10s ease-in-out infinite' }} />
+              <div style={{ position: 'relative', background: 'rgba(255,255,255,0.04)', border: `1px solid ${arch.color}22`, borderRadius: 14, padding: '18px 18px 14px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}77, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 10s ease-in-out infinite' }} />
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite' }}>Tes 3 pratiques quotidiennes</p>
                 {arch.routines.map((r, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
@@ -1716,7 +1716,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         const streak = getCurrentStreak()
         return (
           <div style={{ position: 'absolute', inset: 0, zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,8,16,0.62)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', animation: 'fadeIn 0.5s ease both', pointerEvents: 'none' }}>
-            <div style={{ background: `rgba(${arch.rgb},0.12)`, border: `1px solid ${arch.color}44`, borderRadius: 18, padding: '28px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 280 }}>
+            <div style={{ background: `rgba(${arch.rgb},0.12)`, border: `1px solid ${arch.color}55`, borderRadius: 18, padding: '28px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 280, boxShadow: `0 0 32px rgba(${arch.rgb},0.18), 0 0 80px rgba(${arch.rgb},0.08)`, animation: 'milestoneGlow 4s ease-in-out infinite' }}>
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 18s ease-in-out infinite' }}>Ton avancée</p>
               <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 20, color: 'white', margin: 0, animation: 'milestoneGlow 3s ease-in-out infinite' }}>{routinesDoneToday}/{arch.routines.length} routine{routinesDoneToday !== 1 ? 's' : ''}</p>
               <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: `rgba(255,255,255,0.55)`, margin: 0 }}>{quetesDoneNow}/{arch.quetes.length} quête{quetesDoneNow !== 1 ? 's' : ''} accomplie{quetesDoneNow !== 1 ? 's' : ''}</p>
@@ -1736,7 +1736,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         return <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: haloSize, height: haloSize, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${haloOp} 0%, transparent 65%)`, animation: 'presencePulse 5.8s ease-in-out infinite', pointerEvents: 'none' }} />
       })()}
       {/* Ghost backdrop animal */}
-      <div style={{ position: 'absolute', bottom: '-8%', right: '-12%', pointerEvents: 'none', opacity: vis ? 0.048 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(3px)', animation: vis ? `animalfloat ${ghostPeriod}s ease-in-out infinite` : 'none' }}>
+      <div style={{ position: 'absolute', bottom: '-8%', right: '-12%', pointerEvents: 'none', opacity: typingDone ? 0.072 : vis ? 0.048 : 0, transition: 'opacity 3s ease 1s', filter: typingDone ? 'blur(2.5px)' : 'blur(3px)', animation: vis ? `animalfloat ${ghostPeriod}s ease-in-out infinite` : 'none' }}>
         <SpiritAnimal archetype={archetypeKey} size={280} />
       </div>
       {/* Per-archetype ambient motes */}
