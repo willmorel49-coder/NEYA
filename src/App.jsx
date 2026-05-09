@@ -683,7 +683,7 @@ function NeyaLogo({ size = 'md', onTap }) {
   const cfg = { sm: [20, 13], md: [28, 17], lg: [36, 22] }[size]
   return (
     <div onClick={onTap} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: onTap ? 'pointer' : 'default' }}>
-      <svg width={cfg[0]} height={cfg[0]} viewBox="0 0 32 32" fill="none" style={{ animation: 'compassbreathe 7s ease-in-out infinite' }}>
+      <svg width={cfg[0]} height={cfg[0]} viewBox="0 0 32 32" fill="none" style={{ animation: 'compassbreathe 7s ease-in-out infinite', filter: onTap ? 'drop-shadow(0 0 8px rgba(255,255,255,0.35))' : 'none' }}>
         <ellipse cx="16" cy="26" rx="3" ry="6" fill="white" opacity="0.85" />
         <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" transform="rotate(-45 16 16)" />
         <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" transform="rotate(45 16 16)" />
@@ -717,12 +717,15 @@ function PresenceRing({ progress, color, size = 130 }) {
   const r = 52
   const circ = 2 * Math.PI * r
   const dash = Math.max(0, Math.min(1, progress)) * circ
+  const full = progress >= 1
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" style={{ transform: 'rotate(-90deg)' }}>
       <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
-      <circle cx="60" cy="60" r={r} fill="none" stroke={color} strokeWidth="2.5"
+      {full && <circle cx="60" cy="60" r={r} fill="none" stroke={color} strokeWidth="3.5" strokeOpacity="0.22"
+        style={{ filter: `drop-shadow(0 0 12px ${color}) drop-shadow(0 0 24px ${color})`, animation: 'worldglow 4s ease-in-out infinite' }} />}
+      <circle cx="60" cy="60" r={r} fill="none" stroke={color} strokeWidth={full ? '2.5' : '2.5'}
         strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
-        style={{ filter: `drop-shadow(0 0 5px ${color})`, transition: 'stroke-dasharray 1.6s cubic-bezier(0.22,1,0.36,1)' }} />
+        style={{ filter: `drop-shadow(0 0 ${full ? '8px' : '5px'} ${color})${full ? ` drop-shadow(0 0 16px ${color}66)` : ''}`, transition: 'stroke-dasharray 1.6s cubic-bezier(0.22,1,0.36,1)', animation: full ? 'worldglow 4s ease-in-out infinite' : 'none' }} />
     </svg>
   )
 }
@@ -906,7 +909,7 @@ function SplashScreen({ onStart }) {
           </p>
         </div>
 
-        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06))', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', opacity: showBtn ? 1 : 0, transition: 'opacity 1.4s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1.6s infinite' : 'none' }}>
+        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06))', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', opacity: showBtn ? 1 : 0, transition: 'opacity 1.4s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1.6s infinite' : 'none', boxShadow: showBtn ? '0 4px 32px rgba(99,102,241,0.22), 0 0 0 1px rgba(99,102,241,0.12)' : 'none' }}>
           Commencer
         </button>
       </div>
@@ -1039,7 +1042,7 @@ function QuizIntroScreen({ onStart }) {
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', width: 100, height: 100, borderRadius: '50%', border: '1px solid rgba(99,102,241,0.12)', animation: 'pulsering 6.5s ease-in-out infinite 1.8s' }} />
             <div style={{ position: 'absolute', width: 72, height: 72, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)', animation: 'compassbreathe 7s ease-in-out infinite' }} />
-            <div style={{ animation: 'compassbreathe 7s ease-in-out infinite', display: 'flex' }}>
+            <div style={{ animation: 'compassbreathe 7s ease-in-out infinite', display: 'flex', filter: showBtn ? 'drop-shadow(0 0 14px rgba(99,102,241,0.55)) drop-shadow(0 0 28px rgba(99,102,241,0.22))' : 'none', transition: 'filter 1.4s ease' }}>
               <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
                 <circle cx="24" cy="24" r="21" stroke="rgba(255,255,255,0.50)" strokeWidth="1.5"/>
                 <path d="M24 6v4M24 38v4M6 24h4M38 24h4" stroke="rgba(255,255,255,0.38)" strokeWidth="1.5" strokeLinecap="round"/>
@@ -1317,7 +1320,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
             </p>
           </div>
         </div>
-        <button onClick={() => { haptic([30, 50, 20]); onReveal() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.26)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.2em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(10px)', transition: 'opacity 1.0s ease, transform 0.8s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1s infinite' : 'none' }}>
+        <button onClick={() => { haptic([30, 50, 20]); onReveal() }} style={{ width: '100%', padding: '17px 0', background: arch ? `rgba(${arch.rgb},0.14)` : 'rgba(255,255,255,0.1)', border: `1px solid ${arch ? arch.color + '55' : 'rgba(255,255,255,0.26)'}`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.2em', color: arch ? arch.color : 'white', textTransform: 'uppercase', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(10px)', transition: 'opacity 1.0s ease, transform 0.8s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1s infinite' : 'none', boxShadow: showBtn && arch ? `0 4px 28px rgba(${arch.rgb},0.22)` : 'none' }}>
           Découvrir mon guide
         </button>
       </div>
@@ -1594,7 +1597,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               {/* Intention aperçu */}
               <div style={{ background: `rgba(${arch.rgb},0.07)`, border: `1px solid ${arch.color}33`, borderRadius: 12, padding: '16px 18px' }}>
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 9px', opacity: 0.8, animation: 'phrasebreathe 22s ease-in-out infinite' }}>Ton intention du jour</p>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.7, fontStyle: 'italic', animation: 'phrasebreathe 28s ease-in-out infinite' }}>"{arch.intentions[0]}"</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.7, fontStyle: 'italic', animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 9s ease-in-out 3s infinite', textShadow: `0 0 20px ${arch.color}22` }}>"{arch.intentions[0]}"</p>
               </div>
 
               {/* World insight */}
@@ -1795,7 +1798,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
             </p>
           </>
         )}
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}44`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both, solbreathe 22s ease-in-out 5s infinite' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}55`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both, solbreathe 22s ease-in-out 5s infinite, milestoneGlow 8s ease-in-out 6s infinite', textShadow: `0 0 16px ${arch.color}33` }}>
           {(() => { const h = new Date().getHours(); if (h >= 22 || h < 5) return 'bonne nuit'; if (h < 18) return 'la journée t\'attend doucement'; return 'tu peux revenir quand tu veux' })()}
         </p>
       </div>
@@ -1999,7 +2002,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
         {/* Presence ring wrapping the animal — tap for espace vrai */}
         <div style={{ position: 'relative', width: 130, height: 130, margin: '0 auto 16px' }}>
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 220, height: 220, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}0d 0%, transparent 68%)`, animation: 'presencePulse 6s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 220, height: 220, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${Math.round(13 + presenceProgress * 28).toString(16).padStart(2,'0')} 0%, transparent 68%)`, animation: 'presencePulse 6s ease-in-out infinite', pointerEvents: 'none', zIndex: 0, transition: 'background 1.8s ease' }} />
+          {presenceProgress > 0.3 && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 260, height: 260, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${Math.round(presenceProgress * 11).toString(16).padStart(2,'0')} 0%, transparent 58%)`, animation: 'presencePulse 9s ease-in-out 3s infinite', pointerEvents: 'none', zIndex: 0, transition: 'background 1.8s ease' }} />}
         <div
           onClick={() => { haptic([6, 80, 6]); setRingTap(true); setTimeout(() => setRingTap(false), 700); onOpenVrai() }}
           style={{ position: 'relative', width: 130, height: 130, cursor: 'pointer', zIndex: 1 }}
@@ -2119,13 +2123,13 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <div key={i} onClick={() => { haptic(8); onChangeTab(s.tab) }} style={{ flex: 1, background: s.count === s.total ? `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.07) 100%)` : s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count === s.total ? arch.color + '88' : s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s', cursor: 'pointer', boxShadow: s.count === s.total ? `0 0 22px rgba(${arch.rgb},0.22), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 13, color: s.count > 0 ? arch.color : 'rgba(255,255,255,0.24)', transition: 'color 0.3s ease', textShadow: s.count === s.total ? `0 0 12px ${arch.color}88` : 'none', animation: s.count === s.total ? 'seedPulse 3s ease-in-out infinite' : 'none' }}>{s.icon}</span>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: s.count === s.total ? arch.color : 'rgba(255,255,255,0.26)', transition: 'color 0.4s ease' }}>{s.count}/{s.total}</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: s.count === s.total ? arch.color : 'rgba(255,255,255,0.26)', transition: 'color 0.4s ease', textShadow: s.count === s.total ? `0 0 10px ${arch.color}66` : 'none', animation: s.count === s.total ? 'seedPulse 3.4s ease-in-out infinite' : 'none' }}>{s.count}/{s.total}</span>
             </div>
             <div style={{ height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: 1 }}>
               <div style={{ height: '100%', background: arch.color, borderRadius: 1, width: `${(s.count / s.total) * 100}%`, transition: 'width 0.5s ease', boxShadow: s.count === s.total ? `0 0 12px ${arch.color}cc` : s.count > 0 ? `0 0 7px ${arch.color}88` : 'none', animation: s.count > 0 && s.count < s.total ? 'worldglow 10s ease-in-out infinite' : 'none' }} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-              <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12.5, color: s.count === s.total ? 'rgba(255,255,255,0.72)' : 'rgba(255,255,255,0.52)', transition: 'color 0.4s ease' }}>{s.label}</span>
+              <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12.5, color: s.count === s.total ? arch.color : 'rgba(255,255,255,0.52)', transition: 'color 0.4s ease', animation: s.count === s.total ? 'milestoneGlow 5s ease-in-out infinite' : 'none' }}>{s.label}</span>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 8, color: s.count === s.total ? `${arch.color}88` : 'rgba(255,255,255,0.14)', letterSpacing: '0.04em', transition: 'color 0.4s ease', animation: s.count === s.total ? 'seedPulse 3.2s ease-in-out infinite' : 'none' }}>✦</span>
             </div>
             {s.nextHint && s.count < s.total && (
@@ -2154,7 +2158,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <button onClick={() => {
             haptic([8, 20, 8])
             navigator.share({ title: 'Mon profil NÉYA', text: `"${arch.worldInsight}"\n\nJe suis ${arch.profil} — ${arch.animal} · Élément ${arch.element}.${streak >= 2 ? ` ${streak} jours d'affilée.` : ''} Découvre ton guide intérieur sur NÉYA.`, url: 'https://neya-kappa.vercel.app' }).catch(() => {})
-          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.05em', padding: '10px 0', animation: 'phrasebreathe 44s ease-in-out infinite' }}>
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: `${arch.color}66`, letterSpacing: '0.05em', padding: '10px 0', animation: 'phrasebreathe 30s ease-in-out infinite', textShadow: `0 0 14px ${arch.color}22` }}>
             Partager mon profil
           </button>
         )}
