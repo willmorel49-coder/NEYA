@@ -1594,7 +1594,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               <div style={{ position: 'relative', background: 'rgba(255,255,255,0.055)', border: `1px solid ${arch.color}44`, borderRadius: 16, padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 18, boxShadow: `0 8px 32px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.04)`, overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}99, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s ease-in-out infinite' }} />
                 {arch.desc.split('\n\n').map((para, i) => (
-                  <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: i === 0 ? 16 : 14, color: i === 0 ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.75, fontStyle: i === 0 ? 'italic' : 'normal', textShadow: i === 0 ? '0 1px 20px rgba(0,0,0,0.3)' : 'none', animation: i === 0 ? 'phrasebreathe 36s ease-in-out infinite' : 'phrasebreathe 40s ease-in-out 2s infinite' }}>
+                  <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: i === 0 ? 16 : 14, color: i === 0 ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.75, fontStyle: i === 0 ? 'italic' : 'normal', textShadow: i === 0 ? `0 1px 20px rgba(0,0,0,0.3), 0 0 40px ${arch.color}18` : 'none', animation: i === 0 ? 'phrasebreathe 36s ease-in-out infinite, milestoneGlow 12s ease-in-out 4s infinite' : 'phrasebreathe 40s ease-in-out 2s infinite' }}>
                     {i === 0 ? `"${para}"` : para}
                   </p>
                 ))}
@@ -2556,14 +2556,15 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
     setQuetesDone(next); saveQuetes(archetypeKey, next)
   }
 
-  const overlay = `linear-gradient(180deg, rgba(5,8,16,0.62) 0%, rgba(${arch.rgb},0.09) 100%)`
+  const mainJourComplète = routinesDone.every(Boolean) && quetesDone.some(Boolean)
+  const overlay = `linear-gradient(180deg, rgba(5,8,16,0.62) 0%, rgba(${arch.rgb},${mainJourComplète ? '0.14' : '0.09'}) 100%)`
   const WORLD_GLOW_PERIOD = { 'bg-brume.png': 30, 'bg-feu.png': 8, 'bg-foret.png': 18, 'bg-eau.png': 24, 'bg-cosmos.png': 42, 'bg-vide.png': 60 }
   const glowPeriod = WORLD_GLOW_PERIOD[arch.bg] || 24
 
   return (
     <BgScreen bg={arch.bg} overlay={overlay} breathe>
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, background: `radial-gradient(ellipse at center, ${arch.color}0f 0%, transparent 65%)`, animation: `worldglow ${glowPeriod}s ease-in-out infinite` }} />
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, background: `radial-gradient(ellipse at center, ${arch.color}${mainJourComplète ? '1c' : '0f'} 0%, transparent 65%)`, animation: `worldglow ${glowPeriod}s ease-in-out infinite`, transition: 'background 2s ease' }} />
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }}>
         {[{x:6,y:22,r:2.0,dur:28,del:0.0},{x:92,y:16,r:1.5,dur:34,del:5.2},{x:18,y:72,r:2.4,dur:22,del:2.4},{x:84,y:68,r:1.8,dur:38,del:8.1},{x:52,y:88,r:2.0,dur:26,del:4.6},{x:76,y:38,r:1.6,dur:44,del:12.3},{x:34,y:44,r:1.2,dur:32,del:7.5},{x:62,y:8,r:2.2,dur:18,del:3.8}].map((m,i)=>(
           <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.038, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
