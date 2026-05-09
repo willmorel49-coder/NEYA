@@ -755,13 +755,17 @@ function ReturningScreen({ archetypeKey, onDone }) {
     <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.55)">
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 22 }}>
         {/* Spirit animal */}
-        <div style={{
-          opacity: vis ? 1 : 0,
-          transition: 'opacity 0.7s ease',
-          filter: `drop-shadow(0 0 24px ${arch.color}) drop-shadow(0 0 52px ${arch.color}55)`,
-          animation: vis ? 'animalfloat 18s ease-in-out infinite, animalbreathe 28s ease-in-out infinite' : 'none',
-        }}>
-          <SpiritAnimal archetype={archetypeKey} size={130} />
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {vis && <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 5.5s ease-in-out infinite 0.6s', pointerEvents: 'none' }} />}
+          {vis && <div style={{ position: 'absolute', width: 210, height: 210, borderRadius: '50%', border: `1px solid ${arch.color}11`, animation: 'pulsering 7s ease-in-out infinite 1.8s', pointerEvents: 'none' }} />}
+          <div style={{
+            opacity: vis ? 1 : 0,
+            transition: 'opacity 0.7s ease',
+            filter: `drop-shadow(0 0 24px ${arch.color}) drop-shadow(0 0 52px ${arch.color}55)`,
+            animation: vis ? 'animalfloat 18s ease-in-out infinite, animalbreathe 28s ease-in-out infinite' : 'none',
+          }}>
+            <SpiritAnimal archetype={archetypeKey} size={130} />
+          </div>
         </div>
         {/* Time-of-day greeting */}
         <p style={{
@@ -1474,7 +1478,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.34em', textTransform: 'uppercase', margin: '0 0 12px', opacity: 0, animation: 'fadeIn 0.8s ease 0.4s both, phrasebreathe 22s ease-in-out 2s infinite' }}>
             Ton animal guide
           </p>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 6vw, 28px)', color: 'white', margin: '0 0 7px', textShadow: `0 0 48px ${arch.shadow}, 0 0 24px rgba(255,255,255,0.4)`, opacity: 0, animation: 'fadeIn 1.0s ease 0.8s both, phrasebreathe 24s ease-in-out 2s infinite' }}>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 6vw, 28px)', color: 'white', margin: '0 0 7px', textShadow: `0 0 48px ${arch.shadow}, 0 0 24px rgba(255,255,255,0.4)`, opacity: 0, animation: 'fadeIn 1.0s ease 0.8s both, phrasebreathe 24s ease-in-out 2s infinite, milestoneGlow 6s ease-in-out 2.5s infinite' }}>
             {arch.animal}
           </p>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: `${arch.color}99`, margin: 0, fontStyle: 'italic', letterSpacing: '0.06em', opacity: 0, animation: 'fadeIn 1.0s ease 1.2s both, phrasebreathe 26s ease-in-out 3s infinite' }}>
@@ -2176,9 +2180,10 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
-      <div style={{ textAlign: 'center', marginBottom: 6 }}>
+      <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
+        <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 20s ease-in-out infinite' }} />
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase', animation: 'phrasebreathe 18s ease-in-out infinite' }}>◈ Routines du jour</p>
-        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2, animation: 'phrasebreathe 30s ease-in-out 1s infinite' }}>Tes pratiques<br />quotidiennes</h2>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2, animation: allDone ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 30s ease-in-out 1s infinite' }}>Tes pratiques<br />quotidiennes</h2>
 
         {/* Barre de progression globale */}
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
@@ -2257,9 +2262,10 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
-      <div style={{ textAlign: 'center', marginBottom: 6 }}>
+      <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
+        <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 22s ease-in-out 4s infinite' }} />
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase', animation: 'phrasebreathe 18s ease-in-out infinite' }}>◇ Quêtes</p>
-        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2, animation: 'phrasebreathe 34s ease-in-out infinite' }}>Tes défis<br />bienveillants</h2>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2, animation: allDone ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 34s ease-in-out infinite' }}>Tes défis<br />bienveillants</h2>
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
           <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${(doneCount / arch.quetes.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: allDone ? `0 0 14px ${arch.color}cc, 0 0 28px ${arch.color}44` : doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : 'none' }} />
@@ -2393,7 +2399,7 @@ function BoutiqueScreen({ archetypeKey }) {
       <div style={{ textAlign: 'center', marginBottom: 4, position: 'relative' }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 200, height: 80, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 7s ease-in-out infinite' }} />
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 30s ease-in-out infinite' }}>LA MARQUE</p>
-        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}14`, animation: 'phrasebreathe 36s ease-in-out 1s infinite' }}>ÇA VA?</h1>
+        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}22`, animation: 'phrasebreathe 36s ease-in-out 1s infinite, milestoneGlow 10s ease-in-out 3s infinite' }}>ÇA VA?</h1>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65, animation: 'solbreathe 18s ease-in-out infinite' }}>
           Des vêtements qui portent<br />ce que les mots ne disent pas.
         </p>
