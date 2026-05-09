@@ -1595,9 +1595,13 @@ function ResultScreen({ archetypeKey, onContinue }) {
 
               {/* World insight */}
               {arch.worldInsight && (
-                <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `${arch.color}77`, letterSpacing: '0.06em', margin: '0 4px', lineHeight: 1.75, fontStyle: 'italic', textAlign: 'center', animation: 'phrasebreathe 20s ease-in-out infinite' }}>
-                  {arch.worldInsight}
-                </p>
+                <>
+                  <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 14s ease-in-out infinite' }} />
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `${arch.color}77`, letterSpacing: '0.06em', margin: '0 4px', lineHeight: 1.75, fontStyle: 'italic', textAlign: 'center', animation: 'phrasebreathe 20s ease-in-out infinite' }}>
+                    {arch.worldInsight}
+                  </p>
+                  <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 14s ease-in-out 7s infinite' }} />
+                </>
               )}
 
               {/* Routines preview */}
@@ -1615,7 +1619,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
           )}
         </div>
 
-        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : 'rgba(255,255,255,0.11)', border: phase === 2 ? 'none' : '1px solid rgba(255,255,255,0.26)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: phase === 2 ? 500 : 400, letterSpacing: '0.2em', color: phase === 2 ? '#050810' : 'white', textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : 'none', transition: 'all 0.45s ease', animation: phase === 2 ? 'milestoneGlow 4.5s ease-in-out infinite' : 'none' }}>
+        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : `rgba(${arch.rgb},0.14)`, border: phase === 2 ? 'none' : `1px solid ${arch.color}66`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: phase === 2 ? 500 : 400, letterSpacing: '0.2em', color: phase === 2 ? '#050810' : arch.color, textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : `0 2px 18px rgba(${arch.rgb},0.22)`, transition: 'all 0.45s ease', animation: 'milestoneGlow 5s ease-in-out infinite' }}>
           {['', 'Lire mon message', 'Entrer dans mon espace'][phase]}
         </button>
       </div>
@@ -1874,6 +1878,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [intentionFade, setIntentionFade] = useState(true)
   const [cycleSpin, setCycleSpin] = useState(false)
   const [intentionParticles, setIntentionParticles] = useState(false)
+  const [ringTap, setRingTap] = useState(false)
   const [showPresenceToast, setShowPresenceToast] = useState(false)
   const [restartPending, setRestartPending] = useState(false)
   const restartTimer = useRef(null)
@@ -1973,7 +1978,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ position: 'relative', width: 130, height: 130, margin: '0 auto 16px' }}>
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 220, height: 220, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}0d 0%, transparent 68%)`, animation: 'presencePulse 6s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
         <div
-          onClick={() => { haptic([6, 80, 6]); onOpenVrai() }}
+          onClick={() => { haptic([6, 80, 6]); setRingTap(true); setTimeout(() => setRingTap(false), 700); onOpenVrai() }}
           style={{ position: 'relative', width: 130, height: 130, cursor: 'pointer', zIndex: 1 }}
         >
           <div style={{ position: 'absolute', inset: 0 }}>
@@ -1982,13 +1987,15 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', pointerEvents: 'none', opacity: 0.06 + presenceProgress * 0.22, transition: 'opacity 1.6s ease', zIndex: 2 }}>
             <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'conic-gradient(transparent 0%, transparent 60%, rgba(255,255,255,0.9) 78%, transparent 84%, transparent 100%)', animation: 'ringshimmer 8s linear infinite', willChange: 'transform' }} />
           </div>
+          {/* Tap ripple */}
+          {ringTap && <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: `1.5px solid ${arch.color}77`, animation: 'pulsering 0.7s ease-out forwards', pointerEvents: 'none', zIndex: 5 }} />}
           {/* Soft glow center */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}20 0%, transparent 72%)`, animation: 'presencePulse 3.8s ease-in-out infinite' }} />
             <SpiritAnimal
               archetype={archetypeKey}
               size={74}
-              style={{ opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'animalfloat 18s ease-in-out infinite', position: 'relative', zIndex: 1, willChange: 'transform' }}
+              style={{ opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 26s ease-in-out infinite', position: 'relative', zIndex: 1, willChange: 'transform' }}
             />
           </div>
         </div>
@@ -2455,7 +2462,12 @@ function BoutiqueScreen({ archetypeKey }) {
         </div>
       ))}
 
-      <div style={{ textAlign: 'center', marginTop: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 20s ease-in-out infinite' }} />
+        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 7, color: 'rgba(255,255,255,0.10)', letterSpacing: '0.3em', textTransform: 'uppercase' }}>✦</span>
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 20s ease-in-out 10s infinite' }} />
+      </div>
+      <div style={{ textAlign: 'center', marginTop: 4 }}>
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 10, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.18em', margin: '0 0 4px', textTransform: 'uppercase', animation: 'phrasebreathe 20s ease-in-out infinite' }}>ÇA VA? × NÉYA</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.12)', letterSpacing: '0.06em', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 28s ease-in-out infinite' }}>
           Chaque vêtement porte une intention.
