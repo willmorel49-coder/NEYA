@@ -957,7 +957,7 @@ function IntroScreen({ onStart }) {
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.62)', lineHeight: 1.72, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease' }}>
             vers plus de calme,<br />d'équilibre et de clarté intérieure.
           </p>
-          <p style={{ position: 'absolute', bottom: '9%', fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.20)', letterSpacing: '0.26em', margin: 0, opacity: hintVis ? 1 : 0, transition: 'opacity 1.2s ease' }}>
+          <p style={{ position: 'absolute', bottom: '9%', fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.20)', letterSpacing: '0.26em', margin: 0, opacity: hintVis ? 1 : 0, transition: 'opacity 1.2s ease', animation: hintVis ? 'phrasebreathe 22s ease-in-out 1.5s infinite' : 'none' }}>
             TOUCHER POUR CONTINUER
           </p>
         </div>
@@ -1716,7 +1716,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           </p>
         )}
         {showPatience && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.08em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3s ease forwards', maxWidth: 260, lineHeight: 1.75, textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.08em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3s ease forwards, phrasebreathe 36s ease-in-out 4s infinite', maxWidth: 260, lineHeight: 1.75, textAlign: 'center' }}>
             {PATIENCE_TEXTS[archetypeKey]}
           </p>
         )}
@@ -1726,7 +1726,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           </p>
         )}
         {showDeep && (
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.05em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 5s ease forwards', maxWidth: 280, lineHeight: 1.8, textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.05em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite', maxWidth: 280, lineHeight: 1.8, textAlign: 'center' }}>
             {DEEP_TEXTS[archetypeKey]}
           </p>
         )}
@@ -2008,7 +2008,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           const count = weekDots.filter(Boolean).length
           if (count === 0) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.14em', margin: 0, animation: 'phrasebreathe 28s ease-in-out infinite' }}>ta présence cette semaine</p>
           if (count === 7) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.14em', margin: 0, opacity: 0.9, textShadow: `0 0 14px ${arch.color}88`, animation: 'milestoneGlow 3.8s ease-in-out infinite' }}>7 jours · semaine complète ✦</p>
-          return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.26)', letterSpacing: '0.14em', margin: 0 }}>{count} jour{count > 1 ? 's' : ''} cette semaine</p>
+          return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.26)', letterSpacing: '0.14em', margin: 0, animation: 'phrasebreathe 32s ease-in-out infinite' }}>{count} jour{count > 1 ? 's' : ''} cette semaine</p>
         })()}
         {totalDone > 0 && (
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: 'rgba(255,255,255,0.10)', letterSpacing: '0.12em', margin: 0, animation: 'phrasebreathe 40s ease-in-out 3s infinite' }}>
