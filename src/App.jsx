@@ -1377,6 +1377,18 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
           zIndex: 6,
         }} />
       )}
+      {/* Second outer glow ring on flash */}
+      {step >= 4 && (
+        <div style={{
+          position: 'absolute',
+          width: 360, height: 360,
+          borderRadius: '50%',
+          border: `1px solid ${arch.color}22`,
+          animation: 'pulsering 3.2s ease-in-out infinite 0.8s',
+          zIndex: 3,
+          pointerEvents: 'none',
+        }} />
+      )}
 
       {/* Patronus rings */}
       {step >= 2 && rings.map((ring, i) => (
@@ -1504,7 +1516,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
                 <div style={{ position: 'relative', marginBottom: 2 }}>
                   <div style={{ position: 'absolute', inset: -16, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}18 0%, transparent 70%)`, animation: 'presencePulse 4s ease-in-out infinite' }} />
-                  <SpiritAnimal archetype={archetypeKey} size={60} style={{ opacity: 0.70, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite' }} />
+                  <SpiritAnimal archetype={archetypeKey} size={60} style={{ opacity: 0.70, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite' }} />
                 </div>
                 <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textShadow: `0 0 28px ${arch.color}33` }}>Tes forces naturelles</h2>
                 <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px' }} />
@@ -1786,6 +1798,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
     try { return parseInt(localStorage.getItem(`neya_intentionIdx_${archetypeKey}`) || '0', 10) } catch { return 0 }
   })
   const [intentionFade, setIntentionFade] = useState(true)
+  const [cycleSpin, setCycleSpin] = useState(false)
   const [showPresenceToast, setShowPresenceToast] = useState(false)
   const [restartPending, setRestartPending] = useState(false)
   const restartTimer = useRef(null)
@@ -1824,6 +1837,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const cycleIntention = () => {
     haptic(8)
     setIntentionFade(false)
+    setCycleSpin(true)
+    setTimeout(() => setCycleSpin(false), 420)
     setTimeout(() => {
       setIntentionIdx(i => {
         const next = (i + 1) % pool.length
@@ -1927,7 +1942,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             Intention du jour
             {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9 }}>◎</span>}
           </p>
-          <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, transition: 'color 0.2s ease' }} title="Autre intention">↻</button>
+          <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, transition: 'color 0.2s ease', display: 'inline-block', transform: cycleSpin ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.38s ease, color 0.2s ease' }} title="Autre intention">↻</button>
         </div>
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', lineHeight: 1.68, fontStyle: 'italic', opacity: intentionFade ? 1 : 0, transition: 'opacity 0.2s ease' }}>
           {intentionReady && <TypingText key={intentionIdx} text={`"${intention}"`} delay={0} speed={34} />}
