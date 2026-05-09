@@ -691,7 +691,7 @@ function NeyaLogo({ size = 'md', onTap }) {
         <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" transform="rotate(90 16 16)" />
         <circle cx="16" cy="16" r="3.5" fill="white" />
       </svg>
-      <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: cfg[1], letterSpacing: '0.4em', color: 'white', textShadow: '0 0 20px rgba(255,255,255,0.3)' }}>NÉYA</span>
+      <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: cfg[1], letterSpacing: '0.4em', color: 'white', textShadow: '0 0 20px rgba(255,255,255,0.3)', animation: 'phrasebreathe 55s ease-in-out infinite' }}>NÉYA</span>
     </div>
   )
 }
@@ -1054,13 +1054,13 @@ function QuizIntroScreen({ onStart }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%' }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item1 ? 1 : 0, transform: item1 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
             <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em', boxShadow: '0 0 12px rgba(99,102,241,0.22)' }}>{QUESTIONS.length}</span>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65, animation: item1 ? 'phrasebreathe 32s ease-in-out 1s infinite' : 'none' }}>
               Questions conçues pour révéler ton chemin intérieur unique.
             </p>
           </div>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item2 ? 1 : 0, transform: item2 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65, animation: item2 ? 'phrasebreathe 36s ease-in-out 2s infinite' : 'none' }}>
               Pas de bonne ou de mauvaise réponse — réponds avec ce qui résonne en toi.
             </p>
           </div>
@@ -1593,7 +1593,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                 {arch.routines.map((r, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                     <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.4, animation: `phrasebreathe ${30 + i * 5}s ease-in-out ${i * 1.5}s infinite` }}>{r.title}</span>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `${arch.color}88`, whiteSpace: 'nowrap', flexShrink: 0 }}>{r.duration}</span>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `${arch.color}88`, whiteSpace: 'nowrap', flexShrink: 0, animation: 'phrasebreathe 28s ease-in-out infinite' }}>{r.duration}</span>
                   </div>
                 ))}
               </div>
@@ -2061,7 +2061,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <button onClick={() => {
             haptic([8, 20, 8])
             navigator.share({ title: 'Mon profil NÉYA', text: `"${arch.worldInsight}"\n\nJe suis ${arch.profil} — ${arch.animal} · Élément ${arch.element}.${streak >= 2 ? ` ${streak} jours d'affilée.` : ''} Découvre ton guide intérieur sur NÉYA.`, url: 'https://neya-kappa.vercel.app' }).catch(() => {})
-          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.05em', padding: '10px 0' }}>
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.05em', padding: '10px 0', animation: 'phrasebreathe 44s ease-in-out infinite' }}>
             Partager mon profil
           </button>
         )}
@@ -2353,7 +2353,7 @@ function BoutiqueScreen({ archetypeKey }) {
                   </div>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 38s ease-in-out infinite' }}>{col.desc}</p>
                 </div>
-                <button onClick={(e) => { e.stopPropagation(); handleDiscover() }} style={{ width: '100%', marginTop: 12, padding: '13px 0', background: `rgba(${col.rgb},0.18)`, border: `1px solid ${col.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.2em', color: col.color, textTransform: 'uppercase' }}>
+                <button onClick={(e) => { e.stopPropagation(); handleDiscover() }} style={{ width: '100%', marginTop: 12, padding: '13px 0', background: `rgba(${col.rgb},0.18)`, border: `1px solid ${col.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.2em', color: col.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.8s ease-in-out infinite' }}>
                   Découvrir
                 </button>
               </div>
