@@ -788,6 +788,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
           opacity: vis ? 1 : 0,
           transition: 'opacity 0.9s ease 0.4s',
           textShadow: `0 0 32px ${arch.shadow}`,
+          animation: vis ? 'phrasebreathe 26s ease-in-out 0.8s infinite' : 'none',
         }}>
           {arch.animal}
         </p>
@@ -1536,7 +1537,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   <SpiritAnimal archetype={archetypeKey} size={60} style={{ opacity: 0.70, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite' }} />
                 </div>
                 <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textShadow: `0 0 28px ${arch.color}33` }}>Tes forces naturelles</h2>
-                <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px' }} />
+                <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px', animation: 'worldglow 8s ease-in-out infinite' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
                 {arch.forces.map((f, i) => (
@@ -2319,7 +2320,7 @@ function BoutiqueScreen({ archetypeKey }) {
                 <span key={tag} style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, border: `1px solid ${myCollection.color}44`, borderRadius: 100, padding: '3px 10px', letterSpacing: '0.08em', animation: vis ? `tabslideIn 0.3s ease ${0.2 + ti * 0.1}s both` : 'none' }}>{tag}</span>
               ))}
             </div>
-            <button onClick={handleDiscover} style={{ marginTop: 4, width: '100%', padding: '15px 0', background: myCollection.color, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.22em', color: '#050810', textTransform: 'uppercase', boxShadow: `0 4px 24px rgba(${myCollection.rgb},0.40)` }}>
+            <button onClick={handleDiscover} style={{ marginTop: 4, width: '100%', padding: '15px 0', background: myCollection.color, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.22em', color: '#050810', textTransform: 'uppercase', boxShadow: `0 4px 24px rgba(${myCollection.rgb},0.40)`, animation: 'milestoneGlow 5s ease-in-out infinite' }}>
               Découvrir la collection
             </button>
           </div>
