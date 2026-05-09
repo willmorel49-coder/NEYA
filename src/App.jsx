@@ -1231,7 +1231,7 @@ function QuizScreen({ onComplete }) {
         <div style={{ textAlign: 'center', marginBottom: 22 }}>
           <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.72)', letterSpacing: '0.02em', animation: 'phrasebreathe 18s ease-in-out infinite' }}>{idx + 1}</span>
           <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.14em', margin: '0 6px' }}>·</span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.24)', letterSpacing: '0.08em' }}>{QUESTIONS.length}</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.24)', letterSpacing: '0.08em', animation: 'phrasebreathe 20s ease-in-out infinite' }}>{QUESTIONS.length}</span>
         </div>
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 12, marginBottom: 24 }}>
