@@ -1695,7 +1695,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
 
         <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto', animation: 'worldglow 6s ease-in-out infinite' }} />
 
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease', textShadow: `0 0 20px ${arch.color}44, 0 0 44px ${arch.color}22`, animation: typingDone ? 'milestoneGlow 4.2s ease-in-out infinite' : 'none' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease', textShadow: `0 0 20px ${arch.color}44, 0 0 44px ${arch.color}22`, animation: typingDone ? 'milestoneGlow 4.2s ease-in-out infinite' : 'phrasebreathe 18s ease-in-out infinite' }}>
           Espace de présence
         </p>
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340, animation: typingDone ? 'phrasebreathe 22s ease-in-out infinite' : 'none' }}>
@@ -2290,7 +2290,7 @@ function BoutiqueScreen({ archetypeKey }) {
 
       <div style={{ textAlign: 'center', marginBottom: 4, position: 'relative' }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 200, height: 80, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 7s ease-in-out infinite' }} />
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase' }}>LA MARQUE</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 30s ease-in-out infinite' }}>LA MARQUE</p>
         <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}14` }}>ÇA VA?</h1>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65, animation: 'solbreathe 18s ease-in-out infinite' }}>
           Des vêtements qui portent<br />ce que les mots ne disent pas.
@@ -2315,7 +2315,7 @@ function BoutiqueScreen({ archetypeKey }) {
             </div>
             <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.15, animation: 'phrasebreathe 28s ease-in-out infinite' }}>{myCollection.name}</h2>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 26s ease-in-out infinite' }}>{myCollection.subtitle}</p>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65 }}>{myCollection.desc}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 32s ease-in-out infinite' }}>{myCollection.desc}</p>
             <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
               {myCollection.tags.map((tag, ti) => (
                 <span key={tag} style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, border: `1px solid ${myCollection.color}44`, borderRadius: 100, padding: '3px 10px', letterSpacing: '0.08em', animation: vis ? `tabslideIn 0.3s ease ${0.2 + ti * 0.1}s both` : 'none' }}>{tag}</span>
