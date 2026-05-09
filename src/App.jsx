@@ -803,6 +803,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
           fontStyle: 'italic',
           opacity: vis ? 1 : 0,
           transition: 'opacity 1.1s ease 0.8s',
+          animation: vis ? 'phrasebreathe 30s ease-in-out 1.2s infinite' : 'none',
         }}>
           {whisper}
         </p>
@@ -1045,7 +1046,7 @@ function QuizIntroScreen({ onStart }) {
           <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', lineHeight: 1.32, margin: 0 }}>
             Prêt·e pour ton<br />exploration intérieure ?
           </h1>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase' }}>~5 minutes · {QUESTIONS.length} questions</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 24s ease-in-out infinite' }}>~5 minutes · {QUESTIONS.length} questions</p>
           <div style={{ width: 32, height: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 1, margin: '4px auto 0', opacity: item1 ? 1 : 0, transition: 'opacity 1.4s ease' }} />
         </div>
 
@@ -2004,7 +2005,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         </div>
         {(() => {
           const count = weekDots.filter(Boolean).length
-          if (count === 0) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.14em', margin: 0 }}>ta présence cette semaine</p>
+          if (count === 0) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.14em', margin: 0, animation: 'phrasebreathe 28s ease-in-out infinite' }}>ta présence cette semaine</p>
           if (count === 7) return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.14em', margin: 0, opacity: 0.9, textShadow: `0 0 14px ${arch.color}88`, animation: 'milestoneGlow 3.8s ease-in-out infinite' }}>7 jours · semaine complète ✦</p>
           return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.26)', letterSpacing: '0.14em', margin: 0 }}>{count} jour{count > 1 ? 's' : ''} cette semaine</p>
         })()}
