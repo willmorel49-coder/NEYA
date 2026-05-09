@@ -97,7 +97,7 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 **Branche** : `main`
 **Phase** : V2.0 — Deep Polish · Présence étendue · Micro-animations universelles
 
-### Features actives (`src/App.jsx`) — build 268.96 kB (74.57 kB gzip)
+### Features actives (`src/App.jsx`) — build 278.07 kB (76.51 kB gzip)
 
 **Splash :** 15 étoiles · tint overlay monde · texte retour contextuel (<4h/7j/≥7j) · whisper time-of-day · haptic [4]
 **Onboarding :** 3 écrans cinématiques · `ob0breathe` 42s bg · texte séquentiel · ENTRER bottom:14%
@@ -131,9 +131,21 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - Animations combinées (fadeIn + phrasebreathe) : PatronusReveal animal/profil/guide/élément, EspaceVraiModal encoreIci/ESPACEACCOMPANY
 - Autres : ReturningScreen salutation time-of-day, HomeScreen double-tap restart, BottomNav active glow, QuizScreen progress bar glow, ResultScreen scale, Boutique accordion stagger tabslideIn, EspaceVrai halo per-archetype
 
+**V2.1 — Deep polish & ambient life (sprints 191-232) :**
+- Celebration particles : RoutinesScreen + QuetesScreen burst milestoneMote · PatronusReveal ambient motes (step 3+) · EspaceVrai typing completion 4 particles
+- Ambient particles : MainApp ghost spirit animal (bottom-right 0.026 opacity) · MainApp 8 motes per-archetype all tabs · TransitionScreen archetype motes · EspaceVrai 8 motes per-archetype · Boutique all-done cards motes · RoutinesScreen/QuetesScreen all-done cards motes · QuizIntro WolfSpirit ghost
+- Ghost animals + animalbreathe : SplashScreen DeerSpirit · IntroScreen PhoenixSpirit + BearSpirit · QuizIntro WolfSpirit · all now float+breathe
+- Bg breathing : QuizScreen background bgbreathe 32s · Boutique collection card ob0breathe 38s
+- Responsive animations : ring shimmer opacity scales with presenceProgress · HomeScreen intention card border/glow brightens when all routines done · ResultScreen force cards presencePulse when all forces shown
+- State-driven animations : ReturningScreen worldInsight phrasebreathe · today dot presencePulse when not yet done · stat card ✦ seedPulse when done · partial progress bars worldglow · quiz dot separator phrasebreathe · quiz final button deeper glow · quiz progress bar fill worldglow · selected choice text phrasebreathe 16s
+- UX interactions : intention cycling 3 particles burst · HomeScreen restart confirm milestoneGlow · EspaceVrai long-press 800ms → ritual summary 4s overlay
+- Boutique polish : separator lines worldglow · collection tags phrasebreathe staggered · accordion spirit animal animalbreathe · ring spirit animal animalbreathe
+- ResultScreen polish : phase 2 small spirit animal animalbreathe · force card backgrounds presencePulse all-shown
+- IntroScreen body text step 0 phrasebreathe · QuizScreen final "Terminer" enhanced glow
+
 ### Déploiement
 - `vercel.json` configuré · `npm run build` → `dist/` fonctionnel
-- Prod live : `https://neya-kappa.vercel.app` · Commit `7bac143`
+- Prod live : `https://neya-kappa.vercel.app` · Commit `d2a7dbc`
 
 ### Backlog code
 - [ ] Valider performance mobile (animations nombreuses — worldglow + ringshimmer + forcespring)
