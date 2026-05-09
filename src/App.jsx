@@ -756,7 +756,12 @@ function ReturningScreen({ archetypeKey, onDone }) {
 
   return (
     <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.55)">
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 22 }}>
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }}>
+        {[{x:10,y:20,r:1.6,dur:22,del:0},{x:88,y:14,r:1.2,dur:28,del:3.8},{x:22,y:76,r:2.0,dur:18,del:1.6},{x:82,y:72,r:1.4,dur:32,del:6.2},{x:50,y:88,r:1.8,dur:24,del:4.4},{x:68,y:10,r:1.4,dur:30,del:8.6}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.06, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+        ))}
+      </svg>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 22, position: 'relative', zIndex: 1 }}>
         {/* Spirit animal */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {vis && <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 5.5s ease-in-out infinite 0.6s', pointerEvents: 'none' }} />}
@@ -829,7 +834,8 @@ function ReturningScreen({ archetypeKey, onDone }) {
           lineHeight: 1.7,
           opacity: vis ? 1 : 0,
           transition: 'opacity 1.4s ease 1.1s',
-          animation: vis ? 'phrasebreathe 44s ease-in-out 2s infinite' : 'none',
+          animation: vis ? 'phrasebreathe 44s ease-in-out 2s infinite, milestoneGlow 10s ease-in-out 3s infinite' : 'none',
+          textShadow: vis ? `0 0 16px ${arch.color}22` : 'none',
         }}>
           {arch.worldInsight}
         </p>
@@ -1061,7 +1067,7 @@ function QuizIntroScreen({ onStart }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%' }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item1 ? 1 : 0, transform: item1 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
-            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em', boxShadow: '0 0 12px rgba(99,102,241,0.22)', animation: 'phrasebreathe 26s ease-in-out infinite' }}>{QUESTIONS.length}</span>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: showBtn ? 'rgba(99,102,241,0.18)' : 'rgba(255,255,255,0.11)', border: `1px solid ${showBtn ? 'rgba(99,102,241,0.55)' : 'rgba(255,255,255,0.22)'}`, borderRadius: 7, padding: '4px 9px', color: showBtn ? 'rgba(180,180,255,0.88)' : 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em', boxShadow: showBtn ? '0 0 16px rgba(99,102,241,0.38)' : '0 0 12px rgba(99,102,241,0.22)', animation: showBtn ? 'milestoneGlow 4.5s ease-in-out infinite' : 'phrasebreathe 26s ease-in-out infinite', transition: 'all 0.8s ease' }}>{QUESTIONS.length}</span>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65, animation: item1 ? 'phrasebreathe 32s ease-in-out 1s infinite' : 'none' }}>
               Questions conçues pour révéler ton chemin intérieur unique.
             </p>
@@ -2141,7 +2147,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {/* ── Journée complète ── */}
       {jourComplète && (
-        <div style={{ background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}44`, borderRadius: 14, padding: '18px 20px', textAlign: 'center', animation: 'fadeIn 0.9s ease both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 0 28px rgba(${arch.rgb},0.14), 0 4px 16px rgba(0,0,0,0.2)`, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ position: 'relative', background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}44`, borderRadius: 14, padding: '18px 20px', textAlign: 'center', animation: 'fadeIn 0.9s ease both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 0 28px rgba(${arch.rgb},0.14), 0 4px 16px rgba(0,0,0,0.2)`, display: 'flex', flexDirection: 'column', gap: 12, overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', left: 0, top: '16%', bottom: '16%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}cc, transparent)`, borderRadius: '0 2px 2px 0', animation: 'milestoneGlow 4s ease-in-out infinite' }} />
           <div>
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: arch.color, margin: '0 0 5px', textShadow: `0 0 18px ${arch.color}66`, letterSpacing: '0.03em', animation: 'milestoneGlow 4.2s ease-in-out infinite' }}>✦ Journée complète.</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.36)', margin: 0, fontStyle: 'italic', letterSpacing: '0.03em', animation: 'phrasebreathe 28s ease-in-out infinite' }}>Tu rayonnes aujourd'hui.</p>
@@ -2162,9 +2169,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             Partager mon profil
           </button>
         )}
-        <button onClick={handleRestartClick} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: restartPending ? 'rgba(236,72,153,0.55)' : 'rgba(255,255,255,0.15)', letterSpacing: '0.05em', padding: '10px 0', transition: 'color 0.3s ease', animation: restartPending ? 'milestoneGlow 2s ease-in-out infinite' : 'none' }}>
+        <button onClick={handleRestartClick} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: restartPending ? 'rgba(236,72,153,0.55)' : 'rgba(255,255,255,0.15)', letterSpacing: '0.05em', padding: '10px 0', transition: 'color 0.3s ease', animation: restartPending ? 'milestoneGlow 2s ease-in-out infinite' : 'phrasebreathe 52s ease-in-out infinite' }}>
           {restartPending ? 'Toucher encore pour confirmer' : 'Refaire le parcours'}
         </button>
+
       </div>
     </div>
   )
@@ -2421,6 +2429,7 @@ function BoutiqueScreen({ archetypeKey }) {
 
       <div style={{ textAlign: 'center', marginBottom: 4, position: 'relative' }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 200, height: 80, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 7s ease-in-out infinite' }} />
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 280, height: 120, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}06 0%, transparent 60%)`, pointerEvents: 'none', animation: 'presencePulse 11s ease-in-out 4s infinite' }} />
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 30s ease-in-out infinite' }}>LA MARQUE</p>
         <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}22`, animation: 'phrasebreathe 36s ease-in-out 1s infinite, milestoneGlow 10s ease-in-out 3s infinite' }}>ÇA VA?</h1>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65, animation: 'solbreathe 18s ease-in-out infinite' }}>
@@ -2472,7 +2481,7 @@ function BoutiqueScreen({ archetypeKey }) {
           <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: expandedKey === col.key ? 12 : 6 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'white', margin: 0, animation: 'phrasebreathe 30s ease-in-out infinite' }}>{col.name}</h3>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: col.color }}>{expandedKey === col.key ? '▲' : '▼'}</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: col.color, animation: 'seedPulse 3.8s ease-in-out infinite', textShadow: `0 0 8px ${col.color}66` }}>{expandedKey === col.key ? '▲' : '▼'}</span>
             </div>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 26s ease-in-out infinite' }}>{col.subtitle}</p>
             {expandedKey === col.key && (
