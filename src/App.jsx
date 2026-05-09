@@ -1960,7 +1960,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 40s ease-in-out infinite' }}>
             Intention du jour
-            {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9 }}>◎</span>}
+            {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9, animation: 'seedPulse 3s ease-in-out infinite' }}>◎</span>}
           </p>
           <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, transition: 'color 0.2s ease', display: 'inline-block', transform: cycleSpin ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.38s ease, color 0.2s ease' }} title="Autre intention">↻</button>
         </div>
@@ -1999,7 +1999,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
                   outline: isToday && !active ? `1.5px solid ${arch.color}55` : 'none',
                   outlineOffset: '2px',
                 }} />
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 7.5, color: isToday ? `${arch.color}88` : 'rgba(255,255,255,0.16)', letterSpacing: '0.04em', lineHeight: 1 }}>{letter}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 7.5, color: isToday ? `${arch.color}88` : 'rgba(255,255,255,0.16)', letterSpacing: '0.04em', lineHeight: 1, animation: isToday ? 'phrasebreathe 14s ease-in-out infinite' : 'none' }}>{letter}</span>
               </div>
             )
           })}
@@ -2079,8 +2079,19 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [flash, setFlash] = useState(false)
+  const [celebrateIdx, setCelebrateIdx] = useState(null)
   const prevAllDone = useRef(false)
+  const prevCompleted = useRef([...completed])
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
+  useEffect(() => {
+    completed.forEach((done, i) => {
+      if (done && !prevCompleted.current[i]) {
+        setCelebrateIdx(i)
+        setTimeout(() => setCelebrateIdx(c => c === i ? null : c), 1200)
+      }
+    })
+    prevCompleted.current = [...completed]
+  }, [completed])
   const doneCount = completed.filter(Boolean).length
   const allDone = doneCount === arch.routines.length
 
@@ -2113,7 +2124,10 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
       {arch.routines.map((r, i) => {
         const done = completed[i]
         return (
-          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all 0.35s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.08}s` : '0s' }}>
+          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all 0.35s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.08}s` : '0s', position: 'relative', overflow: 'visible' }}>
+            {celebrateIdx === i && [0,1,2,3,4].map(j => (
+              <div key={j} style={{ position: 'absolute', top: 8, left: `${12 + j * 18}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${0.9 + j * 0.18}s ease-out ${j * 0.08}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 6px ${arch.color}99` }} />
+            ))}
             <button onClick={() => { haptic(done ? 6 : 18); onToggle(i) }} style={{ width: 27, height: 27, borderRadius: '50%', border: `1.5px solid ${done ? arch.color : 'rgba(255,255,255,0.22)'}`, background: done ? arch.color : 'transparent', flexShrink: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.28s ease', marginTop: 2, boxShadow: done ? `0 0 14px ${arch.shadow}` : 'none', transform: done ? 'scale(1.06)' : 'scale(1)', animation: done ? 'seedPulse 2.8s ease-in-out infinite' : 'none' }}>
               {done && <span style={{ fontSize: 11, color: 'white', animation: 'milestoneGlow 3.6s ease-in-out infinite' }}>✓</span>}
             </button>
