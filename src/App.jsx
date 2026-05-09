@@ -1465,7 +1465,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: `${arch.color}99`, margin: 0, fontStyle: 'italic', letterSpacing: '0.06em', opacity: 0, animation: 'fadeIn 1.0s ease 1.2s both, phrasebreathe 26s ease-in-out 3s infinite' }}>
             {arch.profil}
           </p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: '8px 0 0', opacity: 0, animation: 'fadeIn 1.0s ease 1.6s both' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: '8px 0 0', opacity: 0, animation: 'fadeIn 1.0s ease 1.6s both, phrasebreathe 30s ease-in-out 3s infinite' }}>
             Élément · {arch.element}
           </p>
         </div>
@@ -1909,7 +1909,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {/* ── Cocoon header ── */}
       <div style={{ textAlign: 'center', paddingBottom: 6 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', margin: '0 0 2px', textTransform: 'capitalize', textShadow: `0 0 20px ${arch.color}22`, animation: 'phrasebreathe 46s ease-in-out 2s infinite' }}>{greetingStr()}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.07em', margin: '0 0 18px', textTransform: 'capitalize' }}>{dateStr}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.07em', margin: '0 0 18px', textTransform: 'capitalize', animation: 'phrasebreathe 50s ease-in-out 3s infinite' }}>{dateStr}</p>
 
         {/* Presence ring wrapping the animal — tap for espace vrai */}
         <div style={{ position: 'relative', width: 130, height: 130, margin: '0 auto 16px' }}>
@@ -2313,7 +2313,7 @@ function BoutiqueScreen({ archetypeKey }) {
                 </div>
               </div>
             </div>
-            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.15 }}>{myCollection.name}</h2>
+            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.15, animation: 'phrasebreathe 28s ease-in-out infinite' }}>{myCollection.name}</h2>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 26s ease-in-out infinite' }}>{myCollection.subtitle}</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65 }}>{myCollection.desc}</p>
             <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
