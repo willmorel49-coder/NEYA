@@ -1937,7 +1937,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 4px', textShadow: `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)`, animation: 'phrasebreathe 28s ease-in-out 1s infinite' }}>{arch.profil}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}99`, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px', fontStyle: 'italic' }}>{arch.animal}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px' }}>Élément · {arch.element}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px', animation: 'phrasebreathe 36s ease-in-out 2s infinite' }}>Élément · {arch.element}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px' }}>{getPresenceLabel(presenceProgress, archetypeKey)}</p>
 
         {msg ? (
@@ -2130,7 +2130,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
         <div style={{ background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '20px 16px', textAlign: 'center', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: arch.color, margin: '0 0 4px' }}>✦ Routines complètes.</p>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.4)', margin: 0 }}>Ta constance est une force.</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.4)', margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite' }}>Ta constance est une force.</p>
           </div>
           {onOpenVrai && (
             <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite' }}>
@@ -2186,7 +2186,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
                 <span style={{ fontSize: 16, color: done ? arch.color : locked ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.42)', animation: (!done && !locked) ? `seedPulse ${3.4 + i * 0.6}s ease-in-out ${i * 0.5}s infinite` : 'none', textShadow: done ? `0 0 12px ${arch.color}66` : 'none' }}>{locked ? '◻' : q.icon}</span>
                 <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16.5, color: done ? arch.color : locked ? 'rgba(255,255,255,0.26)' : 'white', margin: 0, transition: 'color 0.3s ease' }}>{q.title}</p>
               </div>
-              {done && <span style={{ fontSize: 11, color: arch.color, flexShrink: 0, marginLeft: 8 }}>✓</span>}
+              {done && <span style={{ fontSize: 11, color: arch.color, flexShrink: 0, marginLeft: 8, animation: 'milestoneGlow 4s ease-in-out infinite' }}>✓</span>}
             </div>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: locked ? 'rgba(255,255,255,0.18)' : done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.78)', margin: '0 0 14px', lineHeight: 1.62 }}>
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
