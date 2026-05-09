@@ -1728,6 +1728,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       })()}
       <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}bg-vrai.png)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: `bgbreathe ${bgPeriod}s ease-in-out infinite` }} />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.52)' }} />
+      {typingDone && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '28%', background: `linear-gradient(to top, rgba(${arch.rgb},0.08) 0%, transparent 100%)`, pointerEvents: 'none', zIndex: 2, animation: 'fadeIn 3s ease forwards, worldglow 16s ease-in-out 4s infinite' }} />}
       <GrainFilter />
       {/* Halo de présence — chaleur colorée très subtile derrière le contenu central */}
       {(() => {
@@ -2012,6 +2013,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ position: 'relative', width: 130, height: 130, margin: '0 auto 16px' }}>
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 220, height: 220, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${Math.round(13 + presenceProgress * 28).toString(16).padStart(2,'0')} 0%, transparent 68%)`, animation: 'presencePulse 6s ease-in-out infinite', pointerEvents: 'none', zIndex: 0, transition: 'background 1.8s ease' }} />
           {presenceProgress > 0.3 && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 260, height: 260, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${Math.round(presenceProgress * 11).toString(16).padStart(2,'0')} 0%, transparent 58%)`, animation: 'presencePulse 9s ease-in-out 3s infinite', pointerEvents: 'none', zIndex: 0, transition: 'background 1.8s ease' }} />}
+          {presenceProgress > 0.6 && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 300, height: 300, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${Math.round(presenceProgress * 7).toString(16).padStart(2,'0')} 0%, transparent 48%)`, animation: 'presencePulse 13s ease-in-out 6s infinite', pointerEvents: 'none', zIndex: 0, transition: 'background 1.8s ease' }} />}
         <div
           onClick={() => { haptic([6, 80, 6]); setRingTap(true); setTimeout(() => setRingTap(false), 700); onOpenVrai() }}
           style={{ position: 'relative', width: 130, height: 130, cursor: 'pointer', zIndex: 1 }}
@@ -2115,8 +2117,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.26)', letterSpacing: '0.14em', margin: 0, animation: 'phrasebreathe 32s ease-in-out infinite' }}>{count} jour{count > 1 ? 's' : ''} cette semaine</p>
         })()}
         {totalDone > 0 && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: 'rgba(255,255,255,0.10)', letterSpacing: '0.12em', margin: 0, animation: 'phrasebreathe 40s ease-in-out 3s infinite' }}>
-            {totalDone} présence{totalDone > 1 ? 's' : ''} au total
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: totalDone >= 100 ? `${arch.color}55` : 'rgba(255,255,255,0.10)', letterSpacing: '0.12em', margin: 0, animation: totalDone >= 100 ? 'phrasebreathe 32s ease-in-out infinite, milestoneGlow 8s ease-in-out 4s infinite' : 'phrasebreathe 40s ease-in-out 3s infinite', transition: 'color 1s ease' }}>
+            {totalDone} présence{totalDone > 1 ? 's' : ''} au total{totalDone >= 100 ? ' ✦' : ''}
           </p>
         )}
       </div>
