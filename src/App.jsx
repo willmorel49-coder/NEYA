@@ -2094,7 +2094,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase', animation: 'phrasebreathe 18s ease-in-out infinite' }}>◈ Routines du jour</p>
-        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2 }}>Tes pratiques<br />quotidiennes</h2>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2, animation: 'phrasebreathe 30s ease-in-out 1s infinite' }}>Tes pratiques<br />quotidiennes</h2>
 
         {/* Barre de progression globale */}
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
@@ -2163,7 +2163,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
     <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase' }}>◇ Quêtes</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase', animation: 'phrasebreathe 18s ease-in-out infinite' }}>◇ Quêtes</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2 }}>Tes défis<br />bienveillants</h2>
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
           <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
@@ -2328,7 +2328,7 @@ function BoutiqueScreen({ archetypeKey }) {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
-        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Autres collections</span>
+        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite' }}>Autres collections</span>
         <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)' }} />
       </div>
 
