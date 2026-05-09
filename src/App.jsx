@@ -1659,9 +1659,24 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   const [showEncoreIci, setShowEncoreIci] = useState(false)
   const [showDeep, setShowDeep] = useState(false)
   const [typingDone, setTypingDone] = useState(false)
+  const [showSummary, setShowSummary] = useState(false)
+  const longPressTimer = useRef(null)
+  const longPressDetected = useRef(false)
   const intention = getDailyIntention(archetypeKey)
   const bgPeriod    = EVRAI_BG_PERIODS[archetypeKey]    || 28
   const ghostPeriod = EVRAI_GHOST_PERIODS[archetypeKey] || 36
+
+  const handlePointerDown = () => {
+    longPressDetected.current = false
+    longPressTimer.current = setTimeout(() => {
+      longPressDetected.current = true
+      haptic([2, 40, 2, 40, 2])
+      setShowSummary(true)
+      setTimeout(() => setShowSummary(false), 4000)
+    }, 800)
+  }
+  const handlePointerUp = () => clearTimeout(longPressTimer.current)
+  const handleClick = () => { if (!longPressDetected.current) onClose() }
 
   useEffect(() => {
     const t0 = setTimeout(() => haptic([3, 50, 3]), 800)
@@ -1677,7 +1692,23 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   }, [])
 
   return (
-    <div onClick={onClose} style={{ position: 'absolute', inset: 0, zIndex: 200, opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease', overflow: 'hidden' }}>
+    <div onClick={handleClick} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp} style={{ position: 'absolute', inset: 0, zIndex: 200, opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease', overflow: 'hidden' }}>
+      {showSummary && (() => {
+        const routinesDoneToday = loadRoutines().filter(Boolean).length
+        const quetesDoneNow = loadQuetes(archetypeKey).filter(Boolean).length
+        const streak = getCurrentStreak()
+        return (
+          <div style={{ position: 'absolute', inset: 0, zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,8,16,0.62)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', animation: 'fadeIn 0.5s ease both', pointerEvents: 'none' }}>
+            <div style={{ background: `rgba(${arch.rgb},0.12)`, border: `1px solid ${arch.color}44`, borderRadius: 18, padding: '28px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 280 }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 18s ease-in-out infinite' }}>Ton avancée</p>
+              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 20, color: 'white', margin: 0, animation: 'milestoneGlow 3s ease-in-out infinite' }}>{routinesDoneToday}/{arch.routines.length} routine{routinesDoneToday !== 1 ? 's' : ''}</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: `rgba(255,255,255,0.55)`, margin: 0 }}>{quetesDoneNow}/{arch.quetes.length} quête{quetesDoneNow !== 1 ? 's' : ''} accomplie{quetesDoneNow !== 1 ? 's' : ''}</p>
+              {streak >= 2 && <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: arch.color, margin: 0, opacity: 0.8 }}>{streak} jours d'affilée ✦</p>}
+              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `${arch.color}88`, margin: 0, fontStyle: 'italic', animation: 'phrasebreathe 22s ease-in-out infinite' }}>{arch.worldInsight}</p>
+            </div>
+          </div>
+        )
+      })()}
       <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}bg-vrai.png)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: `bgbreathe ${bgPeriod}s ease-in-out infinite` }} />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.52)' }} />
       <GrainFilter />
@@ -2257,7 +2288,12 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
       })}
 
       {allDone && (
-        <div style={{ background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '20px 16px', textAlign: 'center', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ position: 'relative', background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '20px 16px', textAlign: 'center', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 14, overflow: 'hidden' }}>
+          <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+            {[{x:8,y:40,r:1.6,dur:22,del:0},{x:48,y:15,r:1.4,dur:28,del:3.8},{x:90,y:55,r:1.8,dur:20,del:7.1},{x:26,y:78,r:1.2,dur:26,del:1.6},{x:68,y:28,r:2.0,dur:24,del:9.4}].map((m,i)=>(
+              <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.09, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+            ))}
+          </svg>
           <div>
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: arch.color, margin: '0 0 6px', animation: 'milestoneGlow 4s ease-in-out infinite' }}>✦ Toutes tes quêtes accomplies.</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.42)', margin: 0, animation: 'phrasebreathe 24s ease-in-out infinite' }}>Ta lumière grandit à chaque pas.</p>
