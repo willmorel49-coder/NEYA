@@ -1441,6 +1441,15 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
         }} />
       )}
 
+      {/* Ambient motes during reveal */}
+      {step >= 3 && (
+        <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 8 }}>
+          {[{x:12,y:20,r:2.0,dur:22,del:0},{x:88,y:16,r:1.5,dur:28,del:2.4},{x:8,y:72,r:2.4,dur:18,del:1.6},{x:90,y:68,r:1.8,dur:32,del:5.2},{x:50,y:92,r:2.2,dur:24,del:3.8},{x:72,y:10,r:1.6,dur:26,del:7.1}].map((m,i)=>(
+            <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.07, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+          ))}
+        </svg>
+      )}
+
       {/* The animal */}
       {step >= 3 && (
         <div style={{ position: 'relative', zIndex: 10, animation: 'patronusAnimal 2.4s ease forwards' }}>
@@ -1939,7 +1948,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <div style={{ position: 'absolute', inset: 0 }}>
             <PresenceRing progress={presenceProgress} color={arch.color} size={130} />
           </div>
-          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', pointerEvents: 'none', opacity: 0.15, zIndex: 2 }}>
+          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', pointerEvents: 'none', opacity: 0.06 + presenceProgress * 0.22, transition: 'opacity 1.6s ease', zIndex: 2 }}>
             <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'conic-gradient(transparent 0%, transparent 60%, rgba(255,255,255,0.9) 78%, transparent 84%, transparent 100%)', animation: 'ringshimmer 8s linear infinite', willChange: 'transform' }} />
           </div>
           {/* Soft glow center */}
@@ -2163,7 +2172,12 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
       })}
 
       {allDone && (
-        <div style={{ background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '20px 16px', textAlign: 'center', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ position: 'relative', background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '20px 16px', textAlign: 'center', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 14, overflow: 'hidden' }}>
+          <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+            {[{x:10,y:50,r:1.8,dur:20,del:0},{x:50,y:20,r:1.4,dur:26,del:3.4},{x:88,y:60,r:2.0,dur:22,del:6.8},{x:30,y:80,r:1.6,dur:24,del:1.8},{x:70,y:30,r:1.2,dur:28,del:9.2}].map((m,i)=>(
+              <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.09, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+            ))}
+          </svg>
           <div>
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: arch.color, margin: '0 0 4px', animation: 'milestoneGlow 4s ease-in-out infinite' }}>✦ Routines complètes.</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.4)', margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite' }}>Ta constance est une force.</p>
