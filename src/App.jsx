@@ -1012,6 +1012,7 @@ function QuizIntroScreen({ onStart }) {
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 28px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, textAlign: 'center' }}>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'absolute', width: 100, height: 100, borderRadius: '50%', border: '1px solid rgba(99,102,241,0.12)', animation: 'pulsering 6.5s ease-in-out infinite 1.8s' }} />
             <div style={{ position: 'absolute', width: 72, height: 72, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)', animation: 'compassbreathe 7s ease-in-out infinite' }} />
             <div style={{ animation: 'compassbreathe 7s ease-in-out infinite', display: 'flex' }}>
               <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
@@ -1592,6 +1593,13 @@ const PATIENCE_TEXTS = {
   lumiere:    'Rester, c\'est déjà beaucoup.',
 }
 
+const DEEP_TEXTS = {
+  resilience: 'Quelque chose en toi sait déjà ce qu\'il doit faire.',
+  presence:   'Tu habites vraiment cet instant. C\'est rare.',
+  sagesse:    'Dans ce silence prolongé, quelque chose se clarifie.',
+  lumiere:    'Ta lumière brille même quand tu ne la vois pas.',
+}
+
 const EVRAI_BG_PERIODS    = { resilience: 22, presence: 34, sagesse: 48, lumiere: 28 }
 const EVRAI_GHOST_PERIODS = { resilience: 24, presence: 38, sagesse: 54, lumiere: 30 }
 
@@ -1603,6 +1611,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   const [showAccompany, setShowAccompany] = useState(false)
   const [showPatience, setShowPatience] = useState(false)
   const [showEncoreIci, setShowEncoreIci] = useState(false)
+  const [showDeep, setShowDeep] = useState(false)
   const [typingDone, setTypingDone] = useState(false)
   const intention = getDailyIntention(archetypeKey)
   const bgPeriod    = EVRAI_BG_PERIODS[archetypeKey]    || 28
@@ -1617,7 +1626,8 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
     const t5 = setTimeout(() => haptic([2, 80, 2]), 12000)
     const t6 = setTimeout(() => setShowPatience(true), 30000)
     const t7 = setTimeout(() => setShowEncoreIci(true), 18000)
-    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); clearTimeout(t7) }
+    const t8 = setTimeout(() => { setShowDeep(true); haptic([1, 100, 1]) }, 90000)
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); clearTimeout(t7); clearTimeout(t8) }
   }, [])
 
   return (
@@ -1677,6 +1687,11 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         {showEncoreIci && (
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: `${arch.color}22`, letterSpacing: '0.28em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3.5s ease forwards', textShadow: `0 0 14px ${arch.color}18` }}>
             encore ici
+          </p>
+        )}
+        {showDeep && (
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.05em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 5s ease forwards', maxWidth: 280, lineHeight: 1.8, textAlign: 'center' }}>
+            {DEEP_TEXTS[archetypeKey]}
           </p>
         )}
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}44`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both, solbreathe 22s ease-in-out 5s infinite' }}>
@@ -2065,7 +2080,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
             </button>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease' }}>{r.title}</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : 'none' }}>{r.title}</p>
                 <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', flexShrink: 0, marginLeft: 8 }}>{r.duration}</span>
               </div>
               <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.62, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease' }}>{r.desc}</p>
