@@ -1282,7 +1282,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
             <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(24px, 6vw, 30px)', color: 'white', margin: 0, lineHeight: 1.3, textShadow: '0 2px 32px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.1)' }}>
               Ton guide intérieur<br />s'apprête à se révéler...
             </h1>
-            <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.14)', borderRadius: 1, margin: '0 auto' }} />
+            <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.14)', borderRadius: 1, margin: '0 auto', animation: 'worldglow 8s ease-in-out infinite' }} />
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.72, opacity: vis ? 1 : 0, transition: 'opacity 1.0s ease 0.4s' }}>
               Il est l'écho de ta lumière unique.<br />Es-tu prêt·e à le rencontrer ?
             </p>
@@ -1443,7 +1443,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
       {step >= 6 && (
         <button
           onClick={() => { haptic([20, 60, 20]); onDone() }}
-          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: 'rgba(255,255,255,0.08)', border: `1px solid ${arch.color}88`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', zIndex: 12, animation: 'fadeIn 1.0s ease forwards', boxShadow: `0 4px 28px ${arch.color}44` }}
+          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: 'rgba(255,255,255,0.08)', border: `1px solid ${arch.color}88`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', zIndex: 12, animation: `fadeIn 1.0s ease forwards, milestoneGlow 4.5s ease-in-out 1.2s infinite`, boxShadow: `0 4px 28px ${arch.color}44` }}
         >
           Découvrir mon profil
         </button>
@@ -1742,7 +1742,7 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
           <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '14px 0 11px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
             <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.25s ease' }}>
               <t.Icon active={active} color={color} />
-              {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85 }} />}
+              {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85, animation: 'seedPulse 3s ease-in-out infinite' }} />}
             </span>
             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.12em', color: active ? color : 'rgba(255,255,255,0.22)', transition: 'color 0.25s ease', textTransform: 'uppercase' }}>{t.label}</span>
             <div style={{ width: active ? 20 : 3, height: 1.5, borderRadius: 1, background: active ? color : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 8px ${color}, 0 0 16px ${color}66` : 'none' }} />
