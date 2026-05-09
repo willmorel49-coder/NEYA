@@ -759,7 +759,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
           opacity: vis ? 1 : 0,
           transition: 'opacity 0.7s ease',
           filter: `drop-shadow(0 0 24px ${arch.color}) drop-shadow(0 0 52px ${arch.color}55)`,
-          animation: vis ? 'animalfloat 18s ease-in-out infinite' : 'none',
+          animation: vis ? 'animalfloat 18s ease-in-out infinite, animalbreathe 28s ease-in-out infinite' : 'none',
         }}>
           <SpiritAnimal archetype={archetypeKey} size={130} />
         </div>
@@ -789,7 +789,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
           opacity: vis ? 1 : 0,
           transition: 'opacity 0.9s ease 0.4s',
           textShadow: `0 0 32px ${arch.shadow}`,
-          animation: vis ? 'phrasebreathe 26s ease-in-out 0.8s infinite' : 'none',
+          animation: vis ? 'phrasebreathe 26s ease-in-out 0.8s infinite, milestoneGlow 8s ease-in-out 2s infinite' : 'none',
         }}>
           {arch.animal}
         </p>
@@ -1049,7 +1049,7 @@ function QuizIntroScreen({ onStart }) {
             Prêt·e pour ton<br />exploration intérieure ?
           </h1>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 24s ease-in-out infinite' }}>~5 minutes · {QUESTIONS.length} questions</p>
-          <div style={{ width: 32, height: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 1, margin: '4px auto 0', opacity: item1 ? 1 : 0, transition: 'opacity 1.4s ease' }} />
+          <div style={{ width: 32, height: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 1, margin: '4px auto 0', opacity: item1 ? 1 : 0, transition: 'opacity 1.4s ease', animation: item1 ? 'worldglow 10s ease-in-out infinite' : 'none' }} />
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%' }}>
@@ -1490,7 +1490,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
       {step >= 6 && (
         <button
           onClick={() => { haptic([20, 60, 20]); onDone() }}
-          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: 'rgba(255,255,255,0.08)', border: `1px solid ${arch.color}88`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', zIndex: 12, animation: `fadeIn 1.0s ease forwards, milestoneGlow 4.5s ease-in-out 1.2s infinite`, boxShadow: `0 4px 28px ${arch.color}44` }}
+          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}88`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', zIndex: 12, animation: `fadeIn 1.0s ease forwards, milestoneGlow 4.5s ease-in-out 1.2s infinite`, boxShadow: `0 4px 28px ${arch.color}55` }}
         >
           Découvrir mon profil
         </button>
@@ -2186,7 +2186,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
       {arch.routines.map((r, i) => {
         const done = completed[i]
         return (
-          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all 0.35s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.08}s` : '0s', position: 'relative', overflow: 'visible' }}>
+          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all 0.35s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.08}s` : '0s', position: 'relative', overflow: 'visible', boxShadow: done ? `0 0 18px rgba(${arch.rgb},0.10), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
             {celebrateIdx === i && [0,1,2,3,4].map(j => (
               <div key={j} style={{ position: 'absolute', top: 8, left: `${12 + j * 18}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${0.9 + j * 0.18}s ease-out ${j * 0.08}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 6px ${arch.color}99` }} />
             ))}
@@ -2265,15 +2265,16 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
       {arch.quetes.map((q, i) => {
         const done = completed[i]
         const locked = i > 0 && !completed[i - 1]
+        const isNext = !done && !locked && (i === 0 || completed[i - 1])
         return (
-          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : locked ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : locked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', opacity: locked ? 0.35 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s', position: 'relative', overflow: 'visible' }}>
+          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : locked ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : locked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', opacity: locked ? 0.35 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s', position: 'relative', overflow: 'visible', boxShadow: done ? `0 0 20px rgba(${arch.rgb},0.12), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
             {celebrateIdx === i && [0,1,2,3,4,5].map(j => (
               <div key={j} style={{ position: 'absolute', top: 10, left: `${8 + j * 16}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.0 + j * 0.2}s ease-out ${j * 0.07}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 8px ${arch.color}cc` }} />
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 16, color: done ? arch.color : locked ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.42)', animation: (!done && !locked) ? `seedPulse ${3.4 + i * 0.6}s ease-in-out ${i * 0.5}s infinite` : 'none', textShadow: done ? `0 0 12px ${arch.color}66` : 'none' }}>{locked ? '◻' : q.icon}</span>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16.5, color: done ? arch.color : locked ? 'rgba(255,255,255,0.26)' : 'white', margin: 0, transition: 'color 0.3s ease', animation: done ? 'milestoneGlow 4.6s ease-in-out infinite' : 'none' }}>{q.title}</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16.5, color: done ? arch.color : locked ? 'rgba(255,255,255,0.26)' : 'white', margin: 0, transition: 'color 0.3s ease', animation: done ? 'milestoneGlow 4.6s ease-in-out infinite' : isNext ? 'phrasebreathe 20s ease-in-out infinite' : 'none' }}>{q.title}</p>
               </div>
               {done && <span style={{ fontSize: 11, color: arch.color, flexShrink: 0, marginLeft: 8, animation: 'milestoneGlow 4s ease-in-out infinite' }}>✓</span>}
             </div>
@@ -2281,7 +2282,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
             </p>
             {!done && !locked && (
-              <button onClick={() => handleComplete(i)} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}66`, borderRadius: 10, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.18em', color: arch.color, textTransform: 'uppercase', boxShadow: `0 2px 16px rgba(${arch.rgb},0.20), 0 0 0 1px ${arch.color}22`, animation: 'milestoneGlow 5s ease-in-out infinite' }}>
+              <button onClick={() => handleComplete(i)} style={{ width: '100%', padding: '12px 0', background: isNext ? `rgba(${arch.rgb},0.20)` : `rgba(${arch.rgb},0.14)`, border: `1px solid ${isNext ? arch.color + '88' : arch.color + '66'}`, borderRadius: 10, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.18em', color: arch.color, textTransform: 'uppercase', boxShadow: isNext ? `0 4px 24px rgba(${arch.rgb},0.28), 0 0 0 1px ${arch.color}33` : `0 2px 16px rgba(${arch.rgb},0.20), 0 0 0 1px ${arch.color}22`, animation: isNext ? 'milestoneGlow 3.8s ease-in-out infinite' : 'milestoneGlow 6s ease-in-out infinite' }}>
                 Marquer accomplie
               </button>
             )}
