@@ -817,6 +817,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
           opacity: vis ? 1 : 0,
           transition: 'opacity 1.1s ease 0.8s',
           animation: vis ? 'phrasebreathe 30s ease-in-out 1.2s infinite' : 'none',
+          textShadow: vis ? `0 0 14px ${arch.color}44` : 'none',
         }}>
           {whisper}
         </p>
@@ -1616,7 +1617,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               {arch.worldInsight && (
                 <>
                   <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 14s ease-in-out infinite' }} />
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `${arch.color}77`, letterSpacing: '0.06em', margin: '0 4px', lineHeight: 1.75, fontStyle: 'italic', textAlign: 'center', animation: 'phrasebreathe 20s ease-in-out infinite' }}>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `${arch.color}77`, letterSpacing: '0.06em', margin: '0 4px', lineHeight: 1.75, fontStyle: 'italic', textAlign: 'center', animation: 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 9s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33` }}>
                     {arch.worldInsight}
                   </p>
                   <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 14s ease-in-out 7s infinite' }} />
@@ -1638,7 +1639,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
           )}
         </div>
 
-        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : `rgba(${arch.rgb},0.14)`, border: phase === 2 ? 'none' : `1px solid ${arch.color}66`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: phase === 2 ? 500 : 400, letterSpacing: '0.2em', color: phase === 2 ? '#050810' : arch.color, textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : `0 2px 18px rgba(${arch.rgb},0.22)`, transition: 'all 0.45s ease', animation: 'milestoneGlow 5s ease-in-out infinite' }}>
+        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : `rgba(${arch.rgb},0.14)`, border: phase === 2 ? 'none' : `1px solid ${arch.color}66`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: phase === 2 ? 500 : 400, letterSpacing: '0.2em', color: phase === 2 ? '#050810' : arch.color, textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : (phase === 1 && forcesShown === arch.forces.length) ? `0 4px 36px rgba(${arch.rgb},0.42), 0 0 60px ${arch.color}22` : `0 2px 18px rgba(${arch.rgb},0.22)`, transition: 'all 0.45s ease', animation: (phase === 1 && forcesShown === arch.forces.length) ? 'milestoneGlow 3.5s ease-in-out infinite' : 'milestoneGlow 5s ease-in-out infinite' }}>
           {['', 'Lire mon message', 'Entrer dans mon espace'][phase]}
         </button>
       </div>
@@ -2154,7 +2155,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 8, color: s.count === s.total ? `${arch.color}88` : 'rgba(255,255,255,0.14)', letterSpacing: '0.04em', transition: 'color 0.4s ease', animation: s.count === s.total ? 'seedPulse 3.2s ease-in-out infinite' : 'none' }}>✦</span>
             </div>
             {s.nextHint && s.count < s.total && (
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.04em', lineHeight: 1.3, marginTop: -2, animation: 'phrasebreathe 36s ease-in-out infinite' }}>{s.nextHint}</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: s.count > 0 ? `${arch.color}55` : 'rgba(255,255,255,0.22)', letterSpacing: '0.04em', lineHeight: 1.3, marginTop: -2, animation: s.count > 0 ? 'phrasebreathe 26s ease-in-out infinite, seedPulse 4.5s ease-in-out 1.5s infinite' : 'phrasebreathe 36s ease-in-out infinite', transition: 'color 0.5s ease', textShadow: s.count > 0 ? `0 0 8px ${arch.color}33` : 'none' }}>{s.nextHint}</span>
             )}
           </div>
         ))}
@@ -2256,7 +2257,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : 'none', animation: done ? 'milestoneGlow 4.8s ease-in-out infinite' : 'none' }}>{r.title}</p>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', flexShrink: 0, marginLeft: 8, animation: 'phrasebreathe 34s ease-in-out infinite' }}>{r.duration}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: done ? `${arch.color}77` : 'rgba(255,255,255,0.22)', flexShrink: 0, marginLeft: 8, animation: done ? 'seedPulse 3.5s ease-in-out infinite' : 'phrasebreathe 34s ease-in-out infinite', transition: 'color 0.4s ease' }}>{r.duration}</span>
               </div>
               <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.62, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease', animation: done ? 'none' : 'phrasebreathe 44s ease-in-out infinite' }}>{r.desc}</p>
             </div>
@@ -2340,7 +2341,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
               </div>
               {done && <span style={{ fontSize: 11, color: arch.color, flexShrink: 0, marginLeft: 8, animation: 'milestoneGlow 4s ease-in-out infinite' }}>✓</span>}
             </div>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: locked ? 'rgba(255,255,255,0.18)' : done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.78)', margin: '0 0 14px', lineHeight: 1.62, animation: (!done && !locked) ? 'phrasebreathe 46s ease-in-out infinite' : 'none' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: locked ? 'rgba(255,255,255,0.18)' : done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.78)', margin: '0 0 14px', lineHeight: 1.62, animation: (!done && !locked) ? 'phrasebreathe 46s ease-in-out infinite' : 'none', textShadow: isNext ? `0 0 10px ${arch.color}22` : 'none' }}>
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
             </p>
             {!done && !locked && (
@@ -2525,7 +2526,7 @@ function BoutiqueScreen({ archetypeKey }) {
         <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 20s ease-in-out 10s infinite' }} />
       </div>
       <div style={{ textAlign: 'center', marginTop: 4 }}>
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 10, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.18em', margin: '0 0 4px', textTransform: 'uppercase', animation: 'phrasebreathe 20s ease-in-out infinite' }}>ÇA VA? × NÉYA</p>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 10, color: `${arch.color}33`, letterSpacing: '0.18em', margin: '0 0 4px', textTransform: 'uppercase', animation: 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 14s ease-in-out 6s infinite', textShadow: `0 0 10px ${arch.color}18` }}>ÇA VA? × NÉYA</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.12)', letterSpacing: '0.06em', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 28s ease-in-out infinite' }}>
           Chaque vêtement porte une intention.
         </p>
