@@ -1689,7 +1689,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
               style={{ opacity: 0.72, filter: `drop-shadow(0 0 20px ${arch.color}88) drop-shadow(0 0 40px ${arch.color}33)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 24s ease-in-out infinite' }}
             />
           </div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, opacity: 0.8, textShadow: `0 0 16px ${arch.color}44` }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, opacity: 0.8, textShadow: `0 0 16px ${arch.color}44`, animation: 'phrasebreathe 30s ease-in-out infinite' }}>
             {arch.animal}
           </p>
         </div>
@@ -1958,7 +1958,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <div style={{ position: 'relative', background: `linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}33`, borderRadius: 14, padding: '20px 18px', minHeight: 92, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', left: 0, top: '18%', bottom: '18%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}bb, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s ease-in-out infinite' }} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 40s ease-in-out infinite' }}>
             Intention du jour
             {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9 }}>◎</span>}
           </p>
@@ -2122,7 +2122,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
                 <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : 'none', animation: done ? 'milestoneGlow 4.8s ease-in-out infinite' : 'none' }}>{r.title}</p>
                 <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', flexShrink: 0, marginLeft: 8 }}>{r.duration}</span>
               </div>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.62, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease' }}>{r.desc}</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.62, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease', animation: done ? 'none' : 'phrasebreathe 44s ease-in-out infinite' }}>{r.desc}</p>
             </div>
           </div>
         )
@@ -2186,11 +2186,11 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 16, color: done ? arch.color : locked ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.42)', animation: (!done && !locked) ? `seedPulse ${3.4 + i * 0.6}s ease-in-out ${i * 0.5}s infinite` : 'none', textShadow: done ? `0 0 12px ${arch.color}66` : 'none' }}>{locked ? '◻' : q.icon}</span>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16.5, color: done ? arch.color : locked ? 'rgba(255,255,255,0.26)' : 'white', margin: 0, transition: 'color 0.3s ease' }}>{q.title}</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16.5, color: done ? arch.color : locked ? 'rgba(255,255,255,0.26)' : 'white', margin: 0, transition: 'color 0.3s ease', animation: done ? 'milestoneGlow 4.6s ease-in-out infinite' : 'none' }}>{q.title}</p>
               </div>
               {done && <span style={{ fontSize: 11, color: arch.color, flexShrink: 0, marginLeft: 8, animation: 'milestoneGlow 4s ease-in-out infinite' }}>✓</span>}
             </div>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: locked ? 'rgba(255,255,255,0.18)' : done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.78)', margin: '0 0 14px', lineHeight: 1.62 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: locked ? 'rgba(255,255,255,0.18)' : done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.78)', margin: '0 0 14px', lineHeight: 1.62, animation: (!done && !locked) ? 'phrasebreathe 46s ease-in-out infinite' : 'none' }}>
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
             </p>
             {!done && !locked && (
@@ -2351,7 +2351,7 @@ function BoutiqueScreen({ archetypeKey }) {
                   <div style={{ opacity: 0.45, filter: `drop-shadow(0 0 10px ${col.color}66)`, animation: 'animalfloat 20s ease-in-out infinite', flexShrink: 0 }}>
                     <SpiritAnimal archetype={col.key} size={40} />
                   </div>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65 }}>{col.desc}</p>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 38s ease-in-out infinite' }}>{col.desc}</p>
                 </div>
                 <button onClick={(e) => { e.stopPropagation(); handleDiscover() }} style={{ width: '100%', marginTop: 12, padding: '13px 0', background: `rgba(${col.rgb},0.18)`, border: `1px solid ${col.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.2em', color: col.color, textTransform: 'uppercase' }}>
                   Découvrir
