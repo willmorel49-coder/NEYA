@@ -1545,7 +1545,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
                 {arch.forces.map((f, i) => (
-                  <div key={i} style={{ background: `radial-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid ${arch.color}55`, borderRadius: 12, padding: '20px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, animation: forcesShown > i ? 'forcespring 0.5s ease forwards' : 'none', animationDelay: forcesShown > i ? `${i * 120}ms` : '0ms', opacity: forcesShown > i ? 1 : 0 }}>
+                  <div key={i} style={{ background: forcesShown === arch.forces.length ? `radial-gradient(135deg, rgba(${arch.rgb},0.11) 0%, rgba(255,255,255,0.05) 100%)` : `radial-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid ${forcesShown === arch.forces.length ? arch.color + '77' : arch.color + '55'}`, borderRadius: 12, padding: '20px 12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, animation: forcesShown > i ? `forcespring 0.5s ease forwards${forcesShown === arch.forces.length ? `, presencePulse ${5 + i * 1.2}s ease-in-out ${0.5 + i * 0.3}s infinite` : ''}` : 'none', animationDelay: forcesShown > i ? `${i * 120}ms` : '0ms', opacity: forcesShown > i ? 1 : 0, transition: 'background 0.6s ease, border-color 0.6s ease' }}>
                     <span style={{ fontSize: 13, color: arch.color, textShadow: `0 0 10px ${arch.color}88`, animation: forcesShown > i ? `seedPulse ${2.8 + i * 0.4}s ease-in-out ${i * 0.3}s infinite` : 'none' }}>◈</span>
                     <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'white', textAlign: 'center', lineHeight: 1.3, animation: forcesShown > i ? `phrasebreathe ${34 + i * 4}s ease-in-out ${i * 1.2}s infinite` : 'none' }}>{f}</span>
                   </div>
@@ -2011,7 +2011,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
                   background: active ? arch.color : 'rgba(255,255,255,0.07)',
                   boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : isToday ? `0 0 0 1.5px ${arch.color}66` : 'none',
                   transition: 'all 0.5s ease',
-                  animation: active ? 'seedPulse 3.5s ease-in-out infinite' : 'none',
+                  animation: active ? 'seedPulse 3.5s ease-in-out infinite' : isToday ? 'presencePulse 4.2s ease-in-out infinite' : 'none',
                   animationDelay: `${i * 0.42}s`,
                   outline: isToday && !active ? `1.5px solid ${arch.color}55` : 'none',
                   outlineOffset: '2px',
@@ -2346,7 +2346,7 @@ function BoutiqueScreen({ archetypeKey }) {
                 <div style={{ position: 'absolute', inset: 0 }}>
                   <PresenceRing progress={1} color={myCollection.color} size={58} />
                 </div>
-                <div style={{ opacity: 0.56, filter: `drop-shadow(0 0 12px ${myCollection.color}88)`, animation: 'animalfloat 18s ease-in-out infinite', position: 'relative' }}>
+                <div style={{ opacity: 0.56, filter: `drop-shadow(0 0 12px ${myCollection.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 28s ease-in-out infinite', position: 'relative' }}>
                   <SpiritAnimal archetype={archetypeKey} size={38} />
                 </div>
               </div>
