@@ -1244,14 +1244,14 @@ function QuizScreen({ onComplete }) {
           {q.choices.map((c, i) => {
             const sel = selected === c.type
             return (
-              <button key={i} onClick={() => { haptic(sel ? 6 : 12); setSelected(c.type); if (!sel) { setRippleIdx(i); setTimeout(() => setRippleIdx(null), 620) } }} style={{ position: 'relative', overflow: 'hidden', width: '100%', padding: '14px 17px', background: sel ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transform: sel ? 'scale(1.014)' : 'scale(1)', boxShadow: sel ? '0 4px 28px rgba(255,255,255,0.09), inset 0 0 0 1px rgba(255,255,255,0.18)' : 'none', opacity: choicesVis ? 1 : 0, translate: choicesVis ? '0 0px' : '0 10px', transition: `background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease, opacity 0.45s ease ${i * 55}ms, translate 0.45s ease ${i * 55}ms` }}>
+              <button key={i} onClick={() => { haptic(sel ? 6 : 12); setSelected(c.type); if (!sel) { setRippleIdx(i); setTimeout(() => setRippleIdx(null), 620) } }} style={{ position: 'relative', overflow: 'hidden', width: '100%', padding: '14px 17px', background: sel ? `rgba(${ARCHETYPES[c.type]?.rgb || '255,255,255'},0.12)` : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? (ARCHETYPES[c.type]?.color + 'aa' || 'rgba(255,255,255,0.32)') : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transform: sel ? 'scale(1.014)' : 'scale(1)', boxShadow: sel ? `0 4px 28px rgba(${ARCHETYPES[c.type]?.rgb || '255,255,255'},0.14), inset 0 0 0 1px ${ARCHETYPES[c.type]?.color + '44' || 'rgba(255,255,255,0.18)'}` : 'none', opacity: choicesVis ? 1 : 0, translate: choicesVis ? '0 0px' : '0 10px', transition: `background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease, opacity 0.45s ease ${i * 55}ms, translate 0.45s ease ${i * 55}ms` }}>
                 {rippleIdx === i && (
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
                     <div style={{ width: 40, height: 40, borderRadius: '50%', background: ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.4)', animation: 'choiceripple 0.6s ease-out forwards' }} />
                   </div>
                 )}
                 <ChoiceIcon type={c.type} active={sel} />
-                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease', animation: sel ? 'phrasebreathe 16s ease-in-out infinite' : 'none' }}>{c.text}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? (ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.96)') : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease', animation: sel ? 'phrasebreathe 16s ease-in-out infinite' : 'none' }}>{c.text}</span>
               </button>
             )
           })}
@@ -1296,7 +1296,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
             <div style={{ position: 'absolute', inset: -22, borderRadius: '50%', border: `1px solid ${arch ? arch.color + '33' : 'rgba(255,255,255,0.07)'}`, animation: 'pulsering 4.8s ease-in-out infinite 1.6s' }} />
             <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: `1px solid ${arch ? arch.color + '55' : 'rgba(255,255,255,0.14)'}`, animation: 'pulsering 3.4s ease-in-out infinite' }} />
             <div style={{ width: 76, height: 76, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
-              <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 68%)', animation: 'presencePulse 3.2s ease-in-out infinite' }} />
+              <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', background: `radial-gradient(circle, ${arch ? `rgba(${arch.rgb},0.20)` : 'rgba(99,102,241,0.18)'} 0%, transparent 68%)`, animation: 'presencePulse 3.2s ease-in-out infinite' }} />
               <SpiritAnimal archetype={archetypeKey || 'presence'} size={40} style={{ opacity: 0.78, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', position: 'relative' }} />
             </div>
           </div>
@@ -1552,7 +1552,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   <div style={{ position: 'absolute', inset: -16, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}18 0%, transparent 70%)`, animation: 'presencePulse 4s ease-in-out infinite' }} />
                   <SpiritAnimal archetype={archetypeKey} size={60} style={{ opacity: 0.70, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', willChange: 'transform' }} />
                 </div>
-                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textShadow: `0 0 28px ${arch.color}33`, animation: 'phrasebreathe 32s ease-in-out infinite' }}>Tes forces naturelles</h2>
+                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textShadow: `0 0 28px ${arch.color}33`, animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 32s ease-in-out infinite', transition: 'animation 0.4s ease' }}>Tes forces naturelles</h2>
                 <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px', animation: 'worldglow 8s ease-in-out infinite' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
@@ -1775,7 +1775,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           </p>
         )}
         {showEncoreIci && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: `${arch.color}22`, letterSpacing: '0.28em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3.5s ease forwards, phrasebreathe 38s ease-in-out 4s infinite', textShadow: `0 0 14px ${arch.color}18` }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: typingDone ? `${arch.color}44` : `${arch.color}22`, letterSpacing: '0.28em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3.5s ease forwards, phrasebreathe 38s ease-in-out 4s infinite', textShadow: typingDone ? `0 0 22px ${arch.color}44` : `0 0 14px ${arch.color}18`, transition: 'color 1.8s ease, text-shadow 1.8s ease' }}>
             encore ici
           </p>
         )}
@@ -2030,6 +2030,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {/* ── Graines de présence (7 jours) ── */}
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 22s ease-in-out 6s infinite' }} />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
           {days > 0 && (
@@ -2078,6 +2079,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {/* ── Progression du jour ── */}
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 18s ease-in-out infinite' }} />
       <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '2px 0 0', textTransform: 'uppercase', animation: 'phrasebreathe 24s ease-in-out infinite' }}>Aujourd'hui</p>
       <div style={{ display: 'flex', gap: 10 }}>
         {[
@@ -2175,7 +2177,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
           <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${(doneCount / arch.routines.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: allDone ? `0 0 14px ${arch.color}cc, 0 0 28px ${arch.color}44` : doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : 'none' }} />
           </div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease', textShadow: allDone ? `0 0 14px ${arch.color}88` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : 'none' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease', textShadow: allDone ? `0 0 14px ${arch.color}88` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : doneCount > 0 ? 'phrasebreathe 28s ease-in-out infinite' : 'none' }}>
             {allDone ? '✦ Toutes accomplies' : `${doneCount} / ${arch.routines.length} complétées`}
           </p>
         </div>
@@ -2254,7 +2256,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
           <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${(doneCount / arch.quetes.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: allDone ? `0 0 14px ${arch.color}cc, 0 0 28px ${arch.color}44` : doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : 'none' }} />
           </div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease', textShadow: allDone ? `0 0 14px ${arch.color}88` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : 'none' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease', textShadow: allDone ? `0 0 14px ${arch.color}88` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : doneCount > 0 ? 'phrasebreathe 28s ease-in-out infinite' : 'none' }}>
             {allDone ? '✦ Quêtes accomplies' : `${doneCount} / ${arch.quetes.length} accomplies`}
           </p>
         </div>
@@ -2438,7 +2440,7 @@ function BoutiqueScreen({ archetypeKey }) {
             {expandedKey === col.key && (
               <div style={{ animation: 'tabslideIn 0.25s ease-out both' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ opacity: 0.45, filter: `drop-shadow(0 0 10px ${col.color}66)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 36s ease-in-out infinite', flexShrink: 0 }}>
+                  <div style={{ opacity: 0.45, filter: `drop-shadow(0 0 10px ${col.color}66)`, animation: 'forcespring 0.5s ease both, animalfloat 20s ease-in-out 0.5s infinite, animalbreathe 36s ease-in-out infinite', flexShrink: 0 }}>
                     <SpiritAnimal archetype={col.key} size={40} />
                   </div>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 38s ease-in-out infinite' }}>{col.desc}</p>
