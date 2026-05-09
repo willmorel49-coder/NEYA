@@ -2114,7 +2114,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
         const done = completed[i]
         return (
           <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all 0.35s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.08}s` : '0s' }}>
-            <button onClick={() => { haptic(done ? 6 : 18); onToggle(i) }} style={{ width: 27, height: 27, borderRadius: '50%', border: `1.5px solid ${done ? arch.color : 'rgba(255,255,255,0.22)'}`, background: done ? arch.color : 'transparent', flexShrink: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.28s ease', marginTop: 2, boxShadow: done ? `0 0 14px ${arch.shadow}` : 'none', transform: done ? 'scale(1.06)' : 'scale(1)' }}>
+            <button onClick={() => { haptic(done ? 6 : 18); onToggle(i) }} style={{ width: 27, height: 27, borderRadius: '50%', border: `1.5px solid ${done ? arch.color : 'rgba(255,255,255,0.22)'}`, background: done ? arch.color : 'transparent', flexShrink: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.28s ease', marginTop: 2, boxShadow: done ? `0 0 14px ${arch.shadow}` : 'none', transform: done ? 'scale(1.06)' : 'scale(1)', animation: done ? 'seedPulse 2.8s ease-in-out infinite' : 'none' }}>
               {done && <span style={{ fontSize: 11, color: 'white' }}>✓</span>}
             </button>
             <div style={{ flex: 1 }}>
