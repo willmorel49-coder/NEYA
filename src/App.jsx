@@ -1455,13 +1455,13 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
       {/* Text reveal */}
       {step >= 5 && (
         <div style={{ position: 'absolute', bottom: '27%', textAlign: 'center', zIndex: 12 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.34em', textTransform: 'uppercase', margin: '0 0 12px', opacity: 0, animation: 'fadeIn 0.8s ease 0.4s both' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.34em', textTransform: 'uppercase', margin: '0 0 12px', opacity: 0, animation: 'fadeIn 0.8s ease 0.4s both, phrasebreathe 22s ease-in-out 2s infinite' }}>
             Ton animal guide
           </p>
           <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 6vw, 28px)', color: 'white', margin: '0 0 7px', textShadow: `0 0 48px ${arch.shadow}, 0 0 24px rgba(255,255,255,0.4)`, opacity: 0, animation: 'fadeIn 1.0s ease 0.8s both' }}>
             {arch.animal}
           </p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: `${arch.color}99`, margin: 0, fontStyle: 'italic', letterSpacing: '0.06em', opacity: 0, animation: 'fadeIn 1.0s ease 1.2s both' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: `${arch.color}99`, margin: 0, fontStyle: 'italic', letterSpacing: '0.06em', opacity: 0, animation: 'fadeIn 1.0s ease 1.2s both, phrasebreathe 26s ease-in-out 3s infinite' }}>
             {arch.profil}
           </p>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: '8px 0 0', opacity: 0, animation: 'fadeIn 1.0s ease 1.6s both' }}>
@@ -2204,7 +2204,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
         <div style={{ background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '20px 16px', textAlign: 'center', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: arch.color, margin: '0 0 6px', animation: 'milestoneGlow 4s ease-in-out infinite' }}>✦ Toutes tes quêtes accomplies.</p>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.42)', margin: 0 }}>Ta lumière grandit à chaque pas.</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.42)', margin: 0, animation: 'phrasebreathe 24s ease-in-out infinite' }}>Ta lumière grandit à chaque pas.</p>
           </div>
           {onOpenVrai && (
             <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite' }}>
