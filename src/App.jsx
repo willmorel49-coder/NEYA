@@ -1044,7 +1044,7 @@ function QuizIntroScreen({ onStart }) {
               </svg>
             </div>
           </div>
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', lineHeight: 1.32, margin: 0 }}>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', lineHeight: 1.32, margin: 0, animation: vis ? 'phrasebreathe 38s ease-in-out 1s infinite' : 'none' }}>
             Prêt·e pour ton<br />exploration intérieure ?
           </h1>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 24s ease-in-out infinite' }}>~5 minutes · {QUESTIONS.length} questions</p>
@@ -2341,10 +2341,10 @@ function BoutiqueScreen({ archetypeKey }) {
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.65)' }} />
           <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: expandedKey === col.key ? 12 : 6 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'white', margin: 0 }}>{col.name}</h3>
+              <h3 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'white', margin: 0, animation: 'phrasebreathe 30s ease-in-out infinite' }}>{col.name}</h3>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: col.color }}>{expandedKey === col.key ? '▲' : '▼'}</span>
             </div>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase' }}>{col.subtitle}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 26s ease-in-out infinite' }}>{col.subtitle}</p>
             {expandedKey === col.key && (
               <div style={{ animation: 'tabslideIn 0.25s ease-out both' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
