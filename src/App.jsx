@@ -805,6 +805,23 @@ function ReturningScreen({ archetypeKey, onDone }) {
         }}>
           {whisper}
         </p>
+        {/* worldInsight ultra-faint */}
+        <p style={{
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 300,
+          fontSize: 9.5,
+          color: `${arch.color}33`,
+          letterSpacing: '0.05em',
+          margin: 0,
+          fontStyle: 'italic',
+          maxWidth: 240,
+          textAlign: 'center',
+          lineHeight: 1.7,
+          opacity: vis ? 1 : 0,
+          transition: 'opacity 1.4s ease 1.1s',
+        }}>
+          {arch.worldInsight}
+        </p>
       </div>
     </BgScreen>
   )
@@ -1204,7 +1221,7 @@ function QuizScreen({ onComplete }) {
       )}
 
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.07)', zIndex: 10 }}>
-        <div style={{ height: '100%', background: `linear-gradient(90deg, ${(WORLD_TINTS[q.bg] || 'rgba(99,102,241,0.7)').replace(/[\d.]+\)$/, '0.85)')}, rgba(255,255,255,0.55))`, filter: 'blur(0.4px)', width: `${progress * 100}%`, transition: 'width 0.5s ease, background 0.6s ease' }} />
+        <div style={{ height: '100%', background: `linear-gradient(90deg, ${(WORLD_TINTS[q.bg] || 'rgba(99,102,241,0.7)').replace(/[\d.]+\)$/, '0.85)')}, rgba(255,255,255,0.55))`, filter: 'blur(0.4px)', width: `${progress * 100}%`, transition: 'width 0.5s ease, background 0.6s ease', boxShadow: progress >= 0.95 && selected ? `0 0 12px rgba(255,255,255,0.7)` : 'none' }} />
       </div>
 
       <div style={{ position: 'relative', zIndex: 1, padding: '50px 24px 36px', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', opacity: contentVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
@@ -2326,17 +2343,17 @@ function BoutiqueScreen({ archetypeKey }) {
             </div>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase' }}>{col.subtitle}</p>
             {expandedKey === col.key && (
-              <>
+              <div style={{ animation: 'tabslideIn 0.25s ease-out both' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                   <div style={{ opacity: 0.45, filter: `drop-shadow(0 0 10px ${col.color}66)`, animation: 'animalfloat 20s ease-in-out infinite', flexShrink: 0 }}>
                     <SpiritAnimal archetype={col.key} size={40} />
                   </div>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65 }}>{col.desc}</p>
                 </div>
-                <button onClick={(e) => { e.stopPropagation(); handleDiscover() }} style={{ width: '100%', padding: '13px 0', background: `rgba(${col.rgb},0.18)`, border: `1px solid ${col.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.2em', color: col.color, textTransform: 'uppercase' }}>
+                <button onClick={(e) => { e.stopPropagation(); handleDiscover() }} style={{ width: '100%', marginTop: 12, padding: '13px 0', background: `rgba(${col.rgb},0.18)`, border: `1px solid ${col.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.2em', color: col.color, textTransform: 'uppercase' }}>
                   Découvrir
                 </button>
-              </>
+              </div>
             )}
           </div>
         </div>
