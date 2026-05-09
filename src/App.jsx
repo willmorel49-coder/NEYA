@@ -1062,7 +1062,7 @@ function QuizIntroScreen({ onStart }) {
               Pas de bonne ou de mauvaise réponse — réponds avec ce qui résonne en toi.
             </p>
           </div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.36)', textAlign: 'center', lineHeight: 1.72, margin: '4px 0 0', opacity: foot ? 1 : 0, transition: 'opacity 1s ease' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.36)', textAlign: 'center', lineHeight: 1.72, margin: '4px 0 0', opacity: foot ? 1 : 0, transition: 'opacity 1s ease', animation: foot ? 'phrasebreathe 26s ease-in-out infinite' : 'none' }}>
             Chaque réponse t'aidera à mieux te connaître<br />et à révéler ton chemin intérieur.
           </p>
         </div>
@@ -1573,8 +1573,8 @@ function ResultScreen({ archetypeKey, onContinue }) {
 
               {/* Intention aperçu */}
               <div style={{ background: `rgba(${arch.rgb},0.07)`, border: `1px solid ${arch.color}33`, borderRadius: 12, padding: '16px 18px' }}>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 9px', opacity: 0.8 }}>Ton intention du jour</p>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>"{arch.intentions[0]}"</p>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 9px', opacity: 0.8, animation: 'phrasebreathe 22s ease-in-out infinite' }}>Ton intention du jour</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.7, fontStyle: 'italic', animation: 'phrasebreathe 28s ease-in-out infinite' }}>"{arch.intentions[0]}"</p>
               </div>
 
               {/* World insight */}
