@@ -1506,7 +1506,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
       {step >= 6 && (
         <button
           onClick={() => { haptic([20, 60, 20]); onDone() }}
-          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: `rgba(${arch.rgb},0.18)`, border: `1px solid ${arch.color}99`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', zIndex: 12, animation: `fadeIn 1.0s ease forwards, milestoneGlow 4.5s ease-in-out 1.2s infinite`, boxShadow: `0 4px 32px ${arch.color}66, 0 0 60px ${arch.color}22, inset 0 0 0 1px ${arch.color}22` }}
+          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: `rgba(${arch.rgb},0.18)`, border: `1px solid ${arch.color}99`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', zIndex: 12, animation: `fadeIn 1.0s ease forwards, milestoneGlow 4.5s ease-in-out 1.2s infinite`, boxShadow: `0 4px 32px ${arch.color}66, 0 0 60px ${arch.color}22, inset 0 0 0 1px ${arch.color}22`, textShadow: `0 0 16px ${arch.color}66` }}
         >
           Découvrir mon profil
         </button>
@@ -1871,7 +1871,7 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
     { key: 'boutique', label: 'Boutique', Icon: NavIconBoutique },
   ]
   return (
-    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.80) 0%, rgba(5,8,16,0.95) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 -8px 32px rgba(5,8,16,0.6)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.80) 0%, rgba(5,8,16,0.95) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: `1px solid ${color}18`, boxShadow: '0 -8px 32px rgba(5,8,16,0.6)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {tabs.map(t => {
         const active = tab === t.key
         const badged = !active && !!badges[t.key]
@@ -2050,7 +2050,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 4px', textShadow: jourComplète ? `0 0 28px ${arch.color}88, 0 2px 40px rgba(0,0,0,0.4)` : `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)`, animation: jourComplète ? 'milestoneGlow 5.5s ease-in-out infinite' : 'phrasebreathe 28s ease-in-out 1s infinite', transition: 'text-shadow 0.8s ease' }}>{arch.profil}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px', fontStyle: 'italic', opacity: 0.7, animation: 'phrasebreathe 32s ease-in-out 1.5s infinite', textShadow: `0 0 12px ${arch.color}44` }}>{arch.animal}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: `rgba(255,255,255,0.20)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px', animation: 'phrasebreathe 40s ease-in-out 2.5s infinite' }}>Élément · {arch.element}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: jourComplète ? `${arch.color}33` : `rgba(255,255,255,0.20)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px', animation: jourComplète ? 'phrasebreathe 40s ease-in-out 2.5s infinite, seedPulse 5s ease-in-out 3s infinite' : 'phrasebreathe 40s ease-in-out 2.5s infinite', transition: 'color 0.8s ease', textShadow: jourComplète ? `0 0 10px ${arch.color}22` : 'none' }}>Élément · {arch.element}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px', textShadow: jourComplète ? `0 0 16px ${arch.color}77` : 'none', animation: jourComplète ? 'milestoneGlow 4.5s ease-in-out infinite' : 'phrasebreathe 20s ease-in-out infinite', transition: 'text-shadow 0.8s ease' }}>{getPresenceLabel(presenceProgress, archetypeKey)}</p>
 
         {msg ? (
@@ -2169,7 +2169,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: arch.color, margin: '0 0 5px', textShadow: `0 0 18px ${arch.color}66`, letterSpacing: '0.03em', animation: 'milestoneGlow 4.2s ease-in-out infinite' }}>✦ Journée complète.</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.36)', margin: 0, fontStyle: 'italic', letterSpacing: '0.03em', animation: 'phrasebreathe 28s ease-in-out infinite' }}>Tu rayonnes aujourd'hui.</p>
           </div>
-          <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '11px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite' }}>
+          <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '11px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}55` }}>
             Entrer en Présence
           </button>
         </div>
@@ -2277,7 +2277,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: `${arch.color}66`, margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 8s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33` }}>Ta constance est une force.</p>
           </div>
           {onOpenVrai && (
-            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite' }}>
+            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}55` }}>
               Entrer en Présence
             </button>
           )}
@@ -2365,7 +2365,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: `${arch.color}66`, margin: 0, animation: 'phrasebreathe 24s ease-in-out infinite, milestoneGlow 8s ease-in-out 2.5s infinite', textShadow: `0 0 14px ${arch.color}33` }}>Ta lumière grandit à chaque pas.</p>
           </div>
           {onOpenVrai && (
-            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite' }}>
+            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}55` }}>
               Entrer en Présence
             </button>
           )}
@@ -2450,7 +2450,7 @@ function BoutiqueScreen({ archetypeKey }) {
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 280, height: 120, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}06 0%, transparent 60%)`, pointerEvents: 'none', animation: 'presencePulse 11s ease-in-out 4s infinite' }} />
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 30s ease-in-out infinite' }}>LA MARQUE</p>
         <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}22`, animation: 'phrasebreathe 36s ease-in-out 1s infinite, milestoneGlow 10s ease-in-out 3s infinite' }}>ÇA VA?</h1>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65, animation: 'solbreathe 18s ease-in-out infinite' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65, animation: 'solbreathe 18s ease-in-out infinite', textShadow: `0 0 14px ${arch.color}15` }}>
           Des vêtements qui portent<br />ce que les mots ne disent pas.
         </p>
       </div>
