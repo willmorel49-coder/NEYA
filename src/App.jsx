@@ -991,7 +991,7 @@ function IntroScreen({ onStart }) {
             À chaque pas, tu t'ouvres<br />un peu plus à toi-même.<br /><br />Continue d'avancer à ton rythme...
           </p>
         </div>
-        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.28)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 300, letterSpacing: '0.12em', color: 'white', opacity: line2 ? 1 : 0, transition: 'opacity 1s ease 0.5s', boxShadow: '0 0 0 1px rgba(255,255,255,0.08)', animation: line2 ? 'milestoneGlow 5s ease-in-out 2s infinite' : 'none' }}>
+        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(236,72,153,0.14)', border: '1px solid rgba(236,72,153,0.44)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 300, letterSpacing: '0.12em', color: 'rgba(255,200,220,0.9)', opacity: line2 ? 1 : 0, transition: 'opacity 1s ease 0.5s', boxShadow: '0 2px 20px rgba(236,72,153,0.18)', animation: line2 ? 'milestoneGlow 5s ease-in-out 2s infinite' : 'none' }}>
           Poursuivre
         </button>
       </div>
@@ -1081,7 +1081,7 @@ function QuizIntroScreen({ onStart }) {
 // ─── CHOICE ICON ─────────────────────────────────────────────────────────────
 
 function ChoiceIcon({ type, active }) {
-  const c = active ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.42)'
+  const c = active ? (ARCHETYPES[type]?.color || 'rgba(255,255,255,0.92)') : 'rgba(255,255,255,0.42)'
   const s = { width: 16, height: 16, flexShrink: 0, display: 'block' }
   if (type === 'resilience') return <svg style={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
   if (type === 'presence')   return <svg style={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/></svg>
@@ -2087,13 +2087,13 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {/* ── Progression du jour ── */}
       <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 18s ease-in-out infinite' }} />
-      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '2px 0 0', textTransform: 'uppercase', animation: 'phrasebreathe 24s ease-in-out infinite' }}>Aujourd'hui</p>
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: jourComplète ? arch.color : 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '2px 0 0', textTransform: 'uppercase', transition: 'color 0.6s ease', textShadow: jourComplète ? `0 0 14px ${arch.color}66` : 'none', animation: jourComplète ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 24s ease-in-out infinite' }}>Aujourd'hui</p>
       <div style={{ display: 'flex', gap: 10 }}>
         {[
           { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈', tab: 'routines', nextHint: routinesCount < arch.routines.length ? arch.routines[routinesCount]?.title : null },
           { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇', tab: 'quetes', nextHint: quetesCount < arch.quetes.length ? arch.quetes.find((q, qi) => !quetesDone[qi])?.title : null },
         ].map((s, i) => (
-          <div key={i} onClick={() => { haptic(8); onChangeTab(s.tab) }} style={{ flex: 1, background: s.count === s.total ? `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.07) 100%)` : s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count === s.total ? arch.color + '88' : s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s', cursor: 'pointer', boxShadow: s.count === s.total ? `0 0 18px rgba(${arch.rgb},0.18)` : 'none' }}>
+          <div key={i} onClick={() => { haptic(8); onChangeTab(s.tab) }} style={{ flex: 1, background: s.count === s.total ? `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.07) 100%)` : s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count === s.total ? arch.color + '88' : s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s', cursor: 'pointer', boxShadow: s.count === s.total ? `0 0 22px rgba(${arch.rgb},0.22), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 13, color: s.count > 0 ? arch.color : 'rgba(255,255,255,0.24)', transition: 'color 0.3s ease', textShadow: s.count === s.total ? `0 0 12px ${arch.color}88` : 'none', animation: s.count === s.total ? 'seedPulse 3s ease-in-out infinite' : 'none' }}>{s.icon}</span>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: s.count === s.total ? arch.color : 'rgba(255,255,255,0.26)', transition: 'color 0.4s ease' }}>{s.count}/{s.total}</span>
@@ -2125,7 +2125,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         </div>
       )}
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 4 }}>
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.04)', borderRadius: 1, animation: 'worldglow 26s ease-in-out 12s infinite', marginTop: 4 }} />
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 0 }}>
         {typeof navigator !== 'undefined' && navigator.share && (
           <button onClick={() => {
             haptic([8, 20, 8])
