@@ -1636,7 +1636,11 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.52)' }} />
       <GrainFilter />
       {/* Halo de présence — chaleur colorée très subtile derrière le contenu central */}
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}0a 0%, transparent 65%)`, animation: 'presencePulse 5.8s ease-in-out infinite', pointerEvents: 'none' }} />
+      {(() => {
+        const haloSize = { resilience: 320, presence: 260, sagesse: 300, lumiere: 280 }[archetypeKey] || 280
+        const haloOp = { resilience: '0e', presence: '09', sagesse: '0b', lumiere: '0a' }[archetypeKey] || '0a'
+        return <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: haloSize, height: haloSize, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${haloOp} 0%, transparent 65%)`, animation: 'presencePulse 5.8s ease-in-out infinite', pointerEvents: 'none' }} />
+      })()}
       {/* Ghost backdrop animal */}
       <div style={{ position: 'absolute', bottom: '-8%', right: '-12%', pointerEvents: 'none', opacity: vis ? 0.048 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(3px)', animation: vis ? `animalfloat ${ghostPeriod}s ease-in-out infinite` : 'none' }}>
         <SpiritAnimal archetype={archetypeKey} size={280} />
@@ -1934,7 +1938,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
           {days > 0 && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0 }}>Jour {days}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: isMilestone ? arch.color : `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, textShadow: isMilestone ? `0 0 12px ${arch.color}66` : 'none', animation: isMilestone ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>Jour {days}</p>
           )}
           {streak >= 2 && (
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 7 ? arch.color : `${arch.color}88`, letterSpacing: '0.12em', margin: 0, textShadow: streak >= 7 ? `0 0 12px ${arch.color}66` : 'none', animation: streak >= 7 ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>· {streak} jours d'affilée{streak >= 7 ? ' ✦' : ''}</p>
@@ -2279,8 +2283,8 @@ function BoutiqueScreen({ archetypeKey }) {
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase' }}>{myCollection.subtitle}</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65 }}>{myCollection.desc}</p>
             <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
-              {myCollection.tags.map(tag => (
-                <span key={tag} style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, border: `1px solid ${myCollection.color}44`, borderRadius: 100, padding: '3px 10px', letterSpacing: '0.08em' }}>{tag}</span>
+              {myCollection.tags.map((tag, ti) => (
+                <span key={tag} style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, border: `1px solid ${myCollection.color}44`, borderRadius: 100, padding: '3px 10px', letterSpacing: '0.08em', animation: vis ? `tabslideIn 0.3s ease ${0.2 + ti * 0.1}s both` : 'none' }}>{tag}</span>
               ))}
             </div>
             <button onClick={handleDiscover} style={{ marginTop: 4, width: '100%', padding: '15px 0', background: myCollection.color, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.22em', color: '#050810', textTransform: 'uppercase', boxShadow: `0 4px 24px rgba(${myCollection.rgb},0.40)` }}>
