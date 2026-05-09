@@ -543,7 +543,7 @@ function saveQuetes(archetypeKey, completed) {
 
 // ─── TYPING TEXT ──────────────────────────────────────────────────────────────
 
-function TypingText({ text, delay = 0, speed = 38, style: s, onDone }) {
+function TypingText({ text, delay = 0, speed = 38, style: s, onDone, cursorColor }) {
   const [len, setLen] = useState(0)
   const [done, setDone] = useState(false)
   useEffect(() => {
@@ -561,7 +561,7 @@ function TypingText({ text, delay = 0, speed = 38, style: s, onDone }) {
   return (
     <span style={s}>
       {text.slice(0, len)}
-      {!done && <span style={{ animation: 'cursorblink 0.75s ease-in-out infinite' }}>|</span>}
+      {!done && <span style={{ animation: 'cursorblink 0.75s ease-in-out infinite', color: cursorColor || 'inherit', textShadow: cursorColor ? `0 0 8px ${cursorColor}88` : 'none' }}>|</span>}
     </span>
   )
 }
@@ -1046,6 +1046,7 @@ function QuizIntroScreen({ onStart }) {
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 28px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, textAlign: 'center' }}>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {showBtn && <div style={{ position: 'absolute', width: 130, height: 130, borderRadius: '50%', border: '1px solid rgba(99,102,241,0.08)', animation: 'pulsering 8s ease-in-out infinite 3.2s', opacity: 0 }} />}
             <div style={{ position: 'absolute', width: 100, height: 100, borderRadius: '50%', border: '1px solid rgba(99,102,241,0.12)', animation: 'pulsering 6.5s ease-in-out infinite 1.8s' }} />
             <div style={{ position: 'absolute', width: 72, height: 72, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)', animation: 'compassbreathe 7s ease-in-out infinite' }} />
             <div style={{ animation: 'compassbreathe 7s ease-in-out infinite', display: 'flex', filter: showBtn ? 'drop-shadow(0 0 14px rgba(99,102,241,0.55)) drop-shadow(0 0 28px rgba(99,102,241,0.22))' : 'none', transition: 'filter 1.4s ease' }}>
@@ -1624,7 +1625,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                 {arch.routines.map((r, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                     <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.4, animation: `phrasebreathe ${30 + i * 5}s ease-in-out ${i * 1.5}s infinite` }}>{r.title}</span>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `${arch.color}88`, whiteSpace: 'nowrap', flexShrink: 0, animation: 'phrasebreathe 28s ease-in-out infinite' }}>{r.duration}</span>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `${arch.color}99`, whiteSpace: 'nowrap', flexShrink: 0, animation: `seedPulse ${3.2 + i * 0.6}s ease-in-out ${i * 0.8}s infinite`, textShadow: `0 0 8px ${arch.color}44` }}>{r.duration}</span>
                   </div>
                 ))}
               </div>
@@ -1771,7 +1772,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           Espace de présence
         </p>
         <div style={{ position: 'relative', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340, animation: typingDone ? 'phrasebreathe 22s ease-in-out infinite' : 'none' }}>
-          {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} onDone={() => setTypingDone(true)} />}
+          {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} onDone={() => setTypingDone(true)} cursorColor={arch.color} />}
           {typingDone && [0,1,2,3].map(j => (
             <div key={j} style={{ position: 'absolute', bottom: '100%', left: `${22 + j * 18}%`, width: 4, height: 4, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.1 + j * 0.22}s ease-out ${j * 0.12}s both`, pointerEvents: 'none', boxShadow: `0 0 6px ${arch.color}bb` }} />
           ))}
@@ -2072,7 +2073,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, transition: 'color 0.2s ease', display: 'inline-block', transform: cycleSpin ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.38s ease, color 0.2s ease' }} title="Autre intention">↻</button>
         </div>
         <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', lineHeight: 1.68, fontStyle: 'italic', opacity: intentionFade ? 1 : 0, transition: 'opacity 0.2s ease' }}>
-          {intentionReady && <TypingText key={intentionIdx} text={`"${intention}"`} delay={0} speed={34} />}
+          {intentionReady && <TypingText key={intentionIdx} text={`"${intention}"`} delay={0} speed={34} cursorColor={arch.color} />}
         </div>
       </div>
 
@@ -2173,7 +2174,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <button onClick={() => {
             haptic([8, 20, 8])
             navigator.share({ title: 'Mon profil NÉYA', text: `"${arch.worldInsight}"\n\nJe suis ${arch.profil} — ${arch.animal} · Élément ${arch.element}.${streak >= 2 ? ` ${streak} jours d'affilée.` : ''} Découvre ton guide intérieur sur NÉYA.`, url: 'https://neya-kappa.vercel.app' }).catch(() => {})
-          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: `${arch.color}66`, letterSpacing: '0.05em', padding: '10px 0', animation: 'phrasebreathe 30s ease-in-out infinite', textShadow: `0 0 14px ${arch.color}22` }}>
+          }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: `${arch.color}77`, letterSpacing: '0.05em', padding: '10px 0', animation: 'phrasebreathe 26s ease-in-out infinite, milestoneGlow 12s ease-in-out 4s infinite', textShadow: `0 0 18px ${arch.color}33` }}>
             Partager mon profil
           </button>
         )}
@@ -2238,7 +2239,8 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
       {arch.routines.map((r, i) => {
         const done = completed[i]
         return (
-          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all 0.35s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.08}s` : '0s', position: 'relative', overflow: 'visible', boxShadow: done ? `0 0 18px rgba(${arch.rgb},0.10), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
+          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all 0.35s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.08}s` : '0s', position: 'relative', overflow: 'hidden', boxShadow: done ? `0 0 18px rgba(${arch.rgb},0.10), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
+            {done && <div style={{ position: 'absolute', left: 0, top: '16%', bottom: '16%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}cc, transparent)`, borderRadius: '0 2px 2px 0', animation: 'milestoneGlow 4.8s ease-in-out infinite', pointerEvents: 'none' }} />}
             {celebrateIdx === i && [0,1,2,3,4].map(j => (
               <div key={j} style={{ position: 'absolute', top: 8, left: `${12 + j * 18}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${0.9 + j * 0.18}s ease-out ${j * 0.08}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 6px ${arch.color}99` }} />
             ))}
@@ -2320,7 +2322,8 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
         const locked = i > 0 && !completed[i - 1]
         const isNext = !done && !locked && (i === 0 || completed[i - 1])
         return (
-          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : locked ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : locked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', opacity: locked ? 0.35 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s', position: 'relative', overflow: 'visible', boxShadow: done ? `0 0 20px rgba(${arch.rgb},0.12), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
+          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : locked ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : locked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', opacity: locked ? 0.35 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s', position: 'relative', overflow: 'hidden', boxShadow: done ? `0 0 20px rgba(${arch.rgb},0.12), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
+            {done && <div style={{ position: 'absolute', left: 0, top: '16%', bottom: '16%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}cc, transparent)`, borderRadius: '0 2px 2px 0', animation: 'milestoneGlow 4.8s ease-in-out infinite', pointerEvents: 'none' }} />}
             {celebrateIdx === i && [0,1,2,3,4,5].map(j => (
               <div key={j} style={{ position: 'absolute', top: 10, left: `${8 + j * 16}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.0 + j * 0.2}s ease-out ${j * 0.07}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 8px ${arch.color}cc` }} />
             ))}
@@ -2483,7 +2486,7 @@ function BoutiqueScreen({ archetypeKey }) {
       </div>
 
       {otherCollections.map((col, colIdx) => (
-        <div key={col.key} onClick={() => setExpandedKey(expandedKey === col.key ? null : col.key)} style={{ position: 'relative', overflow: 'hidden', borderRadius: 14, border: '1px solid rgba(255,255,255,0.09)', cursor: 'pointer', animation: 'tabslideIn 0.3s ease-out both', animationDelay: `${colIdx * 80}ms` }}>
+        <div key={col.key} onClick={() => setExpandedKey(expandedKey === col.key ? null : col.key)} style={{ position: 'relative', overflow: 'hidden', borderRadius: 14, border: expandedKey === col.key ? `1px solid ${col.color}44` : '1px solid rgba(255,255,255,0.09)', cursor: 'pointer', animation: 'tabslideIn 0.3s ease-out both', animationDelay: `${colIdx * 80}ms`, boxShadow: expandedKey === col.key ? `0 0 22px rgba(${col.rgb},0.14), inset 0 0 0 1px ${col.color}18` : 'none', transition: 'border-color 0.4s ease, box-shadow 0.4s ease' }}>
           <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${col.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.65)' }} />
           <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: expandedKey === col.key ? 12 : 6 }}>
