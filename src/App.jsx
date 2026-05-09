@@ -1788,9 +1788,12 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           </p>
         )}
         {showDeep && (
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.05em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite', maxWidth: 280, lineHeight: 1.8, textAlign: 'center' }}>
-            {DEEP_TEXTS[archetypeKey]}
-          </p>
+          <>
+            <div style={{ width: 20, height: 1, background: `${arch.color}33`, borderRadius: 1, animation: 'fadeIn 4s ease forwards, worldglow 14s ease-in-out 6s infinite' }} />
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `${arch.color}55`, letterSpacing: '0.05em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite', maxWidth: 280, lineHeight: 1.8, textAlign: 'center', textShadow: `0 0 20px ${arch.color}22` }}>
+              {DEEP_TEXTS[archetypeKey]}
+            </p>
+          </>
         )}
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}44`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both, solbreathe 22s ease-in-out 5s infinite' }}>
           {(() => { const h = new Date().getHours(); if (h >= 22 || h < 5) return 'bonne nuit'; if (h < 18) return 'la journée t\'attend doucement'; return 'tu peux revenir quand tu veux' })()}
@@ -2005,10 +2008,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         </div>
         </div>
 
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 4px', textShadow: `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)`, animation: 'phrasebreathe 28s ease-in-out 1s infinite' }}>{arch.profil}</p>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 4px', textShadow: jourComplète ? `0 0 28px ${arch.color}88, 0 2px 40px rgba(0,0,0,0.4)` : `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)`, animation: jourComplète ? 'milestoneGlow 5.5s ease-in-out infinite' : 'phrasebreathe 28s ease-in-out 1s infinite', transition: 'text-shadow 0.8s ease' }}>{arch.profil}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}99`, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px', fontStyle: 'italic', animation: 'phrasebreathe 32s ease-in-out 1.5s infinite' }}>{arch.animal}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px', animation: 'phrasebreathe 36s ease-in-out 2s infinite' }}>Élément · {arch.element}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px', animation: 'phrasebreathe 20s ease-in-out infinite' }}>{getPresenceLabel(presenceProgress, archetypeKey)}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px', textShadow: jourComplète ? `0 0 16px ${arch.color}77` : 'none', animation: jourComplète ? 'milestoneGlow 4.5s ease-in-out infinite' : 'phrasebreathe 20s ease-in-out infinite', transition: 'text-shadow 0.8s ease' }}>{getPresenceLabel(presenceProgress, archetypeKey)}</p>
 
         {msg ? (
           <div style={{ position: 'relative', display: 'inline-block' }}>
