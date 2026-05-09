@@ -1053,7 +1053,7 @@ function QuizIntroScreen({ onStart }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%' }}>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item1 ? 1 : 0, transform: item1 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
-            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em', boxShadow: '0 0 12px rgba(99,102,241,0.22)' }}>{QUESTIONS.length}</span>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 11, background: 'rgba(255,255,255,0.11)', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 7, padding: '4px 9px', color: 'rgba(255,255,255,0.72)', flexShrink: 0, marginTop: 3, letterSpacing: '0.04em', boxShadow: '0 0 12px rgba(99,102,241,0.22)', animation: 'phrasebreathe 26s ease-in-out infinite' }}>{QUESTIONS.length}</span>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65, animation: item1 ? 'phrasebreathe 32s ease-in-out 1s infinite' : 'none' }}>
               Questions conçues pour révéler ton chemin intérieur unique.
             </p>
@@ -1229,7 +1229,7 @@ function QuizScreen({ onComplete }) {
 
       <div style={{ position: 'relative', zIndex: 1, padding: '50px 24px 36px', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', opacity: contentVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
         <div style={{ textAlign: 'center', marginBottom: 22 }}>
-          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.72)', letterSpacing: '0.02em' }}>{idx + 1}</span>
+          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.72)', letterSpacing: '0.02em', animation: 'phrasebreathe 18s ease-in-out infinite' }}>{idx + 1}</span>
           <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.14em', margin: '0 6px' }}>·</span>
           <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.24)', letterSpacing: '0.08em' }}>{QUESTIONS.length}</span>
         </div>
@@ -2115,12 +2115,12 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
         return (
           <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'all 0.35s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.08}s` : '0s' }}>
             <button onClick={() => { haptic(done ? 6 : 18); onToggle(i) }} style={{ width: 27, height: 27, borderRadius: '50%', border: `1.5px solid ${done ? arch.color : 'rgba(255,255,255,0.22)'}`, background: done ? arch.color : 'transparent', flexShrink: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.28s ease', marginTop: 2, boxShadow: done ? `0 0 14px ${arch.shadow}` : 'none', transform: done ? 'scale(1.06)' : 'scale(1)', animation: done ? 'seedPulse 2.8s ease-in-out infinite' : 'none' }}>
-              {done && <span style={{ fontSize: 11, color: 'white' }}>✓</span>}
+              {done && <span style={{ fontSize: 11, color: 'white', animation: 'milestoneGlow 3.6s ease-in-out infinite' }}>✓</span>}
             </button>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : 'none', animation: done ? 'milestoneGlow 4.8s ease-in-out infinite' : 'none' }}>{r.title}</p>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', flexShrink: 0, marginLeft: 8 }}>{r.duration}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.22)', flexShrink: 0, marginLeft: 8, animation: 'phrasebreathe 34s ease-in-out infinite' }}>{r.duration}</span>
               </div>
               <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.62, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease', animation: done ? 'none' : 'phrasebreathe 44s ease-in-out infinite' }}>{r.desc}</p>
             </div>
@@ -2304,7 +2304,7 @@ function BoutiqueScreen({ archetypeKey }) {
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.30) 0%, rgba(5,8,16,0.82) 100%)' }} />
           <div style={{ position: 'relative', zIndex: 1, padding: '22px 20px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, background: myCollection.color, color: '#050810', borderRadius: 100, padding: '3px 10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase' }}>Ta collection</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, background: myCollection.color, color: '#050810', borderRadius: 100, padding: '3px 10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', animation: 'milestoneGlow 4s ease-in-out infinite' }}>Ta collection</span>
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 58, height: 58 }}>
                 <div style={{ position: 'absolute', inset: 0 }}>
                   <PresenceRing progress={1} color={myCollection.color} size={58} />
