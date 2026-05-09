@@ -878,7 +878,7 @@ function SplashScreen({ onStart }) {
   return (
     <BgScreen bg="bg-onboarding.png" overlay="rgba(5,8,16,0.40)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
       {/* Ghost spirit — welcoming presence, ultra-faint */}
-      <div style={{ position: 'absolute', bottom: '-4%', right: '-8%', pointerEvents: 'none', opacity: vis ? 0.042 : 0, transition: 'opacity 3s ease 1s', filter: 'blur(2.5px)', animation: vis ? 'animalfloat 32s ease-in-out infinite, animalbreathe 48s ease-in-out infinite' : 'none', zIndex: 2 }}>
+      <div style={{ position: 'absolute', bottom: '-4%', right: '-8%', pointerEvents: 'none', opacity: vis ? 0.042 : 0, transition: 'opacity 3s ease 1s', filter: showBtn ? 'blur(2px) drop-shadow(0 0 28px rgba(99,102,241,0.22))' : 'blur(2.5px)', animation: vis ? 'animalfloat 32s ease-in-out infinite, animalbreathe 48s ease-in-out infinite' : 'none', zIndex: 2, transition: 'opacity 3s ease 1s, filter 2s ease' }}>
         <DeerSpirit size={240} color="#6366f1" />
       </div>
       {/* Ambient vertical light column */}
@@ -1076,7 +1076,7 @@ function QuizIntroScreen({ onStart }) {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', opacity: item2 ? 1 : 0, transform: item2 ? 'translateY(0)' : 'translateY(14px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2, filter: showBtn ? 'drop-shadow(0 0 6px rgba(255,255,255,0.28))' : 'none', transition: 'filter 1s ease' }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2, filter: showBtn ? 'drop-shadow(0 0 6px rgba(255,255,255,0.28))' : 'none', transition: 'filter 1s ease', animation: showBtn ? 'animalbreathe 8s ease-in-out infinite' : 'none' }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.65, animation: item2 ? 'phrasebreathe 36s ease-in-out 2s infinite' : 'none' }}>
               Pas de bonne ou de mauvaise réponse — réponds avec ce qui résonne en toi.
             </p>
@@ -1317,7 +1317,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, opacity: vis ? 1 : 0, transition: 'opacity 1.4s ease 0.2s', animation: vis ? 'phrasebreathe 30s ease-in-out 1.5s infinite' : 'none' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch ? `${arch.color}55` : 'rgba(255,255,255,0.28)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, opacity: vis ? 1 : 0, transition: 'opacity 1.4s ease 0.2s, color 1.2s ease', animation: vis ? 'phrasebreathe 30s ease-in-out 1.5s infinite' : 'none', textShadow: arch ? `0 0 10px ${arch.color}33` : 'none' }}>
               {QUESTIONS.length} questions · Tes réponses ont été entendues.
             </p>
             <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(24px, 6vw, 30px)', color: 'white', margin: 0, lineHeight: 1.3, textShadow: '0 2px 32px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.1)', animation: vis ? 'phrasebreathe 24s ease-in-out 2s infinite' : 'none' }}>
@@ -2088,7 +2088,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
           {days > 0 && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: isMilestone ? arch.color : `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, textShadow: isMilestone ? `0 0 12px ${arch.color}66` : 'none', animation: isMilestone ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>Jour {days}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: isMilestone ? arch.color : `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, textShadow: isMilestone ? `0 0 12px ${arch.color}66` : 'none', animation: isMilestone ? 'milestoneGlow 4s ease-in-out infinite' : 'phrasebreathe 40s ease-in-out infinite' }}>Jour {days}</p>
           )}
           {streak >= 2 && (
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 7 ? arch.color : `${arch.color}88`, letterSpacing: '0.12em', margin: 0, textShadow: streak >= 14 ? `0 0 18px ${arch.color}88, 0 0 36px ${arch.color}44` : streak >= 7 ? `0 0 12px ${arch.color}66` : 'none', animation: streak >= 7 ? (streak >= 14 ? 'milestoneGlow 3s ease-in-out infinite' : 'milestoneGlow 4s ease-in-out infinite') : 'none' }}>· {streak} jours d'affilée{streak >= 7 ? ' ✦' : ''}</p>
@@ -2235,7 +2235,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
         {/* Barre de progression globale */}
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
           <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${(doneCount / arch.routines.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: allDone ? `0 0 14px ${arch.color}cc, 0 0 28px ${arch.color}44` : doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : 'none' }} />
+            <div style={{ height: '100%', width: `${(doneCount / arch.routines.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: allDone ? `0 0 14px ${arch.color}cc, 0 0 28px ${arch.color}44` : doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : doneCount > 0 ? 'worldglow 8s ease-in-out infinite' : 'none' }} />
           </div>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : doneCount > 0 ? `${arch.color}88` : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease', textShadow: allDone ? `0 0 14px ${arch.color}88` : doneCount > 0 ? `0 0 8px ${arch.color}44` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : doneCount > 0 ? 'phrasebreathe 24s ease-in-out infinite, seedPulse 4.2s ease-in-out 1s infinite' : 'none' }}>
             {allDone ? '✦ Toutes accomplies' : `${doneCount} / ${arch.routines.length} complétées`}
@@ -2316,7 +2316,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2, animation: allDone ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 34s ease-in-out infinite', textShadow: allDone ? `0 0 28px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` : '0 2px 40px rgba(0,0,0,0.4)', transition: 'text-shadow 0.8s ease' }}>Tes défis<br />bienveillants</h2>
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
           <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${(doneCount / arch.quetes.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: allDone ? `0 0 14px ${arch.color}cc, 0 0 28px ${arch.color}44` : doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : 'none' }} />
+            <div style={{ height: '100%', width: `${(doneCount / arch.quetes.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: allDone ? `0 0 14px ${arch.color}cc, 0 0 28px ${arch.color}44` : doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : doneCount > 0 ? 'worldglow 8s ease-in-out infinite' : 'none' }} />
           </div>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: allDone ? arch.color : doneCount > 0 ? `${arch.color}88` : 'rgba(255,255,255,0.32)', margin: '7px 0 0', transition: 'color 0.4s ease', textShadow: allDone ? `0 0 14px ${arch.color}88` : doneCount > 0 ? `0 0 8px ${arch.color}44` : 'none', animation: allDone ? 'milestoneGlow 3.8s ease-in-out infinite' : doneCount > 0 ? 'phrasebreathe 24s ease-in-out infinite, seedPulse 4.2s ease-in-out 1s infinite' : 'none' }}>
             {allDone ? '✦ Quêtes accomplies' : `${doneCount} / ${arch.quetes.length} accomplies`}
@@ -2530,7 +2530,7 @@ function BoutiqueScreen({ archetypeKey }) {
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.12)', letterSpacing: '0.06em', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 28s ease-in-out infinite' }}>
           Chaque vêtement porte une intention.
         </p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.12em', margin: '6px 0 0', opacity: 0.4, animation: 'phrasebreathe 30s ease-in-out infinite' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.12em', margin: '6px 0 0', opacity: 0.4, animation: 'phrasebreathe 30s ease-in-out infinite, seedPulse 5s ease-in-out 2s infinite', textShadow: `0 0 8px ${arch.color}22` }}>
           Collection {myCollection?.name || 'bientôt'} · Lancement 2026
         </p>
       </div>
