@@ -1886,8 +1886,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [cycleSpin, setCycleSpin] = useState(false)
   const [intentionParticles, setIntentionParticles] = useState(false)
   const [ringTap, setRingTap] = useState(false)
+  const [completeBurst, setCompleteBurst] = useState(false)
   const [showPresenceToast, setShowPresenceToast] = useState(false)
   const [restartPending, setRestartPending] = useState(false)
+  const prevJourComplete = useRef(false)
   const restartTimer = useRef(null)
 
   const handleRestartClick = () => {
@@ -1966,8 +1968,22 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const isMilestone = days > 0 && !!MILESTONES[days]
   const jourComplète = routinesCount === arch.routines.length && quetesCount > 0
 
+  useEffect(() => {
+    if (jourComplète && !prevJourComplete.current) {
+      haptic([20, 50, 20, 50, 40])
+      setCompleteBurst(true)
+      setTimeout(() => setCompleteBurst(false), 1800)
+    }
+    prevJourComplete.current = jourComplète
+  }, [jourComplète])
+
   return (
     <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 16, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
+
+      {/* ── Journée complète burst ── */}
+      {completeBurst && [0,1,2,3,4,5,6,7].map(j => (
+        <div key={j} style={{ position: 'fixed', top: '38%', left: `${12 + j * 11}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.2 + j * 0.15}s ease-out ${j * 0.08}s both`, pointerEvents: 'none', zIndex: 100, boxShadow: `0 0 8px ${arch.color}cc` }} />
+      ))}
 
       {/* ── Première visite du jour ── */}
       {showPresenceToast && (
@@ -2009,8 +2025,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         </div>
 
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'white', margin: '0 0 4px', textShadow: jourComplète ? `0 0 28px ${arch.color}88, 0 2px 40px rgba(0,0,0,0.4)` : `0 0 22px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)`, animation: jourComplète ? 'milestoneGlow 5.5s ease-in-out infinite' : 'phrasebreathe 28s ease-in-out 1s infinite', transition: 'text-shadow 0.8s ease' }}>{arch.profil}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}99`, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px', fontStyle: 'italic', animation: 'phrasebreathe 32s ease-in-out 1.5s infinite' }}>{arch.animal}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: `rgba(255,255,255,0.18)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px', animation: 'phrasebreathe 36s ease-in-out 2s infinite' }}>Élément · {arch.element}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px', fontStyle: 'italic', opacity: 0.7, animation: 'phrasebreathe 32s ease-in-out 1.5s infinite', textShadow: `0 0 12px ${arch.color}44` }}>{arch.animal}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: `rgba(255,255,255,0.20)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px', animation: 'phrasebreathe 40s ease-in-out 2.5s infinite' }}>Élément · {arch.element}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px', textShadow: jourComplète ? `0 0 16px ${arch.color}77` : 'none', animation: jourComplète ? 'milestoneGlow 4.5s ease-in-out infinite' : 'phrasebreathe 20s ease-in-out infinite', transition: 'text-shadow 0.8s ease' }}>{getPresenceLabel(presenceProgress, archetypeKey)}</p>
 
         {msg ? (
@@ -2021,7 +2037,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: isMilestone ? 400 : 300, fontSize: isMilestone ? 12.5 : 11.5, color: isMilestone ? arch.color : 'rgba(255,255,255,0.3)', letterSpacing: isMilestone ? '0.04em' : '0.05em', margin: '4px 0 0', fontStyle: 'italic', animation: isMilestone ? 'fadeIn 1.2s ease both, milestoneGlow 3.8s ease-in-out 1.4s infinite' : 'none', textShadow: isMilestone ? `0 0 18px ${arch.color}55` : 'none', transition: 'all 0.4s ease' }}>{msg}</p>
           </div>
         ) : (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.14)', letterSpacing: '0.12em', margin: '4px 0 0', animation: 'phrasebreathe 24s ease-in-out infinite' }}>touche · instant de présence</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}33`, letterSpacing: '0.12em', margin: '4px 0 0', animation: 'seedPulse 4s ease-in-out infinite' }}>touche · instant de présence</p>
         )}
       </div>
 
