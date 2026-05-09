@@ -2165,6 +2165,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [flash, setFlash] = useState(false)
+  const [celebrateIdx, setCelebrateIdx] = useState(null)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
 
   const handleComplete = (i) => {
@@ -2172,6 +2173,8 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
     onComplete(i)
     setFlash(true)
     setTimeout(() => setFlash(false), 700)
+    setCelebrateIdx(i)
+    setTimeout(() => setCelebrateIdx(c => c === i ? null : c), 1400)
   }
   const doneCount = completed.filter(Boolean).length
   const allDone = doneCount === arch.quetes.length
@@ -2196,7 +2199,10 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
         const done = completed[i]
         const locked = i > 0 && !completed[i - 1]
         return (
-          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : locked ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : locked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', opacity: locked ? 0.35 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s' }}>
+          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : locked ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : locked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', opacity: locked ? 0.35 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s', position: 'relative', overflow: 'visible' }}>
+            {celebrateIdx === i && [0,1,2,3,4,5].map(j => (
+              <div key={j} style={{ position: 'absolute', top: 10, left: `${8 + j * 16}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.0 + j * 0.2}s ease-out ${j * 0.07}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 8px ${arch.color}cc` }} />
+            ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 16, color: done ? arch.color : locked ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.42)', animation: (!done && !locked) ? `seedPulse ${3.4 + i * 0.6}s ease-in-out ${i * 0.5}s infinite` : 'none', textShadow: done ? `0 0 12px ${arch.color}66` : 'none' }}>{locked ? '◻' : q.icon}</span>
