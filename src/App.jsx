@@ -1198,7 +1198,7 @@ function QuizScreen({ onComplete }) {
 
   return (
     <div style={{ width: '100vw', height: '100dvh', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bgMain})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'bgbreathe 32s ease-in-out infinite', willChange: 'transform' }} />
+      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bgMain})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: `bgbreathe ${idx === QUESTIONS.length - 1 ? '14' : '32'}s ease-in-out infinite`, willChange: 'transform', transition: 'animation-duration 1.2s ease' }} />
       {bgFade && (
         <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bgFade})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: bgFadeOp, transition: 'opacity 0.8s ease', pointerEvents: 'none' }} />
       )}
@@ -1266,7 +1266,7 @@ function QuizScreen({ onComplete }) {
                   </div>
                 )}
                 <ChoiceIcon type={c.type} active={sel} />
-                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? (ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.96)') : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease', animation: sel ? 'phrasebreathe 16s ease-in-out infinite' : 'none' }}>{c.text}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? (ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.96)') : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease, text-shadow 0.22s ease', textShadow: sel ? `0 0 12px ${ARCHETYPES[c.type]?.color}55` : 'none', animation: sel ? 'phrasebreathe 16s ease-in-out infinite' : 'none' }}>{c.text}</span>
               </button>
             )
           })}
@@ -1323,7 +1323,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
               Ton guide intérieur<br />s'apprête à se révéler...
             </h1>
             <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.14)', borderRadius: 1, margin: '0 auto', animation: 'worldglow 8s ease-in-out infinite' }} />
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.72, opacity: vis ? 1 : 0, transition: 'opacity 1.0s ease 0.4s', animation: vis ? 'phrasebreathe 28s ease-in-out 1s infinite' : 'none' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15, color: showBtn ? 'rgba(255,255,255,0.72)' : 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.72, opacity: vis ? 1 : 0, transition: 'opacity 1.0s ease 0.4s, color 1.6s ease', animation: showBtn ? 'phrasebreathe 22s ease-in-out 1s infinite, milestoneGlow 8s ease-in-out 2s infinite' : vis ? 'phrasebreathe 28s ease-in-out 1s infinite' : 'none' }}>
               Il est l'écho de ta lumière unique.<br />Es-tu prêt·e à le rencontrer ?
             </p>
           </div>
@@ -1586,7 +1586,10 @@ function ResultScreen({ archetypeKey, onContinue }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, width: '100%' }}>
               {/* Animal guide label */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0 2px' }}>
-                <SpiritAnimal archetype={archetypeKey} size={34} style={{ opacity: 0.65, filter: `drop-shadow(0 0 10px ${arch.color}66)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 32s ease-in-out infinite' }} />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ position: 'absolute', width: 50, height: 50, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 5s ease-in-out infinite 1.2s', pointerEvents: 'none' }} />
+                  <SpiritAnimal archetype={archetypeKey} size={34} style={{ opacity: 0.65, filter: `drop-shadow(0 0 10px ${arch.color}66)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 32s ease-in-out infinite', position: 'relative' }} />
+                </div>
                 <div>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 2px', opacity: 0.85, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 7s ease-in-out 2s infinite', textShadow: `0 0 12px ${arch.color}44` }}>Ton guide intérieur</p>
                   <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'white', margin: 0, animation: 'phrasebreathe 28s ease-in-out infinite' }}>{arch.animal}</p>
@@ -2034,7 +2037,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           {jourComplète && <div style={{ position: 'absolute', inset: -30, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 5.8s ease-in-out infinite 1.4s', pointerEvents: 'none', zIndex: 0 }} />}
           {/* Soft glow center */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}20 0%, transparent 72%)`, animation: 'presencePulse 3.8s ease-in-out infinite' }} />
+            <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${jourComplète ? '34' : '20'} 0%, transparent 72%)`, animation: `presencePulse ${jourComplète ? '2.8' : '3.8'}s ease-in-out infinite`, transition: 'background 1.4s ease' }} />
             <SpiritAnimal
               archetype={archetypeKey}
               size={74}
@@ -2181,7 +2184,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             Partager mon profil
           </button>
         )}
-        <button onClick={handleRestartClick} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: restartPending ? 'rgba(236,72,153,0.55)' : 'rgba(255,255,255,0.15)', letterSpacing: '0.05em', padding: '10px 0', transition: 'color 0.3s ease', animation: restartPending ? 'milestoneGlow 2s ease-in-out infinite' : 'phrasebreathe 52s ease-in-out infinite' }}>
+        <button onClick={handleRestartClick} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: restartPending ? 'rgba(236,72,153,0.65)' : 'rgba(255,255,255,0.18)', letterSpacing: '0.05em', padding: '10px 0', transition: 'color 0.3s ease, text-shadow 0.3s ease', textShadow: restartPending ? '0 0 14px rgba(236,72,153,0.4)' : 'none', animation: restartPending ? 'milestoneGlow 2s ease-in-out infinite' : 'phrasebreathe 52s ease-in-out infinite' }}>
           {restartPending ? 'Toucher encore pour confirmer' : 'Refaire le parcours'}
         </button>
 
@@ -2485,7 +2488,7 @@ function BoutiqueScreen({ archetypeKey }) {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', animation: 'worldglow 16s ease-in-out infinite' }} />
-        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite' }}>Autres collections</span>
+        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}66`, letterSpacing: '0.2em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite', textShadow: `0 0 10px ${arch.color}33` }}>Autres collections</span>
         <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', animation: 'worldglow 16s ease-in-out 4s infinite' }} />
       </div>
 
