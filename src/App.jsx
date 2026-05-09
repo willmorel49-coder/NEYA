@@ -774,6 +774,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
           fontStyle: 'italic',
           opacity: vis ? 1 : 0,
           transition: 'opacity 1s ease 0.2s',
+          animation: vis ? 'phrasebreathe 30s ease-in-out infinite' : 'none',
         }}>
           {(() => { const h = new Date().getHours(); if (h >= 22 || h < 5) return 'cette nuit'; if (h < 9) return 'ce matin'; if (h < 18) return 'cet après-midi'; return 'ce soir' })()}
         </p>
@@ -1303,7 +1304,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
               Ton guide intérieur<br />s'apprête à se révéler...
             </h1>
             <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.14)', borderRadius: 1, margin: '0 auto', animation: 'worldglow 8s ease-in-out infinite' }} />
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.72, opacity: vis ? 1 : 0, transition: 'opacity 1.0s ease 0.4s' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.72, opacity: vis ? 1 : 0, transition: 'opacity 1.0s ease 0.4s', animation: vis ? 'phrasebreathe 28s ease-in-out 1s infinite' : 'none' }}>
               Il est l'écho de ta lumière unique.<br />Es-tu prêt·e à le rencontrer ?
             </p>
           </div>
@@ -2291,7 +2292,7 @@ function BoutiqueScreen({ archetypeKey }) {
       <div style={{ textAlign: 'center', marginBottom: 4, position: 'relative' }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 200, height: 80, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 7s ease-in-out infinite' }} />
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 30s ease-in-out infinite' }}>LA MARQUE</p>
-        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}14` }}>ÇA VA?</h1>
+        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}14`, animation: 'phrasebreathe 36s ease-in-out 1s infinite' }}>ÇA VA?</h1>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65, animation: 'solbreathe 18s ease-in-out infinite' }}>
           Des vêtements qui portent<br />ce que les mots ne disent pas.
         </p>
