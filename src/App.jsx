@@ -1587,7 +1587,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               {/* Routines preview */}
               <div style={{ position: 'relative', background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 14, padding: '18px 18px 14px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2, background: `linear-gradient(180deg, transparent, ${arch.color}66, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 10s ease-in-out infinite' }} />
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0 }}>Tes 3 pratiques quotidiennes</p>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite' }}>Tes 3 pratiques quotidiennes</p>
                 {arch.routines.map((r, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                     <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.4 }}>{r.title}</span>
@@ -2016,7 +2016,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {/* ── Progression du jour ── */}
-      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '2px 0 0', textTransform: 'uppercase' }}>Aujourd'hui</p>
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '2px 0 0', textTransform: 'uppercase', animation: 'phrasebreathe 24s ease-in-out infinite' }}>Aujourd'hui</p>
       <div style={{ display: 'flex', gap: 10 }}>
         {[
           { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈', tab: 'routines', nextHint: routinesCount < arch.routines.length ? arch.routines[routinesCount]?.title : null },
@@ -2313,7 +2313,7 @@ function BoutiqueScreen({ archetypeKey }) {
               </div>
             </div>
             <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.15 }}>{myCollection.name}</h2>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase' }}>{myCollection.subtitle}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 26s ease-in-out infinite' }}>{myCollection.subtitle}</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65 }}>{myCollection.desc}</p>
             <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
               {myCollection.tags.map((tag, ti) => (
