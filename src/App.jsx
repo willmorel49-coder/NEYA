@@ -970,7 +970,7 @@ function IntroScreen({ onStart }) {
             À chaque pas, tu t'ouvres<br />un peu plus à toi-même.<br /><br />Continue d'avancer à ton rythme...
           </p>
         </div>
-        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.28)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 300, letterSpacing: '0.12em', color: 'white', opacity: line2 ? 1 : 0, transition: 'opacity 1s ease 0.5s', boxShadow: '0 0 0 1px rgba(255,255,255,0.08)' }}>
+        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.28)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 300, letterSpacing: '0.12em', color: 'white', opacity: line2 ? 1 : 0, transition: 'opacity 1s ease 0.5s', boxShadow: '0 0 0 1px rgba(255,255,255,0.08)', animation: line2 ? 'milestoneGlow 5s ease-in-out 2s infinite' : 'none' }}>
           Poursuivre
         </button>
       </div>
@@ -1554,7 +1554,8 @@ function ResultScreen({ archetypeKey, onContinue }) {
               )}
 
               {/* Routines preview */}
-              <div style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 14, padding: '18px 18px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ position: 'relative', background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 14, padding: '18px 18px 14px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2, background: `linear-gradient(180deg, transparent, ${arch.color}66, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 10s ease-in-out infinite' }} />
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0 }}>Tes 3 pratiques quotidiennes</p>
                 {arch.routines.map((r, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
@@ -1995,7 +1996,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: arch.color, margin: '0 0 5px', textShadow: `0 0 18px ${arch.color}66`, letterSpacing: '0.03em' }}>✦ Journée complète.</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.36)', margin: 0, fontStyle: 'italic', letterSpacing: '0.03em' }}>Tu rayonnes aujourd'hui.</p>
           </div>
-          <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '11px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase' }}>
+          <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '11px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite' }}>
             Entrer en Présence
           </button>
         </div>
