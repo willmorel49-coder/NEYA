@@ -93,11 +93,11 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 > Mettre à jour à chaque savepoint.
 
-**Date** : 2026-05-08
+**Date** : 2026-05-09
 **Branche** : `main`
-**Phase** : V1.9 — Returning UX · Atmosphère profonde · Personnalisation avancée
+**Phase** : V2.0 — Deep Polish · Présence étendue · Micro-animations universelles
 
-### Features actives (`src/App.jsx`) — build 253.45 kB (72.0 kB gzip)
+### Features actives (`src/App.jsx`) — build 265.84 kB (74.23 kB gzip)
 
 **Splash :**
 - 15 étoiles (splashtw) dont 3 dans la moitié basse (y:52-68%) · returning user : 4.3s / new : 3.1s
@@ -214,9 +214,35 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 ### Assets dans `public/`
 `cerf.svg` · `bg-onboarding.png` · `bg-brume.png` · `bg-foret.png` · `bg-cosmos.png` · `bg-feu.png` · `bg-eau.png` · `bg-vide.png` · `bg-vrai.png` · `bg-cosmos-alt.png`
 
+**V2.0 — nouveautés (sprints 38-106) :**
+- Sprint 62-64 : ReturningScreen salutation time-of-day · HomeScreen double-tap restart confirmation · EspaceVrai divider line pulse
+- Sprint 65-67 : QuetesScreen allDone milestoneGlow · HomeScreen intention accent bar worldglow · Boutique header halo presencePulse
+- Sprint 68-70 : BottomNav badge seedPulse · TransitionScreen divider worldglow · PatronusReveal CTA milestoneGlow
+- Sprint 71-73 : EspaceVrai adieu solbreathe · QuizIntro CTA milestoneGlow · ResultScreen desc card accent bar
+- Sprint 74-76 : HomeScreen stat cards allDone glow+icon · IntroScreen divider worldglow · ResultScreen force icons seedPulse stagger
+- Sprint 77-79 : SplashScreen CTA milestoneGlow · EspaceVrai second intention phrasebreathe · BottomNav active radial glow
+- Sprint 80-82 : Streak ≥7 milestoneGlow+✦ · ResultScreen final CTA milestoneGlow · QuizScreen continue milestoneGlow
+- Sprint 83-85 : IntroScreen Poursuivre milestoneGlow · HomeScreen jourComplète CTA milestoneGlow · ResultScreen routines accent bar
+- Sprint 86-88 : RoutinesScreen+QuetesScreen allDone CTAs milestoneGlow · BottomNav underline worldglow
+- Sprint 89-91 : EspaceVrai 90s `DEEP_TEXTS` archétype · QuizIntro compass outer ring pulsering · RoutinesScreen done title textShadow
+- Sprint 92-94 : Milestone "Jour X" milestoneGlow · Boutique tags stagger tabslideIn · EspaceVrai halo per-archetype size+intensity
+- Sprint 95-97 : HomeScreen cycle↻ spin animation · PatronusReveal step4 outer glow ring · ResultScreen mini animal animalbreathe
+- Sprint 98-100 : ReturningScreen worldInsight whisper · QuizScreen final progress bar glow · Boutique accordion slide tabslideIn
+- Sprint 101-103 : QuetesScreen quest icons seedPulse · SplashScreen title phrasebreathe · ResultScreen worldInsight phrasebreathe
+- Sprint 104-106 : HomeScreen profil phrasebreathe · Boutique footer phrasebreathe · TransitionScreen title phrasebreathe
+- Sprint 107-109 : QuetesScreen Marquer accomplie milestoneGlow · HomeScreen "touche" placeholder phrasebreathe · RoutinesScreen header label phrasebreathe
+- Sprint 110-112 : QuetesScreen header "◇ Quêtes" phrasebreathe · Boutique "Autres collections" separator phrasebreathe · RoutinesScreen h2 phrasebreathe
+- Sprint 113-115 : ResultScreen forces divider worldglow · Boutique "Découvrir la collection" CTA milestoneGlow · ReturningScreen animal name phrasebreathe
+- Sprint 116-118 : HomeScreen element phrasebreathe · QuetesScreen done checkmark milestoneGlow · RoutinesScreen allDone subtext phrasebreathe
+- Sprint 119-121 : QuetesScreen allDone title milestoneGlow · Boutique "Chaque vêtement" phrasebreathe · HomeScreen presenceLabel phrasebreathe
+- Sprint 122-124 : PatronusReveal "Ton animal guide" label phrasebreathe · PatronusReveal profil phrasebreathe · QuetesScreen allDone subtext phrasebreathe
+- Sprint 125-127 : HomeScreen presences total phrasebreathe · IntroScreen screen1 body phrasebreathe · IntroScreen screen0 title phrasebreathe
+- Sprint 128-130 : SplashScreen subtitle phrasebreathe · SplashScreen whisper time-aware phrasebreathe · ResultScreen forces h2 phrasebreathe
+- Sprint 131-133 : QuizIntro footer phrasebreathe · ResultScreen intention label phrasebreathe · ResultScreen intention quote phrasebreathe
+
 ### Déploiement
 - `vercel.json` configuré · `npm run build` → `dist/` fonctionnel
-- Prod live : `https://neya-kappa.vercel.app` · Commit `4d15cb8`
+- Prod live : `https://neya-kappa.vercel.app` · Commit `e18a6d7`
 
 ### Backlog code
 - [ ] Valider performance mobile (animations nombreuses — worldglow + ringshimmer + forcespring)
