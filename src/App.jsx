@@ -1258,7 +1258,7 @@ function QuizScreen({ onComplete }) {
         </div>
 
         <div style={{ marginTop: 18, opacity: selected !== null ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: selected !== null ? 'all' : 'none' }}>
-          <button onClick={handleContinue} style={{ width: '100%', padding: '16px 0', background: selected ? `rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.72)` : 'rgba(99,102,241,0.72)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: selected ? `0 4px 22px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.38)` : '0 4px 22px rgba(99,102,241,0.32)', transition: 'all 0.4s ease', animation: selected ? 'milestoneGlow 5s ease-in-out infinite' : 'none' }}>
+          <button onClick={handleContinue} style={{ width: '100%', padding: '16px 0', background: selected ? `rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.72)` : 'rgba(99,102,241,0.72)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: selected ? (idx === QUESTIONS.length - 1 ? `0 4px 32px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.55), 0 0 60px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.22)` : `0 4px 22px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.38)`) : '0 4px 22px rgba(99,102,241,0.32)', transition: 'all 0.4s ease', animation: selected ? (idx === QUESTIONS.length - 1 ? 'milestoneGlow 3s ease-in-out infinite' : 'milestoneGlow 5s ease-in-out infinite') : 'none' }}>
             {idx === QUESTIONS.length - 1 ? 'Terminer' : 'Continuer'}
           </button>
         </div>
@@ -1284,6 +1284,9 @@ function TransitionScreen({ archetypeKey, onReveal }) {
         {STARS.slice(0, 10).map((s, i) => (
           <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r * 0.75} fill={s.fill || 'white'}
             style={{ animation: `startwinkle ${s.dur}s ease-in-out infinite`, animationDelay: `${s.del + 0.6}s` }} />
+        ))}
+        {arch && [{x:9,y:24,r:2.0,dur:26,del:0},{x:88,y:18,r:1.6,dur:32,del:4.8},{x:24,y:78,r:2.4,dur:20,del:2.2},{x:76,y:72,r:1.8,dur:36,del:7.6},{x:52,y:90,r:2.2,dur:28,del:5.4}].map((m,i)=>(
+          <circle key={`am${i}`} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.05, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
         ))}
       </svg>
       <div style={{ padding: '60px 28px 52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', width: '100%' }}>
@@ -2449,6 +2452,11 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
     <BgScreen bg={arch.bg} overlay={overlay} breathe>
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, background: `radial-gradient(ellipse at center, ${arch.color}0f 0%, transparent 65%)`, animation: `worldglow ${glowPeriod}s ease-in-out infinite` }} />
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }}>
+        {[{x:6,y:22,r:2.0,dur:28,del:0.0},{x:92,y:16,r:1.5,dur:34,del:5.2},{x:18,y:72,r:2.4,dur:22,del:2.4},{x:84,y:68,r:1.8,dur:38,del:8.1},{x:52,y:88,r:2.0,dur:26,del:4.6},{x:76,y:38,r:1.6,dur:44,del:12.3},{x:34,y:44,r:1.2,dur:32,del:7.5},{x:62,y:8,r:2.2,dur:18,del:3.8}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.038, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+        ))}
+      </svg>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 0.22s ease-out' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} onOpenVrai={() => setVraiOpen(true)} />}
