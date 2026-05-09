@@ -1206,7 +1206,7 @@ function QuizScreen({ onComplete }) {
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: selected ? ARCHETYPE_TINTS[selected] : 'transparent',
+        background: selected ? (idx === QUESTIONS.length - 1 ? `rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.16)` : ARCHETYPE_TINTS[selected]) : 'transparent',
         transition: 'background 0.5s ease',
         pointerEvents: 'none',
         zIndex: 2,
@@ -1749,12 +1749,14 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
 
         {/* Animal guide flottant — apparaît avant le texte */}
         <div style={{ opacity: vis ? 1 : 0, transition: 'opacity 1.4s ease 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'absolute', width: 130, height: 130, borderRadius: '50%', border: `1px solid ${arch.color}18`, animation: 'pulsering 6s ease-in-out infinite 1.2s', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', width: 108, height: 108, borderRadius: '50%', border: `1px solid ${arch.color}28`, animation: 'pulsering 4.5s ease-in-out infinite 0.4s', pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', inset: -20, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}1a 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite' }} />
             <SpiritAnimal
               archetype={archetypeKey}
               size={88}
-              style={{ opacity: 0.72, filter: `drop-shadow(0 0 20px ${arch.color}88) drop-shadow(0 0 40px ${arch.color}33)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 24s ease-in-out infinite', willChange: 'transform' }}
+              style={{ opacity: 0.72, filter: `drop-shadow(0 0 20px ${arch.color}88) drop-shadow(0 0 40px ${arch.color}33)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 24s ease-in-out infinite', willChange: 'transform', position: 'relative', zIndex: 1 }}
             />
           </div>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, opacity: 0.8, textShadow: `0 0 16px ${arch.color}44`, animation: 'phrasebreathe 30s ease-in-out infinite' }}>
@@ -2077,10 +2079,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: isMilestone ? arch.color : `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, textShadow: isMilestone ? `0 0 12px ${arch.color}66` : 'none', animation: isMilestone ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>Jour {days}</p>
           )}
           {streak >= 2 && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 7 ? arch.color : `${arch.color}88`, letterSpacing: '0.12em', margin: 0, textShadow: streak >= 7 ? `0 0 12px ${arch.color}66` : 'none', animation: streak >= 7 ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>· {streak} jours d'affilée{streak >= 7 ? ' ✦' : ''}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 7 ? arch.color : `${arch.color}88`, letterSpacing: '0.12em', margin: 0, textShadow: streak >= 14 ? `0 0 18px ${arch.color}88, 0 0 36px ${arch.color}44` : streak >= 7 ? `0 0 12px ${arch.color}66` : 'none', animation: streak >= 7 ? (streak >= 14 ? 'milestoneGlow 3s ease-in-out infinite' : 'milestoneGlow 4s ease-in-out infinite') : 'none' }}>· {streak} jours d'affilée{streak >= 7 ? ' ✦' : ''}</p>
           )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
+          {weekDots.filter(Boolean).length === 7 && <div style={{ position: 'absolute', inset: '-8px -16px', borderRadius: 20, background: `radial-gradient(ellipse at center, ${arch.color}14 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite', pointerEvents: 'none' }} />}
           {weekDots.map((active, i) => {
             const isToday = i === 6
             const FR_DOW = ['D','L','M','M','J','V','S']
