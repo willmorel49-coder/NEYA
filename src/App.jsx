@@ -1748,7 +1748,7 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
               {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85, animation: 'seedPulse 3s ease-in-out infinite' }} />}
             </span>
             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.12em', color: active ? color : 'rgba(255,255,255,0.22)', transition: 'color 0.25s ease', textTransform: 'uppercase' }}>{t.label}</span>
-            <div style={{ width: active ? 20 : 3, height: 1.5, borderRadius: 1, background: active ? color : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 8px ${color}, 0 0 16px ${color}66` : 'none' }} />
+            <div style={{ width: active ? 20 : 3, height: 1.5, borderRadius: 1, background: active ? color : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 8px ${color}, 0 0 16px ${color}66` : 'none', animation: active ? 'worldglow 5s ease-in-out infinite' : 'none' }} />
           </button>
         )
       })}
@@ -2081,7 +2081,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.4)', margin: 0 }}>Ta constance est une force.</p>
           </div>
           {onOpenVrai && (
-            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase' }}>
+            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite' }}>
               Entrer en Présence
             </button>
           )}
@@ -2155,7 +2155,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.42)', margin: 0 }}>Ta lumière grandit à chaque pas.</p>
           </div>
           {onOpenVrai && (
-            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase' }}>
+            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite' }}>
               Entrer en Présence
             </button>
           )}
