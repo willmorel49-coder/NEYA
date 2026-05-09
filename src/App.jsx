@@ -948,7 +948,7 @@ function IntroScreen({ onStart }) {
           ))}
         </svg>
         <div onClick={goStep1} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 32px', cursor: 'pointer', textAlign: 'center', gap: 22, opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(27px, 7vw, 36px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 44px rgba(0,0,0,0.6), 0 0 60px rgba(245,158,11,0.12)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease' }}>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(27px, 7vw, 36px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 44px rgba(0,0,0,0.6), 0 0 60px rgba(245,158,11,0.12)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease', animation: line1 ? 'phrasebreathe 28s ease-in-out 2s infinite' : 'none' }}>
             Ici commence<br />ton chemin...
           </h1>
           <div style={{ width: 1, height: 38, background: 'rgba(255,255,255,0.18)', transformOrigin: 'top', animation: line1 ? 'introlineappear 0.9s ease forwards, worldglow 12s ease-in-out 1.2s infinite' : 'none', opacity: line1 ? 1 : 0 }} />
@@ -984,7 +984,7 @@ function IntroScreen({ onStart }) {
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.4em', margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease' }}>
             ◈
           </p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.65)', lineHeight: 1.78, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.65)', lineHeight: 1.78, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease', animation: line2 ? 'phrasebreathe 32s ease-in-out 1s infinite' : 'none' }}>
             À chaque pas, tu t'ouvres<br />un peu plus à toi-même.<br /><br />Continue d'avancer à ton rythme...
           </p>
         </div>
@@ -2009,7 +2009,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.26)', letterSpacing: '0.14em', margin: 0 }}>{count} jour{count > 1 ? 's' : ''} cette semaine</p>
         })()}
         {totalDone > 0 && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: 'rgba(255,255,255,0.10)', letterSpacing: '0.12em', margin: 0 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: 'rgba(255,255,255,0.10)', letterSpacing: '0.12em', margin: 0, animation: 'phrasebreathe 40s ease-in-out 3s infinite' }}>
             {totalDone} présence{totalDone > 1 ? 's' : ''} au total
           </p>
         )}
