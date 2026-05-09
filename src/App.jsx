@@ -1236,7 +1236,7 @@ function QuizScreen({ onComplete }) {
         </div>
 
         <div style={{ marginTop: 18, opacity: selected !== null ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: selected !== null ? 'all' : 'none' }}>
-          <button onClick={handleContinue} style={{ width: '100%', padding: '16px 0', background: selected ? `rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.72)` : 'rgba(99,102,241,0.72)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: selected ? `0 4px 22px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.38)` : '0 4px 22px rgba(99,102,241,0.32)', transition: 'all 0.4s ease' }}>
+          <button onClick={handleContinue} style={{ width: '100%', padding: '16px 0', background: selected ? `rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.72)` : 'rgba(99,102,241,0.72)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: selected ? `0 4px 22px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.38)` : '0 4px 22px rgba(99,102,241,0.32)', transition: 'all 0.4s ease', animation: selected ? 'milestoneGlow 5s ease-in-out infinite' : 'none' }}>
             {idx === QUESTIONS.length - 1 ? 'Terminer' : 'Continuer'}
           </button>
         </div>
@@ -1567,7 +1567,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
           )}
         </div>
 
-        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : 'rgba(255,255,255,0.11)', border: phase === 2 ? 'none' : '1px solid rgba(255,255,255,0.26)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: phase === 2 ? 500 : 400, letterSpacing: '0.2em', color: phase === 2 ? '#050810' : 'white', textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : 'none', transition: 'all 0.45s ease' }}>
+        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : 'rgba(255,255,255,0.11)', border: phase === 2 ? 'none' : '1px solid rgba(255,255,255,0.26)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: phase === 2 ? 500 : 400, letterSpacing: '0.2em', color: phase === 2 ? '#050810' : 'white', textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : 'none', transition: 'all 0.45s ease', animation: phase === 2 ? 'milestoneGlow 4.5s ease-in-out infinite' : 'none' }}>
           {['', 'Lire mon message', 'Entrer dans mon espace'][phase]}
         </button>
       </div>
@@ -1921,7 +1921,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0 }}>Jour {days}</p>
           )}
           {streak >= 2 && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}88`, letterSpacing: '0.12em', margin: 0 }}>· {streak} jours d'affilée</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 7 ? arch.color : `${arch.color}88`, letterSpacing: '0.12em', margin: 0, textShadow: streak >= 7 ? `0 0 12px ${arch.color}66` : 'none', animation: streak >= 7 ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>· {streak} jours d'affilée{streak >= 7 ? ' ✦' : ''}</p>
           )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
