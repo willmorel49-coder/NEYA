@@ -95,9 +95,9 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-10
 **Branche** : `main`
-**Phase** : V2.5 — CoconScreen · BgScreen bgPosition · Quiz backgrounds diversifiés
+**Phase** : V2.7 — PersonalizationModal · CoconScreen items toggle · HomeScreen cocon ambiance
 
-### Features actives (`src/App.jsx`) — build 357.84 kB (92.67 kB gzip)
+### Features actives (`src/App.jsx`) — build 385.88 kB (98.86 kB gzip)
 
 **Splash :** 15 étoiles · tint overlay monde · texte retour contextuel (<4h/7j/≥7j) · whisper time-of-day · haptic [4]
 **Onboarding :** 3 écrans cinématiques · `ob0breathe` 42s bg · texte séquentiel · ENTRER bottom:14%
@@ -150,7 +150,13 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - HomeScreen : carte "Exercice de souffle" visible dans Accueil, déclenche BreathingModal
 - Fix critique : écran noir résolu — import React default + ErrorBoundary + animalbreathe opacity-only (commit b24f4a7)
 
-**V2.5 — CoconScreen · BgScreen · Quiz (prod live) :**
+**V2.7 — PersonalizationModal · CoconScreen items toggle · HomeScreen cocon ambiance (prod live) :**
+- `PersonalizationModal` : prénom / mantra / nom du cocon — sauvegarde localStorage
+- HomeScreen header : salutation personnalisée `"Bonjour, {prénom}"` + bouton ✎ + mantra italic
+- CoconScreen items tappables : `placed` state, `togglePlaced()`, badge `✦ Dans ton cocon` / `Touche pour placer`
+- HomeScreen ambient layer : items placés → bougie (emberRise) / cristal (godRay) / plante (splashmote) / totem (ghost animal) / portail (waterRing)
+
+**V2.5–V2.6 — CoconScreen · BgScreen · Quiz · Grand Voyage :**
 - `NeyaGirl` SVG inline (fille de dos, cheveux bleus #3b82f6)
 - `CoconScreen` : sanctuaire personnel full-screen overlay (position: fixed, zIndex: 800) · SpiritAnimal size=200 flottant · NeyaGirl centrée · 5 items à débloquer (Bougie/Cristal/Plante/Totem/Portail) · grille 2×2+1 glassmorphisme · unlock basé streak + jours visités · stats streak/jours
 - HomeScreen : card "Mon Cocon Néya" après Exercice de souffle · ouvre CoconScreen
