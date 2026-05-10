@@ -965,10 +965,10 @@ function IntroScreen({ onStart }) {
           ))}
         </svg>
         <div onClick={goStep1} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 32px', cursor: 'pointer', textAlign: 'center', gap: 22, opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(27px, 7vw, 36px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 44px rgba(0,0,0,0.6), 0 0 60px rgba(245,158,11,0.12)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease', animation: line1 ? 'phrasebreathe 28s ease-in-out 2s infinite' : 'none' }}>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(27px, 7vw, 36px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 44px rgba(0,0,0,0.6), 0 0 60px rgba(245,158,11,0.12)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease', animation: line1 ? (line2 ? 'phrasebreathe 28s ease-in-out 2s infinite, milestoneGlow 12s ease-in-out 6s infinite' : 'phrasebreathe 28s ease-in-out 2s infinite') : 'none' }}>
             Ici commence<br />ton chemin...
           </h1>
-          <div style={{ width: 1, height: 38, background: 'rgba(255,255,255,0.18)', transformOrigin: 'top', animation: line1 ? 'introlineappear 0.9s ease forwards, worldglow 12s ease-in-out 1.2s infinite' : 'none', opacity: line1 ? 1 : 0 }} />
+          <div style={{ width: 1, height: 38, background: 'rgba(255,255,255,0.18)', transformOrigin: 'top', animation: line1 ? (line2 ? 'introlineappear 0.9s ease forwards, worldglow 12s ease-in-out 1.2s infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'introlineappear 0.9s ease forwards, worldglow 12s ease-in-out 1.2s infinite') : 'none', opacity: line1 ? 1 : 0 }} />
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.62)', lineHeight: 1.72, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease', animation: line2 ? 'phrasebreathe 38s ease-in-out 1.5s infinite' : 'none', textShadow: '0 0 28px rgba(245,158,11,0.10)' }}>
             vers plus de calme,<br />d'équilibre et de clarté intérieure.
           </p>
@@ -1253,7 +1253,7 @@ function QuizScreen({ onComplete }) {
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 12, marginBottom: 24 }}>
           <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em', textShadow: `0 2px 24px rgba(0,0,0,0.5), 0 0 60px ${(WORLD_TINTS[bgMain] || 'rgba(99,102,241,0.06)').replace(/[\d.]+\)$/, '0.16)')}`, animation: contentVis ? (selected !== null ? 'questionEnter 0.38s ease both, phrasebreathe 34s ease-in-out 0.5s infinite, milestoneGlow 16s ease-in-out 0.5s infinite' : 'questionEnter 0.38s ease both, phrasebreathe 34s ease-in-out 0.5s infinite') : 'none' }}>{q.title}</h2>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.65, padding: '0 4px', animation: contentVis ? 'questionEnter 0.42s ease 0.05s both, phrasebreathe 42s ease-in-out 1s infinite' : 'none', textShadow: '0 0 20px rgba(255,255,255,0.06)' }}>{q.text}</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.65, padding: '0 4px', animation: contentVis ? (selected !== null ? 'questionEnter 0.42s ease 0.05s both, phrasebreathe 42s ease-in-out 1s infinite, milestoneGlow 18s ease-in-out 2s infinite' : 'questionEnter 0.42s ease 0.05s both, phrasebreathe 42s ease-in-out 1s infinite') : 'none', textShadow: '0 0 20px rgba(255,255,255,0.06)' }}>{q.text}</p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
@@ -1267,7 +1267,7 @@ function QuizScreen({ onComplete }) {
                   </div>
                 )}
                 <span style={{ filter: sel ? `drop-shadow(0 0 6px ${ARCHETYPES[c.type]?.color || 'white'}88)` : 'none', transition: 'filter 0.3s ease', flexShrink: 0, display: 'flex' }}><ChoiceIcon type={c.type} active={sel} /></span>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? (ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.96)') : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease, text-shadow 0.22s ease', textShadow: sel ? `0 0 12px ${ARCHETYPES[c.type]?.color}55` : 'none', animation: sel ? 'phrasebreathe 16s ease-in-out infinite' : 'none' }}>{c.text}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? (ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.96)') : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease, text-shadow 0.22s ease', textShadow: sel ? `0 0 12px ${ARCHETYPES[c.type]?.color}55` : 'none', animation: sel ? 'phrasebreathe 16s ease-in-out infinite' : (selected === null ? `phrasebreathe ${50 + i * 8}s ease-in-out ${i * 0.8}s infinite` : 'none') }}>{c.text}</span>
               </button>
             )
           })}
@@ -1593,7 +1593,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 2px', opacity: 0.85, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 7s ease-in-out 2s infinite', textShadow: `0 0 12px ${arch.color}44` }}>Ton guide intérieur</p>
-                  <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'white', margin: 0, animation: 'phrasebreathe 28s ease-in-out infinite', textShadow: `0 0 14px ${arch.color}22` }}>{arch.animal}</p>
+                  <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'white', margin: 0, animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 10s ease-in-out 4s infinite', textShadow: `0 0 14px ${arch.color}22` }}>{arch.animal}</p>
                 </div>
               </div>
 
@@ -1802,7 +1802,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           </p>
         )}
         {showEncoreIci && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: typingDone ? `${arch.color}44` : `${arch.color}22`, letterSpacing: '0.28em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3.5s ease forwards, phrasebreathe 38s ease-in-out 4s infinite', textShadow: typingDone ? `0 0 22px ${arch.color}44` : `0 0 14px ${arch.color}18`, transition: 'color 1.8s ease, text-shadow 1.8s ease' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: typingDone ? `${arch.color}44` : `${arch.color}22`, letterSpacing: '0.28em', margin: 0, fontStyle: 'italic', animation: typingDone ? 'fadeIn 3.5s ease forwards, phrasebreathe 38s ease-in-out 4s infinite, milestoneGlow 20s ease-in-out 8s infinite' : 'fadeIn 3.5s ease forwards, phrasebreathe 38s ease-in-out 4s infinite', textShadow: typingDone ? `0 0 22px ${arch.color}44` : `0 0 14px ${arch.color}18`, transition: 'color 1.8s ease, text-shadow 1.8s ease' }}>
             encore ici
           </p>
         )}
@@ -1882,7 +1882,7 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
               <t.Icon active={active} color={color} />
               {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85, animation: 'seedPulse 3s ease-in-out infinite' }} />}
             </span>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.12em', color: active ? color : 'rgba(255,255,255,0.22)', transition: 'color 0.25s ease', textTransform: 'uppercase', animation: active ? 'phrasebreathe 18s ease-in-out infinite' : 'none' }}>{t.label}</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.12em', color: active ? color : 'rgba(255,255,255,0.22)', transition: 'color 0.25s ease', textTransform: 'uppercase', animation: active ? 'phrasebreathe 18s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'none' }}>{t.label}</span>
             <div style={{ width: active ? 20 : 3, height: 1.5, borderRadius: 1, background: active ? color : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 8px ${color}, 0 0 16px ${color}66` : 'none', animation: active ? 'worldglow 5s ease-in-out infinite' : 'none' }} />
           </button>
         )
