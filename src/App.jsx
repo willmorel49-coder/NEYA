@@ -1569,7 +1569,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   <SpiritAnimal archetype={archetypeKey} size={60} style={{ opacity: 0.70, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', willChange: 'transform' }} />
                 </div>
                 <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textShadow: `0 0 28px ${arch.color}33`, animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 32s ease-in-out infinite', transition: 'animation 0.4s ease' }}>Tes forces naturelles</h2>
-                <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px', animation: 'worldglow 8s ease-in-out infinite' }} />
+                <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px', animation: forcesShown === arch.forces.length ? 'worldglow 8s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'worldglow 8s ease-in-out infinite' }} />
               </div>
               <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
                 {forcesShown === arch.forces.length && <div style={{ position: 'absolute', inset: '-16px -10px', borderRadius: 20, background: `radial-gradient(ellipse at center, ${arch.color}0c 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />}
@@ -1599,7 +1599,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
 
               {/* Description card */}
               <div style={{ position: 'relative', background: 'rgba(255,255,255,0.055)', border: `1px solid ${arch.color}44`, borderRadius: 16, padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 18, boxShadow: `0 8px 32px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.04)`, overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}99, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s ease-in-out infinite' }} />
+                <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}99, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s ease-in-out infinite, milestoneGlow 14s ease-in-out 3s infinite' }} />
                 {arch.desc.split('\n\n').map((para, i) => (
                   <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: i === 0 ? 16 : 14, color: i === 0 ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.75, fontStyle: i === 0 ? 'italic' : 'normal', textShadow: i === 0 ? `0 1px 20px rgba(0,0,0,0.3), 0 0 40px ${arch.color}18` : `0 0 12px ${arch.color}0f`, animation: i === 0 ? 'phrasebreathe 36s ease-in-out infinite, milestoneGlow 12s ease-in-out 4s infinite' : 'phrasebreathe 40s ease-in-out 2s infinite' }}>
                     {i === 0 ? `"${para}"` : para}
@@ -1616,7 +1616,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               {/* World insight */}
               {arch.worldInsight && (
                 <>
-                  <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 14s ease-in-out infinite' }} />
+                  <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 14s ease-in-out infinite, milestoneGlow 10s ease-in-out 4s infinite' }} />
                   <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `${arch.color}77`, letterSpacing: '0.06em', margin: '0 4px', lineHeight: 1.75, fontStyle: 'italic', textAlign: 'center', animation: 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 9s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33` }}>
                     {arch.worldInsight}
                   </p>
@@ -1626,7 +1626,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
 
               {/* Routines preview */}
               <div style={{ position: 'relative', background: 'rgba(255,255,255,0.04)', border: `1px solid ${arch.color}22`, borderRadius: 14, padding: '18px 18px 14px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden', animation: 'milestoneGlow 18s ease-in-out 5s infinite' }}>
-                <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}77, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 10s ease-in-out infinite' }} />
+                <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}77, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 10s ease-in-out infinite, milestoneGlow 16s ease-in-out 4s infinite' }} />
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}77`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 14s ease-in-out 4s infinite', textShadow: `0 0 10px ${arch.color}33` }}>Tes 3 pratiques quotidiennes</p>
                 {arch.routines.map((r, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
@@ -1772,7 +1772,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           </p>
         </div>
 
-        <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto', animation: 'worldglow 6s ease-in-out infinite' }} />
+        <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto', animation: typingDone ? 'worldglow 6s ease-in-out infinite, milestoneGlow 8s ease-in-out 2s infinite' : 'worldglow 6s ease-in-out infinite' }} />
 
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease, text-shadow 1.5s ease', textShadow: typingDone ? `0 0 24px ${arch.color}77, 0 0 52px ${arch.color}33` : `0 0 20px ${arch.color}44, 0 0 44px ${arch.color}22`, animation: typingDone ? 'milestoneGlow 4.2s ease-in-out infinite' : 'phrasebreathe 18s ease-in-out infinite' }}>
           Espace de présence
@@ -2175,7 +2175,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         </div>
       )}
 
-      <div style={{ height: 1, background: `rgba(${arch.rgb},0.12)`, borderRadius: 1, animation: 'worldglow 26s ease-in-out 12s infinite', marginTop: 4, boxShadow: `0 0 8px ${arch.color}18` }} />
+      <div style={{ height: 1, background: `rgba(${arch.rgb},0.12)`, borderRadius: 1, animation: jourComplète ? 'worldglow 26s ease-in-out 12s infinite, milestoneGlow 14s ease-in-out 6s infinite' : 'worldglow 26s ease-in-out 12s infinite', marginTop: 4, boxShadow: `0 0 8px ${arch.color}18` }} />
       <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginTop: 0 }}>
         {typeof navigator !== 'undefined' && navigator.share && (
           <button onClick={() => {
@@ -2488,9 +2488,9 @@ function BoutiqueScreen({ archetypeKey }) {
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', animation: 'worldglow 16s ease-in-out infinite' }} />
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', animation: 'worldglow 16s ease-in-out infinite, milestoneGlow 18s ease-in-out 5s infinite' }} />
         <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}66`, letterSpacing: '0.2em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 16s ease-in-out 6s infinite', textShadow: `0 0 10px ${arch.color}33` }}>Autres collections</span>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', animation: 'worldglow 16s ease-in-out 4s infinite' }} />
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', animation: 'worldglow 16s ease-in-out 4s infinite, milestoneGlow 18s ease-in-out 9s infinite' }} />
       </div>
 
       {otherCollections.map((col, colIdx) => (
