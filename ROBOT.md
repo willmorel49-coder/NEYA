@@ -93,11 +93,11 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 > Mettre à jour à chaque savepoint.
 
-**Date** : 2026-05-09
+**Date** : 2026-05-10
 **Branche** : `main`
-**Phase** : V2.0 — Deep Polish · Présence étendue · Micro-animations universelles
+**Phase** : V2.2 — Quiz 23 atmosphères · Animaux-esprits premium · BreathingModal
 
-### Features actives (`src/App.jsx`) — build 278.07 kB (76.51 kB gzip)
+### Features actives (`src/App.jsx`) — build 331.68 kB (87.22 kB gzip)
 
 **Splash :** 15 étoiles · tint overlay monde · texte retour contextuel (<4h/7j/≥7j) · whisper time-of-day · haptic [4]
 **Onboarding :** 3 écrans cinématiques · `ob0breathe` 42s bg · texte séquentiel · ENTRER bottom:14%
@@ -143,9 +143,16 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - ResultScreen polish : phase 2 small spirit animal animalbreathe · force card backgrounds presencePulse all-shown
 - IntroScreen body text step 0 phrasebreathe · QuizScreen final "Terminer" enhanced glow
 
+**V2.2 — Quiz atmosphères · Animaux premium · Souffle (sprint 233+) :**
+- Quiz : tint gradient unique par question (23/23) — chaque écran a son propre ciel coloré
+- Animaux-esprits : redessin SVG complet — DeerSpirit path-based slim + antlers 4 branches organiques · PhoenixSpirit wings 3 couches + queue 7 plumes · WolfSpirit crinière aurora · BearSpirit élargi
+- BreathingModal : exercice interactif par archétype — cercle morphique CSS transition, countdown, cycle counter, animal animé au centre · Techniques : Guerrier 4·4·4·4 / Ancrage 4·7·8 / Cohérence 5·5 / Créateur 4·8
+- HomeScreen : carte "Exercice de souffle" visible dans Accueil, déclenche BreathingModal
+- Fix critique : écran noir résolu — import React default + ErrorBoundary + animalbreathe opacity-only (commit b24f4a7)
+
 ### Déploiement
 - `vercel.json` configuré · `npm run build` → `dist/` fonctionnel
-- Prod live : `https://neya-kappa.vercel.app` · Commit `d2a7dbc`
+- Prod live : `https://neya-kappa.vercel.app` · Commit `68a5361`
 
 ### Backlog code
 - [ ] Valider performance mobile (animations nombreuses — worldglow + ringshimmer + forcespring)
