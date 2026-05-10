@@ -1587,7 +1587,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   <div style={{ position: 'absolute', inset: -16, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}18 0%, transparent 70%)`, animation: 'presencePulse 4s ease-in-out infinite' }} />
                   <SpiritAnimal archetype={archetypeKey} size={60} style={{ opacity: 0.70, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', willChange: 'transform' }} />
                 </div>
-                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textShadow: `0 0 28px ${arch.color}33`, animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 32s ease-in-out infinite', transition: 'animation 0.4s ease' }}>Tes forces naturelles</h2>
+                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textShadow: `0 0 28px ${arch.color}33`, animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 32s ease-in-out infinite', transition: 'animation 0.4s ease' }}>{{ resilience: 'Tes forces de feu', presence: 'Tes forces d\'ancrage', sagesse: 'Tes forces intérieures', lumiere: 'Tes forces créatrices' }[archetypeKey] || 'Tes forces naturelles'}</h2>
                 <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px', animation: forcesShown === arch.forces.length ? 'worldglow 8s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'worldglow 8s ease-in-out infinite' }} />
               </div>
               <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
@@ -1611,7 +1611,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   <SpiritAnimal archetype={archetypeKey} size={34} style={{ opacity: 0.65, filter: `drop-shadow(0 0 10px ${arch.color}66)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 32s ease-in-out infinite', position: 'relative' }} />
                 </div>
                 <div>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 2px', opacity: 0.85, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 7s ease-in-out 2s infinite', textShadow: `0 0 12px ${arch.color}44` }}>Ton guide intérieur</p>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 2px', opacity: 0.85, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 7s ease-in-out 2s infinite', textShadow: `0 0 12px ${arch.color}44` }}>{{ resilience: 'Ton guide de feu', presence: 'Ton guide d\'ancrage', sagesse: 'Ton guide de sagesse', lumiere: 'Ton guide de lumière' }[archetypeKey] || 'Ton guide intérieur'}</p>
                   <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'white', margin: 0, animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 10s ease-in-out 4s infinite', textShadow: `0 0 14px ${arch.color}22` }}>{arch.animal}</p>
                 </div>
               </div>
@@ -1646,7 +1646,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               {/* Routines preview */}
               <div style={{ position: 'relative', background: 'rgba(255,255,255,0.04)', border: `1px solid ${arch.color}22`, borderRadius: 14, padding: '18px 18px 14px', display: 'flex', flexDirection: 'column', gap: 10, overflow: 'hidden', animation: 'milestoneGlow 18s ease-in-out 5s infinite' }}>
                 <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}77, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 10s ease-in-out infinite, milestoneGlow 16s ease-in-out 4s infinite' }} />
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}77`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 14s ease-in-out 4s infinite', textShadow: `0 0 10px ${arch.color}33` }}>Tes 3 pratiques quotidiennes</p>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}77`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 14s ease-in-out 4s infinite', textShadow: `0 0 10px ${arch.color}33` }}>{{ resilience: 'Tes 3 pratiques de feu', presence: 'Tes 3 pratiques d\'ancrage', sagesse: 'Tes 3 pratiques de sagesse', lumiere: 'Tes 3 pratiques lumineuses' }[archetypeKey] || 'Tes 3 pratiques quotidiennes'}</p>
                 {arch.routines.map((r, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                     <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.4, animation: `phrasebreathe ${30 + i * 5}s ease-in-out ${i * 1.5}s infinite`, textShadow: `0 0 8px ${arch.color}18` }}>{r.title}</span>
@@ -1795,7 +1795,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto', animation: typingDone ? 'worldglow 6s ease-in-out infinite, milestoneGlow 8s ease-in-out 2s infinite' : 'worldglow 6s ease-in-out infinite' }} />
 
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease, text-shadow 1.5s ease', textShadow: typingDone ? `0 0 24px ${arch.color}77, 0 0 52px ${arch.color}33` : `0 0 20px ${arch.color}44, 0 0 44px ${arch.color}22`, animation: typingDone ? 'milestoneGlow 4.2s ease-in-out infinite' : 'phrasebreathe 18s ease-in-out infinite' }}>
-          Espace de présence
+          {{ resilience: 'Espace de feu', presence: 'Espace de présence', sagesse: 'Espace de silence', lumiere: 'Espace de lumière' }[archetypeKey] || 'Espace de présence'}
         </p>
         <div style={{ position: 'relative', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340, animation: typingDone ? 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 12s ease-in-out 2s infinite' : 'none' }}>
           {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} onDone={() => setTypingDone(true)} cursorColor={arch.color} />}
@@ -2557,7 +2557,7 @@ function BoutiqueScreen({ archetypeKey }) {
       <div style={{ textAlign: 'center', marginTop: 4 }}>
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 10, color: `${arch.color}33`, letterSpacing: '0.18em', margin: '0 0 4px', textTransform: 'uppercase', animation: 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 14s ease-in-out 6s infinite', textShadow: `0 0 10px ${arch.color}18` }}>ÇA VA? × NÉYA</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.12)', letterSpacing: '0.06em', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 16s ease-in-out 5s infinite', textShadow: `0 0 10px ${arch.color}15` }}>
-          Chaque vêtement porte une intention.
+          {{ resilience: 'Chaque vêtement porte une flamme.', presence: 'Chaque vêtement porte ta présence.', sagesse: 'Chaque vêtement porte un silence.', lumiere: 'Chaque vêtement porte ta lumière.' }[archetypeKey] || 'Chaque vêtement porte une intention.'}
         </p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.12em', margin: '6px 0 0', opacity: 0.4, animation: 'phrasebreathe 30s ease-in-out infinite, seedPulse 5s ease-in-out 2s infinite, milestoneGlow 16s ease-in-out 7s infinite', textShadow: `0 0 8px ${arch.color}22` }}>
           Collection {myCollection?.name || 'bientôt'} · Lancement 2026
