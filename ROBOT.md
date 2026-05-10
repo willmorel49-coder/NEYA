@@ -95,9 +95,9 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-10
 **Branche** : `main`
-**Phase** : V2.2 — Quiz 23 atmosphères · Animaux-esprits premium · BreathingModal
+**Phase** : V2.3 — Backgrounds MONDE IMAGINAIRE · Animaux redessinés · BreathingModal · Effects monde
 
-### Features actives (`src/App.jsx`) — build 331.68 kB (87.22 kB gzip)
+### Features actives (`src/App.jsx`) — build 341.45 kB (89.65 kB gzip)
 
 **Splash :** 15 étoiles · tint overlay monde · texte retour contextuel (<4h/7j/≥7j) · whisper time-of-day · haptic [4]
 **Onboarding :** 3 écrans cinématiques · `ob0breathe` 42s bg · texte séquentiel · ENTRER bottom:14%
@@ -150,9 +150,18 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - HomeScreen : carte "Exercice de souffle" visible dans Accueil, déclenche BreathingModal
 - Fix critique : écran noir résolu — import React default + ErrorBoundary + animalbreathe opacity-only (commit b24f4a7)
 
+**V2.3 — Backgrounds MONDE IMAGINAIRE · Effects monde (commit 01d355d) :**
+- 8 fonds remplacés par les images de référence Will (dossier NÉYA/NÉYA/) :
+  `bg-onboarding` (fille teal + cité dorée NÉYA) · `bg-vrai` (cerf blanc cercle lumineux + reflet eau)
+  `bg-foret` (ours lumineux en forêt nuit) · `bg-brume` (loup lumineux + fille désert brumeux)
+  `bg-cosmos` (aurora nébuleuse canyon) · `bg-eau` (cerf doré + fille cheveux bleus en forêt)
+  `bg-vide` (arche caverne éthérée + lac) · `bg-cosmos-alt` (fille + trail esprit canyon)
+- EspaceVrai effects par archétype : resilience=10 braises (emberRise) · presence=4 anneaux eau (waterRing) · sagesse=5 nappes brume (mistDrift) · lumiere=6 triangles god-ray (godRay)
+- CSS keyframes ajoutés : `emberRise`, `waterRing`, `mistDrift`, `godRay`, `forestMote`
+
 ### Déploiement
 - `vercel.json` configuré · `npm run build` → `dist/` fonctionnel
-- Prod live : `https://neya-kappa.vercel.app` · Commit `68a5361`
+- Prod live : `https://neya-kappa.vercel.app` · Commit `01d355d`
 
 ### Backlog code
 - [ ] Valider performance mobile (animations nombreuses — worldglow + ringshimmer + forcespring)
