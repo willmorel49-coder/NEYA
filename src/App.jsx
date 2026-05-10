@@ -1620,7 +1620,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `${arch.color}77`, letterSpacing: '0.06em', margin: '0 4px', lineHeight: 1.75, fontStyle: 'italic', textAlign: 'center', animation: 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 9s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33` }}>
                     {arch.worldInsight}
                   </p>
-                  <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 14s ease-in-out 7s infinite' }} />
+                  <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: 'worldglow 14s ease-in-out 7s infinite, milestoneGlow 10s ease-in-out 11s infinite' }} />
                 </>
               )}
 
@@ -2038,7 +2038,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           {jourComplète && <div style={{ position: 'absolute', inset: -30, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 5.8s ease-in-out infinite 1.4s', pointerEvents: 'none', zIndex: 0 }} />}
           {/* Soft glow center */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${jourComplète ? '34' : '20'} 0%, transparent 72%)`, animation: `presencePulse ${jourComplète ? '2.8' : '3.8'}s ease-in-out infinite`, transition: 'background 1.4s ease' }} />
+            <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${jourComplète ? '34' : '20'} 0%, transparent 72%)`, animation: jourComplète ? `presencePulse 2.8s ease-in-out infinite, milestoneGlow 6s ease-in-out 1.5s infinite` : 'presencePulse 3.8s ease-in-out infinite', transition: 'background 1.4s ease' }} />
             <SpiritAnimal
               archetype={archetypeKey}
               size={74}
@@ -2110,12 +2110,12 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
                   background: active ? arch.color : 'rgba(255,255,255,0.07)',
                   boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : isToday ? `0 0 0 1.5px ${arch.color}66` : 'none',
                   transition: 'all 0.5s ease',
-                  animation: active ? 'seedPulse 3.5s ease-in-out infinite' : isToday ? 'presencePulse 4.2s ease-in-out infinite' : 'none',
+                  animation: active ? (weekDots.filter(Boolean).length === 7 ? 'seedPulse 3.5s ease-in-out infinite, milestoneGlow 5s ease-in-out 1s infinite' : 'seedPulse 3.5s ease-in-out infinite') : isToday ? (jourComplète ? 'presencePulse 4.2s ease-in-out infinite, milestoneGlow 7s ease-in-out 2s infinite' : 'presencePulse 4.2s ease-in-out infinite') : 'none',
                   animationDelay: `${i * 0.42}s`,
                   outline: isToday && !active ? `1.5px solid ${arch.color}55` : 'none',
                   outlineOffset: '2px',
                 }} />
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 7.5, color: isToday ? `${arch.color}88` : active ? `${arch.color}55` : 'rgba(255,255,255,0.16)', letterSpacing: '0.04em', lineHeight: 1, transition: 'color 0.5s ease', animation: isToday ? 'phrasebreathe 14s ease-in-out infinite' : active ? 'phrasebreathe 22s ease-in-out infinite' : 'phrasebreathe 60s ease-in-out infinite' }}>{letter}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 7.5, color: isToday ? `${arch.color}88` : active ? `${arch.color}55` : 'rgba(255,255,255,0.16)', letterSpacing: '0.04em', lineHeight: 1, transition: 'color 0.5s ease', animation: isToday ? (jourComplète ? 'phrasebreathe 14s ease-in-out infinite, milestoneGlow 6s ease-in-out infinite' : 'phrasebreathe 14s ease-in-out infinite') : active ? (weekDots.filter(Boolean).length === 7 ? 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 8s ease-in-out 1s infinite' : 'phrasebreathe 22s ease-in-out infinite') : 'phrasebreathe 60s ease-in-out infinite' }}>{letter}</span>
               </div>
             )
           })}
@@ -2521,9 +2521,9 @@ function BoutiqueScreen({ archetypeKey }) {
       ))}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 20s ease-in-out infinite' }} />
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 20s ease-in-out infinite, milestoneGlow 22s ease-in-out 8s infinite' }} />
         <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 7, color: `${arch.color}44`, letterSpacing: '0.3em', textTransform: 'uppercase', animation: 'seedPulse 4.5s ease-in-out infinite, milestoneGlow 12s ease-in-out 3s infinite', textShadow: `0 0 8px ${arch.color}33` }}>✦</span>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 20s ease-in-out 10s infinite' }} />
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 20s ease-in-out 10s infinite, milestoneGlow 22s ease-in-out 18s infinite' }} />
       </div>
       <div style={{ textAlign: 'center', marginTop: 4 }}>
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 10, color: `${arch.color}33`, letterSpacing: '0.18em', margin: '0 0 4px', textTransform: 'uppercase', animation: 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 14s ease-in-out 6s infinite', textShadow: `0 0 10px ${arch.color}18` }}>ÇA VA? × NÉYA</p>
