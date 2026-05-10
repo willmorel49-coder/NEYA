@@ -1587,8 +1587,9 @@ function TransitionScreen({ archetypeKey, onReveal }) {
     const t2 = setTimeout(() => setShowBtn(true), 2800)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
+  const transitionBg = { resilience: 'bg-feu.png', presence: 'bg-eau.png', sagesse: 'bg-brume.png', lumiere: 'bg-foret.png' }[archetypeKey] || 'bg-cosmos-alt.png'
   return (
-    <BgScreen bg="bg-cosmos-alt.png" overlay="rgba(5,8,16,0.62)" breathe>
+    <BgScreen bg={transitionBg} overlay="rgba(5,8,16,0.58)" breathe>
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
         {STARS.slice(0, 10).map((s, i) => (
           <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r * 0.75} fill={s.fill || 'white'}
@@ -1597,23 +1598,29 @@ function TransitionScreen({ archetypeKey, onReveal }) {
         {arch && [{x:9,y:24,r:2.0,dur:26,del:0},{x:88,y:18,r:1.6,dur:32,del:4.8},{x:24,y:78,r:2.4,dur:20,del:2.2},{x:76,y:72,r:1.8,dur:36,del:7.6},{x:52,y:90,r:2.2,dur:28,del:5.4}].map((m,i)=>(
           <circle key={`am${i}`} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.05, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
         ))}
+        {arch && [{x:14,y:8,r:3.2,dur:22,del:1.4},{x:82,y:34,r:2.8,dur:28,del:6.1},{x:37,y:55,r:4.1,dur:18,del:3.3},{x:61,y:14,r:2.5,dur:34,del:8.7},{x:7,y:67,r:3.8,dur:38,del:0.9},{x:91,y:81,r:2.6,dur:24,del:5.2},{x:48,y:42,r:4.4,dur:30,del:11.5},{x:26,y:92,r:3.0,dur:26,del:2.8}].map((p,i)=>(
+          <circle key={`wp${i}`} cx={`${p.x}%`} cy={`${p.y}%`} r={p.r} fill={arch.color} style={{ opacity: 0.09, animation: `splashmote ${p.dur}s ease-in-out infinite`, animationDelay: `${p.del}s` }} />
+        ))}
       </svg>
+      {arch && (
+        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 60%, ${arch.color}14 0%, transparent 60%)`, pointerEvents: 'none', zIndex: 1, animation: 'presencePulse 6s ease-in-out infinite' }} />
+      )}
       <div style={{ padding: '60px 28px 52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', width: '100%' }}>
         <NeyaLogo size="sm" />
         <div style={{ textAlign: 'center', opacity: vis ? 1 : 0, transition: 'opacity 1.6s ease', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 26 }}>
-          <div style={{ position: 'relative', width: 76, height: 76 }}>
-            <div style={{ position: 'absolute', inset: -22, borderRadius: '50%', border: `1px solid ${arch ? arch.color + '33' : 'rgba(255,255,255,0.07)'}`, animation: 'pulsering 4.8s ease-in-out infinite 1.6s' }} />
-            <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: `1px solid ${arch ? arch.color + '55' : 'rgba(255,255,255,0.14)'}`, animation: 'pulsering 3.4s ease-in-out infinite' }} />
-            <div style={{ width: 76, height: 76, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
+          <div style={{ position: 'relative', width: 110, height: 110 }}>
+            <div style={{ position: 'absolute', inset: -28, borderRadius: '50%', border: `1px solid ${arch ? arch.color + '33' : 'rgba(255,255,255,0.07)'}`, animation: 'pulsering 4.8s ease-in-out infinite 1.6s' }} />
+            <div style={{ position: 'absolute', inset: -14, borderRadius: '50%', border: `1px solid ${arch ? arch.color + '55' : 'rgba(255,255,255,0.14)'}`, animation: 'pulsering 3.4s ease-in-out infinite' }} />
+            <div style={{ width: 110, height: 110, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', background: `radial-gradient(circle, ${arch ? `rgba(${arch.rgb},0.20)` : 'rgba(99,102,241,0.18)'} 0%, transparent 68%)`, animation: 'presencePulse 3.2s ease-in-out infinite' }} />
-              <SpiritAnimal archetype={archetypeKey || 'presence'} size={40} style={{ opacity: 0.78, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', position: 'relative' }} />
+              <SpiritAnimal archetype={archetypeKey || 'presence'} size={72} style={{ opacity: 0.78, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', position: 'relative' }} />
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch ? `${arch.color}55` : 'rgba(255,255,255,0.28)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, opacity: vis ? 1 : 0, transition: 'opacity 1.4s ease 0.2s, color 1.2s ease', animation: vis ? 'phrasebreathe 30s ease-in-out 1.5s infinite, milestoneGlow 12s ease-in-out 3s infinite' : 'none', textShadow: arch ? `0 0 10px ${arch.color}33` : 'none' }}>
               {QUESTIONS.length} questions · Tes réponses ont été entendues.
             </p>
-            <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(24px, 6vw, 30px)', color: 'white', margin: 0, lineHeight: 1.3, textShadow: arch ? `0 2px 32px rgba(0,0,0,0.5), 0 0 60px ${arch.color}18` : '0 2px 32px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.1)', animation: vis ? (showBtn ? 'phrasebreathe 24s ease-in-out 2s infinite, milestoneGlow 10s ease-in-out 5s infinite' : 'phrasebreathe 24s ease-in-out 2s infinite') : 'none' }}>
+            <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(24px, 6vw, 30px)', color: 'white', margin: 0, lineHeight: 1.3, textShadow: arch ? `0 2px 32px rgba(0,0,0,0.5), 0 0 60px ${arch.color}18, 0 0 40px ${arch.color}33` : '0 2px 32px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.1)', animation: vis ? (showBtn ? 'phrasebreathe 24s ease-in-out 2s infinite, milestoneGlow 10s ease-in-out 5s infinite' : 'phrasebreathe 24s ease-in-out 2s infinite') : 'none' }}>
               Ton guide intérieur<br />s'apprête à se révéler...
             </h1>
             <div style={{ width: 1, height: 36, background: 'rgba(255,255,255,0.14)', borderRadius: 1, margin: '0 auto', animation: showBtn ? 'worldglow 8s ease-in-out infinite, milestoneGlow 12s ease-in-out 3s infinite' : 'worldglow 8s ease-in-out infinite' }} />
