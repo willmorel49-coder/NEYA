@@ -1629,7 +1629,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               {/* Intention aperçu */}
               <div style={{ background: `rgba(${arch.rgb},0.07)`, border: `1px solid ${arch.color}33`, borderRadius: 12, padding: '16px 18px', animation: 'milestoneGlow 18s ease-in-out 4s infinite' }}>
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 9px', opacity: 0.8, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 8s ease-in-out 3s infinite', textShadow: `0 0 10px ${arch.color}44` }}>Ton intention du jour</p>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.7, fontStyle: 'italic', animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 9s ease-in-out 3s infinite', textShadow: `0 0 20px ${arch.color}22` }}>"{arch.intentions[0]}"</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.7, fontStyle: 'italic', animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 9s ease-in-out 3s infinite', textShadow: `0 0 20px ${arch.color}22` }}>"{getDailyIntention(archetypeKey)}"</p>
               </div>
 
               {/* World insight */}
@@ -1998,9 +1998,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const returningMsg = () => {
     if (days <= 0) return FIRST_DAY_MSGS[archetypeKey] || 'Ton voyage commence ici.'
     if (MILESTONES[days]) return MILESTONES[days]
-    if (days === 1) return 'Tu es revenu·e. C\'est bien.'
-    if (days < 7) return `${days} jours avec toi.`
-    if (days < 30) return `${days} jours ensemble.`
+    const day1Msg = { resilience: 'Tu es revenu·e. Le feu est intact.', presence: 'Tu es revenu·e. L\'espace t\'attendait.', sagesse: 'Tu es revenu·e. La brume s\'éclaire.', lumiere: 'Tu es revenu·e. La lumière continue.' }[archetypeKey]
+    if (days === 1) return day1Msg || 'Tu es revenu·e. C\'est bien.'
+    if (days < 7) return `${days} jours. Tu construis quelque chose.`
+    if (days < 30) return `${days} jours ensemble — c'est réel.`
     return `${days} jours. Ta constance est belle.`
   }
   const msg = returningMsg()
@@ -2027,7 +2028,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {/* ── Première visite du jour ── */}
       {showPresenceToast && (
         <div style={{ position: 'fixed', top: 18, left: '50%', transform: 'translateX(-50%)', background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}44`, borderRadius: 100, padding: '7px 18px', zIndex: 50, animation: 'fadeIn 0.6s ease both', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', pointerEvents: 'none', whiteSpace: 'nowrap' }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.14em', margin: 0, animation: 'milestoneGlow 3.5s ease-in-out infinite' }}>✦ Présence notée</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.14em', margin: 0, animation: 'milestoneGlow 3.5s ease-in-out infinite' }}>✦ {{ resilience: 'Présence de feu notée', presence: 'Présence d\'eau notée', sagesse: 'Présence de brume notée', lumiere: 'Présence de lumière notée' }[archetypeKey] || 'Présence notée'}</p>
         </div>
       )}
 
@@ -2294,7 +2295,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
           </svg>
           <div>
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: arch.color, margin: '0 0 4px', animation: 'milestoneGlow 4s ease-in-out infinite', textShadow: `0 0 18px ${arch.color}55` }}>✦ Routines complètes.</p>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: `${arch.color}66`, margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33` }}>Ta constance est une force.</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: `${arch.color}66`, margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33` }}>{{ resilience: 'Ton feu nourrit chaque geste.', presence: 'Ta régularité est une eau profonde.', sagesse: 'Ta discipline forge ta sagesse.', lumiere: 'Ta constance crée de la lumière.' }[archetypeKey] || 'Ta constance est une force.'}</p>
           </div>
           {onOpenVrai && (
             <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}55` }}>
@@ -2382,7 +2383,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
           </svg>
           <div>
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: arch.color, margin: '0 0 6px', animation: 'milestoneGlow 4s ease-in-out infinite', textShadow: `0 0 18px ${arch.color}55` }}>✦ Toutes tes quêtes accomplies.</p>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: `${arch.color}66`, margin: 0, animation: 'phrasebreathe 24s ease-in-out infinite, milestoneGlow 8s ease-in-out 2.5s infinite', textShadow: `0 0 14px ${arch.color}33` }}>Ta lumière grandit à chaque pas.</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: `${arch.color}66`, margin: 0, animation: 'phrasebreathe 24s ease-in-out infinite, milestoneGlow 8s ease-in-out 2.5s infinite', textShadow: `0 0 14px ${arch.color}33` }}>{{ resilience: 'Tu as transformé l\'intention en action.', presence: 'Tu as tenu ta promesse intérieure.', sagesse: 'Ta quête intérieure avance.', lumiere: 'Ta lumière grandit à chaque pas.' }[archetypeKey] || 'Tu avances avec courage.'}</p>
           </div>
           {onOpenVrai && (
             <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}55` }}>
