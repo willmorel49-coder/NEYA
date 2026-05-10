@@ -24,6 +24,9 @@ const ARCHETYPES = {
       "Ta flamme intérieure ne cherche pas à réchauffer le monde. Elle le réchauffe naturellement.",
       "Ce que tu construis chaque jour, même en silence, compte plus que tu ne le crois.",
       "Tu n'as pas besoin d'aller vite. Tu as besoin d'avancer.",
+      "Ton courage n'est pas un état. C'est une décision que tu prends, encore et encore.",
+      "Même brisé·e, tu reconstruis. C'est ta nature profonde.",
+      "L'endurance n'est pas la résignation. C'est le feu qui reste après la tempête.",
     ],
     routines: [
       { title: 'La Minute de Feu', desc: 'Prends 60 secondes pour noter UNE chose que tu vas transformer aujourd\'hui. Une seule.', duration: '1 min' },
@@ -55,6 +58,9 @@ const ARCHETYPES = {
       "Ta douceur n'est pas une faiblesse. C'est une intelligence du cœur.",
       "Aujourd'hui, laisse le moment être ce qu'il est, sans vouloir le changer.",
       "Tes racines sont profondes. Rien ne peut vraiment t'emporter.",
+      "Ton silence est une forme de sagesse que peu savent reconnaître.",
+      "La vraie présence n'exige rien. Elle rayonne simplement.",
+      "Prends soin de toi avec la même douceur que tu offres aux autres.",
     ],
     routines: [
       { title: 'Le Silence du Matin', desc: '3 minutes sans écran, juste ta respiration et ce que tu ressens en ce moment précis.', duration: '3 min' },
@@ -86,6 +92,9 @@ const ARCHETYPES = {
       "Observe. Tout est là, dans les détails que les autres ne remarquent pas.",
       "Ton intuition parle doucement. Apprends à lui faire plus de place aujourd'hui.",
       "Le sens ne se trouve pas. Il se crée, à chaque décision consciente.",
+      "Tes questions comptent autant que tes réponses. Parfois plus.",
+      "Le doute n'est pas l'opposé de la sagesse. C'en est l'entrée.",
+      "Ce que tu as traversé t'a donné une vue que les autres n'ont pas.",
     ],
     routines: [
       { title: 'L\'Observation', desc: 'Observe une chose que tu n\'avais jamais vraiment regardée. Laisse-toi surprendre par l\'évidence.', duration: '5 min' },
@@ -117,6 +126,9 @@ const ARCHETYPES = {
       "Ta créativité n'est pas un talent parmi d'autres. C'est une énergie de vie.",
       "Aujourd'hui, laisse quelque chose naître sans jugement ni attente.",
       "Ta lumière n'a pas besoin de permission pour exister. Brille.",
+      "Ton éclat ne s'excuse pas. Il illumine.",
+      "La créativité n'attend pas l'inspiration — elle la crée.",
+      "Quelque chose de beau passe par toi. Laisse-le circuler.",
     ],
     routines: [
       { title: 'L\'Étincelle', desc: 'Crée quelque chose, n\'importe quoi, en 10 minutes. Dessine, écris, chante — sans objectif.', duration: '10 min' },
@@ -744,14 +756,21 @@ function ReturningScreen({ archetypeKey, onDone }) {
 
   if (!arch) { onDone(); return null }
 
+  const ARCH_WHISPERS = {
+    resilience: ['Ton feu est intact.', 'La flamme n\'attend que toi.', 'Tu reviens en force.'],
+    presence:   ['Ton espace t\'attendait.', 'L\'eau garde ta place.', 'Tu reviens à toi.'],
+    sagesse:    ['Le silence t\'a gardé.', 'La brume t\'accueille.', 'Tu retrouves ta voix.'],
+    lumiere:    ['Ta lumière revient.', 'Tu es encore là, présent·e.', 'La lumière t\'attendait.'],
+  }
   const whisper = (() => {
     try {
       const todayStr = new Date().toISOString().split('T')[0]
       const yesterStr = new Date(Date.now() - 86400000).toISOString().split('T')[0]
-      if (localStorage.getItem(`neya_visited_${todayStr}`)) return 'Tu es encore là.'
-      if (localStorage.getItem(`neya_visited_${yesterStr}`)) return 'Tu es revenu·e.'
-      return 'Tu es de retour.'
-    } catch { return 'Tu es encore là.' }
+      const w = ARCH_WHISPERS[archetypeKey] || ['Tu es encore là.', 'Tu es revenu·e.', 'Tu es de retour.']
+      if (localStorage.getItem(`neya_visited_${todayStr}`)) return w[0]
+      if (localStorage.getItem(`neya_visited_${yesterStr}`)) return w[1]
+      return w[2]
+    } catch { return (ARCH_WHISPERS[archetypeKey] || ['Tu es encore là.'])[0] }
   })()
 
   return (
@@ -878,7 +897,7 @@ function SplashScreen({ onStart }) {
   return (
     <BgScreen bg="bg-onboarding.png" overlay="rgba(5,8,16,0.40)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
       {/* Ghost spirit — welcoming presence, ultra-faint */}
-      <div style={{ position: 'absolute', bottom: '-4%', right: '-8%', pointerEvents: 'none', opacity: vis ? 0.042 : 0, transition: 'opacity 3s ease 1s', filter: showBtn ? 'blur(2px) drop-shadow(0 0 28px rgba(99,102,241,0.22))' : 'blur(2.5px)', animation: vis ? 'animalfloat 32s ease-in-out infinite, animalbreathe 48s ease-in-out infinite' : 'none', zIndex: 2, transition: 'opacity 3s ease 1s, filter 2s ease' }}>
+      <div style={{ position: 'absolute', bottom: '-4%', right: '-8%', pointerEvents: 'none', opacity: vis ? 0.042 : 0, filter: showBtn ? 'blur(2px) drop-shadow(0 0 28px rgba(99,102,241,0.22))' : 'blur(2.5px)', animation: vis ? 'animalfloat 32s ease-in-out infinite, animalbreathe 48s ease-in-out infinite' : 'none', zIndex: 2, transition: 'opacity 3s ease 1s, filter 2s ease' }}>
         <DeerSpirit size={240} color="#6366f1" />
       </div>
       {/* Ambient vertical light column */}
@@ -1657,17 +1676,17 @@ const ESPACEACCOMPANY = {
 }
 
 const PATIENCE_TEXTS = {
-  resilience: 'Ta force n\'est pas dans la vitesse.',
-  presence:   'L\'eau n\'est pas pressée. Toi non plus.',
-  sagesse:    'Le silence est ta langue native.',
-  lumiere:    'Rester, c\'est déjà beaucoup.',
+  resilience: ['Ta force n\'est pas dans la vitesse.', 'Le repos est aussi une forme de feu.', 'Même immobile, tu avances.'],
+  presence:   ['L\'eau n\'est pas pressée. Toi non plus.', 'Être là suffit. Vraiment.', 'Tu n\'as rien à faire ici, juste être.'],
+  sagesse:    ['Le silence est ta langue native.', 'Dans l\'immobilité, tout devient clair.', 'Ta brume te protège autant qu\'elle te révèle.'],
+  lumiere:    ['Rester, c\'est déjà beaucoup.', 'Ta lumière n\'a pas besoin d\'agir pour exister.', 'Parfois la plus belle création, c\'est le silence.'],
 }
 
 const DEEP_TEXTS = {
-  resilience: 'Quelque chose en toi sait déjà ce qu\'il doit faire.',
-  presence:   'Tu habites vraiment cet instant. C\'est rare.',
-  sagesse:    'Dans ce silence prolongé, quelque chose se clarifie.',
-  lumiere:    'Ta lumière brille même quand tu ne la vois pas.',
+  resilience: ['Quelque chose en toi sait déjà ce qu\'il doit faire.', 'Ta flamme brûle même quand tu ne la vois pas.', 'Tu as traversé plus difficile. Tu traverseras ceci aussi.'],
+  presence:   ['Tu habites vraiment cet instant. C\'est rare.', 'Ton ancrage est réel. Il est là, sous tout.', 'Cette profondeur que tu sens — elle t\'appartient.'],
+  sagesse:    ['Dans ce silence prolongé, quelque chose se clarifie.', 'Ce que tu perçois là est vrai. Fais confiance.', 'Ton intelligence intérieure parle. Écoute sans traduire.'],
+  lumiere:    ['Ta lumière brille même quand tu ne la vois pas.', 'Quelque chose de neuf naît en toi en ce moment.', 'Tu es une source. Et les sources ne s\'épuisent pas.'],
 }
 
 const EVRAI_BG_PERIODS    = { resilience: 22, presence: 34, sagesse: 48, lumiere: 28 }
@@ -1689,6 +1708,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   const intention = getDailyIntention(archetypeKey)
   const bgPeriod    = EVRAI_BG_PERIODS[archetypeKey]    || 28
   const ghostPeriod = EVRAI_GHOST_PERIODS[archetypeKey] || 36
+  const textVariantIdx = new Date().getDate() % 3
 
   const handlePointerDown = () => {
     longPressDetected.current = false
@@ -1798,7 +1818,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         )}
         {showPatience && (
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.08em', margin: 0, fontStyle: 'italic', animation: typingDone ? 'fadeIn 3s ease forwards, phrasebreathe 36s ease-in-out 4s infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'fadeIn 3s ease forwards, phrasebreathe 36s ease-in-out 4s infinite', maxWidth: 260, lineHeight: 1.75, textAlign: 'center', textShadow: `0 0 14px ${arch.color}22` }}>
-            {PATIENCE_TEXTS[archetypeKey]}
+            {(PATIENCE_TEXTS[archetypeKey] || [])[textVariantIdx] || PATIENCE_TEXTS[archetypeKey]?.[0]}
           </p>
         )}
         {showEncoreIci && (
@@ -1810,7 +1830,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           <>
             <div style={{ width: 20, height: 1, background: `${arch.color}33`, borderRadius: 1, animation: 'fadeIn 4s ease forwards, worldglow 14s ease-in-out 6s infinite' }} />
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `${arch.color}55`, letterSpacing: '0.05em', margin: 0, fontStyle: 'italic', animation: typingDone ? 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite, milestoneGlow 14s ease-in-out 7s infinite' : 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite', maxWidth: 280, lineHeight: 1.8, textAlign: 'center', textShadow: `0 0 20px ${arch.color}22` }}>
-              {DEEP_TEXTS[archetypeKey]}
+              {(DEEP_TEXTS[archetypeKey] || [])[textVariantIdx] || DEEP_TEXTS[archetypeKey]?.[0]}
             </p>
           </>
         )}
@@ -1968,7 +1988,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const totalDone = getTotalRoutinesDone()
   const presenceProgress = ringReady ? getPresenceProgress(savedAt, routinesDone, quetesDone, arch) : 0
 
-  const MILESTONES = { 7: 'Sept jours de présence. Quelque chose prend racine.', 14: 'Deux semaines — tu construis quelque chose de réel.', 21: '21 jours, ton rythme prend forme.', 30: 'Un mois de présence — ta constance est belle.', 60: 'Deux mois. Tu avances avec profondeur.', 100: 'Cent jours. Ta lumière est durable.' }
+  const MILESTONES = { 3: 'Trois jours. Quelque chose commence à prendre forme.', 5: 'Cinq jours. Tu es là, et ça compte.', 7: 'Sept jours de présence. Quelque chose prend racine.', 14: 'Deux semaines — tu construis quelque chose de réel.', 21: '21 jours, ton rythme prend forme.', 30: 'Un mois de présence — ta constance est belle.', 45: 'Quarante-cinq jours. Tu t\'ancres en profondeur.', 60: 'Deux mois. Tu avances avec profondeur.', 90: 'Trois mois. Ce que tu construis est vrai.', 100: 'Cent jours. Ta lumière est durable.' }
   const FIRST_DAY_MSGS = {
     resilience: 'Ton feu commence ici.',
     presence:   'Ton espace commence ici.',
