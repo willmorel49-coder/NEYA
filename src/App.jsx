@@ -2020,9 +2020,12 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
     if (MILESTONES[days]) return MILESTONES[days]
     const day1Msg = { resilience: 'Tu es revenu·e. Le feu est intact.', presence: 'Tu es revenu·e. L\'espace t\'attendait.', sagesse: 'Tu es revenu·e. La brume s\'éclaire.', lumiere: 'Tu es revenu·e. La lumière continue.' }[archetypeKey]
     if (days === 1) return day1Msg || 'Tu es revenu·e. C\'est bien.'
-    if (days < 7) return `${days} jours. Tu construis quelque chose.`
-    if (days < 30) return `${days} jours ensemble — c'est réel.`
-    return `${days} jours. Ta constance est belle.`
+    const short = { resilience: `${days} jours. Ton feu brûle.`, presence: `${days} jours. Tu t'ancres.`, sagesse: `${days} jours. Ta brume prend forme.`, lumiere: `${days} jours. Ta lumière grandit.` }[archetypeKey]
+    if (days < 7) return short || `${days} jours. Tu construis quelque chose.`
+    const mid = { resilience: `${days} jours de feu — tu avances.`, presence: `${days} jours de présence — c'est réel.`, sagesse: `${days} jours de sagesse — c'est réel.`, lumiere: `${days} jours de lumière — c'est réel.` }[archetypeKey]
+    if (days < 30) return mid || `${days} jours ensemble — c'est réel.`
+    const long = { resilience: `${days} jours. Ton feu est une constance.`, presence: `${days} jours. Ta présence est une constance.`, sagesse: `${days} jours. Ta sagesse est une constance.`, lumiere: `${days} jours. Ta lumière est une constance.` }[archetypeKey]
+    return long || `${days} jours. Ta constance est belle.`
   }
   const msg = returningMsg()
   const isMilestone = days > 0 && !!MILESTONES[days]
