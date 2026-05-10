@@ -786,7 +786,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
           fontStyle: 'italic',
           opacity: vis ? 1 : 0,
           transition: 'opacity 1s ease 0.2s',
-          animation: vis ? 'phrasebreathe 30s ease-in-out infinite' : 'none',
+          animation: vis ? 'phrasebreathe 30s ease-in-out infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'none',
         }}>
           {(() => { const h = new Date().getHours(); if (h >= 22 || h < 5) return 'cette nuit'; if (h < 9) return 'ce matin'; if (h < 18) return 'cet après-midi'; return 'ce soir' })()}
         </p>
@@ -902,13 +902,13 @@ function SplashScreen({ onStart }) {
 
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, position: 'relative' }}>
           <div style={{ position: 'absolute', inset: '-60px -80px', background: 'radial-gradient(ellipse at center, rgba(99,102,241,0.08) 0%, transparent 68%)', pointerEvents: 'none', zIndex: 0 }} />
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(30px, 8vw, 40px)', color: 'white', lineHeight: 1.25, margin: 0, textShadow: '0 2px 40px rgba(0,0,0,0.55), 0 0 80px rgba(99,102,241,0.18)', letterSpacing: '0.01em', opacity: titleVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1, animation: titleVis ? 'phrasebreathe 26s ease-in-out 2s infinite' : 'none' }}>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(30px, 8vw, 40px)', color: 'white', lineHeight: 1.25, margin: 0, textShadow: '0 2px 40px rgba(0,0,0,0.55), 0 0 80px rgba(99,102,241,0.18)', letterSpacing: '0.01em', opacity: titleVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1, animation: titleVis ? (showBtn ? 'phrasebreathe 26s ease-in-out 2s infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'phrasebreathe 26s ease-in-out 2s infinite') : 'none' }}>
             Bienvenue dans<br />ton Grand Voyage...
           </h1>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.7, opacity: subVis ? 1 : 0, transition: 'opacity 1.2s ease', position: 'relative', zIndex: 1, animation: subVis ? (showBtn ? 'phrasebreathe 34s ease-in-out 2s infinite, milestoneGlow 16s ease-in-out 6s infinite' : 'phrasebreathe 34s ease-in-out 2s infinite') : 'none', textShadow: '0 0 30px rgba(99,102,241,0.14)' }}>
             Le plus beau chemin<br />commence en toi.
           </p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.20)', margin: 0, letterSpacing: '0.04em', fontStyle: 'italic', opacity: whisperVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1, animation: whisperVis ? 'phrasebreathe 38s ease-in-out 3s infinite' : 'none', textShadow: '0 0 20px rgba(99,102,241,0.15)' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.20)', margin: 0, letterSpacing: '0.04em', fontStyle: 'italic', opacity: whisperVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1, animation: whisperVis ? (showBtn ? 'phrasebreathe 38s ease-in-out 3s infinite, milestoneGlow 18s ease-in-out 5s infinite' : 'phrasebreathe 38s ease-in-out 3s infinite') : 'none', textShadow: '0 0 20px rgba(99,102,241,0.15)' }}>
             T'as pas besoin d'aller bien pour commencer.
           </p>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: 'rgba(255,255,255,0.09)', margin: '5px 0 0', letterSpacing: '0.06em', fontStyle: 'italic', opacity: whisper2Vis ? 1 : 0, transition: 'opacity 2s ease', position: 'relative', zIndex: 1, animation: whisper2Vis ? (showBtn ? 'phrasebreathe 30s ease-in-out 4s infinite, seedPulse 5s ease-in-out 6s infinite' : 'phrasebreathe 30s ease-in-out 4s infinite') : 'none', textShadow: whisper2Vis ? '0 0 12px rgba(99,102,241,0.18)' : 'none' }}>
@@ -2259,7 +2259,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
                 <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : 'none', animation: done ? 'milestoneGlow 4.8s ease-in-out infinite' : 'phrasebreathe 36s ease-in-out infinite' }}>{r.title}</p>
                 <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: done ? `${arch.color}77` : 'rgba(255,255,255,0.22)', flexShrink: 0, marginLeft: 8, animation: done ? 'seedPulse 3.5s ease-in-out infinite' : 'phrasebreathe 34s ease-in-out infinite', transition: 'color 0.4s ease', textShadow: done ? `0 0 8px ${arch.color}44` : `0 0 6px ${arch.color}18` }}>{r.duration}</span>
               </div>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.62, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease', animation: done ? 'none' : 'phrasebreathe 44s ease-in-out infinite', textShadow: done ? 'none' : `0 0 8px ${arch.color}15` }}>{r.desc}</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: done ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.62, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease', animation: done ? 'none' : (doneCount > 0 ? 'phrasebreathe 44s ease-in-out infinite, milestoneGlow 20s ease-in-out 5s infinite' : 'phrasebreathe 44s ease-in-out infinite'), textShadow: done ? 'none' : `0 0 8px ${arch.color}15` }}>{r.desc}</p>
             </div>
           </div>
         )
@@ -2474,7 +2474,7 @@ function BoutiqueScreen({ archetypeKey }) {
             </div>
             <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.15, animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 9s ease-in-out 3s infinite', textShadow: `0 2px 30px rgba(0,0,0,0.4), 0 0 56px ${myCollection.color}33` }}>{myCollection.name}</h2>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 26s ease-in-out infinite, milestoneGlow 12s ease-in-out 4s infinite', textShadow: `0 0 10px ${myCollection.color}33` }}>{myCollection.subtitle}</p>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 32s ease-in-out infinite', textShadow: `0 0 8px ${myCollection.color}18` }}>{myCollection.desc}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 32s ease-in-out infinite, milestoneGlow 14s ease-in-out 4s infinite', textShadow: `0 0 8px ${myCollection.color}18` }}>{myCollection.desc}</p>
             <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
               {myCollection.tags.map((tag, ti) => (
                 <span key={tag} style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, border: `1px solid ${myCollection.color}44`, borderRadius: 100, padding: '3px 10px', letterSpacing: '0.08em', animation: vis ? `tabslideIn 0.3s ease ${0.2 + ti * 0.1}s both, phrasebreathe ${28 + ti * 6}s ease-in-out ${1 + ti * 0.8}s infinite` : 'none', textShadow: `0 0 8px ${myCollection.color}33` }}>{tag}</span>
@@ -2500,9 +2500,9 @@ function BoutiqueScreen({ archetypeKey }) {
           <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: expandedKey === col.key ? 12 : 6 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'white', margin: 0, animation: expandedKey === col.key ? 'phrasebreathe 30s ease-in-out infinite, milestoneGlow 10s ease-in-out 2s infinite' : 'phrasebreathe 30s ease-in-out infinite', textShadow: expandedKey === col.key ? `0 0 20px ${col.color}33` : `0 0 20px ${col.color}18` }}>{col.name}</h3>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: col.color, animation: 'seedPulse 3.8s ease-in-out infinite', textShadow: `0 0 8px ${col.color}66` }}>{expandedKey === col.key ? '▲' : '▼'}</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: col.color, animation: expandedKey === col.key ? 'seedPulse 3.8s ease-in-out infinite, milestoneGlow 5s ease-in-out infinite' : 'seedPulse 3.8s ease-in-out infinite', textShadow: `0 0 8px ${col.color}66` }}>{expandedKey === col.key ? '▲' : '▼'}</span>
             </div>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 26s ease-in-out infinite', textShadow: `0 0 8px ${col.color}33` }}>{col.subtitle}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase', animation: expandedKey === col.key ? 'phrasebreathe 26s ease-in-out infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'phrasebreathe 26s ease-in-out infinite', textShadow: `0 0 8px ${col.color}33` }}>{col.subtitle}</p>
             {expandedKey === col.key && (
               <div style={{ animation: 'tabslideIn 0.25s ease-out both' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
