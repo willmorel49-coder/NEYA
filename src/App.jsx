@@ -1711,6 +1711,11 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   const longPressTimer = useRef(null)
   const longPressDetected = useRef(false)
   const intention = getDailyIntention(archetypeKey)
+  const secondaryIntention = (() => {
+    const pool = ARCHETYPES[archetypeKey]?.intentions || []
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000)
+    return pool[(dayOfYear + Math.ceil(pool.length / 2)) % pool.length]
+  })()
   const bgPeriod    = EVRAI_BG_PERIODS[archetypeKey]    || 28
   const ghostPeriod = EVRAI_GHOST_PERIODS[archetypeKey] || 36
   const textVariantIdx = new Date().getDate() % 3
@@ -1813,7 +1818,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         </p>
         {showSecond && (
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}66`, letterSpacing: '0.10em', margin: 0, fontStyle: 'italic', animation: typingDone ? 'fadeIn 1.8s ease forwards, phrasebreathe 22s ease-in-out 2s infinite, milestoneGlow 12s ease-in-out 4s infinite' : 'fadeIn 1.8s ease forwards, phrasebreathe 22s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33` }}>
-            {arch.intentions[1]}
+            {secondaryIntention}
           </p>
         )}
         {showAccompany && (
@@ -2117,7 +2122,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ position: 'absolute', left: 0, top: '18%', bottom: '18%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}bb, transparent)`, borderRadius: '0 2px 2px 0', animation: jourComplète ? 'worldglow 8s ease-in-out infinite, milestoneGlow 12s ease-in-out 3s infinite' : 'worldglow 8s ease-in-out infinite' }} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: jourComplète ? 'phrasebreathe 40s ease-in-out infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'phrasebreathe 40s ease-in-out infinite', textShadow: jourComplète ? `0 0 12px ${arch.color}33` : `0 0 8px ${arch.color}22` }}>
-            Intention du jour
+            {{ resilience: 'Intention de feu', presence: 'Intention de présence', sagesse: 'Intention de sagesse', lumiere: 'Intention de lumière' }[archetypeKey] || 'Intention du jour'}
             {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9, animation: 'seedPulse 3s ease-in-out infinite, milestoneGlow 6s ease-in-out 1.5s infinite' }}>◎</span>}
           </p>
           <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, display: 'inline-block', transform: cycleSpin ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.38s ease, color 0.2s ease', animation: jourComplète ? 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'phrasebreathe 30s ease-in-out infinite' }} title="Autre intention">↻</button>
