@@ -672,6 +672,153 @@ function getDaysToNextWorld(archetypeKey) {
   return nextThreshold !== undefined ? nextThreshold - totalDays : 0
 }
 
+// ─── GAMIFICATION — XP · NIVEAUX · INVITATIONS · GRÂCE ───────────────────────
+
+const XP_THRESHOLDS = [0, 100, 250, 500, 900, 1400, 2000]
+
+const ARCHETYPE_LEVELS = {
+  resilience: ['Étincelle', 'Flamme', 'Braise', 'Feu Vif', 'Brasier', 'Phénix', 'Soleil'],
+  presence:   ['Goutte', 'Ruisseau', 'Rivière', 'Lac', 'Mer', 'Océan', 'Source'],
+  sagesse:    ['Brume', 'Voile', 'Mystère', 'Profondeur', 'Loup', 'Silence', 'Sage'],
+  lumiere:    ['Luciole', 'Rayon', 'Lumière', 'Éclat', 'Aurore', 'Ours', 'Cosmos'],
+}
+
+const DAILY_INVITATIONS = [
+  'Pose une main sur ton cœur pendant 30 secondes.',
+  'Regarde le ciel au moins une fois aujourd\'hui.',
+  'Note le premier mot qui vient quand tu penses à toi.',
+  'Bois un grand verre d\'eau lentement, consciemment.',
+  'Envoie un message chaleureux à quelqu\'un sans raison.',
+  'Prends 3 respirations profondes avant ton prochain repas.',
+  'Marche pieds nus sur le sol un moment.',
+  'Écoute une chanson qui te touche vraiment.',
+  'Ferme les yeux 2 minutes et écoute ce qu\'il y a autour de toi.',
+  'Dis à voix haute une chose que tu apprécies en toi.',
+  'Ouvre une fenêtre et laisse l\'air entrer.',
+  'Note quelque chose que tu voudrais te dire il y a 5 ans.',
+  'Prends 1 minute pour ne rien faire — juste être là.',
+  'Note une peur que tu portes et accepte-la sans la combattre.',
+  'Regarde tes mains et remercie-les pour ce qu\'elles font.',
+  'Éteins ton téléphone 30 minutes et observe ce que ça fait.',
+  'Fais quelque chose lentement que tu fais toujours vite.',
+  'Note 3 choses qui existaient avant toi et existeront après.',
+  'Prends un chemin différent de ta route habituelle.',
+  'Dis merci à ton corps pour ce qu\'il endure chaque jour.',
+  'Lis quelques lignes d\'un livre qui t\'a marqué·e.',
+  'Reste 5 minutes sans chercher à changer quoi que ce soit.',
+  'Dessine ou gribouille quelque chose sans but précis.',
+  'Plante quelque chose — même symbolique, même virtuel.',
+  'Souris à quelqu\'un que tu ne connais pas aujourd\'hui.',
+]
+
+function getXP() {
+  try { return parseInt(localStorage.getItem('neya_xp') || '0', 10) } catch { return 0 }
+}
+
+function addXP(amount) {
+  try {
+    const current = getXP()
+    localStorage.setItem('neya_xp', String(current + amount))
+  } catch {}
+}
+
+function getLevelIndex() {
+  const xp = getXP()
+  let level = 0
+  for (let i = XP_THRESHOLDS.length - 1; i >= 0; i--) {
+    if (xp >= XP_THRESHOLDS[i]) { level = i; break }
+  }
+  return Math.min(level, XP_THRESHOLDS.length - 1)
+}
+
+function getLevelName(archetypeKey) {
+  const levels = ARCHETYPE_LEVELS[archetypeKey] || ARCHETYPE_LEVELS.presence
+  return levels[getLevelIndex()] || levels[levels.length - 1]
+}
+
+function getXPProgress() {
+  const xp = getXP()
+  const lvl = getLevelIndex()
+  const base = XP_THRESHOLDS[lvl]
+  const next = XP_THRESHOLDS[lvl + 1]
+  if (!next) return 1
+  return Math.min(1, (xp - base) / (next - base))
+}
+
+function getXPToNext() {
+  const xp = getXP()
+  const lvl = getLevelIndex()
+  const next = XP_THRESHOLDS[lvl + 1]
+  if (!next) return 0
+  return next - xp
+}
+
+function getTodayInvitationKey() {
+  return `neya_inv_${todayKey()}`
+}
+
+function isTodayInvitationDone() {
+  try { return !!localStorage.getItem(getTodayInvitationKey()) } catch { return false }
+}
+
+function completeTodayInvitation() {
+  try { localStorage.setItem(getTodayInvitationKey(), '1') } catch {}
+  addXP(20)
+}
+
+function getTodayInvitation() {
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000)
+  return DAILY_INVITATIONS[dayOfYear % DAILY_INVITATIONS.length]
+}
+
+function getGraceAvailable() {
+  try {
+    const last = localStorage.getItem('neya_grace_last_used')
+    if (!last) return true
+    const daysSinceLast = Math.floor((Date.now() - new Date(last).getTime()) / 86400000)
+    return daysSinceLast >= 7
+  } catch { return false }
+}
+
+function applyGraceIfNeeded() {
+  try {
+    const streak = getCurrentStreak()
+    if (streak > 0) return false
+    if (!getGraceAvailable()) return false
+    // Check if yesterday had meaningful streak (> 2)
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1)
+    const y2 = new Date(); y2.setDate(y2.getDate() - 2)
+    const yKey  = `neya_routines_${yesterday.toISOString().split('T')[0]}`
+    const y2Key = `neya_routines_${y2.toISOString().split('T')[0]}`
+    const yDone  = (JSON.parse(localStorage.getItem(yKey) || '[]')).some(Boolean)
+    const y2Done = (JSON.parse(localStorage.getItem(y2Key) || '[]')).some(Boolean)
+    if (!yDone && !y2Done) return false // streak was already broken before
+    if (yDone) return false // yesterday was done, no grace needed
+    // Yesterday missed but 2 days ago was done — apply grace for yesterday
+    localStorage.setItem(yKey, JSON.stringify([true]))
+    localStorage.setItem('neya_grace_last_used', new Date().toISOString().split('T')[0])
+    return true
+  } catch { return false }
+}
+
+function getWorldRealFragmentCount(worldKey) {
+  try { return Math.min(5, parseInt(localStorage.getItem(`neya_frags_${worldKey}`) || '0', 10)) } catch { return 0 }
+}
+
+function addEvraiFragment(archetypeKey) {
+  try {
+    const dailyKey = `neya_evrai_${todayKey()}`
+    const todayCount = parseInt(localStorage.getItem(dailyKey) || '0', 10)
+    if (todayCount >= 3) return // max 3 fragments par jour
+    const unlocked = getUnlockedWorlds(archetypeKey)
+    const worldKey = unlocked.length > 0 ? unlocked[unlocked.length - 1] : (WORLD_ORDER[archetypeKey] || WORLD_ORDER.resilience)[0]
+    const current = getWorldRealFragmentCount(worldKey)
+    if (current < 5) localStorage.setItem(`neya_frags_${worldKey}`, String(current + 1))
+    localStorage.setItem(dailyKey, String(todayCount + 1))
+    addXP(50)
+  } catch {}
+}
+
 function loadRoutines() {
   try { return JSON.parse(localStorage.getItem(`neya_routines_${todayKey()}`) || '[]') } catch { return [] }
 }
@@ -2105,6 +2252,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   const [showSummary, setShowSummary] = useState(false)
   const longPressTimer = useRef(null)
   const longPressDetected = useRef(false)
+  const sessionQualified = useRef(false)
   const intention = getDailyIntention(archetypeKey)
   const secondaryIntention = (() => {
     const pool = ARCHETYPES[archetypeKey]?.intentions || []
@@ -2125,7 +2273,12 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
     }, 800)
   }
   const handlePointerUp = () => clearTimeout(longPressTimer.current)
-  const handleClick = () => { if (!longPressDetected.current) onClose() }
+  const handleClick = () => {
+    if (!longPressDetected.current) {
+      if (sessionQualified.current) addEvraiFragment(archetypeKey)
+      onClose()
+    }
+  }
 
   useEffect(() => {
     const t0 = setTimeout(() => haptic([3, 50, 3]), 800)
@@ -2137,7 +2290,8 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
     const t6 = setTimeout(() => setShowPatience(true), 30000)
     const t7 = setTimeout(() => setShowEncoreIci(true), 18000)
     const t8 = setTimeout(() => { setShowDeep(true); haptic([1, 100, 1]) }, 90000)
-    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); clearTimeout(t7); clearTimeout(t8) }
+    const tq = setTimeout(() => { sessionQualified.current = true }, 18000)
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); clearTimeout(t7); clearTimeout(t8); clearTimeout(tq) }
   }, [])
 
   return (
@@ -2605,7 +2759,7 @@ function WorldUnlockModal({ worldKey, onClose }) {
 
 function WorldCard({ worldKey, archetypeKey, isUnlocked, isHome, daysToUnlock, onEnter }) {
   const w = WORLDS[worldKey]
-  const fragmentCount = isUnlocked ? getWorldFragmentCount(archetypeKey) : 0
+  const fragmentCount = isUnlocked ? getWorldRealFragmentCount(worldKey) : 0
   const visibleFragments = Math.min(fragmentCount, w.fragments.length)
   const latestFragment = visibleFragments > 0 ? w.fragments[visibleFragments - 1] : null
 
@@ -2671,7 +2825,7 @@ function WorldCard({ worldKey, archetypeKey, isUnlocked, isHome, daysToUnlock, o
 
 function WorldDetailOverlay({ worldKey, archetypeKey, onClose }) {
   const w = WORLDS[worldKey]
-  const fragmentCount = getWorldFragmentCount(archetypeKey)
+  const fragmentCount = getWorldRealFragmentCount(worldKey)
   const visibleFragments = Math.min(fragmentCount, w.fragments.length)
   const [vis, setVis] = useState(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 40); return () => clearTimeout(t) }, [])
@@ -2721,6 +2875,7 @@ function WorldDetailOverlay({ worldKey, archetypeKey, onClose }) {
 }
 
 function GrandVoyageScreen({ archetypeKey }) {
+  const arch = ARCHETYPES[archetypeKey]
   const totalDays = getTotalDaysVisited()
   const unlockedWorlds = getUnlockedWorlds(archetypeKey)
   const order = WORLD_ORDER[archetypeKey] || WORLD_ORDER.resilience
@@ -2739,6 +2894,21 @@ function GrandVoyageScreen({ archetypeKey }) {
           {unlockedWorlds.length === 6 ? 'Tous les mondes t\'ont été révélés.' : `${unlockedWorlds.length} monde${unlockedWorlds.length > 1 ? 's' : ''} découvert${unlockedWorlds.length > 1 ? 's' : ''} · ${daysToNext} jour${daysToNext > 1 ? 's' : ''} vers le prochain`}
         </div>
       </div>
+
+      {/* Fragment summary bar */}
+      {(() => {
+        const order = WORLD_ORDER[archetypeKey] || WORLD_ORDER.resilience
+        const totalFrags = order.reduce((sum, wk) => sum + getWorldRealFragmentCount(wk), 0)
+        const maxFrags = order.length * 5
+        return totalFrags > 0 ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <div style={{ flex: 1, height: 2, background: 'rgba(255,255,255,0.06)', borderRadius: 1 }}>
+              <div style={{ height: '100%', width: `${Math.round((totalFrags / maxFrags) * 100)}%`, background: `linear-gradient(90deg, ${arch.color}66, ${arch.color})`, borderRadius: 1, boxShadow: `0 0 6px ${arch.color}55`, transition: 'width 1s ease' }} />
+            </div>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.16em', whiteSpace: 'nowrap' }}>{totalFrags} fragment{totalFrags !== 1 ? 's' : ''}</span>
+          </div>
+        ) : null
+      })()}
 
       {/* Progress bar toward next world */}
       {daysToNext > 0 && (() => {
@@ -2869,7 +3039,7 @@ function BreathingModal({ archetypeKey, onClose }) {
         const nextCycle = isNewCycle ? st.cycle + 1 : st.cycle
         if (isNewCycle && st.cycle >= tech.totalCycles) {
           stateRef.current = { ...st, done: true, timeLeft: 0 }
-          setDone(true); setTimeLeft(0); haptic([10, 60, 10]); return
+          setDone(true); setTimeLeft(0); haptic([10, 60, 10]); addXP(25); return
         }
         const np = tech.phases[nextIdx]
         stateRef.current = { phaseIdx: nextIdx, cycle: nextCycle, timeLeft: np.dur, done: false }
@@ -2998,6 +3168,30 @@ function PersonalizationModal({ archetypeKey, onClose }) {
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+// ─── INVITATION CARD ──────────────────────────────────────────────────────────
+
+function InvitationCard({ archetypeKey }) {
+  const arch = ARCHETYPES[archetypeKey]
+  const [done, setDone] = useState(isTodayInvitationDone)
+  const invitation = getTodayInvitation()
+  return (
+    <div style={{ background: done ? `linear-gradient(rgba(5,8,16,0.7),rgba(5,8,16,0.7)) padding-box, linear-gradient(135deg,${arch.color}44,transparent 40%,${arch.color}28) border-box` : `rgba(255,255,255,0.04)`, border: done ? '1px solid transparent' : `1px solid rgba(${arch.rgb},0.18)`, borderRadius: 14, padding: '16px 18px', animation: 'fadeIn 0.6s ease 0.3s both', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'all 0.5s ease', boxShadow: done ? `0 0 24px rgba(${arch.rgb},0.12)` : 'none' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.65)`, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 7, animation: 'phrasebreathe 18s ease-in-out infinite' }}>Invitation du jour</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: done ? `rgba(${arch.rgb},0.75)` : 'rgba(255,255,255,0.80)', lineHeight: 1.6, fontStyle: 'italic', transition: 'color 0.4s ease', animation: 'phrasebreathe 40s ease-in-out infinite' }}>"{invitation}"</div>
+        </div>
+        {!done ? (
+          <button onClick={() => { haptic([6,40,6]); completeTodayInvitation(); setDone(true) }} style={{ flexShrink: 0, marginTop: 2, width: 32, height: 32, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.35)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: arch.color, boxShadow: `0 0 14px rgba(${arch.rgb},0.18)`, animation: 'animalbreathe 8s ease-in-out infinite' }}>✓</button>
+        ) : (
+          <span style={{ fontSize: 14, color: arch.color, flexShrink: 0, marginTop: 4, animation: 'milestoneGlow 4s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}88` }}>✦</span>
+        )}
+      </div>
+      {done && <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.45)`, letterSpacing: '0.12em', marginTop: 8, animation: 'fadeIn 0.6s ease both' }}>+20 XP · Invitation accomplie</div>}
     </div>
   )
 }
@@ -3256,6 +3450,26 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: jourComplète ? `${arch.color}33` : `rgba(255,255,255,0.20)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px', animation: jourComplète ? 'phrasebreathe 40s ease-in-out 2.5s infinite, seedPulse 5s ease-in-out 3s infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'phrasebreathe 40s ease-in-out 2.5s infinite', transition: 'color 0.8s ease', textShadow: jourComplète ? `0 0 10px ${arch.color}22` : 'none' }}>Élément · {arch.element}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px', textShadow: jourComplète ? `0 0 16px ${arch.color}77` : 'none', animation: jourComplète ? 'milestoneGlow 4.5s ease-in-out infinite' : 'phrasebreathe 20s ease-in-out infinite', transition: 'text-shadow 0.8s ease' }}>{getPresenceLabel(presenceProgress, archetypeKey)}</p>
 
+        {/* ── Niveau XP ── */}
+        {(() => {
+          const xp = getXP()
+          const progress = getXPProgress()
+          const levelName = getLevelName(archetypeKey)
+          const toNext = getXPToNext()
+          const isMaxLevel = getLevelIndex() === 6
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, margin: '8px 0 4px', width: '100%', maxWidth: 200 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', justifyContent: 'space-between' }}>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite' }}>{levelName}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.06em' }}>{isMaxLevel ? '✦ max' : `${toNext} xp`}</span>
+              </div>
+              <div style={{ width: '100%', height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2 }}>
+                <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${arch.color}66, ${arch.color})`, borderRadius: 2, boxShadow: `0 0 8px ${arch.color}66`, transition: 'width 1.2s cubic-bezier(0.22,1,0.36,1)', animation: 'worldglow 6s ease-in-out infinite' }} />
+              </div>
+            </div>
+          )
+        })()}
+
         {msg ? (
           <div style={{ position: 'relative', display: 'inline-block' }}>
             {isMilestone && [0,1,2,3,4].map(i => (
@@ -3286,6 +3500,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           {intentionReady && <TypingText key={intentionIdx} text={`"${intention}"`} delay={0} speed={34} cursorColor={arch.color} />}
         </div>
       </div>
+
+      {/* ── Invitation du jour ── */}
+      <InvitationCard archetypeKey={archetypeKey} />
 
       {/* ── Exercice de souffle ── */}
       <div onClick={() => { haptic([6,40,6]); setShowBreathing(true) }} style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.09) 0%, rgba(255,255,255,0.05) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.22)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.4s both', boxShadow: `0 4px 24px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
@@ -3369,6 +3586,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           )}
           {streak >= 2 && (
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 7 ? arch.color : `${arch.color}88`, letterSpacing: '0.12em', margin: 0, textShadow: streak >= 14 ? `0 0 18px ${arch.color}88, 0 0 36px ${arch.color}44` : streak >= 7 ? `0 0 12px ${arch.color}66` : `0 0 8px ${arch.color}22`, animation: streak >= 7 ? (streak >= 14 ? 'milestoneGlow 3s ease-in-out infinite' : 'milestoneGlow 4s ease-in-out infinite') : 'phrasebreathe 30s ease-in-out infinite' }}>· {streak} jours d'affilée{streak >= 7 ? ' ✦' : ''}</p>
+          )}
+          {getGraceAvailable() && streak >= 1 && (
+            <span title="Bouclier de présence disponible" style={{ fontSize: 12, opacity: 0.45, animation: 'phrasebreathe 28s ease-in-out infinite', cursor: 'default' }}>🛡</span>
           )}
         </div>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
@@ -3839,6 +4059,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
   const [seenWorldUnlocks, setSeenWorldUnlocks] = useState(() => {
     try { return JSON.parse(localStorage.getItem('neya_seen_unlocks') || '[]') } catch { return [] }
   })
+  const [graceApplied, setGraceApplied] = useState(false)
 
   const changeTab = (newTab) => {
     if (newTab === tab) return
@@ -3850,6 +4071,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
   const toggleRoutine = (i) => {
     const next = [...routinesDone]; next[i] = !next[i]
     setRoutinesDone(next); saveRoutines(next)
+    if (!routinesDone[i]) addXP(15)
     const nowAllDone = next.every(Boolean)
     if (nowAllDone) haptic([20, 50, 20, 50, 40])
   }
@@ -3857,6 +4079,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
   const completeQuete = (i) => {
     const next = [...quetesDone]; next[i] = true
     setQuetesDone(next); saveQuetes(archetypeKey, next)
+    addXP(30)
   }
 
   useEffect(() => {
@@ -3869,6 +4092,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
       try { localStorage.setItem('neya_seen_unlocks', JSON.stringify(updated)) } catch {}
       setTimeout(() => setPendingWorldUnlock(newUnlock), 1200)
     }
+    if (applyGraceIfNeeded()) setGraceApplied(true)
   }, [archetypeKey])
 
   const mainJourComplète = routinesDone.every(Boolean) && quetesDone.some(Boolean)
@@ -3898,6 +4122,11 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
         <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ routines: routinesDone.filter(Boolean).length < arch.routines.length, quetes: quetesDone.filter(Boolean).length < arch.quetes.length }} />
         {pendingWorldUnlock && <WorldUnlockModal worldKey={pendingWorldUnlock} onClose={() => { setPendingWorldUnlock(null); changeTab('voyage') }} />}
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
+        {graceApplied && (
+          <div onClick={() => setGraceApplied(false)} style={{ position: 'fixed', top: 18, left: '50%', transform: 'translateX(-50%)', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '8px 22px', zIndex: 200, animation: 'fadeIn 0.6s ease both', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', pointerEvents: 'auto', whiteSpace: 'nowrap', cursor: 'pointer' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.14em', margin: 0, animation: 'milestoneGlow 3.5s ease-in-out infinite' }}>🛡 Ton bouclier de présence a protégé ta série</p>
+          </div>
+        )}
       </div>
     </BgScreen>
   )
