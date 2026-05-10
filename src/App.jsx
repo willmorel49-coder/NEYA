@@ -1842,10 +1842,12 @@ function ResultScreen({ archetypeKey, onContinue }) {
     } else { onContinue() }
   }
 
+  const resultBg = { resilience: 'bg-feu.png', presence: 'bg-eau.png', sagesse: 'bg-brume.png', lumiere: 'bg-foret.png' }[archetypeKey] || 'bg-cosmos.png'
+
   // Phase 0 : révélation patronus plein écran
   if (phase === 0) {
     return (
-      <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.28)" breathe>
+      <BgScreen bg={resultBg} overlay="rgba(5,8,16,0.28)" breathe>
         <PatronusReveal arch={arch} archetypeKey={archetypeKey} onDone={() => {
           setPhaseVis(false)
           setTimeout(() => { setPhase(1); setPhaseVis(true) }, 300)
@@ -1855,7 +1857,8 @@ function ResultScreen({ archetypeKey, onContinue }) {
   }
 
   return (
-    <BgScreen bg={arch.bg} overlay="rgba(5,8,16,0.48)" breathe>
+    <BgScreen bg={resultBg} overlay="rgba(5,8,16,0.60)" breathe>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 80%, rgba(${arch.rgb},0.10) 0%, transparent 55%)`, pointerEvents: 'none', zIndex: 1, animation: 'worldglow 8s ease-in-out infinite' }} />
       <div style={{ padding: '52px 28px 36px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', width: '100%', overflowY: 'auto' }}>
         <NeyaLogo size="sm" />
 
@@ -2045,7 +2048,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         )
       })()}
       <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}bg-vrai.png)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: `bgbreathe ${bgPeriod}s ease-in-out infinite` }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.52)' }} />
+      {(() => { const vraiOverlay = `linear-gradient(to bottom, rgba(5,8,16,0.45) 0%, rgba(${arch.rgb},0.12) 50%, rgba(5,8,16,0.52) 100%)`; return <div style={{ position: 'absolute', inset: 0, background: vraiOverlay }} /> })()}
       {typingDone && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '28%', background: `linear-gradient(to top, rgba(${arch.rgb},0.08) 0%, transparent 100%)`, pointerEvents: 'none', zIndex: 2, animation: 'fadeIn 3s ease forwards, worldglow 16s ease-in-out 4s infinite' }} />}
       <GrainFilter />
       {/* Halo de présence — chaleur colorée très subtile derrière le contenu central */}
@@ -2067,7 +2070,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       {/* World-specific atmospheric effects */}
       {archetypeKey === 'resilience' && (
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
-          {[{x:28,dx:-6,dur:7.2,del:0,r:2.2},{x:42,dx:4,dur:9.1,del:1.4,r:1.6},{x:55,dx:-3,dur:6.4,del:2.8,r:2.8},{x:65,dx:7,dur:8.3,del:0.7,r:1.8},{x:72,dx:-5,dur:7.8,del:3.5,r:2.0},{x:38,dx:3,dur:10.2,del:1.9,r:1.4},{x:60,dx:-8,dur:6.9,del:4.2,r:2.4},{x:48,dx:5,dur:8.7,del:0.3,r:1.6},{x:78,dx:-4,dur:7.5,del:2.1,r:2.0},{x:32,dx:6,dur:9.4,del:3.8,r:1.8}].map((e,i) => (
+          {[{x:28,dx:-6,dur:7.2,del:0,r:2.2},{x:42,dx:4,dur:9.1,del:1.4,r:1.6},{x:55,dx:-3,dur:6.4,del:2.8,r:2.8},{x:65,dx:7,dur:8.3,del:0.7,r:1.8},{x:72,dx:-5,dur:7.8,del:3.5,r:2.0},{x:38,dx:3,dur:10.2,del:1.9,r:1.4},{x:60,dx:-8,dur:6.9,del:4.2,r:2.4},{x:48,dx:5,dur:8.7,del:0.3,r:1.6},{x:78,dx:-4,dur:7.5,del:2.1,r:2.0},{x:32,dx:6,dur:9.4,del:3.8,r:1.8},{x:18,dx:5,dur:8.0,del:5.1,r:2.6},{x:85,dx:-6,dur:7.6,del:6.3,r:1.4}].map((e,i) => (
             <circle key={i} cx={`${e.x}%`} cy="95%" r={e.r} fill={`rgba(245,158,11,1)`}
               style={{ opacity: 0, animation: `emberRise ${e.dur}s ease-out infinite`, animationDelay: `${e.del}s` }} />
           ))}
@@ -2075,21 +2078,21 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       )}
       {archetypeKey === 'presence' && (
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {[{dur:6,del:0,size:80},{dur:9,del:2,size:140},{dur:12,del:4,size:200},{dur:15,del:6,size:260}].map((r,i) => (
-            <div key={i} style={{ position: 'absolute', width: r.size, height: r.size, borderRadius: '50%', border: `1px solid rgba(20,184,166,0.55)`, animation: `waterRing ${r.dur}s ease-out infinite`, animationDelay: `${r.del}s` }} />
+          {[{dur:6,del:0,size:80},{dur:9,del:2,size:140},{dur:12,del:4,size:200},{dur:15,del:6,size:260},{dur:18,del:8,size:320},{dur:21,del:10,size:380}].map((r,i) => (
+            <div key={i} style={{ position: 'absolute', width: r.size, height: r.size, borderRadius: '50%', border: `1px solid rgba(20,184,166,0.72)`, animation: `waterRing ${r.dur}s ease-out infinite`, animationDelay: `${r.del}s` }} />
           ))}
         </div>
       )}
       {archetypeKey === 'sagesse' && (
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2, overflow: 'hidden' }}>
-          {[{y:'18%',h:60,dur:22,del:0},{y:'36%',h:48,dur:28,del:5},{y:'54%',h:72,dur:19,del:11},{y:'68%',h:44,dur:24,del:7},{y:'80%',h:56,dur:31,del:3}].map((m,i) => (
-            <div key={i} style={{ position: 'absolute', left: '-10%', right: '-10%', top: m.y, height: m.h, background: `linear-gradient(90deg, transparent, rgba(99,102,241,0.14), rgba(99,102,241,0.08), rgba(139,92,246,0.10), transparent)`, borderRadius: 60, animation: `mistDrift ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+          {[{y:'18%',h:60,dur:22,del:0},{y:'36%',h:48,dur:28,del:5},{y:'54%',h:72,dur:19,del:11},{y:'68%',h:44,dur:24,del:7},{y:'80%',h:56,dur:31,del:3},{y:'28%',h:52,dur:25,del:14},{y:'62%',h:40,dur:20,del:9}].map((m,i) => (
+            <div key={i} style={{ position: 'absolute', left: '-10%', right: '-10%', top: m.y, height: m.h, background: `linear-gradient(90deg, transparent, rgba(99,102,241,0.18), rgba(99,102,241,0.10), rgba(139,92,246,0.13), transparent)`, borderRadius: 60, animation: `mistDrift ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
           ))}
         </div>
       )}
       {archetypeKey === 'lumiere' && (
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
-          {[{x:35,w:18,dur:14,del:0},{x:45,w:12,dur:18,del:3},{x:55,w:22,dur:16,del:6},{x:63,w:14,dur:20,del:1.5},{x:72,w:10,dur:12,del:8},{x:28,w:8,dur:22,del:4}].map((r,i) => (
+          {[{x:35,w:18,dur:14,del:0},{x:45,w:12,dur:18,del:3},{x:55,w:22,dur:16,del:6},{x:63,w:14,dur:20,del:1.5},{x:72,w:10,dur:12,del:8},{x:28,w:8,dur:22,del:4},{x:50,w:16,dur:15,del:10},{x:40,w:10,dur:19,del:13}].map((r,i) => (
             <path key={i} d={`M${r.x}%,0 L${r.x - r.w/2}%,100% L${r.x + r.w/2}%,100% Z`}
               fill={`rgba(236,72,153,1)`} style={{ opacity: 0, animation: `godRay ${r.dur}s ease-in-out infinite`, animationDelay: `${r.del}s` }} />
           ))}
@@ -2105,7 +2108,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
             <div style={{ position: 'absolute', inset: -20, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}1a 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite' }} />
             <SpiritAnimal
               archetype={archetypeKey}
-              size={88}
+              size={106}
               style={{ opacity: 0.72, filter: `drop-shadow(0 0 20px ${arch.color}88) drop-shadow(0 0 40px ${arch.color}33)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 24s ease-in-out infinite', willChange: 'transform', position: 'relative', zIndex: 1 }}
             />
           </div>
@@ -2168,6 +2171,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           })()}
         </p>
       </div>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: `linear-gradient(to top, rgba(5,8,16,0.62) 0%, transparent 100%)`, pointerEvents: 'none', zIndex: 1 }} />
     </div>
   )
 }
