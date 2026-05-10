@@ -1833,7 +1833,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         )}
         {showEncoreIci && (
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: typingDone ? `${arch.color}44` : `${arch.color}22`, letterSpacing: '0.28em', margin: 0, fontStyle: 'italic', animation: typingDone ? 'fadeIn 3.5s ease forwards, phrasebreathe 38s ease-in-out 4s infinite, milestoneGlow 20s ease-in-out 8s infinite' : 'fadeIn 3.5s ease forwards, phrasebreathe 38s ease-in-out 4s infinite', textShadow: typingDone ? `0 0 22px ${arch.color}44` : `0 0 14px ${arch.color}18`, transition: 'color 1.8s ease, text-shadow 1.8s ease' }}>
-            encore ici
+            {{ resilience: 'encore là, en feu', presence: 'encore présent·e', sagesse: 'encore dans le silence', lumiere: 'encore lumineux·se' }[archetypeKey] || 'encore ici'}
           </p>
         )}
         {showDeep && (
@@ -2062,7 +2062,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {/* ── Cocoon header ── */}
       <div style={{ textAlign: 'center', paddingBottom: 6 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', margin: '0 0 2px', textTransform: 'capitalize', textShadow: `0 0 20px ${arch.color}22`, animation: jourComplète ? 'phrasebreathe 46s ease-in-out 2s infinite, milestoneGlow 18s ease-in-out 8s infinite' : 'phrasebreathe 46s ease-in-out 2s infinite' }}>{greetingStr()}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', margin: '0 0 2px', textTransform: 'capitalize', textShadow: `0 0 20px ${arch.color}22`, animation: jourComplète ? 'phrasebreathe 46s ease-in-out 2s infinite, milestoneGlow 18s ease-in-out 8s infinite' : 'phrasebreathe 46s ease-in-out 2s infinite' }}>{greetingStr()}{archetypeKey ? ` · ${({ resilience: 'Phénix', presence: 'Cerf', sagesse: 'Loup', lumiere: 'Ours' }[archetypeKey] || '')}` : ''}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.07em', margin: '0 0 18px', textTransform: 'capitalize', animation: jourComplète ? 'phrasebreathe 50s ease-in-out 3s infinite, milestoneGlow 22s ease-in-out 10s infinite' : 'phrasebreathe 50s ease-in-out 3s infinite', textShadow: `0 0 12px ${arch.color}18` }}>{dateStr}</p>
 
         {/* Presence ring wrapping the animal — tap for espace vrai */}
