@@ -691,7 +691,7 @@ function NeyaLogo({ size = 'md', onTap }) {
         <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" transform="rotate(90 16 16)" />
         <circle cx="16" cy="16" r="3.5" fill="white" />
       </svg>
-      <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: cfg[1], letterSpacing: '0.4em', color: 'white', textShadow: '0 0 20px rgba(255,255,255,0.3)', animation: 'phrasebreathe 55s ease-in-out infinite' }}>NÉYA</span>
+      <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: cfg[1], letterSpacing: '0.4em', color: 'white', textShadow: '0 0 20px rgba(255,255,255,0.3)', animation: 'phrasebreathe 55s ease-in-out infinite, milestoneGlow 22s ease-in-out 8s infinite' }}>NÉYA</span>
     </div>
   )
 }
@@ -969,7 +969,7 @@ function IntroScreen({ onStart }) {
             Ici commence<br />ton chemin...
           </h1>
           <div style={{ width: 1, height: 38, background: 'rgba(255,255,255,0.18)', transformOrigin: 'top', animation: line1 ? (line2 ? 'introlineappear 0.9s ease forwards, worldglow 12s ease-in-out 1.2s infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'introlineappear 0.9s ease forwards, worldglow 12s ease-in-out 1.2s infinite') : 'none', opacity: line1 ? 1 : 0 }} />
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.62)', lineHeight: 1.72, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease', animation: line2 ? 'phrasebreathe 38s ease-in-out 1.5s infinite' : 'none', textShadow: '0 0 28px rgba(245,158,11,0.10)' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.62)', lineHeight: 1.72, margin: 0, opacity: line2 ? 1 : 0, transition: 'opacity 1.3s ease', animation: line2 ? 'phrasebreathe 38s ease-in-out 1.5s infinite, milestoneGlow 16s ease-in-out 5s infinite' : 'none', textShadow: '0 0 28px rgba(245,158,11,0.10)' }}>
             vers plus de calme,<br />d'équilibre et de clarté intérieure.
           </p>
           <p style={{ position: 'absolute', bottom: '9%', fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.20)', letterSpacing: '0.26em', margin: 0, opacity: hintVis ? 1 : 0, transition: 'opacity 1.2s ease', animation: hintVis ? 'phrasebreathe 22s ease-in-out 1.5s infinite' : 'none', textShadow: hintVis ? '0 0 14px rgba(255,255,255,0.18)' : 'none' }}>
@@ -1064,7 +1064,7 @@ function QuizIntroScreen({ onStart }) {
           <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', lineHeight: 1.32, margin: 0, animation: vis ? (showBtn ? 'phrasebreathe 38s ease-in-out 1s infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'phrasebreathe 38s ease-in-out 1s infinite') : 'none', textShadow: '0 2px 32px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.14)' }}>
             Prêt·e pour ton<br />exploration intérieure ?
           </h1>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: showBtn ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: showBtn ? 'phrasebreathe 18s ease-in-out infinite, seedPulse 4s ease-in-out 1s infinite' : 'phrasebreathe 24s ease-in-out infinite', transition: 'color 1.2s ease, text-shadow 1.2s ease', textShadow: showBtn ? '0 0 10px rgba(99,102,241,0.33)' : 'none' }}>~5 minutes · {QUESTIONS.length} questions</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: showBtn ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: showBtn ? 'phrasebreathe 18s ease-in-out infinite, seedPulse 4s ease-in-out 1s infinite, milestoneGlow 8s ease-in-out 3s infinite' : 'phrasebreathe 24s ease-in-out infinite', transition: 'color 1.2s ease, text-shadow 1.2s ease', textShadow: showBtn ? '0 0 10px rgba(99,102,241,0.33)' : 'none' }}>~5 minutes · {QUESTIONS.length} questions</p>
           <div style={{ width: 32, height: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 1, margin: '4px auto 0', opacity: item1 ? 1 : 0, transition: 'opacity 1.4s ease', animation: item1 ? (showBtn ? 'worldglow 10s ease-in-out infinite, milestoneGlow 12s ease-in-out 4s infinite' : 'worldglow 10s ease-in-out infinite') : 'none' }} />
         </div>
 
@@ -2078,13 +2078,13 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           </p>
           <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, transition: 'color 0.2s ease', display: 'inline-block', transform: cycleSpin ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.38s ease, color 0.2s ease' }} title="Autre intention">↻</button>
         </div>
-        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', lineHeight: 1.68, fontStyle: 'italic', opacity: intentionFade ? 1 : 0, transition: 'opacity 0.2s ease', animation: intentionFade ? 'phrasebreathe 90s ease-in-out infinite' : 'none' }}>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', lineHeight: 1.68, fontStyle: 'italic', opacity: intentionFade ? 1 : 0, transition: 'opacity 0.2s ease', animation: intentionFade ? (jourComplète ? 'phrasebreathe 90s ease-in-out infinite, milestoneGlow 16s ease-in-out 6s infinite' : 'phrasebreathe 90s ease-in-out infinite') : 'none' }}>
           {intentionReady && <TypingText key={intentionIdx} text={`"${intention}"`} delay={0} speed={34} cursorColor={arch.color} />}
         </div>
       </div>
 
       {/* ── Graines de présence (7 jours) ── */}
-      <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 22s ease-in-out 6s infinite' }} />
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: jourComplète ? 'worldglow 22s ease-in-out 6s infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'worldglow 22s ease-in-out 6s infinite' }} />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
           {days > 0 && (
@@ -2155,7 +2155,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 8, color: s.count === s.total ? `${arch.color}88` : 'rgba(255,255,255,0.14)', letterSpacing: '0.04em', transition: 'color 0.4s ease', animation: s.count === s.total ? 'seedPulse 3.2s ease-in-out infinite' : 'none' }}>✦</span>
             </div>
             {s.nextHint && s.count < s.total && (
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: s.count > 0 ? `${arch.color}55` : 'rgba(255,255,255,0.22)', letterSpacing: '0.04em', lineHeight: 1.3, marginTop: -2, animation: s.count > 0 ? 'phrasebreathe 26s ease-in-out infinite, seedPulse 4.5s ease-in-out 1.5s infinite' : 'phrasebreathe 36s ease-in-out infinite', transition: 'color 0.5s ease', textShadow: s.count > 0 ? `0 0 8px ${arch.color}33` : 'none' }}>{s.nextHint}</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: s.count > 0 ? `${arch.color}55` : 'rgba(255,255,255,0.22)', letterSpacing: '0.04em', lineHeight: 1.3, marginTop: -2, animation: s.count > 0 ? 'phrasebreathe 26s ease-in-out infinite, seedPulse 4.5s ease-in-out 1.5s infinite, milestoneGlow 10s ease-in-out 2s infinite' : 'phrasebreathe 36s ease-in-out infinite', transition: 'color 0.5s ease', textShadow: s.count > 0 ? `0 0 8px ${arch.color}33` : 'none' }}>{s.nextHint}</span>
             )}
           </div>
         ))}
@@ -2448,7 +2448,7 @@ function BoutiqueScreen({ archetypeKey }) {
       <div style={{ textAlign: 'center', marginBottom: 4, position: 'relative' }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 200, height: 80, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 7s ease-in-out infinite' }} />
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 280, height: 120, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}06 0%, transparent 60%)`, pointerEvents: 'none', animation: 'presencePulse 11s ease-in-out 4s infinite' }} />
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 30s ease-in-out infinite', textShadow: `0 0 10px ${arch.color}22` }}>LA MARQUE</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 30s ease-in-out infinite, milestoneGlow 14s ease-in-out 5s infinite', textShadow: `0 0 10px ${arch.color}22` }}>LA MARQUE</p>
         <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}22`, animation: 'phrasebreathe 36s ease-in-out 1s infinite, milestoneGlow 10s ease-in-out 3s infinite' }}>ÇA VA?</h1>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65, animation: 'solbreathe 18s ease-in-out infinite', textShadow: `0 0 14px ${arch.color}15` }}>
           Des vêtements qui portent<br />ce que les mots ne disent pas.
