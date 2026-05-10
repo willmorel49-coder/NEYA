@@ -425,6 +425,85 @@ const QUESTIONS = [
   },
 ]
 
+// ─── WORLDS ───────────────────────────────────────────────────────────────────
+
+const WORLDS = {
+  feu: {
+    name: 'Le Monde du Feu', sub: 'Transformation · Courage · Résilience',
+    bg: 'bg-feu.png', color: '#f59e0b', rgb: '245,158,11', animalKey: 'resilience',
+    fragments: [
+      "Dans le monde du feu, même les cendres portent une promesse. Tu n'avances pas malgré la résistance — tu avances à travers elle.",
+      "Le feu ne consume pas ce qui est vrai. Il révèle ce qui est essentiel. Ce que tu traverses forge quelque chose d'indestructible en toi.",
+      "Tu as appris à ne pas fuir les flammes intérieures. Peu à peu, tu en fais une lanterne.",
+      "Le Phénix ne renaît pas parce qu'il le doit. Il renaît parce que c'est sa nature profonde. La tienne aussi.",
+      "Trente jours dans le monde du feu. Ta flamme est devenue une lumière que rien ne peut éteindre — ni les doutes, ni la peur, ni le temps.",
+    ],
+  },
+  eau: {
+    name: "Le Monde de l'Eau", sub: 'Présence · Ancrage · Douceur',
+    bg: 'bg-eau.png', color: '#14b8a6', rgb: '20,184,166', animalKey: 'presence',
+    fragments: [
+      "L'eau ne résiste pas — elle épouse. Dans ce monde, tu apprends que la douceur n'est pas une faiblesse, mais la forme la plus profonde de la force.",
+      "Le cerf s'arrête au bord de l'eau. Il regarde. Il sait que voir vraiment est un acte de courage.",
+      "Tu as trouvé dans ce monde quelque chose que peu cherchent : le silence habité. Pas l'absence, mais la présence pleine.",
+      "Chaque vague se retire pour mieux revenir. Ton ancrage grandit avec chaque retour à toi-même.",
+      "L'eau trouve toujours son chemin. Sans forcer, sans bruit. Ton chemin intérieur aussi.",
+    ],
+  },
+  brume: {
+    name: 'Le Monde de la Brume', sub: 'Sagesse · Intuition · Profondeur',
+    bg: 'bg-brume.png', color: '#6366f1', rgb: '99,102,241', animalKey: 'sagesse',
+    fragments: [
+      "La brume cache ce qui est évident pour révéler ce qui est vrai. Ici, ton regard apprend à percer l'apparence.",
+      "Le loup marche seul dans la brume non par solitude, mais par clarté. Il sait que certaines vérités se trouvent dans le silence.",
+      "Tu as commencé à faire confiance à ce que tu ressens avant de savoir pourquoi. C'est le début de la vraie sagesse.",
+      "Dans ce monde, le doute n'est pas l'ennemi de la connaissance — c'en est la porte d'entrée.",
+      "Quarante-cinq jours dans la brume. Tu percevais déjà l'invisible. Maintenant, tu sais qu'il te parle.",
+    ],
+  },
+  foret: {
+    name: 'Le Monde de la Forêt', sub: 'Lumière · Créativité · Joie',
+    bg: 'bg-foret.png', color: '#ec4899', rgb: '236,72,153', animalKey: 'lumiere',
+    fragments: [
+      "La forêt garde ses secrets dans la lumière filtrée. Chaque rayon qui perce les feuillages te rappelle que la beauté se trouve dans les espaces entre.",
+      "L'ours de lumière n'illumine pas le monde malgré ses blessures — il l'illumine à travers elles.",
+      "Tu as découvert dans ce monde que créer n'est pas produire. C'est offrir une partie de ta lumière intérieure.",
+      "Chaque pas dans la forêt éveille quelque chose. Tu avances maintenant avec la conscience de ce que tu laisses derrière toi.",
+      "La forêt a tout vu. Elle a vu tes doutes, tes élans, tes silences. Et elle te dit : tu es exactement où tu dois être.",
+    ],
+  },
+  cosmos: {
+    name: 'Le Monde du Cosmos', sub: 'Mystère · Infini · Perspective',
+    bg: 'bg-cosmos.png', color: '#818cf8', rgb: '129,140,248', animalKey: 'sagesse',
+    fragments: [
+      "Dans le cosmos, les distances sont si grandes qu'elles rendent l'instant précieux. Tu es une étoile qui ne connaît pas encore sa propre magnitude.",
+      "Là-haut, pas de haut, pas de bas. Seulement des directions choisies. Ta liberté intérieure ressemble à ça.",
+      "Les étoiles ne se demandent pas si leur lumière compte. Elles brillent, c'est tout. Tu as ce même droit.",
+      "Le cosmos ne juge pas ta vitesse. Il observe — avec une patience de milliards d'années.",
+      "Tu as traversé assez de silence intérieur pour comprendre que le vide n'est pas l'absence. C'est l'espace où tout peut naître.",
+    ],
+  },
+  vide: {
+    name: 'Le Monde du Vide', sub: 'Silence · Essence · Paix profonde',
+    bg: 'bg-vide.png', color: '#94a3b8', rgb: '148,163,184', animalKey: 'presence',
+    fragments: [
+      "Le vide n'est pas le néant. C'est l'espace d'avant les mots, d'avant les formes. C'est là que tu trouves ce qui est vraiment toi.",
+      "Dans ce monde, la lenteur est une pratique. Chaque silence porte plus que tous les bruits du monde réunis.",
+      "Tu commences à comprendre que le vide intérieur n'est pas un manque à combler. C'est une capacité à accueillir.",
+      "Certaines vérités ne se disent pas. Elles se vivent, dans le silence de ce monde.",
+      "Tu as appris à tenir l'espace entre deux pensées. Ce silence-là est le tien, profondément.",
+    ],
+  },
+}
+
+const WORLD_ORDER = {
+  resilience: ['feu', 'cosmos', 'foret', 'eau', 'brume', 'vide'],
+  presence:   ['eau', 'foret', 'cosmos', 'vide', 'brume', 'feu'],
+  sagesse:    ['brume', 'vide', 'cosmos', 'foret', 'eau', 'feu'],
+  lumiere:    ['foret', 'cosmos', 'brume', 'eau', 'vide', 'feu'],
+}
+const WORLD_UNLOCK_DAYS = [0, 5, 12, 20, 30, 45]
+
 // ─── ÉTOILES ──────────────────────────────────────────────────────────────────
 
 const STARS = [
@@ -561,6 +640,36 @@ function getTotalRoutinesDone() {
     }
   } catch {}
   return total
+}
+
+function getTotalDaysVisited() {
+  let count = 0
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith('neya_routines_')) {
+        if (JSON.parse(localStorage.getItem(key) || '[]').some(Boolean)) count++
+      }
+    }
+  } catch {}
+  return count
+}
+
+function getUnlockedWorlds(archetypeKey) {
+  const totalDays = getTotalDaysVisited()
+  const order = WORLD_ORDER[archetypeKey] || WORLD_ORDER.resilience
+  return order.filter((_, i) => totalDays >= WORLD_UNLOCK_DAYS[i])
+}
+
+function getWorldFragmentCount(archetypeKey) {
+  const totalDays = getTotalDaysVisited()
+  const thresholds = [0, 7, 14, 21, 30]
+  return thresholds.filter(t => totalDays >= t).length
+}
+
+function getDaysToNextWorld(archetypeKey) {
+  const totalDays = getTotalDaysVisited()
+  const nextThreshold = WORLD_UNLOCK_DAYS.find(d => d > totalDays)
+  return nextThreshold !== undefined ? nextThreshold - totalDays : 0
 }
 
 function loadRoutines() {
@@ -2421,10 +2530,253 @@ function NavIconBoutique({ active, color }) {
   )
 }
 
+// ─── WORLD UNLOCK MODAL ───────────────────────────────────────────────────────
+
+function WorldUnlockModal({ worldKey, onClose }) {
+  const w = WORLDS[worldKey]
+  const [vis, setVis] = useState(false)
+  const [phase, setPhase] = useState(0)  // 0=animal reveal, 1=text, 2=button
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setVis(true), 50)
+    const t2 = setTimeout(() => setPhase(1), 1200)
+    const t3 = setTimeout(() => setPhase(2), 2600)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, [])
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 950, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease' }}>
+      <BgScreen bg={w.bg} overlay={`linear-gradient(180deg, rgba(5,8,16,0.78) 0%, rgba(${w.rgb},0.08) 50%, rgba(5,8,16,0.88) 100%)`}>
+        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 32px', gap: 28 }}>
+
+          {/* Animal spirit géant */}
+          <div style={{ filter: `drop-shadow(0 0 48px rgba(${w.rgb},0.65)) drop-shadow(0 0 120px rgba(${w.rgb},0.30))`, animation: 'animalfloat 14s ease-in-out infinite, animalbreathe 8s ease-in-out infinite', opacity: vis ? 1 : 0, transform: vis ? 'scale(1)' : 'scale(0.72)', transition: 'opacity 1s ease, transform 1.2s cubic-bezier(0.22,1,0.36,1)' }}>
+            <SpiritAnimal archetype={w.animalKey} size={180} />
+          </div>
+
+          {/* Textes (phase 1+) */}
+          <div style={{ textAlign: 'center', opacity: phase >= 1 ? 1 : 0, transform: phase >= 1 ? 'translateY(0)' : 'translateY(18px)', transition: 'all 0.8s ease' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${w.rgb},0.75)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 12px', animation: 'phrasebreathe 8s ease-in-out infinite' }}>Nouveau monde découvert</p>
+            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'rgba(255,255,255,0.94)', margin: '0 0 12px', letterSpacing: '-0.01em', lineHeight: 1.2, textShadow: `0 0 40px rgba(${w.rgb},0.50)`, animation: 'milestoneGlow 5s ease-in-out infinite' }}>{w.name}</h2>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.52)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>"{w.fragments[0]}"</p>
+          </div>
+
+          {/* CTA (phase 2+) */}
+          <button onClick={onClose} style={{ opacity: phase >= 2 ? 1 : 0, transform: phase >= 2 ? 'translateY(0)' : 'translateY(12px)', transition: 'all 0.6s ease', background: `rgba(${w.rgb},0.18)`, border: `1px solid rgba(${w.rgb},0.55)`, borderRadius: 100, padding: '16px 40px', color: 'rgba(255,255,255,0.88)', fontFamily: 'Sora, sans-serif', fontSize: 13, fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: `0 0 32px rgba(${w.rgb},0.30)`, animation: phase >= 2 ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>
+            Explorer ce monde →
+          </button>
+        </div>
+      </BgScreen>
+    </div>
+  )
+}
+
+// ─── GRAND VOYAGE SCREEN ──────────────────────────────────────────────────────
+
+function WorldCard({ worldKey, archetypeKey, isUnlocked, isHome, daysToUnlock, onEnter }) {
+  const w = WORLDS[worldKey]
+  const fragmentCount = isUnlocked ? getWorldFragmentCount(archetypeKey) : 0
+  const visibleFragments = Math.min(fragmentCount, w.fragments.length)
+  const latestFragment = visibleFragments > 0 ? w.fragments[visibleFragments - 1] : null
+
+  return (
+    <div onClick={() => isUnlocked && onEnter(worldKey)}
+      style={{
+        position: 'relative', borderRadius: 18, overflow: 'hidden', marginBottom: 14,
+        minHeight: 160, cursor: isUnlocked ? 'pointer' : 'default',
+        border: isHome ? `1.5px solid ${w.color}88` : isUnlocked ? `1px solid ${w.color}44` : '1px solid rgba(255,255,255,0.08)',
+        opacity: isUnlocked ? 1 : 0.55,
+        boxShadow: isHome ? `0 0 32px rgba(${w.rgb},0.18), 0 4px 24px rgba(0,0,0,0.5)` : isUnlocked ? `0 4px 16px rgba(0,0,0,0.4)` : 'none',
+        animation: isHome ? 'fadeIn 0.5s ease both' : 'fadeIn 0.6s ease 0.1s both',
+      }}>
+      {/* Background image */}
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${w.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: isUnlocked ? 'none' : 'grayscale(0.8) brightness(0.4)', transition: 'filter 0.5s ease' }} />
+      {/* Overlay */}
+      <div style={{ position: 'absolute', inset: 0, background: isHome ? `linear-gradient(135deg, rgba(5,8,16,0.62), rgba(${w.rgb},0.18))` : 'linear-gradient(135deg, rgba(5,8,16,0.72), rgba(5,8,16,0.50))' }} />
+      {/* Content */}
+      <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px 16px', height: '100%', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {/* Header row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: isUnlocked ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.40)', letterSpacing: '0.01em', animation: isHome ? 'phrasebreathe 24s ease-in-out infinite' : 'none' }}>{w.name}</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: isUnlocked ? `rgba(${w.rgb},0.75)` : 'rgba(255,255,255,0.20)', letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: 3 }}>{w.sub}</div>
+          </div>
+          <div style={{ flexShrink: 0, opacity: isUnlocked ? 0.88 : 0.25, animation: isHome ? 'animalbreathe 8s ease-in-out infinite' : 'none' }}>
+            <SpiritAnimal archetype={w.animalKey} size={42} />
+          </div>
+        </div>
+        {/* Status */}
+        {isUnlocked ? (
+          <>
+            {isHome && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: w.color, boxShadow: `0 0 8px ${w.color}`, animation: 'seedPulse 3s ease-in-out infinite' }} />
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: w.color, letterSpacing: '0.14em', textTransform: 'uppercase', animation: 'milestoneGlow 6s ease-in-out infinite' }}>Ton monde natal</span>
+              </div>
+            )}
+            {latestFragment && (
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.58)', lineHeight: 1.6, margin: 0, fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>"{latestFragment}"</p>
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+              <div style={{ display: 'flex', gap: 5 }}>
+                {w.fragments.map((_, i) => (
+                  <div key={i} style={{ width: i < visibleFragments ? 8 : 6, height: i < visibleFragments ? 8 : 6, borderRadius: '50%', background: i < visibleFragments ? w.color : 'rgba(255,255,255,0.12)', boxShadow: i < visibleFragments ? `0 0 6px ${w.color}88` : 'none', transition: 'all 0.4s ease', animation: i < visibleFragments ? 'seedPulse 4s ease-in-out infinite' : 'none', animationDelay: `${i * 0.4}s` }} />
+                ))}
+              </div>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${w.rgb},0.65)`, letterSpacing: '0.12em', animation: 'phrasebreathe 12s ease-in-out infinite' }}>Explorer →</span>
+            </div>
+          </>
+        ) : (
+          <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 13, opacity: 0.45 }}>🔒</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.30)', letterSpacing: '0.06em' }}>Débloque dans {daysToUnlock} jours de pratique</span>
+          </div>
+        )}
+      </div>
+      {/* Home world glow ring */}
+      {isHome && <div style={{ position: 'absolute', inset: -1, borderRadius: 18, border: `1px solid ${w.color}44`, pointerEvents: 'none', animation: 'worldglow 6s ease-in-out infinite' }} />}
+    </div>
+  )
+}
+
+function WorldDetailOverlay({ worldKey, archetypeKey, onClose }) {
+  const w = WORLDS[worldKey]
+  const fragmentCount = getWorldFragmentCount(archetypeKey)
+  const visibleFragments = Math.min(fragmentCount, w.fragments.length)
+  const [vis, setVis] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 40); return () => clearTimeout(t) }, [])
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 850, opacity: vis ? 1 : 0, transition: 'opacity 0.45s ease' }}>
+      <BgScreen bg={w.bg} overlay={`linear-gradient(180deg, rgba(5,8,16,0.72) 0%, rgba(${w.rgb},0.12) 50%, rgba(5,8,16,0.85) 100%)`}>
+        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', padding: '0 22px', paddingTop: 'calc(env(safe-area-inset-top) + 52px)', paddingBottom: 40, overflowY: 'auto', gap: 0 }}>
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
+            <div>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em', animation: 'phrasebreathe 20s ease-in-out infinite' }}>{w.name}</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${w.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 6 }}>{w.sub}</div>
+            </div>
+            <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '8px 16px', color: 'rgba(255,255,255,0.40)', fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.10em', cursor: 'pointer', flexShrink: 0 }}>Fermer</button>
+          </div>
+
+          {/* Spirit animal */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 10s ease-in-out infinite' }}>
+            <div style={{ filter: `drop-shadow(0 0 32px rgba(${w.rgb},0.55)) drop-shadow(0 0 80px rgba(${w.rgb},0.25))` }}>
+              <SpiritAnimal archetype={w.animalKey} size={120} />
+            </div>
+          </div>
+
+          {/* Story fragments */}
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${w.rgb},0.65)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 16 }}>Fragments de ton voyage · {visibleFragments}/{w.fragments.length}</div>
+          {w.fragments.map((frag, i) => {
+            const unlocked = i < visibleFragments
+            return (
+              <div key={i} style={{ position: 'relative', marginBottom: 16, opacity: unlocked ? 1 : 0.22 }}>
+                <div style={{ position: 'absolute', left: 0, top: '15%', bottom: '15%', width: 2, background: unlocked ? `linear-gradient(180deg, transparent, ${w.color}99, transparent)` : 'rgba(255,255,255,0.08)', borderRadius: 2, animation: unlocked ? 'worldglow 6s ease-in-out infinite' : 'none', animationDelay: `${i * 0.8}s` }} />
+                <div style={{ paddingLeft: 16, paddingTop: 4, paddingBottom: 4 }}>
+                  {unlocked ? (
+                    <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.75)', lineHeight: 1.72, margin: 0, fontStyle: 'italic', animation: 'phrasebreathe 40s ease-in-out infinite', animationDelay: `${i * 3}s` }}>"{frag}"</p>
+                  ) : (
+                    <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.20)', margin: 0, letterSpacing: '0.08em' }}>Fragment débloqué dans {Math.max(0, [0,7,14,21,30][i] - getTotalDaysVisited())} jours...</p>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+          <div style={{ height: 60 }} />
+        </div>
+      </BgScreen>
+    </div>
+  )
+}
+
+function GrandVoyageScreen({ archetypeKey }) {
+  const totalDays = getTotalDaysVisited()
+  const unlockedWorlds = getUnlockedWorlds(archetypeKey)
+  const order = WORLD_ORDER[archetypeKey] || WORLD_ORDER.resilience
+  const homeWorldKey = order[0]
+  const daysToNext = getDaysToNextWorld(archetypeKey)
+  const [vis, setVis] = useState(false)
+  const [selectedWorld, setSelectedWorld] = useState(null)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 60); return () => clearTimeout(t) }, [])
+
+  return (
+    <div style={{ width: '100%', height: '100%', overflowY: 'auto', padding: '0 20px', paddingBottom: 100, paddingTop: 'calc(env(safe-area-inset-top) + 22px)', opacity: vis ? 1 : 0, transition: 'opacity 0.4s ease' }}>
+      {/* Header */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'rgba(255,255,255,0.90)', letterSpacing: '-0.01em', animation: 'phrasebreathe 28s ease-in-out infinite' }}>Mon Grand Voyage</div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 6, lineHeight: 1.5, letterSpacing: '0.02em' }}>
+          {unlockedWorlds.length === 6 ? 'Tous les mondes t\'ont été révélés.' : `${unlockedWorlds.length} monde${unlockedWorlds.length > 1 ? 's' : ''} découvert${unlockedWorlds.length > 1 ? 's' : ''} · ${daysToNext} jour${daysToNext > 1 ? 's' : ''} vers le prochain`}
+        </div>
+      </div>
+
+      {/* Progress bar toward next world */}
+      {daysToNext > 0 && (() => {
+        const prevThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length - 1] || 0
+        const nextThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length] || prevThreshold
+        const progress = nextThreshold > prevThreshold ? (totalDays - prevThreshold) / (nextThreshold - prevThreshold) : 1
+        const nextWorldKey = order[unlockedWorlds.length]
+        const nextWorld = nextWorldKey ? WORLDS[nextWorldKey] : null
+        return nextWorld ? (
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: '14px 16px', marginBottom: 20, border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.30)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>Prochain monde</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${nextWorld.rgb},0.60)` }}>{daysToNext} jour{daysToNext > 1 ? 's' : ''}</span>
+            </div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 10 }}>{nextWorld.name}</div>
+            <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 2 }}>
+              <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${nextWorld.color}88, ${nextWorld.color})`, borderRadius: 2, boxShadow: `0 0 8px ${nextWorld.color}66`, transition: 'width 0.8s ease', animation: 'worldglow 4s ease-in-out infinite' }} />
+            </div>
+          </div>
+        ) : null
+      })()}
+
+      {/* World cards */}
+      {order.map((worldKey, idx) => {
+        const isUnlocked = unlockedWorlds.includes(worldKey)
+        const isHome = worldKey === homeWorldKey
+        const daysToUnlock = isUnlocked ? 0 : Math.max(0, WORLD_UNLOCK_DAYS[idx] - totalDays)
+        return (
+          <WorldCard
+            key={worldKey}
+            worldKey={worldKey}
+            archetypeKey={archetypeKey}
+            isUnlocked={isUnlocked}
+            isHome={isHome}
+            daysToUnlock={daysToUnlock}
+            onEnter={setSelectedWorld}
+          />
+        )
+      })}
+
+      {/* Footer */}
+      <div style={{ textAlign: 'center', paddingTop: 8 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.18)', fontStyle: 'italic', lineHeight: 1.6, margin: 0 }}>
+          Chaque jour de présence ouvre un peu plus<br />ton univers intérieur.
+        </p>
+      </div>
+
+      {selectedWorld && <WorldDetailOverlay worldKey={selectedWorld} archetypeKey={archetypeKey} onClose={() => setSelectedWorld(null)} />}
+    </div>
+  )
+}
+
+function NavIconVoyage({ active, color }) {
+  const c = active ? color : 'rgba(255,255,255,0.26)'
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="9" stroke={c} strokeWidth="1.4" />
+      <path d="M12 3v2M12 19v2M3 12h2M19 12h2" stroke={c} strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M15.5 8.5L13 13l-4.5 2.5 2.5-4.5L15.5 8.5Z" stroke={c} strokeWidth="1.2" strokeLinejoin="round" fill={active ? color + '33' : 'none'} />
+    </svg>
+  )
+}
+
 function BottomNav({ tab, onChange, color, badges = {} }) {
   const tabs = [
     { key: 'home',     label: 'Accueil',  Icon: NavIconHome },
     { key: 'routines', label: 'Routines', Icon: NavIconRoutines },
+    { key: 'voyage',   label: 'Voyage',   Icon: NavIconVoyage },
     { key: 'quetes',   label: 'Quêtes',   Icon: NavIconQuetes },
     { key: 'boutique', label: 'Boutique', Icon: NavIconBoutique },
   ]
@@ -2434,13 +2786,13 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
         const active = tab === t.key
         const badged = !active && !!badges[t.key]
         return (
-          <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '14px 0 11px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, position: 'relative' }}>
+          <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '12px 0 9px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, position: 'relative' }}>
             {active && <div style={{ position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${color.length > 7 ? '99,102,241' : color.replace('#','').match(/.{2}/g).map(x=>parseInt(x,16)).join(',')},0.10) 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 4.5s ease-in-out infinite' }} />}
             <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.25s ease', animation: active ? 'animalbreathe 6s ease-in-out infinite, milestoneGlow 8s ease-in-out 3s infinite' : 'none' }}>
               <t.Icon active={active} color={color} />
               {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85, animation: 'seedPulse 3s ease-in-out infinite, milestoneGlow 5s ease-in-out 1s infinite' }} />}
             </span>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.12em', color: active ? color : 'rgba(255,255,255,0.22)', transition: 'color 0.25s ease', textTransform: 'uppercase', animation: active ? 'phrasebreathe 18s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'none' }}>{t.label}</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, letterSpacing: '0.12em', color: active ? color : 'rgba(255,255,255,0.22)', transition: 'color 0.25s ease', textTransform: 'uppercase', animation: active ? 'phrasebreathe 18s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'none' }}>{t.label}</span>
             <div style={{ width: active ? 20 : 3, height: 1.5, borderRadius: 1, background: active ? color : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 8px ${color}, 0 0 16px ${color}66` : 'none', animation: active ? 'worldglow 5s ease-in-out infinite, milestoneGlow 4s ease-in-out 1s infinite' : 'none' }} />
           </button>
         )
@@ -2799,6 +3151,32 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {showBreathing && <BreathingModal archetypeKey={archetypeKey} onClose={() => setShowBreathing(false)} />}
+
+      {/* ── Prochaine découverte ── */}
+      {(() => {
+        const totalDays = getTotalDaysVisited()
+        const daysToNext = getDaysToNextWorld(archetypeKey)
+        const unlockedWorlds = getUnlockedWorlds(archetypeKey)
+        const order = WORLD_ORDER[archetypeKey] || WORLD_ORDER.resilience
+        const nextWorldKey = order[unlockedWorlds.length]
+        const nextWorld = nextWorldKey ? WORLDS[nextWorldKey] : null
+        if (!nextWorld) return null
+        const prevThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length - 1] || 0
+        const nextThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length] || prevThreshold
+        const progress = nextThreshold > prevThreshold ? Math.min(1, (totalDays - prevThreshold) / (nextThreshold - prevThreshold)) : 1
+        return (
+          <div style={{ background: `linear-gradient(135deg, rgba(${nextWorld.rgb},0.07) 0%, rgba(255,255,255,0.03) 100%)`, border: `1px solid rgba(${nextWorld.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', animation: 'fadeIn 0.6s ease 0.8s both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Prochain monde</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${nextWorld.rgb},0.65)`, letterSpacing: '0.06em' }}>{daysToNext} jour{daysToNext > 1 ? 's' : ''}</span>
+            </div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.65)', marginBottom: 10, animation: 'phrasebreathe 20s ease-in-out infinite' }}>{nextWorld.name}</div>
+            <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2 }}>
+              <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${nextWorld.color}66, ${nextWorld.color})`, borderRadius: 2, boxShadow: `0 0 8px ${nextWorld.color}55`, transition: 'width 1s ease', animation: 'worldglow 5s ease-in-out infinite' }} />
+            </div>
+          </div>
+        )
+      })()}
 
       {/* ── Mon Espace Néya ── */}
       <div onClick={() => { haptic([6,40,6]); setShowCocon(true) }}
@@ -3305,6 +3683,10 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
   const [routinesDone, setRoutinesDone] = useState(() => loadRoutines())
   const [quetesDone, setQuetesDone] = useState(() => loadQuetes(archetypeKey))
   const [vraiOpen, setVraiOpen] = useState(false)
+  const [pendingWorldUnlock, setPendingWorldUnlock] = useState(null)
+  const [seenWorldUnlocks, setSeenWorldUnlocks] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('neya_seen_unlocks') || '[]') } catch { return [] }
+  })
 
   const changeTab = (newTab) => {
     if (newTab === tab) return
@@ -3324,6 +3706,18 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
     const next = [...quetesDone]; next[i] = true
     setQuetesDone(next); saveQuetes(archetypeKey, next)
   }
+
+  useEffect(() => {
+    if (!archetypeKey) return
+    const unlocked = getUnlockedWorlds(archetypeKey)
+    const newUnlock = unlocked.find(wk => !seenWorldUnlocks.includes(wk))
+    if (newUnlock) {
+      const updated = [...seenWorldUnlocks, newUnlock]
+      setSeenWorldUnlocks(updated)
+      try { localStorage.setItem('neya_seen_unlocks', JSON.stringify(updated)) } catch {}
+      setTimeout(() => setPendingWorldUnlock(newUnlock), 1200)
+    }
+  }, [archetypeKey])
 
   const mainJourComplète = routinesDone.every(Boolean) && quetesDone.some(Boolean)
   const overlay = `linear-gradient(180deg, rgba(5,8,16,0.62) 0%, rgba(${arch.rgb},${mainJourComplète ? '0.14' : '0.09'}) 100%)`
@@ -3346,9 +3740,11 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} onOpenVrai={() => setVraiOpen(true)} />}
           {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} onOpenVrai={() => setVraiOpen(true)} />}
+          {tab === 'voyage' && <GrandVoyageScreen archetypeKey={archetypeKey} />}
           {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>
         <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ routines: routinesDone.filter(Boolean).length < arch.routines.length, quetes: quetesDone.filter(Boolean).length < arch.quetes.length }} />
+        {pendingWorldUnlock && <WorldUnlockModal worldKey={pendingWorldUnlock} onClose={() => { setPendingWorldUnlock(null); changeTab('voyage') }} />}
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
       </div>
     </BgScreen>
