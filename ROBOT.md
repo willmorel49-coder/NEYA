@@ -95,9 +95,9 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 **Date** : 2026-05-10
 **Branche** : `main`
-**Phase** : V2.3 — Backgrounds MONDE IMAGINAIRE · Animaux redessinés · BreathingModal · Effects monde
+**Phase** : V2.5 — CoconScreen · BgScreen bgPosition · Quiz backgrounds diversifiés
 
-### Features actives (`src/App.jsx`) — build 341.45 kB (89.65 kB gzip)
+### Features actives (`src/App.jsx`) — build 357.84 kB (92.67 kB gzip)
 
 **Splash :** 15 étoiles · tint overlay monde · texte retour contextuel (<4h/7j/≥7j) · whisper time-of-day · haptic [4]
 **Onboarding :** 3 écrans cinématiques · `ob0breathe` 42s bg · texte séquentiel · ENTRER bottom:14%
@@ -149,6 +149,13 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - BreathingModal : exercice interactif par archétype — cercle morphique CSS transition, countdown, cycle counter, animal animé au centre · Techniques : Guerrier 4·4·4·4 / Ancrage 4·7·8 / Cohérence 5·5 / Créateur 4·8
 - HomeScreen : carte "Exercice de souffle" visible dans Accueil, déclenche BreathingModal
 - Fix critique : écran noir résolu — import React default + ErrorBoundary + animalbreathe opacity-only (commit b24f4a7)
+
+**V2.5 — CoconScreen · BgScreen · Quiz (prod live) :**
+- `NeyaGirl` SVG inline (fille de dos, cheveux bleus #3b82f6)
+- `CoconScreen` : sanctuaire personnel full-screen overlay (position: fixed, zIndex: 800) · SpiritAnimal size=200 flottant · NeyaGirl centrée · 5 items à débloquer (Bougie/Cristal/Plante/Totem/Portail) · grille 2×2+1 glassmorphisme · unlock basé streak + jours visités · stats streak/jours
+- HomeScreen : card "Mon Cocon Néya" après Exercice de souffle · ouvre CoconScreen
+- `BgScreen` : nouveau prop `bgPosition = 'center'` (remplace valeur hardcodée)
+- Quiz backgrounds diversifiés : `bg-cosmos-alt.png` (Ta relation aux autres, Quand l'imprévu) · `bg-vide.png` (Ta vision du bonheur, Face à une échéance, Ton moteur intérieur)
 
 **V2.3 — Backgrounds MONDE IMAGINAIRE · Effects monde (commit 01d355d) :**
 - 8 fonds remplacés par les images de référence Will (dossier NÉYA/NÉYA/) :

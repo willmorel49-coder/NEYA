@@ -207,7 +207,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-cosmos.png',
+    bg: 'bg-cosmos-alt.png',
     tint: 'linear-gradient(160deg, rgba(99,102,241,0.26) 0%, rgba(79,70,229,0.12) 100%)',
     title: 'Ta relation aux autres...',
     text: 'Dans une relation profonde, quel est ton rôle naturel ?',
@@ -267,7 +267,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-cosmos.png',
+    bg: 'bg-vide.png',
     tint: 'linear-gradient(160deg, rgba(109,40,217,0.28) 0%, rgba(139,92,246,0.14) 100%)',
     title: 'Ta vision du bonheur...',
     text: 'Pour toi, le bonheur ressemble à...',
@@ -352,7 +352,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-cosmos.png',
+    bg: 'bg-cosmos-alt.png',
     tint: 'linear-gradient(160deg, rgba(139,92,246,0.26) 0%, rgba(99,102,241,0.14) 100%)',
     title: "Quand l'imprévu arrive...",
     text: "Quel est ton réflexe naturel quand les choses ne se passent pas comme prévu ?",
@@ -388,7 +388,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-cosmos.png',
+    bg: 'bg-vide.png',
     tint: 'linear-gradient(160deg, rgba(99,102,241,0.30) 0%, rgba(79,70,229,0.16) 100%)',
     title: "Ton moteur intérieur...",
     text: "Quelle énergie intérieure te pousse à te lever chaque matin ?",
@@ -984,10 +984,10 @@ function NeyaLogo({ size = 'md', onTap }) {
 
 // ─── BG SCREEN ────────────────────────────────────────────────────────────────
 
-function BgScreen({ bg, overlay = 'rgba(5,8,16,0.48)', breathe = false, breatheAnim = 'bgbreathe 26s ease-in-out infinite', children }) {
+function BgScreen({ bg, overlay = 'rgba(5,8,16,0.48)', breathe = false, breatheAnim = 'bgbreathe 26s ease-in-out infinite', bgPosition = 'center', children }) {
   return (
     <div style={{ width: '100vw', height: '100dvh', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bg})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: breathe ? breatheAnim : 'none', transformOrigin: 'center center', willChange: breathe ? 'transform' : 'auto' }} />
+      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bg})`, backgroundSize: 'cover', backgroundPosition: bgPosition, animation: breathe ? breatheAnim : 'none', transformOrigin: 'center center', willChange: breathe ? 'transform' : 'auto' }} />
       <div style={{ position: 'absolute', inset: 0, background: overlay }} />
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%', background: 'linear-gradient(to top, rgba(5,8,16,0.55) 0%, transparent 100%)', pointerEvents: 'none', zIndex: 1 }} />
       <GrainFilter />
@@ -2177,6 +2177,209 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   )
 }
 
+// ─── NÉYA GIRL ────────────────────────────────────────────────────────────────
+
+function NeyaGirl({ size = 54, color = '#3b82f6' }) {
+  return (
+    <svg width={size * 0.7} height={size} viewBox="0 0 38 60" fill="none">
+      {/* Tête */}
+      <ellipse cx="19" cy="13" rx="7.5" ry="8.5" fill="rgba(255,255,255,0.18)" />
+      {/* Cheveux bleus longs */}
+      <path d="M11 11 Q8 5 11 2 Q16 0 19 4 Q22 0 27 2 Q30 5 27 11" fill={color} opacity="0.82" />
+      <path d="M11 11 Q7 20 9 30 Q11 33 13 28 Q12 20 13 13Z" fill={color} opacity="0.62" />
+      <path d="M27 11 Q31 20 29 30 Q27 33 25 28 Q26 20 25 13Z" fill={color} opacity="0.62" />
+      {/* Corps / robe */}
+      <path d="M13 20 Q8 32 11 48 L27 48 Q30 32 25 20 Q22 23 19 23 Q16 23 13 20Z" fill="rgba(255,255,255,0.14)" />
+      {/* Bras */}
+      <path d="M13 22 Q8 28 8 35 Q10 36 13 30 L13 22Z" fill="rgba(255,255,255,0.10)" />
+      <path d="M25 22 Q30 28 30 35 Q28 36 25 30 L25 22Z" fill="rgba(255,255,255,0.10)" />
+    </svg>
+  )
+}
+
+// ─── COCON SCREEN ─────────────────────────────────────────────────────────────
+
+function CoconScreen({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [visible, setVisible] = useState(false)
+
+  const streak = getCurrentStreak()
+  const totalDays = (() => {
+    let count = 0
+    try {
+      for (const key of Object.keys(localStorage)) {
+        if (key.startsWith('neya_routines_')) {
+          if (JSON.parse(localStorage.getItem(key) || '[]').some(Boolean)) count++
+        }
+      }
+    } catch {}
+    return count
+  })()
+
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 50)
+    return () => clearTimeout(t)
+  }, [])
+
+  const COCON_ITEMS = [
+    { id: 'bougie',  label: 'La Bougie',   sub: 'Flamme intérieure',  unlockAt: 3,  by: 'streak', icon: 'candle'  },
+    { id: 'cristal', label: 'Le Cristal',  sub: 'Clarté et ancrage',  unlockAt: 7,  by: 'total',  icon: 'crystal' },
+    { id: 'plante',  label: 'La Plante',   sub: 'Ce qui grandit',     unlockAt: 14, by: 'total',  icon: 'plant'   },
+    { id: 'totem',   label: 'Ton Totem',   sub: arch.animal,          unlockAt: 21, by: 'total',  icon: 'totem'   },
+    { id: 'portail', label: 'Le Portail',  sub: "Vers l'inconnu",     unlockAt: 30, by: 'total',  icon: 'portal'  },
+  ]
+
+  function ItemIcon({ icon, color: icolor, unlocked }) {
+    const op = unlocked ? 1 : 0.38
+    if (icon === 'candle') return (
+      <svg width={28} height={28} viewBox="0 0 28 28" fill="none">
+        <rect x="10" y="14" width="8" height="12" rx="1.5" fill={icolor} opacity={0.72 * op} />
+        <path d="M14 14 Q12 8 14 4 Q16 8 14 14Z" fill={icolor} opacity={0.95 * op} />
+        <ellipse cx="14" cy="4.5" rx="1.5" ry="2" fill="white" opacity={0.55 * op} />
+      </svg>
+    )
+    if (icon === 'crystal') return (
+      <svg width={28} height={28} viewBox="0 0 28 28" fill="none">
+        <path d="M14 3 L22 10 L19 24 L9 24 L6 10 Z" fill={icolor} opacity={0.55 * op} />
+        <path d="M14 3 L22 10 L14 7 Z" fill={icolor} opacity={0.85 * op} />
+        <path d="M14 3 L6 10 L14 7 Z" fill="white" opacity={0.18 * op} />
+      </svg>
+    )
+    if (icon === 'plant') return (
+      <svg width={28} height={28} viewBox="0 0 28 28" fill="none">
+        <path d="M14 25 L14 12" stroke={icolor} strokeWidth="1.8" strokeLinecap="round" opacity={0.72 * op} />
+        <path d="M14 18 Q10 14 6 15 Q7 19 14 18Z" fill={icolor} opacity={0.82 * op} />
+        <path d="M14 14 Q18 10 22 11 Q21 15 14 14Z" fill={icolor} opacity={0.68 * op} />
+        <path d="M14 22 Q11 19 8 20 Q9 23 14 22Z" fill={icolor} opacity={0.55 * op} />
+      </svg>
+    )
+    if (icon === 'totem') return <SpiritAnimal archetype={archetypeKey} size={28} style={{ opacity: op }} />
+    if (icon === 'portal') return (
+      <svg width={28} height={28} viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="9" stroke={icolor} strokeWidth="2" opacity={0.80 * op} />
+        <circle cx="14" cy="14" r="5" stroke={icolor} strokeWidth="1" opacity={0.50 * op} />
+        <circle cx="14" cy="14" r="2" fill={icolor} opacity={0.88 * op} />
+      </svg>
+    )
+    return null
+  }
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 800,
+      opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease',
+      overflow: 'hidden',
+      display: 'flex', flexDirection: 'column',
+    }}>
+      {/* Background monde */}
+      <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${arch.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'bgbreathe 30s ease-in-out infinite' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.72)' }} />
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 40%, rgba(${arch.rgb},0.12) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+      <GrainFilter />
+
+      {/* Header semi-transparent */}
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '52px 22px 16px', background: 'rgba(5,8,16,0.28)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderBottom: `1px solid rgba(${arch.rgb},0.12)` }}>
+        <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '8px 16px', color: 'rgba(255,255,255,0.50)', fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.10em', cursor: 'pointer' }}>← Fermer</button>
+        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.72)', letterSpacing: '0.14em', animation: 'phrasebreathe 18s ease-in-out infinite' }}>Mon Espace</span>
+        <div style={{ width: 72 }} />
+      </div>
+
+      {/* Contenu scrollable */}
+      <div style={{ position: 'relative', zIndex: 5, flex: 1, overflowY: 'auto', padding: '24px 22px 100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+
+        {/* Spirit Animal géant flottant */}
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 8 }}>
+          <div style={{ position: 'absolute', width: 240, height: 240, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.18) 0%, transparent 68%)`, animation: 'presencePulse 5s ease-in-out infinite', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', width: 270, height: 270, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.14)`, animation: 'pulsering 6s ease-in-out infinite 1.2s', pointerEvents: 'none' }} />
+          <div style={{ filter: `drop-shadow(0 0 32px ${arch.color}) drop-shadow(0 0 64px ${arch.color}66)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 26s ease-in-out infinite' }}>
+            <SpiritAnimal archetype={archetypeKey} size={200} />
+          </div>
+        </div>
+
+        {/* NeyaGirl + titre */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+          <div style={{ animation: 'animalfloat 22s ease-in-out 3s infinite', opacity: 0.85 }}>
+            <NeyaGirl size={54} color="#3b82f6" />
+          </div>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.88)', margin: 0, letterSpacing: '0.02em', textAlign: 'center', textShadow: `0 0 28px ${arch.color}44`, animation: 'phrasebreathe 24s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite' }}>Mon Cocon Néya</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `rgba(${arch.rgb},0.65)`, margin: 0, letterSpacing: '0.08em', textAlign: 'center', fontStyle: 'italic', animation: 'phrasebreathe 30s ease-in-out infinite' }}>Ton sanctuaire se construit avec ta présence</p>
+        </div>
+
+        {/* Stats streak + jours */}
+        <div style={{ display: 'flex', gap: 24, justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: arch.color, textShadow: `0 0 18px ${arch.color}66`, animation: 'milestoneGlow 6s ease-in-out infinite' }}>{streak}</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 2 }}>jours d'affilée</div>
+          </div>
+          <div style={{ width: 1, height: 32, background: `rgba(${arch.rgb},0.20)`, borderRadius: 1 }} />
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: arch.color, textShadow: `0 0 18px ${arch.color}66`, animation: 'milestoneGlow 6s ease-in-out 1.5s infinite' }}>{totalDays}</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 2 }}>jours visités</div>
+          </div>
+        </div>
+
+        {/* Séparateur lumineux */}
+        <div style={{ width: '100%', height: 1, background: `linear-gradient(90deg, transparent, rgba(${arch.rgb},0.30), transparent)`, animation: 'worldglow 8s ease-in-out infinite' }} />
+
+        {/* Objets du cocon */}
+        <div style={{ width: '100%' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center', animation: 'phrasebreathe 20s ease-in-out infinite' }}>Objets de ton sanctuaire</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            {COCON_ITEMS.slice(0, 4).map((item) => {
+              const current = item.by === 'streak' ? streak : totalDays
+              const unlocked = current >= item.unlockAt
+              return (
+                <div key={item.id} style={{
+                  background: unlocked ? `rgba(${arch.rgb},0.10)` : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${unlocked ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`,
+                  borderRadius: 14, padding: '18px 14px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+                  opacity: unlocked ? 1 : 0.55,
+                  boxShadow: unlocked ? `0 0 22px rgba(${arch.rgb},0.16), inset 0 0 0 1px ${arch.color}18` : 'none',
+                  animation: unlocked ? 'milestoneGlow 8s ease-in-out infinite' : 'none',
+                  transition: 'all 0.4s ease',
+                  backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+                }}>
+                  <div style={{ filter: unlocked ? `drop-shadow(0 0 8px ${arch.color}88)` : 'none', animation: unlocked ? 'animalbreathe 8s ease-in-out infinite' : 'none' }}>
+                    <ItemIcon icon={item.icon} color={arch.color} unlocked={unlocked} />
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: unlocked ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.40)', letterSpacing: '-0.01em', marginBottom: 3, animation: unlocked ? 'phrasebreathe 22s ease-in-out infinite' : 'none' }}>{item.label}</div>
+                    <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: unlocked ? `rgba(${arch.rgb},0.70)` : 'rgba(255,255,255,0.22)', letterSpacing: '0.04em', fontStyle: 'italic' }}>{unlocked ? item.sub : `${item.unlockAt} jours`}</div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* 5e item — Le Portail — centré pleine largeur */}
+          {(() => {
+            const item = COCON_ITEMS[4]
+            const current = item.by === 'streak' ? streak : totalDays
+            const unlocked = current >= item.unlockAt
+            return (
+              <div style={{ marginTop: 12, background: unlocked ? `rgba(${arch.rgb},0.12)` : 'rgba(255,255,255,0.04)', border: `1px solid ${unlocked ? arch.color + '66' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 18, opacity: unlocked ? 1 : 0.55, boxShadow: unlocked ? `0 0 28px rgba(${arch.rgb},0.20), inset 0 0 0 1px ${arch.color}18` : 'none', animation: unlocked ? 'milestoneGlow 6s ease-in-out infinite' : 'none', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+                <div style={{ filter: unlocked ? `drop-shadow(0 0 12px ${arch.color}cc)` : 'none', animation: unlocked ? 'animalbreathe 6s ease-in-out infinite' : 'none', flexShrink: 0 }}>
+                  <ItemIcon icon={item.icon} color={arch.color} unlocked={unlocked} />
+                </div>
+                <div>
+                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: unlocked ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.38)', letterSpacing: '-0.01em', marginBottom: 4, animation: unlocked ? 'milestoneGlow 5s ease-in-out infinite' : 'none' }}>{item.label}</div>
+                  <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: unlocked ? `rgba(${arch.rgb},0.75)` : 'rgba(255,255,255,0.22)', fontStyle: 'italic', letterSpacing: '0.04em' }}>{unlocked ? item.sub : `${item.unlockAt} jours de présence`}</div>
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+
+        {/* Message poétique de fin */}
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: `rgba(${arch.rgb},0.40)`, letterSpacing: '0.06em', textAlign: 'center', lineHeight: 1.75, margin: '8px 0 0', fontStyle: 'italic', animation: 'phrasebreathe 36s ease-in-out infinite', maxWidth: 280 }}>
+          Chaque jour que tu passes ici fait grandir ton sanctuaire.<br />Ta présence est la seule clé.
+        </p>
+      </div>
+    </div>
+  )
+}
+
 // ─── BOTTOM NAV ───────────────────────────────────────────────────────────────
 
 function NavIconHome({ active, color }) {
@@ -2370,6 +2573,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showPresenceToast, setShowPresenceToast] = useState(false)
   const [restartPending, setRestartPending] = useState(false)
   const [showBreathing, setShowBreathing] = useState(false)
+  const [showCocon, setShowCocon] = useState(false)
   const prevJourComplete = useRef(false)
   const restartTimer = useRef(null)
 
@@ -2595,6 +2799,36 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {showBreathing && <BreathingModal archetypeKey={archetypeKey} onClose={() => setShowBreathing(false)} />}
+
+      {/* ── Mon Espace Néya ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowCocon(true) }}
+        style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(255,255,255,0.04) 100%)`,
+          border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 14, padding: '18px 18px',
+          display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease',
+          animation: 'fadeIn 0.6s ease 0.6s both',
+          boxShadow: `0 0 24px rgba(${arch.rgb},0.10)` }}>
+        <div style={{ width: 44, height: 44, borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(${arch.rgb},0.25) 0%, transparent 70%)`,
+          border: `1px solid rgba(${arch.rgb},0.38)`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          animation: 'animalbreathe 12s ease-in-out infinite' }}>
+          <SpiritAnimal archetype={archetypeKey} size={26} style={{ opacity: 0.80 }} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.75)`,
+            letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mon Espace</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14,
+            color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.01em' }}>Mon Cocon Néya</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.30)', marginTop: 3 }}>
+            Ton sanctuaire personnel · Objets à débloquer
+          </div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`,
+          letterSpacing: '0.08em', flexShrink: 0, animation: 'phrasebreathe 8s ease-in-out infinite' }}>→</div>
+      </div>
+
+      {showCocon && <CoconScreen archetypeKey={archetypeKey} onClose={() => setShowCocon(false)} />}
 
       {/* ── Graines de présence (7 jours) ── */}
       <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: jourComplète ? 'worldglow 22s ease-in-out 6s infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'worldglow 22s ease-in-out 6s infinite' }} />
