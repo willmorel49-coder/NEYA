@@ -2657,6 +2657,24 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
   )
 }
 
+// ─── ERROR BOUNDARY ───────────────────────────────────────────────────────────
+
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false } }
+  static getDerivedStateFromError() { return { hasError: true } }
+  componentDidCatch(err) { console.error('[NÉYA]', err) }
+  render() {
+    if (!this.state.hasError) return this.props.children
+    return (
+      <div style={{ width: '100vw', height: '100dvh', background: '#050810', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, padding: 32 }}>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textAlign: 'center', opacity: 0.88 }}>Une erreur est survenue.</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', margin: 0, textAlign: 'center', lineHeight: 1.6 }}>Ferme et relance l'app pour continuer.</p>
+        <button onClick={() => window.location.reload()} style={{ marginTop: 8, background: 'rgba(99,102,241,0.18)', border: '1px solid rgba(99,102,241,0.4)', borderRadius: 100, padding: '12px 28px', color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif', fontSize: 13, letterSpacing: '0.08em', cursor: 'pointer' }}>Recharger</button>
+      </div>
+    )
+  }
+}
+
 // ─── APP ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
@@ -2682,7 +2700,7 @@ export default function App() {
       @keyframes cursorblink  { 0%,100%{opacity:0}                             45%,55%{opacity:1} }
       @keyframes startwinkle  { 0%,100%{opacity:0.18}                         50%{opacity:0.88} }
       @keyframes animalfloat  { 0%,100%{transform:translateY(0) scale(1) translateX(0)}  50%{transform:translateY(-7px) scale(1.028) translateX(3px)} }
-      @keyframes animalbreathe{ 0%,100%{filter:brightness(1)}                            50%{filter:brightness(1.10)} }
+      @keyframes animalbreathe{ 0%,100%{opacity:0.88}                                    50%{opacity:1} }
       @keyframes patronusRing { 0%{transform:scale(0.06);opacity:0.96}        100%{transform:scale(5.8);opacity:0} }
       @keyframes patronusAnimal {
         0%   { opacity:0; transform:scale(0.28); filter:blur(22px) brightness(4.5); }
@@ -2734,25 +2752,27 @@ export default function App() {
   }
 
   return (
-    <div style={{ width: '100vw', height: '100dvh', background: '#050810', overflow: 'hidden', position: 'fixed', inset: 0 }}>
-      {screen === 'returning'  && archetype && <ReturningScreen archetypeKey={archetype} onDone={() => go('main')} />}
-      {screen === 'splash'     && <SplashScreen onStart={() => go('intro')} />}
-      {screen === 'intro'      && <IntroScreen onStart={() => go('quiz-intro')} />}
-      {screen === 'quiz-intro' && <QuizIntroScreen onStart={() => go('quiz')} />}
-      {screen === 'quiz'       && <QuizScreen onComplete={(answers) => {
-        const result = computeArchetype(answers)
-        saveProfile(result)
-        const ts = Date.now()
-        go('transition', () => { setArchetype(result); setSavedAt(ts) })
-      }} />}
-      {screen === 'transition' && <TransitionScreen archetypeKey={archetype} onReveal={() => go('result')} />}
-      {screen === 'result'     && archetype && <ResultScreen archetypeKey={archetype} onContinue={() => go('main')} />}
-      {screen === 'main'       && archetype && <MainApp archetypeKey={archetype} onRestart={handleRestart} savedAt={savedAt} />}
+    <ErrorBoundary>
+      <div style={{ width: '100vw', height: '100dvh', background: '#050810', overflow: 'hidden', position: 'fixed', inset: 0 }}>
+        {screen === 'returning'  && archetype && <ReturningScreen archetypeKey={archetype} onDone={() => go('main')} />}
+        {screen === 'splash'     && <SplashScreen onStart={() => go('intro')} />}
+        {screen === 'intro'      && <IntroScreen onStart={() => go('quiz-intro')} />}
+        {screen === 'quiz-intro' && <QuizIntroScreen onStart={() => go('quiz')} />}
+        {screen === 'quiz'       && <QuizScreen onComplete={(answers) => {
+          const result = computeArchetype(answers)
+          saveProfile(result)
+          const ts = Date.now()
+          go('transition', () => { setArchetype(result); setSavedAt(ts) })
+        }} />}
+        {screen === 'transition' && <TransitionScreen archetypeKey={archetype} onReveal={() => go('result')} />}
+        {screen === 'result'     && archetype && <ResultScreen archetypeKey={archetype} onContinue={() => go('main')} />}
+        {screen === 'main'       && archetype && <MainApp archetypeKey={archetype} onRestart={handleRestart} savedAt={savedAt} />}
 
-      <div style={{ position: 'fixed', inset: 0, background: '#050810', zIndex: 9999, opacity: blackout ? 1 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: blackout ? 'all' : 'none' }} />
-      {archetype && ARCHETYPES[archetype] && (
-        <div style={{ position: 'fixed', inset: 0, background: ARCHETYPES[archetype].color, zIndex: 10000, opacity: blackout ? 0.08 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: 'none' }} />
-      )}
-    </div>
+        <div style={{ position: 'fixed', inset: 0, background: '#050810', zIndex: 9999, opacity: blackout ? 1 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: blackout ? 'all' : 'none' }} />
+        {archetype && ARCHETYPES[archetype] && (
+          <div style={{ position: 'fixed', inset: 0, background: ARCHETYPES[archetype].color, zIndex: 10000, opacity: blackout ? 0.08 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: 'none' }} />
+        )}
+      </div>
+    </ErrorBoundary>
   )
 }
