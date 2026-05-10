@@ -836,7 +836,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
           opacity: vis ? 1 : 0,
           transition: 'opacity 1.4s ease 1.1s',
           animation: vis ? 'phrasebreathe 44s ease-in-out 2s infinite, milestoneGlow 10s ease-in-out 3s infinite' : 'none',
-          textShadow: vis ? `0 0 16px ${arch.color}22` : 'none',
+          textShadow: vis ? `0 0 18px ${arch.color}33` : 'none',
         }}>
           {arch.worldInsight}
         </p>
@@ -1253,7 +1253,7 @@ function QuizScreen({ onComplete }) {
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 12, marginBottom: 24 }}>
           <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em', textShadow: `0 2px 24px rgba(0,0,0,0.5), 0 0 60px ${(WORLD_TINTS[bgMain] || 'rgba(99,102,241,0.06)').replace(/[\d.]+\)$/, '0.16)')}`, animation: contentVis ? 'questionEnter 0.38s ease both, phrasebreathe 34s ease-in-out 0.5s infinite' : 'none' }}>{q.title}</h2>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.65, padding: '0 4px', animation: contentVis ? 'questionEnter 0.42s ease 0.05s both, phrasebreathe 42s ease-in-out 1s infinite' : 'none' }}>{q.text}</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.65, padding: '0 4px', animation: contentVis ? 'questionEnter 0.42s ease 0.05s both, phrasebreathe 42s ease-in-out 1s infinite' : 'none', textShadow: '0 0 20px rgba(255,255,255,0.06)' }}>{q.text}</p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
@@ -1601,7 +1601,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               <div style={{ position: 'relative', background: 'rgba(255,255,255,0.055)', border: `1px solid ${arch.color}44`, borderRadius: 16, padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 18, boxShadow: `0 8px 32px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.04)`, overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}99, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s ease-in-out infinite' }} />
                 {arch.desc.split('\n\n').map((para, i) => (
-                  <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: i === 0 ? 16 : 14, color: i === 0 ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.75, fontStyle: i === 0 ? 'italic' : 'normal', textShadow: i === 0 ? `0 1px 20px rgba(0,0,0,0.3), 0 0 40px ${arch.color}18` : 'none', animation: i === 0 ? 'phrasebreathe 36s ease-in-out infinite, milestoneGlow 12s ease-in-out 4s infinite' : 'phrasebreathe 40s ease-in-out 2s infinite' }}>
+                  <p key={i} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: i === 0 ? 16 : 14, color: i === 0 ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.75, fontStyle: i === 0 ? 'italic' : 'normal', textShadow: i === 0 ? `0 1px 20px rgba(0,0,0,0.3), 0 0 40px ${arch.color}18` : `0 0 12px ${arch.color}0f`, animation: i === 0 ? 'phrasebreathe 36s ease-in-out infinite, milestoneGlow 12s ease-in-out 4s infinite' : 'phrasebreathe 40s ease-in-out 2s infinite' }}>
                     {i === 0 ? `"${para}"` : para}
                   </p>
                 ))}
@@ -2088,10 +2088,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
           {days > 0 && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: isMilestone ? arch.color : `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, textShadow: isMilestone ? `0 0 12px ${arch.color}66` : 'none', animation: isMilestone ? 'milestoneGlow 4s ease-in-out infinite' : 'phrasebreathe 40s ease-in-out infinite' }}>Jour {days}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: isMilestone ? arch.color : `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, textShadow: isMilestone ? `0 0 12px ${arch.color}66` : `0 0 8px ${arch.color}33`, animation: isMilestone ? 'milestoneGlow 4s ease-in-out infinite' : 'phrasebreathe 40s ease-in-out infinite' }}>Jour {days}</p>
           )}
           {streak >= 2 && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 7 ? arch.color : `${arch.color}88`, letterSpacing: '0.12em', margin: 0, textShadow: streak >= 14 ? `0 0 18px ${arch.color}88, 0 0 36px ${arch.color}44` : streak >= 7 ? `0 0 12px ${arch.color}66` : 'none', animation: streak >= 7 ? (streak >= 14 ? 'milestoneGlow 3s ease-in-out infinite' : 'milestoneGlow 4s ease-in-out infinite') : 'none' }}>· {streak} jours d'affilée{streak >= 7 ? ' ✦' : ''}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 7 ? arch.color : `${arch.color}88`, letterSpacing: '0.12em', margin: 0, textShadow: streak >= 14 ? `0 0 18px ${arch.color}88, 0 0 36px ${arch.color}44` : streak >= 7 ? `0 0 12px ${arch.color}66` : `0 0 8px ${arch.color}22`, animation: streak >= 7 ? (streak >= 14 ? 'milestoneGlow 3s ease-in-out infinite' : 'milestoneGlow 4s ease-in-out infinite') : 'none' }}>· {streak} jours d'affilée{streak >= 7 ? ' ✦' : ''}</p>
           )}
         </div>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
@@ -2127,7 +2127,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: count >= 3 ? `${arch.color}66` : 'rgba(255,255,255,0.26)', letterSpacing: '0.14em', margin: 0, transition: 'color 0.8s ease', animation: count >= 3 ? 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite' : 'phrasebreathe 32s ease-in-out infinite', textShadow: count >= 3 ? `0 0 12px ${arch.color}33` : 'none' }}>{count} jour{count > 1 ? 's' : ''} cette semaine</p>
         })()}
         {totalDone > 0 && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: totalDone >= 100 ? `${arch.color}55` : 'rgba(255,255,255,0.10)', letterSpacing: '0.12em', margin: 0, animation: totalDone >= 100 ? 'phrasebreathe 32s ease-in-out infinite, milestoneGlow 8s ease-in-out 4s infinite' : 'phrasebreathe 40s ease-in-out 3s infinite', transition: 'color 1s ease', textShadow: totalDone >= 100 ? `0 0 12px ${arch.color}33` : 'none' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: totalDone >= 100 ? `${arch.color}55` : 'rgba(255,255,255,0.10)', letterSpacing: '0.12em', margin: 0, animation: totalDone >= 100 ? 'phrasebreathe 32s ease-in-out infinite, milestoneGlow 8s ease-in-out 4s infinite' : 'phrasebreathe 40s ease-in-out 3s infinite', transition: 'color 1s ease', textShadow: totalDone >= 100 ? `0 0 12px ${arch.color}33` : `0 0 8px ${arch.color}18` }}>
             {totalDone} présence{totalDone > 1 ? 's' : ''} au total{totalDone >= 100 ? ' ✦' : ''}
           </p>
         )}
@@ -2336,7 +2336,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
             ))}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 16, color: done ? arch.color : locked ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.42)', animation: (!done && !locked) ? `seedPulse ${3.4 + i * 0.6}s ease-in-out ${i * 0.5}s infinite` : 'none', textShadow: done ? `0 0 12px ${arch.color}66` : 'none' }}>{locked ? '◻' : q.icon}</span>
+                <span style={{ fontSize: 16, color: done ? arch.color : locked ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.42)', animation: (!done && !locked) ? `seedPulse ${3.4 + i * 0.6}s ease-in-out ${i * 0.5}s infinite` : 'none', textShadow: done ? `0 0 12px ${arch.color}66` : (!locked && !done) ? `0 0 8px ${arch.color}33` : 'none' }}>{locked ? '◻' : q.icon}</span>
                 <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16.5, color: done ? arch.color : locked ? 'rgba(255,255,255,0.26)' : 'white', margin: 0, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : isNext ? `0 0 12px ${arch.color}33` : 'none', animation: done ? 'milestoneGlow 4.6s ease-in-out infinite' : isNext ? 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 9s ease-in-out 3s infinite' : 'none' }}>{q.title}</p>
               </div>
               {done && <span style={{ fontSize: 11, color: arch.color, flexShrink: 0, marginLeft: 8, animation: 'milestoneGlow 4s ease-in-out infinite' }}>✓</span>}
