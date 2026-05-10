@@ -623,35 +623,86 @@ function GrainFilter() {
 const PhoenixSpirit = React.memo(function PhoenixSpirit({ size = 120, color = '#f59e0b', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
-      <ellipse cx="60" cy="60" rx="42" ry="54" fill={color} opacity="0.04" />
-      {/* Body — elongated teardrop */}
-      <path d="M52,86 C48,70 50,54 60,42 C70,54 72,70 68,86 C65,94 55,94 52,86Z" fill={color} opacity="0.90" />
-      <path d="M57,82 C55,68 57,56 60,48 C63,56 65,68 63,82 C62,87 58,87 57,82Z" fill={color} opacity="0.32" />
-      {/* Left wing — sweeping layers */}
-      <path d="M52,66 C34,54 10,60 2,50 C16,38 42,48 52,62Z" fill={color} opacity="0.82"/>
-      <path d="M50,73 C28,66 6,74 0,64 C14,52 40,60 50,70Z" fill={color} opacity="0.50"/>
-      <path d="M50,79 C32,75 14,83 8,78 C22,65 44,70 50,76Z" fill={color} opacity="0.28"/>
-      {/* Right wing — sweeping layers */}
-      <path d="M68,66 C86,54 110,60 118,50 C104,38 78,48 68,62Z" fill={color} opacity="0.82"/>
-      <path d="M70,73 C92,66 114,74 120,64 C106,52 80,60 70,70Z" fill={color} opacity="0.50"/>
-      <path d="M70,79 C88,75 106,83 112,78 C98,65 76,70 70,76Z" fill={color} opacity="0.28"/>
-      {/* Head */}
-      <ellipse cx="60" cy="40" rx="9" ry="11" fill={color} opacity="0.95"/>
-      {/* Flame crest — triple layer */}
-      <path d="M56,34 C52,22 54,12 60,2 C66,12 68,22 64,34Z" fill={color} opacity="0.84"/>
-      <path d="M59,33 C57,20 59,10 60,2 C61,10 63,20 61,33Z" fill={color} opacity="0.98"/>
-      <path d="M57,34 C54,24 56,14 60,6 C64,14 66,24 63,34Z" fill="white" opacity="0.10"/>
-      {/* Eyes */}
-      <ellipse cx="55" cy="40" rx="3" ry="3.2" fill="white" opacity="0.94"/>
-      <ellipse cx="65" cy="40" rx="3" ry="3.2" fill="white" opacity="0.94"/>
-      {/* Tail feathers — five flame tongues */}
-      <path d="M54,86 C49,100 45,112 49,120 C54,108 58,98 60,88Z" fill={color} opacity="0.68"/>
-      <path d="M57,88 C54,104 54,116 57,120 C60,116 60,104 60,90Z" fill={color} opacity="0.88"/>
-      <path d="M60,88 C60,106 60,118 60,120 C61,118 62,106 60,90Z" fill="white" opacity="0.12"/>
-      <path d="M63,88 C66,104 66,116 63,120 C62,116 62,104 60,90Z" fill={color} opacity="0.88"/>
-      <path d="M66,86 C71,100 75,112 71,120 C66,108 62,98 60,88Z" fill={color} opacity="0.68"/>
-      <path d="M56,84 C52,98 48,110 52,118 C57,106 59,96 60,86Z" fill={color} opacity="0.38"/>
-      <path d="M64,84 C68,98 72,110 68,118 C63,106 61,96 60,86Z" fill={color} opacity="0.38"/>
+      {/* Halo ambiant très doux */}
+      <ellipse cx="60" cy="58" rx="48" ry="52" fill={color} opacity="0.03" />
+
+      {/* === AILE GAUCHE — 5 couches, pointes vers le haut === */}
+      {/* Couche principale — grande lame d'aile */}
+      <path d="M54,68 C44,58 22,44 2,48 C8,34 36,38 54,60Z" fill={color} opacity="0.88"/>
+      {/* Deuxième couche — plume médiane */}
+      <path d="M52,72 C38,62 14,52 0,58 C6,44 34,48 52,66Z" fill={color} opacity="0.65"/>
+      {/* Troisième couche — plume basse */}
+      <path d="M51,78 C36,70 12,64 2,70 C10,56 36,58 51,74Z" fill={color} opacity="0.42"/>
+      {/* Quatrième couche — traîne fine */}
+      <path d="M50,82 C38,76 18,72 6,78 C14,64 38,66 50,78Z" fill={color} opacity="0.22"/>
+      {/* Cinquième couche — reflet lumineux blanc */}
+      <path d="M54,62 C44,52 26,40 8,44 C18,36 40,40 54,58Z" fill="white" opacity="0.07"/>
+      {/* Glow intérieur aile gauche */}
+      <path d="M54,68 C46,60 30,50 14,52 C22,42 44,46 54,62Z" fill={color} opacity="0.08"/>
+
+      {/* === AILE DROITE — 5 couches, pointes vers le haut === */}
+      {/* Couche principale */}
+      <path d="M66,68 C76,58 98,44 118,48 C112,34 84,38 66,60Z" fill={color} opacity="0.88"/>
+      {/* Deuxième couche */}
+      <path d="M68,72 C82,62 106,52 120,58 C114,44 86,48 68,66Z" fill={color} opacity="0.65"/>
+      {/* Troisième couche */}
+      <path d="M69,78 C84,70 108,64 118,70 C110,56 84,58 69,74Z" fill={color} opacity="0.42"/>
+      {/* Quatrième couche */}
+      <path d="M70,82 C82,76 102,72 114,78 C106,64 82,66 70,78Z" fill={color} opacity="0.22"/>
+      {/* Reflet blanc */}
+      <path d="M66,62 C76,52 94,40 112,44 C102,36 80,40 66,58Z" fill="white" opacity="0.07"/>
+      {/* Glow intérieur aile droite */}
+      <path d="M66,68 C74,60 90,50 106,52 C98,42 76,46 66,62Z" fill={color} opacity="0.08"/>
+
+      {/* === CORPS — fusiforme svelte === */}
+      <ellipse cx="60" cy="65" rx="9" ry="22" fill={color} opacity="0.92"/>
+      {/* Reflet central corps */}
+      <ellipse cx="59" cy="62" rx="4" ry="14" fill="white" opacity="0.08"/>
+
+      {/* === TÊTE — petite, fière === */}
+      <ellipse cx="60" cy="40" rx="7" ry="8" fill={color} opacity="0.96"/>
+      {/* Reflet tête */}
+      <ellipse cx="58" cy="38" rx="3" ry="3.5" fill="white" opacity="0.10"/>
+
+      {/* === CRÊTE DE FLAMME — 5 flammes ascendantes, profil 3/4 === */}
+      {/* Flamme principale — monte haut */}
+      <path d="M59,34 C55,22 54,10 58,2 C62,10 64,22 62,34Z" fill={color} opacity="0.98"/>
+      {/* Flamme gauche secondaire haute */}
+      <path d="M56,34 C50,24 49,14 52,8 C56,16 58,26 57,34Z" fill={color} opacity="0.82"/>
+      {/* Flamme droite secondaire */}
+      <path d="M63,34 C68,24 68,16 66,10 C63,18 62,26 63,34Z" fill={color} opacity="0.70"/>
+      {/* Flamme gauche basse */}
+      <path d="M55,34 C50,28 50,20 53,14 C56,20 57,28 56,34Z" fill={color} opacity="0.48"/>
+      {/* Flamme droite basse */}
+      <path d="M65,34 C70,28 70,22 67,16 C65,22 64,28 65,34Z" fill={color} opacity="0.38"/>
+      {/* Reflet blanc crête centrale */}
+      <path d="M59,34 C57,24 57,14 59,6 C60,14 60,24 60,34Z" fill="white" opacity="0.10"/>
+
+      {/* === YEUX — lumineux === */}
+      <ellipse cx="56" cy="40" rx="2.8" ry="3" fill="white" opacity="0.96"/>
+      <ellipse cx="64" cy="40" rx="2.8" ry="3" fill="white" opacity="0.96"/>
+
+      {/* === QUEUE — 8 flammes descendantes organiques === */}
+      {/* Flamme centrale — la plus longue */}
+      <path d="M60,86 C58,98 56,110 58,120 C60,112 62,100 60,86Z" fill={color} opacity="0.90"/>
+      {/* Flamme légèrement gauche */}
+      <path d="M58,86 C54,100 50,112 52,120 C55,110 57,98 58,86Z" fill={color} opacity="0.80"/>
+      {/* Flamme légèrement droite */}
+      <path d="M62,86 C66,100 70,112 68,120 C65,110 63,98 62,86Z" fill={color} opacity="0.80"/>
+      {/* Flamme gauche ample */}
+      <path d="M56,86 C50,100 44,114 46,120 C50,112 54,100 56,86Z" fill={color} opacity="0.62"/>
+      {/* Flamme droite ample */}
+      <path d="M64,86 C70,100 76,114 74,120 C70,112 66,100 64,86Z" fill={color} opacity="0.62"/>
+      {/* Flamme gauche longue ondulante */}
+      <path d="M55,86 C47,102 40,116 44,120 C48,114 52,102 55,86Z" fill={color} opacity="0.40"/>
+      {/* Flamme droite longue ondulante */}
+      <path d="M65,86 C73,102 80,116 76,120 C72,114 68,102 65,86Z" fill={color} opacity="0.40"/>
+      {/* Flamme extrême gauche — traîne */}
+      <path d="M54,87 C44,104 38,118 42,120 C46,116 50,104 54,87Z" fill={color} opacity="0.20"/>
+      {/* Flamme extrême droite — traîne */}
+      <path d="M66,87 C76,104 82,118 78,120 C74,116 70,104 66,87Z" fill={color} opacity="0.20"/>
+      {/* Reflet blanc central queue */}
+      <path d="M60,86 C59,100 59,112 60,120 C61,112 61,100 60,86Z" fill="white" opacity="0.09"/>
     </svg>
   )
 })
@@ -659,35 +710,70 @@ const PhoenixSpirit = React.memo(function PhoenixSpirit({ size = 120, color = '#
 const WolfSpirit = React.memo(function WolfSpirit({ size = 120, color = '#6366f1', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
-      <ellipse cx="60" cy="72" rx="38" ry="48" fill={color} opacity="0.06" />
-      {/* Shoulders hint */}
-      <path d="M38,120 C36,96 42,80 60,74 C78,80 84,96 82,120Z" fill={color} opacity="0.20" />
-      {/* Main head — broad and powerful */}
-      <path d="M34,74 C34,46 86,46 86,74 C86,92 74,104 60,104 C46,104 34,92 34,74Z" fill={color} opacity="0.84"/>
-      {/* Left ear — sharp angular */}
-      <path d="M38,56 C34,36 26,22 32,14 C40,26 46,44 48,56Z" fill={color} opacity="0.94"/>
-      <path d="M40,54 C37,38 31,26 36,18 C43,28 47,43 48,54Z" fill="white" opacity="0.09"/>
-      {/* Right ear — sharp angular */}
-      <path d="M82,56 C86,36 94,22 88,14 C80,26 74,44 72,56Z" fill={color} opacity="0.94"/>
-      <path d="M80,54 C83,38 89,26 84,18 C77,28 73,43 72,54Z" fill="white" opacity="0.09"/>
-      {/* Muzzle */}
-      <path d="M44,84 C42,94 50,102 60,102 C70,102 78,94 76,84 C72,78 65,80 60,80 C55,80 48,78 44,84Z" fill={color} opacity="0.62"/>
-      <ellipse cx="60" cy="88" rx="9" ry="6" fill={color} opacity="0.86"/>
-      <ellipse cx="60" cy="86" rx="4.5" ry="2.5" fill="white" opacity="0.20"/>
-      {/* Eyes — large, luminous */}
-      <ellipse cx="47" cy="68" rx="5.5" ry="6" fill="white" opacity="0.96"/>
-      <ellipse cx="73" cy="68" rx="5.5" ry="6" fill="white" opacity="0.96"/>
-      <ellipse cx="47.5" cy="68.5" rx="2.4" ry="2.8" fill={color} opacity="0.20"/>
-      <ellipse cx="73.5" cy="68.5" rx="2.4" ry="2.8" fill={color} opacity="0.20"/>
-      {/* Brow ridges — intensity */}
-      <path d="M40,61 C45,56 53,56 58,63" stroke={color} strokeWidth="2.8" strokeLinecap="round" fill="none" opacity="0.55"/>
-      <path d="M80,61 C75,56 67,56 62,63" stroke={color} strokeWidth="2.8" strokeLinecap="round" fill="none" opacity="0.55"/>
-      {/* Flowing aurora mane */}
-      <path d="M82,92 C100,80 116,86 118,98 C104,108 90,100 80,96Z" fill={color} opacity="0.42"/>
-      <path d="M38,92 C20,80 4,86 2,98 C16,108 30,100 40,96Z" fill={color} opacity="0.28"/>
-      {/* Legs */}
-      <path d="M47,104 Q46,114 45,120" stroke={color} strokeWidth="9" strokeLinecap="round" fill="none" opacity="0.48"/>
-      <path d="M73,104 Q74,114 75,120" stroke={color} strokeWidth="9" strokeLinecap="round" fill="none" opacity="0.48"/>
+      {/* — LAYER 0 : Aura / brume ambiante — */}
+      <ellipse cx="60" cy="78" rx="44" ry="46" fill={color} opacity="0.05" />
+      <ellipse cx="60" cy="72" rx="36" ry="40" fill={color} opacity="0.04" />
+
+      {/* — LAYER 1 : Corps / épaules — suggestion de masse — */}
+      <path d="M22,120 C20,100 30,84 60,76 C90,84 100,100 98,120Z" fill={color} opacity="0.18"/>
+
+      {/* — LAYER 2 : Fourrure crinière — 7 paths rayonnants depuis le cou — */}
+      <path d="M60,90 C48,98 32,102 20,112" stroke={color} strokeWidth="5" strokeLinecap="round" fill="none" opacity="0.22"/>
+      <path d="M60,90 C44,96 26,96 12,106" stroke={color} strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.17"/>
+      <path d="M60,90 C50,100 40,108 30,120" stroke={color} strokeWidth="4.5" strokeLinecap="round" fill="none" opacity="0.19"/>
+      <path d="M60,90 C72,98 88,102 100,112" stroke={color} strokeWidth="5" strokeLinecap="round" fill="none" opacity="0.22"/>
+      <path d="M60,90 C76,96 94,96 108,106" stroke={color} strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.17"/>
+      <path d="M60,90 C70,100 80,108 90,120" stroke={color} strokeWidth="4.5" strokeLinecap="round" fill="none" opacity="0.19"/>
+      <path d="M60,90 C60,104 60,112 60,120" stroke={color} strokeWidth="5.5" strokeLinecap="round" fill="none" opacity="0.24"/>
+
+      {/* — LAYER 3 : Tête — fond (background shape) — */}
+      <path d="M30,78 C28,52 36,28 46,16 C52,10 60,8 60,8 C60,8 68,10 74,16 C84,28 92,52 90,78 C90,96 78,108 60,108 C42,108 30,96 30,78Z" fill={color} opacity="0.55"/>
+
+      {/* — LAYER 4 : Tête — face principale — */}
+      <path d="M34,80 C32,56 38,34 48,22 C53,16 60,14 60,14 C60,14 67,16 72,22 C82,34 88,56 86,80 C86,96 75,106 60,106 C45,106 34,96 34,80Z" fill={color} opacity="0.82"/>
+
+      {/* — LAYER 5 : Highlight central — lumière sculptée — */}
+      <path d="M46,52 C46,40 52,30 60,28 C68,30 74,40 74,52 C74,62 68,70 60,72 C52,70 46,62 46,52Z" fill="white" opacity="0.08"/>
+
+      {/* — OREILLE GAUCHE — légèrement tournée vers la gauche — */}
+      <path d="M34,52 C30,36 24,16 28,2 C36,14 44,34 46,52Z" fill={color} opacity="0.92"/>
+      <path d="M36,50 C33,36 29,20 32,8 C39,18 44,36 46,50Z" fill="white" opacity="0.08"/>
+
+      {/* — OREILLE DROITE — légèrement plus haute (asymétrie vigilante) — */}
+      <path d="M86,50 C90,34 96,14 92,0 C84,12 76,32 74,50Z" fill={color} opacity="0.92"/>
+      <path d="M84,48 C87,34 91,18 88,6 C81,16 76,34 74,48Z" fill="white" opacity="0.08"/>
+
+      {/* — YEUX — amandes larges, regard direct — */}
+      {/* Oeil gauche outer */}
+      <path d="M40,56 C42,50 48,48 54,50 C58,52 58,58 54,62 C48,64 42,62 40,56Z" fill="white" opacity="0.95"/>
+      {/* Oeil droit outer */}
+      <path d="M80,56 C78,50 72,48 66,50 C62,52 62,58 66,62 C72,64 78,62 80,56Z" fill="white" opacity="0.95"/>
+      {/* Pupille gauche */}
+      <ellipse cx="48" cy="56" rx="3.5" ry="4" fill={color} opacity="0.15"/>
+      {/* Pupille droite */}
+      <ellipse cx="72" cy="56" rx="3.5" ry="4" fill={color} opacity="0.15"/>
+      {/* Reflets — minuscules éclats de lumière */}
+      <circle cx="50" cy="53.5" r="1.5" fill="white" opacity="0.35"/>
+      <circle cx="74" cy="53.5" r="1.5" fill="white" opacity="0.35"/>
+
+      {/* — SOURCILS — inclinés vers l'intérieur, sagesse et profondeur — */}
+      <path d="M38,48 C43,43 51,42 56,46" stroke={color} strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.60"/>
+      <path d="M82,48 C77,43 69,42 64,46" stroke={color} strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.60"/>
+
+      {/* — MUSEAU — légèrement projeté en avant — */}
+      <path d="M46,78 C44,90 50,102 60,104 C70,102 76,90 74,78 C70,72 65,74 60,74 C55,74 50,72 46,78Z" fill={color} opacity="0.58"/>
+
+      {/* — NEZ — */}
+      <ellipse cx="60" cy="72" rx="6" ry="4" fill={color} opacity="0.92"/>
+      <ellipse cx="60" cy="71" rx="3" ry="2" fill="white" opacity="0.12"/>
+
+      {/* — LÈVRE SUPÉRIEURE — petit sillon qui divise le museau — */}
+      <path d="M60,76 C57,80 54,82 52,84" stroke={color} strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.38"/>
+      <path d="M60,76 C63,80 66,82 68,84" stroke={color} strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.38"/>
+
+      {/* — JOUES / FOURRURE LATÉRALE — masse et présence — */}
+      <path d="M34,80 C22,78 12,84 10,96 C24,102 36,94 40,88Z" fill={color} opacity="0.30"/>
+      <path d="M86,80 C98,78 108,84 110,96 C96,102 84,94 80,88Z" fill={color} opacity="0.24"/>
     </svg>
   )
 })
@@ -695,34 +781,77 @@ const WolfSpirit = React.memo(function WolfSpirit({ size = 120, color = '#6366f1
 const BearSpirit = React.memo(function BearSpirit({ size = 120, color = '#ec4899', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
-      <ellipse cx="60" cy="74" rx="46" ry="50" fill={color} opacity="0.06" />
-      {/* Massive body */}
-      <path d="M18,120 C16,96 24,78 60,72 C96,78 104,96 102,120Z" fill={color} opacity="0.58"/>
-      {/* Head — broad and powerful */}
-      <ellipse cx="60" cy="50" rx="32" ry="30" fill={color} opacity="0.88"/>
-      {/* Left ear — round and prominent */}
-      <circle cx="33" cy="28" r="15" fill={color} opacity="0.92"/>
-      <circle cx="33" cy="28" r="9" fill="white" opacity="0.06"/>
-      {/* Right ear */}
-      <circle cx="87" cy="28" r="15" fill={color} opacity="0.92"/>
-      <circle cx="87" cy="28" r="9" fill="white" opacity="0.06"/>
-      {/* Face structure */}
-      <ellipse cx="60" cy="58" rx="18" ry="14" fill={color} opacity="0.52"/>
-      {/* Snout */}
-      <ellipse cx="60" cy="62" rx="10" ry="7.5" fill={color} opacity="0.84"/>
-      <ellipse cx="60" cy="60" rx="5" ry="3.5" fill="white" opacity="0.26"/>
-      {/* Nose */}
-      <ellipse cx="60" cy="56" rx="4.5" ry="2.8" fill={color} opacity="0.92"/>
-      {/* Eyes — round and bright */}
-      <circle cx="46" cy="45" r="6" fill="white" opacity="0.96"/>
-      <circle cx="74" cy="45" r="6" fill="white" opacity="0.96"/>
-      <circle cx="46.6" cy="45.6" r="2.5" fill={color} opacity="0.22"/>
-      <circle cx="74.6" cy="45.6" r="2.5" fill={color} opacity="0.22"/>
-      {/* Chest — forest spirit glow */}
-      <ellipse cx="60" cy="74" rx="20" ry="16" fill="white" opacity="0.05"/>
-      {/* Paws */}
-      <ellipse cx="28" cy="108" rx="18" ry="13" fill={color} opacity="0.52"/>
-      <ellipse cx="92" cy="108" rx="18" ry="13" fill={color} opacity="0.52"/>
+      {/* Aura lointaine — présence massive dans la forêt */}
+      <ellipse cx="60" cy="82" rx="52" ry="40" fill={color} opacity="0.05" />
+
+      {/* Corps — layer 1: outline large, ancrage au sol */}
+      <path d="M8,120 C8,98 16,80 28,68 C36,60 48,56 60,56 C72,56 84,60 92,68 C104,80 112,98 112,120Z" fill={color} opacity="0.42"/>
+      {/* Corps — layer 2: masse principale, lourde et vaste */}
+      <path d="M14,120 C14,100 22,83 34,72 C42,64 51,60 60,60 C69,60 78,64 86,72 C98,83 106,100 106,120Z" fill={color} opacity="0.78"/>
+      {/* Bosse des épaules gauche — caractéristique ours */}
+      <ellipse cx="30" cy="66" rx="20" ry="14" fill={color} opacity="0.72"/>
+      {/* Bosse des épaules droite */}
+      <ellipse cx="90" cy="66" rx="20" ry="14" fill={color} opacity="0.72"/>
+      {/* Corps — layer 3: highlight ventral, lumière intérieure */}
+      <ellipse cx="60" cy="92" rx="28" ry="24" fill="white" opacity="0.10"/>
+
+      {/* Tête — ronde et puissante, plus petite que le corps */}
+      <ellipse cx="60" cy="44" rx="24" ry="22" fill={color} opacity="0.90"/>
+      {/* Front légèrement bombé */}
+      <ellipse cx="60" cy="36" rx="18" ry="12" fill={color} opacity="0.20"/>
+
+      {/* Oreille gauche — 3 cercles concentriques */}
+      <circle cx="40" cy="27" r="11" fill={color} opacity="0.90"/>
+      <circle cx="40" cy="27" r="7" fill={color} opacity="0.55"/>
+      <circle cx="40" cy="27" r="3.5" fill="white" opacity="0.08"/>
+      {/* Oreille droite */}
+      <circle cx="80" cy="27" r="11" fill={color} opacity="0.90"/>
+      <circle cx="80" cy="27" r="7" fill={color} opacity="0.55"/>
+      <circle cx="80" cy="27" r="3.5" fill="white" opacity="0.08"/>
+
+      {/* Museau proéminent — avance vers le spectateur */}
+      <ellipse cx="60" cy="57" rx="14" ry="10" fill={color} opacity="0.82"/>
+      {/* Nez large */}
+      <ellipse cx="60" cy="51" rx="5" ry="3.5" fill={color} opacity="0.95"/>
+      {/* Narines suggérées */}
+      <circle cx="57.5" cy="52" r="1.5" fill="white" opacity="0.18"/>
+      <circle cx="62.5" cy="52" r="1.5" fill="white" opacity="0.18"/>
+
+      {/* Yeux — petits et rapprochés, caractéristique ours */}
+      <circle cx="50" cy="44" r="4.5" fill="white" opacity="0.95"/>
+      <circle cx="70" cy="44" r="4.5" fill="white" opacity="0.95"/>
+      <circle cx="50.8" cy="44.6" r="2" fill={color} opacity="0.18"/>
+      <circle cx="70.8" cy="44.6" r="2" fill={color} opacity="0.18"/>
+      {/* Paupière gauche suggérée */}
+      <path d="M46,41.5 Q50,39.5 54,41.5" stroke={color} strokeWidth="1.2" opacity="0.35" fill="none"/>
+      {/* Paupière droite */}
+      <path d="M66,41.5 Q70,39.5 74,41.5" stroke={color} strokeWidth="1.2" opacity="0.35" fill="none"/>
+
+      {/* Texture fourrure — épaules gauche */}
+      <path d="M22,65 Q25,58 29,62" stroke={color} strokeWidth="2" opacity="0.22" fill="none"/>
+      <path d="M28,60 Q32,53 36,57" stroke={color} strokeWidth="1.8" opacity="0.20" fill="none"/>
+      <path d="M19,72 Q23,64 27,68" stroke={color} strokeWidth="1.6" opacity="0.18" fill="none"/>
+      {/* Texture fourrure — épaules droite */}
+      <path d="M98,65 Q95,58 91,62" stroke={color} strokeWidth="2" opacity="0.22" fill="none"/>
+      <path d="M92,60 Q88,53 84,57" stroke={color} strokeWidth="1.8" opacity="0.20" fill="none"/>
+      <path d="M101,72 Q97,64 93,68" stroke={color} strokeWidth="1.6" opacity="0.18" fill="none"/>
+      {/* Texture fourrure — cou */}
+      <path d="M50,60 Q53,55 56,59" stroke={color} strokeWidth="1.5" opacity="0.25" fill="none"/>
+      <path d="M64,60 Q67,55 70,59" stroke={color} strokeWidth="1.5" opacity="0.25" fill="none"/>
+
+      {/* Patte avant gauche — légèrement en avant */}
+      <path d="M22,120 C20,106 22,94 28,88 C32,84 38,84 42,88 C46,92 47,106 46,120Z" fill={color} opacity="0.68"/>
+      {/* Griffes patte gauche — suggérées */}
+      <ellipse cx="31" cy="118" rx="4" ry="2.5" fill={color} opacity="0.50"/>
+      <ellipse cx="37" cy="119" rx="3.5" ry="2" fill={color} opacity="0.50"/>
+      {/* Patte avant droite */}
+      <path d="M98,120 C100,106 98,94 92,88 C88,84 82,84 78,88 C74,92 73,106 74,120Z" fill={color} opacity="0.62"/>
+      {/* Griffes patte droite */}
+      <ellipse cx="89" cy="118" rx="4" ry="2.5" fill={color} opacity="0.50"/>
+      <ellipse cx="83" cy="119" rx="3.5" ry="2" fill={color} opacity="0.50"/>
+
+      {/* Marque de lumière — phare intérieur sur la poitrine */}
+      <ellipse cx="60" cy="80" rx="16" ry="14" fill="white" opacity="0.08"/>
     </svg>
   )
 })
@@ -730,39 +859,97 @@ const BearSpirit = React.memo(function BearSpirit({ size = 120, color = '#ec4899
 const DeerSpirit = React.memo(function DeerSpirit({ size = 120, color = '#14b8a6', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
-      {/* Outer aura */}
-      <ellipse cx="60" cy="66" rx="36" ry="52" fill={color} opacity="0.05" />
-      <ellipse cx="60" cy="54" rx="22" ry="36" fill={color} opacity="0.05" />
-      {/* Body — slim, elongated, graceful */}
-      <path d="M49,108 C47,90 47,73 51,60 C54,52 66,52 69,60 C73,73 73,90 71,108Z" fill={color} opacity="0.64" />
-      {/* Body inner highlight */}
-      <path d="M56,106 C55,91 56,77 58,66 C59,62 61,62 62,66 C64,77 65,91 64,106Z" fill={color} opacity="0.18" />
-      {/* Neck — long elegant curve */}
-      <path d="M56,60 C54,47 56,36 59,26 C61,33 63,45 64,60Z" fill={color} opacity="0.76" />
-      {/* Head — small, refined */}
-      <ellipse cx="60" cy="20" rx="10" ry="12" fill={color} opacity="0.90" />
-      {/* Snout */}
-      <path d="M54,28 C53,33 56,36 60,36 C64,36 67,33 66,28Z" fill={color} opacity="0.55" />
-      {/* Left antler — 4-branch organic flow */}
-      <path d="M53,13 C46,5 37,2 32,0" stroke={color} strokeWidth="4.0" strokeLinecap="round" fill="none" opacity="0.90"/>
-      <path d="M46,8 C40,5 34,8 30,5" stroke={color} strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.68"/>
-      <path d="M42,5 C38,2 36,-2 34,-6" stroke={color} strokeWidth="2.0" strokeLinecap="round" fill="none" opacity="0.48"/>
-      <path d="M36,2 C32,-2 30,-6 28,-10" stroke={color} strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.30"/>
-      {/* Right antler — 4-branch organic flow */}
-      <path d="M67,13 C74,5 83,2 88,0" stroke={color} strokeWidth="4.0" strokeLinecap="round" fill="none" opacity="0.90"/>
-      <path d="M74,8 C80,5 86,8 90,5" stroke={color} strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.68"/>
-      <path d="M78,5 C82,2 84,-2 86,-6" stroke={color} strokeWidth="2.0" strokeLinecap="round" fill="none" opacity="0.48"/>
-      <path d="M84,2 C88,-2 90,-6 92,-10" stroke={color} strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.30"/>
-      {/* Eyes — large, luminous */}
-      <ellipse cx="53" cy="16" rx="3.4" ry="4.0" fill="white" opacity="0.96"/>
-      <ellipse cx="67" cy="16" rx="3.4" ry="4.0" fill="white" opacity="0.96"/>
-      <ellipse cx="53.5" cy="16.5" rx="1.4" ry="1.7" fill={color} opacity="0.28"/>
-      <ellipse cx="67.5" cy="16.5" rx="1.4" ry="1.7" fill={color} opacity="0.28"/>
-      {/* Legs — slim, graceful, 4 visible */}
-      <path d="M52,108 Q50,116 50,120" stroke={color} strokeWidth="5.5" strokeLinecap="round" fill="none" opacity="0.54"/>
-      <path d="M57,109 Q55,116 55,120" stroke={color} strokeWidth="4.0" strokeLinecap="round" fill="none" opacity="0.42"/>
-      <path d="M63,109 Q65,116 65,120" stroke={color} strokeWidth="4.0" strokeLinecap="round" fill="none" opacity="0.42"/>
-      <path d="M68,108 Q70,116 70,120" stroke={color} strokeWidth="5.5" strokeLinecap="round" fill="none" opacity="0.54"/>
+      {/* Aura — halo lointain, présence millénaire */}
+      <ellipse cx="58" cy="72" rx="32" ry="46" fill={color} opacity="0.04" />
+      <ellipse cx="58" cy="60" rx="20" ry="32" fill={color} opacity="0.05" />
+
+      {/* Corps 3/4 gauche — couche de fond (flanc, ombre) */}
+      <path d="M44,112 C42,94 42,76 46,62 C49,53 56,50 63,52 C70,54 74,62 76,76 C78,90 77,104 75,112Z" fill={color} opacity="0.22" />
+      {/* Corps — masse principale */}
+      <path d="M46,112 C44,95 44,77 48,63 C51,54 57,51 63,53 C69,55 73,63 74,77 C76,91 75,105 73,112Z" fill={color} opacity="0.55" />
+      {/* Corps — face avant plus lumineuse (3/4) */}
+      <path d="M48,112 C47,97 47,80 50,66 C52,57 57,53 62,55 C67,57 70,65 71,78 C72,91 71,106 70,112Z" fill={color} opacity="0.82" />
+      {/* Ventre — arrondi doux */}
+      <path d="M55,110 C54,97 55,83 57,70 C58,64 61,63 63,68 C65,78 66,94 65,110Z" fill={color} opacity="0.18" />
+
+      {/* Épaule — suggérée, légère */}
+      <path d="M46,68 C44,63 46,58 50,56 C53,55 56,57 57,62" stroke={color} strokeWidth="2.2" strokeLinecap="round" fill="none" opacity="0.38" />
+
+      {/* Highlight épaule — lumière sculptée */}
+      <path d="M49,70 C48,64 50,59 53,57 C55,56 57,58 57,62" stroke="white" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.10" />
+
+      {/* Encolure — long, coulant */}
+      <path d="M54,63 C52,50 53,38 56,28 C58,22 61,20 63,24 C65,30 65,44 64,63Z" fill={color} opacity="0.78" />
+      {/* Encolure highlight — côté lumineux */}
+      <path d="M57,61 C56,50 57,39 59,30 C60,26 62,25 63,28 C64,33 64,46 63,61Z" fill={color} opacity="0.22" />
+
+      {/* Tête — petite, noble, légèrement tournée */}
+      <ellipse cx="59" cy="18" rx="9.5" ry="11" fill={color} opacity="0.88" />
+      {/* Tête — volume 3/4 */}
+      <ellipse cx="58" cy="17" rx="7" ry="9" fill={color} opacity="0.20" />
+
+      {/* Museau — pointu, élégant */}
+      <path d="M53,25 C52,30 55,34 59,34 C63,34 66,30 65,25Z" fill={color} opacity="0.52" />
+      {/* Truffe */}
+      <ellipse cx="59" cy="33.5" rx="2.2" ry="1.4" fill={color} opacity="0.70" />
+
+      {/* Oreille gauche */}
+      <path d="M51,11 C48,5 50,1 53,3 C55,5 55,10 54,14Z" fill={color} opacity="0.62" />
+      {/* Oreille droite */}
+      <path d="M67,11 C70,5 68,1 65,3 C63,5 63,10 64,14Z" fill={color} opacity="0.46" />
+
+      {/* BOIS GAUCHE — tige principale, majestueuse */}
+      <path d="M53,10 C49,3 42,-3 33,-8" stroke={color} strokeWidth="5.0" strokeLinecap="round" fill="none" opacity="0.88"/>
+      {/* Bois gauche — andouiller 1 (haut, vers l'extérieur) */}
+      <path d="M44,0 C39,-5 32,-6 26,-4" stroke={color} strokeWidth="3.2" strokeLinecap="round" fill="none" opacity="0.72"/>
+      {/* Bois gauche — andouiller 2 (du milieu tige) */}
+      <path d="M39,-3 C35,-8 31,-11 27,-14" stroke={color} strokeWidth="2.4" strokeLinecap="round" fill="none" opacity="0.56"/>
+      {/* Bois gauche — andouiller 3 (vers intérieur) */}
+      <path d="M35,-6 C31,-4 28,-1 25,2" stroke={color} strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.40"/>
+      {/* Bois gauche — pointe principale */}
+      <path d="M33,-8 C29,-12 25,-14 21,-16" stroke={color} strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.28"/>
+      {/* Bois gauche — andouiller terminal */}
+      <path d="M27,-14 C24,-18 22,-20 20,-22" stroke={color} strokeWidth="1.0" strokeLinecap="round" fill="none" opacity="0.18"/>
+
+      {/* BOIS DROIT — tige principale */}
+      <path d="M65,10 C69,3 76,-3 85,-8" stroke={color} strokeWidth="5.0" strokeLinecap="round" fill="none" opacity="0.72"/>
+      {/* Bois droit — andouiller 1 */}
+      <path d="M74,0 C79,-5 86,-6 92,-4" stroke={color} strokeWidth="3.2" strokeLinecap="round" fill="none" opacity="0.58"/>
+      {/* Bois droit — andouiller 2 */}
+      <path d="M79,-3 C83,-8 87,-11 91,-14" stroke={color} strokeWidth="2.4" strokeLinecap="round" fill="none" opacity="0.44"/>
+      {/* Bois droit — andouiller 3 (vers intérieur) */}
+      <path d="M83,-6 C87,-4 90,-1 93,2" stroke={color} strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.30"/>
+      {/* Bois droit — pointe principale */}
+      <path d="M85,-8 C89,-12 93,-14 97,-16" stroke={color} strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.22"/>
+      {/* Bois droit — andouiller terminal */}
+      <path d="M91,-14 C94,-18 96,-20 98,-22" stroke={color} strokeWidth="1.0" strokeLinecap="round" fill="none" opacity="0.14"/>
+
+      {/* Yeux — lumineux, doux, légèrement asymétriques (3/4) */}
+      <ellipse cx="54" cy="15" rx="3.2" ry="3.8" fill="white" opacity="0.95"/>
+      <ellipse cx="65" cy="15.5" rx="2.8" ry="3.2" fill="white" opacity="0.80"/>
+      {/* Pupilles — profondes */}
+      <ellipse cx="54.3" cy="15.4" rx="1.5" ry="1.9" fill={color} opacity="0.32"/>
+      <ellipse cx="65.2" cy="15.8" rx="1.2" ry="1.5" fill={color} opacity="0.26"/>
+      {/* Reflet oeil gauche */}
+      <ellipse cx="53.2" cy="14.2" rx="0.7" ry="0.8" fill="white" opacity="0.72"/>
+
+      {/* JAMBES — 4 visibles, effilées, avec genou suggéré */}
+      {/* Jambe avant gauche */}
+      <path d="M51,112 C51,116 50,118 50,121" stroke={color} strokeWidth="5.0" strokeLinecap="round" fill="none" opacity="0.58"/>
+      <path d="M50,119 C49,120 49,121 49,122" stroke={color} strokeWidth="3.8" strokeLinecap="round" fill="none" opacity="0.44"/>
+      {/* Jambe avant droite */}
+      <path d="M58,113 C58,116 57,118 57,121" stroke={color} strokeWidth="3.8" strokeLinecap="round" fill="none" opacity="0.46"/>
+      <path d="M57,119 C56,120 56,121 56,122" stroke={color} strokeWidth="2.8" strokeLinecap="round" fill="none" opacity="0.34"/>
+      {/* Jambe arrière gauche */}
+      <path d="M65,113 C66,117 66,119 66,122" stroke={color} strokeWidth="3.8" strokeLinecap="round" fill="none" opacity="0.44"/>
+      <path d="M66,119 C67,121 67,122 67,123" stroke={color} strokeWidth="2.8" strokeLinecap="round" fill="none" opacity="0.32"/>
+      {/* Jambe arrière droite */}
+      <path d="M72,112 C73,116 73,118 73,121" stroke={color} strokeWidth="5.0" strokeLinecap="round" fill="none" opacity="0.56"/>
+      <path d="M73,119 C74,121 74,122 74,123" stroke={color} strokeWidth="3.8" strokeLinecap="round" fill="none" opacity="0.42"/>
+
+      {/* Queue — petite, relevée */}
+      <path d="M74,80 C78,77 80,73 78,70" stroke={color} strokeWidth="2.8" strokeLinecap="round" fill="none" opacity="0.38"/>
+      <ellipse cx="78" cy="69" rx="3.5" ry="2.5" fill="white" opacity="0.18"/>
     </svg>
   )
 })
@@ -1870,6 +2057,37 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.06, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
         ))}
       </svg>
+      {/* World-specific atmospheric effects */}
+      {archetypeKey === 'resilience' && (
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
+          {[{x:28,dx:-6,dur:7.2,del:0,r:2.2},{x:42,dx:4,dur:9.1,del:1.4,r:1.6},{x:55,dx:-3,dur:6.4,del:2.8,r:2.8},{x:65,dx:7,dur:8.3,del:0.7,r:1.8},{x:72,dx:-5,dur:7.8,del:3.5,r:2.0},{x:38,dx:3,dur:10.2,del:1.9,r:1.4},{x:60,dx:-8,dur:6.9,del:4.2,r:2.4},{x:48,dx:5,dur:8.7,del:0.3,r:1.6},{x:78,dx:-4,dur:7.5,del:2.1,r:2.0},{x:32,dx:6,dur:9.4,del:3.8,r:1.8}].map((e,i) => (
+            <circle key={i} cx={`${e.x}%`} cy="95%" r={e.r} fill={`rgba(245,158,11,1)`}
+              style={{ opacity: 0, animation: `emberRise ${e.dur}s ease-out infinite`, animationDelay: `${e.del}s` }} />
+          ))}
+        </svg>
+      )}
+      {archetypeKey === 'presence' && (
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {[{dur:6,del:0,size:80},{dur:9,del:2,size:140},{dur:12,del:4,size:200},{dur:15,del:6,size:260}].map((r,i) => (
+            <div key={i} style={{ position: 'absolute', width: r.size, height: r.size, borderRadius: '50%', border: `1px solid rgba(20,184,166,0.55)`, animation: `waterRing ${r.dur}s ease-out infinite`, animationDelay: `${r.del}s` }} />
+          ))}
+        </div>
+      )}
+      {archetypeKey === 'sagesse' && (
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2, overflow: 'hidden' }}>
+          {[{y:'18%',h:60,dur:22,del:0},{y:'36%',h:48,dur:28,del:5},{y:'54%',h:72,dur:19,del:11},{y:'68%',h:44,dur:24,del:7},{y:'80%',h:56,dur:31,del:3}].map((m,i) => (
+            <div key={i} style={{ position: 'absolute', left: '-10%', right: '-10%', top: m.y, height: m.h, background: `linear-gradient(90deg, transparent, rgba(99,102,241,0.14), rgba(99,102,241,0.08), rgba(139,92,246,0.10), transparent)`, borderRadius: 60, animation: `mistDrift ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+          ))}
+        </div>
+      )}
+      {archetypeKey === 'lumiere' && (
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
+          {[{x:35,w:18,dur:14,del:0},{x:45,w:12,dur:18,del:3},{x:55,w:22,dur:16,del:6},{x:63,w:14,dur:20,del:1.5},{x:72,w:10,dur:12,del:8},{x:28,w:8,dur:22,del:4}].map((r,i) => (
+            <path key={i} d={`M${r.x}%,0 L${r.x - r.w/2}%,100% L${r.x + r.w/2}%,100% Z`}
+              fill={`rgba(236,72,153,1)`} style={{ opacity: 0, animation: `godRay ${r.dur}s ease-in-out infinite`, animationDelay: `${r.del}s` }} />
+          ))}
+        </svg>
+      )}
       <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', gap: 24, textAlign: 'center' }}>
 
         {/* Animal guide flottant — apparaît avant le texte */}
@@ -2935,6 +3153,11 @@ export default function App() {
       @keyframes lightFlash2    { 0%{opacity:0} 15%{opacity:0.06} 100%{opacity:0} }
       @keyframes solbreathe     { 0%,100%{opacity:0.16}                           50%{opacity:0.23} }
       @keyframes phrasebreathe  { 0%,100%{opacity:1}                               50%{opacity:0.86} }
+      @keyframes emberRise    { 0%{transform:translateY(0) translateX(0);opacity:0.55} 50%{transform:translateY(-60px) translateX(6px);opacity:0.35} 100%{transform:translateY(-120px) translateX(-4px);opacity:0} }
+      @keyframes waterRing    { 0%{transform:scale(0.3);opacity:0.55} 100%{transform:scale(2.4);opacity:0} }
+      @keyframes mistDrift    { 0%{transform:translateX(-8%) opacity:0} 15%{opacity:0.28} 85%{opacity:0.18} 100%{transform:translateX(8%);opacity:0} }
+      @keyframes godRay       { 0%,100%{opacity:0.04} 50%{opacity:0.11} }
+      @keyframes forestMote   { 0%,100%{transform:translateY(0) scale(1);opacity:0.07} 50%{transform:translateY(-18px) scale(1.15);opacity:0.14} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
