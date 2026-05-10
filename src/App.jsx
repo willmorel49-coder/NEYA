@@ -989,6 +989,7 @@ function BgScreen({ bg, overlay = 'rgba(5,8,16,0.48)', breathe = false, breatheA
     <div style={{ width: '100vw', height: '100dvh', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bg})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: breathe ? breatheAnim : 'none', transformOrigin: 'center center', willChange: breathe ? 'transform' : 'auto' }} />
       <div style={{ position: 'absolute', inset: 0, background: overlay }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%', background: 'linear-gradient(to top, rgba(5,8,16,0.55) 0%, transparent 100%)', pointerEvents: 'none', zIndex: 1 }} />
       <GrainFilter />
       <div style={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {children}
@@ -2471,6 +2472,31 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   return (
     <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 16, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
 
+      {/* World ambient layer */}
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2, overflow: 'hidden' }}>
+        {archetypeKey === 'resilience' && [
+          { x: 15, del: 0, dur: 14 }, { x: 35, del: 3.2, dur: 18 }, { x: 55, del: 6.8, dur: 12 },
+          { x: 72, del: 1.5, dur: 16 }, { x: 88, del: 9.1, dur: 15 },
+        ].map((e, i) => (
+          <div key={`ha${i}`} style={{ position: 'absolute', bottom: '8%', left: `${e.x}%`, width: 5, height: 5, borderRadius: '50%', background: '#f59e0b', opacity: 0.22, animation: `emberRise ${e.dur}s ease-in-out infinite`, animationDelay: `${e.del}s`, filter: 'blur(0.5px)' }} />
+        ))}
+        {archetypeKey === 'presence' && [
+          { sz: 120, del: 0, dur: 6 }, { sz: 200, del: 2.2, dur: 8 }, { sz: 290, del: 4.8, dur: 10 },
+        ].map((r, i) => (
+          <div key={`hr${i}`} style={{ position: 'absolute', bottom: '6%', left: '50%', transform: 'translateX(-50%)', width: r.sz, height: r.sz, borderRadius: '50%', border: '1px solid rgba(20,184,166,0.28)', opacity: 0, animation: `waterRing ${r.dur}s ease-out infinite`, animationDelay: `${r.del}s` }} />
+        ))}
+        {archetypeKey === 'sagesse' && [
+          { y: 30, del: 0, dur: 22 }, { y: 55, del: 6, dur: 28 }, { y: 75, del: 13, dur: 24 },
+        ].map((m, i) => (
+          <div key={`hm${i}`} style={{ position: 'absolute', top: `${m.y}%`, left: 0, right: 0, height: 40, background: 'linear-gradient(to right, transparent, rgba(99,102,241,0.06), transparent)', animation: `mistDrift ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+        ))}
+        {archetypeKey === 'lumiere' && [
+          { x: 20, del: 0, dur: 14 }, { x: 50, del: 5, dur: 18 }, { x: 78, del: 9, dur: 12 },
+        ].map((g, i) => (
+          <div key={`hg${i}`} style={{ position: 'absolute', top: 0, left: `${g.x}%`, width: 0, height: 0, borderLeft: '14px solid transparent', borderRight: '14px solid transparent', borderTop: '70px solid rgba(236,72,153,0.05)', opacity: 0, animation: `godRay ${g.dur}s ease-in-out infinite`, animationDelay: `${g.del}s`, filter: 'blur(4px)' }} />
+        ))}
+      </div>
+
       {/* ── Journée complète burst ── */}
       {completeBurst && [0,1,2,3,4,5,6,7].map(j => (
         <div key={j} style={{ position: 'fixed', top: '38%', left: `${12 + j * 11}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.2 + j * 0.15}s ease-out ${j * 0.08}s both`, pointerEvents: 'none', zIndex: 100, boxShadow: `0 0 8px ${arch.color}cc` }} />
@@ -3169,6 +3195,9 @@ export default function App() {
       @keyframes mistDrift    { 0%{transform:translateX(-8%) opacity:0} 15%{opacity:0.28} 85%{opacity:0.18} 100%{transform:translateX(8%);opacity:0} }
       @keyframes godRay       { 0%,100%{opacity:0.04} 50%{opacity:0.11} }
       @keyframes forestMote   { 0%,100%{transform:translateY(0) scale(1);opacity:0.07} 50%{transform:translateY(-18px) scale(1.15);opacity:0.14} }
+      @keyframes worldDrift   { 0%,100%{transform:scale(1) translateX(0)}              50%{transform:scale(1.032) translateX(-0.8%)} }
+      @keyframes ambientRise  { 0%{transform:translateY(0);opacity:0}                  20%{opacity:0.14} 80%{opacity:0.08} 100%{transform:translateY(-90px);opacity:0} }
+      @keyframes breatheScale { 0%,100%{transform:scale(1);opacity:0.72}               50%{transform:scale(1.08);opacity:1} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
