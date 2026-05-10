@@ -1835,7 +1835,15 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           </>
         )}
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}55`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both, solbreathe 22s ease-in-out 5s infinite, milestoneGlow 8s ease-in-out 6s infinite', textShadow: `0 0 16px ${arch.color}33` }}>
-          {(() => { const h = new Date().getHours(); if (h >= 22 || h < 5) return 'bonne nuit'; if (h < 18) return 'la journée t\'attend doucement'; return 'tu peux revenir quand tu veux' })()}
+          {(() => {
+            const h = new Date().getHours()
+            const night = { resilience: 'que le feu garde ta nuit', presence: 'bonne nuit, l\'eau veille', sagesse: 'la brume t\'enveloppe cette nuit', lumiere: 'que ta lumière guide ta nuit' }[archetypeKey] || 'bonne nuit'
+            const day = { resilience: 'ta flamme t\'attend dehors', presence: 'le monde t\'accueille doucement', sagesse: 'la journée porte tes insights', lumiere: 'va rayonner dans ta journée' }[archetypeKey] || 'la journée t\'attend doucement'
+            const eve = { resilience: 'reviens quand le feu appelle', presence: 'l\'eau est toujours là', sagesse: 'la brume reste en toi', lumiere: 'tu peux revenir quand tu veux' }[archetypeKey] || 'tu peux revenir quand tu veux'
+            if (h >= 22 || h < 5) return night
+            if (h < 18) return day
+            return eve
+          })()}
         </p>
       </div>
     </div>
