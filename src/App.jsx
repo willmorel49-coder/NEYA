@@ -2180,6 +2180,17 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             {totalDone} présence{totalDone > 1 ? 's' : ''} au total{totalDone >= 100 ? ' ✦' : ''}
           </p>
         )}
+        {(() => {
+          const STREAK_MSGS = {
+            resilience: { 3: 'Tu brûles 3 jours d\'affilée.', 7: '7 jours de feu consécutifs. Tu es en plein élan.', 14: '14 jours — ta flamme est continue.', 21: '21 jours d\'affilée. Ton feu devient constance.', 30: '30 jours consécutifs. Tu es en feu.', 60: '60 jours d\'affilée. Tu as transformé la durée.', 100: '100 jours. Phénix — tu brûles sans t\'arrêter.' },
+            presence:   { 3: 'Tu coules 3 jours d\'affilée.', 7: '7 jours de présence consécutifs. Tu t\'ancres en profondeur.', 14: '14 jours — ton eau ne tarit pas.', 21: '21 jours d\'affilée. Ta présence est une force.', 30: '30 jours consécutifs. Tu habites vraiment cet espace.', 60: '60 jours d\'affilée. L\'eau qui demeure transforme tout.', 100: '100 jours. Cerf — tu es l\'eau qui ne s\'arrête plus.' },
+            sagesse:    { 3: 'Tu observes 3 jours d\'affilée.', 7: '7 jours de silence consécutifs. Ta brume porte ta sagesse.', 14: '14 jours — ta profondeur prend racine.', 21: '21 jours d\'affilée. Ta sagesse devient une voie.', 30: '30 jours consécutifs. Tu perçois ce que peu voient.', 60: '60 jours d\'affilée. Ta perception est devenue une force.', 100: '100 jours. Loup — tu vois dans le silence total.' },
+            lumiere:    { 3: 'Tu rayonnes 3 jours d\'affilée.', 7: '7 jours de lumière consécutifs. Tu illumines la durée.', 14: '14 jours — ta créativité ne s\'arrête pas.', 21: '21 jours d\'affilée. Ta lumière grandit.', 30: '30 jours consécutifs. Tu crées là où tu passes.', 60: '60 jours d\'affilée. Ta lumière est une constance.', 100: '100 jours. Ours — tu illumines sans jamais faiblir.' },
+          }
+          const msg = (STREAK_MSGS[archetypeKey] || {})[streak]
+          if (!msg) return null
+          return <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.08em', margin: '2px 0 0', fontStyle: 'italic', opacity: 0.8, animation: 'milestoneGlow 4s ease-in-out infinite, phrasebreathe 22s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}55`, textAlign: 'center', maxWidth: 260 }}>{msg}</p>
+        })()}
       </div>
 
       {/* ── Progression du jour ── */}
