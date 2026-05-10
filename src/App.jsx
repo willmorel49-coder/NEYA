@@ -2311,6 +2311,7 @@ function NeyaGirl({ size = 54, color = '#3b82f6' }) {
 function CoconScreen({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const [visible, setVisible] = useState(false)
+  const coconName = (() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })()
 
   const streak = getCurrentStreak()
   const totalDays = (() => {
@@ -2324,6 +2325,20 @@ function CoconScreen({ archetypeKey, onClose }) {
     } catch {}
     return count
   })()
+
+  const [placed, setPlaced] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('neya_cocon_placed') || '[]') } catch { return [] }
+  })
+
+  const togglePlaced = (id, isUnlocked) => {
+    if (!isUnlocked) return
+    haptic([6, 40, 6])
+    setPlaced(prev => {
+      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      try { localStorage.setItem('neya_cocon_placed', JSON.stringify(next)) } catch {}
+      return next
+    })
+  }
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 50)
@@ -2410,7 +2425,7 @@ function CoconScreen({ archetypeKey, onClose }) {
           <div style={{ animation: 'animalfloat 22s ease-in-out 3s infinite', opacity: 0.85 }}>
             <NeyaGirl size={54} color="#3b82f6" />
           </div>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.88)', margin: 0, letterSpacing: '0.02em', textAlign: 'center', textShadow: `0 0 28px ${arch.color}44`, animation: 'phrasebreathe 24s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite' }}>Mon Cocon Néya</p>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.88)', margin: 0, letterSpacing: '0.02em', textAlign: 'center', textShadow: `0 0 28px ${arch.color}44`, animation: 'phrasebreathe 24s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite' }}>{coconName || 'Mon Cocon Néya'}</p>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `rgba(${arch.rgb},0.65)`, margin: 0, letterSpacing: '0.08em', textAlign: 'center', fontStyle: 'italic', animation: 'phrasebreathe 30s ease-in-out infinite' }}>Ton sanctuaire se construit avec ta présence</p>
         </div>
 
@@ -2438,9 +2453,10 @@ function CoconScreen({ archetypeKey, onClose }) {
               const current = item.by === 'streak' ? streak : totalDays
               const unlocked = current >= item.unlockAt
               return (
-                <div key={item.id} style={{
-                  background: unlocked ? `rgba(${arch.rgb},0.10)` : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${unlocked ? arch.color + '55' : 'rgba(255,255,255,0.09)'}`,
+                <div key={item.id} onClick={() => togglePlaced(item.id, unlocked)} style={{
+                  background: unlocked ? (placed.includes(item.id) ? `rgba(${arch.rgb},0.16)` : `rgba(${arch.rgb},0.10)`) : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${unlocked ? (placed.includes(item.id) ? arch.color + '88' : arch.color + '55') : 'rgba(255,255,255,0.09)'}`,
+                  cursor: unlocked ? 'pointer' : 'default',
                   borderRadius: 14, padding: '18px 14px',
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
                   opacity: unlocked ? 1 : 0.55,
@@ -2454,7 +2470,9 @@ function CoconScreen({ archetypeKey, onClose }) {
                   </div>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: unlocked ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.40)', letterSpacing: '-0.01em', marginBottom: 3, animation: unlocked ? 'phrasebreathe 22s ease-in-out infinite' : 'none' }}>{item.label}</div>
-                    <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: unlocked ? `rgba(${arch.rgb},0.70)` : 'rgba(255,255,255,0.22)', letterSpacing: '0.04em', fontStyle: 'italic' }}>{unlocked ? item.sub : `${item.unlockAt} jours`}</div>
+                    <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.04em', fontStyle: 'italic', color: unlocked ? (placed.includes(item.id) ? arch.color : `rgba(${arch.rgb},0.55)`) : 'rgba(255,255,255,0.22)' }}>
+                      {unlocked ? (placed.includes(item.id) ? '✦ Dans ton cocon' : 'Touche pour placer') : `${item.unlockAt} jours`}
+                    </div>
                   </div>
                 </div>
               )
@@ -2467,13 +2485,15 @@ function CoconScreen({ archetypeKey, onClose }) {
             const current = item.by === 'streak' ? streak : totalDays
             const unlocked = current >= item.unlockAt
             return (
-              <div style={{ marginTop: 12, background: unlocked ? `rgba(${arch.rgb},0.12)` : 'rgba(255,255,255,0.04)', border: `1px solid ${unlocked ? arch.color + '66' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 18, opacity: unlocked ? 1 : 0.55, boxShadow: unlocked ? `0 0 28px rgba(${arch.rgb},0.20), inset 0 0 0 1px ${arch.color}18` : 'none', animation: unlocked ? 'milestoneGlow 6s ease-in-out infinite' : 'none', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+              <div onClick={() => togglePlaced(item.id, unlocked)} style={{ marginTop: 12, background: unlocked ? (placed.includes(item.id) ? `rgba(${arch.rgb},0.18)` : `rgba(${arch.rgb},0.12)`) : 'rgba(255,255,255,0.04)', border: `1px solid ${unlocked ? (placed.includes(item.id) ? arch.color + '88' : arch.color + '66') : 'rgba(255,255,255,0.09)'}`, cursor: unlocked ? 'pointer' : 'default', borderRadius: 14, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 18, opacity: unlocked ? 1 : 0.55, boxShadow: unlocked ? `0 0 28px rgba(${arch.rgb},0.20), inset 0 0 0 1px ${arch.color}18` : 'none', animation: unlocked ? 'milestoneGlow 6s ease-in-out infinite' : 'none', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', transition: 'all 0.4s ease' }}>
                 <div style={{ filter: unlocked ? `drop-shadow(0 0 12px ${arch.color}cc)` : 'none', animation: unlocked ? 'animalbreathe 6s ease-in-out infinite' : 'none', flexShrink: 0 }}>
                   <ItemIcon icon={item.icon} color={arch.color} unlocked={unlocked} />
                 </div>
                 <div>
                   <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: unlocked ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.38)', letterSpacing: '-0.01em', marginBottom: 4, animation: unlocked ? 'milestoneGlow 5s ease-in-out infinite' : 'none' }}>{item.label}</div>
-                  <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: unlocked ? `rgba(${arch.rgb},0.75)` : 'rgba(255,255,255,0.22)', fontStyle: 'italic', letterSpacing: '0.04em' }}>{unlocked ? item.sub : `${item.unlockAt} jours de présence`}</div>
+                  <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontStyle: 'italic', letterSpacing: '0.04em', color: unlocked ? (placed.includes(item.id) ? arch.color : `rgba(${arch.rgb},0.75)`) : 'rgba(255,255,255,0.22)' }}>
+                    {unlocked ? (placed.includes(item.id) ? '✦ Dans ton cocon' : 'Touche pour placer') : `${item.unlockAt} jours de présence`}
+                  </div>
                 </div>
               </div>
             )
@@ -2907,6 +2927,68 @@ function BreathingModal({ archetypeKey, onClose }) {
   )
 }
 
+// ─── PERSONALIZATION MODAL ────────────────────────────────────────────────────
+
+function PersonalizationModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey]
+  const [prenom, setPrenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
+  const [mantra, setMantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
+  const [coconName, setCoconName] = useState(() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })
+  const [vis, setVis] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 40); return () => clearTimeout(t) }, [])
+
+  const save = () => {
+    try {
+      prenom.trim() ? localStorage.setItem('neya_prenom', prenom.trim()) : localStorage.removeItem('neya_prenom')
+      mantra.trim() ? localStorage.setItem('neya_mantra', mantra.trim().slice(0, 120)) : localStorage.removeItem('neya_mantra')
+      coconName.trim() ? localStorage.setItem('neya_cocon_name', coconName.trim()) : localStorage.removeItem('neya_cocon_name')
+    } catch {}
+    haptic([8, 60, 8]); onClose()
+  }
+
+  const inputStyle = { background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(${arch.rgb},0.28)`, borderRadius: 12, padding: '14px 16px', color: 'rgba(255,255,255,0.90)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, outline: 'none', letterSpacing: '0.02em', width: '100%', boxSizing: 'border-box' }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 820, opacity: vis ? 1 : 0, transition: 'opacity 0.4s ease', background: 'rgba(5,8,16,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 28px' }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 40%, rgba(${arch.rgb},0.07) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 360, display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+        {/* Header */}
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.26em', textTransform: 'uppercase', marginBottom: 10, animation: 'phrasebreathe 12s ease-in-out infinite' }}>Mon Cocon</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'rgba(255,255,255,0.90)', letterSpacing: '-0.01em' }}>Personnalise ton espace</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: 'rgba(255,255,255,0.28)', marginTop: 8, lineHeight: 1.5 }}>Ces détails ne sont visibles que par toi.</div>
+        </div>
+
+        {/* Prénom */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+          <label style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.58)`, letterSpacing: '0.20em', textTransform: 'uppercase' }}>Ton prénom</label>
+          <input value={prenom} onChange={e => setPrenom(e.target.value)} placeholder="Comment tu t'appelles ?" maxLength={30} style={inputStyle} />
+        </div>
+
+        {/* Mantra */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+          <label style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.58)`, letterSpacing: '0.20em', textTransform: 'uppercase' }}>Ton mantra <span style={{ opacity: 0.40, fontSize: 8.5 }}>· facultatif</span></label>
+          <textarea value={mantra} onChange={e => setMantra(e.target.value)} placeholder="Une phrase qui t'appartient..." maxLength={120} rows={2} style={{ ...inputStyle, fontFamily: 'Inter, sans-serif', fontSize: 14, resize: 'none', lineHeight: 1.65 }} />
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.18)', textAlign: 'right' }}>{mantra.length}/120</span>
+        </div>
+
+        {/* Nom du cocon */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+          <label style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.58)`, letterSpacing: '0.20em', textTransform: 'uppercase' }}>Nom de ton cocon</label>
+          <input value={coconName} onChange={e => setCoconName(e.target.value)} placeholder="Mon Cocon Néya" maxLength={40} style={inputStyle} />
+        </div>
+
+        {/* Boutons */}
+        <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: '14px 0', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, color: 'rgba(255,255,255,0.42)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer' }}>Annuler</button>
+          <button onClick={save} style={{ flex: 2, padding: '14px 0', background: `rgba(${arch.rgb},0.18)`, border: `1px solid rgba(${arch.rgb},0.55)`, borderRadius: 100, color: 'rgba(255,255,255,0.92)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, letterSpacing: '0.16em', cursor: 'pointer', boxShadow: `0 0 24px rgba(${arch.rgb},0.24)`, animation: 'milestoneGlow 4.5s ease-in-out infinite' }}>Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── HOME SCREEN ──────────────────────────────────────────────────────────────
 
 function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenVrai, onChangeTab, savedAt }) {
@@ -2926,6 +3008,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [restartPending, setRestartPending] = useState(false)
   const [showBreathing, setShowBreathing] = useState(false)
   const [showCocon, setShowCocon] = useState(false)
+  const [showPersonalize, setShowPersonalize] = useState(false)
+  const [prenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
+  const [mantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
+  const coconName = (() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })()
   const prevJourComplete = useRef(false)
   const restartTimer = useRef(null)
 
@@ -3053,6 +3139,47 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         ))}
       </div>
 
+      {/* Cocon items ambiance — items placés par l'utilisateur */}
+      {(() => {
+        let coconPlaced = []
+        try { coconPlaced = JSON.parse(localStorage.getItem('neya_cocon_placed') || '[]') } catch {}
+        if (!coconPlaced.length) return null
+        return (
+          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1, overflow: 'hidden' }}>
+            {/* Bougie — flamme douce en bas */}
+            {coconPlaced.includes('bougie') && [
+              { x: 22, del: 0, dur: 8 }, { x: 50, del: 2.8, dur: 11 }, { x: 78, del: 5.4, dur: 9 },
+            ].map((e, i) => (
+              <div key={`cb${i}`} style={{ position: 'absolute', bottom: '12%', left: `${e.x}%`, width: 4, height: 4, borderRadius: '50%', background: '#f59e0b', opacity: 0.14, animation: `emberRise ${e.dur}s ease-in-out infinite`, animationDelay: `${e.del}s`, filter: 'blur(1px)' }} />
+            ))}
+            {/* Cristal — rayons légers */}
+            {coconPlaced.includes('cristal') && [
+              { x: 30, dur: 16, del: 0 }, { x: 65, dur: 20, del: 7 },
+            ].map((r, i) => (
+              <div key={`cc${i}`} style={{ position: 'absolute', top: 0, left: `${r.x}%`, width: 0, height: 0, borderLeft: '10px solid transparent', borderRight: '10px solid transparent', borderTop: `60px solid rgba(${arch.rgb},1)`, opacity: 0, animation: `godRay ${r.dur}s ease-in-out infinite`, animationDelay: `${r.del}s`, filter: 'blur(6px)' }} />
+            ))}
+            {/* Plante — motes vertes flottantes */}
+            {coconPlaced.includes('plante') && [
+              { x: 15, y: 60, dur: 22, del: 0 }, { x: 85, y: 45, dur: 28, del: 6 }, { x: 48, y: 72, dur: 18, del: 11 },
+            ].map((p, i) => (
+              <div key={`cp${i}`} style={{ position: 'absolute', left: `${p.x}%`, top: `${p.y}%`, width: 4, height: 4, borderRadius: '50%', background: '#14b8a6', opacity: 0.10, animation: `splashmote ${p.dur}s ease-in-out infinite`, animationDelay: `${p.del}s`, filter: 'blur(0.5px)' }} />
+            ))}
+            {/* Totem — glow animal fantôme */}
+            {coconPlaced.includes('totem') && (
+              <div style={{ position: 'absolute', bottom: '-5%', left: '50%', transform: 'translateX(-50%)', opacity: 0.04, filter: `blur(4px) drop-shadow(0 0 20px ${arch.color})`, animation: 'animalfloat 40s ease-in-out infinite, animalbreathe 60s ease-in-out infinite', pointerEvents: 'none' }}>
+                <SpiritAnimal archetype={archetypeKey} size={160} />
+              </div>
+            )}
+            {/* Portail — anneaux d'eau doux */}
+            {coconPlaced.includes('portail') && [
+              { sz: 200, del: 0, dur: 9 }, { sz: 340, del: 3.5, dur: 12 },
+            ].map((r, i) => (
+              <div key={`cpr${i}`} style={{ position: 'absolute', bottom: '2%', left: '50%', transform: 'translateX(-50%)', width: r.sz, height: r.sz, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.18)`, opacity: 0, animation: `waterRing ${r.dur}s ease-out infinite`, animationDelay: `${r.del}s` }} />
+            ))}
+          </div>
+        )
+      })()}
+
       {/* ── Journée complète burst ── */}
       {completeBurst && [0,1,2,3,4,5,6,7].map(j => (
         <div key={j} style={{ position: 'fixed', top: '38%', left: `${12 + j * 11}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.2 + j * 0.15}s ease-out ${j * 0.08}s both`, pointerEvents: 'none', zIndex: 100, boxShadow: `0 0 8px ${arch.color}cc` }} />
@@ -3066,9 +3193,17 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       )}
 
       {/* ── Cocoon header ── */}
-      <div style={{ textAlign: 'center', paddingBottom: 6 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', margin: '0 0 2px', textTransform: 'capitalize', textShadow: `0 0 20px ${arch.color}22`, animation: jourComplète ? 'phrasebreathe 46s ease-in-out 2s infinite, milestoneGlow 18s ease-in-out 8s infinite' : 'phrasebreathe 46s ease-in-out 2s infinite' }}>{greetingStr()}{archetypeKey ? ` · ${({ resilience: 'Phénix', presence: 'Cerf', sagesse: 'Loup', lumiere: 'Ours' }[archetypeKey] || '')}` : ''}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.07em', margin: '0 0 18px', textTransform: 'capitalize', animation: jourComplète ? 'phrasebreathe 50s ease-in-out 3s infinite, milestoneGlow 22s ease-in-out 10s infinite' : 'phrasebreathe 50s ease-in-out 3s infinite', textShadow: `0 0 12px ${arch.color}18` }}>{dateStr}</p>
+      <div style={{ textAlign: 'center', paddingBottom: 6, position: 'relative' }}>
+        {/* Bouton personnalisation */}
+        <button onClick={() => setShowPersonalize(true)} style={{ position: 'absolute', top: 2, right: 0, background: 'none', border: 'none', cursor: 'pointer', color: `rgba(${arch.rgb},0.32)`, fontSize: 15, padding: '4px 6px', lineHeight: 1, transition: 'color 0.2s ease', animation: 'phrasebreathe 22s ease-in-out infinite' }} title="Personnaliser">✎</button>
+        {prenom ? (
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: arch.color, letterSpacing: '0.03em', margin: '0 0 2px', textShadow: `0 0 20px ${arch.color}55`, animation: jourComplète ? 'phrasebreathe 32s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite' : 'phrasebreathe 32s ease-in-out infinite' }}>{greetingStr()}, {prenom}</p>
+        ) : (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.1em', margin: '0 0 2px', textTransform: 'capitalize', textShadow: `0 0 20px ${arch.color}22`, animation: jourComplète ? 'phrasebreathe 46s ease-in-out 2s infinite, milestoneGlow 18s ease-in-out 8s infinite' : 'phrasebreathe 46s ease-in-out 2s infinite' }}>{greetingStr()}{archetypeKey ? ` · ${({ resilience: 'Phénix', presence: 'Cerf', sagesse: 'Loup', lumiere: 'Ours' }[archetypeKey] || '')}` : ''}</p>
+        )}
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.07em', margin: '0 0 6px', textTransform: 'capitalize', animation: jourComplète ? 'phrasebreathe 50s ease-in-out 3s infinite, milestoneGlow 22s ease-in-out 10s infinite' : 'phrasebreathe 50s ease-in-out 3s infinite', textShadow: `0 0 12px ${arch.color}18` }}>{dateStr}</p>
+        {mantra && <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12.5, color: `rgba(${arch.rgb},0.52)`, letterSpacing: '0.03em', fontStyle: 'italic', margin: '2px 0 16px', lineHeight: 1.65, animation: 'phrasebreathe 40s ease-in-out infinite' }}>"{mantra}"</p>}
+        {!mantra && <div style={{ marginBottom: 12 }} />}
 
         {/* Presence ring wrapping the animal — tap for espace vrai */}
         <div style={{ position: 'relative', width: 130, height: 130, margin: '0 auto 16px' }}>
@@ -3197,7 +3332,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.75)`,
             letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mon Espace</div>
           <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14,
-            color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.01em' }}>Mon Cocon Néya</div>
+            color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.01em' }}>{coconName || 'Mon Cocon Néya'}</div>
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.30)', marginTop: 3 }}>
             Ton sanctuaire personnel · Objets à débloquer
           </div>
@@ -3207,6 +3342,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {showCocon && <CoconScreen archetypeKey={archetypeKey} onClose={() => setShowCocon(false)} />}
+      {showPersonalize && <PersonalizationModal archetypeKey={archetypeKey} onClose={() => setShowPersonalize(false)} />}
 
       {/* ── Graines de présence (7 jours) ── */}
       <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: jourComplète ? 'worldglow 22s ease-in-out 6s infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'worldglow 22s ease-in-out 6s infinite' }} />
