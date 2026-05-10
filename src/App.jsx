@@ -905,7 +905,7 @@ function SplashScreen({ onStart }) {
           <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(30px, 8vw, 40px)', color: 'white', lineHeight: 1.25, margin: 0, textShadow: '0 2px 40px rgba(0,0,0,0.55), 0 0 80px rgba(99,102,241,0.18)', letterSpacing: '0.01em', opacity: titleVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1, animation: titleVis ? 'phrasebreathe 26s ease-in-out 2s infinite' : 'none' }}>
             Bienvenue dans<br />ton Grand Voyage...
           </h1>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.7, opacity: subVis ? 1 : 0, transition: 'opacity 1.2s ease', position: 'relative', zIndex: 1, animation: subVis ? 'phrasebreathe 34s ease-in-out 2s infinite' : 'none' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.7, opacity: subVis ? 1 : 0, transition: 'opacity 1.2s ease', position: 'relative', zIndex: 1, animation: subVis ? 'phrasebreathe 34s ease-in-out 2s infinite' : 'none', textShadow: '0 0 30px rgba(99,102,241,0.14)' }}>
             Le plus beau chemin<br />commence en toi.
           </p>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.20)', margin: 0, letterSpacing: '0.04em', fontStyle: 'italic', opacity: whisperVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1, animation: whisperVis ? 'phrasebreathe 38s ease-in-out 3s infinite' : 'none' }}>
@@ -1061,10 +1061,10 @@ function QuizIntroScreen({ onStart }) {
               </svg>
             </div>
           </div>
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', lineHeight: 1.32, margin: 0, animation: vis ? 'phrasebreathe 38s ease-in-out 1s infinite' : 'none' }}>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', lineHeight: 1.32, margin: 0, animation: vis ? 'phrasebreathe 38s ease-in-out 1s infinite' : 'none', textShadow: '0 2px 32px rgba(0,0,0,0.5), 0 0 60px rgba(99,102,241,0.14)' }}>
             Prêt·e pour ton<br />exploration intérieure ?
           </h1>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: showBtn ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: showBtn ? 'phrasebreathe 18s ease-in-out infinite, seedPulse 4s ease-in-out 1s infinite' : 'phrasebreathe 24s ease-in-out infinite', transition: 'color 1.2s ease' }}>~5 minutes · {QUESTIONS.length} questions</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: showBtn ? 'rgba(255,255,255,0.36)' : 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: showBtn ? 'phrasebreathe 18s ease-in-out infinite, seedPulse 4s ease-in-out 1s infinite' : 'phrasebreathe 24s ease-in-out infinite', transition: 'color 1.2s ease, text-shadow 1.2s ease', textShadow: showBtn ? '0 0 10px rgba(99,102,241,0.33)' : 'none' }}>~5 minutes · {QUESTIONS.length} questions</p>
           <div style={{ width: 32, height: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 1, margin: '4px auto 0', opacity: item1 ? 1 : 0, transition: 'opacity 1.4s ease', animation: item1 ? 'worldglow 10s ease-in-out infinite' : 'none' }} />
         </div>
 
@@ -1081,12 +1081,12 @@ function QuizIntroScreen({ onStart }) {
               Pas de bonne ou de mauvaise réponse — réponds avec ce qui résonne en toi.
             </p>
           </div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.36)', textAlign: 'center', lineHeight: 1.72, margin: '4px 0 0', opacity: foot ? 1 : 0, transition: 'opacity 1s ease', animation: foot ? 'phrasebreathe 26s ease-in-out infinite' : 'none' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.36)', textAlign: 'center', lineHeight: 1.72, margin: '4px 0 0', opacity: foot ? 1 : 0, transition: 'opacity 1s ease', animation: foot ? 'phrasebreathe 26s ease-in-out infinite' : 'none', textShadow: '0 0 10px rgba(99,102,241,0.12)' }}>
             Chaque réponse t'aidera à mieux te connaître<br />et à révéler ton chemin intérieur.
           </p>
         </div>
 
-        <button onClick={() => { haptic([15, 40, 15]); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.78)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 500, letterSpacing: '0.28em', color: 'white', textTransform: 'uppercase', boxShadow: '0 6px 32px rgba(99,102,241,0.38)', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 1s ease, transform 0.3s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1.5s infinite' : 'none' }}>
+        <button onClick={() => { haptic([15, 40, 15]); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.78)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 500, letterSpacing: '0.28em', color: 'white', textTransform: 'uppercase', boxShadow: '0 6px 32px rgba(99,102,241,0.38)', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 1s ease, transform 0.3s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1.5s infinite' : 'none', textShadow: showBtn ? '0 0 14px rgba(99,102,241,0.6)' : 'none' }}>
           Commencer l'aventure
         </button>
       </div>
@@ -1493,10 +1493,10 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
           <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 6vw, 28px)', color: 'white', margin: '0 0 7px', textShadow: `0 0 48px ${arch.shadow}, 0 0 24px rgba(255,255,255,0.4)`, opacity: 0, animation: 'fadeIn 1.0s ease 0.8s both, phrasebreathe 24s ease-in-out 2s infinite, milestoneGlow 6s ease-in-out 2.5s infinite' }}>
             {arch.animal}
           </p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: `${arch.color}99`, margin: 0, fontStyle: 'italic', letterSpacing: '0.06em', opacity: 0, animation: 'fadeIn 1.0s ease 1.2s both, phrasebreathe 26s ease-in-out 3s infinite' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: `${arch.color}99`, margin: 0, fontStyle: 'italic', letterSpacing: '0.06em', opacity: 0, animation: 'fadeIn 1.0s ease 1.2s both, phrasebreathe 26s ease-in-out 3s infinite', textShadow: `0 0 14px ${arch.color}44` }}>
             {arch.profil}
           </p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: '8px 0 0', opacity: 0, animation: 'fadeIn 1.0s ease 1.6s both, phrasebreathe 30s ease-in-out 3s infinite' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.28em', textTransform: 'uppercase', margin: '8px 0 0', opacity: 0, animation: 'fadeIn 1.0s ease 1.6s both, phrasebreathe 30s ease-in-out 3s infinite', textShadow: `0 0 8px ${arch.color}22` }}>
             Élément · {arch.element}
           </p>
         </div>
