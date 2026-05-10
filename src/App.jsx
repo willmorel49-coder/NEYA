@@ -911,7 +911,7 @@ function SplashScreen({ onStart }) {
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.20)', margin: 0, letterSpacing: '0.04em', fontStyle: 'italic', opacity: whisperVis ? 1 : 0, transition: 'opacity 1.6s ease', position: 'relative', zIndex: 1, animation: whisperVis ? 'phrasebreathe 38s ease-in-out 3s infinite' : 'none', textShadow: '0 0 20px rgba(99,102,241,0.15)' }}>
             T'as pas besoin d'aller bien pour commencer.
           </p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: 'rgba(255,255,255,0.09)', margin: '5px 0 0', letterSpacing: '0.06em', fontStyle: 'italic', opacity: whisper2Vis ? 1 : 0, transition: 'opacity 2s ease', position: 'relative', zIndex: 1, animation: whisper2Vis ? (showBtn ? 'phrasebreathe 30s ease-in-out 4s infinite, seedPulse 5s ease-in-out 6s infinite' : 'phrasebreathe 30s ease-in-out 4s infinite') : 'none' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: 'rgba(255,255,255,0.09)', margin: '5px 0 0', letterSpacing: '0.06em', fontStyle: 'italic', opacity: whisper2Vis ? 1 : 0, transition: 'opacity 2s ease', position: 'relative', zIndex: 1, animation: whisper2Vis ? (showBtn ? 'phrasebreathe 30s ease-in-out 4s infinite, seedPulse 5s ease-in-out 6s infinite' : 'phrasebreathe 30s ease-in-out 4s infinite') : 'none', textShadow: whisper2Vis ? '0 0 12px rgba(99,102,241,0.18)' : 'none' }}>
             {(() => { const h = new Date().getHours(); if (h >= 22 || h < 5) return 'cette nuit, commence ici'; if (h < 9) return 'ce matin, commence ici'; if (h < 18) return 'cet après-midi, commence ici'; return 'ce soir, commence ici' })()}
           </p>
         </div>
@@ -1608,7 +1608,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               </div>
 
               {/* Intention aperçu */}
-              <div style={{ background: `rgba(${arch.rgb},0.07)`, border: `1px solid ${arch.color}33`, borderRadius: 12, padding: '16px 18px' }}>
+              <div style={{ background: `rgba(${arch.rgb},0.07)`, border: `1px solid ${arch.color}33`, borderRadius: 12, padding: '16px 18px', animation: 'milestoneGlow 18s ease-in-out 4s infinite' }}>
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 9px', opacity: 0.8, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 8s ease-in-out 3s infinite', textShadow: `0 0 10px ${arch.color}44` }}>Ton intention du jour</p>
                 <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.7, fontStyle: 'italic', animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 9s ease-in-out 3s infinite', textShadow: `0 0 20px ${arch.color}22` }}>"{arch.intentions[0]}"</p>
               </div>
@@ -1726,8 +1726,8 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
             <div style={{ background: `rgba(${arch.rgb},0.12)`, border: `1px solid ${arch.color}55`, borderRadius: 18, padding: '28px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 280, boxShadow: `0 0 32px rgba(${arch.rgb},0.18), 0 0 80px rgba(${arch.rgb},0.08)`, animation: 'milestoneGlow 4s ease-in-out infinite' }}>
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 18s ease-in-out infinite' }}>Ton avancée</p>
               <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 20, color: 'white', margin: 0, animation: 'milestoneGlow 3s ease-in-out infinite' }}>{routinesDoneToday}/{arch.routines.length} routine{routinesDoneToday !== 1 ? 's' : ''}</p>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: quetesDoneNow > 0 ? `${arch.color}88` : `rgba(255,255,255,0.55)`, margin: 0, transition: 'color 0.5s ease' }}>{quetesDoneNow}/{arch.quetes.length} quête{quetesDoneNow !== 1 ? 's' : ''} accomplie{quetesDoneNow !== 1 ? 's' : ''}</p>
-              {streak >= 2 && <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: arch.color, margin: 0, opacity: 0.8 }}>{streak} jours d'affilée ✦</p>}
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: quetesDoneNow > 0 ? `${arch.color}88` : `rgba(255,255,255,0.55)`, margin: 0, transition: 'color 0.5s ease', animation: 'phrasebreathe 20s ease-in-out infinite' }}>{quetesDoneNow}/{arch.quetes.length} quête{quetesDoneNow !== 1 ? 's' : ''} accomplie{quetesDoneNow !== 1 ? 's' : ''}</p>
+              {streak >= 2 && <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: arch.color, margin: 0, opacity: 0.8, animation: 'milestoneGlow 4s ease-in-out infinite', textShadow: `0 0 10px ${arch.color}44` }}>{streak} jours d'affilée ✦</p>}
               <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `${arch.color}88`, margin: 0, fontStyle: 'italic', animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 5s ease-in-out 2s infinite', textShadow: `0 0 12px ${arch.color}33` }}>{arch.worldInsight}</p>
             </div>
           </div>
@@ -1797,7 +1797,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           </p>
         )}
         {showPatience && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.08em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3s ease forwards, phrasebreathe 36s ease-in-out 4s infinite', maxWidth: 260, lineHeight: 1.75, textAlign: 'center', textShadow: `0 0 14px ${arch.color}22` }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: `${arch.color}55`, letterSpacing: '0.08em', margin: 0, fontStyle: 'italic', animation: typingDone ? 'fadeIn 3s ease forwards, phrasebreathe 36s ease-in-out 4s infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'fadeIn 3s ease forwards, phrasebreathe 36s ease-in-out 4s infinite', maxWidth: 260, lineHeight: 1.75, textAlign: 'center', textShadow: `0 0 14px ${arch.color}22` }}>
             {PATIENCE_TEXTS[archetypeKey]}
           </p>
         )}
@@ -1809,7 +1809,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         {showDeep && (
           <>
             <div style={{ width: 20, height: 1, background: `${arch.color}33`, borderRadius: 1, animation: 'fadeIn 4s ease forwards, worldglow 14s ease-in-out 6s infinite' }} />
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `${arch.color}55`, letterSpacing: '0.05em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite', maxWidth: 280, lineHeight: 1.8, textAlign: 'center', textShadow: `0 0 20px ${arch.color}22` }}>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `${arch.color}55`, letterSpacing: '0.05em', margin: 0, fontStyle: 'italic', animation: typingDone ? 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite, milestoneGlow 14s ease-in-out 7s infinite' : 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite', maxWidth: 280, lineHeight: 1.8, textAlign: 'center', textShadow: `0 0 20px ${arch.color}22` }}>
               {DEEP_TEXTS[archetypeKey]}
             </p>
           </>
@@ -2144,7 +2144,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         ].map((s, i) => (
           <div key={i} onClick={() => { haptic(8); onChangeTab(s.tab) }} style={{ flex: 1, position: 'relative', zIndex: 1, background: s.count === s.total ? `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.07) 100%)` : s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count === s.total ? arch.color + '88' : s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s', cursor: 'pointer', boxShadow: s.count === s.total ? `0 0 22px rgba(${arch.rgb},0.22), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 13, color: s.count > 0 ? arch.color : 'rgba(255,255,255,0.24)', transition: 'color 0.3s ease', textShadow: s.count === s.total ? `0 0 12px ${arch.color}88` : 'none', animation: s.count === s.total ? 'seedPulse 3s ease-in-out infinite' : 'none' }}>{s.icon}</span>
+              <span style={{ fontSize: 13, color: s.count > 0 ? arch.color : 'rgba(255,255,255,0.24)', transition: 'color 0.3s ease', textShadow: s.count === s.total ? `0 0 12px ${arch.color}88` : 'none', animation: s.count === s.total ? 'seedPulse 3s ease-in-out infinite' : s.count > 0 ? 'phrasebreathe 22s ease-in-out infinite' : 'none' }}>{s.icon}</span>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: s.count === s.total ? arch.color : 'rgba(255,255,255,0.26)', transition: 'color 0.4s ease', textShadow: s.count === s.total ? `0 0 10px ${arch.color}66` : 'none', animation: s.count === s.total ? 'seedPulse 3.4s ease-in-out infinite' : (s.count > 0 ? 'phrasebreathe 26s ease-in-out infinite' : 'none') }}>{s.count}/{s.total}</span>
             </div>
             <div style={{ height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: 1 }}>
@@ -2527,7 +2527,7 @@ function BoutiqueScreen({ archetypeKey }) {
       </div>
       <div style={{ textAlign: 'center', marginTop: 4 }}>
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 10, color: `${arch.color}33`, letterSpacing: '0.18em', margin: '0 0 4px', textTransform: 'uppercase', animation: 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 14s ease-in-out 6s infinite', textShadow: `0 0 10px ${arch.color}18` }}>ÇA VA? × NÉYA</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.12)', letterSpacing: '0.06em', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 28s ease-in-out infinite', textShadow: `0 0 10px ${arch.color}15` }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.12)', letterSpacing: '0.06em', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 16s ease-in-out 5s infinite', textShadow: `0 0 10px ${arch.color}15` }}>
           Chaque vêtement porte une intention.
         </p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.12em', margin: '6px 0 0', opacity: 0.4, animation: 'phrasebreathe 30s ease-in-out infinite, seedPulse 5s ease-in-out 2s infinite', textShadow: `0 0 8px ${arch.color}22` }}>
