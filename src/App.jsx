@@ -148,6 +148,7 @@ const ARCHETYPES = {
 const QUESTIONS = [
   {
     bg: 'bg-cosmos.png',
+    tint: 'linear-gradient(160deg, rgba(79,70,229,0.22) 0%, rgba(139,92,246,0.10) 100%)',
     title: "Avancer dans l'inconnu...",
     text: "Quand tu avances vers l'inconnu, quelle force intérieure te guide naturellement ?",
     choices: [
@@ -159,6 +160,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-feu.png',
+    tint: 'linear-gradient(160deg, rgba(251,146,60,0.22) 0%, rgba(245,158,11,0.10) 100%)',
     title: 'Face au changement de cap...',
     text: "Quand la vie t'amène à changer de cap, comment réagis-tu intérieurement ?",
     choices: [
@@ -170,6 +172,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-eau.png',
+    tint: 'linear-gradient(160deg, rgba(20,184,166,0.22) 0%, rgba(6,182,212,0.10) 100%)',
     title: 'Face au ralentissement...',
     text: "Quand la vie t'invite à ralentir, quelle est ta réponse intérieure ?",
     choices: [
@@ -181,6 +184,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-foret.png',
+    tint: 'linear-gradient(160deg, rgba(236,72,153,0.22) 0%, rgba(251,113,133,0.10) 100%)',
     title: 'Ta vraie nature...',
     text: 'Si tu pouvais exprimer ta vraie nature sans masque ni peur, quelle version de toi prendrait vie ?',
     choices: [
@@ -192,6 +196,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-brume.png',
+    tint: 'linear-gradient(160deg, rgba(139,92,246,0.24) 0%, rgba(109,40,217,0.10) 100%)',
     title: 'Dans les moments de doute...',
     text: "Quand le doute s'installe profondément, qu'est-ce qui te recentre ?",
     choices: [
@@ -203,6 +208,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-cosmos.png',
+    tint: 'linear-gradient(160deg, rgba(99,102,241,0.26) 0%, rgba(79,70,229,0.12) 100%)',
     title: 'Ta relation aux autres...',
     text: 'Dans une relation profonde, quel est ton rôle naturel ?',
     choices: [
@@ -214,6 +220,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-feu.png',
+    tint: 'linear-gradient(160deg, rgba(245,158,11,0.28) 0%, rgba(239,68,68,0.12) 100%)',
     title: "Face à l'adversité...",
     text: "Quand tout semble s'effondrer, qu'est-ce qui reste debout en toi ?",
     choices: [
@@ -225,6 +232,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-eau.png',
+    tint: 'linear-gradient(160deg, rgba(13,148,136,0.26) 0%, rgba(20,184,166,0.12) 100%)',
     title: 'Ta façon de ressentir...',
     text: 'Comment vis-tu principalement tes émotions ?',
     choices: [
@@ -236,6 +244,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-foret.png',
+    tint: 'linear-gradient(160deg, rgba(251,113,133,0.24) 0%, rgba(236,72,153,0.10) 100%)',
     title: 'Ta source de création...',
     text: "Quand tu crées quelque chose, qu'est-ce qui te motive profondément ?",
     choices: [
@@ -247,6 +256,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-vide.png',
+    tint: 'linear-gradient(160deg, rgba(148,163,184,0.20) 0%, rgba(100,116,139,0.10) 100%)',
     title: 'Ta force cachée...',
     text: 'Quelle est la force en toi que les autres remarquent rarement ?',
     choices: [
@@ -258,6 +268,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-cosmos.png',
+    tint: 'linear-gradient(160deg, rgba(109,40,217,0.28) 0%, rgba(139,92,246,0.14) 100%)',
     title: 'Ta vision du bonheur...',
     text: 'Pour toi, le bonheur ressemble à...',
     choices: [
@@ -269,6 +280,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-brume.png',
+    tint: 'linear-gradient(160deg, rgba(124,58,237,0.26) 0%, rgba(167,139,250,0.12) 100%)',
     title: 'Ton prochain chapitre...',
     text: "Quand tu imagines le prochain grand chapitre de ta vie, qu'est-ce qui l'anime ?",
     choices: [
@@ -281,6 +293,7 @@ const QUESTIONS = [
   // ─── Questions tirées du MVP original ────────────────────────────────────────
   {
     bg: 'bg-foret.png',
+    tint: 'linear-gradient(160deg, rgba(16,185,129,0.22) 0%, rgba(52,211,153,0.10) 100%)',
     title: "Quand une émotion forte surgit...",
     text: "Un geste, une parole ou un regard éveille une émotion forte en toi. Comment choisis-tu de l'accueillir ?",
     choices: [
@@ -292,6 +305,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-eau.png',
+    tint: 'linear-gradient(160deg, rgba(6,182,212,0.24) 0%, rgba(34,211,238,0.10) 100%)',
     title: "Face à une décision importante...",
     text: "La dernière fois que tu as eu une grande décision à prendre, quelle a été ta boussole intérieure ?",
     choices: [
@@ -303,6 +317,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-brume.png',
+    tint: 'linear-gradient(160deg, rgba(167,139,250,0.24) 0%, rgba(196,181,253,0.10) 100%)',
     title: "Dans un endroit nouveau...",
     text: "Quand tu arrives dans un endroit totalement nouveau, que fais-tu en premier ?",
     choices: [
@@ -314,6 +329,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-vide.png',
+    tint: 'linear-gradient(160deg, rgba(100,116,139,0.22) 0%, rgba(148,163,184,0.10) 100%)',
     title: "Face à une échéance...",
     text: "Quand une échéance se profile, quelle est ta manière naturelle de l'aborder ?",
     choices: [
@@ -325,6 +341,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-eau.png',
+    tint: 'linear-gradient(160deg, rgba(34,211,238,0.22) 0%, rgba(20,184,166,0.14) 100%)',
     title: "Retrouver son équilibre...",
     text: "Quand tu as besoin de retrouver ton équilibre, que privilégies-tu ?",
     choices: [
@@ -336,6 +353,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-cosmos.png',
+    tint: 'linear-gradient(160deg, rgba(139,92,246,0.26) 0%, rgba(99,102,241,0.14) 100%)',
     title: "Quand l'imprévu arrive...",
     text: "Quel est ton réflexe naturel quand les choses ne se passent pas comme prévu ?",
     choices: [
@@ -347,6 +365,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-foret.png',
+    tint: 'linear-gradient(160deg, rgba(34,197,94,0.20) 0%, rgba(16,185,129,0.10) 100%)',
     title: "En arrivant dans un lieu inconnu...",
     text: "Quand tu arrives dans un lieu totalement nouveau, que captes-tu naturellement en premier ?",
     choices: [
@@ -358,6 +377,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-brume.png',
+    tint: 'linear-gradient(160deg, rgba(244,114,182,0.24) 0%, rgba(236,72,153,0.10) 100%)',
     title: "Une journée libre...",
     text: "Quand tu as une journée entièrement libre, comment la vis-tu naturellement ?",
     choices: [
@@ -369,6 +389,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-cosmos.png',
+    tint: 'linear-gradient(160deg, rgba(99,102,241,0.30) 0%, rgba(79,70,229,0.16) 100%)',
     title: "Ton moteur intérieur...",
     text: "Quelle énergie intérieure te pousse à te lever chaque matin ?",
     choices: [
@@ -380,6 +401,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-feu.png',
+    tint: 'linear-gradient(160deg, rgba(239,68,68,0.22) 0%, rgba(245,158,11,0.12) 100%)',
     title: "Face au besoin de changement...",
     text: "Quand une partie de toi sent qu'il est temps de changer, que fais-tu naturellement ?",
     choices: [
@@ -391,6 +413,7 @@ const QUESTIONS = [
   },
   {
     bg: 'bg-foret.png',
+    tint: 'linear-gradient(160deg, rgba(236,72,153,0.28) 0%, rgba(251,113,133,0.14) 100%)',
     title: "À la rencontre d'une nouvelle personne...",
     text: "Quand tu rencontres quelqu'un pour la première fois, quelle est ton attitude naturelle ?",
     choices: [
@@ -600,19 +623,35 @@ function GrainFilter() {
 const PhoenixSpirit = React.memo(function PhoenixSpirit({ size = 120, color = '#f59e0b', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
-      <ellipse cx="60" cy="68" rx="10" ry="16" fill={color} opacity="0.92" />
-      <path d="M50 70 C30 55 8 72 4 56 C12 44 34 52 50 62Z" fill={color} opacity="0.85" />
-      <path d="M50 72 C28 68 6 82 2 70 C10 58 32 64 50 68Z" fill={color} opacity="0.55" />
-      <path d="M70 70 C90 55 112 72 116 56 C108 44 86 52 70 62Z" fill={color} opacity="0.85" />
-      <path d="M70 72 C92 68 114 82 118 70 C110 58 88 64 70 68Z" fill={color} opacity="0.55" />
-      <path d="M55 84 C50 100 44 110 48 118 C54 106 58 96 60 86Z" fill={color} opacity="0.70" />
-      <path d="M60 84 C58 102 56 114 60 120 C64 114 62 102 60 86Z" fill={color} opacity="0.90" />
-      <path d="M65 84 C70 100 76 110 72 118 C66 106 62 96 60 86Z" fill={color} opacity="0.70" />
-      <ellipse cx="60" cy="50" rx="8" ry="10" fill={color} opacity="0.96" />
-      <path d="M56 42 C52 28 48 18 54 8 C58 20 58 32 60 40Z" fill={color} opacity="0.80" />
-      <path d="M60 40 C60 24 62 12 60 2 C62 14 64 28 60 40Z" fill={color} opacity="0.95" />
-      <path d="M64 42 C68 28 72 18 66 8 C62 20 62 32 60 40Z" fill={color} opacity="0.80" />
-      <ellipse cx="60" cy="60" rx="18" ry="22" fill="white" opacity="0.08" />
+      <ellipse cx="60" cy="60" rx="42" ry="54" fill={color} opacity="0.04" />
+      {/* Body — elongated teardrop */}
+      <path d="M52,86 C48,70 50,54 60,42 C70,54 72,70 68,86 C65,94 55,94 52,86Z" fill={color} opacity="0.90" />
+      <path d="M57,82 C55,68 57,56 60,48 C63,56 65,68 63,82 C62,87 58,87 57,82Z" fill={color} opacity="0.32" />
+      {/* Left wing — sweeping layers */}
+      <path d="M52,66 C34,54 10,60 2,50 C16,38 42,48 52,62Z" fill={color} opacity="0.82"/>
+      <path d="M50,73 C28,66 6,74 0,64 C14,52 40,60 50,70Z" fill={color} opacity="0.50"/>
+      <path d="M50,79 C32,75 14,83 8,78 C22,65 44,70 50,76Z" fill={color} opacity="0.28"/>
+      {/* Right wing — sweeping layers */}
+      <path d="M68,66 C86,54 110,60 118,50 C104,38 78,48 68,62Z" fill={color} opacity="0.82"/>
+      <path d="M70,73 C92,66 114,74 120,64 C106,52 80,60 70,70Z" fill={color} opacity="0.50"/>
+      <path d="M70,79 C88,75 106,83 112,78 C98,65 76,70 70,76Z" fill={color} opacity="0.28"/>
+      {/* Head */}
+      <ellipse cx="60" cy="40" rx="9" ry="11" fill={color} opacity="0.95"/>
+      {/* Flame crest — triple layer */}
+      <path d="M56,34 C52,22 54,12 60,2 C66,12 68,22 64,34Z" fill={color} opacity="0.84"/>
+      <path d="M59,33 C57,20 59,10 60,2 C61,10 63,20 61,33Z" fill={color} opacity="0.98"/>
+      <path d="M57,34 C54,24 56,14 60,6 C64,14 66,24 63,34Z" fill="white" opacity="0.10"/>
+      {/* Eyes */}
+      <ellipse cx="55" cy="40" rx="3" ry="3.2" fill="white" opacity="0.94"/>
+      <ellipse cx="65" cy="40" rx="3" ry="3.2" fill="white" opacity="0.94"/>
+      {/* Tail feathers — five flame tongues */}
+      <path d="M54,86 C49,100 45,112 49,120 C54,108 58,98 60,88Z" fill={color} opacity="0.68"/>
+      <path d="M57,88 C54,104 54,116 57,120 C60,116 60,104 60,90Z" fill={color} opacity="0.88"/>
+      <path d="M60,88 C60,106 60,118 60,120 C61,118 62,106 60,90Z" fill="white" opacity="0.12"/>
+      <path d="M63,88 C66,104 66,116 63,120 C62,116 62,104 60,90Z" fill={color} opacity="0.88"/>
+      <path d="M66,86 C71,100 75,112 71,120 C66,108 62,98 60,88Z" fill={color} opacity="0.68"/>
+      <path d="M56,84 C52,98 48,110 52,118 C57,106 59,96 60,86Z" fill={color} opacity="0.38"/>
+      <path d="M64,84 C68,98 72,110 68,118 C63,106 61,96 60,86Z" fill={color} opacity="0.38"/>
     </svg>
   )
 })
@@ -620,21 +659,35 @@ const PhoenixSpirit = React.memo(function PhoenixSpirit({ size = 120, color = '#
 const WolfSpirit = React.memo(function WolfSpirit({ size = 120, color = '#6366f1', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
-      <ellipse cx="60" cy="80" rx="24" ry="28" fill={color} opacity="0.18" />
-      <path d="M38 62 C38 40 82 40 82 62 C82 78 72 88 60 88 C48 88 38 78 38 62Z" fill={color} opacity="0.82" />
-      <path d="M44 52 C40 34 30 26 34 18 C42 28 46 42 48 52Z" fill={color} opacity="0.90" />
-      <path d="M76 52 C80 34 90 26 86 18 C78 28 74 42 72 52Z" fill={color} opacity="0.90" />
-      <path d="M45 50 C42 36 34 30 37 22 C43 32 46 43 48 50Z" fill="white" opacity="0.10" />
-      <path d="M75 50 C78 36 86 30 83 22 C77 32 74 43 72 50Z" fill="white" opacity="0.10" />
-      <ellipse cx="60" cy="74" rx="12" ry="8" fill={color} opacity="0.60" />
-      <ellipse cx="60" cy="72" rx="5" ry="3" fill={color} opacity="0.90" />
-      <ellipse cx="50" cy="60" rx="4" ry="4.5" fill="white" opacity="0.92" />
-      <ellipse cx="70" cy="60" rx="4" ry="4.5" fill="white" opacity="0.92" />
-      <ellipse cx="51" cy="60" rx="2" ry="2.5" fill={color} opacity="0.20" />
-      <ellipse cx="71" cy="60" rx="2" ry="2.5" fill={color} opacity="0.20" />
-      <path d="M84 82 C100 72 114 78 116 88 C104 94 92 88 82 84Z" fill={color} opacity="0.60" />
-      <rect x="46" y="88" width="10" height="22" rx="5" fill={color} opacity="0.55" />
-      <rect x="64" y="88" width="10" height="22" rx="5" fill={color} opacity="0.55" />
+      <ellipse cx="60" cy="72" rx="38" ry="48" fill={color} opacity="0.06" />
+      {/* Shoulders hint */}
+      <path d="M38,120 C36,96 42,80 60,74 C78,80 84,96 82,120Z" fill={color} opacity="0.20" />
+      {/* Main head — broad and powerful */}
+      <path d="M34,74 C34,46 86,46 86,74 C86,92 74,104 60,104 C46,104 34,92 34,74Z" fill={color} opacity="0.84"/>
+      {/* Left ear — sharp angular */}
+      <path d="M38,56 C34,36 26,22 32,14 C40,26 46,44 48,56Z" fill={color} opacity="0.94"/>
+      <path d="M40,54 C37,38 31,26 36,18 C43,28 47,43 48,54Z" fill="white" opacity="0.09"/>
+      {/* Right ear — sharp angular */}
+      <path d="M82,56 C86,36 94,22 88,14 C80,26 74,44 72,56Z" fill={color} opacity="0.94"/>
+      <path d="M80,54 C83,38 89,26 84,18 C77,28 73,43 72,54Z" fill="white" opacity="0.09"/>
+      {/* Muzzle */}
+      <path d="M44,84 C42,94 50,102 60,102 C70,102 78,94 76,84 C72,78 65,80 60,80 C55,80 48,78 44,84Z" fill={color} opacity="0.62"/>
+      <ellipse cx="60" cy="88" rx="9" ry="6" fill={color} opacity="0.86"/>
+      <ellipse cx="60" cy="86" rx="4.5" ry="2.5" fill="white" opacity="0.20"/>
+      {/* Eyes — large, luminous */}
+      <ellipse cx="47" cy="68" rx="5.5" ry="6" fill="white" opacity="0.96"/>
+      <ellipse cx="73" cy="68" rx="5.5" ry="6" fill="white" opacity="0.96"/>
+      <ellipse cx="47.5" cy="68.5" rx="2.4" ry="2.8" fill={color} opacity="0.20"/>
+      <ellipse cx="73.5" cy="68.5" rx="2.4" ry="2.8" fill={color} opacity="0.20"/>
+      {/* Brow ridges — intensity */}
+      <path d="M40,61 C45,56 53,56 58,63" stroke={color} strokeWidth="2.8" strokeLinecap="round" fill="none" opacity="0.55"/>
+      <path d="M80,61 C75,56 67,56 62,63" stroke={color} strokeWidth="2.8" strokeLinecap="round" fill="none" opacity="0.55"/>
+      {/* Flowing aurora mane */}
+      <path d="M82,92 C100,80 116,86 118,98 C104,108 90,100 80,96Z" fill={color} opacity="0.42"/>
+      <path d="M38,92 C20,80 4,86 2,98 C16,108 30,100 40,96Z" fill={color} opacity="0.28"/>
+      {/* Legs */}
+      <path d="M47,104 Q46,114 45,120" stroke={color} strokeWidth="9" strokeLinecap="round" fill="none" opacity="0.48"/>
+      <path d="M73,104 Q74,114 75,120" stroke={color} strokeWidth="9" strokeLinecap="round" fill="none" opacity="0.48"/>
     </svg>
   )
 })
@@ -642,22 +695,34 @@ const WolfSpirit = React.memo(function WolfSpirit({ size = 120, color = '#6366f1
 const BearSpirit = React.memo(function BearSpirit({ size = 120, color = '#ec4899', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
-      <ellipse cx="60" cy="80" rx="32" ry="30" fill={color} opacity="0.75" />
-      <ellipse cx="60" cy="52" rx="26" ry="24" fill={color} opacity="0.88" />
-      <circle cx="38" cy="34" r="11" fill={color} opacity="0.90" />
-      <circle cx="82" cy="34" r="11" fill={color} opacity="0.90" />
-      <circle cx="38" cy="34" r="7" fill="white" opacity="0.08" />
-      <circle cx="82" cy="34" r="7" fill="white" opacity="0.08" />
-      <ellipse cx="60" cy="60" rx="13" ry="9" fill={color} opacity="0.55" />
-      <ellipse cx="60" cy="59" rx="6" ry="4" fill={color} opacity="0.85" />
-      <ellipse cx="60" cy="56" rx="3.5" ry="2.5" fill="white" opacity="0.30" />
-      <circle cx="50" cy="48" r="5" fill="white" opacity="0.90" />
-      <circle cx="70" cy="48" r="5" fill="white" opacity="0.90" />
-      <circle cx="51" cy="48" r="2.5" fill={color} opacity="0.25" />
-      <circle cx="71" cy="48" r="2.5" fill={color} opacity="0.25" />
-      <ellipse cx="60" cy="60" rx="22" ry="20" fill="white" opacity="0.05" />
-      <ellipse cx="36" cy="104" rx="12" ry="10" fill={color} opacity="0.60" />
-      <ellipse cx="84" cy="104" rx="12" ry="10" fill={color} opacity="0.60" />
+      <ellipse cx="60" cy="74" rx="46" ry="50" fill={color} opacity="0.06" />
+      {/* Massive body */}
+      <path d="M18,120 C16,96 24,78 60,72 C96,78 104,96 102,120Z" fill={color} opacity="0.58"/>
+      {/* Head — broad and powerful */}
+      <ellipse cx="60" cy="50" rx="32" ry="30" fill={color} opacity="0.88"/>
+      {/* Left ear — round and prominent */}
+      <circle cx="33" cy="28" r="15" fill={color} opacity="0.92"/>
+      <circle cx="33" cy="28" r="9" fill="white" opacity="0.06"/>
+      {/* Right ear */}
+      <circle cx="87" cy="28" r="15" fill={color} opacity="0.92"/>
+      <circle cx="87" cy="28" r="9" fill="white" opacity="0.06"/>
+      {/* Face structure */}
+      <ellipse cx="60" cy="58" rx="18" ry="14" fill={color} opacity="0.52"/>
+      {/* Snout */}
+      <ellipse cx="60" cy="62" rx="10" ry="7.5" fill={color} opacity="0.84"/>
+      <ellipse cx="60" cy="60" rx="5" ry="3.5" fill="white" opacity="0.26"/>
+      {/* Nose */}
+      <ellipse cx="60" cy="56" rx="4.5" ry="2.8" fill={color} opacity="0.92"/>
+      {/* Eyes — round and bright */}
+      <circle cx="46" cy="45" r="6" fill="white" opacity="0.96"/>
+      <circle cx="74" cy="45" r="6" fill="white" opacity="0.96"/>
+      <circle cx="46.6" cy="45.6" r="2.5" fill={color} opacity="0.22"/>
+      <circle cx="74.6" cy="45.6" r="2.5" fill={color} opacity="0.22"/>
+      {/* Chest — forest spirit glow */}
+      <ellipse cx="60" cy="74" rx="20" ry="16" fill="white" opacity="0.05"/>
+      {/* Paws */}
+      <ellipse cx="28" cy="108" rx="18" ry="13" fill={color} opacity="0.52"/>
+      <ellipse cx="92" cy="108" rx="18" ry="13" fill={color} opacity="0.52"/>
     </svg>
   )
 })
@@ -665,17 +730,39 @@ const BearSpirit = React.memo(function BearSpirit({ size = 120, color = '#ec4899
 const DeerSpirit = React.memo(function DeerSpirit({ size = 120, color = '#14b8a6', style: s }) {
   return (
     <svg width={size} height={size} viewBox="0 0 120 120" fill="none" style={s}>
-      <ellipse cx="60" cy="82" rx="18" ry="26" fill={color} opacity="0.70" />
-      <rect x="54" y="56" width="12" height="22" rx="6" fill={color} opacity="0.80" />
-      <ellipse cx="60" cy="50" rx="14" ry="16" fill={color} opacity="0.88" />
-      <path d="M48 42 C44 28 36 20 30 10 M44 36 C38 26 28 22 22 14 M44 36 C42 24 38 14 36 4" stroke={color} strokeWidth="2.5" strokeLinecap="round" opacity="0.80" fill="none"/>
-      <path d="M72 42 C76 28 84 20 90 10 M76 36 C82 26 92 22 98 14 M76 36 C78 24 82 14 84 4" stroke={color} strokeWidth="2.5" strokeLinecap="round" opacity="0.80" fill="none"/>
-      <ellipse cx="60" cy="58" rx="8" ry="6" fill={color} opacity="0.55" />
-      <ellipse cx="60" cy="56" rx="3.5" ry="2.5" fill="white" opacity="0.20" />
-      <ellipse cx="52" cy="47" rx="4" ry="4.5" fill="white" opacity="0.90" />
-      <ellipse cx="68" cy="47" rx="4" ry="4.5" fill="white" opacity="0.90" />
-      <rect x="50" y="106" width="7" height="14" rx="3.5" fill={color} opacity="0.55" />
-      <rect x="63" y="106" width="7" height="14" rx="3.5" fill={color} opacity="0.55" />
+      {/* Outer aura */}
+      <ellipse cx="60" cy="66" rx="36" ry="52" fill={color} opacity="0.05" />
+      <ellipse cx="60" cy="54" rx="22" ry="36" fill={color} opacity="0.05" />
+      {/* Body — slim, elongated, graceful */}
+      <path d="M49,108 C47,90 47,73 51,60 C54,52 66,52 69,60 C73,73 73,90 71,108Z" fill={color} opacity="0.64" />
+      {/* Body inner highlight */}
+      <path d="M56,106 C55,91 56,77 58,66 C59,62 61,62 62,66 C64,77 65,91 64,106Z" fill={color} opacity="0.18" />
+      {/* Neck — long elegant curve */}
+      <path d="M56,60 C54,47 56,36 59,26 C61,33 63,45 64,60Z" fill={color} opacity="0.76" />
+      {/* Head — small, refined */}
+      <ellipse cx="60" cy="20" rx="10" ry="12" fill={color} opacity="0.90" />
+      {/* Snout */}
+      <path d="M54,28 C53,33 56,36 60,36 C64,36 67,33 66,28Z" fill={color} opacity="0.55" />
+      {/* Left antler — 4-branch organic flow */}
+      <path d="M53,13 C46,5 37,2 32,0" stroke={color} strokeWidth="4.0" strokeLinecap="round" fill="none" opacity="0.90"/>
+      <path d="M46,8 C40,5 34,8 30,5" stroke={color} strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.68"/>
+      <path d="M42,5 C38,2 36,-2 34,-6" stroke={color} strokeWidth="2.0" strokeLinecap="round" fill="none" opacity="0.48"/>
+      <path d="M36,2 C32,-2 30,-6 28,-10" stroke={color} strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.30"/>
+      {/* Right antler — 4-branch organic flow */}
+      <path d="M67,13 C74,5 83,2 88,0" stroke={color} strokeWidth="4.0" strokeLinecap="round" fill="none" opacity="0.90"/>
+      <path d="M74,8 C80,5 86,8 90,5" stroke={color} strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.68"/>
+      <path d="M78,5 C82,2 84,-2 86,-6" stroke={color} strokeWidth="2.0" strokeLinecap="round" fill="none" opacity="0.48"/>
+      <path d="M84,2 C88,-2 90,-6 92,-10" stroke={color} strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.30"/>
+      {/* Eyes — large, luminous */}
+      <ellipse cx="53" cy="16" rx="3.4" ry="4.0" fill="white" opacity="0.96"/>
+      <ellipse cx="67" cy="16" rx="3.4" ry="4.0" fill="white" opacity="0.96"/>
+      <ellipse cx="53.5" cy="16.5" rx="1.4" ry="1.7" fill={color} opacity="0.28"/>
+      <ellipse cx="67.5" cy="16.5" rx="1.4" ry="1.7" fill={color} opacity="0.28"/>
+      {/* Legs — slim, graceful, 4 visible */}
+      <path d="M52,108 Q50,116 50,120" stroke={color} strokeWidth="5.5" strokeLinecap="round" fill="none" opacity="0.54"/>
+      <path d="M57,109 Q55,116 55,120" stroke={color} strokeWidth="4.0" strokeLinecap="round" fill="none" opacity="0.42"/>
+      <path d="M63,109 Q65,116 65,120" stroke={color} strokeWidth="4.0" strokeLinecap="round" fill="none" opacity="0.42"/>
+      <path d="M68,108 Q70,116 70,120" stroke={color} strokeWidth="5.5" strokeLinecap="round" fill="none" opacity="0.54"/>
     </svg>
   )
 })
@@ -1224,7 +1311,7 @@ function QuizScreen({ onComplete }) {
       )}
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.56)' }} />
       <GrainFilter />
-      <div style={{ position: 'absolute', inset: 0, background: WORLD_TINTS[q.bg] || 'transparent', transition: 'background 0.6s ease', pointerEvents: 'none', zIndex: 1 }} />
+      <div style={{ position: 'absolute', inset: 0, background: q.tint || WORLD_TINTS[q.bg] || 'transparent', transition: 'background 0.6s ease', pointerEvents: 'none', zIndex: 1 }} />
       <div style={{
         position: 'absolute',
         inset: 0,
@@ -1929,6 +2016,112 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
   )
 }
 
+// ─── BREATHING MODAL ──────────────────────────────────────────────────────────
+
+function BreathingModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey]
+  const Animal = { resilience: PhoenixSpirit, presence: DeerSpirit, sagesse: WolfSpirit, lumiere: BearSpirit }[archetypeKey] || DeerSpirit
+
+  const TECHNIQUES = {
+    resilience: { name: 'Respiration du Guerrier', subtitle: 'Cohésion corps-esprit · 4 cycles', phases: [{ label: 'Inspire', dur: 4, expand: true }, { label: 'Retiens', dur: 4, expand: true }, { label: 'Expire', dur: 4, expand: false }, { label: 'Retiens', dur: 4, expand: false }], totalCycles: 4 },
+    presence:   { name: "Respiration de l'Ancrage", subtitle: 'Présence et stabilité · 4 cycles', phases: [{ label: 'Inspire', dur: 4, expand: true }, { label: 'Retiens', dur: 7, expand: true }, { label: 'Expire', dur: 8, expand: false }], totalCycles: 4 },
+    sagesse:    { name: 'Cohérence Cardiaque', subtitle: 'Clarté et équilibre · 5 cycles', phases: [{ label: 'Inspire', dur: 5, expand: true }, { label: 'Expire', dur: 5, expand: false }], totalCycles: 5 },
+    lumiere:    { name: 'Souffle Créateur', subtitle: 'Libération et légèreté · 4 cycles', phases: [{ label: 'Inspire', dur: 4, expand: true }, { label: 'Expire', dur: 8, expand: false }], totalCycles: 4 },
+  }
+  const tech = TECHNIQUES[archetypeKey] || TECHNIQUES.sagesse
+
+  const [phaseIdx, setPhaseIdx] = useState(0)
+  const [cycle, setCycle] = useState(1)
+  const [timeLeft, setTimeLeft] = useState(tech.phases[0].dur)
+  const [done, setDone] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const stateRef = useRef({ phaseIdx: 0, cycle: 1, timeLeft: tech.phases[0].dur, done: false })
+
+  useEffect(() => {
+    const t = setTimeout(() => { setVisible(true); setTimeout(() => setIsExpanded(tech.phases[0].expand), 300) }, 30)
+    return () => clearTimeout(t)
+  }, [])
+
+  useEffect(() => {
+    if (done) return
+    const interval = setInterval(() => {
+      const st = stateRef.current
+      if (st.done) { clearInterval(interval); return }
+      if (st.timeLeft <= 1) {
+        const nextIdx = (st.phaseIdx + 1) % tech.phases.length
+        const isNewCycle = nextIdx === 0
+        const nextCycle = isNewCycle ? st.cycle + 1 : st.cycle
+        if (isNewCycle && st.cycle >= tech.totalCycles) {
+          stateRef.current = { ...st, done: true, timeLeft: 0 }
+          setDone(true); setTimeLeft(0); haptic([10, 60, 10]); return
+        }
+        const np = tech.phases[nextIdx]
+        stateRef.current = { phaseIdx: nextIdx, cycle: nextCycle, timeLeft: np.dur, done: false }
+        setPhaseIdx(nextIdx); setCycle(nextCycle); setTimeLeft(np.dur); setIsExpanded(np.expand)
+      } else {
+        stateRef.current = { ...st, timeLeft: st.timeLeft - 1 }
+        setTimeLeft(prev => prev - 1)
+      }
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [done])
+
+  const currentPhase = tech.phases[phaseIdx]
+  const circleScale = isExpanded ? 1 : 0.36
+  const circleDur = currentPhase.dur
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 900, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,8,16,0.97)', opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease' }}>
+      <button onClick={onClose} style={{ position: 'absolute', top: 52, right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '8px 16px', color: 'rgba(255,255,255,0.38)', fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.10em', cursor: 'pointer' }}>Fermer</button>
+
+      {/* Technique name */}
+      <div style={{ position: 'absolute', top: 54, left: 0, right: 0, textAlign: 'center', padding: '0 80px' }}>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `rgba(${arch.rgb},0.85)`, letterSpacing: '0.18em', textTransform: 'uppercase', animation: 'phrasebreathe 8s ease-in-out infinite' }}>{tech.name}</div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(255,255,255,0.22)', marginTop: 5, letterSpacing: '0.06em' }}>{tech.subtitle}</div>
+      </div>
+
+      {/* Ambient glow */}
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 50%, rgba(${arch.rgb},0.07) 0%, transparent 68%)`, pointerEvents: 'none' }} />
+
+      {/* Breathing circle */}
+      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 72 }}>
+        <div style={{ position: 'absolute', width: 280, height: 280, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.09)`, transform: `scale(${isExpanded ? 1.18 : 0.44})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', width: 230, height: 230, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.18)`, transform: `scale(${isExpanded ? 1.10 : 0.40})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
+        <div style={{ width: 190, height: 190, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.05) 70%, transparent 100%)`, border: `1.5px solid rgba(${arch.rgb},0.40)`, transform: `scale(${circleScale})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 70px rgba(${arch.rgb},0.15), inset 0 0 32px rgba(${arch.rgb},0.08)` }}>
+          <Animal size={60} color={arch.color} style={{ opacity: 0.65, animation: 'animalbreathe 6s ease-in-out infinite' }} />
+        </div>
+      </div>
+
+      {/* Phase info */}
+      <div style={{ textAlign: 'center', minHeight: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        {done ? (
+          <div style={{ animation: 'fadeIn 0.7s ease' }}>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', letterSpacing: '-0.01em', animation: 'phrasebreathe 6s ease-in-out infinite' }}>Bien</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.38)', marginTop: 8 }}>Tu es là, pleinement.</div>
+            <button onClick={onClose} style={{ marginTop: 28, background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 100, padding: '13px 34px', color: 'rgba(255,255,255,0.82)', fontFamily: 'Inter, sans-serif', fontSize: 13, letterSpacing: '0.10em', cursor: 'pointer', animation: 'milestoneGlow 6s ease-in-out infinite' }}>Continuer</button>
+          </div>
+        ) : (
+          <>
+            <div key={phaseIdx} style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', letterSpacing: '-0.02em', animation: 'fadeIn 0.35s ease' }}>{currentPhase.label}</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 200, fontSize: 52, color: `rgba(${arch.rgb},0.88)`, marginTop: 2, letterSpacing: '-0.06em', lineHeight: 1 }}>{timeLeft}</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(255,255,255,0.22)', marginTop: 14, letterSpacing: '0.14em' }}>Cycle {cycle}&nbsp;/&nbsp;{tech.totalCycles}</div>
+          </>
+        )}
+      </div>
+
+      {/* Phase dots */}
+      {!done && (
+        <div style={{ display: 'flex', gap: 8, position: 'absolute', bottom: 58 }}>
+          {tech.phases.map((p, i) => (
+            <div key={i} style={{ width: i === phaseIdx ? 22 : 6, height: 6, borderRadius: 3, background: i === phaseIdx ? `rgba(${arch.rgb},0.80)` : 'rgba(255,255,255,0.12)', transition: 'all 0.5s ease' }} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── HOME SCREEN ──────────────────────────────────────────────────────────────
 
 function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenVrai, onChangeTab, savedAt }) {
@@ -1946,6 +2139,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [completeBurst, setCompleteBurst] = useState(false)
   const [showPresenceToast, setShowPresenceToast] = useState(false)
   const [restartPending, setRestartPending] = useState(false)
+  const [showBreathing, setShowBreathing] = useState(false)
   const prevJourComplete = useRef(false)
   const restartTimer = useRef(null)
 
@@ -2131,6 +2325,21 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           {intentionReady && <TypingText key={intentionIdx} text={`"${intention}"`} delay={0} speed={34} cursorColor={arch.color} />}
         </div>
       </div>
+
+      {/* ── Exercice de souffle ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowBreathing(true) }} style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.07) 0%, rgba(255,255,255,0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.22)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.4s both' }}>
+        <div style={{ width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, transparent 70%)`, border: `1px solid rgba(${arch.rgb},0.30)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, animation: 'animalbreathe 8s ease-in-out infinite' }}>
+          <SpiritAnimal archetype={archetypeKey} size={26} style={{ opacity: 0.70 }} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Exercice de souffle</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.82)', letterSpacing: '-0.01em' }}>{{ resilience: 'Respiration du Guerrier', presence: "Respiration de l'Ancrage", sagesse: 'Cohérence Cardiaque', lumiere: 'Souffle Créateur' }[archetypeKey]}</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.28)', marginTop: 3 }}>{{ resilience: '4·4·4·4 — Cohésion corps-esprit', presence: '4·7·8 — Ancrage profond', sagesse: '5·5 — Clarté et équilibre', lumiere: '4·8 — Libération créatrice' }[archetypeKey]}</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+
+      {showBreathing && <BreathingModal archetypeKey={archetypeKey} onClose={() => setShowBreathing(false)} />}
 
       {/* ── Graines de présence (7 jours) ── */}
       <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: jourComplète ? 'worldglow 22s ease-in-out 6s infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'worldglow 22s ease-in-out 6s infinite' }} />
