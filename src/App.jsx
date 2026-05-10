@@ -1659,7 +1659,12 @@ function ResultScreen({ archetypeKey, onContinue }) {
         </div>
 
         <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : `rgba(${arch.rgb},0.14)`, border: phase === 2 ? 'none' : `1px solid ${arch.color}66`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: phase === 2 ? 500 : 400, letterSpacing: '0.2em', color: phase === 2 ? '#050810' : arch.color, textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : (phase === 1 && forcesShown === arch.forces.length) ? `0 4px 36px rgba(${arch.rgb},0.42), 0 0 60px ${arch.color}22` : `0 2px 18px rgba(${arch.rgb},0.22)`, transition: 'all 0.45s ease', animation: (phase === 1 && forcesShown === arch.forces.length) ? 'milestoneGlow 3.5s ease-in-out infinite' : 'milestoneGlow 5s ease-in-out infinite' }}>
-          {['', 'Lire mon message', 'Entrer dans mon espace'][phase]}
+          {phase === 1
+            ? ({ resilience: 'Lire mon message · feu', presence: 'Lire mon message · présence', sagesse: 'Lire mon message · sagesse', lumiere: 'Lire mon message · lumière' }[archetypeKey] || 'Lire mon message')
+            : phase === 2
+              ? ({ resilience: 'Entrer dans mon feu', presence: 'Entrer en présence', sagesse: 'Entrer dans ma sagesse', lumiere: 'Entrer dans ma lumière' }[archetypeKey] || 'Entrer dans mon espace')
+              : ''
+          }
         </button>
       </div>
     </BgScreen>
@@ -1996,7 +2001,14 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const totalDone = getTotalRoutinesDone()
   const presenceProgress = ringReady ? getPresenceProgress(savedAt, routinesDone, quetesDone, arch) : 0
 
-  const MILESTONES = { 3: 'Trois jours. Quelque chose commence à prendre forme.', 5: 'Cinq jours. Tu es là, et ça compte.', 7: 'Sept jours de présence. Quelque chose prend racine.', 14: 'Deux semaines — tu construis quelque chose de réel.', 21: '21 jours, ton rythme prend forme.', 30: 'Un mois de présence — ta constance est belle.', 45: 'Quarante-cinq jours. Tu t\'ancres en profondeur.', 60: 'Deux mois. Tu avances avec profondeur.', 90: 'Trois mois. Ce que tu construis est vrai.', 100: 'Cent jours. Ta lumière est durable.' }
+  const MILESTONES_BASE = { 3: 'Trois jours. Quelque chose commence à prendre forme.', 5: 'Cinq jours. Tu es là, et ça compte.', 7: 'Sept jours de présence. Quelque chose prend racine.', 14: 'Deux semaines — tu construis quelque chose de réel.', 21: '21 jours, ton rythme prend forme.', 30: 'Un mois de présence — ta constance est belle.', 45: 'Quarante-cinq jours. Tu t\'ancres en profondeur.', 60: 'Deux mois. Tu avances avec profondeur.', 90: 'Trois mois. Ce que tu construis est vrai.', 100: 'Cent jours. Ta lumière est durable.' }
+  const MILESTONES_ARCH = {
+    resilience: { 3: 'Trois jours. Ton feu commence à brûler.', 7: 'Sept jours. Ton Phénix prend racine.', 14: 'Deux semaines — ta flamme est réelle.', 30: 'Un mois. Ton feu est devenu une force.', 60: 'Deux mois. Tu as transformé la durée en puissance.', 100: 'Cent jours de feu. Rien ne peut l\'éteindre.' },
+    presence:   { 3: 'Trois jours. Ton eau commence à couler.', 7: 'Sept jours. Ton Cerf te guide en profondeur.', 14: 'Deux semaines — ton ancrage est réel.', 30: 'Un mois. Ta présence est devenue une force.', 60: 'Deux mois. Tu vis vraiment ce que tu traverses.', 100: 'Cent jours de présence. Tu es l\'eau qui demeure.' },
+    sagesse:    { 3: 'Trois jours. Ta brume commence à parler.', 7: 'Sept jours. Ton Loup te guide dans le silence.', 14: 'Deux semaines — ta profondeur prend forme.', 30: 'Un mois. Ta sagesse est devenue une force.', 60: 'Deux mois. Tu vois ce que peu osent regarder.', 100: 'Cent jours de brume. Tu perçois l\'invisible.' },
+    lumiere:    { 3: 'Trois jours. Ta lumière commence à rayonner.', 7: 'Sept jours. Ton Ours illumine ton chemin.', 14: 'Deux semaines — ta créativité est réelle.', 30: 'Un mois. Ta lumière est devenue une force.', 60: 'Deux mois. Tu crées là où tu passes.', 100: 'Cent jours de lumière. Tu es une source.' },
+  }
+  const MILESTONES = { ...MILESTONES_BASE, ...(MILESTONES_ARCH[archetypeKey] || {}) }
   const FIRST_DAY_MSGS = {
     resilience: 'Ton feu commence ici.',
     presence:   'Ton espace commence ici.',
