@@ -2018,7 +2018,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
         {/* Presence ring wrapping the animal — tap for espace vrai */}
         <div style={{ position: 'relative', width: 130, height: 130, margin: '0 auto 16px' }}>
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 220, height: 220, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${Math.round(13 + presenceProgress * 28).toString(16).padStart(2,'0')} 0%, transparent 68%)`, animation: 'presencePulse 6s ease-in-out infinite', pointerEvents: 'none', zIndex: 0, transition: 'background 1.8s ease' }} />
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 220, height: 220, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${Math.round(13 + presenceProgress * 28).toString(16).padStart(2,'0')} 0%, transparent 68%)`, animation: jourComplète ? 'presencePulse 6s ease-in-out infinite, milestoneGlow 8s ease-in-out 2s infinite' : 'presencePulse 6s ease-in-out infinite', pointerEvents: 'none', zIndex: 0, transition: 'background 1.8s ease' }} />
           {presenceProgress > 0.3 && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 260, height: 260, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${Math.round(presenceProgress * 11).toString(16).padStart(2,'0')} 0%, transparent 58%)`, animation: 'presencePulse 9s ease-in-out 3s infinite', pointerEvents: 'none', zIndex: 0, transition: 'background 1.8s ease' }} />}
           {presenceProgress > 0.6 && <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 300, height: 300, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${Math.round(presenceProgress * 7).toString(16).padStart(2,'0')} 0%, transparent 48%)`, animation: 'presencePulse 13s ease-in-out 6s infinite', pointerEvents: 'none', zIndex: 0, transition: 'background 1.8s ease' }} />}
         <div
@@ -2074,7 +2074,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: jourComplète ? 'phrasebreathe 40s ease-in-out infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'phrasebreathe 40s ease-in-out infinite', textShadow: jourComplète ? `0 0 12px ${arch.color}33` : `0 0 8px ${arch.color}22` }}>
             Intention du jour
-            {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9, animation: 'seedPulse 3s ease-in-out infinite' }}>◎</span>}
+            {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9, animation: 'seedPulse 3s ease-in-out infinite, milestoneGlow 6s ease-in-out 1.5s infinite' }}>◎</span>}
           </p>
           <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, display: 'inline-block', transform: cycleSpin ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.38s ease, color 0.2s ease', animation: jourComplète ? 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'phrasebreathe 30s ease-in-out infinite' }} title="Autre intention">↻</button>
         </div>
@@ -2095,7 +2095,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           )}
         </div>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
-          {weekDots.filter(Boolean).length === 7 && <div style={{ position: 'absolute', inset: '-8px -16px', borderRadius: 20, background: `radial-gradient(ellipse at center, ${arch.color}14 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite', pointerEvents: 'none' }} />}
+          {weekDots.filter(Boolean).length === 7 && <div style={{ position: 'absolute', inset: '-8px -16px', borderRadius: 20, background: `radial-gradient(ellipse at center, ${arch.color}14 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite', pointerEvents: 'none' }} />}
           {weekDots.map((active, i) => {
             const isToday = i === 6
             const FR_DOW = ['D','L','M','M','J','V','S']
@@ -2137,7 +2137,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 1, animation: jourComplète ? 'worldglow 18s ease-in-out infinite, milestoneGlow 14s ease-in-out 6s infinite' : 'worldglow 18s ease-in-out infinite' }} />
       <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: jourComplète ? arch.color : 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: '2px 0 0', textTransform: 'uppercase', transition: 'color 0.6s ease', textShadow: jourComplète ? `0 0 14px ${arch.color}66` : `0 0 10px ${arch.color}22`, animation: jourComplète ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 24s ease-in-out infinite' }}>Aujourd'hui</p>
       <div style={{ position: 'relative', display: 'flex', gap: 10 }}>
-        {jourComplète && <div style={{ position: 'absolute', inset: '-10px -6px', borderRadius: 18, background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 68%)`, animation: 'presencePulse 7s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />}
+        {jourComplète && <div style={{ position: 'absolute', inset: '-10px -6px', borderRadius: 18, background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 68%)`, animation: 'presencePulse 7s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite', pointerEvents: 'none', zIndex: 0 }} />}
         {[
           { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈', tab: 'routines', nextHint: routinesCount < arch.routines.length ? arch.routines[routinesCount]?.title : null },
           { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇', tab: 'quetes', nextHint: quetesCount < arch.quetes.length ? arch.quetes.find((q, qi) => !quetesDone[qi])?.title : null },
@@ -2229,7 +2229,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 20s ease-in-out infinite' }} />
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase', animation: 'phrasebreathe 18s ease-in-out infinite, seedPulse 5s ease-in-out 2s infinite', textShadow: `0 0 8px ${arch.color}33` }}>◈ Routines du jour</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase', animation: allDone ? 'phrasebreathe 18s ease-in-out infinite, seedPulse 5s ease-in-out 2s infinite, milestoneGlow 4s ease-in-out infinite' : 'phrasebreathe 18s ease-in-out infinite, seedPulse 5s ease-in-out 2s infinite', textShadow: `0 0 8px ${arch.color}33` }}>◈ Routines du jour</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2, animation: allDone ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 30s ease-in-out 1s infinite', textShadow: allDone ? `0 0 28px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` : '0 2px 40px rgba(0,0,0,0.4)', transition: 'text-shadow 0.8s ease' }}>Tes pratiques<br />quotidiennes</h2>
 
         {/* Barre de progression globale */}
@@ -2251,7 +2251,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
             {celebrateIdx === i && [0,1,2,3,4].map(j => (
               <div key={j} style={{ position: 'absolute', top: 8, left: `${12 + j * 18}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${0.9 + j * 0.18}s ease-out ${j * 0.08}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 6px ${arch.color}99` }} />
             ))}
-            <button onClick={() => { haptic(done ? 6 : 18); onToggle(i) }} style={{ width: 27, height: 27, borderRadius: '50%', border: `1.5px solid ${done ? arch.color : 'rgba(255,255,255,0.22)'}`, background: done ? arch.color : 'transparent', flexShrink: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.28s ease', marginTop: 2, boxShadow: done ? `0 0 14px ${arch.shadow}` : 'none', transform: done ? 'scale(1.06)' : 'scale(1)', animation: done ? 'seedPulse 2.8s ease-in-out infinite' : 'none' }}>
+            <button onClick={() => { haptic(done ? 6 : 18); onToggle(i) }} style={{ width: 27, height: 27, borderRadius: '50%', border: `1.5px solid ${done ? arch.color : 'rgba(255,255,255,0.22)'}`, background: done ? arch.color : 'transparent', flexShrink: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.28s ease', marginTop: 2, boxShadow: done ? `0 0 14px ${arch.shadow}` : 'none', transform: done ? 'scale(1.06)' : 'scale(1)', animation: done ? 'seedPulse 2.8s ease-in-out infinite, milestoneGlow 5s ease-in-out 1s infinite' : 'none' }}>
               {done && <span style={{ fontSize: 11, color: 'white', animation: 'milestoneGlow 3.6s ease-in-out infinite' }}>✓</span>}
             </button>
             <div style={{ flex: 1 }}>
@@ -2312,7 +2312,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 22s ease-in-out 4s infinite' }} />
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase', animation: 'phrasebreathe 18s ease-in-out infinite, seedPulse 5s ease-in-out 2.5s infinite', textShadow: `0 0 8px ${arch.color}33` }}>◇ Quêtes</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', margin: '0 0 8px', textTransform: 'uppercase', animation: allDone ? 'phrasebreathe 18s ease-in-out infinite, seedPulse 5s ease-in-out 2.5s infinite, milestoneGlow 4s ease-in-out infinite' : 'phrasebreathe 18s ease-in-out infinite, seedPulse 5s ease-in-out 2.5s infinite', textShadow: `0 0 8px ${arch.color}33` }}>◇ Quêtes</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.2, animation: allDone ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 34s ease-in-out infinite', textShadow: allDone ? `0 0 28px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` : '0 2px 40px rgba(0,0,0,0.4)', transition: 'text-shadow 0.8s ease' }}>Tes défis<br />bienveillants</h2>
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
           <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
