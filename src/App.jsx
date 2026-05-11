@@ -1221,17 +1221,24 @@ const SpiritAnimal = React.memo(function SpiritAnimal({ archetype, size = 120, s
 
 // ─── LOGO ─────────────────────────────────────────────────────────────────────
 
-function NeyaLogo({ size = 'md', onTap }) {
+function NeyaLogo({ size = 'md', onTap, glowColor = 'rgba(255,255,255,0.32)' }) {
   const cfg = { sm: [20, 13], md: [28, 17], lg: [36, 22] }[size]
+  const w = cfg[0], h = Math.round(cfg[0] * 1.28)
   return (
-    <div onClick={onTap} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: onTap ? 'pointer' : 'default' }}>
-      <svg width={cfg[0]} height={cfg[0]} viewBox="0 0 32 32" fill="none" style={{ animation: 'compassbreathe 7s ease-in-out infinite', filter: onTap ? 'drop-shadow(0 0 8px rgba(255,255,255,0.35))' : 'none' }}>
-        <ellipse cx="16" cy="26" rx="3" ry="6" fill="white" opacity="0.85" />
-        <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" transform="rotate(-45 16 16)" />
-        <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" transform="rotate(45 16 16)" />
-        <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" />
-        <ellipse cx="16" cy="16" rx="3" ry="8" fill="white" opacity="0.85" transform="rotate(90 16 16)" />
-        <circle cx="16" cy="16" r="3.5" fill="white" />
+    <div onClick={onTap} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, cursor: onTap ? 'pointer' : 'default' }}>
+      <svg width={w} height={h} viewBox="0 0 30 38" fill="none" style={{ animation: 'compassbreathe 7s ease-in-out infinite', filter: `drop-shadow(0 0 6px ${glowColor})${onTap ? ' drop-shadow(0 0 14px rgba(255,255,255,0.25))' : ''}` }}>
+        {/* Leaf/tree crown */}
+        <path d="M15 2 C8.5 3.5 4 9.5 4 16.5 C4 22.5 8.5 27.5 15 28.5 C21.5 27.5 26 22.5 26 16.5 C26 9.5 21.5 3.5 15 2Z" fill="white" opacity="0.90"/>
+        {/* Central vein */}
+        <line x1="15" y1="5.5" x2="15" y2="27" stroke="rgba(5,8,16,0.22)" strokeWidth="0.85" strokeLinecap="round"/>
+        {/* Upper branches */}
+        <path d="M15 11 L10 15" stroke="rgba(5,8,16,0.17)" strokeWidth="0.75" fill="none" strokeLinecap="round"/>
+        <path d="M15 11 L20 15" stroke="rgba(5,8,16,0.17)" strokeWidth="0.75" fill="none" strokeLinecap="round"/>
+        {/* Lower branches */}
+        <path d="M15 17.5 L11 21.5" stroke="rgba(5,8,16,0.13)" strokeWidth="0.65" fill="none" strokeLinecap="round"/>
+        <path d="M15 17.5 L19 21.5" stroke="rgba(5,8,16,0.13)" strokeWidth="0.65" fill="none" strokeLinecap="round"/>
+        {/* Trunk */}
+        <path d="M14.1 28.5 L14.1 36.5 Q14.1 38 15 38 Q15.9 38 15.9 36.5 L15.9 28.5Z" fill="white" opacity="0.82"/>
       </svg>
       <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: cfg[1], letterSpacing: '0.4em', color: 'white', textShadow: '0 0 20px rgba(255,255,255,0.3)', animation: 'phrasebreathe 55s ease-in-out infinite, milestoneGlow 22s ease-in-out 8s infinite' }}>NÉYA</span>
     </div>
@@ -1744,7 +1751,9 @@ function QuizScreen({ onComplete }) {
       {bgFade && (
         <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${bgFade})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: bgFadeOp, transition: 'opacity 0.8s ease', pointerEvents: 'none' }} />
       )}
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.56)' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.38)' }} />
+      {/* Bottom gradient to ensure choices are readable */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '55%', background: 'linear-gradient(to top, rgba(5,8,16,0.82) 0%, rgba(5,8,16,0.30) 60%, transparent 100%)', pointerEvents: 'none', zIndex: 1 }} />
       <GrainFilter />
       <div style={{ position: 'absolute', inset: 0, background: q.tint || WORLD_TINTS[q.bg] || 'transparent', transition: 'background 0.6s ease', pointerEvents: 'none', zIndex: 1 }} />
       <div style={{
@@ -1785,42 +1794,96 @@ function QuizScreen({ onComplete }) {
         <div style={{ height: '100%', background: `linear-gradient(90deg, ${(WORLD_TINTS[q.bg] || 'rgba(99,102,241,0.7)').replace(/[\d.]+\)$/, '0.85)')}, rgba(255,255,255,0.55))`, filter: 'blur(0.4px)', width: `${progress * 100}%`, transition: 'width 0.5s ease, background 0.6s ease', boxShadow: progress >= 0.95 && selected ? `0 0 12px rgba(255,255,255,0.7)` : 'none', animation: progress > 0 ? (selected !== null ? 'worldglow 8s ease-in-out infinite, milestoneGlow 12s ease-in-out 3s infinite' : 'worldglow 8s ease-in-out infinite') : 'none' }} />
       </div>
 
-      <div style={{ position: 'relative', zIndex: 1, padding: '50px 24px 36px', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', opacity: contentVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
-        <div style={{ textAlign: 'center', marginBottom: 22 }}>
-          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: dominantCount >= 3 ? ARCHETYPES[dominantArch].color : 'rgba(255,255,255,0.72)', letterSpacing: '0.02em', animation: dominantCount >= 3 ? 'phrasebreathe 18s ease-in-out infinite, milestoneGlow 6s ease-in-out infinite' : 'phrasebreathe 18s ease-in-out infinite', textShadow: dominantCount >= 3 ? `0 0 14px ${ARCHETYPES[dominantArch].color}66` : 'none', transition: 'color 1.2s ease, text-shadow 1.2s ease' }}>{idx + 1}</span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: dominantCount >= 3 ? `${ARCHETYPES[dominantArch].color}55` : 'rgba(255,255,255,0.22)', letterSpacing: '0.14em', margin: '0 6px', animation: (dominantCount >= 3 || selected !== null) ? 'phrasebreathe 12s ease-in-out infinite, seedPulse 2.8s ease-in-out infinite, milestoneGlow 6s ease-in-out 1s infinite' : 'phrasebreathe 12s ease-in-out infinite', transition: 'color 1.2s ease' }}>·</span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.24)', letterSpacing: '0.08em', animation: selected !== null ? 'phrasebreathe 20s ease-in-out infinite, seedPulse 3.5s ease-in-out infinite, milestoneGlow 8s ease-in-out 2s infinite' : 'phrasebreathe 20s ease-in-out infinite' }}>{QUESTIONS.length}</span>
+      {/* NeyaGirl silhouette — ambient presence during quiz */}
+      <div style={{ position: 'absolute', bottom: '27%', left: '50%', transform: 'translateX(-50%)', opacity: 0.15, zIndex: 5, pointerEvents: 'none', transition: 'opacity 1.2s ease', animation: 'animalfloat 20s ease-in-out infinite' }}>
+        <NeyaGirl size={88} color="#5b9cf6" />
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 6, padding: '46px 22px 32px', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', opacity: contentVis ? 1 : 0, transition: 'opacity 0.32s ease' }}>
+        {/* Logo top */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 14 }}>
+          <NeyaLogo size="sm" glowColor={dominantCount >= 3 ? `${ARCHETYPES[dominantArch]?.color}55` : 'rgba(255,255,255,0.28)'} />
         </div>
 
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 12, marginBottom: 24 }}>
-          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(22px, 5.5vw, 28px)', color: 'white', margin: 0, lineHeight: 1.2, letterSpacing: '-0.01em', textShadow: `0 2px 24px rgba(0,0,0,0.5), 0 0 60px ${(WORLD_TINTS[bgMain] || 'rgba(99,102,241,0.06)').replace(/[\d.]+\)$/, '0.16)')}`, animation: contentVis ? (selected !== null ? 'questionEnter 0.38s ease both, phrasebreathe 34s ease-in-out 0.5s infinite, milestoneGlow 16s ease-in-out 0.5s infinite' : 'questionEnter 0.38s ease both, phrasebreathe 34s ease-in-out 0.5s infinite') : 'none' }}>{q.title}</h2>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.65, padding: '0 4px', animation: contentVis ? (selected !== null ? 'questionEnter 0.42s ease 0.05s both, phrasebreathe 42s ease-in-out 1s infinite, milestoneGlow 18s ease-in-out 2s infinite' : 'questionEnter 0.42s ease 0.05s both, phrasebreathe 42s ease-in-out 1s infinite') : 'none', textShadow: '0 0 20px rgba(255,255,255,0.06)' }}>{q.text}</p>
+        {/* Progress counter */}
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
+          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: dominantCount >= 3 ? ARCHETYPES[dominantArch].color : 'rgba(255,255,255,0.60)', letterSpacing: '0.02em', animation: dominantCount >= 3 ? 'phrasebreathe 18s ease-in-out infinite, milestoneGlow 6s ease-in-out infinite' : 'phrasebreathe 18s ease-in-out infinite', textShadow: dominantCount >= 3 ? `0 0 14px ${ARCHETYPES[dominantArch].color}66` : 'none', transition: 'color 1.2s ease, text-shadow 1.2s ease' }}>{idx + 1}</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: dominantCount >= 3 ? `${ARCHETYPES[dominantArch].color}55` : 'rgba(255,255,255,0.18)', letterSpacing: '0.14em', margin: '0 6px', animation: (dominantCount >= 3 || selected !== null) ? 'phrasebreathe 12s ease-in-out infinite, seedPulse 2.8s ease-in-out infinite, milestoneGlow 6s ease-in-out 1s infinite' : 'phrasebreathe 12s ease-in-out infinite', transition: 'color 1.2s ease' }}>·</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.20)', letterSpacing: '0.08em', animation: selected !== null ? 'phrasebreathe 20s ease-in-out infinite, seedPulse 3.5s ease-in-out infinite, milestoneGlow 8s ease-in-out 2s infinite' : 'phrasebreathe 20s ease-in-out infinite' }}>{QUESTIONS.length}</span>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', gap: 10, marginBottom: 20 }}>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: 'clamp(24px, 6vw, 30px)', color: 'white', margin: 0, lineHeight: 1.18, letterSpacing: '-0.01em', textShadow: `0 2px 24px rgba(0,0,0,0.55), 0 0 60px ${(WORLD_TINTS[bgMain] || 'rgba(99,102,241,0.06)').replace(/[\d.]+\)$/, '0.20)')}`, animation: contentVis ? (selected !== null ? 'questionEnter 0.38s ease both, phrasebreathe 34s ease-in-out 0.5s infinite, milestoneGlow 16s ease-in-out 0.5s infinite' : 'questionEnter 0.38s ease both, phrasebreathe 34s ease-in-out 0.5s infinite') : 'none' }}>{q.title}</h2>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.58)', margin: 0, lineHeight: 1.65, padding: '0 6px', animation: contentVis ? (selected !== null ? 'questionEnter 0.42s ease 0.05s both, phrasebreathe 42s ease-in-out 1s infinite, milestoneGlow 18s ease-in-out 2s infinite' : 'questionEnter 0.42s ease 0.05s both, phrasebreathe 42s ease-in-out 1s infinite') : 'none', textShadow: '0 0 20px rgba(255,255,255,0.06)' }}>{q.text}</p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {q.choices.map((c, i) => {
             const sel = selected === c.type
             return (
-              <button key={i} onClick={() => { haptic(sel ? 6 : 12); setSelected(c.type); if (!sel) { setRippleIdx(i); setTimeout(() => setRippleIdx(null), 620) } }} style={{ position: 'relative', overflow: 'hidden', width: '100%', padding: '14px 17px', background: sel ? `rgba(${ARCHETYPES[c.type]?.rgb || '255,255,255'},0.12)` : 'rgba(255,255,255,0.05)', border: `1px solid ${sel ? (ARCHETYPES[c.type]?.color + 'aa' || 'rgba(255,255,255,0.32)') : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transform: sel ? 'scale(1.014)' : (selected !== null && !sel ? 'scale(0.988)' : 'scale(1)'), boxShadow: sel ? `0 4px 28px rgba(${ARCHETYPES[c.type]?.rgb || '255,255,255'},0.14), inset 0 0 0 1px ${ARCHETYPES[c.type]?.color + '44' || 'rgba(255,255,255,0.18)'}` : 'none', opacity: choicesVis ? (selected !== null && !sel ? 0.52 : 1) : 0, translate: choicesVis ? '0 0px' : '0 10px', transition: `background 0.22s ease, border-color 0.22s ease, transform 0.3s ease, box-shadow 0.22s ease, opacity 0.35s ease ${sel ? '0ms' : (i * 55) + 'ms'}, translate 0.45s ease ${i * 55}ms`, animation: sel ? 'milestoneGlow 5s ease-in-out 0.5s infinite' : 'none' }}>
+              <button key={i} onClick={() => { haptic(sel ? 6 : 12); setSelected(c.type); if (!sel) { setRippleIdx(i); setTimeout(() => setRippleIdx(null), 620) } }} style={{ position: 'relative', overflow: 'hidden', width: '100%', padding: '13px 16px', background: sel ? `rgba(${ARCHETYPES[c.type]?.rgb || '255,255,255'},0.22)` : 'rgba(6,18,34,0.78)', border: `1px solid ${sel ? (ARCHETYPES[c.type]?.color + 'cc' || 'rgba(255,255,255,0.32)') : 'rgba(255,255,255,0.11)'}`, borderRadius: 22, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 13, textAlign: 'left', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', transform: sel ? 'scale(1.014)' : (selected !== null && !sel ? 'scale(0.990)' : 'scale(1)'), boxShadow: sel ? `0 4px 28px rgba(${ARCHETYPES[c.type]?.rgb || '255,255,255'},0.18), inset 0 0 0 1px ${ARCHETYPES[c.type]?.color + '44' || 'rgba(255,255,255,0.18)'}` : '0 2px 12px rgba(0,0,0,0.3)', opacity: choicesVis ? (selected !== null && !sel ? 0.48 : 1) : 0, translate: choicesVis ? '0 0px' : '0 10px', transition: `background 0.22s ease, border-color 0.22s ease, transform 0.3s ease, box-shadow 0.22s ease, opacity 0.35s ease ${sel ? '0ms' : (i * 55) + 'ms'}, translate 0.45s ease ${i * 55}ms`, animation: sel ? 'milestoneGlow 5s ease-in-out 0.5s infinite' : 'none' }}>
                 {rippleIdx === i && (
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
                     <div style={{ width: 40, height: 40, borderRadius: '50%', background: ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.4)', animation: 'choiceripple 0.6s ease-out forwards', boxShadow: `0 0 24px ${ARCHETYPES[c.type]?.color}99, 0 0 48px ${ARCHETYPES[c.type]?.color}44` }} />
                   </div>
                 )}
                 <span style={{ filter: sel ? `drop-shadow(0 0 6px ${ARCHETYPES[c.type]?.color || 'white'}88)` : 'none', transition: 'filter 0.3s ease', flexShrink: 0, display: 'flex' }}><ChoiceIcon type={c.type} active={sel} /></span>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? (ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.96)') : 'rgba(255,255,255,0.62)', transition: 'color 0.22s ease, text-shadow 0.22s ease', textShadow: sel ? `0 0 12px ${ARCHETYPES[c.type]?.color}55` : 'none', animation: sel ? 'phrasebreathe 16s ease-in-out infinite' : (selected === null ? `phrasebreathe ${50 + i * 8}s ease-in-out ${i * 0.8}s infinite` : 'none') }}>{c.text}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, lineHeight: 1.48, color: sel ? (ARCHETYPES[c.type]?.color || 'rgba(255,255,255,0.96)') : 'rgba(255,255,255,0.80)', transition: 'color 0.22s ease, text-shadow 0.22s ease', textShadow: sel ? `0 0 12px ${ARCHETYPES[c.type]?.color}55` : 'none', animation: sel ? 'phrasebreathe 16s ease-in-out infinite' : (selected === null ? `phrasebreathe ${50 + i * 8}s ease-in-out ${i * 0.8}s infinite` : 'none') }}>{c.text}</span>
               </button>
             )
           })}
         </div>
 
-        <div style={{ marginTop: 18, opacity: selected !== null ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: selected !== null ? 'all' : 'none' }}>
-          <button onClick={handleContinue} style={{ width: '100%', padding: '16px 0', background: selected ? `rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.72)` : 'rgba(99,102,241,0.72)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: selected ? (idx === QUESTIONS.length - 1 ? `0 4px 32px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.55), 0 0 60px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.22)` : `0 4px 22px rgba(${ARCHETYPES[selected]?.rgb || '99,102,241'},0.38)`) : '0 4px 22px rgba(99,102,241,0.32)', transition: 'all 0.4s ease', animation: selected ? (idx === QUESTIONS.length - 1 ? 'milestoneGlow 3s ease-in-out infinite' : 'milestoneGlow 5s ease-in-out infinite') : 'none', textShadow: selected ? `0 0 12px rgba(${ARCHETYPES[selected]?.rgb || '255,255,255'},0.4)` : 'none' }}>
+        <div style={{ marginTop: 14, opacity: selected !== null ? 1 : 0, transition: 'opacity 0.4s ease', pointerEvents: selected !== null ? 'all' : 'none' }}>
+          <button onClick={handleContinue} style={{ width: '100%', padding: '15px 0', background: selected ? `rgba(${ARCHETYPES[selected]?.rgb || '14,184,166'},0.90)` : 'rgba(14,100,115,0.80)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 600, letterSpacing: '0.26em', color: 'white', textTransform: 'uppercase', boxShadow: selected ? (idx === QUESTIONS.length - 1 ? `0 4px 32px rgba(${ARCHETYPES[selected]?.rgb || '14,184,166'},0.55), 0 0 60px rgba(${ARCHETYPES[selected]?.rgb || '14,184,166'},0.22)` : `0 4px 22px rgba(${ARCHETYPES[selected]?.rgb || '14,184,166'},0.40)`) : '0 4px 22px rgba(14,100,115,0.30)', transition: 'all 0.4s ease', animation: selected ? (idx === QUESTIONS.length - 1 ? 'milestoneGlow 3s ease-in-out infinite' : 'milestoneGlow 5s ease-in-out infinite') : 'none', textShadow: selected ? `0 0 14px rgba(${ARCHETYPES[selected]?.rgb || '255,255,255'},0.35)` : 'none' }}>
             {idx === QUESTIONS.length - 1 ? 'Terminer' : 'Continuer'}
           </button>
         </div>
       </div>
     </div>
+  )
+}
+
+// ─── WORLD REVEAL BRIDGE ──────────────────────────────────────────────────────
+
+function WorldRevealBridge({ onContinue }) {
+  const [vis, setVis] = useState(false)
+  const [showBtn, setShowBtn] = useState(false)
+  useEffect(() => {
+    const t1 = setTimeout(() => setVis(true), 380)
+    const t2 = setTimeout(() => setShowBtn(true), 2400)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [])
+  return (
+    <BgScreen bg="bg-foret.png" overlay="rgba(2,5,14,0.74)" breathe>
+      {/* Golden star at top */}
+      <div style={{ position: 'absolute', top: '9%', left: '50%', transform: 'translateX(-50%)', zIndex: 3, opacity: vis ? 1 : 0, transition: 'opacity 1.6s ease' }}>
+        <svg width={48} height={48} viewBox="0 0 48 48" fill="none" style={{ animation: 'seedPulse 3.2s ease-in-out infinite, milestoneGlow 4s ease-in-out infinite', filter: 'drop-shadow(0 0 14px rgba(245,195,60,0.85)) drop-shadow(0 0 32px rgba(245,195,60,0.4))' }}>
+          <path d="M24 4 L26.8 19 L42 24 L26.8 29 L24 44 L21.2 29 L6 24 L21.2 19Z" fill="rgba(248,200,70,0.96)"/>
+        </svg>
+      </div>
+      {/* NeyaGirl with golden halo */}
+      <div style={{ position: 'absolute', bottom: '22%', left: '50%', transform: 'translateX(-50%)', zIndex: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'animalfloat 20s ease-in-out infinite' }}>
+        <div style={{ position: 'absolute', width: 190, height: 190, borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,195,60,0.30) 0%, rgba(245,195,60,0.10) 38%, transparent 68%)', animation: 'presencePulse 4.2s ease-in-out infinite', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', width: 280, height: 280, borderRadius: '50%', background: 'radial-gradient(circle, rgba(245,195,60,0.10) 0%, transparent 60%)', animation: 'presencePulse 6s ease-in-out 1s infinite', pointerEvents: 'none' }} />
+        <NeyaGirl size={96} color="#4a90d9" />
+      </div>
+      {/* Text block */}
+      <div style={{ position: 'absolute', top: '18%', left: 0, right: 0, padding: '0 30px', textAlign: 'center', opacity: vis ? 1 : 0, transition: 'opacity 1.8s ease 0.2s', zIndex: 4 }}>
+        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: 'clamp(24px, 6.2vw, 30px)', color: 'white', margin: '0 0 18px', lineHeight: 1.22, textShadow: '0 2px 32px rgba(0,0,0,0.65), 0 0 80px rgba(245,195,60,0.15)', animation: vis ? 'phrasebreathe 28s ease-in-out 1s infinite' : 'none' }}>
+          Un monde intérieur<br />vient de s'ouvrir en toi
+        </h1>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.62)', margin: 0, lineHeight: 1.72, animation: vis ? 'phrasebreathe 34s ease-in-out 2s infinite' : 'none' }}>
+          Chaque réponse a révélé<br />une part précieuse de ta lumière.
+        </p>
+      </div>
+      {/* CTA */}
+      <div style={{ position: 'absolute', bottom: '8%', left: '28px', right: '28px', zIndex: 4, opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 1.1s ease, transform 0.9s ease' }}>
+        <button onClick={() => { haptic([20, 50, 20]); onContinue() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.92), rgba(200,140,25,0.88))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 500, letterSpacing: '0.04em', color: 'rgba(20,12,2,0.92)', animation: showBtn ? 'milestoneGlow 4s ease-in-out infinite' : 'none', boxShadow: '0 6px 36px rgba(225,168,40,0.42), 0 2px 12px rgba(0,0,0,0.3)' }}>
+          Es-tu prêt·e à rencontrer ton potentiel caché
+        </button>
+      </div>
+    </BgScreen>
   )
 }
 
@@ -1877,7 +1940,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
             </p>
           </div>
         </div>
-        <button onClick={() => { haptic([30, 50, 20]); onReveal() }} style={{ width: '100%', padding: '17px 0', background: arch ? `rgba(${arch.rgb},0.14)` : 'rgba(255,255,255,0.1)', border: `1px solid ${arch ? arch.color + '55' : 'rgba(255,255,255,0.26)'}`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.2em', color: arch ? arch.color : 'white', textTransform: 'uppercase', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(10px)', transition: 'opacity 1.0s ease, transform 0.8s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1s infinite' : 'none', boxShadow: showBtn && arch ? `0 4px 28px rgba(${arch.rgb},0.22)` : 'none', textShadow: showBtn && arch ? `0 0 14px ${arch.color}55` : 'none' }}>
+        <button onClick={() => { haptic([30, 50, 20]); onReveal() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.90), rgba(200,140,25,0.86))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 13.5, fontWeight: 500, letterSpacing: '0.12em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(10px)', transition: 'opacity 1.0s ease, transform 0.8s ease', animation: showBtn ? 'milestoneGlow 4s ease-in-out 1s infinite' : 'none', boxShadow: showBtn ? '0 6px 32px rgba(225,168,40,0.38), 0 2px 12px rgba(0,0,0,0.3)' : 'none' }}>
           Découvrir mon guide
         </button>
       </div>
@@ -4238,8 +4301,9 @@ export default function App() {
           const result = computeArchetype(answers)
           saveProfile(result)
           const ts = Date.now()
-          go('transition', () => { setArchetype(result); setSavedAt(ts) })
+          go('world-reveal', () => { setArchetype(result); setSavedAt(ts) })
         }} />}
+        {screen === 'world-reveal' && <WorldRevealBridge onContinue={() => go('transition')} />}
         {screen === 'transition' && <TransitionScreen archetypeKey={archetype} onReveal={() => go('result')} />}
         {screen === 'result'     && archetype && <ResultScreen archetypeKey={archetype} onContinue={() => go('main')} />}
         {screen === 'main'       && archetype && <MainApp archetypeKey={archetype} onRestart={handleRestart} savedAt={savedAt} />}
