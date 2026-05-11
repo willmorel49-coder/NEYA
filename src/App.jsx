@@ -3152,6 +3152,12 @@ function BreathingModal({ archetypeKey, onClose }) {
             <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(255,255,255,0.22)', marginTop: 14, letterSpacing: '0.14em' }}>Cycle {cycle}&nbsp;/&nbsp;{tech.totalCycles}</div>
           </>
         )}
+        {done && (
+          <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 6, background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}44`, borderRadius: 100, padding: '6px 16px', animation: 'fadeIn 0.8s ease 0.4s both, milestoneGlow 4s ease-in-out 1s infinite' }}>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 12, color: arch.color, letterSpacing: '-0.01em' }}>+25</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}88`, letterSpacing: '0.16em', textTransform: 'uppercase' }}>XP · Souffle accompli ✦</span>
+          </div>
+        )}
       </div>
 
       {/* Phase dots */}
@@ -3514,8 +3520,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         </div>
         </div>
 
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, background: `linear-gradient(135deg, rgba(255,255,255,0.96), ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', margin: '0 0 4px', animation: jourComplète ? 'prismaticPulse 8s ease-in-out infinite' : 'phrasebreathe 28s ease-in-out 1s infinite' }}>{arch.profil}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px', fontStyle: 'italic', opacity: 0.7, animation: jourComplète ? 'phrasebreathe 32s ease-in-out 1.5s infinite, milestoneGlow 8s ease-in-out 3s infinite' : 'phrasebreathe 32s ease-in-out 1.5s infinite', textShadow: jourComplète ? `0 0 18px ${arch.color}66` : `0 0 12px ${arch.color}44`, transition: 'text-shadow 0.8s ease' }}>{arch.animal}</p>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, background: `linear-gradient(135deg, rgba(255,255,255,0.96), ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', margin: '0 0 3px', animation: jourComplète ? 'prismaticPulse 8s ease-in-out infinite' : 'phrasebreathe 28s ease-in-out 1s infinite' }}>{arch.profil}</p>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12, color: arch.color, letterSpacing: '0.06em', margin: '0 0 2px', fontStyle: 'italic', opacity: jourComplète ? 0.88 : 0.72, animation: jourComplète ? 'phrasebreathe 32s ease-in-out 1.5s infinite, milestoneGlow 8s ease-in-out 3s infinite' : 'phrasebreathe 32s ease-in-out 1.5s infinite', textShadow: jourComplète ? `0 0 18px ${arch.color}55` : `0 0 12px ${arch.color}33`, transition: 'text-shadow 0.8s ease, opacity 0.8s ease' }}>{arch.animal}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: jourComplète ? `${arch.color}33` : `rgba(255,255,255,0.20)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px', animation: jourComplète ? 'phrasebreathe 40s ease-in-out 2.5s infinite, seedPulse 5s ease-in-out 3s infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'phrasebreathe 40s ease-in-out 2.5s infinite', transition: 'color 0.8s ease', textShadow: jourComplète ? `0 0 10px ${arch.color}22` : 'none' }}>Élément · {arch.element}</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 10px', textShadow: jourComplète ? `0 0 16px ${arch.color}77` : 'none', animation: jourComplète ? 'milestoneGlow 4.5s ease-in-out infinite' : 'phrasebreathe 20s ease-in-out infinite', transition: 'text-shadow 0.8s ease' }}>{getPresenceLabel(presenceProgress, archetypeKey)}</p>
 
