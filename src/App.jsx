@@ -1879,7 +1879,7 @@ function WorldRevealBridge({ onContinue }) {
       {/* CTA */}
       <div style={{ position: 'absolute', bottom: '8%', left: '28px', right: '28px', zIndex: 4, opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 1.1s ease, transform 0.9s ease' }}>
         <button onClick={() => { haptic([20, 50, 20]); onContinue() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.92), rgba(200,140,25,0.88))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 500, letterSpacing: '0.04em', color: 'rgba(20,12,2,0.92)', animation: showBtn ? 'milestoneGlow 4s ease-in-out infinite' : 'none', boxShadow: '0 6px 36px rgba(225,168,40,0.42), 0 2px 12px rgba(0,0,0,0.3)' }}>
-          Es-tu prêt·e à rencontrer ton potentiel caché
+          Es-tu prêt·e à rencontrer ton potentiel caché ?
         </button>
       </div>
     </BgScreen>
@@ -2120,7 +2120,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
       {step >= 6 && (
         <button
           onClick={() => { haptic([20, 60, 20]); onDone() }}
-          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: `rgba(${arch.rgb},0.18)`, border: `1px solid ${arch.color}99`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', zIndex: 12, animation: `fadeIn 1.0s ease forwards, milestoneGlow 4.5s ease-in-out 1.2s infinite`, boxShadow: `0 4px 32px ${arch.color}66, 0 0 60px ${arch.color}22, inset 0 0 0 1px ${arch.color}22`, textShadow: `0 0 16px ${arch.color}66` }}
+          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: `rgba(${arch.rgb},0.88)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', zIndex: 12, animation: `fadeIn 1.0s ease forwards, milestoneGlow 4.5s ease-in-out 1.2s infinite`, boxShadow: `0 6px 36px ${arch.color}66, 0 0 60px ${arch.color}33`, textShadow: `0 0 16px ${arch.color}44` }}
         >
           {{ resilience: 'Voir mon profil · feu', presence: 'Voir mon profil · présence', sagesse: 'Voir mon profil · sagesse', lumiere: 'Voir mon profil · lumière' }[archetypeKey] || 'Découvrir mon profil'}
         </button>
@@ -3683,8 +3683,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             return (
               <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
                 <div style={{
-                  width: active ? 8.5 : isToday ? 5 : 4.5,
-                  height: active ? 8.5 : isToday ? 5 : 4.5,
+                  width: active ? 11 : isToday ? 7 : 5.5,
+                  height: active ? 11 : isToday ? 7 : 5.5,
                   borderRadius: '50%',
                   background: active ? arch.color : 'rgba(255,255,255,0.07)',
                   boxShadow: active ? `0 0 10px ${arch.color}cc, 0 0 22px ${arch.color}44, 0 0 40px ${arch.color}18` : isToday ? `0 0 0 1.5px ${arch.color}66` : 'none',
@@ -3759,8 +3759,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: arch.color, margin: '0 0 5px', textShadow: `0 0 18px ${arch.color}66`, letterSpacing: '0.03em', animation: 'milestoneGlow 4.2s ease-in-out infinite' }}>✦ Journée complète.</p>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.36)', margin: 0, fontStyle: 'italic', letterSpacing: '0.03em', animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 8s ease-in-out 2s infinite', textShadow: `0 0 12px ${arch.color}22` }}>{{ resilience: 'Tu brûles avec clarté aujourd\'hui.', presence: 'Tu es ancré·e et rayonnant·e.', sagesse: 'Ta sagesse brille dans chaque geste.', lumiere: 'Tu rayonnes aujourd\'hui.' }[archetypeKey] || 'Tu rayonnes aujourd\'hui.'}</p>
           </div>
-          <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '11px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}55` }}>
-            Entrer en Présence
+          <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '14px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.94), rgba(200,140,25,0.90))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.22em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', boxShadow: '0 6px 32px rgba(225,168,40,0.42), 0 2px 12px rgba(0,0,0,0.25)' }}>
+            Entrer en Présence ✦
           </button>
         </div>
       )}
@@ -3867,8 +3867,8 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: `${arch.color}66`, margin: 0, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33` }}>{{ resilience: 'Ton feu nourrit chaque geste.', presence: 'Ta régularité est une eau profonde.', sagesse: 'Ta discipline forge ta sagesse.', lumiere: 'Ta constance crée de la lumière.' }[archetypeKey] || 'Ta constance est une force.'}</p>
           </div>
           {onOpenVrai && (
-            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}55` }}>
-              Entrer en Présence
+            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '14px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.94), rgba(200,140,25,0.90))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.22em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', boxShadow: '0 6px 32px rgba(225,168,40,0.42), 0 2px 12px rgba(0,0,0,0.25)' }}>
+              Entrer en Présence ✦
             </button>
           )}
         </div>
@@ -3935,7 +3935,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
             </p>
             {!done && !locked && (
-              <button onClick={() => handleComplete(i)} style={{ width: '100%', padding: '12px 0', background: isNext ? `rgba(${arch.rgb},0.20)` : `rgba(${arch.rgb},0.14)`, border: `1px solid ${isNext ? arch.color + '88' : arch.color + '66'}`, borderRadius: 10, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.18em', color: arch.color, textTransform: 'uppercase', boxShadow: isNext ? `0 4px 24px rgba(${arch.rgb},0.28), 0 0 0 1px ${arch.color}33` : `0 2px 16px rgba(${arch.rgb},0.20), 0 0 0 1px ${arch.color}22`, animation: isNext ? 'milestoneGlow 3.8s ease-in-out infinite' : 'milestoneGlow 6s ease-in-out infinite', textShadow: isNext ? `0 0 10px ${arch.color}55` : `0 0 8px ${arch.color}33` }}>
+              <button onClick={() => handleComplete(i)} style={{ width: '100%', padding: '12px 0', background: isNext ? `rgba(${arch.rgb},0.88)` : `rgba(${arch.rgb},0.60)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.18em', color: 'white', textTransform: 'uppercase', boxShadow: isNext ? `0 4px 28px rgba(${arch.rgb},0.40)` : `0 2px 16px rgba(${arch.rgb},0.25)`, animation: isNext ? 'milestoneGlow 3.8s ease-in-out infinite' : 'milestoneGlow 6s ease-in-out infinite', textShadow: isNext ? `0 0 12px ${arch.color}66` : 'none' }}>
                 Marquer accomplie
               </button>
             )}
@@ -3955,8 +3955,8 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: `${arch.color}66`, margin: 0, animation: 'phrasebreathe 24s ease-in-out infinite, milestoneGlow 8s ease-in-out 2.5s infinite', textShadow: `0 0 14px ${arch.color}33` }}>{{ resilience: 'Tu as transformé l\'intention en action.', presence: 'Tu as tenu ta promesse intérieure.', sagesse: 'Ta quête intérieure avance.', lumiere: 'Ta lumière grandit à chaque pas.' }[archetypeKey] || 'Tu avances avec courage.'}</p>
           </div>
           {onOpenVrai && (
-            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '12px 0', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 400, letterSpacing: '0.22em', color: arch.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}55` }}>
-              Entrer en Présence
+            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '14px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.94), rgba(200,140,25,0.90))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.22em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', animation: 'milestoneGlow 4.5s ease-in-out infinite', boxShadow: '0 6px 32px rgba(225,168,40,0.42), 0 2px 12px rgba(0,0,0,0.25)' }}>
+              Entrer en Présence ✦
             </button>
           )}
         </div>
