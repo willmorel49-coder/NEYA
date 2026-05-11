@@ -1316,14 +1316,21 @@ function ReturningScreen({ archetypeKey, onDone }) {
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {vis && <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 5.5s ease-in-out infinite 0.6s', pointerEvents: 'none' }} />}
           {vis && <div style={{ position: 'absolute', width: 210, height: 210, borderRadius: '50%', border: `1px solid ${arch.color}11`, animation: 'pulsering 7s ease-in-out infinite 1.8s', pointerEvents: 'none' }} />}
-          <div style={{
-            opacity: vis ? 1 : 0,
-            transition: 'opacity 0.7s ease',
-            filter: `drop-shadow(0 0 24px ${arch.color}) drop-shadow(0 0 52px ${arch.color}55)`,
-            animation: vis ? 'animalfloat 18s ease-in-out infinite, animalbreathe 28s ease-in-out infinite' : 'none',
-          }}>
-            <SpiritAnimal archetype={archetypeKey} size={130} />
-          </div>
+          <img
+            src={`${B}spirit-${archetypeKey}.jpg`}
+            alt={arch.animal}
+            style={{
+              width: 130, height: 130,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              objectPosition: 'center 30%',
+              display: 'block',
+              opacity: vis ? 1 : 0,
+              transition: 'opacity 0.7s ease',
+              filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 24px ${arch.color}) drop-shadow(0 0 52px ${arch.color}55)`,
+              animation: vis ? 'animalfloat 18s ease-in-out infinite, animalbreathe 28s ease-in-out infinite' : 'none',
+            }}
+          />
         </div>
         {/* Time-of-day greeting */}
         <p style={{
@@ -1427,10 +1434,6 @@ function SplashScreen({ onStart }) {
 
   return (
     <BgScreen bg="bg-onboarding.png" overlay="rgba(5,8,16,0.40)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
-      {/* Ghost spirit — welcoming presence, ultra-faint */}
-      <div style={{ position: 'absolute', bottom: '-4%', right: '-8%', pointerEvents: 'none', opacity: vis ? 0.042 : 0, filter: showBtn ? 'blur(2px) drop-shadow(0 0 28px rgba(99,102,241,0.22))' : 'blur(2.5px)', animation: vis ? 'animalfloat 32s ease-in-out infinite, animalbreathe 48s ease-in-out infinite' : 'none', zIndex: 2, transition: 'opacity 3s ease 1s, filter 2s ease' }}>
-        <DeerSpirit size={240} color="#6366f1" />
-      </div>
       {/* Ambient vertical light column */}
       <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: showBtn ? 240 : 180, height: '70%', background: showBtn ? 'linear-gradient(to bottom, rgba(99,102,241,0.10) 0%, rgba(99,102,241,0.04) 60%, transparent 100%)' : 'linear-gradient(to bottom, rgba(99,102,241,0.07) 0%, rgba(99,102,241,0.02) 60%, transparent 100%)', pointerEvents: 'none', zIndex: 2, animation: 'worldglow 34s ease-in-out infinite', transition: 'width 2s ease, background 2s ease' }} />
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
@@ -1506,10 +1509,6 @@ function IntroScreen({ onStart }) {
   if (step === 0) {
     return (
       <BgScreen bg="bg-onboarding.png" overlay="rgba(10,6,2,0.46)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
-        {/* Ghost phoenix — chaleur dorée de l'intro */}
-        <div style={{ position: 'absolute', bottom: '-5%', left: '-8%', pointerEvents: 'none', opacity: vis ? 0.034 : 0, transition: 'opacity 3s ease 1.2s', filter: 'blur(2.5px)', animation: vis ? 'animalfloat 28s ease-in-out infinite, animalbreathe 44s ease-in-out infinite' : 'none', zIndex: 2 }}>
-          <PhoenixSpirit size={200} color="#f59e0b" />
-        </div>
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
           {[{x:15,y:22,r:1.8,dur:19,del:0.0},{x:82,y:18,r:1.2,dur:24,del:2.8},{x:66,y:72,r:2.2,dur:17,del:1.5},{x:30,y:80,r:1.5,dur:21,del:4.1},{x:90,y:55,r:1.0,dur:26,del:0.8}].map((m,i)=>(
             <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill="rgba(245,158,11,1)" style={{ opacity: 0.06, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
@@ -1540,11 +1539,6 @@ function IntroScreen({ onStart }) {
         ))}
       </svg>
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '72px 32px 52px', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
-        {/* Ghost animal — monde forêt = lumière = BearSpirit */}
-        {line2 && <div style={{ position: 'absolute', bottom: '22%', right: '8%', width: 150, height: 150, borderRadius: '50%', border: '1px solid rgba(236,72,153,0.08)', animation: 'pulsering 7s ease-in-out infinite 2s', pointerEvents: 'none' }} />}
-        <div style={{ position: 'absolute', bottom: '18%', right: '6%', pointerEvents: 'none', opacity: line2 ? 0.055 : 0, transition: 'opacity 2.4s ease', filter: 'blur(2px)', animation: line2 ? 'animalfloat 28s ease-in-out infinite, animalbreathe 44s ease-in-out infinite' : 'none' }}>
-          <BearSpirit size={140} color="#ec4899" />
-        </div>
         <div />
         <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 22 }}>
           <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 'clamp(23px, 6vw, 30px)', color: 'white', lineHeight: 1.3, margin: 0, textShadow: '0 2px 32px rgba(0,0,0,0.5), 0 0 60px rgba(236,72,153,0.14)', opacity: line1 ? 1 : 0, transition: 'opacity 1.5s ease', animation: line1 ? (line2 ? 'phrasebreathe 34s ease-in-out 2s infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'phrasebreathe 34s ease-in-out 2s infinite') : 'none' }}>
@@ -1587,10 +1581,6 @@ function QuizIntroScreen({ onStart }) {
 
   return (
     <BgScreen bg="bg-cosmos.png" overlay="rgba(5,8,16,0.74)" breathe>
-      {/* Ghost wolf — sagesse archetype, ultra-faint cosmic presence */}
-      <div style={{ position: 'absolute', bottom: '-6%', left: '-10%', pointerEvents: 'none', opacity: vis ? 0.038 : 0, transition: 'opacity 3s ease 1.5s', filter: 'blur(2px)', animation: vis ? 'animalfloat 34s ease-in-out infinite, animalbreathe 52s ease-in-out infinite' : 'none', zIndex: 2 }}>
-        <WolfSpirit size={220} color="#6366f1" />
-      </div>
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
         {STARS.slice(0, 8).map((s, i) => (
           <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r * 0.7} fill={s.fill || 'white'} style={{ animation: `startwinkle ${s.dur}s ease-in-out infinite`, animationDelay: `${s.del}s` }} />
@@ -2029,12 +2019,16 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
         <div style={{ position: 'relative', zIndex: 10, animation: 'patronusAnimal 2.4s ease forwards' }}>
           {/* Inner aura */}
           <div style={{ position: 'absolute', inset: -28, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 65%)`, animation: 'presencePulse 2.8s ease-in-out infinite 0.6s' }} />
-          <SpiritAnimal
-            archetype={archetypeKey}
-            size={210}
+          <img
+            src={`${B}spirit-${archetypeKey}.jpg`}
+            alt={arch.animal}
             style={{
+              width: 220, height: 220,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              objectPosition: 'center 30%',
               display: 'block',
-              filter: `drop-shadow(0 0 28px ${arch.color}) drop-shadow(0 0 55px rgba(255,255,255,0.8)) drop-shadow(0 0 90px ${arch.color}99)`,
+              filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 28px ${arch.color}) drop-shadow(0 0 55px rgba(255,255,255,0.5)) drop-shadow(0 0 90px ${arch.color}99)`,
               animation: 'animalfloat 18s ease-in-out infinite 2.5s, animalbreathe 22s ease-in-out infinite 2.5s',
               willChange: 'transform',
             }}
@@ -2127,7 +2121,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
                 <div style={{ position: 'relative', marginBottom: 2 }}>
                   <div style={{ position: 'absolute', inset: -16, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}18 0%, transparent 70%)`, animation: 'presencePulse 4s ease-in-out infinite' }} />
-                  <SpiritAnimal archetype={archetypeKey} size={60} style={{ opacity: 0.70, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', willChange: 'transform' }} />
+                  <img src={`${B}spirit-${archetypeKey}.jpg`} alt={arch.animal} style={{ width: 60, height: 60, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block', opacity: 0.75, filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', willChange: 'transform' }} />
                 </div>
                 <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 23, margin: 0, background: `linear-gradient(135deg, rgba(255,255,255,0.96), ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 32s ease-in-out infinite', transition: 'animation 0.4s ease' }}>{{ resilience: 'Tes forces de feu', presence: 'Tes forces d\'ancrage', sagesse: 'Tes forces intérieures', lumiere: 'Tes forces créatrices' }[archetypeKey] || 'Tes forces naturelles'}</h2>
                 <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px', animation: forcesShown === arch.forces.length ? 'worldglow 8s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'worldglow 8s ease-in-out infinite' }} />
@@ -2150,7 +2144,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0 2px' }}>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <div style={{ position: 'absolute', width: 50, height: 50, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 5s ease-in-out infinite 1.2s', pointerEvents: 'none' }} />
-                  <SpiritAnimal archetype={archetypeKey} size={34} style={{ opacity: 0.65, filter: `drop-shadow(0 0 12px ${arch.color}99) drop-shadow(0 0 24px ${arch.color}44)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 32s ease-in-out infinite', position: 'relative' }} />
+                  <img src={`${B}spirit-${archetypeKey}.jpg`} alt={arch.animal} style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block', opacity: 0.70, filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 12px ${arch.color}99) drop-shadow(0 0 24px ${arch.color}44)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 32s ease-in-out infinite', position: 'relative' }} />
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 2px', opacity: 0.85, animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 7s ease-in-out 2s infinite', textShadow: `0 0 12px ${arch.color}44` }}>{{ resilience: 'Ton guide de feu', presence: 'Ton guide d\'ancrage', sagesse: 'Ton guide de sagesse', lumiere: 'Ton guide de lumière' }[archetypeKey] || 'Ton guide intérieur'}</p>
@@ -2322,10 +2316,6 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         const haloOp = { resilience: '0e', presence: '09', sagesse: '0b', lumiere: '0a' }[archetypeKey] || '0a'
         return <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: haloSize, height: haloSize, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${haloOp} 0%, transparent 65%)`, animation: typingDone ? 'presencePulse 5.8s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite' : 'presencePulse 5.8s ease-in-out infinite', pointerEvents: 'none' }} />
       })()}
-      {/* Ghost backdrop animal */}
-      <div style={{ position: 'absolute', bottom: '-8%', right: '-12%', pointerEvents: 'none', opacity: typingDone ? 0.072 : vis ? 0.048 : 0, transition: 'opacity 3s ease 1s', filter: typingDone ? 'blur(2.5px)' : 'blur(3px)', animation: vis ? `animalfloat ${ghostPeriod}s ease-in-out infinite, animalbreathe 52s ease-in-out infinite` : 'none' }}>
-        <SpiritAnimal archetype={archetypeKey} size={280} />
-      </div>
       {/* Per-archetype ambient motes */}
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}>
         {[{x:8,y:18,r:2.2,dur:32,del:0},{x:88,y:12,r:1.8,dur:38,del:5.2},{x:22,y:76,r:2.8,dur:28,del:2.1},{x:74,y:68,r:2.0,dur:42,del:8.4},{x:48,y:88,r:1.6,dur:36,del:3.7},{x:91,y:44,r:2.4,dur:26,del:6.6},{x:14,y:54,r:1.4,dur:44,del:1.8},{x:62,y:22,r:1.8,dur:34,del:11.3}].map((m,i) => (
@@ -2364,23 +2354,6 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         </svg>
       )}
       <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 32px', gap: 24, textAlign: 'center' }}>
-
-        {/* Animal guide flottant — apparaît avant le texte */}
-        <div style={{ opacity: vis ? 1 : 0, transition: 'opacity 1.4s ease 0.2s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ position: 'absolute', width: 130, height: 130, borderRadius: '50%', border: `1px solid ${arch.color}18`, animation: 'pulsering 6s ease-in-out infinite 1.2s', pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', width: 108, height: 108, borderRadius: '50%', border: `1px solid ${arch.color}28`, animation: 'pulsering 4.5s ease-in-out infinite 0.4s', pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', inset: -20, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}1a 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite' }} />
-            <SpiritAnimal
-              archetype={archetypeKey}
-              size={106}
-              style={{ opacity: 0.72, filter: `drop-shadow(0 0 20px ${arch.color}88) drop-shadow(0 0 40px ${arch.color}33)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 24s ease-in-out infinite', willChange: 'transform', position: 'relative', zIndex: 1 }}
-            />
-          </div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: arch.color, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, opacity: 0.8, textShadow: `0 0 16px ${arch.color}44`, animation: typingDone ? 'phrasebreathe 30s ease-in-out infinite, milestoneGlow 10s ease-in-out 5s infinite' : 'phrasebreathe 30s ease-in-out infinite' }}>
-            {arch.animal}
-          </p>
-        </div>
 
         <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto', animation: typingDone ? 'worldglow 6s ease-in-out infinite, milestoneGlow 8s ease-in-out 2s infinite' : 'worldglow 6s ease-in-out infinite' }} />
 
@@ -2571,9 +2544,19 @@ function CoconScreen({ archetypeKey, onClose }) {
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 8 }}>
           <div style={{ position: 'absolute', width: 240, height: 240, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.18) 0%, transparent 68%)`, animation: 'presencePulse 5s ease-in-out infinite', pointerEvents: 'none' }} />
           <div style={{ position: 'absolute', width: 270, height: 270, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.14)`, animation: 'pulsering 6s ease-in-out infinite 1.2s', pointerEvents: 'none' }} />
-          <div style={{ filter: `drop-shadow(0 0 32px ${arch.color}) drop-shadow(0 0 64px ${arch.color}66)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 26s ease-in-out infinite' }}>
-            <SpiritAnimal archetype={archetypeKey} size={200} />
-          </div>
+          <img
+            src={`${B}spirit-${archetypeKey}.jpg`}
+            alt={arch.animal}
+            style={{
+              width: 200, height: 200,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              objectPosition: 'center 30%',
+              display: 'block',
+              filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 32px ${arch.color}) drop-shadow(0 0 64px ${arch.color}66)`,
+              animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 26s ease-in-out infinite',
+            }}
+          />
         </div>
 
         {/* NeyaGirl + titre */}
@@ -2733,9 +2716,9 @@ function WorldUnlockModal({ worldKey, onClose }) {
       <BgScreen bg={w.bg} overlay={`linear-gradient(180deg, rgba(5,8,16,0.78) 0%, rgba(${w.rgb},0.08) 50%, rgba(5,8,16,0.88) 100%)`}>
         <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 32px', gap: 28 }}>
 
-          {/* Animal spirit géant */}
-          <div style={{ filter: `drop-shadow(0 0 48px rgba(${w.rgb},0.65)) drop-shadow(0 0 120px rgba(${w.rgb},0.30))`, animation: 'animalfloat 14s ease-in-out infinite, animalbreathe 8s ease-in-out infinite', opacity: vis ? 1 : 0, transform: vis ? 'scale(1)' : 'scale(0.72)', transition: 'opacity 1s ease, transform 1.2s cubic-bezier(0.22,1,0.36,1)' }}>
-            <SpiritAnimal archetype={w.animalKey} size={180} />
+          {/* World glow orb */}
+          <div style={{ width: 120, height: 120, borderRadius: '50%', background: `radial-gradient(circle, rgba(${w.rgb},0.38) 0%, rgba(${w.rgb},0.10) 55%, transparent 100%)`, border: `1px solid rgba(${w.rgb},0.55)`, boxShadow: `0 0 60px rgba(${w.rgb},0.40), 0 0 120px rgba(${w.rgb},0.18)`, animation: 'presencePulse 3s ease-in-out infinite', opacity: vis ? 1 : 0, transform: vis ? 'scale(1)' : 'scale(0.72)', transition: 'opacity 1s ease, transform 1.2s cubic-bezier(0.22,1,0.36,1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: 40, filter: `drop-shadow(0 0 14px rgba(${w.rgb},0.80))`, animation: 'seedPulse 4s ease-in-out infinite' }}>{{ brume: '🌫', feu: '🔥', foret: '🌿', eau: '💧', cosmos: '✨', vide: '🌀' }[worldKey] || '✦'}</span>
           </div>
 
           {/* Textes (phase 1+) */}
@@ -2785,8 +2768,8 @@ function WorldCard({ worldKey, archetypeKey, isUnlocked, isHome, daysToUnlock, o
             <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: isUnlocked ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.40)', letterSpacing: '0.01em', animation: isHome ? 'phrasebreathe 24s ease-in-out infinite' : 'none' }}>{w.name}</div>
             <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: isUnlocked ? `rgba(${w.rgb},0.75)` : 'rgba(255,255,255,0.20)', letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: 3 }}>{w.sub}</div>
           </div>
-          <div style={{ flexShrink: 0, opacity: isUnlocked ? 0.88 : 0.25, animation: isHome ? 'animalbreathe 8s ease-in-out infinite' : 'none' }}>
-            <SpiritAnimal archetype={w.animalKey} size={42} />
+          <div style={{ flexShrink: 0, width: 42, height: 42, borderRadius: '50%', background: isUnlocked ? `radial-gradient(circle, rgba(${w.rgb},0.32) 0%, transparent 70%)` : 'transparent', border: isUnlocked ? `1px solid rgba(${w.rgb},0.44)` : '1px solid rgba(255,255,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isUnlocked ? 1 : 0.25, animation: isHome ? 'presencePulse 6s ease-in-out infinite' : 'none', boxShadow: isHome ? `0 0 18px rgba(${w.rgb},0.25)` : 'none' }}>
+            <span style={{ fontSize: 18, filter: isUnlocked ? `drop-shadow(0 0 8px rgba(${w.rgb},0.80))` : 'none' }}>{{ brume: '🌫', feu: '🔥', foret: '🌿', eau: '💧', cosmos: '✨', vide: '🌀' }[worldKey] || '✦'}</span>
           </div>
         </div>
         {/* Status */}
@@ -2845,9 +2828,18 @@ function WorldDetailOverlay({ worldKey, archetypeKey, onClose }) {
 
           {/* Spirit animal */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 10s ease-in-out infinite' }}>
-            <div style={{ filter: `drop-shadow(0 0 32px rgba(${w.rgb},0.55)) drop-shadow(0 0 80px rgba(${w.rgb},0.25))` }}>
-              <SpiritAnimal archetype={w.animalKey} size={120} />
-            </div>
+            <img
+              src={`${B}spirit-${w.animalKey}.jpg`}
+              alt={w.animalKey}
+              style={{
+                width: 120, height: 120,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                objectPosition: 'center 30%',
+                display: 'block',
+                filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 32px rgba(${w.rgb},0.55)) drop-shadow(0 0 80px rgba(${w.rgb},0.25))`,
+              }}
+            />
           </div>
 
           {/* Story fragments */}
@@ -3074,7 +3066,10 @@ function BreathingModal({ archetypeKey, onClose }) {
         <div style={{ position: 'absolute', width: 280, height: 280, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.09)`, transform: `scale(${isExpanded ? 1.18 : 0.44})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', width: 230, height: 230, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.18)`, transform: `scale(${isExpanded ? 1.10 : 0.40})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
         <div style={{ width: 190, height: 190, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.05) 70%, transparent 100%)`, border: `1.5px solid rgba(${arch.rgb},0.40)`, transform: `scale(${circleScale})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 70px rgba(${arch.rgb},0.15), inset 0 0 32px rgba(${arch.rgb},0.08)` }}>
-          <Animal size={60} color={arch.color} style={{ opacity: 0.65, animation: 'animalbreathe 6s ease-in-out infinite' }} />
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ opacity: 0.70, animation: 'animalbreathe 6s ease-in-out infinite' }}>
+            <circle cx="24" cy="24" r="18" stroke={arch.color} strokeWidth="1" opacity="0.5" />
+            <path d="M10 24 C14 16, 20 16, 24 24 C28 32, 34 32, 38 24" stroke={arch.color} strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.85"/>
+          </svg>
         </div>
       </div>
 
@@ -3436,10 +3431,20 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           {/* Soft glow center */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${jourComplète ? '34' : '20'} 0%, transparent 72%)`, animation: jourComplète ? `presencePulse 2.8s ease-in-out infinite, milestoneGlow 6s ease-in-out 1.5s infinite` : 'presencePulse 3.8s ease-in-out infinite', transition: 'background 1.4s ease' }} />
-            <SpiritAnimal
-              archetype={archetypeKey}
-              size={74}
-              style={{ opacity: 0.80, filter: `drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 26s ease-in-out infinite', position: 'relative', zIndex: 1, willChange: 'transform' }}
+            <img
+              src={`${B}spirit-${archetypeKey}.jpg`}
+              alt={arch.animal}
+              style={{
+                width: 74, height: 74,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                objectPosition: 'center 30%',
+                display: 'block',
+                opacity: 0.80,
+                filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 16px ${arch.shadow}) drop-shadow(0 0 32px ${arch.color}44)`,
+                animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 26s ease-in-out infinite',
+                position: 'relative', zIndex: 1, willChange: 'transform',
+              }}
             />
           </div>
         </div>
@@ -3507,7 +3512,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {/* ── Exercice de souffle ── */}
       <div onClick={() => { haptic([6,40,6]); setShowBreathing(true) }} style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.09) 0%, rgba(255,255,255,0.05) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.22)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.4s both', boxShadow: `0 4px 24px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
         <div style={{ width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, transparent 70%)`, border: `1px solid rgba(${arch.rgb},0.30)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, animation: 'animalbreathe 8s ease-in-out infinite', boxShadow: `0 0 16px rgba(${arch.rgb},0.25), inset 0 0 12px rgba(${arch.rgb},0.10)` }}>
-          <SpiritAnimal archetype={archetypeKey} size={26} style={{ opacity: 0.70 }} />
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style={{ opacity: 0.75 }}>
+            <path d="M3 11 C5.5 6, 9 6, 11 11 C13 16, 16.5 16, 19 11" stroke={arch.color} strokeWidth="1.6" strokeLinecap="round" fill="none"/>
+          </svg>
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Exercice de souffle</div>
@@ -3559,7 +3566,10 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
           animation: 'animalbreathe 12s ease-in-out infinite',
           boxShadow: `0 0 20px rgba(${arch.rgb},0.30)` }}>
-          <SpiritAnimal archetype={archetypeKey} size={26} style={{ opacity: 0.80 }} />
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style={{ opacity: 0.82 }}>
+            <path d="M11 2 L19 7 L19 15 L11 20 L3 15 L3 7 Z" stroke={arch.color} strokeWidth="1.2" fill="none"/>
+            <path d="M11 2 L11 20 M3 7 L19 7 M3 15 L19 15" stroke={arch.color} strokeWidth="0.6" opacity="0.45"/>
+          </svg>
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.75)`,
@@ -3975,8 +3985,8 @@ function BoutiqueScreen({ archetypeKey }) {
                 <div style={{ position: 'absolute', inset: 0 }}>
                   <PresenceRing progress={1} color={myCollection.color} size={58} />
                 </div>
-                <div style={{ opacity: 0.56, filter: `drop-shadow(0 0 12px ${myCollection.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 28s ease-in-out infinite, milestoneGlow 10s ease-in-out 4s infinite', position: 'relative' }}>
-                  <SpiritAnimal archetype={archetypeKey} size={38} />
+                <div style={{ opacity: 0.72, filter: `drop-shadow(0 0 12px ${myCollection.color}88)`, animation: 'animalbreathe 28s ease-in-out infinite, milestoneGlow 10s ease-in-out 4s infinite', position: 'relative', fontSize: 22, color: myCollection.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontFamily: 'Sora, sans-serif' }}>◈</span>
                 </div>
               </div>
             </div>
@@ -4014,8 +4024,8 @@ function BoutiqueScreen({ archetypeKey }) {
             {expandedKey === col.key && (
               <div style={{ animation: 'tabslideIn 0.25s ease-out both' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ opacity: 0.45, filter: `drop-shadow(0 0 10px ${col.color}66)`, animation: 'forcespring 0.5s ease both, animalfloat 20s ease-in-out 0.5s infinite, animalbreathe 36s ease-in-out infinite', flexShrink: 0 }}>
-                    <SpiritAnimal archetype={col.key} size={40} />
+                  <div style={{ opacity: 0.55, filter: `drop-shadow(0 0 10px ${col.color}66)`, animation: 'forcespring 0.5s ease both, animalbreathe 36s ease-in-out infinite', flexShrink: 0, width: 40, height: 40, borderRadius: '50%', background: `radial-gradient(circle, rgba(${col.rgb},0.22) 0%, transparent 70%)`, border: `1px solid rgba(${col.rgb},0.35)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: col.color }}>
+                    <span>◈</span>
                   </div>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 38s ease-in-out infinite, milestoneGlow 12s ease-in-out 3s infinite', textShadow: `0 0 10px ${col.color}22` }}>{col.desc}</p>
                 </div>
@@ -4109,9 +4119,6 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
           <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.038, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
         ))}
       </svg>
-      <div style={{ position: 'absolute', bottom: '-7%', right: '-10%', pointerEvents: 'none', opacity: mainJourComplète ? 0.042 : 0.026, transition: 'opacity 3s ease', filter: mainJourComplète ? 'blur(2.5px)' : 'blur(3.5px)', animation: 'animalfloat 38s ease-in-out infinite, animalbreathe 56s ease-in-out infinite', zIndex: 0 }}>
-        <SpiritAnimal archetype={archetypeKey} size={280} />
-      </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 0.22s ease-out' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} onOpenVrai={() => setVraiOpen(true)} />}
