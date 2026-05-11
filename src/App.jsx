@@ -1476,9 +1476,8 @@ function SplashScreen({ onStart }) {
           </p>
         </div>
 
-        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(255,255,255,0.12), rgba(99,102,241,0.10) 50%, rgba(255,255,255,0.08))', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 400, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', opacity: showBtn ? 1 : 0, transition: 'opacity 1.4s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1.6s infinite' : 'none', boxShadow: showBtn ? '0 4px 40px rgba(99,102,241,0.28), 0 0 0 1px rgba(99,102,241,0.18), inset 0 1px 0 rgba(255,255,255,0.12)' : 'none', textShadow: showBtn ? '0 0 16px rgba(99,102,241,0.55)' : 'none', position: 'relative', overflow: 'hidden' }}>
-          <span style={{ position: 'relative', zIndex: 1 }}>Commencer</span>
-          <span style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%)', backgroundSize: '200% 100%', animation: showBtn ? 'shimmerPass 4s ease-in-out infinite 1s' : 'none', borderRadius: 'inherit', pointerEvents: 'none' }} />
+        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.84)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.26em', color: 'white', textTransform: 'uppercase', opacity: showBtn ? 1 : 0, transition: 'opacity 1.4s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1.6s infinite' : 'none', boxShadow: showBtn ? '0 6px 40px rgba(99,102,241,0.44)' : 'none', textShadow: showBtn ? '0 0 16px rgba(99,102,241,0.55)' : 'none' }}>
+          Commencer
         </button>
       </div>
     </BgScreen>
@@ -1558,7 +1557,7 @@ function IntroScreen({ onStart }) {
             À chaque pas, tu t'ouvres<br />un peu plus à toi-même.<br /><br />Continue d'avancer à ton rythme...
           </p>
         </div>
-        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(236,72,153,0.14)', border: '1px solid rgba(236,72,153,0.44)', borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 300, letterSpacing: '0.12em', color: 'rgba(255,200,220,0.9)', opacity: line2 ? 1 : 0, transition: 'opacity 1s ease 0.5s', boxShadow: '0 2px 20px rgba(236,72,153,0.18)', animation: line2 ? 'milestoneGlow 5s ease-in-out 2s infinite' : 'none', textShadow: line2 ? '0 0 14px rgba(236,72,153,0.5)' : 'none' }}>
+        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(236,72,153,0.80)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.26em', color: 'white', textTransform: 'uppercase', opacity: line2 ? 1 : 0, transition: 'opacity 1s ease 0.5s', boxShadow: line2 ? '0 6px 36px rgba(236,72,153,0.42)' : 'none', animation: line2 ? 'milestoneGlow 5s ease-in-out 2s infinite' : 'none', textShadow: line2 ? '0 0 14px rgba(236,72,153,0.5)' : 'none' }}>
           Poursuivre
         </button>
       </div>
@@ -1634,7 +1633,7 @@ function QuizIntroScreen({ onStart }) {
           </p>
         </div>
 
-        <button onClick={() => { haptic([15, 40, 15]); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.78)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 500, letterSpacing: '0.28em', color: 'white', textTransform: 'uppercase', boxShadow: '0 6px 32px rgba(99,102,241,0.38)', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 1s ease, transform 0.3s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1.5s infinite' : 'none', textShadow: showBtn ? '0 0 14px rgba(99,102,241,0.6)' : 'none' }}>
+        <button onClick={() => { haptic([15, 40, 15]); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.92), rgba(200,140,25,0.88))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', boxShadow: showBtn ? '0 6px 36px rgba(225,168,40,0.46), 0 2px 12px rgba(0,0,0,0.3)' : 'none', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 1s ease, transform 0.3s ease', animation: showBtn ? 'milestoneGlow 4s ease-in-out 1.5s infinite' : 'none' }}>
           Commencer l'aventure
         </button>
       </div>
@@ -2186,8 +2185,10 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   <div style={{ position: 'absolute', inset: -16, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}18 0%, transparent 70%)`, animation: 'presencePulse 4s ease-in-out infinite' }} />
                   <img src={`${B}spirit-${archetypeKey}.jpg`} alt={arch.animal} style={{ width: 60, height: 60, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block', opacity: 0.75, filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', willChange: 'transform' }} />
                 </div>
-                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 23, margin: 0, background: `linear-gradient(135deg, rgba(255,255,255,0.96), ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 32s ease-in-out infinite', transition: 'animation 0.4s ease' }}>{{ resilience: 'Tes forces de feu', presence: 'Tes forces d\'ancrage', sagesse: 'Tes forces intérieures', lumiere: 'Tes forces créatrices' }[archetypeKey] || 'Tes forces naturelles'}</h2>
-                <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '0 auto 8px', animation: forcesShown === arch.forces.length ? 'worldglow 8s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'worldglow 8s ease-in-out infinite' }} />
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.65)`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 2px', animation: 'phrasebreathe 24s ease-in-out infinite' }}>Profil mental</p>
+                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: 22, margin: 0, background: `linear-gradient(135deg, rgba(255,255,255,0.96), ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 32s ease-in-out infinite', transition: 'animation 0.4s ease' }}>{arch.profil}</h2>
+                <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '4px auto 6px', animation: forcesShown === arch.forces.length ? 'worldglow 8s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite' : 'worldglow 8s ease-in-out infinite' }} />
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.18em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 28s ease-in-out 1s infinite' }}>Tes forces naturelles</p>
               </div>
               <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
                 {forcesShown === arch.forces.length && <div style={{ position: 'absolute', inset: '-16px -10px', borderRadius: 20, background: `radial-gradient(ellipse at center, ${arch.color}0c 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />}
@@ -2257,9 +2258,9 @@ function ResultScreen({ archetypeKey, onContinue }) {
           )}
         </div>
 
-        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? arch.color : `rgba(${arch.rgb},0.14)`, border: phase === 2 ? 'none' : `1px solid ${arch.color}66`, borderRadius: 14, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: phase === 2 ? 500 : 400, letterSpacing: '0.2em', color: phase === 2 ? '#050810' : arch.color, textTransform: 'uppercase', backdropFilter: phase === 2 ? 'none' : 'blur(10px)', WebkitBackdropFilter: phase === 2 ? 'none' : 'blur(10px)', boxShadow: phase === 2 ? `0 4px 32px ${arch.shadow}` : (phase === 1 && forcesShown === arch.forces.length) ? `0 4px 36px rgba(${arch.rgb},0.42), 0 0 60px ${arch.color}22` : `0 2px 18px rgba(${arch.rgb},0.22)`, transition: 'all 0.45s ease', animation: (phase === 1 && forcesShown === arch.forces.length) ? 'milestoneGlow 3.5s ease-in-out infinite' : 'milestoneGlow 5s ease-in-out infinite' }}>
+        <button onClick={nextPhase} style={{ width: '100%', padding: '17px 0', background: phase === 2 ? `linear-gradient(135deg, rgba(225,168,40,0.92), rgba(200,140,25,0.88))` : `rgba(${arch.rgb},0.88)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.22em', color: phase === 2 ? 'rgba(20,12,2,0.90)' : 'white', textTransform: 'uppercase', boxShadow: phase === 2 ? `0 6px 32px rgba(225,168,40,0.42)` : (phase === 1 && forcesShown === arch.forces.length) ? `0 4px 36px rgba(${arch.rgb},0.50), 0 0 60px ${arch.color}22` : `0 4px 22px rgba(${arch.rgb},0.35)`, transition: 'all 0.45s ease', animation: (phase === 1 && forcesShown === arch.forces.length) ? 'milestoneGlow 3.5s ease-in-out infinite' : 'milestoneGlow 5s ease-in-out infinite' }}>
           {phase === 1
-            ? ({ resilience: 'Lire mon message · feu', presence: 'Lire mon message · présence', sagesse: 'Lire mon message · sagesse', lumiere: 'Lire mon message · lumière' }[archetypeKey] || 'Lire mon message')
+            ? 'Continuer mon voyage'
             : phase === 2
               ? ({ resilience: 'Entrer dans mon feu', presence: 'Entrer en présence', sagesse: 'Entrer dans ma sagesse', lumiere: 'Entrer dans ma lumière' }[archetypeKey] || 'Entrer dans mon espace')
               : ''
@@ -3528,11 +3529,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           return (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, margin: '8px 0 4px', width: '100%', maxWidth: 200 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', justifyContent: 'space-between' }}>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite' }}>{levelName}</span>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.06em' }}>{isMaxLevel ? '✦ max' : `${toNext} xp`}</span>
+                <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.85)`, letterSpacing: '0.12em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite', fontWeight: 500 }}>{levelName}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.30)', letterSpacing: '0.06em' }}>{isMaxLevel ? '✦ max' : `+${toNext} xp`}</span>
               </div>
-              <div style={{ width: '100%', height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2 }}>
-                <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${arch.color}66, ${arch.color})`, borderRadius: 2, boxShadow: `0 0 8px ${arch.color}66`, transition: 'width 1.2s cubic-bezier(0.22,1,0.36,1)', animation: 'worldglow 6s ease-in-out infinite' }} />
+              <div style={{ width: '100%', height: 5, background: 'rgba(255,255,255,0.07)', borderRadius: 3 }}>
+                <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${arch.color}66, ${arch.color})`, borderRadius: 3, boxShadow: `0 0 10px ${arch.color}77`, transition: 'width 1.4s cubic-bezier(0.22,1,0.36,1)', animation: 'worldglow 6s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite' }} />
               </div>
             </div>
           )
@@ -3653,17 +3654,25 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {/* ── Graines de présence (7 jours) ── */}
       <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: jourComplète ? 'worldglow 22s ease-in-out 6s infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'worldglow 22s ease-in-out 6s infinite' }} />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
-          {days > 0 && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: isMilestone ? arch.color : `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, textShadow: isMilestone ? `0 0 12px ${arch.color}66` : `0 0 8px ${arch.color}33`, animation: isMilestone ? 'milestoneGlow 4s ease-in-out infinite' : 'phrasebreathe 40s ease-in-out infinite' }}>Jour {days}</p>
-          )}
-          {streak >= 2 && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 7 ? arch.color : `${arch.color}88`, letterSpacing: '0.12em', margin: 0, textShadow: streak >= 14 ? `0 0 18px ${arch.color}88, 0 0 36px ${arch.color}44` : streak >= 7 ? `0 0 12px ${arch.color}66` : `0 0 8px ${arch.color}22`, animation: streak >= 7 ? (streak >= 14 ? 'milestoneGlow 3s ease-in-out infinite' : 'milestoneGlow 4s ease-in-out infinite') : 'phrasebreathe 30s ease-in-out infinite' }}>· {streak} jours d'affilée{streak >= 7 ? ' ✦' : ''}</p>
-          )}
-          {getGraceAvailable() && streak >= 1 && (
-            <span title="Bouclier de présence disponible" style={{ fontSize: 12, opacity: 0.45, animation: 'phrasebreathe 28s ease-in-out infinite', cursor: 'default' }}>🛡</span>
-          )}
-        </div>
+        {/* Streak display */}
+        {streak >= 2 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, marginBottom: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
+              <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: streak >= 30 ? 40 : streak >= 7 ? 36 : 30, background: `linear-gradient(135deg, ${arch.color}, rgba(255,255,255,0.95) 55%, ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', lineHeight: 1, textShadow: 'none', animation: streak >= 7 ? 'milestoneGlow 4s ease-in-out infinite' : 'phrasebreathe 22s ease-in-out infinite' }}>{streak}</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `${arch.color}88`, letterSpacing: '0.06em' }}>jours</span>
+            </div>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: streak >= 14 ? arch.color : `${arch.color}66`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: 0, textShadow: streak >= 14 ? `0 0 14px ${arch.color}77` : `0 0 8px ${arch.color}33`, animation: streak >= 14 ? 'milestoneGlow 4s ease-in-out infinite' : 'phrasebreathe 28s ease-in-out infinite' }}>
+              {{ resilience: 'de feu', presence: 'de présence', sagesse: 'de sagesse', lumiere: 'de lumière' }[archetypeKey] || 'd\'affilée'}{streak >= 7 ? ' ✦' : ''}
+            </p>
+            {getGraceAvailable() && <span title="Bouclier de présence disponible" style={{ fontSize: 12, opacity: 0.45, animation: 'phrasebreathe 28s ease-in-out infinite', cursor: 'default' }}>🛡</span>}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
+            {days > 0 && (
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: isMilestone ? arch.color : `${arch.color}55`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, textShadow: isMilestone ? `0 0 12px ${arch.color}66` : `0 0 8px ${arch.color}33`, animation: isMilestone ? 'milestoneGlow 4s ease-in-out infinite' : 'phrasebreathe 40s ease-in-out infinite' }}>Jour {days}</p>
+            )}
+          </div>
+        )}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9 }}>
           {weekDots.filter(Boolean).length === 7 && <div style={{ position: 'absolute', inset: '-8px -16px', borderRadius: 20, background: `radial-gradient(ellipse at center, ${arch.color}14 0%, transparent 70%)`, animation: 'presencePulse 5s ease-in-out infinite, milestoneGlow 6s ease-in-out 2s infinite', pointerEvents: 'none' }} />}
           {weekDots.map((active, i) => {
