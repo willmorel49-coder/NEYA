@@ -2793,7 +2793,7 @@ function WorldUnlockModal({ worldKey, onClose }) {
           </div>
 
           {/* CTA (phase 2+) */}
-          <button onClick={onClose} style={{ opacity: phase >= 2 ? 1 : 0, transform: phase >= 2 ? 'translateY(0)' : 'translateY(12px)', transition: 'all 0.6s ease', background: `rgba(${w.rgb},0.18)`, border: `1px solid rgba(${w.rgb},0.55)`, borderRadius: 100, padding: '16px 40px', color: 'rgba(255,255,255,0.88)', fontFamily: 'Sora, sans-serif', fontSize: 13, fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: `0 0 32px rgba(${w.rgb},0.30)`, animation: phase >= 2 ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>
+          <button onClick={onClose} style={{ opacity: phase >= 2 ? 1 : 0, transform: phase >= 2 ? 'translateY(0)' : 'translateY(12px)', transition: 'all 0.6s ease', background: `rgba(${w.rgb},0.88)`, border: 'none', borderRadius: 100, padding: '16px 40px', color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 13, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: `0 6px 36px rgba(${w.rgb},0.44), 0 2px 12px rgba(0,0,0,0.3)`, animation: phase >= 2 ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>
             Explorer ce monde →
           </button>
         </div>
@@ -3239,7 +3239,7 @@ function PersonalizationModal({ archetypeKey, onClose }) {
 
 // ─── INVITATION CARD ──────────────────────────────────────────────────────────
 
-function InvitationCard({ archetypeKey }) {
+function InvitationCard({ archetypeKey, onXp }) {
   const arch = ARCHETYPES[archetypeKey]
   const [done, setDone] = useState(isTodayInvitationDone)
   const invitation = getTodayInvitation()
@@ -3251,7 +3251,7 @@ function InvitationCard({ archetypeKey }) {
           <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: done ? `rgba(${arch.rgb},0.75)` : 'rgba(255,255,255,0.80)', lineHeight: 1.6, fontStyle: 'italic', transition: 'color 0.4s ease', animation: 'phrasebreathe 40s ease-in-out infinite' }}>"{invitation}"</div>
         </div>
         {!done ? (
-          <button onClick={() => { haptic([6,40,6]); completeTodayInvitation(); setDone(true) }} style={{ flexShrink: 0, marginTop: 2, width: 32, height: 32, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.35)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: arch.color, boxShadow: `0 0 14px rgba(${arch.rgb},0.18)`, animation: 'animalbreathe 8s ease-in-out infinite' }}>✓</button>
+          <button onClick={() => { haptic([6,40,6]); completeTodayInvitation(); setDone(true); if (onXp) onXp(20) }} style={{ flexShrink: 0, marginTop: 2, width: 32, height: 32, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.35)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: arch.color, boxShadow: `0 0 14px rgba(${arch.rgb},0.18)`, animation: 'animalbreathe 8s ease-in-out infinite' }}>✓</button>
         ) : (
           <span style={{ fontSize: 14, color: arch.color, flexShrink: 0, marginTop: 4, animation: 'milestoneGlow 4s ease-in-out infinite', textShadow: `0 0 12px ${arch.color}88` }}>✦</span>
         )}
@@ -3263,7 +3263,7 @@ function InvitationCard({ archetypeKey }) {
 
 // ─── HOME SCREEN ──────────────────────────────────────────────────────────────
 
-function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenVrai, onChangeTab, savedAt }) {
+function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenVrai, onChangeTab, savedAt, showXpToast }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [intentionReady, setIntentionReady] = useState(false)
@@ -3582,7 +3582,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {/* ── Invitation du jour ── */}
-      <InvitationCard archetypeKey={archetypeKey} />
+      <InvitationCard archetypeKey={archetypeKey} onXp={showXpToast ? (amt) => showXpToast(amt, false) : undefined} />
 
       {/* ── Exercice de souffle ── */}
       <div onClick={() => { haptic([6,40,6]); setShowBreathing(true) }} style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.09) 0%, rgba(255,255,255,0.05) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.22)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.4s both', boxShadow: `0 4px 24px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
@@ -4191,7 +4191,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
         ))}
       </svg>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 0.22s ease-out' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
-          {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} />}
+          {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} showXpToast={showXpToast} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} onOpenVrai={() => setVraiOpen(true)} />}
           {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} onOpenVrai={() => setVraiOpen(true)} />}
           {tab === 'voyage' && <GrandVoyageScreen archetypeKey={archetypeKey} />}
@@ -4230,7 +4230,7 @@ class ErrorBoundary extends React.Component {
       <div style={{ width: '100vw', height: '100dvh', background: '#050810', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, padding: 32 }}>
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, textAlign: 'center', opacity: 0.88 }}>Une erreur est survenue.</p>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', margin: 0, textAlign: 'center', lineHeight: 1.6 }}>Ferme et relance l'app pour continuer.</p>
-        <button onClick={() => window.location.reload()} style={{ marginTop: 8, background: 'rgba(99,102,241,0.18)', border: '1px solid rgba(99,102,241,0.4)', borderRadius: 100, padding: '12px 28px', color: 'rgba(255,255,255,0.8)', fontFamily: 'Inter, sans-serif', fontSize: 13, letterSpacing: '0.08em', cursor: 'pointer' }}>Recharger</button>
+        <button onClick={() => window.location.reload()} style={{ marginTop: 8, background: 'rgba(99,102,241,0.84)', border: 'none', borderRadius: 100, padding: '12px 28px', color: 'white', fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', cursor: 'pointer', boxShadow: '0 4px 24px rgba(99,102,241,0.38)' }}>Recharger</button>
       </div>
     )
   }
