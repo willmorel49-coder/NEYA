@@ -3059,115 +3059,308 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
 
 // ─── BREATHING MODAL ──────────────────────────────────────────────────────────
 
+function MoodSlider({ value, onChange, color, rgb }) {
+  const labels = ['😔','😟','😐','🙂','✨']
+  const labelTexts = ['Lourd','Bas','Neutre','Bien','Lumineux']
+  const segIdx = Math.min(4, Math.floor((value - 1) / 2))
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 2px', marginBottom: 14 }}>
+        {[1,2,3,4,5,6,7,8,9,10].map(n => (
+          <button key={n} onClick={() => { haptic(4); onChange(n) }} aria-label={`Niveau ${n}`} style={{ flex: 1, height: 40, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, touchAction: 'manipulation' }}>
+            <div style={{ width: n === value ? 16 : 6, height: n === value ? 16 : 6, borderRadius: '50%', background: n <= value ? color : 'rgba(255,255,255,0.18)', boxShadow: n === value ? `0 0 14px ${color}, 0 0 28px ${color}66` : (n <= value ? `0 0 6px ${color}88` : 'none'), transition: 'all 0.25s ease' }} />
+          </button>
+        ))}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+        <span style={{ fontSize: 22, filter: `drop-shadow(0 0 10px ${color}88)` }}>{labels[segIdx]}</span>
+        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'white', letterSpacing: '0.02em' }}>{labelTexts[segIdx]}</span>
+        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `rgba(${rgb},0.78)`, letterSpacing: '0.05em' }}>{`· ${value}/10`}</span>
+      </div>
+    </div>
+  )
+}
+
 function BreathingModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey]
-  const Animal = { resilience: PhoenixSpirit, presence: DeerSpirit, sagesse: WolfSpirit, lumiere: BearSpirit }[archetypeKey] || DeerSpirit
 
   const TECHNIQUES = {
-    resilience: { name: 'Respiration du Guerrier', subtitle: 'Cohésion corps-esprit · 4 cycles', phases: [{ label: 'Inspire', dur: 4, expand: true }, { label: 'Retiens', dur: 4, expand: true }, { label: 'Expire', dur: 4, expand: false }, { label: 'Retiens', dur: 4, expand: false }], totalCycles: 4 },
-    presence:   { name: "Respiration de l'Ancrage", subtitle: 'Présence et stabilité · 4 cycles', phases: [{ label: 'Inspire', dur: 4, expand: true }, { label: 'Retiens', dur: 7, expand: true }, { label: 'Expire', dur: 8, expand: false }], totalCycles: 4 },
-    sagesse:    { name: 'Cohérence Cardiaque', subtitle: 'Clarté et équilibre · 5 cycles', phases: [{ label: 'Inspire', dur: 5, expand: true }, { label: 'Expire', dur: 5, expand: false }], totalCycles: 5 },
-    lumiere:    { name: 'Souffle Créateur', subtitle: 'Libération et légèreté · 4 cycles', phases: [{ label: 'Inspire', dur: 4, expand: true }, { label: 'Expire', dur: 8, expand: false }], totalCycles: 4 },
+    resilience: {
+      name: 'Souffle du Guerrier',
+      subtitle: 'Box Breathing · 4·4·4·4',
+      benefit: 'Calme le système nerveux. Aiguise la concentration. Utilisé par les Navy SEALs avant action.',
+      bestFor: 'Avant un défi · stress aigu · moments tendus',
+      phases: [
+        { label: 'Inspire', dur: 4, expand: true,  hint: 'Par le nez, lentement' },
+        { label: 'Retiens', dur: 4, expand: true,  hint: 'Garde le souffle plein' },
+        { label: 'Expire',  dur: 4, expand: false, hint: 'Par la bouche, long' },
+        { label: 'Repose',  dur: 4, expand: false, hint: 'Poumons vides, immobile' },
+      ],
+      totalCycles: 4, xp: 25,
+    },
+    presence: {
+      name: "Souffle d'Ancrage",
+      subtitle: '4-7-8 · Calmer · Dormir',
+      benefit: "Active le parasympathique. Ralentit le rythme cardiaque. Aide profondément à s'endormir.",
+      bestFor: 'Anxiété · ruminations · avant la nuit',
+      phases: [
+        { label: 'Inspire', dur: 4, expand: true,  hint: 'Par le nez, paisible' },
+        { label: 'Retiens', dur: 7, expand: true,  hint: 'Tu es ancré·e' },
+        { label: 'Expire',  dur: 8, expand: false, hint: 'Long, libérateur' },
+      ],
+      totalCycles: 4, xp: 25,
+    },
+    sagesse: {
+      name: 'Cohérence Cardiaque',
+      subtitle: '5·5 · Équilibrer',
+      benefit: 'Synchronise cœur et respiration. Réduit le cortisol. Clarifie la pensée.',
+      bestFor: 'Avant une décision · concentration · clarté',
+      phases: [
+        { label: 'Inspire', dur: 5, expand: true,  hint: 'Vague qui monte' },
+        { label: 'Expire',  dur: 5, expand: false, hint: 'Vague qui descend' },
+      ],
+      totalCycles: 6, xp: 25,
+    },
+    lumiere: {
+      name: 'Souffle Créateur',
+      subtitle: '4·8 · Libérer',
+      benefit: "Active la créativité. Détend le diaphragme. Libère l'expression intérieure.",
+      bestFor: 'Bloc créatif · avant un projet · réveil',
+      phases: [
+        { label: 'Inspire', dur: 4, expand: true,  hint: 'Reçois pleinement' },
+        { label: 'Expire',  dur: 8, expand: false, hint: 'Donne au monde' },
+      ],
+      totalCycles: 4, xp: 25,
+    },
   }
   const tech = TECHNIQUES[archetypeKey] || TECHNIQUES.sagesse
 
+  const [stage, setStage] = useState('intro')
   const [phaseIdx, setPhaseIdx] = useState(0)
   const [cycle, setCycle] = useState(1)
   const [timeLeft, setTimeLeft] = useState(tech.phases[0].dur)
-  const [done, setDone] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [paused, setPaused] = useState(false)
   const [visible, setVisible] = useState(false)
-  const stateRef = useRef({ phaseIdx: 0, cycle: 1, timeLeft: tech.phases[0].dur, done: false })
+  const [moodStart, setMoodStart] = useState(5)
+  const [moodEnd, setMoodEnd] = useState(7)
+  const [sessionCount, setSessionCount] = useState(0)
+  const stateRef = useRef({ phaseIdx: 0, cycle: 1, timeLeft: tech.phases[0].dur, paused: false })
 
   useEffect(() => {
-    const t = setTimeout(() => { setVisible(true); setTimeout(() => setIsExpanded(tech.phases[0].expand), 300) }, 30)
+    const t = setTimeout(() => setVisible(true), 30)
+    try { setSessionCount(parseInt(localStorage.getItem('neya_breath_count') || '0', 10)) } catch {}
     return () => clearTimeout(t)
   }, [])
 
   useEffect(() => {
-    if (done) return
+    if (stage !== 'active') return
     const interval = setInterval(() => {
       const st = stateRef.current
-      if (st.done) { clearInterval(interval); return }
+      if (st.paused) return
       if (st.timeLeft <= 1) {
         const nextIdx = (st.phaseIdx + 1) % tech.phases.length
         const isNewCycle = nextIdx === 0
         const nextCycle = isNewCycle ? st.cycle + 1 : st.cycle
         if (isNewCycle && st.cycle >= tech.totalCycles) {
-          stateRef.current = { ...st, done: true, timeLeft: 0 }
-          setDone(true); setTimeLeft(0); haptic([10, 60, 10]); addXP(25); return
+          stateRef.current = { ...st, timeLeft: 0 }
+          haptic([10, 60, 10, 60, 10]); addXP(tech.xp)
+          try {
+            const cur = parseInt(localStorage.getItem('neya_breath_count') || '0', 10) + 1
+            localStorage.setItem('neya_breath_count', String(cur))
+            const sessions = JSON.parse(localStorage.getItem('neya_breath_sessions') || '[]')
+            sessions.push({ ts: Date.now(), tech: archetypeKey, moodStart, name: tech.name })
+            localStorage.setItem('neya_breath_sessions', JSON.stringify(sessions.slice(-50)))
+            setSessionCount(cur)
+          } catch {}
+          setStage('outro'); return
         }
         const np = tech.phases[nextIdx]
-        stateRef.current = { phaseIdx: nextIdx, cycle: nextCycle, timeLeft: np.dur, done: false }
+        stateRef.current = { ...st, phaseIdx: nextIdx, cycle: nextCycle, timeLeft: np.dur }
         setPhaseIdx(nextIdx); setCycle(nextCycle); setTimeLeft(np.dur); setIsExpanded(np.expand)
+        haptic(6)
       } else {
         stateRef.current = { ...st, timeLeft: st.timeLeft - 1 }
         setTimeLeft(prev => prev - 1)
       }
     }, 1000)
     return () => clearInterval(interval)
-  }, [done])
+  }, [stage])
+
+  const startSession = () => {
+    haptic([10, 40, 10])
+    setStage('active')
+    setTimeout(() => setIsExpanded(tech.phases[0].expand), 100)
+  }
+  const togglePause = () => {
+    haptic(8)
+    setPaused(p => {
+      const next = !p
+      stateRef.current = { ...stateRef.current, paused: next }
+      return next
+    })
+  }
+  const finishOutro = () => {
+    haptic(12)
+    try {
+      const sessions = JSON.parse(localStorage.getItem('neya_breath_sessions') || '[]')
+      if (sessions.length > 0) {
+        sessions[sessions.length - 1].moodEnd = moodEnd
+        localStorage.setItem('neya_breath_sessions', JSON.stringify(sessions))
+        localStorage.setItem('neya_mood_last', String(moodEnd))
+      }
+    } catch {}
+    onClose()
+  }
 
   const currentPhase = tech.phases[phaseIdx]
-  const circleScale = isExpanded ? 1 : 0.36
-  const circleDur = currentPhase.dur
+  const moodDelta = moodEnd - moodStart
 
-  return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 900, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,8,16,0.97)', opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease' }}>
-      <button onClick={onClose} style={{ position: 'absolute', top: 52, right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '8px 16px', color: 'rgba(255,255,255,0.38)', fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.10em', cursor: 'pointer' }}>Fermer</button>
+  const backdrop = (
+    <>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 38%, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 90%, rgba(${arch.rgb},0.07) 0%, transparent 60%)`, pointerEvents: 'none' }} />
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        {[{x:8,y:18,r:1.6,dur:30,del:0},{x:90,y:24,r:1.2,dur:36,del:4.2},{x:18,y:78,r:1.8,dur:26,del:2.6},{x:78,y:70,r:1.4,dur:34,del:7.1},{x:48,y:88,r:1.0,dur:32,del:3.4},{x:88,y:46,r:1.6,dur:28,del:5.8}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.08, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+        ))}
+      </svg>
+    </>
+  )
 
-      {/* Technique name */}
-      <div style={{ position: 'absolute', top: 54, left: 0, right: 0, textAlign: 'center', padding: '0 80px' }}>
-        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `rgba(${arch.rgb},0.85)`, letterSpacing: '0.18em', textTransform: 'uppercase', animation: 'phrasebreathe 8s ease-in-out infinite' }}>{tech.name}</div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(255,255,255,0.42)', marginTop: 5, letterSpacing: '0.06em' }}>{tech.subtitle}</div>
-      </div>
+  if (stage === 'intro') {
+    return (
+      <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(5,8,16,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease', overflowY: 'auto' }}>
+        {backdrop}
+        <button onClick={onClose} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '9px 18px', color: 'rgba(255,255,255,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 10, minHeight: 36 }}>Fermer</button>
+        <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 72px) 28px 40px', display: 'flex', flexDirection: 'column', gap: 22, minHeight: '100%', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'phrasebreathe 14s ease-in-out infinite, milestoneGlow 5s ease-in-out infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Exercice de souffle</p>
+            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 26, color: 'white', margin: 0, lineHeight: 1.22, textShadow: `0 0 32px ${arch.color}33` }}>{tech.name}</h2>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: `rgba(${arch.rgb},0.85)`, margin: '8px 0 0', letterSpacing: '0.05em' }}>{tech.subtitle}</p>
+          </div>
 
-      {/* Ambient glow */}
-      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 50%, rgba(${arch.rgb},0.07) 0%, transparent 68%)`, pointerEvents: 'none' }} />
+          <div style={{ background: `rgba(${arch.rgb},0.08)`, border: `1px solid ${arch.color}33`, borderRadius: 14, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 8px' }}>Ce que tu vas ressentir</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.86)', margin: 0, lineHeight: 1.6 }}>{tech.benefit}</p>
+            </div>
+            <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}33, transparent)` }} />
+            <div>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 8px' }}>Idéal pour</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.72)', margin: 0, lineHeight: 1.55 }}>{tech.bestFor}</p>
+            </div>
+          </div>
 
-      {/* Breathing circle */}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 72 }}>
-        <div style={{ position: 'absolute', width: 280, height: 280, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.09)`, transform: `scale(${isExpanded ? 1.18 : 0.44})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', width: 230, height: 230, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.18)`, transform: `scale(${isExpanded ? 1.10 : 0.40})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
-        <div style={{ width: 190, height: 190, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.05) 70%, transparent 100%)`, border: `1.5px solid rgba(${arch.rgb},0.40)`, transform: `scale(${circleScale})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 70px rgba(${arch.rgb},0.15), inset 0 0 32px rgba(${arch.rgb},0.08)` }}>
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style={{ opacity: 0.70, animation: 'animalbreathe 6s ease-in-out infinite' }}>
-            <circle cx="24" cy="24" r="18" stroke={arch.color} strokeWidth="1" opacity="0.5" />
-            <path d="M10 24 C14 16, 20 16, 24 24 C28 32, 34 32, 38 24" stroke={arch.color} strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.85"/>
-          </svg>
+          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '20px 18px' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center' }}>Comment tu te sens là ?</p>
+            <MoodSlider value={moodStart} onChange={setMoodStart} color={arch.color} rgb={arch.rgb} />
+          </div>
+
+          {sessionCount > 0 && (
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: `${arch.color}aa`, textAlign: 'center', margin: 0, letterSpacing: '0.08em', textShadow: `0 0 14px ${arch.color}33` }}>
+              {`✦ ${sessionCount} session${sessionCount > 1 ? 's' : ''} de souffle accomplie${sessionCount > 1 ? 's' : ''}`}
+            </p>
+          )}
+
+          <button onClick={startSession} style={{ width: '100%', padding: '18px 0', background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`, animation: 'milestoneGlow 4s ease-in-out infinite', textShadow: '0 0 14px rgba(255,255,255,0.35)', minHeight: 54 }}>
+            Commencer
+          </button>
         </div>
       </div>
+    )
+  }
 
-      {/* Phase info */}
-      <div style={{ textAlign: 'center', minHeight: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        {done ? (
-          <div style={{ animation: 'fadeIn 0.7s ease' }}>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', letterSpacing: '-0.01em', animation: 'phrasebreathe 6s ease-in-out infinite' }}>Bien</div>
-            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.38)', marginTop: 8 }}>Tu es là, pleinement.</div>
-            <button onClick={onClose} style={{ marginTop: 28, background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 100, padding: '13px 34px', color: 'rgba(255,255,255,0.82)', fontFamily: 'Inter, sans-serif', fontSize: 13, letterSpacing: '0.10em', cursor: 'pointer', animation: 'milestoneGlow 6s ease-in-out infinite' }}>Continuer</button>
-          </div>
-        ) : (
-          <>
-            <div key={phaseIdx} style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', letterSpacing: '-0.02em', animation: 'fadeIn 0.35s ease' }}>{currentPhase.label}</div>
-            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 200, fontSize: 52, color: `rgba(${arch.rgb},0.88)`, marginTop: 2, letterSpacing: '-0.06em', lineHeight: 1 }}>{timeLeft}</div>
-            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(255,255,255,0.40)', marginTop: 14, letterSpacing: '0.14em' }}>Cycle {cycle}&nbsp;/&nbsp;{tech.totalCycles}</div>
-          </>
-        )}
-        {done && (
-          <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 6, background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}44`, borderRadius: 100, padding: '6px 16px', animation: 'fadeIn 0.8s ease 0.4s both, milestoneGlow 4s ease-in-out 1s infinite' }}>
-            <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 12, color: arch.color, letterSpacing: '-0.01em' }}>+25</span>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}88`, letterSpacing: '0.16em', textTransform: 'uppercase' }}>XP · Souffle accompli ✦</span>
-          </div>
-        )}
-      </div>
+  if (stage === 'active') {
+    const circleScale = isExpanded ? 1 : 0.36
+    const circleDur = currentPhase.dur
+    return (
+      <div style={{ position: 'fixed', inset: 0, zIndex: 900, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,8,16,0.98)', opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease', overflow: 'hidden' }}>
+        {backdrop}
+        <button onClick={() => { haptic(6); onClose() }} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '9px 18px', color: 'rgba(255,255,255,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 10, minHeight: 36 }}>Arrêter</button>
+        <button onClick={togglePause} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', left: 22, background: paused ? `rgba(${arch.rgb},0.18)` : 'rgba(255,255,255,0.06)', border: `1px solid ${paused ? arch.color + '66' : 'rgba(255,255,255,0.10)'}`, borderRadius: 100, padding: '9px 18px', color: paused ? arch.color : 'rgba(255,255,255,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 10, minHeight: 36, transition: 'all 0.3s ease' }}>{paused ? 'Reprendre' : 'Pause'}</button>
 
-      {/* Phase dots */}
-      {!done && (
-        <div style={{ display: 'flex', gap: 8, position: 'absolute', bottom: 58 }}>
+        <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 80px)', left: 0, right: 0, textAlign: 'center', padding: '0 80px', zIndex: 4 }}>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `rgba(${arch.rgb},0.95)`, letterSpacing: '0.18em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 8s ease-in-out infinite' }}>{tech.name}</p>
+        </div>
+
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 78 }}>
+          <div style={{ position: 'absolute', width: 340, height: 340, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, transform: `scale(${isExpanded ? 1.20 : 0.40})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none', filter: 'blur(2px)' }} />
+          <div style={{ position: 'absolute', width: 280, height: 280, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.10)`, transform: `scale(${isExpanded ? 1.18 : 0.44})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', width: 230, height: 230, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.20)`, transform: `scale(${isExpanded ? 1.10 : 0.40})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
+          <div style={{ width: 190, height: 190, borderRadius: '50%', background: `radial-gradient(circle at 50% 40%, rgba(${arch.rgb},0.42) 0%, rgba(${arch.rgb},0.18) 50%, rgba(${arch.rgb},0.05) 85%, transparent 100%)`, border: `1.5px solid rgba(${arch.rgb},0.50)`, transform: `scale(${circleScale})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 80px rgba(${arch.rgb},0.22), inset 0 0 38px rgba(${arch.rgb},0.10), inset 0 2px 0 rgba(255,255,255,0.06)`, position: 'relative' }}>
+            <div style={{ position: 'absolute', width: 56, height: 56, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,255,255,0.36) 0%, transparent 65%)`, animation: 'animalbreathe 6s ease-in-out infinite' }} />
+            <svg width="44" height="44" viewBox="0 0 48 48" fill="none" style={{ opacity: 0.85, position: 'relative' }}>
+              <circle cx="24" cy="24" r="18" stroke={arch.color} strokeWidth="0.8" opacity="0.45" />
+              <path d="M10 24 C14 16, 20 16, 24 24 C28 32, 34 32, 38 24" stroke={arch.color} strokeWidth="1.6" strokeLinecap="round" fill="none" opacity="0.92" />
+            </svg>
+          </div>
+        </div>
+
+        <div style={{ textAlign: 'center', minHeight: 144, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 5, position: 'relative' }}>
+          <div key={`${phaseIdx}-${cycle}`} style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 30, color: 'white', letterSpacing: '-0.02em', animation: 'fadeIn 0.45s ease', textShadow: `0 0 24px ${arch.color}55` }}>{currentPhase.label}</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 200, fontSize: 54, color: `rgba(${arch.rgb},0.92)`, marginTop: 2, letterSpacing: '-0.06em', lineHeight: 1, textShadow: `0 0 30px ${arch.color}55` }}>{timeLeft}</div>
+          {currentPhase.hint && <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12.5, color: 'rgba(255,255,255,0.55)', marginTop: 10, fontStyle: 'italic', letterSpacing: '0.04em' }}>{currentPhase.hint}</div>}
+          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(255,255,255,0.42)', marginTop: 14, letterSpacing: '0.16em' }}>{`Cycle ${cycle} / ${tech.totalCycles}`}</div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 60px)', zIndex: 5 }}>
           {tech.phases.map((p, i) => (
-            <div key={i} style={{ width: i === phaseIdx ? 22 : 6, height: 6, borderRadius: 3, background: i === phaseIdx ? `rgba(${arch.rgb},0.80)` : 'rgba(255,255,255,0.12)', transition: 'all 0.5s ease' }} />
+            <div key={i} style={{ width: i === phaseIdx ? 22 : 6, height: 6, borderRadius: 3, background: i === phaseIdx ? `rgba(${arch.rgb},0.88)` : 'rgba(255,255,255,0.14)', transition: 'all 0.5s ease', boxShadow: i === phaseIdx ? `0 0 10px ${arch.color}88` : 'none' }} />
           ))}
         </div>
-      )}
+
+        <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 30px)', left: 32, right: 32, height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: 1, overflow: 'hidden', zIndex: 5 }}>
+          <div style={{ height: '100%', width: `${((cycle - 1 + (phaseIdx / tech.phases.length)) / tech.totalCycles) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 1, transition: 'width 0.5s ease', boxShadow: `0 0 8px ${arch.color}99` }} />
+        </div>
+
+        {paused && (
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.55)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 20, animation: 'fadeIn 0.3s ease' }}>
+            <div style={{ textAlign: 'center', padding: 32, animation: 'phrasebreathe 6s ease-in-out infinite' }}>
+              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: arch.color, margin: 0, letterSpacing: '0.04em' }}>En pause</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '10px 0 0' }}>Reprends quand tu veux.</p>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(5,8,16,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease', overflowY: 'auto' }}>
+      {backdrop}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
+        {[{x:18,y:24,r:2.4,del:0},{x:82,y:32,r:2.0,del:0.3},{x:30,y:72,r:2.6,del:0.6},{x:74,y:80,r:1.8,del:0.9},{x:50,y:14,r:2.2,del:1.2},{x:88,y:60,r:2.0,del:1.5},{x:12,y:54,r:1.6,del:1.8},{x:60,y:90,r:2.4,del:0.5}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0, animation: `milestoneMote ${2.2 + i * 0.15}s ease-out ${m.del}s both`, filter: `drop-shadow(0 0 6px ${arch.color}99)` }} />
+        ))}
+      </svg>
+      <div style={{ position: 'relative', zIndex: 3, padding: 'calc(env(safe-area-inset-top, 0px) + 56px) 28px 40px', display: 'flex', flexDirection: 'column', gap: 22, minHeight: '100%', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', animation: 'fadeIn 0.7s ease' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'milestoneGlow 4s ease-in-out infinite, phrasebreathe 14s ease-in-out infinite', textShadow: `0 0 16px ${arch.color}88` }}>✦ Souffle accompli</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: 0, letterSpacing: '-0.01em', textShadow: `0 0 28px ${arch.color}44`, animation: 'phrasebreathe 10s ease-in-out infinite' }}>Tu es là, pleinement.</h2>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', animation: 'fadeIn 1s ease 0.3s both' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '9px 20px', animation: 'milestoneGlow 4s ease-in-out infinite', boxShadow: `0 0 24px rgba(${arch.rgb},0.25)` }}>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 13, color: arch.color, letterSpacing: '-0.01em', textShadow: `0 0 14px ${arch.color}88` }}>{`+${tech.xp}`}</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}cc`, letterSpacing: '0.18em', textTransform: 'uppercase' }}>{`XP · ${sessionCount}${sessionCount === 1 ? 're' : 'e'} session`}</span>
+          </div>
+        </div>
+
+        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '20px 18px', animation: 'fadeIn 1s ease 0.6s both' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center' }}>Et maintenant ?</p>
+          <MoodSlider value={moodEnd} onChange={setMoodEnd} color={arch.color} rgb={arch.rgb} />
+          {moodDelta !== 0 && (
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: moodDelta > 0 ? arch.color : 'rgba(255,255,255,0.55)', textAlign: 'center', margin: '14px 0 0', letterSpacing: '0.05em', textShadow: moodDelta > 0 ? `0 0 14px ${arch.color}66` : 'none' }}>
+              {moodDelta > 0 ? `+${moodDelta} · Tu t'es offert un mieux-être` : `${moodDelta} · Reste avec ce qui est`}
+            </p>
+          )}
+        </div>
+
+        <button onClick={finishOutro} style={{ width: '100%', padding: '18px 0', background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`, animation: 'milestoneGlow 4s ease-in-out infinite, fadeIn 1s ease 0.9s both', textShadow: '0 0 14px rgba(255,255,255,0.35)', minHeight: 54 }}>
+          Continuer ✦
+        </button>
+      </div>
     </div>
   )
 }
@@ -3797,11 +3990,68 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
 // ─── ROUTINES SCREEN ──────────────────────────────────────────────────────────
 
+function RoutineGuideModal({ archetypeKey, routine, done, onClose, onComplete }) {
+  const arch = ARCHETYPES[archetypeKey]
+  const [vis, setVis] = useState(false)
+  const [completing, setCompleting] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const handleComplete = () => {
+    if (done) { onClose(); return }
+    haptic([10, 50, 30, 50, 10])
+    setCompleting(true)
+    setTimeout(() => { onComplete(); setTimeout(onClose, 460) }, 1100)
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(5,8,16,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: vis ? 1 : 0, transition: 'opacity 0.5s ease', overflowY: 'auto' }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 36%, rgba(${arch.rgb},0.12) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 92%, rgba(${arch.rgb},0.08) 0%, transparent 60%)`, pointerEvents: 'none' }} />
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        {[{x:12,y:22,r:1.8,dur:30,del:0},{x:84,y:30,r:1.4,dur:34,del:3.5},{x:22,y:74,r:2.0,dur:28,del:1.8},{x:76,y:80,r:1.4,dur:36,del:6.2},{x:50,y:18,r:1.6,dur:32,del:9.1},{x:88,y:54,r:1.2,dur:38,del:2.4}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.08, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
+        ))}
+      </svg>
+
+      {completing && (
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 50 }}>
+          {[{x:20,y:30,r:3,del:0},{x:80,y:38,r:2.6,del:0.15},{x:32,y:70,r:3.2,del:0.32},{x:70,y:74,r:2.4,del:0.50},{x:50,y:18,r:2.8,del:0.70},{x:88,y:58,r:2.6,del:0.90},{x:14,y:60,r:2.2,del:0.40},{x:62,y:34,r:2.0,del:0.20}].map((m,i)=>(
+            <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0, animation: `milestoneMote 1.6s ease-out ${m.del}s both`, filter: `drop-shadow(0 0 8px ${arch.color})` }} />
+          ))}
+        </svg>
+      )}
+
+      <button onClick={onClose} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '9px 18px', color: 'rgba(255,255,255,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 10, minHeight: 36 }}>Fermer</button>
+
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 72px) 28px 40px', display: 'flex', flexDirection: 'column', gap: 26, minHeight: '100%', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ display: 'inline-block', background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '6px 16px', marginBottom: 18, animation: 'phrasebreathe 14s ease-in-out infinite' }}>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase' }}>{routine.duration}</span>
+          </div>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 28, color: 'white', margin: 0, lineHeight: 1.22, letterSpacing: '-0.01em', textShadow: `0 0 32px ${arch.color}44`, animation: 'phrasebreathe 14s ease-in-out infinite' }}>{routine.title}</h2>
+        </div>
+
+        <div style={{ background: `rgba(${arch.rgb},0.06)`, border: `1px solid ${arch.color}26`, borderRadius: 18, padding: '26px 24px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}99, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s ease-in-out infinite, milestoneGlow 12s ease-in-out 3s infinite' }} />
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', margin: 0, lineHeight: 1.72, fontStyle: 'italic', textShadow: `0 0 14px ${arch.color}22`, animation: 'phrasebreathe 28s ease-in-out infinite' }}>{routine.desc}</p>
+        </div>
+
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.50)', textAlign: 'center', margin: 0, lineHeight: 1.65, padding: '0 12px', animation: 'phrasebreathe 20s ease-in-out infinite' }}>Prends ton temps. Quand c'est fait, marque-le ici — pour toi, pas pour l'app.</p>
+
+        <button onClick={handleComplete} disabled={completing} style={{ width: '100%', padding: '18px 0', background: done ? `rgba(${arch.rgb},0.20)` : `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: done ? `1px solid ${arch.color}66` : 'none', borderRadius: 100, cursor: completing ? 'wait' : 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.24em', color: done ? arch.color : 'white', textTransform: 'uppercase', boxShadow: done ? 'none' : `0 6px 36px rgba(${arch.rgb},0.42), 0 0 60px rgba(${arch.rgb},0.18)`, animation: completing ? 'milestoneGlow 1.4s ease-in-out infinite' : 'milestoneGlow 5s ease-in-out infinite', textShadow: done ? 'none' : '0 0 14px rgba(255,255,255,0.35)', minHeight: 54, opacity: completing ? 0.88 : 1, transition: 'opacity 0.3s ease' }}>
+          {completing ? '✦ Bien joué' : done ? '✓ Déjà accomplie' : 'Marquer accomplie'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [flash, setFlash] = useState(false)
   const [celebrateIdx, setCelebrateIdx] = useState(null)
+  const [guideIdx, setGuideIdx] = useState(null)
   const prevAllDone = useRef(false)
   const prevCompleted = useRef([...completed])
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
@@ -3855,7 +4105,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
             <button onClick={() => { haptic(done ? 6 : 18); onToggle(i) }} style={{ width: 34, height: 34, borderRadius: '50%', border: `2px solid ${done ? arch.color : 'rgba(255,255,255,0.30)'}`, touchAction: 'manipulation', background: done ? arch.color : 'transparent', flexShrink: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.28s ease', marginTop: 2, boxShadow: done ? `0 0 14px ${arch.shadow}` : 'none', transform: done ? 'scale(1.06)' : 'scale(1)', animation: done ? 'seedPulse 2.8s ease-in-out infinite, milestoneGlow 5s ease-in-out 1s infinite' : 'none' }}>
               {done && <span style={{ fontSize: 11, color: 'white', animation: 'milestoneGlow 3.6s ease-in-out infinite, seedPulse 2.4s ease-in-out 0.5s infinite' }}>✓</span>}
             </button>
-            <div style={{ flex: 1 }}>
+            <div onClick={() => { haptic(6); setGuideIdx(i) }} role="button" tabIndex={0} style={{ flex: 1, cursor: 'pointer', minHeight: 44 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : 'none', animation: done ? 'milestoneGlow 4.8s ease-in-out infinite' : (doneCount > 0 ? 'phrasebreathe 36s ease-in-out infinite, milestoneGlow 18s ease-in-out 4s infinite' : 'phrasebreathe 36s ease-in-out infinite') }}>{r.title}</p>
                 <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: done ? `${arch.color}99` : 'rgba(255,255,255,0.48)', flexShrink: 0, marginLeft: 8, animation: done ? 'seedPulse 3.5s ease-in-out infinite' : (doneCount > 0 ? 'phrasebreathe 34s ease-in-out infinite, milestoneGlow 16s ease-in-out 3s infinite' : 'phrasebreathe 34s ease-in-out infinite'), transition: 'color 0.4s ease', textShadow: done ? `0 0 8px ${arch.color}44` : `0 0 6px ${arch.color}18` }}>{r.duration}</span>
@@ -3883,6 +4133,15 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
             </button>
           )}
         </div>
+      )}
+      {guideIdx !== null && (
+        <RoutineGuideModal
+          archetypeKey={archetypeKey}
+          routine={arch.routines[guideIdx]}
+          done={completed[guideIdx]}
+          onClose={() => setGuideIdx(null)}
+          onComplete={() => { if (!completed[guideIdx]) onToggle(guideIdx) }}
+        />
       )}
     </div>
   )
