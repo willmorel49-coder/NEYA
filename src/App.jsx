@@ -147,7 +147,7 @@ const ARCHETYPES = {
 
 const QUESTIONS = [
   {
-    bg: 'bg-cosmos.png',
+    bg: 'bg-quiz-01.png',
     tint: 'linear-gradient(160deg, rgba(79,70,229,0.22) 0%, rgba(139,92,246,0.10) 100%)',
     title: "Avancer dans l'inconnu...",
     text: "Quand tu avances vers l'inconnu, quelle force intérieure te guide naturellement ?",
@@ -159,7 +159,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-feu.png',
+    bg: 'bg-quiz-02.png',
     tint: 'linear-gradient(160deg, rgba(251,146,60,0.22) 0%, rgba(245,158,11,0.10) 100%)',
     title: 'Face au changement de cap...',
     text: "Quand la vie t'amène à changer de cap, comment réagis-tu intérieurement ?",
@@ -171,7 +171,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-eau.png',
+    bg: 'bg-quiz-03.png',
     tint: 'linear-gradient(160deg, rgba(20,184,166,0.22) 0%, rgba(6,182,212,0.10) 100%)',
     title: 'Face au ralentissement...',
     text: "Quand la vie t'invite à ralentir, quelle est ta réponse intérieure ?",
@@ -183,7 +183,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-foret.png',
+    bg: 'bg-quiz-04.png',
     tint: 'linear-gradient(160deg, rgba(236,72,153,0.22) 0%, rgba(251,113,133,0.10) 100%)',
     title: 'Ta vraie nature...',
     text: 'Si tu pouvais exprimer ta vraie nature sans masque ni peur, quelle version de toi prendrait vie ?',
@@ -195,7 +195,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-brume.png',
+    bg: 'bg-quiz-05.png',
     tint: 'linear-gradient(160deg, rgba(139,92,246,0.24) 0%, rgba(109,40,217,0.10) 100%)',
     title: 'Dans les moments de doute...',
     text: "Quand le doute s'installe profondément, qu'est-ce qui te recentre ?",
@@ -207,7 +207,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-cosmos-alt.png',
+    bg: 'bg-quiz-06.png',
     tint: 'linear-gradient(160deg, rgba(99,102,241,0.26) 0%, rgba(79,70,229,0.12) 100%)',
     title: 'Ta relation aux autres...',
     text: 'Dans une relation profonde, quel est ton rôle naturel ?',
@@ -219,7 +219,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-feu.png',
+    bg: 'bg-quiz-07.png',
     tint: 'linear-gradient(160deg, rgba(245,158,11,0.28) 0%, rgba(239,68,68,0.12) 100%)',
     title: "Face à l'adversité...",
     text: "Quand tout semble s'effondrer, qu'est-ce qui reste debout en toi ?",
@@ -231,7 +231,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-eau.png',
+    bg: 'bg-quiz-08.png',
     tint: 'linear-gradient(160deg, rgba(13,148,136,0.26) 0%, rgba(20,184,166,0.12) 100%)',
     title: 'Ta façon de ressentir...',
     text: 'Comment vis-tu principalement tes émotions ?',
@@ -243,7 +243,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-foret.png',
+    bg: 'bg-quiz-09.png',
     tint: 'linear-gradient(160deg, rgba(251,113,133,0.24) 0%, rgba(236,72,153,0.10) 100%)',
     title: 'Ta source de création...',
     text: "Quand tu crées quelque chose, qu'est-ce qui te motive profondément ?",
@@ -255,7 +255,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-vide.png',
+    bg: 'bg-quiz-10.png',
     tint: 'linear-gradient(160deg, rgba(148,163,184,0.20) 0%, rgba(100,116,139,0.10) 100%)',
     title: 'Ta force cachée...',
     text: 'Quelle est la force en toi que les autres remarquent rarement ?',
@@ -267,7 +267,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-vide.png',
+    bg: 'bg-quiz-11.png',
     tint: 'linear-gradient(160deg, rgba(109,40,217,0.28) 0%, rgba(139,92,246,0.14) 100%)',
     title: 'Ta vision du bonheur...',
     text: 'Pour toi, le bonheur ressemble à...',
@@ -279,7 +279,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-brume.png',
+    bg: 'bg-quiz-12.png',
     tint: 'linear-gradient(160deg, rgba(124,58,237,0.26) 0%, rgba(167,139,250,0.12) 100%)',
     title: 'Ton prochain chapitre...',
     text: "Quand tu imagines le prochain grand chapitre de ta vie, qu'est-ce qui l'anime ?",
@@ -292,7 +292,7 @@ const QUESTIONS = [
   },
   // ─── Questions tirées du MVP original ────────────────────────────────────────
   {
-    bg: 'bg-foret.png',
+    bg: 'bg-quiz-13.png',
     tint: 'linear-gradient(160deg, rgba(16,185,129,0.22) 0%, rgba(52,211,153,0.10) 100%)',
     title: "Quand une émotion forte surgit...",
     text: "Un geste, une parole ou un regard éveille une émotion forte en toi. Comment choisis-tu de l'accueillir ?",
@@ -304,7 +304,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-eau.png',
+    bg: 'bg-quiz-14.png',
     tint: 'linear-gradient(160deg, rgba(6,182,212,0.24) 0%, rgba(34,211,238,0.10) 100%)',
     title: "Face à une décision importante...",
     text: "La dernière fois que tu as eu une grande décision à prendre, quelle a été ta boussole intérieure ?",
@@ -316,7 +316,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-brume.png',
+    bg: 'bg-quiz-15.png',
     tint: 'linear-gradient(160deg, rgba(167,139,250,0.24) 0%, rgba(196,181,253,0.10) 100%)',
     title: "Dans un endroit nouveau...",
     text: "Quand tu arrives dans un endroit totalement nouveau, que fais-tu en premier ?",
@@ -328,7 +328,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-vide.png',
+    bg: 'bg-quiz-16.png',
     tint: 'linear-gradient(160deg, rgba(100,116,139,0.22) 0%, rgba(148,163,184,0.10) 100%)',
     title: "Face à une échéance...",
     text: "Quand une échéance se profile, quelle est ta manière naturelle de l'aborder ?",
@@ -340,7 +340,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-eau.png',
+    bg: 'bg-quiz-17.png',
     tint: 'linear-gradient(160deg, rgba(34,211,238,0.22) 0%, rgba(20,184,166,0.14) 100%)',
     title: "Retrouver son équilibre...",
     text: "Quand tu as besoin de retrouver ton équilibre, que privilégies-tu ?",
@@ -352,7 +352,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-cosmos-alt.png',
+    bg: 'bg-quiz-18.png',
     tint: 'linear-gradient(160deg, rgba(139,92,246,0.26) 0%, rgba(99,102,241,0.14) 100%)',
     title: "Quand l'imprévu arrive...",
     text: "Quel est ton réflexe naturel quand les choses ne se passent pas comme prévu ?",
@@ -364,7 +364,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-foret.png',
+    bg: 'bg-quiz-19.png',
     tint: 'linear-gradient(160deg, rgba(34,197,94,0.20) 0%, rgba(16,185,129,0.10) 100%)',
     title: "En arrivant dans un lieu inconnu...",
     text: "Quand tu arrives dans un lieu totalement nouveau, que captes-tu naturellement en premier ?",
@@ -376,7 +376,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-brume.png',
+    bg: 'bg-quiz-20.png',
     tint: 'linear-gradient(160deg, rgba(244,114,182,0.24) 0%, rgba(236,72,153,0.10) 100%)',
     title: "Une journée libre...",
     text: "Quand tu as une journée entièrement libre, comment la vis-tu naturellement ?",
@@ -388,7 +388,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-vide.png',
+    bg: 'bg-quiz-21.png',
     tint: 'linear-gradient(160deg, rgba(99,102,241,0.30) 0%, rgba(79,70,229,0.16) 100%)',
     title: "Ton moteur intérieur...",
     text: "Quelle énergie intérieure te pousse à te lever chaque matin ?",
@@ -400,7 +400,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-feu.png',
+    bg: 'bg-quiz-22.png',
     tint: 'linear-gradient(160deg, rgba(239,68,68,0.22) 0%, rgba(245,158,11,0.12) 100%)',
     title: "Face au besoin de changement...",
     text: "Quand une partie de toi sent qu'il est temps de changer, que fais-tu naturellement ?",
@@ -412,7 +412,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-foret.png',
+    bg: 'bg-quiz-23.png',
     tint: 'linear-gradient(160deg, rgba(236,72,153,0.28) 0%, rgba(251,113,133,0.14) 100%)',
     title: "À la rencontre d'une nouvelle personne...",
     text: "Quand tu rencontres quelqu'un pour la première fois, quelle est ton attitude naturelle ?",
