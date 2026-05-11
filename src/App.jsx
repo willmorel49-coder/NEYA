@@ -1440,7 +1440,7 @@ function SplashScreen({ onStart }) {
   ]
 
   return (
-    <BgScreen bg="bg-onboarding.png" overlay="rgba(5,8,16,0.40)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
+    <BgScreen bg="bg-splash.png" overlay="rgba(5,8,16,0.45)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
       {/* Ambient vertical light column */}
       <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: showBtn ? 240 : 180, height: '70%', background: showBtn ? 'linear-gradient(to bottom, rgba(99,102,241,0.10) 0%, rgba(99,102,241,0.04) 60%, transparent 100%)' : 'linear-gradient(to bottom, rgba(99,102,241,0.07) 0%, rgba(99,102,241,0.02) 60%, transparent 100%)', pointerEvents: 'none', zIndex: 2, animation: 'worldglow 34s ease-in-out infinite', transition: 'width 2s ease, background 2s ease' }} />
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
@@ -4312,7 +4312,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const assets = ['bg-onboarding.png','bg-cosmos.png','bg-cosmos-alt.png','bg-feu.png','bg-eau.png','bg-foret.png','bg-brume.png','bg-vide.png','bg-vrai.png']
+    const assets = ['bg-splash.png','bg-onboarding.png','bg-cosmos.png','bg-cosmos-alt.png','bg-feu.png','bg-eau.png','bg-foret.png','bg-brume.png','bg-vide.png','bg-vrai.png']
     assets.forEach(s => { const img = new Image(); img.src = B + s })
   }, [])
 
