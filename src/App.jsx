@@ -3527,12 +3527,17 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           const toNext = getXPToNext()
           const isMaxLevel = getLevelIndex() === 6
           return (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, margin: '8px 0 4px', width: '100%', maxWidth: 200 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', justifyContent: 'space-between' }}>
-                <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.85)`, letterSpacing: '0.12em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite', fontWeight: 500 }}>{levelName}</span>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.30)', letterSpacing: '0.06em' }}>{isMaxLevel ? '✦ max' : `+${toNext} xp`}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, margin: '8px 0 4px', width: '100%', maxWidth: 220 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <div style={{ width: 20, height: 20, borderRadius: '50%', background: `rgba(${arch.rgb},0.18)`, border: `1.5px solid ${arch.color}66`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, animation: isMaxLevel ? 'milestoneGlow 3s ease-in-out infinite' : 'phrasebreathe 18s ease-in-out infinite', boxShadow: isMaxLevel ? `0 0 14px ${arch.color}66` : `0 0 8px ${arch.color}33` }}>
+                    <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 8.5, fontWeight: 700, color: arch.color, lineHeight: 1 }}>{getLevelIndex() + 1}</span>
+                  </div>
+                  <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.88)`, letterSpacing: '0.10em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite', fontWeight: 500 }}>{levelName}</span>
+                </div>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: isMaxLevel ? arch.color : 'rgba(255,255,255,0.28)', letterSpacing: '0.06em', animation: isMaxLevel ? 'milestoneGlow 4s ease-in-out infinite' : 'none' }}>{isMaxLevel ? '✦ max' : `+${toNext} xp`}</span>
               </div>
-              <div style={{ width: '100%', height: 5, background: 'rgba(255,255,255,0.07)', borderRadius: 3 }}>
+              <div style={{ width: '100%', height: 5, background: 'rgba(255,255,255,0.07)', borderRadius: 3, overflow: 'hidden' }}>
                 <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${arch.color}66, ${arch.color})`, borderRadius: 3, boxShadow: `0 0 10px ${arch.color}77`, transition: 'width 1.4s cubic-bezier(0.22,1,0.36,1)', animation: 'worldglow 6s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite' }} />
               </div>
             </div>
@@ -4118,6 +4123,14 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
     try { return JSON.parse(localStorage.getItem('neya_seen_unlocks') || '[]') } catch { return [] }
   })
   const [graceApplied, setGraceApplied] = useState(false)
+  const [xpToast, setXpToast] = useState(null)
+  const xpToastTimer = useRef(null)
+
+  const showXpToast = (amount, bonus = false) => {
+    clearTimeout(xpToastTimer.current)
+    setXpToast({ amount, bonus })
+    xpToastTimer.current = setTimeout(() => setXpToast(null), 2200)
+  }
 
   const changeTab = (newTab) => {
     if (newTab === tab) return
@@ -4129,15 +4142,19 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
   const toggleRoutine = (i) => {
     const next = [...routinesDone]; next[i] = !next[i]
     setRoutinesDone(next); saveRoutines(next)
-    if (!routinesDone[i]) addXP(15)
-    const nowAllDone = next.every(Boolean)
-    if (nowAllDone) haptic([20, 50, 20, 50, 40])
+    if (!routinesDone[i]) {
+      addXP(15)
+      const allNowDone = next.every(Boolean)
+      showXpToast(15, allNowDone)
+      if (allNowDone) haptic([20, 50, 20, 50, 40])
+    }
   }
 
   const completeQuete = (i) => {
     const next = [...quetesDone]; next[i] = true
     setQuetesDone(next); saveQuetes(archetypeKey, next)
     addXP(30)
+    showXpToast(30, false)
   }
 
   useEffect(() => {
@@ -4177,6 +4194,14 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
         <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ routines: routinesDone.filter(Boolean).length < arch.routines.length, quetes: quetesDone.filter(Boolean).length < arch.quetes.length }} />
         {pendingWorldUnlock && <WorldUnlockModal worldKey={pendingWorldUnlock} onClose={() => { setPendingWorldUnlock(null); changeTab('voyage') }} />}
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
+        {xpToast && (
+          <div key={xpToast.amount + xpToast.bonus} style={{ position: 'fixed', top: 22, left: '50%', transform: 'translateX(-50%)', zIndex: 300, pointerEvents: 'none', animation: 'xpToastIn 2.2s ease forwards', whiteSpace: 'nowrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: xpToast.bonus ? 'linear-gradient(135deg, rgba(225,168,40,0.95), rgba(200,140,25,0.92))' : `rgba(${arch.rgb},0.92)`, borderRadius: 100, padding: '9px 20px', boxShadow: xpToast.bonus ? '0 6px 28px rgba(225,168,40,0.55), 0 2px 10px rgba(0,0,0,0.3)' : `0 6px 28px rgba(${arch.rgb},0.50), 0 2px 10px rgba(0,0,0,0.3)`, backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}>
+              <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 15, color: xpToast.bonus ? 'rgba(20,12,2,0.92)' : 'white', letterSpacing: '-0.01em', lineHeight: 1 }}>+{xpToast.amount}</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: xpToast.bonus ? 'rgba(20,12,2,0.70)' : 'rgba(255,255,255,0.75)', letterSpacing: '0.18em', textTransform: 'uppercase', lineHeight: 1 }}>{xpToast.bonus ? 'XP · Toutes complètes ✦' : 'XP'}</span>
+            </div>
+          </div>
+        )}
         {graceApplied && (
           <div onClick={() => setGraceApplied(false)} style={{ position: 'fixed', top: 18, left: '50%', transform: 'translateX(-50%)', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '8px 22px', zIndex: 200, animation: 'fadeIn 0.6s ease both', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', pointerEvents: 'auto', whiteSpace: 'nowrap', cursor: 'pointer' }}>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.14em', margin: 0, animation: 'milestoneGlow 3.5s ease-in-out infinite' }}>🛡 Ton bouclier de présence a protégé ta série</p>
@@ -4274,6 +4299,7 @@ export default function App() {
       @keyframes prismaticPulse{ 0%,100%{filter:brightness(1) saturate(1)} 33%{filter:brightness(1.12) saturate(1.3)} 66%{filter:brightness(0.96) saturate(0.9)} }
       @keyframes floatUp      { 0%{transform:translateY(0) scale(1);opacity:0.6} 50%{opacity:0.35} 100%{transform:translateY(-55px) scale(0.55);opacity:0} }
       @keyframes depthBreath  { 0%,100%{transform:scale(1);opacity:0.88} 50%{transform:scale(1.018);opacity:1} }
+      @keyframes xpToastIn    { 0%{opacity:0;transform:translateX(-50%) translateY(-14px) scale(0.88)} 14%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} 72%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} 100%{opacity:0;transform:translateX(-50%) translateY(-10px) scale(0.94)} }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
