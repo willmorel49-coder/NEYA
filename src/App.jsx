@@ -3895,163 +3895,139 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
 
 // ─── BOUTIQUE SCREEN ──────────────────────────────────────────────────────────
 
-const CA_VA_COLLECTIONS = [
-  {
-    key: 'resilience',
-    name: 'Collection Braise',
-    subtitle: 'Pour les Porteurs de Feu',
-    desc: 'Pièces qui incarnent la force tranquille et la transformation intérieure.',
-    bg: 'bg-feu.png',
-    color: '#f59e0b',
-    rgb: '245,158,11',
-    tags: ['Force', 'Courage', 'Mouvement'],
-  },
-  {
-    key: 'presence',
-    name: 'Collection Marée',
-    subtitle: 'Pour les Ancreurs de Présence',
-    desc: "Des silhouettes fluides qui épousent l'instant et cultivent la paix intérieure.",
-    bg: 'bg-eau.png',
-    color: '#14b8a6',
-    rgb: '20,184,166',
-    tags: ['Douceur', 'Calme', 'Harmonie'],
-  },
-  {
-    key: 'sagesse',
-    name: 'Collection Brume',
-    subtitle: 'Pour les Éveilleurs de Sens',
-    desc: "Des pièces habitées d'une profondeur silencieuse. Celles qui ont quelque chose à dire.",
-    bg: 'bg-brume.png',
-    color: '#6366f1',
-    rgb: '99,102,241',
-    tags: ['Profondeur', 'Intuition', 'Mystère'],
-  },
-  {
-    key: 'lumiere',
-    name: 'Collection Forêt',
-    subtitle: 'Pour les Créateurs de Lumière',
-    desc: "De l'éclat, de la joie, de la vie. Des vêtements qui rayonnent autant que toi.",
-    bg: 'bg-foret.png',
-    color: '#ec4899',
-    rgb: '236,72,153',
-    tags: ['Joie', 'Créativité', 'Lumière'],
-  },
+const CAVA_PIECES = [
+  { img: 'cava/shoot-mains.png',       phrase: 'Moins de jugements,\nplus de mains tendues.' },
+  { img: 'cava/shoot-respire.png',     phrase: 'Respire,\nc\'est résister.' },
+  { img: 'cava/shoot-regard.png',      phrase: 'Un regard, un geste,\nune parole, peuvent sauver.' },
+  { img: 'cava/shoot-citron.png',      phrase: 'À force d\'être pressé,\nj\'ai perdu le goût.' },
+  { img: 'cava/shoot-multiplicite.png',phrase: 'La multiplicité\nest une nécessité.' },
+  { img: 'cava/shoot-dos.jpg',         phrase: 'Ce que tu portes\nparle pour toi.' },
 ]
 
 function BoutiqueScreen({ archetypeKey }) {
+  const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
-  const [expandedKey, setExpandedKey] = useState(null)
-  const [ctaToast, setCtaToast] = useState(false)
+  const [activeIdx, setActiveIdx] = useState(null)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
 
-  const myCollection = CA_VA_COLLECTIONS.find(c => c.key === archetypeKey)
-  const otherCollections = CA_VA_COLLECTIONS.filter(c => c.key !== archetypeKey)
-  const arch = ARCHETYPES[archetypeKey]
-
-  const handleDiscover = () => {
-    haptic([10, 30, 10])
-    setCtaToast(true)
-    setTimeout(() => setCtaToast(false), 2600)
+  const openShop = () => {
+    haptic([10, 40, 10])
+    window.open('https://cava-brand.com', '_blank', 'noopener')
   }
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 20, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease' }}>
+    <div style={{ flex: 1, overflowY: 'auto', padding: '0 0 100px', display: 'flex', flexDirection: 'column', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
 
-      {ctaToast && (
-        <div style={{ position: 'fixed', top: 18, left: '50%', transform: 'translateX(-50%)', background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '8px 20px', zIndex: 200, animation: 'fadeIn 0.5s ease both', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', pointerEvents: 'none', whiteSpace: 'nowrap' }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.14em', margin: 0, animation: 'milestoneGlow 3.2s ease-in-out infinite' }}>✦ Bientôt disponible</p>
+      {/* ── Hero ── */}
+      <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', overflow: 'hidden', flexShrink: 0 }}>
+        <img src={`${B}cava/shoot-vraiçava.png`} alt="ÇA VA?" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.18) 0%, rgba(5,8,16,0.0) 40%, rgba(5,8,16,0.72) 100%)' }} />
+        <div style={{ position: 'absolute', bottom: 28, left: 22, right: 22 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}`, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 8px', animation: 'phrasebreathe 22s ease-in-out infinite', textShadow: `0 0 18px ${arch.color}88` }}>LA MARQUE</p>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 42, color: 'white', margin: '0 0 10px', letterSpacing: '0.08em', lineHeight: 1, textShadow: '0 2px 40px rgba(0,0,0,0.6)' }}>ÇA VA?</h1>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.55, textShadow: '0 1px 20px rgba(0,0,0,0.5)', maxWidth: 260 }}>Des vêtements qui posent<br />la vraie question.</p>
         </div>
-      )}
-
-      <div style={{ textAlign: 'center', marginBottom: 4, position: 'relative' }}>
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 200, height: 80, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 7s ease-in-out infinite, milestoneGlow 14s ease-in-out 4s infinite' }} />
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 280, height: 120, borderRadius: '50%', background: `radial-gradient(ellipse at center, ${arch.color}06 0%, transparent 60%)`, pointerEvents: 'none', animation: 'presencePulse 11s ease-in-out 4s infinite, milestoneGlow 18s ease-in-out 10s infinite' }} />
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.32em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 30s ease-in-out infinite, milestoneGlow 14s ease-in-out 5s infinite', textShadow: `0 0 10px ${arch.color}22` }}>LA MARQUE</p>
-        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 28, color: 'white', margin: '0 0 6px', letterSpacing: '0.22em', textShadow: `0 2px 30px rgba(0,0,0,0.5), 0 0 60px ${arch.color}22`, animation: 'phrasebreathe 36s ease-in-out 1s infinite, milestoneGlow 10s ease-in-out 3s infinite' }}>ÇA VA?</h1>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.65, animation: 'solbreathe 18s ease-in-out infinite', textShadow: `0 0 14px ${arch.color}15` }}>
-          Des vêtements qui portent<br />ce que les mots ne disent pas.
-        </p>
       </div>
 
-      {myCollection && (
-        <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 18, border: `1px solid ${myCollection.color}55` }}>
-          <div style={{ position: 'absolute', top: '-5%', left: '-5%', right: '-5%', bottom: '-5%', backgroundImage: `url(${B}${myCollection.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'ob0breathe 38s ease-in-out infinite' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.30) 0%, rgba(5,8,16,0.82) 100%)' }} />
-          <div style={{ position: 'relative', zIndex: 1, padding: '22px 20px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, background: myCollection.color, color: '#050810', borderRadius: 100, padding: '3px 10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', animation: 'milestoneGlow 4s ease-in-out infinite', boxShadow: `0 0 14px ${myCollection.color}88, 0 0 28px ${myCollection.color}44` }}>Ta collection</span>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 58, height: 58 }}>
-                <div style={{ position: 'absolute', width: 78, height: 78, borderRadius: '50%', border: `1px solid ${myCollection.color}22`, animation: 'pulsering 6s ease-in-out infinite 1.5s', pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', inset: 0 }}>
-                  <PresenceRing progress={1} color={myCollection.color} size={58} />
-                </div>
-                <div style={{ opacity: 0.72, filter: `drop-shadow(0 0 12px ${myCollection.color}88)`, animation: 'animalbreathe 28s ease-in-out infinite, milestoneGlow 10s ease-in-out 4s infinite', position: 'relative', fontSize: 22, color: myCollection.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontFamily: 'Sora, sans-serif' }}>◈</span>
-                </div>
-              </div>
-            </div>
-            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.15, animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 9s ease-in-out 3s infinite', textShadow: `0 2px 30px rgba(0,0,0,0.4), 0 0 56px ${myCollection.color}33` }}>{myCollection.name}</h2>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, letterSpacing: '0.16em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 26s ease-in-out infinite, milestoneGlow 12s ease-in-out 4s infinite', textShadow: `0 0 10px ${myCollection.color}33` }}>{myCollection.subtitle}</p>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 32s ease-in-out infinite, milestoneGlow 14s ease-in-out 4s infinite', textShadow: `0 0 8px ${myCollection.color}18` }}>{myCollection.desc}</p>
-            <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
-              {myCollection.tags.map((tag, ti) => (
-                <span key={tag} style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: myCollection.color, border: `1px solid ${myCollection.color}44`, borderRadius: 100, padding: '3px 10px', letterSpacing: '0.08em', animation: vis ? `tabslideIn 0.3s ease ${0.2 + ti * 0.1}s both, phrasebreathe ${28 + ti * 6}s ease-in-out ${1 + ti * 0.8}s infinite, milestoneGlow ${10 + ti * 3}s ease-in-out ${3 + ti * 1.5}s infinite` : 'none', textShadow: `0 0 8px ${myCollection.color}33` }}>{tag}</span>
-              ))}
-            </div>
-            <button onClick={handleDiscover} style={{ marginTop: 4, width: '100%', padding: '15px 0', background: myCollection.color, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.22em', color: '#050810', textTransform: 'uppercase', boxShadow: `0 4px 24px rgba(${myCollection.rgb},0.40)`, animation: 'milestoneGlow 5s ease-in-out infinite' }}>
-              Découvrir la collection
-            </button>
+      {/* ── Manifeste ── */}
+      <div style={{ padding: '32px 24px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}44, transparent)`, animation: 'worldglow 12s ease-in-out infinite' }} />
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.92)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 34s ease-in-out infinite', textShadow: `0 0 30px ${arch.color}22` }}>
+          "Ça va ?" — on le dit tous les jours,<br />mais on attend rarement la vraie réponse.
+        </p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.48)', margin: 0, lineHeight: 1.75, animation: 'phrasebreathe 42s ease-in-out infinite' }}>
+          ÇA VA? est une marque de streetwear émotionnel. Chaque pièce porte une phrase, une question, une vérité qu'on n'ose pas toujours dire à voix haute. Porter ÇA VA?, c'est choisir l'authenticité.
+        </p>
+        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}22, transparent)`, animation: 'worldglow 16s ease-in-out 4s infinite' }} />
+      </div>
+
+      {/* ── Graphisme signature ── */}
+      <div style={{ padding: '28px 24px 0', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+        <img src={`${B}cava/graph-masque.png`} alt="" style={{ width: 90, height: 90, objectFit: 'contain', objectPosition: 'center', opacity: 0.88, flexShrink: 0, animation: 'animalfloat 22s ease-in-out infinite' }} />
+        <div style={{ flex: 1, paddingTop: 8 }}>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: arch.color, letterSpacing: '0.06em', margin: '0 0 6px', animation: 'phrasebreathe 26s ease-in-out infinite, milestoneGlow 10s ease-in-out 2s infinite', textShadow: `0 0 16px ${arch.color}66` }}>Et toi, ça va vraiment ?</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12.5, color: 'rgba(255,255,255,0.40)', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 38s ease-in-out 2s infinite' }}>La question derrière le vêtement. Celle qui change tout quand elle est sincère.</p>
+        </div>
+      </div>
+
+      {/* ── Grille pièces ── */}
+      <div style={{ padding: '28px 20px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}88`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: '0 0 4px', animation: 'phrasebreathe 22s ease-in-out infinite' }}>— Les pièces</p>
+
+        {/* Rangée 1 : grande + petite */}
+        <div style={{ display: 'flex', gap: 10, height: 280 }}>
+          <div onClick={() => setActiveIdx(activeIdx === 0 ? null : 0)} style={{ flex: 1.4, position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'pointer', border: activeIdx === 0 ? `1px solid ${arch.color}55` : '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.3s ease' }}>
+            <img src={`${B}${CAVA_PIECES[0].img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block', transition: 'transform 0.5s ease', transform: activeIdx === 0 ? 'scale(1.04)' : 'scale(1)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 45%, rgba(5,8,16,0.88) 100%)' }} />
+            <p style={{ position: 'absolute', bottom: 14, left: 14, right: 14, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12.5, color: 'white', margin: 0, lineHeight: 1.45, textShadow: '0 1px 12px rgba(0,0,0,0.7)', whiteSpace: 'pre-line' }}>{CAVA_PIECES[0].phrase}</p>
+          </div>
+          <div onClick={() => setActiveIdx(activeIdx === 1 ? null : 1)} style={{ flex: 1, position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'pointer', border: activeIdx === 1 ? `1px solid ${arch.color}55` : '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.3s ease' }}>
+            <img src={`${B}${CAVA_PIECES[1].img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', transition: 'transform 0.5s ease', transform: activeIdx === 1 ? 'scale(1.04)' : 'scale(1)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 40%, rgba(5,8,16,0.90) 100%)' }} />
+            <p style={{ position: 'absolute', bottom: 12, left: 12, right: 12, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 11.5, color: 'white', margin: 0, lineHeight: 1.4, textShadow: '0 1px 12px rgba(0,0,0,0.7)', whiteSpace: 'pre-line' }}>{CAVA_PIECES[1].phrase}</p>
           </div>
         </div>
-      )}
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', animation: 'worldglow 16s ease-in-out infinite, milestoneGlow 18s ease-in-out 5s infinite' }} />
-        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}66`, letterSpacing: '0.2em', textTransform: 'uppercase', animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 16s ease-in-out 6s infinite', textShadow: `0 0 10px ${arch.color}33` }}>Autres collections</span>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.07)', animation: 'worldglow 16s ease-in-out 4s infinite, milestoneGlow 18s ease-in-out 9s infinite' }} />
+        {/* Rangée 2 : pleine largeur */}
+        <div onClick={() => setActiveIdx(activeIdx === 2 ? null : 2)} style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', height: 200, cursor: 'pointer', border: activeIdx === 2 ? `1px solid ${arch.color}55` : '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.3s ease' }}>
+          <img src={`${B}${CAVA_PIECES[2].img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block', transition: 'transform 0.5s ease', transform: activeIdx === 2 ? 'scale(1.03)' : 'scale(1)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(5,8,16,0.0) 40%, rgba(5,8,16,0.80) 100%)' }} />
+          <p style={{ position: 'absolute', bottom: 20, right: 20, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: 'white', margin: 0, lineHeight: 1.5, textShadow: '0 1px 12px rgba(0,0,0,0.7)', textAlign: 'right', maxWidth: '55%', whiteSpace: 'pre-line' }}>{CAVA_PIECES[2].phrase}</p>
+        </div>
+
+        {/* Rangée 3 : deux égales */}
+        <div style={{ display: 'flex', gap: 10, height: 240 }}>
+          {[3, 4].map((idx) => (
+            <div key={idx} onClick={() => setActiveIdx(activeIdx === idx ? null : idx)} style={{ flex: 1, position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'pointer', border: activeIdx === idx ? `1px solid ${arch.color}55` : '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.3s ease' }}>
+              <img src={`${B}${CAVA_PIECES[idx].img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', transition: 'transform 0.5s ease', transform: activeIdx === idx ? 'scale(1.04)' : 'scale(1)' }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 40%, rgba(5,8,16,0.92) 100%)' }} />
+              <p style={{ position: 'absolute', bottom: 12, left: 12, right: 12, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 11, color: 'white', margin: 0, lineHeight: 1.4, textShadow: '0 1px 10px rgba(0,0,0,0.8)', whiteSpace: 'pre-line' }}>{CAVA_PIECES[idx].phrase}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {otherCollections.map((col, colIdx) => (
-        <div key={col.key} onClick={() => setExpandedKey(expandedKey === col.key ? null : col.key)} style={{ position: 'relative', overflow: 'hidden', borderRadius: 14, border: expandedKey === col.key ? `1px solid ${col.color}44` : '1px solid rgba(255,255,255,0.09)', cursor: 'pointer', animation: 'tabslideIn 0.3s ease-out both', animationDelay: `${colIdx * 80}ms`, boxShadow: expandedKey === col.key ? `0 0 22px rgba(${col.rgb},0.14), inset 0 0 0 1px ${col.color}18` : 'none', transition: 'border-color 0.4s ease, box-shadow 0.4s ease' }}>
-          <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${col.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.35 }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.65)' }} />
-          <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: expandedKey === col.key ? 12 : 6 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'white', margin: 0, animation: expandedKey === col.key ? 'phrasebreathe 30s ease-in-out infinite, milestoneGlow 10s ease-in-out 2s infinite' : 'phrasebreathe 30s ease-in-out infinite', textShadow: expandedKey === col.key ? `0 0 20px ${col.color}33` : `0 0 20px ${col.color}18` }}>{col.name}</h3>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: col.color, animation: expandedKey === col.key ? 'seedPulse 3.8s ease-in-out infinite, milestoneGlow 5s ease-in-out infinite' : 'seedPulse 3.8s ease-in-out infinite', textShadow: `0 0 8px ${col.color}66` }}>{expandedKey === col.key ? '▲' : '▼'}</span>
-            </div>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: col.color, letterSpacing: '0.14em', margin: 0, textTransform: 'uppercase', animation: expandedKey === col.key ? 'phrasebreathe 26s ease-in-out infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'phrasebreathe 26s ease-in-out infinite', textShadow: `0 0 8px ${col.color}33` }}>{col.subtitle}</p>
-            {expandedKey === col.key && (
-              <div style={{ animation: 'tabslideIn 0.25s ease-out both' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ opacity: 0.55, filter: `drop-shadow(0 0 10px ${col.color}66)`, animation: 'forcespring 0.5s ease both, animalbreathe 36s ease-in-out infinite', flexShrink: 0, width: 40, height: 40, borderRadius: '50%', background: `radial-gradient(circle, rgba(${col.rgb},0.22) 0%, transparent 70%)`, border: `1px solid rgba(${col.rgb},0.35)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: col.color }}>
-                    <span>◈</span>
-                  </div>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.70)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 38s ease-in-out infinite, milestoneGlow 12s ease-in-out 3s infinite', textShadow: `0 0 10px ${col.color}22` }}>{col.desc}</p>
-                </div>
-                <button onClick={(e) => { e.stopPropagation(); handleDiscover() }} style={{ width: '100%', marginTop: 12, padding: '13px 0', background: `rgba(${col.rgb},0.18)`, border: `1px solid ${col.color}55`, borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 400, letterSpacing: '0.2em', color: col.color, textTransform: 'uppercase', animation: 'milestoneGlow 4.8s ease-in-out infinite', textShadow: `0 0 12px ${col.color}55` }}>
-                  Découvrir
-                </button>
-              </div>
-            )}
+      {/* ── Citation + graphisme ── */}
+      <div style={{ padding: '32px 24px 0', display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          <img src={`${B}cava/graph-equilibre.png`} alt="" style={{ width: 72, height: 72, objectFit: 'contain', opacity: 0.80, flexShrink: 0, animation: 'animalfloat 28s ease-in-out 4s infinite' }} />
+          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${arch.color}33, transparent)`, animation: 'worldglow 14s ease-in-out infinite' }} />
+        </div>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 20, color: 'rgba(255,255,255,0.88)', margin: 0, lineHeight: 1.55, animation: 'phrasebreathe 40s ease-in-out infinite', textShadow: `0 0 40px ${arch.color}18` }}>
+          "Un vrai 'ça va'<br />peut tout changer."
+        </p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}88`, letterSpacing: '0.18em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 28s ease-in-out 1s infinite' }}>— ÇA VA? · Collection 2026</p>
+      </div>
+
+      {/* ── Photo couple ── */}
+      <div style={{ padding: '24px 20px 0' }}>
+        <div style={{ position: 'relative', borderRadius: 18, overflow: 'hidden', aspectRatio: '4/3', border: `1px solid ${arch.color}22` }}>
+          <img src={`${B}cava/shoot-couple.png`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, transparent 55%, rgba(5,8,16,0.85) 100%)` }} />
+          <div style={{ position: 'absolute', bottom: 20, left: 22, right: 22 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 5px', animation: 'phrasebreathe 24s ease-in-out infinite' }}>Unisexe · Capsule 2026</p>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.90)', margin: 0, lineHeight: 1.4 }}>Pour ceux qui portent leurs émotions à fleur de peau.</p>
           </div>
         </div>
-      ))}
+      </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 20s ease-in-out infinite, milestoneGlow 22s ease-in-out 8s infinite' }} />
-        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 7, color: `${arch.color}44`, letterSpacing: '0.3em', textTransform: 'uppercase', animation: 'seedPulse 4.5s ease-in-out infinite, milestoneGlow 12s ease-in-out 3s infinite', textShadow: `0 0 8px ${arch.color}33` }}>✦</span>
-        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 1, animation: 'worldglow 20s ease-in-out 10s infinite, milestoneGlow 22s ease-in-out 18s infinite' }} />
-      </div>
-      <div style={{ textAlign: 'center', marginTop: 4 }}>
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 10, color: `${arch.color}33`, letterSpacing: '0.18em', margin: '0 0 4px', textTransform: 'uppercase', animation: 'phrasebreathe 20s ease-in-out infinite, milestoneGlow 14s ease-in-out 6s infinite', textShadow: `0 0 10px ${arch.color}18` }}>ÇA VA? × NÉYA</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.12)', letterSpacing: '0.06em', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 28s ease-in-out infinite, milestoneGlow 16s ease-in-out 5s infinite', textShadow: `0 0 10px ${arch.color}15` }}>
-          {{ resilience: 'Chaque vêtement porte une flamme.', presence: 'Chaque vêtement porte ta présence.', sagesse: 'Chaque vêtement porte un silence.', lumiere: 'Chaque vêtement porte ta lumière.' }[archetypeKey] || 'Chaque vêtement porte une intention.'}
-        </p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.12em', margin: '6px 0 0', opacity: 0.4, animation: 'phrasebreathe 30s ease-in-out infinite, seedPulse 5s ease-in-out 2s infinite, milestoneGlow 16s ease-in-out 7s infinite', textShadow: `0 0 8px ${arch.color}22` }}>
-          Collection {myCollection?.name || 'bientôt'} · Lancement 2026
+      {/* ── CTA ── */}
+      <div style={{ padding: '32px 22px 0', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
+        <img src={`${B}cava/graph-visages.png`} alt="" style={{ width: 88, height: 88, objectFit: 'contain', opacity: 0.72, animation: 'animalfloat 20s ease-in-out 2s infinite' }} />
+        <button onClick={openShop} style={{ width: '100%', padding: '17px 0', background: `linear-gradient(135deg, ${arch.color}, ${arch.color}cc)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 13, fontWeight: 500, letterSpacing: '0.22em', color: '#050810', textTransform: 'uppercase', boxShadow: `0 6px 32px rgba(${arch.rgb},0.45), 0 0 0 1px ${arch.color}44`, animation: 'milestoneGlow 5s ease-in-out infinite' }}>
+          Découvrir ÇA VA?
+        </button>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.28)', margin: 0, textAlign: 'center', letterSpacing: '0.04em', lineHeight: 1.6 }}>
+          cava-brand.com
         </p>
       </div>
+
+      {/* ── Footer ── */}
+      <div style={{ padding: '28px 24px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}22, transparent)` }} />
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}44`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 30s ease-in-out infinite' }}>ÇA VA? × NÉYA · 2026</p>
+      </div>
+
     </div>
   )
 }
