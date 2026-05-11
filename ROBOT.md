@@ -93,11 +93,11 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 
 > Mettre à jour à chaque savepoint.
 
-**Date** : 2026-05-10
+**Date** : 2026-05-11
 **Branche** : `main`
-**Phase** : V2.7 — PersonalizationModal · CoconScreen items toggle · HomeScreen cocon ambiance
+**Phase** : V3.0 — Animaux-esprits images réelles · Nettoyage ghost/quiz
 
-### Features actives (`src/App.jsx`) — build 385.88 kB (98.86 kB gzip)
+### Features actives (`src/App.jsx`) — build 398.07 kB (101.95 kB gzip)
 
 **Splash :** 15 étoiles · tint overlay monde · texte retour contextuel (<4h/7j/≥7j) · whisper time-of-day · haptic [4]
 **Onboarding :** 3 écrans cinématiques · `ob0breathe` 42s bg · texte séquentiel · ENTRER bottom:14%
@@ -106,7 +106,7 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 **Audio :** Web Audio API · pluie/vent/feu/silence · ConvolverNode 2.2s 14% wet · ramp EspaceVrai 90s→0.008
 **WorldReveal :** cerf période monde-spécifique · phrase phrasebreathe après frappe · worldnamebreathe · cursor | frappe · haptic [2]→[4]
 **EspaceVrai :** ripple 2 cercles · PATIENCE_TEXTS@30s · flux dots 38% palette monde · h1/h2pulse · DEEP_TEXTS@90s · solbreathe · adieu time-aware · long-press → résumé rituel 4s · halo per-archetype
-**Animaux-esprits :** SpiritAnimal dispatcher (Phoenix/Wolf/Bear/Deer) · size 40 TransitionScreen / 210 PatronusReveal / 74 HomeScreen ring
+**Animaux-esprits :** SpiritAnimal SVG (Phoenix/Wolf/Bear/Deer) conservé pour TransitionScreen (72) · CoconScreen totem icon (28) · HomeScreen totem ambient (160, opacity 0.04) — toutes les autres occurrences remplacées par `<img src="${B}spirit-{archetype}.jpg">` circulaire : PatronusReveal (220) · CoconScreen central (200) · HomeScreen ring (74) · ReturningScreen (130) · ResultScreen phases 1+2 (60/34) · GrandVoyage (120)
 **Quiz :** ambient archétype tint · choiceripple 600ms · re-sélection pré-Continuer
 **Main App :** 4 tabs (Accueil/Routines/Quêtes/Boutique) · BoutiqueScreen collection + accordion + CTA cava-brand.com
 **Transitions :** animalfloat/animalbreathe · tabslideIn 220ms · forcespring stagger · blackout 380ms teinté · grain 0.038 · ringshimmer 8s · worldglow période monde-spécifique
@@ -149,6 +149,16 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - BreathingModal : exercice interactif par archétype — cercle morphique CSS transition, countdown, cycle counter, animal animé au centre · Techniques : Guerrier 4·4·4·4 / Ancrage 4·7·8 / Cohérence 5·5 / Créateur 4·8
 - HomeScreen : carte "Exercice de souffle" visible dans Accueil, déclenche BreathingModal
 - Fix critique : écran noir résolu — import React default + ErrorBoundary + animalbreathe opacity-only (commit b24f4a7)
+
+**V3.0 — Animaux-esprits images réelles · Nettoyage ghost/quiz (prod live, commit b118ba5) :**
+- 4 images de référence copiées dans `public/` : `spirit-resilience.jpg` · `spirit-presence.jpg` · `spirit-sagesse.jpg` · `spirit-lumiere.jpg`
+- Toutes les occurrences importantes : remplacement de `<SpiritAnimal>` SVG par `<img>` circulaire (objectFit cover, borderRadius 50%, drop-shadow archétype) — PatronusReveal · CoconScreen · HomeScreen ring · ReturningScreen · ResultScreen · GrandVoyage
+- Ghost/ambient supprimés : SplashScreen · IntroScreen · QuizIntro · EspaceVrai backdrop + guide · MainApp ghost bottom-right · Boutique collection ring + accordion
+- WorldUnlockModal + WorldCard header : remplacés par orbe lumineux + emoji monde (◈ / 🌫/🔥/🌿/💧/✨/🌀)
+- BreathingModal center : remplacé par SVG breath wave (circle + courbe sinusoïdale)
+- HomeScreen breathing card icon : breath wave SVG · cocon card icon : cristal hexagone SVG
+- Boutique accordion expanded + collection ring : remplacés par ◈ coloré archétype
+- Règle : animaux-esprits SVG uniquement pour TransitionScreen pre-révélation (72) · CoconScreen totem icon (28) · HomeScreen totem ambient fantôme (160, opacity 0.04)
 
 **V2.7 — PersonalizationModal · CoconScreen items toggle · HomeScreen cocon ambiance (prod live) :**
 - `PersonalizationModal` : prénom / mantra / nom du cocon — sauvegarde localStorage
