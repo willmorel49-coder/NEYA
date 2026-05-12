@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
+import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate } from './inner-world'
 import { tokens as T } from './design-tokens'
 
 const B = import.meta.env.BASE_URL
@@ -609,6 +610,7 @@ function loadProfile() {
 }
 function saveProfile(archetype) {
   localStorage.setItem('neya_profile', JSON.stringify({ archetype, savedAt: Date.now() }))
+  try { addSouvenir('archetype_revealed', { archetype }) } catch {}
 }
 function markTodayVisited() {
   localStorage.setItem(`neya_visited_${todayKey()}`, '1')
@@ -2399,7 +2401,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         )
       })()}
       {/* Close hint + button */}
-      <button onClick={(e) => { e.stopPropagation(); haptic(6); if (sessionQualified.current) { addEvraiFragment(archetypeKey); try { trackEspaceVraiQualified(18) } catch {} } onClose() }} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, width: 40, height: 40, color: 'rgba(255,255,255,0.72)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }} aria-label="Quitter l'espace">✕</button>
+      <button onClick={(e) => { e.stopPropagation(); haptic(6); if (sessionQualified.current) { addEvraiFragment(archetypeKey); try { trackEspaceVraiQualified(18); addSouvenir('first_espace_vrai') } catch {} } onClose() }} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, width: 40, height: 40, color: 'rgba(255,255,255,0.72)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }} aria-label="Quitter l'espace">✕</button>
       <div style={{ position: 'absolute', top: '-2.5%', left: '-2.5%', right: '-2.5%', bottom: '-2.5%', backgroundImage: `url(${B}bg-vrai.avif)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: `bgbreathe ${bgPeriod}s cubic-bezier(0.45,0,0.55,1) infinite` }} />
       {(() => { const vraiOverlay = `linear-gradient(to bottom, rgba(5,8,16,0.45) 0%, rgba(${arch.rgb},0.12) 50%, rgba(5,8,16,0.52) 100%)`; return <div style={{ position: 'absolute', inset: 0, background: vraiOverlay }} /> })()}
       {typingDone && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '28%', background: `linear-gradient(to top, rgba(${arch.rgb},0.08) 0%, transparent 100%)`, pointerEvents: 'none', zIndex: 2, animation: 'fadeIn 3s ease forwards, worldglow 16s ease-in-out 4s infinite' }} />}
@@ -2533,6 +2535,9 @@ function NeyaGirl({ size = 54, color = '#3b82f6' }) {
 function CoconScreen({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const [visible, setVisible] = useState(false)
+  const ambience = getTimeAmbience()
+  const vitality = getCoconVitality()
+  useEffect(() => { try { addSouvenir('first_cocon') } catch {} }, [])
   const coconName = (() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })()
 
   const streak = getCurrentStreak()
@@ -2557,7 +2562,10 @@ function CoconScreen({ archetypeKey, onClose }) {
     haptic([6, 40, 6])
     setPlaced(prev => {
       const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-      try { localStorage.setItem('neya_cocon_placed', JSON.stringify(next)) } catch {}
+      try {
+        localStorage.setItem('neya_cocon_placed', JSON.stringify(next))
+        if (next.includes(id) && !prev.includes(id)) addSouvenir(`item_${id}`)
+      } catch {}
       return next
     })
   }
@@ -2621,18 +2629,57 @@ function CoconScreen({ archetypeKey, onClose }) {
       <div style={{ position: 'absolute', top: '-2.5%', left: '-2.5%', right: '-2.5%', bottom: '-2.5%', backgroundImage: `url(${B}${arch.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', animation: 'bgbreathe 30s cubic-bezier(0.45,0,0.55,1) infinite' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.72)' }} />
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 40%, rgba(${arch.rgb},0.12) 0%, transparent 65%)`, pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: `linear-gradient(to top, rgba(${arch.rgb},0.07) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'depthBreath 16s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+      {/* Ambience temporelle — dawn/day/dusk/night */}
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% ${ambience.period === 'night' ? '70%' : '30%'}, ${ambience.primary} 0%, transparent 60%)`, pointerEvents: 'none', transition: 'background 1.8s cubic-bezier(0.45,0,0.55,1)' }} />
+      <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(${ambience.period === 'night' ? '180deg' : '0deg'}, ${ambience.secondary} 0%, transparent 55%)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: `linear-gradient(to top, rgba(${arch.rgb},${0.04 + vitality * 0.06}) 0%, transparent 100%)`, pointerEvents: 'none', animation: `depthBreath ${Math.round(16 / ambience.rhythm)}s cubic-bezier(0.45,0,0.55,1) infinite` }} />
+      {/* Vitalité — petites lueurs flottantes en plus si monde vivant */}
+      {vitality > 0.5 && (
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+          {[{x:12,y:22,r:1.6,dur:30,del:0},{x:84,y:28,r:1.2,dur:38,del:5.2},{x:22,y:72,r:2.0,dur:28,del:2.1},{x:78,y:68,r:1.4,dur:42,del:8.4},{x:50,y:88,r:1.6,dur:36,del:3.7},{x:90,y:50,r:1.4,dur:32,del:6.6}].map((m,i) => (
+            <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: ambience.particleOp + vitality * 0.04, animation: `splashmote ${Math.round(m.dur / ambience.rhythm)}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${m.del}s` }} />
+          ))}
+        </svg>
+      )}
       <GrainFilter />
 
       {/* Header semi-transparent */}
       <div style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 22px 16px', background: 'rgba(5,8,16,0.28)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderBottom: `1px solid rgba(${arch.rgb},0.12)` }}>
         <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '10px 20px', color: 'rgba(255,255,255,0.72)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', minHeight: 40 }} aria-label="Fermer le cocon">← Fermer</button>
-        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.72)', letterSpacing: '0.14em', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>Mon Espace</span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', letterSpacing: '0.14em', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>Mon Espace</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.20em', textTransform: 'uppercase', textShadow: `0 0 10px ${arch.color}33`, animation: 'signaturePulse 22s cubic-bezier(0.45,0,0.55,1) infinite' }}>{{ dawn: "à l'aube", day: 'en pleine clarté', dusk: 'au crépuscule', night: 'sous la nuit' }[ambience.period]}</span>
+        </div>
         <div style={{ width: 72 }} />
       </div>
 
       {/* Contenu scrollable */}
-      <div style={{ position: 'relative', zIndex: 5, flex: 1, overflowY: 'auto', padding: '24px 22px 100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+      <div style={{ position: 'relative', zIndex: 5, flex: 1, overflowY: 'auto', scrollBehavior: 'smooth', padding: '24px 22px 100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+
+        {/* Ambience badge + Souvenirs ribbon */}
+        {(() => {
+          const souvenirs = getSouvenirs().slice(-6).reverse()
+          if (souvenirs.length === 0) return null
+          return (
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, animation: 'fadeIn 0.8s cubic-bezier(0,0,0.2,1) both' }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.30em', textTransform: 'uppercase', margin: 0, textShadow: `0 0 12px ${arch.color}44` }}>◈ Tes éclats</p>
+              <div style={{ display: 'flex', gap: 14, overflowX: 'auto', overflowY: 'visible', padding: '8px 4px 12px', maxWidth: '100%', justifyContent: souvenirs.length < 4 ? 'center' : 'flex-start', alignSelf: 'stretch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                {souvenirs.map((s, i) => {
+                  const def = SOUVENIR_LIBRARY[s.type] || { glyph: '✦', title: s.type, subtitle: '' }
+                  return (
+                    <div key={s.ts} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, minWidth: 84, animation: `chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) ${i * 70}ms both` }}>
+                      <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, rgba(${arch.rgb},0.04) 70%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 14px rgba(${arch.rgb},0.20), inset 0 0 8px rgba(${arch.rgb},0.10)`, animation: `signaturePulse ${10 + i * 2}s cubic-bezier(0.45,0,0.55,1) ${i * 1.2}s infinite` }}>
+                        <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, color: arch.color, lineHeight: 1, textShadow: `0 0 8px ${arch.color}88` }}>{def.glyph}</span>
+                      </div>
+                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, fontWeight: 300, color: 'rgba(255,255,255,0.75)', textAlign: 'center', margin: 0, lineHeight: 1.3, letterSpacing: '0.02em', maxWidth: 84, textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>{def.title}</p>
+                      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 8.5, color: `${arch.color}aa`, margin: 0, letterSpacing: '0.06em' }}>{formatSouvenirDate(s.ts)}</p>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })()}
 
         {/* Spirit Animal géant flottant */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 8 }}>
@@ -2655,7 +2702,7 @@ function CoconScreen({ archetypeKey, onClose }) {
 
         {/* NeyaGirl + titre */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-          <div style={{ animation: 'animalfloat 22s ease-in-out 3s infinite', opacity: 0.85 }}>
+          <div style={{ animation: `animalfloat ${Math.round(22 / ambience.rhythm)}s cubic-bezier(0.45,0,0.55,1) ${3 + (1 - vitality) * 2}s infinite, animalbreathe ${Math.round(28 / Math.max(0.5, vitality))}s cubic-bezier(0.45,0,0.55,1) infinite`, opacity: 0.7 + vitality * 0.25 }}>
             <NeyaGirl size={54} color="#3b82f6" />
           </div>
           <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, margin: 0, letterSpacing: '0.02em', textAlign: 'center', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 10s ease-in-out 3s infinite', background: `linear-gradient(135deg, ${arch.color}, rgba(255,255,255,0.92) 55%, ${arch.color}bb)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{coconName || 'Mon Cocon Néya'}</p>
@@ -3244,6 +3291,8 @@ function BreathingModal({ archetypeKey, onClose }) {
         const durS = Math.max(0, Math.round(((lastSession.ts ? Date.now() - lastSession.ts : 0)) / 1000))
         trackBreathComplete(archetypeKey, durS, moodStart, moodEnd)
       }
+      addSouvenir('first_breath')
+      if (moodEnd > moodStart) addSouvenir('first_mood_lift', { delta: moodEnd - moodStart })
     } catch {}
     onClose()
   }
@@ -3916,6 +3965,24 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.30)', marginTop: 3 }}>
             Ton sanctuaire personnel · Objets à débloquer
           </div>
+          {/* Souvenirs hint : 3 derniers éclats en mini */}
+          {(() => {
+            const souvenirs = getSouvenirs().slice(-3).reverse()
+            if (souvenirs.length === 0) return null
+            return (
+              <div style={{ display: 'flex', gap: 6, marginTop: 8, alignItems: 'center' }}>
+                {souvenirs.map((s, i) => {
+                  const def = SOUVENIR_LIBRARY[s.type] || { glyph: '✦' }
+                  return (
+                    <div key={s.ts} style={{ width: 18, height: 18, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.40)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 6px rgba(${arch.rgb},0.25)`, animation: `signaturePulse ${8 + i * 2}s cubic-bezier(0.45,0,0.55,1) ${i * 0.8}s infinite` }}>
+                      <span style={{ fontSize: 10, color: arch.color, lineHeight: 1, textShadow: `0 0 4px ${arch.color}` }}>{def.glyph}</span>
+                    </div>
+                  )
+                })}
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', marginLeft: 4, fontStyle: 'italic' }}>tes éclats</span>
+              </div>
+            )
+          })()}
         </div>
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 16, color: arch.color,
           letterSpacing: '0.08em', flexShrink: 0, animation: 'phrasebreathe 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>→</div>
@@ -4827,7 +4894,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
     setRoutinesDone(next); saveRoutines(next)
     if (!routinesDone[i]) {
       addXP(15)
-      try { trackRoutineComplete(i) } catch {}
+      try { trackRoutineComplete(i); addSouvenir('first_routine') } catch {}
       const allNowDone = next.every(Boolean)
       showXpToast(15, allNowDone)
       if (allNowDone) {
@@ -4840,6 +4907,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
             if (milestone) {
               setMilestoneCount(milestone)
               haptic([40, 80, 40, 80, 60])
+              try { addSouvenir(`milestone_${milestone}`) } catch {}
               setTimeout(() => setMilestoneCount(null), 3600)
             }
           } catch {}
@@ -4852,7 +4920,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
     const next = [...quetesDone]; next[i] = true
     setQuetesDone(next); saveQuetes(archetypeKey, next)
     addXP(30)
-    try { trackQueteComplete(i) } catch {}
+    try { trackQueteComplete(i); addSouvenir('first_quete') } catch {}
     showXpToast(30, false)
   }
 
@@ -4891,7 +4959,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
           {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>
         <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ routines: routinesDone.filter(Boolean).length < arch.routines.length, quetes: quetesDone.filter(Boolean).length < arch.quetes.length }} />
-        {pendingWorldUnlock && <WorldUnlockModal worldKey={pendingWorldUnlock} onClose={() => { setPendingWorldUnlock(null); changeTab('voyage') }} />}
+        {pendingWorldUnlock && <WorldUnlockModal worldKey={pendingWorldUnlock} onClose={() => { try { addSouvenir('world_unlock', { world: pendingWorldUnlock }) } catch {} ; setPendingWorldUnlock(null); changeTab('voyage') }} />}
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
         {milestoneCount && <MilestoneCelebration count={milestoneCount} archetypeKey={archetypeKey} />}
         {xpToast && (
@@ -5083,7 +5151,7 @@ export default function App() {
     try {
       const firstKey = 'neya_first_seen'
       const isFirst = !localStorage.getItem(firstKey)
-      if (isFirst) localStorage.setItem(firstKey, String(Date.now()))
+      if (isFirst) { localStorage.setItem(firstKey, String(Date.now())); addSouvenir('first_visit') }
       trackAppOpen(isFirst)
     } catch {}
     try { registerSW({ immediate: true }) } catch {}

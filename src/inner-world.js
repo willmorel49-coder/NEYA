@@ -1,0 +1,156 @@
+// NÉYA — Inner World System
+// Système d'attachement émotionnel : souvenirs, ambiance temporelle, vitalité.
+// Tout en localStorage — aucun backend.
+
+// ─── Ambiance temporelle ──────────────────────────────────────
+//
+// Le cocon respire selon l'heure. 4 périodes douces (dawn/morning/dusk/night).
+// Retourne une palette + intensité particules + rythme.
+
+export function getTimeAmbience() {
+  const h = new Date().getHours()
+  let period, primary, secondary, particleOp, rhythm
+  if (h >= 5 && h < 9) {
+    period = 'dawn'
+    primary = 'rgba(245,180,140,0.10)'   // aube — orange pêche très doux
+    secondary = 'rgba(255,210,170,0.06)'
+    particleOp = 0.10
+    rhythm = 0.92                          // animations légèrement plus lentes (apaisé)
+  } else if (h >= 9 && h < 17) {
+    period = 'day'
+    primary = 'rgba(255,255,255,0.06)'    // jour — lumière claire
+    secondary = 'rgba(220,230,255,0.04)'
+    particleOp = 0.08
+    rhythm = 1.0
+  } else if (h >= 17 && h < 21) {
+    period = 'dusk'
+    primary = 'rgba(236,120,180,0.10)'    // crépuscule — magenta doux
+    secondary = 'rgba(245,160,120,0.06)'
+    particleOp = 0.12
+    rhythm = 0.96
+  } else {
+    period = 'night'
+    primary = 'rgba(99,102,241,0.10)'     // nuit — indigo profond
+    secondary = 'rgba(60,70,140,0.06)'
+    particleOp = 0.14
+    rhythm = 0.88                          // animations plus lentes (apaisement)
+  }
+  return { period, primary, secondary, particleOp, rhythm }
+}
+
+export const TIME_LABELS = {
+  dawn:    'À l\'aube',
+  day:     'En pleine clarté',
+  dusk:    'Au crépuscule',
+  night:   'Sous la nuit',
+}
+
+// ─── Vitalité du monde ────────────────────────────────────────
+//
+// 0 à 1, basée sur l'activité récente.
+// L'idée : si l'utilisateur respire, agit, fait son rituel — le monde a plus d'énergie.
+// S'il n'est pas venu depuis 4 jours — le monde devient plus calme.
+
+export function getCoconVitality() {
+  try {
+    // Composante 1 : sessions de breath récentes (7 derniers jours)
+    const sessions = JSON.parse(localStorage.getItem('neya_breath_sessions') || '[]')
+    const weekAgo = Date.now() - 7 * 86400000
+    const recentBreath = sessions.filter(s => s && s.ts && s.ts > weekAgo).length
+    const breathScore = Math.min(1, recentBreath / 6)  // 6 sessions/sem = max
+
+    // Composante 2 : jours actifs récents (7 derniers jours)
+    let activeDays = 0
+    const today = new Date()
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today); d.setDate(d.getDate() - i)
+      const key = `neya_routines_${d.toISOString().split('T')[0]}`
+      try {
+        if (JSON.parse(localStorage.getItem(key) || '[]').some(Boolean)) activeDays++
+      } catch {}
+    }
+    const activeScore = activeDays / 7
+
+    // Composante 3 : mood delta moyen sur les sessions
+    const recent = sessions.slice(-10).filter(s => typeof s.moodEnd === 'number' && typeof s.moodStart === 'number')
+    const avgDelta = recent.length > 0
+      ? recent.reduce((sum, s) => sum + (s.moodEnd - s.moodStart), 0) / recent.length
+      : 0
+    const moodScore = Math.max(0, Math.min(1, (avgDelta + 2) / 6))  // -2 → 0, +4 → 1
+
+    // Pondération
+    return Math.max(0, Math.min(1,
+      breathScore * 0.35 +
+      activeScore * 0.45 +
+      moodScore   * 0.20
+    ))
+  } catch {
+    return 0.4   // valeur médiane par défaut
+  }
+}
+
+// ─── Souvenirs — collectibles émotionnels ─────────────────────
+//
+// Pas des achievements à compter. Des moments à conserver.
+// Stockés en localStorage : { ts, type, payload? }
+// Maximum 30 (rotation). Premier ajout d'un type = c'est lui qu'on garde.
+
+const SOUVENIRS_KEY = 'neya_souvenirs'
+
+// Bibliothèque de souvenirs nameables.
+// Chaque entrée : un titre poétique + un glyph.
+export const SOUVENIR_LIBRARY = {
+  first_visit:        { glyph: '◈', title: 'Première venue',           subtitle: 'Tu as poussé la porte.' },
+  first_cocon:        { glyph: '◎', title: 'Ton premier cocon',         subtitle: "L'espace t'a accueilli·e." },
+  first_breath:       { glyph: '◇', title: 'Ton premier souffle',       subtitle: 'Une respiration intentionnelle.' },
+  first_mood_lift:    { glyph: '✦', title: 'Premier mieux-être',        subtitle: 'Le souffle a allégé quelque chose.' },
+  first_routine:      { glyph: '◊', title: 'Première routine',          subtitle: 'Un geste posé pour toi.' },
+  first_quete:        { glyph: '✧', title: 'Première quête',            subtitle: 'Tu es allé·e plus loin.' },
+  first_espace_vrai:  { glyph: '◯', title: 'Premier Espace Vrai',       subtitle: 'Tu es resté·e dans la présence.' },
+  milestone_3:        { glyph: '✦', title: '3 jours d\'affilée',         subtitle: 'Une constance naissante.' },
+  milestone_7:        { glyph: '✦', title: 'Une semaine entière',       subtitle: 'Un rythme prend forme.' },
+  milestone_14:       { glyph: '✦', title: 'Deux semaines',              subtitle: 'C\'est devenu naturel.' },
+  milestone_30:       { glyph: '✦', title: 'Un mois complet',            subtitle: 'Tu as construit quelque chose.' },
+  milestone_60:       { glyph: '✦', title: 'Deux mois',                  subtitle: 'Phénoménal.' },
+  milestone_100:      { glyph: '✦', title: '100 jours',                  subtitle: 'Ta lumière brûle constamment.' },
+  item_bougie:        { glyph: '⊙', title: 'La Bougie t\'a rejoint·e',   subtitle: 'Flamme intérieure placée.' },
+  item_cristal:       { glyph: '⟁', title: 'Le Cristal s\'est allumé',   subtitle: 'Clarté ancrée.' },
+  item_plante:        { glyph: '⚘', title: 'La Plante a poussé',         subtitle: 'Quelque chose grandit.' },
+  item_totem:         { glyph: '◈', title: 'Ton Totem veille',           subtitle: 'L\'animal-esprit est là.' },
+  item_portail:       { glyph: '◉', title: 'Le Portail s\'est ouvert',   subtitle: 'Vers ce qui vient.' },
+  world_unlock:       { glyph: '◌', title: 'Un nouveau monde',           subtitle: 'Ton univers s\'élargit.' },
+  archetype_revealed: { glyph: '◈', title: 'Ton archétype révélé',      subtitle: '' },
+}
+
+export function getSouvenirs() {
+  try { return JSON.parse(localStorage.getItem(SOUVENIRS_KEY) || '[]') }
+  catch { return [] }
+}
+
+export function addSouvenir(type, payload = {}) {
+  if (!SOUVENIR_LIBRARY[type]) return null
+  try {
+    const list = getSouvenirs()
+    // Anti-doublon par type pour les "premières"
+    if (type.startsWith('first_') && list.some(s => s.type === type)) return null
+    if (type.startsWith('milestone_') && list.some(s => s.type === type)) return null
+    if (type.startsWith('item_') && list.some(s => s.type === type)) return null
+    if (type === 'archetype_revealed' && list.some(s => s.type === type)) return null
+
+    const entry = { ts: Date.now(), type, ...payload }
+    const next = [...list, entry].slice(-30)  // garde 30 plus récents
+    localStorage.setItem(SOUVENIRS_KEY, JSON.stringify(next))
+    return entry
+  } catch { return null }
+}
+
+export function formatSouvenirDate(ts) {
+  try {
+    const d = new Date(ts)
+    const months = ['janv.', 'févr.', 'mars', 'avril', 'mai', 'juin',
+                    'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.']
+    return `${d.getDate()} ${months[d.getMonth()]}`
+  } catch { return '' }
+}
+
+export default { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, TIME_LABELS, formatSouvenirDate }
