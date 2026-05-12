@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
-import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate } from './inner-world'
+import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat } from './inner-world'
 import { tokens as T } from './design-tokens'
 
 const B = import.meta.env.BASE_URL
@@ -2532,12 +2532,88 @@ function NeyaGirl({ size = 54, color = '#3b82f6' }) {
 
 // ─── COCON SCREEN ─────────────────────────────────────────────────────────────
 
+function SouvenirDetailModal({ souvenir, archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const def = SOUVENIR_LIBRARY[souvenir.type] || { glyph: '✦', title: 'Un éclat', subtitle: '' }
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const dateLong = (() => {
+    try {
+      const d = new Date(souvenir.ts)
+      const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre']
+      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`
+    } catch { return '' }
+  })()
+  const timeOfDay = (() => {
+    try {
+      const h = new Date(souvenir.ts).getHours()
+      if (h >= 5 && h < 9)  return "à l'aube"
+      if (h >= 9 && h < 17) return 'en pleine clarté'
+      if (h >= 17 && h < 21) return 'au crépuscule'
+      return 'sous la nuit'
+    } catch { return '' }
+  })()
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 38%, rgba(${arch.rgb},0.18) 0%, transparent 60%)`, pointerEvents: 'none' }} />
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        {[{x:14,y:22,r:1.6,d:0},{x:82,y:30,r:1.4,d:3.2},{x:24,y:76,r:1.8,d:1.4},{x:78,y:70,r:1.2,d:6.4},{x:52,y:18,r:1.6,d:2.8}].map((m,i) => (
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.18, animation: `splashmote ${24 + i * 3}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${m.d}s` }} />
+        ))}
+      </svg>
+
+      <button data-press="true" onClick={close} aria-label="Fermer l'éclat" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 32px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 28, minHeight: '100%', justifyContent: 'center', textAlign: 'center' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: 0, animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Un éclat</p>
+
+        {/* Glyph central avec halo */}
+        <div style={{ position: 'relative', width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'cardLiftDone 600ms cubic-bezier(0.34,1.56,0.64,1) both' }}>
+          <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.30) 0%, transparent 65%)`, animation: 'presencePulse 4.5s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+          <div style={{ position: 'absolute', width: 120, height: 120, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.55)`, animation: 'pulsering 5.2s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+          <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 64, fontWeight: 200, color: arch.color, lineHeight: 1, textShadow: `0 0 32px ${arch.color}88, 0 0 64px ${arch.color}44` }}>{def.glyph}</span>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 320 }}>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 26, color: 'white', margin: 0, lineHeight: 1.22, letterSpacing: '-0.01em', textShadow: `0 0 28px ${arch.color}33` }}>{def.title}</h2>
+          {def.subtitle && <p style={{ fontFamily: 'Inter, sans-serif', fontStyle: 'italic', fontSize: 14.5, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.65 }}>« {def.subtitle} »</p>}
+        </div>
+
+        <div style={{ height: 1, width: 32, background: `${arch.color}88`, borderRadius: 1 }} />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.62)', margin: 0, letterSpacing: '0.05em' }}>{dateLong}</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `${arch.color}cc`, margin: 0, letterSpacing: '0.18em', textTransform: 'uppercase' }}>{timeOfDay}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function CoconScreen({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const [visible, setVisible] = useState(false)
   const ambience = getTimeAmbience()
   const vitality = getCoconVitality()
-  useEffect(() => { try { addSouvenir('first_cocon') } catch {} }, [])
+  useEffect(() => {
+    try { addSouvenir('first_cocon') } catch {}
+    try {
+      const astro = checkAstroEclat()
+      if (astro) addSouvenir(astro)
+    } catch {}
+    try {
+      const v = getVisitor(ambience.period, vitality)
+      if (v) {
+        setShowVisitor(v)
+        const sKey = v === 'shooting_star' ? 'visitor_shooting' : 'visitor_butterfly'
+        addSouvenir(sKey)
+        setTimeout(() => setShowVisitor(null), 6400)
+      }
+    } catch {}
+  }, [])
   const coconName = (() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })()
 
   const streak = getCurrentStreak()
@@ -2556,6 +2632,12 @@ function CoconScreen({ archetypeKey, onClose }) {
   const [placed, setPlaced] = useState(() => {
     try { return JSON.parse(localStorage.getItem('neya_cocon_placed') || '[]') } catch { return [] }
   })
+  const [selectedSouvenir, setSelectedSouvenir] = useState(null)
+  const [coconNameLocal, setCoconNameLocal] = useState(coconName)
+  const [editingName, setEditingName] = useState(false)
+  const [showVisitor, setShowVisitor] = useState(null)
+  const season = getSeason()
+  const meteo = getMeteo(vitality)
 
   const togglePlaced = (id, isUnlocked) => {
     if (!isUnlocked) return
@@ -2632,6 +2714,23 @@ function CoconScreen({ archetypeKey, onClose }) {
       {/* Ambience temporelle — dawn/day/dusk/night */}
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% ${ambience.period === 'night' ? '70%' : '30%'}, ${ambience.primary} 0%, transparent 60%)`, pointerEvents: 'none', transition: 'background 1.8s cubic-bezier(0.45,0,0.55,1)' }} />
       <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(${ambience.period === 'night' ? '180deg' : '0deg'}, ${ambience.secondary} 0%, transparent 55%)`, pointerEvents: 'none' }} />
+      {/* Saison — tint additionnel doux */}
+      <div style={{ position: 'absolute', inset: 0, background: season.tint, pointerEvents: 'none', mixBlendMode: 'overlay' }} />
+      {/* Météo intérieure : brume si basse vitalité, lueurs si haute */}
+      {meteo.key === 'brume' && (
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+          {[{y:'18%',h:60,dur:32,del:0},{y:'42%',h:48,dur:38,del:8},{y:'68%',h:72,dur:28,del:14},{y:'82%',h:44,dur:34,del:5}].map((m,i) => (
+            <div key={i} style={{ position: 'absolute', left: '-10%', right: '-10%', top: m.y, height: m.h, background: 'linear-gradient(90deg, transparent, rgba(170,180,210,0.08), rgba(140,150,200,0.05), transparent)', borderRadius: 60, animation: `mistDrift ${m.dur}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${m.del}s` }} />
+          ))}
+        </div>
+      )}
+      {meteo.key === 'lueurs' && (
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+          {[{x:8,y:16,r:1.2,dur:14,del:0},{x:92,y:22,r:1.0,dur:18,del:3},{x:18,y:74,r:1.4,dur:12,del:7},{x:82,y:68,r:1.0,dur:16,del:2},{x:50,y:50,r:1.6,dur:11,del:5},{x:28,y:38,r:0.8,dur:22,del:9},{x:72,y:42,r:1.0,dur:17,del:11}].map((s,i) => (
+            <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill={arch.color} style={{ opacity: 0.40 + meteo.intensity * 0.20, animation: `seedPulse ${s.dur}s cubic-bezier(0.45,0,0.55,1) infinite, animalfloat ${s.dur * 2}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${s.del}s`, filter: `drop-shadow(0 0 ${4 + meteo.intensity * 4}px ${arch.color})` }} />
+          ))}
+        </svg>
+      )}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: `linear-gradient(to top, rgba(${arch.rgb},${0.04 + vitality * 0.06}) 0%, transparent 100%)`, pointerEvents: 'none', animation: `depthBreath ${Math.round(16 / ambience.rhythm)}s cubic-bezier(0.45,0,0.55,1) infinite` }} />
       {/* Vitalité — petites lueurs flottantes en plus si monde vivant */}
       {vitality > 0.5 && (
@@ -2648,7 +2747,7 @@ function CoconScreen({ archetypeKey, onClose }) {
         <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '10px 20px', color: 'rgba(255,255,255,0.72)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', minHeight: 40 }} aria-label="Fermer le cocon">← Fermer</button>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
           <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.78)', letterSpacing: '0.14em', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>Mon Espace</span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.20em', textTransform: 'uppercase', textShadow: `0 0 10px ${arch.color}33`, animation: 'signaturePulse 22s cubic-bezier(0.45,0,0.55,1) infinite' }}>{{ dawn: "à l'aube", day: 'en pleine clarté', dusk: 'au crépuscule', night: 'sous la nuit' }[ambience.period]}</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.20em', textTransform: 'uppercase', textShadow: `0 0 10px ${arch.color}33`, animation: 'signaturePulse 22s cubic-bezier(0.45,0,0.55,1) infinite' }}>{{ dawn: "à l'aube", day: 'en pleine clarté', dusk: 'au crépuscule', night: 'sous la nuit' }[ambience.period]} · {season.label} · {meteo.label}</span>
         </div>
         <div style={{ width: 72 }} />
       </div>
@@ -2667,7 +2766,7 @@ function CoconScreen({ archetypeKey, onClose }) {
                 {souvenirs.map((s, i) => {
                   const def = SOUVENIR_LIBRARY[s.type] || { glyph: '✦', title: s.type, subtitle: '' }
                   return (
-                    <div key={s.ts} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, minWidth: 84, animation: `chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) ${i * 70}ms both` }}>
+                    <div key={s.ts} onClick={() => { haptic(6); setSelectedSouvenir(s) }} role="button" tabIndex={0} aria-label={`Voir l'éclat ${def.title}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, minWidth: 84, animation: `chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) ${i * 70}ms both`, cursor: 'pointer' }}>
                       <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, rgba(${arch.rgb},0.04) 70%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 14px rgba(${arch.rgb},0.20), inset 0 0 8px rgba(${arch.rgb},0.10)`, animation: `signaturePulse ${10 + i * 2}s cubic-bezier(0.45,0,0.55,1) ${i * 1.2}s infinite` }}>
                         <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, color: arch.color, lineHeight: 1, textShadow: `0 0 8px ${arch.color}88` }}>{def.glyph}</span>
                       </div>
@@ -2705,7 +2804,22 @@ function CoconScreen({ archetypeKey, onClose }) {
           <div style={{ animation: `animalfloat ${Math.round(22 / ambience.rhythm)}s cubic-bezier(0.45,0,0.55,1) ${3 + (1 - vitality) * 2}s infinite, animalbreathe ${Math.round(28 / Math.max(0.5, vitality))}s cubic-bezier(0.45,0,0.55,1) infinite`, opacity: 0.7 + vitality * 0.25 }}>
             <NeyaGirl size={54} color="#3b82f6" />
           </div>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, margin: 0, letterSpacing: '0.02em', textAlign: 'center', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 10s ease-in-out 3s infinite', background: `linear-gradient(135deg, ${arch.color}, rgba(255,255,255,0.92) 55%, ${arch.color}bb)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{coconName || 'Mon Cocon Néya'}</p>
+          {editingName ? (
+            <input
+              autoFocus
+              value={coconNameLocal}
+              onChange={(e) => setCoconNameLocal(e.target.value.slice(0, 40))}
+              onBlur={() => { try { coconNameLocal.trim() ? localStorage.setItem('neya_cocon_name', coconNameLocal.trim()) : localStorage.removeItem('neya_cocon_name') } catch {} ; setEditingName(false) }}
+              onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+              placeholder="Mon Cocon Néya"
+              style={{ background: 'transparent', border: 'none', borderBottom: `1px solid ${arch.color}88`, outline: 'none', textAlign: 'center', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'white', letterSpacing: '0.02em', maxWidth: 240, padding: '2px 0', caretColor: arch.color }}
+            />
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, margin: 0, letterSpacing: '0.02em', textAlign: 'center', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 10s ease-in-out 3s infinite', background: `linear-gradient(135deg, ${arch.color}, rgba(255,255,255,0.92) 55%, ${arch.color}bb)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{coconNameLocal || 'Mon Cocon Néya'}</p>
+              <button onClick={() => setEditingName(true)} aria-label="Renommer ton cocon" style={{ background: 'none', border: 'none', cursor: 'pointer', color: `${arch.color}88`, fontSize: 13, padding: 6, lineHeight: 1, minWidth: 32, minHeight: 32, animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>✎</button>
+            </div>
+          )}
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `rgba(${arch.rgb},0.65)`, margin: 0, letterSpacing: '0.08em', textAlign: 'center', fontStyle: 'italic', animation: 'phrasebreathe 30s cubic-bezier(0.45,0,0.55,1) infinite' }}>Ton sanctuaire se construit avec ta présence</p>
         </div>
 
@@ -2788,7 +2902,21 @@ function CoconScreen({ archetypeKey, onClose }) {
           })()}
         </div>
 
-        {/* Message poétique de fin */}
+        {selectedSouvenir && <SouvenirDetailModal souvenir={selectedSouvenir} archetypeKey={archetypeKey} onClose={() => setSelectedSouvenir(null)} />}
+      {showVisitor && (
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 6, animation: 'fadeIn 1.2s cubic-bezier(0.45,0,0.55,1) both' }}>
+          {showVisitor === 'shooting_star' ? (
+            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+              <line x1="-5%" y1="20%" x2="105%" y2="60%" stroke="white" strokeWidth="1.4" strokeLinecap="round" style={{ filter: `drop-shadow(0 0 8px ${arch.color}) drop-shadow(0 0 18px white)`, strokeDasharray: '180 9999', animation: 'shootingStar 5.6s cubic-bezier(0.22,1,0.36,1) forwards' }} />
+            </svg>
+          ) : (
+            <div style={{ position: 'absolute', top: '38%', left: '-10%', fontSize: 28, opacity: 0.75, filter: `drop-shadow(0 0 14px ${arch.color}88)`, animation: 'butterflyFlight 6.4s cubic-bezier(0.45,0,0.55,1) forwards' }}>⌒</div>
+          )}
+          <p style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 22%)', left: 0, right: 0, textAlign: 'center', fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.18em', textTransform: 'uppercase', textShadow: `0 0 14px ${arch.color}44`, animation: 'fadeIn 2s cubic-bezier(0.45,0,0.55,1) 1s both', margin: 0, fontStyle: 'italic' }}>{showVisitor === 'shooting_star' ? 'une étoile filante' : 'un papillon est passé'}</p>
+        </div>
+      )}
+
+      {/* Message poétique de fin */}
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: `rgba(${arch.rgb},0.40)`, letterSpacing: '0.06em', textAlign: 'center', lineHeight: 1.75, margin: '8px 0 0', fontStyle: 'italic', animation: 'phrasebreathe 36s cubic-bezier(0.45,0,0.55,1) infinite', maxWidth: 280 }}>
           Chaque jour que tu passes ici fait grandir ton sanctuaire.<br />Ta présence est la seule clé.
         </p>
@@ -5123,6 +5251,8 @@ export default function App() {
       @keyframes cardLiftDone  { 0%{transform:scale(1)} 38%{transform:scale(1.045) translateY(-2px)} 76%{transform:scale(0.992) translateY(0.5px)} 100%{transform:scale(1.018) translateY(0)} }
       @keyframes haloOnce      { 0%{box-shadow:0 0 0 0 rgba(255,255,255,0)} 38%{box-shadow:0 0 0 6px rgba(255,255,255,0.10)} 100%{box-shadow:0 0 0 14px rgba(255,255,255,0)} }
       @keyframes signaturePulse{ 0%,100%{opacity:0.88;transform:scale(1)} 50%{opacity:1;transform:scale(1.012)} }
+      @keyframes shootingStar  { 0%{opacity:0;stroke-dashoffset:200} 8%{opacity:1} 80%{opacity:1;stroke-dashoffset:-2200} 100%{opacity:0;stroke-dashoffset:-2400} }
+      @keyframes butterflyFlight { 0%{transform:translate(0,0) rotate(0deg);opacity:0} 10%{opacity:1} 25%{transform:translate(28vw,-12vh) rotate(8deg)} 50%{transform:translate(56vw,4vh) rotate(-6deg)} 75%{transform:translate(82vw,-8vh) rotate(10deg)} 100%{transform:translate(116vw,12vh) rotate(0deg);opacity:0} }
 
       /* Focus rings accessibles */
       *:focus-visible { outline: 2px solid rgba(255,255,255,0.62); outline-offset: 2px; border-radius: 6px; transition: outline-offset 140ms cubic-bezier(0.4,0,0.2,1); }

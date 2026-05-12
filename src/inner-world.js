@@ -45,6 +45,77 @@ export const TIME_LABELS = {
   night:   'Sous la nuit',
 }
 
+// ─── Saisonnalité ─────────────────────────────────────────────
+//
+// Le cocon s'imprègne de la saison du monde extérieur.
+
+export function getSeason() {
+  const m = new Date().getMonth() + 1
+  if (m >= 3 && m <= 5)  return { key: 'spring', label: 'au printemps', tint: 'rgba(160,220,180,0.05)' }
+  if (m >= 6 && m <= 8)  return { key: 'summer', label: 'en été',        tint: 'rgba(255,230,170,0.06)' }
+  if (m >= 9 && m <= 11) return { key: 'autumn', label: 'en automne',    tint: 'rgba(220,150,100,0.06)' }
+  return                       { key: 'winter', label: 'en hiver',       tint: 'rgba(170,200,240,0.06)' }
+}
+
+// ─── Météo intérieure ──────────────────────────────────────────
+//
+// Reflète l'énergie intérieure visuellement. 3 modes, déterminés par la vitalité.
+//   - vitalité < 0.30 : "brume" — particules très lentes, voile doux (le monde se repose)
+//   - vitalité 0.30-0.65 : "claire" — neutre, particules modérées
+//   - vitalité > 0.65 : "lueurs" — petites lumières flottantes additionnelles
+//
+// Pas culpabilisant : la brume n'est pas un échec — c'est le monde qui se met en pause.
+
+export function getMeteo(vitality) {
+  if (vitality < 0.30) return { key: 'brume',  label: 'se repose',  intensity: 1 - vitality }
+  if (vitality > 0.65) return { key: 'lueurs', label: 'rayonne',    intensity: (vitality - 0.65) / 0.35 }
+  return                     { key: 'claire', label: 'respire',    intensity: 0.5 }
+}
+
+// ─── Visiteurs paisibles ──────────────────────────────────────
+//
+// Le cocon est parfois traversé par une présence : étoile filante (nuit) ou papillon (jour).
+// Apparition rare, seed basé sur la date (1× chance/jour ~15% selon vitalité).
+
+export function getVisitor(period, vitality) {
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    const lastVisitKey = `neya_visitor_${today}`
+    const already = localStorage.getItem(lastVisitKey)
+    if (already === 'shown') return null
+
+    // Seed déterministe basé sur la date
+    const seed = today.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+    const roll = (seed * 9301 + 49297) % 233280 / 233280   // 0-1 deterministic
+    const chance = 0.12 + vitality * 0.20                    // 12% base, jusqu'à 32% si vitalité haute
+
+    if (roll < chance) {
+      const visitor = (period === 'night' || period === 'dusk') ? 'shooting_star' : 'butterfly'
+      localStorage.setItem(lastVisitKey, 'shown')
+      return visitor
+    }
+    return null
+  } catch { return null }
+}
+
+// ─── Solstice / Équinoxe — éclats astronomiques ──────────────
+//
+// Détecte les périodes solstice ±2 jours et offre un souvenir rare 1× / saison.
+
+export function checkAstroEclat() {
+  try {
+    const now = new Date()
+    const m = now.getMonth() + 1
+    const d = now.getDate()
+    let key = null
+    if (m === 6 && d >= 19 && d <= 23)        key = 'solstice_summer'
+    else if (m === 12 && d >= 19 && d <= 23)  key = 'solstice_winter'
+    else if (m === 3 && d >= 19 && d <= 23)   key = 'equinox_spring'
+    else if (m === 9 && d >= 20 && d <= 24)   key = 'equinox_autumn'
+    return key
+  } catch { return null }
+}
+
 // ─── Vitalité du monde ────────────────────────────────────────
 //
 // 0 à 1, basée sur l'activité récente.
@@ -120,6 +191,12 @@ export const SOUVENIR_LIBRARY = {
   item_portail:       { glyph: '◉', title: 'Le Portail s\'est ouvert',   subtitle: 'Vers ce qui vient.' },
   world_unlock:       { glyph: '◌', title: 'Un nouveau monde',           subtitle: 'Ton univers s\'élargit.' },
   archetype_revealed: { glyph: '◈', title: 'Ton archétype révélé',      subtitle: '' },
+  solstice_summer:    { glyph: '☀', title: 'Solstice d\'été',            subtitle: 'Le jour le plus long t\'a trouvé·e ici.' },
+  solstice_winter:    { glyph: '❄', title: 'Solstice d\'hiver',          subtitle: 'La nuit la plus longue, et toi en présence.' },
+  equinox_spring:     { glyph: '☽', title: 'Équinoxe de printemps',     subtitle: 'Le monde renaît, toi aussi.' },
+  equinox_autumn:     { glyph: '☾', title: 'Équinoxe d\'automne',       subtitle: 'Le temps de se déposer.' },
+  visitor_butterfly:  { glyph: '⌒', title: 'Un papillon est passé',     subtitle: 'Tu l\'as juste vu.' },
+  visitor_shooting:   { glyph: '⋆', title: 'Une étoile filante',        subtitle: 'Le ciel a brillé pour toi.' },
 }
 
 export function getSouvenirs() {
