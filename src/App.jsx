@@ -2558,7 +2558,7 @@ function SouvenirDetailModal({ souvenir, archetypeKey, onClose }) {
   })()
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 38%, rgba(${arch.rgb},0.18) 0%, transparent 60%)`, pointerEvents: 'none' }} />
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
         {[{x:14,y:22,r:1.6,d:0},{x:82,y:30,r:1.4,d:3.2},{x:24,y:76,r:1.8,d:1.4},{x:78,y:70,r:1.2,d:6.4},{x:52,y:18,r:1.6,d:2.8}].map((m,i) => (
@@ -2754,7 +2754,7 @@ function CoconScreen({ archetypeKey, onClose }) {
       </div>
 
       {/* Contenu scrollable */}
-      <div style={{ position: 'relative', zIndex: 5, flex: 1, overflowY: 'auto', scrollBehavior: 'smooth', padding: '24px 22px 100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+      <div style={{ position: 'relative', zIndex: 5, flex: 1, overflowY: 'auto', scrollBehavior: 'smooth', padding: '24px 22px calc(env(safe-area-inset-bottom, 0px) + 110px)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
 
         {/* Ambience badge + Souvenirs ribbon */}
         {(() => {
@@ -2828,12 +2828,12 @@ function CoconScreen({ archetypeKey, onClose }) {
         <div style={{ display: 'flex', gap: 24, justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: arch.color, textShadow: `0 0 18px ${arch.color}66`, animation: 'milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite' }}>{streak}</div>
-            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 2 }}>jours d'affilée</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.52)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 2 }}>jours d'affilée</div>
           </div>
           <div style={{ width: 1, height: 32, background: `rgba(${arch.rgb},0.20)`, borderRadius: 1 }} />
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: arch.color, textShadow: `0 0 18px ${arch.color}66`, animation: 'milestoneGlow 6s ease-in-out 1.5s infinite' }}>{totalDays}</div>
-            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 2 }}>jours visités</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.52)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 2 }}>jours visités</div>
           </div>
         </div>
 
@@ -3510,7 +3510,7 @@ function BreathingModal({ archetypeKey, onClose }) {
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 78 }}>
           <div style={{ position: 'absolute', width: 340, height: 340, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, transform: `scale(${isExpanded ? 1.20 : 0.40})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none', filter: 'blur(2px)' }} />
           <div style={{ position: 'absolute', width: 280, height: 280, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.10)`, transform: `scale(${isExpanded ? 1.18 : 0.44})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', width: 230, height: 230, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.20)`, transform: `scale(${isExpanded ? 1.10 : 0.40})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', width: 230, height: 230, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.38)`, transform: `scale(${isExpanded ? 1.10 : 0.40})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, pointerEvents: 'none' }} />
           <div style={{ width: 190, height: 190, borderRadius: '50%', background: `radial-gradient(circle at 50% 40%, rgba(${arch.rgb},0.42) 0%, rgba(${arch.rgb},0.18) 50%, rgba(${arch.rgb},0.05) 85%, transparent 100%)`, border: `1.5px solid rgba(${arch.rgb},0.50)`, transform: `scale(${circleScale})`, transition: `transform ${circleDur}s cubic-bezier(0.4,0,0.2,1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 80px rgba(${arch.rgb},0.22), inset 0 0 38px rgba(${arch.rgb},0.10), inset 0 2px 0 rgba(255,255,255,0.06)`, position: 'relative' }}>
             <div style={{ position: 'absolute', width: 56, height: 56, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,255,255,0.36) 0%, transparent 65%)`, animation: 'animalbreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' }} />
             <svg width="44" height="44" viewBox="0 0 48 48" fill="none" style={{ opacity: 0.85, position: 'relative' }}>
@@ -3611,7 +3611,7 @@ function PersonalizationModal({ archetypeKey, onClose }) {
   const inputStyle = { background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(${arch.rgb},0.28)`, borderRadius: 12, padding: '14px 16px', color: 'rgba(255,255,255,0.90)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, outline: 'none', letterSpacing: '0.02em', width: '100%', boxSizing: 'border-box', transition: 'border-color 0.3s ease, box-shadow 0.3s ease' }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 820, opacity: vis ? 1 : 0, transition: 'opacity 320ms cubic-bezier(0,0,0.2,1)', background: 'rgba(5,8,16,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 28px', animation: vis ? 'modalEnter 380ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 820, opacity: vis ? 1 : 0, transition: 'opacity 320ms cubic-bezier(0,0,0.2,1)', background: 'rgba(5,8,16,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: 'calc(env(safe-area-inset-top, 0px) + 40px) 28px calc(env(safe-area-inset-bottom, 0px) + 40px)', overflowY: 'auto', animation: vis ? 'modalEnter 380ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none' }}>
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 40%, rgba(${arch.rgb},0.07) 0%, transparent 65%)`, pointerEvents: 'none' }} />
       <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 360, display: 'flex', flexDirection: 'column', gap: 24 }}>
 
@@ -3826,7 +3826,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   }, [jourComplète])
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 16, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
+    <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '52px 22px calc(env(safe-area-inset-bottom, 0px) + 110px)', display: 'flex', flexDirection: 'column', gap: 16, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
 
       {/* World ambient layer */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2, overflow: 'hidden' }}>
@@ -3888,7 +3888,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             {coconPlaced.includes('portail') && [
               { sz: 200, del: 0, dur: 9 }, { sz: 340, del: 3.5, dur: 12 },
             ].map((r, i) => (
-              <div key={`cpr${i}`} style={{ position: 'absolute', bottom: '2%', left: '50%', transform: 'translateX(-50%)', width: r.sz, height: r.sz, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.18)`, opacity: 0, animation: `waterRing ${r.dur}s ease-out infinite`, animationDelay: `${r.del}s` }} />
+              <div key={`cpr${i}`} style={{ position: 'absolute', bottom: '2%', left: '50%', transform: 'translateX(-50%)', width: r.sz, height: r.sz, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.36)`, opacity: 0, animation: `waterRing ${r.dur}s ease-out infinite`, animationDelay: `${r.del}s` }} />
             ))}
           </div>
         )
@@ -4013,7 +4013,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         ))}
         <div style={{ position: 'absolute', left: 0, top: '18%', bottom: '18%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}bb, transparent)`, borderRadius: '0 2px 2px 0', animation: jourComplète ? 'worldglow 8s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 12s ease-in-out 3s infinite' : 'worldglow 8s cubic-bezier(0.45,0,0.55,1) infinite' }} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: jourComplète ? 'phrasebreathe 40s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'phrasebreathe 40s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: jourComplète ? `0 0 12px ${arch.color}33` : `0 0 8px ${arch.color}22` }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.50)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: jourComplète ? 'phrasebreathe 40s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 12s ease-in-out 5s infinite' : 'phrasebreathe 40s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: jourComplète ? `0 0 12px ${arch.color}33` : `0 0 8px ${arch.color}22` }}>
             {{ resilience: 'Intention de feu', presence: 'Intention de présence', sagesse: 'Intention de sagesse', lumiere: 'Intention de lumière' }[archetypeKey] || 'Intention du jour'}
             {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9, animation: 'seedPulse 3s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 6s ease-in-out 1.5s infinite' }}>◎</span>}
           </p>
@@ -4028,7 +4028,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <InvitationCard archetypeKey={archetypeKey} onXp={showXpToast ? (amt) => showXpToast(amt, false) : undefined} />
 
       {/* ── Exercice de souffle ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowBreathing(true) }} style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.09) 0%, rgba(255,255,255,0.05) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.22)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.4s both', boxShadow: `0 4px 24px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
+      <div onClick={() => { haptic([6,40,6]); setShowBreathing(true) }} style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.09) 0%, rgba(255,255,255,0.05) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.40)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.4s both', boxShadow: `0 4px 24px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
         <div style={{ width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, transparent 70%)`, border: `1px solid rgba(${arch.rgb},0.30)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, animation: 'animalbreathe 8s cubic-bezier(0.45,0,0.55,1) infinite', boxShadow: `0 0 16px rgba(${arch.rgb},0.25), inset 0 0 12px rgba(${arch.rgb},0.10)` }}>
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style={{ opacity: 0.75 }}>
             <path d="M3 11 C5.5 6, 9 6, 11 11 C13 16, 16.5 16, 19 11" stroke={arch.color} strokeWidth="1.6" strokeLinecap="round" fill="none"/>
@@ -4045,7 +4045,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {showBreathing && <BreathingModal archetypeKey={archetypeKey} onClose={() => setShowBreathing(false)} />}
 
       {/* ── Libération des pensées (mini-jeu thérapeutique) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowLiberation(true) }} role="button" tabIndex={0} aria-label="Ouvrir Libération des pensées" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.5s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+      <div onClick={() => { haptic([6,40,6]); setShowLiberation(true) }} role="button" tabIndex={0} aria-label="Ouvrir Libération des pensées" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.5s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'animalbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite' }}>
           <ellipse cx="11" cy="13" rx="5" ry="4" fill={`rgba(120,130,160,0.42)`} />
           <ellipse cx="20" cy="11" rx="4" ry="3" fill={`rgba(120,130,160,0.30)`} />
@@ -4057,14 +4057,14 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ flex: 1 }}>
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
           <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Libération des pensées</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.36)', marginTop: 3 }}>Touche ce qui pèse pour le laisser partir</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Touche ce qui pèse pour le laisser partir</div>
         </div>
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
       {showLiberation && <LiberationPenseesModal archetypeKey={archetypeKey} onClose={() => setShowLiberation(false)} />}
 
       {/* ── Apaisement sensoriel (mini-jeu) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowApaisement(true) }} role="button" tabIndex={0} aria-label="Ouvrir Apaisement sensoriel" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.6s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+      <div onClick={() => { haptic([6,40,6]); setShowApaisement(true) }} role="button" tabIndex={0} aria-label="Ouvrir Apaisement sensoriel" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.6s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>
           <circle cx="10" cy="8"  r="1.6" fill={arch.color} opacity="0.85"/>
           <circle cx="22" cy="11" r="1.4" fill={arch.color} opacity="0.70"/>
@@ -4079,14 +4079,14 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ flex: 1 }}>
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
           <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Apaisement sensoriel</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.36)', marginTop: 3 }}>Glisse ton doigt sur les douze présences</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Glisse ton doigt sur les douze présences</div>
         </div>
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
       {showApaisement && <ApaisementSensorielModal archetypeKey={archetypeKey} onClose={() => setShowApaisement(false)} />}
 
       {/* ── Ta trace ── carte discrète d'accès au sanctuaire temporel */}
-      <div onClick={() => { haptic(6); setShowTrace(true) }} role="button" tabIndex={0} aria-label="Voir ta trace des 30 derniers jours" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.07) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid rgba(${arch.rgb},0.18)`, borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.55s both', boxShadow: `0 4px 20px rgba(${arch.rgb},0.08)`, minHeight: 56 }}>
+      <div onClick={() => { haptic(6); setShowTrace(true) }} role="button" tabIndex={0} aria-label="Voir ta trace des 30 derniers jours" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.07) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid rgba(${arch.rgb},0.36)`, borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.55s both', boxShadow: `0 4px 20px rgba(${arch.rgb},0.08)`, minHeight: 56 }}>
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 6px ${arch.color}66)`, animation: 'animalbreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' }}>
           <circle cx="8" cy="10" r="1.6" fill={arch.color} opacity="0.85" />
           <circle cx="22" cy="6" r="1.2" fill={arch.color} opacity="0.55" />
@@ -4121,7 +4121,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         return (
           <div style={{ background: `linear-gradient(135deg, rgba(${nextWorld.rgb},0.10) 0%, rgba(255,255,255,0.03) 60%, rgba(${nextWorld.rgb},0.05) 100%)`, border: `1px solid rgba(${nextWorld.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', animation: 'fadeIn 0.6s ease 0.8s both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 4px 28px rgba(${nextWorld.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Prochain monde</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.52)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Prochain monde</span>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${nextWorld.rgb},0.65)`, letterSpacing: '0.06em' }}>{daysToNext} jour{daysToNext > 1 ? 's' : ''}</span>
             </div>
             <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.82)', marginBottom: 10, animation: 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 20px ${nextWorld.color}66` }}>{nextWorld.name}</div>
@@ -4156,7 +4156,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mon Espace</div>
           <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14,
             color: arch.color, letterSpacing: '-0.01em', textShadow: `0 0 16px ${arch.color}55` }}>{coconName || 'Mon Cocon Néya'}</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.30)', marginTop: 3 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>
             Ton sanctuaire personnel · Objets à débloquer
           </div>
           {/* Souvenirs hint : 3 derniers éclats en mini */}
@@ -4407,7 +4407,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
   }, [allDone])
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', scrollBehavior: 'smooth', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
+    <div style={{ flex: 1, overflowY: 'auto', scrollBehavior: 'smooth', padding: '52px 22px calc(env(safe-area-inset-bottom, 0px) + 110px)', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 20s cubic-bezier(0.45,0,0.55,1) infinite' }} />
@@ -4499,7 +4499,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
   const allDone = doneCount === arch.quetes.length
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', scrollBehavior: 'smooth', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
+    <div style={{ flex: 1, overflowY: 'auto', scrollBehavior: 'smooth', padding: '52px 22px calc(env(safe-area-inset-bottom, 0px) + 110px)', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 22s ease-in-out 4s infinite' }} />
@@ -4787,7 +4787,7 @@ function ApaisementSensorielModal({ archetypeKey, onClose }) {
 
       <button data-press="true" onClick={close} aria-label="Quitter l'apaisement" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
 
-      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 50px)', left: 0, right: 0, textAlign: 'center', zIndex: 5, padding: '0 32px' }}>
+      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 50px)', left: 0, right: 0, textAlign: 'center', zIndex: 5, padding: '0 32px', pointerEvents: 'none' }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◌ Apaisement sensoriel</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.32, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>{allLit ? 'Le corps est revenu.' : 'Glisse ton doigt sur les points.'}</h2>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '10px 0 0', fontStyle: 'italic', lineHeight: 1.55, maxWidth: 320, marginLeft: 'auto', marginRight: 'auto' }}>{allLit ? "Tu as touché à douze présences. Tu es là." : 'Aucune séquence, aucune hâte. Touche, sens, respire.'}</p>
@@ -4950,7 +4950,7 @@ function LiberationPenseesModal({ archetypeKey, onClose }) {
 
       <button data-press="true" onClick={close} aria-label="Quitter la libération" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
 
-      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 50px)', left: 0, right: 0, textAlign: 'center', zIndex: 5, padding: '0 32px' }}>
+      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 50px)', left: 0, right: 0, textAlign: 'center', zIndex: 5, padding: '0 32px', pointerEvents: 'none' }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◍ Libération des pensées</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.32, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>{allReleased ? "L'espace s'est éclairci." : 'Touche ce qui pèse.'}</h2>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '10px 0 0', fontStyle: 'italic', lineHeight: 1.55, maxWidth: 320, marginLeft: 'auto', marginRight: 'auto' }}>{allReleased ? 'Ces pensées ne sont pas toi. Elles n\'étaient que de passage.' : 'Chaque pensée est un nuage. Tu peux la laisser passer.'}</p>
@@ -5492,7 +5492,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
           <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.038, animation: `splashmote ${m.dur}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${m.del}s` }} />
         ))}
       </svg>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 320ms cubic-bezier(0.34,1.56,0.64,1)' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 320ms cubic-bezier(0.34,1.56,0.64,1)' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} showXpToast={showXpToast} />}
           {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} onOpenVrai={() => setVraiOpen(true)} />}
           {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} onOpenVrai={() => setVraiOpen(true)} />}
@@ -5548,7 +5548,7 @@ function ConsentToast() {
   }, [])
   if (!show) return null
   return (
-    <div role="dialog" aria-label="Consentement analytics" style={{ position: 'fixed', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)', left: 12, right: 12, zIndex: 9500, background: 'rgba(5,8,16,0.94)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 10, animation: 'fadeIn 0.5s ease', boxShadow: '0 8px 32px rgba(0,0,0,0.55)' }}>
+    <div role="dialog" aria-label="Consentement analytics" style={{ position: 'fixed', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 88px)', left: 12, right: 12, zIndex: 9500, background: 'rgba(5,8,16,0.94)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 10, animation: 'fadeIn 0.5s ease', boxShadow: '0 8px 32px rgba(0,0,0,0.55)' }}>
       <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12.5, color: 'rgba(255,255,255,0.82)', flex: 1, lineHeight: 1.5 }}>
         Pour améliorer NÉYA — un suivi anonyme de ton usage ? Aucun contenu personnel.
       </span>
@@ -5578,7 +5578,7 @@ function InstallPromptButton({ visible }) {
     setDismissed(true)
   }
   return (
-    <div style={{ position: 'fixed', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 76px)', right: 14, zIndex: 750, display: 'flex', alignItems: 'center', gap: 6, animation: 'fadeIn 0.6s ease 1.5s both' }}>
+    <div style={{ position: 'fixed', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 132px)', right: 14, zIndex: 750, display: 'flex', alignItems: 'center', gap: 6, animation: 'fadeIn 0.6s ease 1.5s both' }}>
       <button onClick={dismiss} aria-label="Masquer la proposition d'installation" style={{ background: 'rgba(5,8,16,0.78)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '50%', width: 28, height: 28, color: 'rgba(255,255,255,0.55)', fontSize: 13, lineHeight: 1, cursor: 'pointer', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>✕</button>
       <button onClick={install} aria-label="Installer NÉYA sur cet appareil" style={{ background: 'rgba(99,102,241,0.92)', border: 'none', borderRadius: 100, padding: '10px 18px', color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 6px 24px rgba(99,102,241,0.45)', animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite', minHeight: 40 }}>Installer</button>
     </div>
