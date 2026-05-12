@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
-import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat } from './inner-world'
+import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal } from './inner-world'
 import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, initAudioPressFeedback } from './audio'
 import { tokens as T } from './design-tokens'
 
@@ -5064,6 +5064,191 @@ function LiberationPenseesModal({ archetypeKey, onClose }) {
   )
 }
 
+function CercleDePresenceModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  const [cercle, setCercle] = useState(() => getCercle())
+  const [adding, setAdding] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [burst, setBurst] = useState(null)
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const refresh = () => setCercle(getCercle())
+
+  const handleAdd = () => {
+    const ok = addToCercle(newName)
+    if (ok) {
+      haptic([6, 40, 6])
+      try { playConfirm(); addSouvenir('first_cercle') } catch {}
+      setNewName(''); setAdding(false); refresh()
+    } else {
+      haptic([10, 30])
+    }
+  }
+
+  const handleRemove = (prenom) => {
+    haptic(8)
+    removeFromCercle(prenom)
+    refresh()
+  }
+
+  const handleLumiere = (prenom) => {
+    if (hasSentLumiereToday(prenom)) return
+    haptic([4, 50, 4, 50, 8])
+    try { playSouvenir(); addSouvenir('first_lumiere', { to: prenom }) } catch {}
+    sendLumiere(prenom)
+    setBurst(prenom)
+    setTimeout(() => setBurst(null), 1800)
+    refresh()
+  }
+
+  const handleShareLumiere = async (prenom) => {
+    const messages = {
+      resilience: `Une pensée chaleureuse pour toi, ${prenom}. Si tu veux essayer un refuge intérieur : neya-kappa.vercel.app`,
+      presence:   `Je pense à toi en ce moment, ${prenom}. Un espace doux : neya-kappa.vercel.app`,
+      sagesse:    `${prenom}, j'avais envie que tu saches que je te porte. Un lieu où je passe : neya-kappa.vercel.app`,
+      lumiere:    `${prenom}, une petite lumière depuis là où je suis. Si ça te parle : neya-kappa.vercel.app`,
+    }
+    const text = messages[archetypeKey] || messages.presence
+    try {
+      if (navigator.share) {
+        await navigator.share({ text })
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(text)
+        haptic([6, 30, 6])
+      }
+    } catch {}
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(5,8,16,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 36%, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+
+      <button data-press="true" onClick={close} aria-label="Fermer le cercle" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 24px calc(env(safe-area-inset-bottom, 0px) + 40px)', display: 'flex', flexDirection: 'column', gap: 22, maxWidth: 480, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◐ Cercle de présence</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.22, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>Trois personnes,<br />portées en intention</h2>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '12px 0 0', fontStyle: 'italic', lineHeight: 1.55, maxWidth: 320, marginLeft: 'auto', marginRight: 'auto' }}>Pas un réseau social. Pas une liste d'amis. Trois prénoms que tu portes dans ta présence.</p>
+        </div>
+
+        {/* Liste des proches */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {cercle.length === 0 && !adding && (
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.50)', textAlign: 'center', fontStyle: 'italic', padding: '24px 0', lineHeight: 1.6 }}>Ton cercle est vide pour l'instant.<br />Tu peux porter jusqu'à trois personnes.</p>
+          )}
+          {cercle.map((p) => {
+            const sent = hasSentLumiereToday(p.prenom)
+            return (
+              <div key={p.prenom} style={{ background: `rgba(${arch.rgb},0.07)`, border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 16, padding: '16px 18px', position: 'relative', overflow: 'hidden' }}>
+                {burst === p.prenom && (
+                  <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 4 }}>
+                    {[{x:20,y:50,r:2.4,d:0},{x:50,y:30,r:2.0,d:0.1},{x:80,y:50,r:2.2,d:0.2},{x:50,y:70,r:1.8,d:0.3},{x:30,y:30,r:1.6,d:0.4},{x:70,y:30,r:1.8,d:0.5},{x:30,y:70,r:1.6,d:0.6},{x:70,y:70,r:1.4,d:0.7}].map((m,i) => (
+                      <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0, animation: `milestoneMote 1.6s ease-out ${m.d}s both`, filter: `drop-shadow(0 0 8px ${arch.color})` }} />
+                    ))}
+                  </svg>
+                )}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, position: 'relative', zIndex: 5 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'white', letterSpacing: '-0.01em', textShadow: `0 0 14px ${arch.color}33` }}>{p.prenom}</div>
+                    <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.10em', marginTop: 4, fontStyle: 'italic' }}>{sent ? 'Lumière partagée aujourd\'hui ✦' : 'En présence'}</div>
+                  </div>
+                  <button data-press="true" onClick={() => handleRemove(p.prenom)} aria-label={`Retirer ${p.prenom}`} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, width: 30, height: 30, color: 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontSize: 13, lineHeight: 1, cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 12, position: 'relative', zIndex: 5 }}>
+                  <button data-press="true" onClick={() => handleLumiere(p.prenom)} disabled={sent} style={{ flex: 1, padding: '11px 0', background: sent ? 'rgba(255,255,255,0.04)' : `linear-gradient(135deg, rgba(${arch.rgb},0.85), rgba(${arch.rgb},0.65))`, border: sent ? `1px solid rgba(${arch.rgb},0.40)` : 'none', borderRadius: 100, color: sent ? `${arch.color}cc` : 'white', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12, letterSpacing: '0.14em', cursor: sent ? 'default' : 'pointer', textTransform: 'uppercase', minHeight: 40, boxShadow: sent ? 'none' : `0 4px 18px rgba(${arch.rgb},0.32)`, opacity: sent ? 0.78 : 1, transition: 'opacity 240ms cubic-bezier(0.4,0,0.2,1)' }}>{sent ? '✦ Lumière envoyée' : 'Envoyer une lumière'}</button>
+                  {!sent && navigator && navigator.share && (
+                    <button data-press="true" onClick={() => handleShareLumiere(p.prenom)} aria-label={`Partager avec ${p.prenom}`} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 40, height: 40, color: 'rgba(255,255,255,0.68)', fontFamily: 'Inter, sans-serif', fontSize: 15, lineHeight: 1, cursor: 'pointer', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>↗</button>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+
+          {/* Add new */}
+          {adding ? (
+            <div style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 16, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <input
+                autoFocus
+                value={newName}
+                onChange={(e) => setNewName(e.target.value.slice(0, 30))}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleAdd() }}
+                placeholder="Son prénom"
+                style={{ background: 'rgba(0,0,0,0.20)', border: `1px solid rgba(${arch.rgb},0.36)`, borderRadius: 12, padding: '12px 14px', color: 'rgba(255,255,255,0.92)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, outline: 'none', letterSpacing: '0.02em' }}
+              />
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button data-press="true" onClick={() => { setAdding(false); setNewName('') }} style={{ flex: 1, padding: '10px 0', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, color: 'rgba(255,255,255,0.55)', fontFamily: 'Inter, sans-serif', fontSize: 12, cursor: 'pointer', minHeight: 40 }}>Annuler</button>
+                <button data-press="true" onClick={handleAdd} disabled={!newName.trim()} style={{ flex: 2, padding: '10px 0', background: newName.trim() ? `rgba(${arch.rgb},0.85)` : 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12, letterSpacing: '0.10em', cursor: newName.trim() ? 'pointer' : 'default', minHeight: 40, opacity: newName.trim() ? 1 : 0.5 }}>Ajouter</button>
+              </div>
+            </div>
+          ) : cercle.length < 3 ? (
+            <button data-press="true" onClick={() => setAdding(true)} style={{ width: '100%', padding: '16px 0', background: 'rgba(255,255,255,0.03)', border: `1px dashed rgba(${arch.rgb},0.40)`, borderRadius: 16, color: `rgba(${arch.rgb},0.92)`, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, letterSpacing: '0.10em', cursor: 'pointer', minHeight: 48, transition: 'all 240ms cubic-bezier(0.4,0,0.2,1)' }}>+ Ajouter un·e proche</button>
+          ) : (
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', margin: 0, fontStyle: 'italic' }}>Ton cercle est complet. Trois est suffisant.</p>
+          )}
+        </div>
+
+        {/* Note de fermeture */}
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: 'rgba(255,255,255,0.46)', textAlign: 'center', margin: '8px 0 0', fontStyle: 'italic', lineHeight: 1.6, padding: '0 12px' }}>"Envoyer une lumière" est un geste pour toi.<br />Tu peux choisir de le partager — ou de le garder.</p>
+      </div>
+    </div>
+  )
+}
+
+function InviteFriendModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  const [shared, setShared] = useState(false)
+  const [copied, setCopied] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const messages = {
+    resilience: `Si tu cherches un refuge intérieur pour les jours intenses — NÉYA :\nneya-kappa.vercel.app\n\n"Et toi, ça va vraiment ?"`,
+    presence:   `Un espace doux que j'aime — NÉYA :\nneya-kappa.vercel.app\n\n"T'as pas besoin d'aller bien pour commencer."`,
+    sagesse:    `Un endroit où je passe pour me poser — NÉYA :\nneya-kappa.vercel.app\n\n"Tu n'es pas seul·e."`,
+    lumiere:    `Si ça te parle, un petit refuge poétique — NÉYA :\nneya-kappa.vercel.app\n\n"Et toi, ça va vraiment ?"`,
+  }
+  const text = messages[archetypeKey] || messages.presence
+
+  const handleShare = async () => {
+    haptic([6, 40, 6])
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'NÉYA', text })
+        try { addSouvenir('first_invite') } catch {}
+        setShared(true)
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(text)
+        setCopied(true)
+        try { addSouvenir('first_invite') } catch {}
+        setTimeout(() => setCopied(false), 2400)
+      }
+    } catch {}
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(5,8,16,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 38%, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+      <button data-press="true" onClick={close} aria-label="Fermer" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 28px calc(env(safe-area-inset-bottom, 0px) + 40px)', display: 'flex', flexDirection: 'column', gap: 28, minHeight: '100%', justifyContent: 'center', textAlign: 'center', maxWidth: 460, margin: '0 auto' }}>
+        <div>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Inviter</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 26, color: 'white', margin: 0, lineHeight: 1.22, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>Offrir NÉYA<br />à un·e proche</h2>
+        </div>
+        <div style={{ background: `rgba(${arch.rgb},0.07)`, border: `1px solid rgba(${arch.rgb},0.32)`, borderRadius: 18, padding: '24px 22px', position: 'relative' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.88)', margin: 0, lineHeight: 1.72, whiteSpace: 'pre-line', textAlign: 'left', fontStyle: 'italic' }}>{text}</p>
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.55)', margin: 0, fontStyle: 'italic', lineHeight: 1.6 }}>Tu peux modifier le message ensuite, dans l'application de partage.</p>
+        <button data-press="true" onClick={handleShare} disabled={shared} style={{ width: '100%', padding: '17px 0', background: shared ? `rgba(${arch.rgb},0.20)` : `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: shared ? `1px solid ${arch.color}66` : 'none', borderRadius: 100, cursor: shared ? 'default' : 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.24em', color: shared ? arch.color : 'white', textTransform: 'uppercase', boxShadow: shared ? 'none' : `0 6px 36px rgba(${arch.rgb},0.42), 0 0 60px rgba(${arch.rgb},0.18)`, animation: shared ? 'none' : 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: shared ? 'none' : '0 0 14px rgba(255,255,255,0.35)', minHeight: 54 }}>{shared ? '✦ Invitation envoyée' : copied ? '✓ Copié dans le presse-papier' : 'Partager'}</button>
+      </div>
+    </div>
+  )
+}
+
 function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const [vis, setVis] = useState(false)
@@ -5071,6 +5256,8 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
   const [audioOn, setAudioOn] = useState(() => getAudioEnabled())
   const [confirmRestart, setConfirmRestart] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
+  const [showCercle, setShowCercle] = useState(false)
+  const [showInvite, setShowInvite] = useState(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
 
   const totalSouvenirs = getSouvenirs().length
@@ -5167,6 +5354,27 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.50)', margin: 0, fontStyle: 'italic', textAlign: 'center' }}>Un fichier JSON sur ton appareil. Tu en gardes la trace.</p>
         </div>
 
+        {/* SECTION: Présence partagée */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0 }}>Présence partagée</p>
+          <button data-press="true" onClick={() => { haptic(6); setShowCercle(true) }} style={{ width: '100%', padding: '16px 18px', background: `rgba(${arch.rgb},0.07)`, border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 14, color: 'rgba(255,255,255,0.92)', fontFamily: 'inherit', cursor: 'pointer', minHeight: 60, display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left' }}>
+            <span style={{ fontSize: 22, color: arch.color, lineHeight: 1, textShadow: `0 0 12px ${arch.color}` }}>◐</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em' }}>Mon cercle de présence</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.58)', marginTop: 3, fontStyle: 'italic' }}>{getCercle().length === 0 ? "Porter quelqu'un en intention" : `${getCercle().length} ${getCercle().length === 1 ? 'personne portée' : 'personnes portées'}`}</div>
+            </div>
+            <span style={{ fontSize: 14, color: `rgba(${arch.rgb},0.62)` }}>→</span>
+          </button>
+          <button data-press="true" onClick={() => { haptic(6); setShowInvite(true) }} style={{ width: '100%', padding: '16px 18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 14, color: 'rgba(255,255,255,0.88)', fontFamily: 'inherit', cursor: 'pointer', minHeight: 60, display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left' }}>
+            <span style={{ fontSize: 18, color: arch.color, lineHeight: 1 }}>◈</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em' }}>Inviter à NÉYA</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.58)', marginTop: 3, fontStyle: 'italic' }}>Offrir un refuge à quelqu'un que tu aimes</div>
+            </div>
+            <span style={{ fontSize: 14, color: `rgba(${arch.rgb},0.62)` }}>↗</span>
+          </button>
+        </div>
+
         {/* SECTION: Recommencer */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0 }}>Recommencer</p>
@@ -5185,6 +5393,8 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
           </div>
         </div>
       </div>
+      {showCercle && <CercleDePresenceModal archetypeKey={archetypeKey} onClose={() => setShowCercle(false)} />}
+      {showInvite && <InviteFriendModal archetypeKey={archetypeKey} onClose={() => setShowInvite(false)} />}
     </div>
   )
 }

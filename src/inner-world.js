@@ -201,6 +201,74 @@ export const SOUVENIR_LIBRARY = {
   liberation_session: { glyph: '◍', title: 'Pensées libérées',          subtitle: 'L\'espace s\'est éclairci.' },
   first_apaisement:   { glyph: '◌', title: 'Premier apaisement',         subtitle: 'Tu as touché à douze présences.' },
   apaisement_session: { glyph: '◌', title: 'Apaisement sensoriel',       subtitle: 'Le corps est revenu au présent.' },
+  first_cercle:       { glyph: '◐', title: 'Premier cercle',              subtitle: 'Tu portes quelqu\'un en intention.' },
+  first_lumiere:      { glyph: '✦', title: 'Première lumière envoyée',    subtitle: 'Un geste invisible vers un·e proche.' },
+  lumiere_session:    { glyph: '✦', title: 'Lumière partagée',            subtitle: 'Tu as pensé à quelqu\'un avec soin.' },
+  first_invite:       { glyph: '◈', title: 'Première invitation',         subtitle: 'Tu as ouvert une porte.' },
+}
+
+// ─── Cercle de présence ──────────────────────────────────────
+//
+// Jusqu'à 3 proches portés en intention. Pas un réseau social, pas une liste
+// d'amis. Un acte rituel d'évocation.
+// Stockés en localStorage uniquement (privé, jamais transmis).
+
+const CERCLE_KEY = 'neya_cercle'
+
+export function getCercle() {
+  try { return JSON.parse(localStorage.getItem(CERCLE_KEY) || '[]') }
+  catch { return [] }
+}
+
+export function addToCercle(prenom) {
+  const trimmed = (prenom || '').trim().slice(0, 30)
+  if (!trimmed) return false
+  try {
+    const list = getCercle()
+    if (list.length >= 3) return false
+    if (list.some(p => p.prenom.toLowerCase() === trimmed.toLowerCase())) return false
+    const next = [...list, { prenom: trimmed, addedAt: Date.now() }]
+    localStorage.setItem(CERCLE_KEY, JSON.stringify(next))
+    return true
+  } catch { return false }
+}
+
+export function removeFromCercle(prenom) {
+  try {
+    const list = getCercle()
+    const next = list.filter(p => p.prenom !== prenom)
+    localStorage.setItem(CERCLE_KEY, JSON.stringify(next))
+    return true
+  } catch { return false }
+}
+
+// Vérifie si une lumière a déjà été envoyée à cette personne aujourd'hui
+export function hasSentLumiereToday(prenom) {
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    const key = `neya_lumiere_${prenom}_${today}`
+    return !!localStorage.getItem(key)
+  } catch { return false }
+}
+
+// Marque une lumière envoyée (rituel local, jamais transmis automatiquement)
+export function sendLumiere(prenom) {
+  if (!prenom) return false
+  if (hasSentLumiereToday(prenom)) return false
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    localStorage.setItem(`neya_lumiere_${prenom}_${today}`, String(Date.now()))
+    // Compteur global
+    const totalKey = 'neya_lumieres_total'
+    const total = parseInt(localStorage.getItem(totalKey) || '0', 10) + 1
+    localStorage.setItem(totalKey, String(total))
+    return true
+  } catch { return false }
+}
+
+export function getLumieresTotal() {
+  try { return parseInt(localStorage.getItem('neya_lumieres_total') || '0', 10) }
+  catch { return 0 }
 }
 
 export function getSouvenirs() {
@@ -234,4 +302,4 @@ export function formatSouvenirDate(ts) {
   } catch { return '' }
 }
 
-export default { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, TIME_LABELS, formatSouvenirDate }
+export default { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, TIME_LABELS, formatSouvenirDate, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal }
