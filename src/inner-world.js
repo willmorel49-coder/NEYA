@@ -209,6 +209,8 @@ export const SOUVENIR_LIBRARY = {
   carnet_week:        { glyph: '◊', title: 'Une semaine d\'écriture',     subtitle: '7 jours, 7 traces.' },
   first_letter_received: { glyph: '✉', title: 'Première lettre reçue',   subtitle: 'Quelqu\'un t\'a écrit, sans te connaître.' },
   first_letter_sent:  { glyph: '✉', title: 'Première lettre envoyée',     subtitle: 'Tu as confié un mot au silence.' },
+  first_quick_mood:   { glyph: '◐', title: 'Première écoute de soi',      subtitle: 'Tu as nommé ce que tu ressens.' },
+  mood_week:          { glyph: '◐', title: 'Une semaine d\'écoute',       subtitle: 'Sept jours à te regarder doucement.' },
 }
 
 // ─── Cercle de présence ──────────────────────────────────────
@@ -335,8 +337,76 @@ export function getMoodHistory(limit = 14) {
     return sessions
       .filter(s => s && typeof s.moodEnd === 'number' && typeof s.moodStart === 'number' && s.ts)
       .slice(-limit)
-      .map(s => ({ ts: s.ts, before: s.moodStart, after: s.moodEnd, delta: s.moodEnd - s.moodStart }))
+      .map(s => ({ ts: s.ts, before: s.moodStart, after: s.moodEnd, delta: s.moodEnd - s.moodStart, source: 'breath' }))
   } catch { return [] }
+}
+
+// ─── Quick mood (1-tap check sans modal) ──────────────────────
+//
+// Échelle 1-5 (lourd / difficile / neutre / bien / lumineux).
+// Un seul check par jour (le dernier compte si re-tap).
+// Compatible avec MoodGraph : exposé comme {ts, after: scaled10}.
+
+export function setMoodQuick(value) {
+  if (typeof value !== 'number' || value < 1 || value > 5) return false
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    const key = `neya_mood_quick_${today}`
+    localStorage.setItem(key, JSON.stringify({ value, ts: Date.now() }))
+    return true
+  } catch { return false }
+}
+
+export function getMoodQuickToday() {
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    const raw = localStorage.getItem(`neya_mood_quick_${today}`)
+    return raw ? JSON.parse(raw) : null
+  } catch { return null }
+}
+
+export function getMoodQuickHistory(days = 14) {
+  const out = []
+  try {
+    const today = new Date()
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(today); d.setDate(d.getDate() - i)
+      const ds = d.toISOString().split('T')[0]
+      const raw = localStorage.getItem(`neya_mood_quick_${ds}`)
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw)
+          // Scale 1-5 → 1-10 pour cohérence avec MoodGraph
+          out.push({ ts: parsed.ts, after: parsed.value * 2, source: 'quick' })
+        } catch {}
+      }
+    }
+  } catch {}
+  return out
+}
+
+// Combine breath + quick mood pour MoodGraph
+export function getMoodCombined(limit = 14) {
+  const breath = getMoodHistory(limit * 2)
+  const quick = getMoodQuickHistory(limit * 2)
+  const combined = [...breath, ...quick].sort((a, b) => a.ts - b.ts)
+  return combined.slice(-limit)
+}
+
+// Count consecutive days with at least 1 quick mood logged
+export function getMoodQuickStreak() {
+  let streak = 0
+  try {
+    const today = new Date()
+    for (let i = 0; i < 90; i++) {
+      const d = new Date(today); d.setDate(d.getDate() - i)
+      const ds = d.toISOString().split('T')[0]
+      if (localStorage.getItem(`neya_mood_quick_${ds}`)) streak++
+      else if (i > 0) break
+      else continue // today not done is OK
+    }
+  } catch {}
+  return streak
 }
 
 export function getSouvenirs() {

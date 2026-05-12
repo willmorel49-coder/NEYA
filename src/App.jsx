@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
-import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory } from './inner-world'
+import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory, setMoodQuick, getMoodQuickToday, getMoodQuickHistory, getMoodCombined, getMoodQuickStreak } from './inner-world'
 import { getNextLetter, markLetterReceived, sendLetter, getReceivedLetters, getSentLetters, getCollectiveCount, ARCHETYPE_PLURAL } from './community'
 import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, initAudioPressFeedback } from './audio'
 import { tokens as T } from './design-tokens'
@@ -4032,6 +4032,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {/* ── Invitation du jour ── */}
       <InvitationCard archetypeKey={archetypeKey} onXp={showXpToast ? (amt) => showXpToast(amt, false) : undefined} />
 
+      {/* ── Aujourd'hui (quick mood + suggestion) ── */}
+      <AujourdhuiCard archetypeKey={archetypeKey} />
+
       {/* ── Exercice de souffle ── */}
       <div onClick={() => { haptic([6,40,6]); setShowBreathing(true) }} style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.09) 0%, rgba(255,255,255,0.05) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.40)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.4s both', boxShadow: `0 4px 24px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
         <div style={{ width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, transparent 70%)`, border: `1px solid rgba(${arch.rgb},0.30)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, animation: 'animalbreathe 8s cubic-bezier(0.45,0,0.55,1) infinite', boxShadow: `0 0 16px rgba(${arch.rgb},0.25), inset 0 0 12px rgba(${arch.rgb},0.10)` }}>
@@ -5100,6 +5103,106 @@ function LiberationPenseesModal({ archetypeKey, onClose }) {
   )
 }
 
+function AujourdhuiCard({ archetypeKey, onSetMood }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [currentMood, setCurrentMood] = useState(() => {
+    const t = getMoodQuickToday()
+    return t ? t.value : null
+  })
+  const [tapped, setTapped] = useState(false)
+
+  const MOODS = [
+    { v: 1, emoji: '😔', label: 'Lourd' },
+    { v: 2, emoji: '😟', label: 'Difficile' },
+    { v: 3, emoji: '😐', label: 'Neutre' },
+    { v: 4, emoji: '🙂', label: 'Bien' },
+    { v: 5, emoji: '✨', label: 'Lumineux' },
+  ]
+
+  const handleMood = (v) => {
+    haptic([6, 40, 6])
+    setMoodQuick(v)
+    setCurrentMood(v)
+    setTapped(true)
+    try {
+      playConfirm()
+      addSouvenir('first_quick_mood')
+      const streak = getMoodQuickStreak()
+      if (streak >= 7) addSouvenir('mood_week')
+      if (onSetMood) onSetMood(v)
+    } catch {}
+    setTimeout(() => setTapped(false), 600)
+  }
+
+  // Suggestion contextuelle par heure
+  const h = new Date().getHours()
+  const suggestion =
+    h < 6  ? 'Le silence est aussi une présence.' :
+    h < 12 ? 'Pose une intention douce pour aujourd\'hui.' :
+    h < 18 ? 'Une respiration peut tout changer.' :
+    h < 22 ? 'Comment s\'est passée ta journée ?' :
+             'La nuit te rappelle à toi-même.'
+
+  const period =
+    h < 6  ? 'Cette nuit' :
+    h < 12 ? 'Ce matin' :
+    h < 18 ? 'Cet après-midi' :
+    h < 22 ? 'Ce soir' :
+             'À la nuit qui vient'
+
+  const moodLabel = currentMood ? MOODS.find(m => m.v === currentMood)?.label : null
+
+  return (
+    <div style={{ background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.05) 60%, rgba(255,255,255,0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.42)`, borderRadius: 18, padding: '20px 20px', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', boxShadow: `0 6px 32px rgba(${arch.rgb},0.16), inset 0 1px 0 rgba(255,255,255,0.08)`, animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.15s both' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.85)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0, animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>Aujourd'hui</p>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '4px 0 0', letterSpacing: '0.02em' }}>{period}</p>
+        </div>
+        {currentMood && (
+          <div style={{ fontSize: 20, lineHeight: 1, opacity: 0.95, filter: `drop-shadow(0 0 10px ${arch.color}66)`, animation: tapped ? 'chipPop 480ms cubic-bezier(0.34,1.56,0.64,1)' : 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>{MOODS.find(m => m.v === currentMood)?.emoji}</div>
+        )}
+      </div>
+
+      <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.94)', margin: '0 0 18px', lineHeight: 1.45, letterSpacing: '-0.005em', fontStyle: 'italic', textShadow: `0 0 18px ${arch.color}22`, animation: 'phrasebreathe 28s cubic-bezier(0.45,0,0.55,1) infinite' }}>{suggestion}</p>
+
+      {/* Mood quick check */}
+      <div>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.20em', textTransform: 'uppercase', margin: '0 0 10px' }}>{currentMood ? `Tu te sens ${moodLabel?.toLowerCase()}` : 'Comment tu te sens ?'}</p>
+        <div style={{ display: 'flex', gap: 4, justifyContent: 'space-between' }}>
+          {MOODS.map(m => {
+            const active = currentMood === m.v
+            return (
+              <button key={m.v} data-press="true" onClick={() => handleMood(m.v)} aria-label={m.label} aria-pressed={active} style={{
+                flex: 1,
+                padding: '12px 0',
+                background: active ? `rgba(${arch.rgb},0.28)` : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${active ? arch.color + '88' : 'rgba(255,255,255,0.10)'}`,
+                borderRadius: 12,
+                cursor: 'pointer',
+                minHeight: 56,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 4,
+                fontSize: 20,
+                lineHeight: 1,
+                transition: 'background 280ms cubic-bezier(0.4,0,0.2,1), border-color 280ms cubic-bezier(0.4,0,0.2,1), transform 240ms cubic-bezier(0.34,1.56,0.64,1)',
+                transform: active ? 'scale(1.04)' : 'scale(1)',
+                boxShadow: active ? `0 4px 18px rgba(${arch.rgb},0.32), 0 0 18px rgba(${arch.rgb},0.20)` : 'none',
+                animation: active ? 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) 0.6s infinite' : 'none',
+              }}>
+                <span style={{ filter: active ? `drop-shadow(0 0 8px ${arch.color}88)` : 'none', transition: 'filter 280ms cubic-bezier(0.4,0,0.2,1)' }}>{m.emoji}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, fontWeight: 400, color: active ? arch.color : 'rgba(255,255,255,0.50)', letterSpacing: '0.04em', transition: 'color 280ms cubic-bezier(0.4,0,0.2,1)' }}>{m.label}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function PulseCollectif({ archetypeKey, onClick }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const count = getCollectiveCount(archetypeKey)
@@ -5680,7 +5783,7 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
             </div>
           </div>
           {(() => {
-            const moodData = getMoodHistory(14)
+            const moodData = getMoodCombined(14)
             if (moodData.length < 2) return null
             return (
               <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
