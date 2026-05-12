@@ -215,6 +215,8 @@ export const SOUVENIR_LIBRARY = {
   concentration_complete: { glyph: '◉', title: 'Attention soutenue',      subtitle: 'Soixante secondes de présence focalisée.' },
   first_reparation:   { glyph: '◈', title: 'Première réparation',         subtitle: 'Tu as commencé à rassembler.' },
   reparation_complete:{ glyph: '◈', title: 'Cocon entier',                 subtitle: 'Toutes les pièces ont retrouvé leur place.' },
+  first_jardin:       { glyph: '⚘', title: 'Premier passage au Jardin',   subtitle: 'Quelque chose pousse ici.' },
+  jardin_florissant:  { glyph: '⚘', title: 'Jardin florissant',           subtitle: 'Sept jours et le sol s\'éveille.' },
 }
 
 // ─── Cercle de présence ──────────────────────────────────────

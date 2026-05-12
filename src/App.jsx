@@ -3716,6 +3716,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showApaisement, setShowApaisement] = useState(false)
   const [showConcentration, setShowConcentration] = useState(false)
   const [showReparation, setShowReparation] = useState(false)
+  const [showJardin, setShowJardin] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showCarnet, setShowCarnet] = useState(false)
   const [showLetters, setShowLetters] = useState(false)
@@ -4132,6 +4133,27 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
       {showReparation && <ReparationCoconModal archetypeKey={archetypeKey} onClose={() => setShowReparation(false)} />}
+
+      {/* ── Mon jardin interieur (ecran contemplatif long-terme) ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowJardin(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon jardin interieur" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.75s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 11s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <line x1="16" y1="28" x2="16" y2="18" stroke={arch.color} strokeWidth="1" opacity="0.65"/>
+          <circle cx="16" cy="14" r="3" fill={arch.color} opacity="0.78"/>
+          <circle cx="13" cy="15" r="2" fill={arch.color} opacity="0.60"/>
+          <circle cx="19" cy="15" r="2" fill={arch.color} opacity="0.60"/>
+          <circle cx="16" cy="12" r="1" fill="white" opacity="0.85"/>
+          <line x1="4"  y1="28" x2="4"  y2="22" stroke={arch.color} strokeWidth="0.6" opacity="0.45"/>
+          <line x1="28" y1="28" x2="28" y2="22" stroke={arch.color} strokeWidth="0.6" opacity="0.45"/>
+          <line x1="0"  y1="28" x2="32" y2="28" stroke={arch.color} strokeWidth="0.5" opacity="0.30"/>
+        </svg>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Espace vivant</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Mon jardin intérieur</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Il pousse avec ta présence</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+      {showJardin && <JardinModal archetypeKey={archetypeKey} onClose={() => setShowJardin(false)} />}
 
       {/* ── Carnet du Voyage (écriture quotidienne) ── */}
       <div onClick={() => { haptic([6,40,6]); setShowCarnet(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon Carnet du Voyage" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.7s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
@@ -4799,6 +4821,269 @@ function BoutiqueScreen({ archetypeKey }) {
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
+function JardinModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  const [tappedElement, setTappedElement] = useState(null)
+  const [bursts, setBursts] = useState([])
+
+  useEffect(() => {
+    const t = setTimeout(() => setVis(true), 30)
+    try {
+      addSouvenir('first_jardin')
+      const stats = computeStats()
+      if (stats.days >= 7) addSouvenir('jardin_florissant')
+    } catch {}
+    return () => clearTimeout(t)
+  }, [])
+
+  // Compute growth stats from localStorage
+  const computeStats = () => {
+    let days = 0
+    let breaths = 0
+    let souvenirs = 0
+    try {
+      for (const k of Object.keys(localStorage)) {
+        if (k.startsWith('neya_routines_') && JSON.parse(localStorage.getItem(k) || '[]').some(Boolean)) days++
+      }
+      breaths = parseInt(localStorage.getItem('neya_breath_count') || '0', 10)
+      souvenirs = (getSouvenirs() || []).length
+    } catch {}
+    let streak = 0
+    try { streak = getCurrentStreak() } catch {}
+    return { days, breaths, souvenirs, streak }
+  }
+
+  const stats = computeStats()
+  const { days, breaths, souvenirs, streak } = stats
+
+  // Time of day for sky
+  const h = new Date().getHours()
+  const isNight = h < 6 || h >= 21
+  const isDusk = h >= 18 && h < 21
+  const isDawn = h >= 6 && h < 9
+
+  // Sky gradient adaptatif
+  let skyTop, skyMid, skyBottom
+  if (isNight) {
+    skyTop = '#020410'; skyMid = `rgba(${arch.rgb},0.14)`; skyBottom = '#080c1a'
+  } else if (isDusk) {
+    skyTop = '#0a0e2a'; skyMid = `rgba(${arch.rgb},0.30)`; skyBottom = '#2a1838'
+  } else if (isDawn) {
+    skyTop = '#1a2540'; skyMid = `rgba(${arch.rgb},0.20)`; skyBottom = '#3a2a35'
+  } else {
+    skyTop = '#0e1530'; skyMid = `rgba(${arch.rgb},0.10)`; skyBottom = '#1a2238'
+  }
+
+  const handleTap = (label, e) => {
+    haptic(4)
+    setTappedElement(label)
+    if (e) {
+      try {
+        const x = e.clientX || (e.touches && e.touches[0]?.clientX) || window.innerWidth / 2
+        const y = e.clientY || (e.touches && e.touches[0]?.clientY) || window.innerHeight / 2
+        const bid = `b-${Date.now()}-${Math.random()}`
+        setBursts(prev => [...prev, { id: bid, x, y }])
+        setTimeout(() => setBursts(prev => prev.filter(b => b.id !== bid)), 1200)
+      } catch {}
+    }
+    setTimeout(() => setTappedElement(null), 2600)
+  }
+
+  // Phrases poétiques par élément
+  const ELEMENT_PHRASES = {
+    'sol': 'Le sol te porte. Toujours.',
+    'herbe1': 'Une herbe. C\'est déjà la vie.',
+    'herbe2': 'Deux herbes. Le tapis se forme.',
+    'fleur1': 'Une fleur. Sortie de rien.',
+    'fleur2': 'Une autre fleur. Tu t\'enracines.',
+    'fleur3': 'Trois fleurs. Le jardin se peuple.',
+    'arbuste': 'Un arbuste prend place. Discret mais là.',
+    'arbre1': 'Un arbre. Mémoire vivante.',
+    'arbre2': 'Deux arbres. Forêt naissante.',
+    'luciole': 'Une luciole te visite.',
+    'oiseau': 'Un oiseau passe. Il sait, lui.',
+    'creature': 'Une présence ancienne se montre. Elle est restée.',
+    'lune': 'La lune veille au-dessus.',
+    'soleil': 'Le soleil te trouve même les jours gris.',
+    'etoile': 'Une étoile pour chacun de tes jours.',
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 760, opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 540ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+
+      {/* SKY background */}
+      <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, ${skyTop} 0%, ${skyMid} 45%, ${skyBottom} 100%)`, transition: 'background 2s cubic-bezier(0.45,0,0.55,1)' }} />
+
+      {/* Stars (night/dusk) */}
+      {(isNight || isDusk) && (
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '60%', pointerEvents: 'none' }}>
+          {[{x:8,y:14,r:0.8,d:0},{x:22,y:8,r:1.2,d:1.3},{x:38,y:18,r:0.7,d:0.5},{x:54,y:6,r:1.1,d:2.1},{x:68,y:22,r:0.9,d:0.8},{x:82,y:11,r:1.3,d:1.7},{x:90,y:26,r:0.8,d:2.4},{x:14,y:36,r:1.0,d:3.2},{x:46,y:42,r:0.9,d:1.0},{x:74,y:38,r:1.1,d:2.6},{x:30,y:48,r:0.7,d:1.5},{x:60,y:46,r:0.8,d:0.3}].map((s,i) => {
+            const visible = i < Math.min(12, 4 + Math.floor(streak / 3))
+            if (!visible) return null
+            return (
+              <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill="white" style={{ opacity: 0, animation: `seedPulse ${8 + (i % 4)}s cubic-bezier(0.45,0,0.55,1) ${s.d}s infinite, fadeIn 2s cubic-bezier(0,0,0.2,1) ${s.d * 0.3}s forwards`, filter: 'drop-shadow(0 0 4px white)' }} />
+            )
+          })}
+        </svg>
+      )}
+
+      {/* Sun (day) or Moon (night/dusk) */}
+      {!isNight && !isDusk && days >= 1 ? (
+        <div onClick={(e) => handleTap('soleil', e)} role="button" aria-label="Soleil" style={{ position: 'absolute', top: '12%', right: '14%', width: 48, height: 48, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,220,150,0.85) 0%, rgba(255,200,120,0.45) 50%, transparent 100%)`, boxShadow: '0 0 32px rgba(255,210,140,0.65), 0 0 64px rgba(255,180,80,0.30)', cursor: 'pointer', animation: 'signaturePulse 18s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+      ) : (
+        <div onClick={(e) => handleTap('lune', e)} role="button" aria-label="Lune" style={{ position: 'absolute', top: '10%', right: '16%', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle at 35% 35%, rgba(255,255,255,0.92) 0%, rgba(220,225,255,0.55) 50%, transparent 100%)`, boxShadow: '0 0 24px rgba(255,255,255,0.42), 0 0 60px rgba(180,200,255,0.30)', cursor: 'pointer', animation: 'signaturePulse 22s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+      )}
+
+      {/* Close button */}
+      <button data-press="true" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); close() }} aria-label="Fermer le jardin" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.82)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+
+      {/* Header */}
+      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 28px)', left: 0, right: 0, textAlign: 'center', padding: '0 32px', pointerEvents: 'none', zIndex: 5 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.85)', letterSpacing: '0.32em', textTransform: 'uppercase', margin: 0, animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>⚘ Mon jardin intérieur</p>
+      </div>
+
+      {/* Tappable phrase ribbon */}
+      {tappedElement && (
+        <div style={{ position: 'absolute', top: '32%', left: 0, right: 0, textAlign: 'center', padding: '0 28px', pointerEvents: 'none', zIndex: 10, animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) both' }}>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 17, color: 'white', margin: 0, textShadow: `0 0 22px ${arch.color}99, 0 2px 12px rgba(0,0,0,0.6)`, animation: 'phrasebreathe 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>« {ELEMENT_PHRASES[tappedElement] || ''} »</p>
+        </div>
+      )}
+
+      {/* Burst particles on tap */}
+      {bursts.map(b => (
+        <div key={b.id} style={{ position: 'fixed', left: b.x, top: b.y, pointerEvents: 'none', zIndex: 20, width: 0, height: 0 }}>
+          {[0,1,2,3,4,5,6,7].map((i) => {
+            const angle = (i / 8) * Math.PI * 2
+            const dist = 50
+            const tx = Math.cos(angle) * dist
+            const ty = Math.sin(angle) * dist
+            return (
+              <div key={i} style={{ position: 'absolute', left: 0, top: 0, width: 4, height: 4, borderRadius: '50%', background: arch.color, boxShadow: `0 0 8px ${arch.color}`, opacity: 0, '--tx': `${tx}px`, '--ty': `${ty}px`, animation: `thoughtBurst 1.0s cubic-bezier(0,0,0.2,1) ${i * 0.02}s forwards` }} />
+            )
+          })}
+        </div>
+      ))}
+
+      {/* Ground composition */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%', overflow: 'hidden' }}>
+        {/* Ground gradient */}
+        <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, transparent 0%, rgba(${arch.rgb},0.18) 30%, rgba(20,30,50,0.85) 65%, rgba(8,12,24,0.95) 100%)` }} />
+
+        {/* Ground horizon line */}
+        <div onClick={(e) => handleTap('sol', e)} role="button" aria-label="Sol" style={{ position: 'absolute', top: '32%', left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, rgba(${arch.rgb},0.65), transparent)`, animation: 'worldglow 14s cubic-bezier(0.45,0,0.55,1) infinite', cursor: 'pointer' }} />
+
+        {/* SVG plant composition */}
+        <svg viewBox="0 0 100 50" preserveAspectRatio="xMidYMax meet" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '78%', pointerEvents: 'none' }}>
+          {/* Herbes (1+ jour) */}
+          {days >= 1 && (
+            <g onClick={(e) => handleTap('herbe1', e)} style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+              <path d="M 14 50 Q 14 42 13 36" stroke={arch.color} strokeWidth="0.4" fill="none" opacity="0.65" style={{ animation: 'animalfloat 9s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+              <path d="M 16 50 Q 16 44 15.5 38" stroke={arch.color} strokeWidth="0.3" fill="none" opacity="0.55" />
+              <path d="M 12 50 Q 12 46 11.5 41" stroke={arch.color} strokeWidth="0.3" fill="none" opacity="0.50" />
+            </g>
+          )}
+          {days >= 2 && (
+            <g onClick={(e) => handleTap('herbe2', e)} style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+              <path d="M 84 50 Q 84 43 85 36" stroke={arch.color} strokeWidth="0.4" fill="none" opacity="0.62" style={{ animation: 'animalfloat 11s cubic-bezier(0.45,0,0.55,1) 2s infinite' }} />
+              <path d="M 86 50 Q 86 45 86.5 39" stroke={arch.color} strokeWidth="0.3" fill="none" opacity="0.50" />
+              <path d="M 82 50 Q 82 46 82.5 42" stroke={arch.color} strokeWidth="0.3" fill="none" opacity="0.45" />
+            </g>
+          )}
+          {/* Fleur 1 (3+ jours) */}
+          {days >= 3 && (
+            <g onClick={(e) => handleTap('fleur1', e)} style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+              <line x1="30" y1="50" x2="30" y2="40" stroke={arch.color} strokeWidth="0.4" opacity="0.7" />
+              <g transform="translate(30, 40)" style={{ animation: 'animalfloat 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+                <circle cx="0" cy="-2" r="1.2" fill={arch.color} opacity="0.8" />
+                <circle cx="1.5" cy="0" r="1.0" fill={arch.color} opacity="0.7" />
+                <circle cx="-1.5" cy="0" r="1.0" fill={arch.color} opacity="0.7" />
+                <circle cx="0.8" cy="-1" r="0.6" fill="white" opacity="0.6" />
+              </g>
+            </g>
+          )}
+          {/* Fleur 2 (5+ jours) */}
+          {days >= 5 && (
+            <g onClick={(e) => handleTap('fleur2', e)} style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+              <line x1="70" y1="50" x2="70" y2="38" stroke={arch.color} strokeWidth="0.4" opacity="0.7" />
+              <g transform="translate(70, 38)" style={{ animation: 'animalfloat 14s cubic-bezier(0.45,0,0.55,1) 3s infinite' }}>
+                <circle cx="0" cy="-2" r="1.3" fill="white" opacity="0.85" />
+                <circle cx="1.6" cy="0" r="1.1" fill="white" opacity="0.75" />
+                <circle cx="-1.6" cy="0" r="1.1" fill="white" opacity="0.75" />
+                <circle cx="0" cy="0" r="0.7" fill={arch.color} />
+              </g>
+            </g>
+          )}
+          {/* Arbuste (7+ jours) */}
+          {days >= 7 && (
+            <g onClick={(e) => handleTap('arbuste', e)} style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+              <path d="M 50 50 Q 47 44 50 40 Q 53 44 50 50 Z" fill={arch.color} opacity="0.42" />
+              <circle cx="48" cy="42" r="2.5" fill={arch.color} opacity="0.50" style={{ animation: 'animalbreathe 8s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+              <circle cx="52" cy="42" r="2.5" fill={arch.color} opacity="0.50" />
+              <circle cx="50" cy="38" r="2.5" fill={arch.color} opacity="0.55" />
+            </g>
+          )}
+          {/* Fleur 3 (10+ jours) */}
+          {days >= 10 && (
+            <g onClick={(e) => handleTap('fleur3', e)} style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+              <line x1="22" y1="50" x2="22" y2="42" stroke={arch.color} strokeWidth="0.4" opacity="0.7" />
+              <g transform="translate(22, 42)" style={{ animation: 'animalfloat 10s cubic-bezier(0.45,0,0.55,1) 1s infinite' }}>
+                <circle cx="0" cy="-2" r="1.0" fill={arch.color} opacity="0.85" />
+                <circle cx="1.3" cy="0.5" r="0.9" fill={arch.color} opacity="0.70" />
+                <circle cx="-1.3" cy="0.5" r="0.9" fill={arch.color} opacity="0.70" />
+                <circle cx="0" cy="0" r="0.5" fill="white" opacity="0.8" />
+              </g>
+            </g>
+          )}
+          {/* Arbre 1 (14+ jours) */}
+          {days >= 14 && (
+            <g onClick={(e) => handleTap('arbre1', e)} style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+              <line x1="38" y1="50" x2="38" y2="36" stroke="rgba(40,30,20,0.85)" strokeWidth="0.7" />
+              <ellipse cx="38" cy="32" rx="5" ry="5.5" fill={arch.color} opacity="0.62" style={{ animation: 'animalbreathe 12s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+              <ellipse cx="35" cy="34" rx="3.5" ry="3.5" fill={arch.color} opacity="0.50" />
+              <ellipse cx="41" cy="34" rx="3.5" ry="3.5" fill={arch.color} opacity="0.50" />
+            </g>
+          )}
+          {/* Arbre 2 (21+ jours) */}
+          {days >= 21 && (
+            <g onClick={(e) => handleTap('arbre2', e)} style={{ pointerEvents: 'auto', cursor: 'pointer' }}>
+              <line x1="62" y1="50" x2="62" y2="34" stroke="rgba(40,30,20,0.85)" strokeWidth="0.8" />
+              <ellipse cx="62" cy="30" rx="6" ry="6.5" fill={arch.color} opacity="0.66" style={{ animation: 'animalbreathe 14s cubic-bezier(0.45,0,0.55,1) 2s infinite' }} />
+              <ellipse cx="58" cy="32" rx="4" ry="4" fill={arch.color} opacity="0.54" />
+              <ellipse cx="66" cy="32" rx="4" ry="4" fill={arch.color} opacity="0.54" />
+            </g>
+          )}
+        </svg>
+
+        {/* Luciole (30+ jours) — floating element */}
+        {days >= 30 && (
+          <div onClick={(e) => handleTap('luciole', e)} role="button" aria-label="Luciole" style={{ position: 'absolute', bottom: '36%', left: '42%', width: 6, height: 6, borderRadius: '50%', background: '#ffe788', boxShadow: '0 0 14px #ffd766, 0 0 28px #ffd76688', cursor: 'pointer', animation: 'animalfloat 18s cubic-bezier(0.45,0,0.55,1) infinite, signaturePulse 4s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+        )}
+        {/* Luciole 2 (50+ jours) */}
+        {days >= 50 && (
+          <div onClick={(e) => handleTap('luciole', e)} role="button" aria-label="Luciole" style={{ position: 'absolute', bottom: '42%', left: '70%', width: 5, height: 5, borderRadius: '50%', background: '#ffe788', boxShadow: '0 0 12px #ffd766, 0 0 24px #ffd76688', cursor: 'pointer', animation: 'animalfloat 22s cubic-bezier(0.45,0,0.55,1) 3s infinite, signaturePulse 5s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+        )}
+
+        {/* Créature paisible (100+ jours) — spirit animal miniature */}
+        {days >= 100 && (
+          <div onClick={(e) => handleTap('creature', e)} role="button" aria-label="Créature paisible" style={{ position: 'absolute', bottom: '8%', right: '12%', opacity: 0.62, cursor: 'pointer', animation: 'animalfloat 26s cubic-bezier(0.45,0,0.55,1) 6s infinite, animalbreathe 18s cubic-bezier(0.45,0,0.55,1) infinite', filter: `drop-shadow(0 0 12px ${arch.color}88)` }}>
+            <img src={`${B}spirit-${archetypeKey}.avif`} alt="" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 45%' }} />
+          </div>
+        )}
+      </div>
+
+      {/* Stats discreet at bottom (private, no comparison) */}
+      <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 22px)', left: 0, right: 0, textAlign: 'center', pointerEvents: 'none', zIndex: 5 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.20em', textTransform: 'uppercase', margin: 0, textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>{days === 0 ? "Premier passage — le sol t'attend" : days === 1 ? '1 jour de présence' : `${days} jours, ${souvenirs} éclat${souvenirs > 1 ? 's' : ''}`}</p>
+        {days >= 2 && (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: 'rgba(255,255,255,0.45)', margin: '6px 0 0', fontStyle: 'italic', letterSpacing: '0.04em', textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>Touche les éléments pour les écouter.</p>
+        )}
+      </div>
+    </div>
+  )
+}
 
 function ReparationCoconModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
