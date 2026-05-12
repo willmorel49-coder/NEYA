@@ -8,7 +8,7 @@ const ARCHETYPES = {
   resilience: {
     profil: 'Porteur·se de Feu',
     animal: 'Le Phénix intérieur',
-    bg: 'bg-feu.png',
+    bg: 'bg-feu.avif',
     color: '#f59e0b',
     shadow: 'rgba(245,158,11,0.4)',
     rgb: '245,158,11',
@@ -42,7 +42,7 @@ const ARCHETYPES = {
   presence: {
     profil: 'Ancreur·euse de Présence',
     animal: 'Le Cerf des eaux',
-    bg: 'bg-eau.png',
+    bg: 'bg-eau.avif',
     color: '#14b8a6',
     shadow: 'rgba(20,184,166,0.4)',
     rgb: '20,184,166',
@@ -76,7 +76,7 @@ const ARCHETYPES = {
   sagesse: {
     profil: 'Éveilleur·euse de Sens',
     animal: 'Le Loup de la brume',
-    bg: 'bg-brume.png',
+    bg: 'bg-brume.avif',
     color: '#6366f1',
     shadow: 'rgba(99,102,241,0.4)',
     rgb: '99,102,241',
@@ -110,7 +110,7 @@ const ARCHETYPES = {
   lumiere: {
     profil: 'Créateur·trice de Lumière',
     animal: 'L\'Ours lumineux',
-    bg: 'bg-foret.png',
+    bg: 'bg-foret.avif',
     color: '#ec4899',
     shadow: 'rgba(236,72,153,0.4)',
     rgb: '236,72,153',
@@ -147,7 +147,7 @@ const ARCHETYPES = {
 
 const QUESTIONS = [
   {
-    bg: 'bg-quiz-01.png',
+    bg: 'bg-quiz-01.avif',
     tint: 'linear-gradient(160deg, rgba(79,70,229,0.22) 0%, rgba(139,92,246,0.10) 100%)',
     title: "Avancer dans l'inconnu...",
     text: "Quand tu avances vers l'inconnu, quelle force intérieure te guide naturellement ?",
@@ -159,7 +159,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-02.png',
+    bg: 'bg-quiz-02.avif',
     tint: 'linear-gradient(160deg, rgba(251,146,60,0.22) 0%, rgba(245,158,11,0.10) 100%)',
     title: 'Face au changement de cap...',
     text: "Quand la vie t'amène à changer de cap, comment réagis-tu intérieurement ?",
@@ -171,7 +171,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-03.png',
+    bg: 'bg-quiz-03.avif',
     tint: 'linear-gradient(160deg, rgba(20,184,166,0.22) 0%, rgba(6,182,212,0.10) 100%)',
     title: 'Face au ralentissement...',
     text: "Quand la vie t'invite à ralentir, quelle est ta réponse intérieure ?",
@@ -183,7 +183,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-04.png',
+    bg: 'bg-quiz-04.avif',
     tint: 'linear-gradient(160deg, rgba(236,72,153,0.22) 0%, rgba(251,113,133,0.10) 100%)',
     title: 'Ta vraie nature...',
     text: 'Si tu pouvais exprimer ta vraie nature sans masque ni peur, quelle version de toi prendrait vie ?',
@@ -195,7 +195,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-05.png',
+    bg: 'bg-quiz-05.avif',
     tint: 'linear-gradient(160deg, rgba(139,92,246,0.24) 0%, rgba(109,40,217,0.10) 100%)',
     title: 'Dans les moments de doute...',
     text: "Quand le doute s'installe profondément, qu'est-ce qui te recentre ?",
@@ -207,7 +207,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-06.png',
+    bg: 'bg-quiz-06.avif',
     tint: 'linear-gradient(160deg, rgba(99,102,241,0.26) 0%, rgba(79,70,229,0.12) 100%)',
     title: 'Ta relation aux autres...',
     text: 'Dans une relation profonde, quel est ton rôle naturel ?',
@@ -219,7 +219,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-07.png',
+    bg: 'bg-quiz-07.avif',
     tint: 'linear-gradient(160deg, rgba(245,158,11,0.28) 0%, rgba(239,68,68,0.12) 100%)',
     title: "Face à l'adversité...",
     text: "Quand tout semble s'effondrer, qu'est-ce qui reste debout en toi ?",
@@ -231,7 +231,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-08.png',
+    bg: 'bg-quiz-08.avif',
     tint: 'linear-gradient(160deg, rgba(13,148,136,0.26) 0%, rgba(20,184,166,0.12) 100%)',
     title: 'Ta façon de ressentir...',
     text: 'Comment vis-tu principalement tes émotions ?',
@@ -243,7 +243,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-09.png',
+    bg: 'bg-quiz-09.avif',
     tint: 'linear-gradient(160deg, rgba(251,113,133,0.24) 0%, rgba(236,72,153,0.10) 100%)',
     title: 'Ta source de création...',
     text: "Quand tu crées quelque chose, qu'est-ce qui te motive profondément ?",
@@ -255,7 +255,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-10.png',
+    bg: 'bg-quiz-10.avif',
     tint: 'linear-gradient(160deg, rgba(148,163,184,0.20) 0%, rgba(100,116,139,0.10) 100%)',
     title: 'Ta force cachée...',
     text: 'Quelle est la force en toi que les autres remarquent rarement ?',
@@ -267,7 +267,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-11.png',
+    bg: 'bg-quiz-11.avif',
     tint: 'linear-gradient(160deg, rgba(109,40,217,0.28) 0%, rgba(139,92,246,0.14) 100%)',
     title: 'Ta vision du bonheur...',
     text: 'Pour toi, le bonheur ressemble à...',
@@ -279,7 +279,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-12.png',
+    bg: 'bg-quiz-12.avif',
     tint: 'linear-gradient(160deg, rgba(124,58,237,0.26) 0%, rgba(167,139,250,0.12) 100%)',
     title: 'Ton prochain chapitre...',
     text: "Quand tu imagines le prochain grand chapitre de ta vie, qu'est-ce qui l'anime ?",
@@ -292,7 +292,7 @@ const QUESTIONS = [
   },
   // ─── Questions tirées du MVP original ────────────────────────────────────────
   {
-    bg: 'bg-quiz-13.png',
+    bg: 'bg-quiz-13.avif',
     tint: 'linear-gradient(160deg, rgba(16,185,129,0.22) 0%, rgba(52,211,153,0.10) 100%)',
     title: "Quand une émotion forte surgit...",
     text: "Un geste, une parole ou un regard éveille une émotion forte en toi. Comment choisis-tu de l'accueillir ?",
@@ -304,7 +304,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-14.png',
+    bg: 'bg-quiz-14.avif',
     tint: 'linear-gradient(160deg, rgba(6,182,212,0.24) 0%, rgba(34,211,238,0.10) 100%)',
     title: "Face à une décision importante...",
     text: "La dernière fois que tu as eu une grande décision à prendre, quelle a été ta boussole intérieure ?",
@@ -316,7 +316,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-15.png',
+    bg: 'bg-quiz-15.avif',
     tint: 'linear-gradient(160deg, rgba(167,139,250,0.24) 0%, rgba(196,181,253,0.10) 100%)',
     title: "Dans un endroit nouveau...",
     text: "Quand tu arrives dans un endroit totalement nouveau, que fais-tu en premier ?",
@@ -328,7 +328,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-16.png',
+    bg: 'bg-quiz-16.avif',
     tint: 'linear-gradient(160deg, rgba(100,116,139,0.22) 0%, rgba(148,163,184,0.10) 100%)',
     title: "Face à une échéance...",
     text: "Quand une échéance se profile, quelle est ta manière naturelle de l'aborder ?",
@@ -340,7 +340,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-17.png',
+    bg: 'bg-quiz-17.avif',
     tint: 'linear-gradient(160deg, rgba(34,211,238,0.22) 0%, rgba(20,184,166,0.14) 100%)',
     title: "Retrouver son équilibre...",
     text: "Quand tu as besoin de retrouver ton équilibre, que privilégies-tu ?",
@@ -352,7 +352,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-18.png',
+    bg: 'bg-quiz-18.avif',
     tint: 'linear-gradient(160deg, rgba(139,92,246,0.26) 0%, rgba(99,102,241,0.14) 100%)',
     title: "Quand l'imprévu arrive...",
     text: "Quel est ton réflexe naturel quand les choses ne se passent pas comme prévu ?",
@@ -364,7 +364,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-19.png',
+    bg: 'bg-quiz-19.avif',
     tint: 'linear-gradient(160deg, rgba(34,197,94,0.20) 0%, rgba(16,185,129,0.10) 100%)',
     title: "En arrivant dans un lieu inconnu...",
     text: "Quand tu arrives dans un lieu totalement nouveau, que captes-tu naturellement en premier ?",
@@ -376,7 +376,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-20.png',
+    bg: 'bg-quiz-20.avif',
     tint: 'linear-gradient(160deg, rgba(244,114,182,0.24) 0%, rgba(236,72,153,0.10) 100%)',
     title: "Une journée libre...",
     text: "Quand tu as une journée entièrement libre, comment la vis-tu naturellement ?",
@@ -388,7 +388,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-21.png',
+    bg: 'bg-quiz-21.avif',
     tint: 'linear-gradient(160deg, rgba(99,102,241,0.30) 0%, rgba(79,70,229,0.16) 100%)',
     title: "Ton moteur intérieur...",
     text: "Quelle énergie intérieure te pousse à te lever chaque matin ?",
@@ -400,7 +400,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-22.png',
+    bg: 'bg-quiz-22.avif',
     tint: 'linear-gradient(160deg, rgba(239,68,68,0.22) 0%, rgba(245,158,11,0.12) 100%)',
     title: "Face au besoin de changement...",
     text: "Quand une partie de toi sent qu'il est temps de changer, que fais-tu naturellement ?",
@@ -412,7 +412,7 @@ const QUESTIONS = [
     ],
   },
   {
-    bg: 'bg-quiz-23.png',
+    bg: 'bg-quiz-23.avif',
     tint: 'linear-gradient(160deg, rgba(236,72,153,0.28) 0%, rgba(251,113,133,0.14) 100%)',
     title: "À la rencontre d'une nouvelle personne...",
     text: "Quand tu rencontres quelqu'un pour la première fois, quelle est ton attitude naturelle ?",
@@ -430,7 +430,7 @@ const QUESTIONS = [
 const WORLDS = {
   feu: {
     name: 'Le Monde du Feu', sub: 'Transformation · Courage · Résilience',
-    bg: 'bg-feu.png', color: '#f59e0b', rgb: '245,158,11', animalKey: 'resilience',
+    bg: 'bg-feu.avif', color: '#f59e0b', rgb: '245,158,11', animalKey: 'resilience',
     fragments: [
       "Dans le monde du feu, même les cendres portent une promesse. Tu n'avances pas malgré la résistance — tu avances à travers elle.",
       "Le feu ne consume pas ce qui est vrai. Il révèle ce qui est essentiel. Ce que tu traverses forge quelque chose d'indestructible en toi.",
@@ -441,7 +441,7 @@ const WORLDS = {
   },
   eau: {
     name: "Le Monde de l'Eau", sub: 'Présence · Ancrage · Douceur',
-    bg: 'bg-eau.png', color: '#14b8a6', rgb: '20,184,166', animalKey: 'presence',
+    bg: 'bg-eau.avif', color: '#14b8a6', rgb: '20,184,166', animalKey: 'presence',
     fragments: [
       "L'eau ne résiste pas — elle épouse. Dans ce monde, tu apprends que la douceur n'est pas une faiblesse, mais la forme la plus profonde de la force.",
       "Le cerf s'arrête au bord de l'eau. Il regarde. Il sait que voir vraiment est un acte de courage.",
@@ -452,7 +452,7 @@ const WORLDS = {
   },
   brume: {
     name: 'Le Monde de la Brume', sub: 'Sagesse · Intuition · Profondeur',
-    bg: 'bg-brume.png', color: '#6366f1', rgb: '99,102,241', animalKey: 'sagesse',
+    bg: 'bg-brume.avif', color: '#6366f1', rgb: '99,102,241', animalKey: 'sagesse',
     fragments: [
       "La brume cache ce qui est évident pour révéler ce qui est vrai. Ici, ton regard apprend à percer l'apparence.",
       "Le loup marche seul dans la brume non par solitude, mais par clarté. Il sait que certaines vérités se trouvent dans le silence.",
@@ -463,7 +463,7 @@ const WORLDS = {
   },
   foret: {
     name: 'Le Monde de la Forêt', sub: 'Lumière · Créativité · Joie',
-    bg: 'bg-foret.png', color: '#ec4899', rgb: '236,72,153', animalKey: 'lumiere',
+    bg: 'bg-foret.avif', color: '#ec4899', rgb: '236,72,153', animalKey: 'lumiere',
     fragments: [
       "La forêt garde ses secrets dans la lumière filtrée. Chaque rayon qui perce les feuillages te rappelle que la beauté se trouve dans les espaces entre.",
       "L'ours de lumière n'illumine pas le monde malgré ses blessures — il l'illumine à travers elles.",
@@ -474,7 +474,7 @@ const WORLDS = {
   },
   cosmos: {
     name: 'Le Monde du Cosmos', sub: 'Mystère · Infini · Perspective',
-    bg: 'bg-cosmos.png', color: '#818cf8', rgb: '129,140,248', animalKey: 'sagesse',
+    bg: 'bg-cosmos.avif', color: '#818cf8', rgb: '129,140,248', animalKey: 'sagesse',
     fragments: [
       "Dans le cosmos, les distances sont si grandes qu'elles rendent l'instant précieux. Tu es une étoile qui ne connaît pas encore sa propre magnitude.",
       "Là-haut, pas de haut, pas de bas. Seulement des directions choisies. Ta liberté intérieure ressemble à ça.",
@@ -485,7 +485,7 @@ const WORLDS = {
   },
   vide: {
     name: 'Le Monde du Vide', sub: 'Silence · Essence · Paix profonde',
-    bg: 'bg-vide.png', color: '#94a3b8', rgb: '148,163,184', animalKey: 'presence',
+    bg: 'bg-vide.avif', color: '#94a3b8', rgb: '148,163,184', animalKey: 'presence',
     fragments: [
       "Le vide n'est pas le néant. C'est l'espace d'avant les mots, d'avant les formes. C'est là que tu trouves ce qui est vraiment toi.",
       "Dans ce monde, la lenteur est une pratique. Chaque silence porte plus que tous les bruits du monde réunis.",
@@ -1324,7 +1324,7 @@ function ReturningScreen({ archetypeKey, onDone }) {
           {vis && <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 5.5s ease-in-out infinite 0.6s', pointerEvents: 'none' }} />}
           {vis && <div style={{ position: 'absolute', width: 210, height: 210, borderRadius: '50%', border: `1px solid ${arch.color}11`, animation: 'pulsering 7s ease-in-out infinite 1.8s', pointerEvents: 'none' }} />}
           <img
-            src={`${B}spirit-${archetypeKey}.jpg`}
+            src={`${B}spirit-${archetypeKey}.avif`}
             alt={arch.animal}
             style={{
               width: 130, height: 130,
@@ -1440,7 +1440,7 @@ function SplashScreen({ onStart }) {
   ]
 
   return (
-    <BgScreen bg="bg-splash.png" overlay="rgba(5,8,16,0.45)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
+    <BgScreen bg="bg-splash.avif" overlay="rgba(5,8,16,0.45)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
       {/* Ambient vertical light column */}
       <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: showBtn ? 240 : 180, height: '70%', background: showBtn ? 'linear-gradient(to bottom, rgba(99,102,241,0.10) 0%, rgba(99,102,241,0.04) 60%, transparent 100%)' : 'linear-gradient(to bottom, rgba(99,102,241,0.07) 0%, rgba(99,102,241,0.02) 60%, transparent 100%)', pointerEvents: 'none', zIndex: 2, animation: 'worldglow 34s ease-in-out infinite', transition: 'width 2s ease, background 2s ease' }} />
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
@@ -1514,7 +1514,7 @@ function IntroScreen({ onStart }) {
 
   if (step === 0) {
     return (
-      <BgScreen bg="bg-onboarding.png" overlay="rgba(10,6,2,0.46)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
+      <BgScreen bg="bg-onboarding.avif" overlay="rgba(10,6,2,0.46)" breathe breatheAnim="ob0breathe 42s ease-in-out infinite">
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
           {[{x:15,y:22,r:1.8,dur:19,del:0.0},{x:82,y:18,r:1.2,dur:24,del:2.8},{x:66,y:72,r:2.2,dur:17,del:1.5},{x:30,y:80,r:1.5,dur:21,del:4.1},{x:90,y:55,r:1.0,dur:26,del:0.8}].map((m,i)=>(
             <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill="rgba(245,158,11,1)" style={{ opacity: 0.06, animation: `splashmote ${m.dur}s ease-in-out infinite`, animationDelay: `${m.del}s` }} />
@@ -1537,7 +1537,7 @@ function IntroScreen({ onStart }) {
   }
 
   return (
-    <BgScreen bg="bg-foret.png" overlay="rgba(4,10,4,0.44)" breathe>
+    <BgScreen bg="bg-foret.avif" overlay="rgba(4,10,4,0.44)" breathe>
       {/* Motes forêt — magenta doux */}
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}>
         {[{x:14,y:74,size:2.5,dur:22,del:0},{x:78,y:62,size:3,dur:18,del:3.2},{x:54,y:84,size:2,dur:20,del:1.5},{x:36,y:68,size:3.5,dur:25,del:5.1},{x:88,y:78,size:2.2,dur:19,del:2.4}].map((m,i)=>(
@@ -1586,7 +1586,7 @@ function QuizIntroScreen({ onStart }) {
   }, [])
 
   return (
-    <BgScreen bg="bg-cosmos.png" overlay="rgba(5,8,16,0.74)" breathe>
+    <BgScreen bg="bg-cosmos.avif" overlay="rgba(5,8,16,0.74)" breathe>
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
         {STARS.slice(0, 8).map((s, i) => (
           <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r * 0.7} fill={s.fill || 'white'} style={{ animation: `startwinkle ${s.dur}s ease-in-out infinite`, animationDelay: `${s.del}s` }} />
@@ -1674,20 +1674,20 @@ function QuizScreen({ onComplete }) {
     lumiere:    'rgba(236,72,153,0.10)',
   }
   const WORLD_TINTS = {
-    'bg-cosmos.png': 'rgba(99,102,241,0.06)',
-    'bg-feu.png':    'rgba(245,158,11,0.06)',
-    'bg-eau.png':    'rgba(20,184,166,0.05)',
-    'bg-foret.png':  'rgba(236,72,153,0.05)',
-    'bg-brume.png':  'rgba(120,100,200,0.05)',
-    'bg-vide.png':   'rgba(200,200,240,0.04)',
+    'bg-cosmos.avif': 'rgba(99,102,241,0.06)',
+    'bg-feu.avif':    'rgba(245,158,11,0.06)',
+    'bg-eau.avif':    'rgba(20,184,166,0.05)',
+    'bg-foret.avif':  'rgba(236,72,153,0.05)',
+    'bg-brume.avif':  'rgba(120,100,200,0.05)',
+    'bg-vide.avif':   'rgba(200,200,240,0.04)',
   }
   const WORLD_MOTES = {
-    'bg-cosmos.png': { color: '99,102,241', count: 5, op: 0.07 },
-    'bg-feu.png':    { color: '245,158,11', count: 4, op: 0.06 },
-    'bg-eau.png':    { color: '20,184,166', count: 4, op: 0.05 },
-    'bg-foret.png':  { color: '236,72,153', count: 4, op: 0.05 },
-    'bg-brume.png':  { color: '120,100,200', count: 5, op: 0.06 },
-    'bg-vide.png':   { color: '200,200,240', count: 3, op: 0.04 },
+    'bg-cosmos.avif': { color: '99,102,241', count: 5, op: 0.07 },
+    'bg-feu.avif':    { color: '245,158,11', count: 4, op: 0.06 },
+    'bg-eau.avif':    { color: '20,184,166', count: 4, op: 0.05 },
+    'bg-foret.avif':  { color: '236,72,153', count: 4, op: 0.05 },
+    'bg-brume.avif':  { color: '120,100,200', count: 5, op: 0.06 },
+    'bg-vide.avif':   { color: '200,200,240', count: 3, op: 0.04 },
   }
   const worldMote = WORLD_MOTES[bgMain]
 
@@ -1854,7 +1854,7 @@ function WorldRevealBridge({ onContinue }) {
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
   return (
-    <BgScreen bg="bg-foret.png" overlay="rgba(2,5,14,0.74)" breathe>
+    <BgScreen bg="bg-foret.avif" overlay="rgba(2,5,14,0.74)" breathe>
       {/* Golden star at top */}
       <div style={{ position: 'absolute', top: '9%', left: '50%', transform: 'translateX(-50%)', zIndex: 3, opacity: vis ? 1 : 0, transition: 'opacity 1.6s ease' }}>
         <svg width={48} height={48} viewBox="0 0 48 48" fill="none" style={{ animation: 'seedPulse 3.2s ease-in-out infinite, milestoneGlow 4s ease-in-out infinite', filter: 'drop-shadow(0 0 14px rgba(245,195,60,0.85)) drop-shadow(0 0 32px rgba(245,195,60,0.4))' }}>
@@ -1897,7 +1897,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
     const t2 = setTimeout(() => setShowBtn(true), 2800)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
-  const transitionBg = { resilience: 'bg-feu.png', presence: 'bg-eau.png', sagesse: 'bg-brume.png', lumiere: 'bg-foret.png' }[archetypeKey] || 'bg-cosmos-alt.png'
+  const transitionBg = { resilience: 'bg-feu.avif', presence: 'bg-eau.avif', sagesse: 'bg-brume.avif', lumiere: 'bg-foret.avif' }[archetypeKey] || 'bg-cosmos-alt.avif'
   return (
     <BgScreen bg={transitionBg} overlay="rgba(5,8,16,0.58)" breathe>
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
@@ -2082,7 +2082,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
           {/* Inner aura */}
           <div style={{ position: 'absolute', inset: -28, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 65%)`, animation: 'presencePulse 2.8s ease-in-out infinite 0.6s' }} />
           <img
-            src={`${B}spirit-${archetypeKey}.jpg`}
+            src={`${B}spirit-${archetypeKey}.avif`}
             alt={arch.animal}
             style={{
               width: 220, height: 220,
@@ -2156,7 +2156,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
     } else { onContinue() }
   }
 
-  const resultBg = { resilience: 'bg-feu.png', presence: 'bg-eau.png', sagesse: 'bg-brume.png', lumiere: 'bg-foret.png' }[archetypeKey] || 'bg-cosmos.png'
+  const resultBg = { resilience: 'bg-feu.avif', presence: 'bg-eau.avif', sagesse: 'bg-brume.avif', lumiere: 'bg-foret.avif' }[archetypeKey] || 'bg-cosmos.avif'
 
   // Phase 0 : révélation patronus plein écran
   if (phase === 0) {
@@ -2183,7 +2183,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
                 <div style={{ position: 'relative', marginBottom: 2 }}>
                   <div style={{ position: 'absolute', inset: -16, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}18 0%, transparent 70%)`, animation: 'presencePulse 4s ease-in-out infinite' }} />
-                  <img src={`${B}spirit-${archetypeKey}.jpg`} alt={arch.animal} style={{ width: 60, height: 60, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 45%', display: 'block', opacity: 0.75, filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', willChange: 'transform' }} />
+                  <img src={`${B}spirit-${archetypeKey}.avif`} alt={arch.animal} style={{ width: 60, height: 60, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 45%', display: 'block', opacity: 0.75, filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 22s ease-in-out infinite', willChange: 'transform' }} />
                 </div>
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.95)`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 4px', animation: 'phrasebreathe 24s ease-in-out infinite', textShadow: '0 1px 8px rgba(0,0,0,0.55)' }}>Profil mental</p>
                 <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: 22, margin: 0, background: `linear-gradient(135deg, rgba(255,255,255,0.96), ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s ease-in-out infinite' : 'phrasebreathe 32s ease-in-out infinite', transition: 'animation 0.4s ease' }}>{arch.profil}</h2>
@@ -2208,7 +2208,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0 2px' }}>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <div style={{ position: 'absolute', width: 50, height: 50, borderRadius: '50%', border: `1px solid ${arch.color}22`, animation: 'pulsering 5s ease-in-out infinite 1.2s', pointerEvents: 'none' }} />
-                  <img src={`${B}spirit-${archetypeKey}.jpg`} alt={arch.animal} style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 45%', display: 'block', opacity: 0.70, filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 12px ${arch.color}99) drop-shadow(0 0 24px ${arch.color}44)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 32s ease-in-out infinite', position: 'relative' }} />
+                  <img src={`${B}spirit-${archetypeKey}.avif`} alt={arch.animal} style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 45%', display: 'block', opacity: 0.70, filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 12px ${arch.color}99) drop-shadow(0 0 24px ${arch.color}44)`, animation: 'animalfloat 20s ease-in-out infinite, animalbreathe 32s ease-in-out infinite', position: 'relative' }} />
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 4px', opacity: 1, textShadow: '0 1px 8px rgba(0,0,0,0.55)', animation: 'phrasebreathe 22s ease-in-out infinite, milestoneGlow 7s ease-in-out 2s infinite', textShadow: `0 0 12px ${arch.color}44` }}>{{ resilience: 'Ton guide de feu', presence: 'Ton guide d\'ancrage', sagesse: 'Ton guide de sagesse', lumiere: 'Ton guide de lumière' }[archetypeKey] || 'Ton guide intérieur'}</p>
@@ -2372,7 +2372,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       })()}
       {/* Close hint + button */}
       <button onClick={(e) => { e.stopPropagation(); haptic(6); if (sessionQualified.current) addEvraiFragment(archetypeKey); onClose() }} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, width: 40, height: 40, color: 'rgba(255,255,255,0.72)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }} aria-label="Quitter l'espace">✕</button>
-      <div style={{ position: 'absolute', top: '-2.5%', left: '-2.5%', right: '-2.5%', bottom: '-2.5%', backgroundImage: `url(${B}bg-vrai.png)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: `bgbreathe ${bgPeriod}s ease-in-out infinite` }} />
+      <div style={{ position: 'absolute', top: '-2.5%', left: '-2.5%', right: '-2.5%', bottom: '-2.5%', backgroundImage: `url(${B}bg-vrai.avif)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: `bgbreathe ${bgPeriod}s ease-in-out infinite` }} />
       {(() => { const vraiOverlay = `linear-gradient(to bottom, rgba(5,8,16,0.45) 0%, rgba(${arch.rgb},0.12) 50%, rgba(5,8,16,0.52) 100%)`; return <div style={{ position: 'absolute', inset: 0, background: vraiOverlay }} /> })()}
       {typingDone && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '28%', background: `linear-gradient(to top, rgba(${arch.rgb},0.08) 0%, transparent 100%)`, pointerEvents: 'none', zIndex: 2, animation: 'fadeIn 3s ease forwards, worldglow 16s ease-in-out 4s infinite' }} />}
       <GrainFilter />
@@ -2611,7 +2611,7 @@ function CoconScreen({ archetypeKey, onClose }) {
           <div style={{ position: 'absolute', width: 240, height: 240, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.18) 0%, transparent 68%)`, animation: 'presencePulse 5s ease-in-out infinite', pointerEvents: 'none' }} />
           <div style={{ position: 'absolute', width: 270, height: 270, borderRadius: '50%', border: `1px solid rgba(${arch.rgb},0.14)`, animation: 'pulsering 6s ease-in-out infinite 1.2s', pointerEvents: 'none' }} />
           <img
-            src={`${B}spirit-${archetypeKey}.jpg`}
+            src={`${B}spirit-${archetypeKey}.avif`}
             alt={arch.animal}
             style={{
               width: 200, height: 200,
@@ -2895,7 +2895,7 @@ function WorldDetailOverlay({ worldKey, archetypeKey, onClose }) {
           {/* Spirit animal */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28, animation: 'animalfloat 18s ease-in-out infinite, animalbreathe 10s ease-in-out infinite' }}>
             <img
-              src={`${B}spirit-${w.animalKey}.jpg`}
+              src={`${B}spirit-${w.animalKey}.avif`}
               alt={w.animalKey}
               style={{
                 width: 120, height: 120,
@@ -3697,7 +3697,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ position: 'absolute', width: 76, height: 76, borderRadius: '50%', background: `radial-gradient(circle, ${arch.color}${jourComplète ? '34' : '20'} 0%, transparent 72%)`, animation: jourComplète ? `presencePulse 2.8s ease-in-out infinite, milestoneGlow 6s ease-in-out 1.5s infinite` : 'presencePulse 3.8s ease-in-out infinite', transition: 'background 1.4s ease' }} />
             <img
-              src={`${B}spirit-${archetypeKey}.jpg`}
+              src={`${B}spirit-${archetypeKey}.avif`}
               alt={arch.animal}
               style={{
                 width: 74, height: 74,
@@ -4240,12 +4240,12 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
 // ─── BOUTIQUE SCREEN ──────────────────────────────────────────────────────────
 
 const CAVA_PIECES = [
-  { img: 'cava/shoot-mains.png',       phrase: 'Moins de jugements,\nplus de mains tendues.' },
-  { img: 'cava/shoot-respire.png',     phrase: 'Respire,\nc\'est résister.' },
-  { img: 'cava/shoot-regard.png',      phrase: 'Un regard, un geste,\nune parole, peuvent sauver.' },
-  { img: 'cava/shoot-citron.png',      phrase: 'À force d\'être pressé,\nj\'ai perdu le goût.' },
-  { img: 'cava/shoot-multiplicite.png',phrase: 'La multiplicité\nest une nécessité.' },
-  { img: 'cava/shoot-dos.jpg',         phrase: 'Ce que tu portes\nparle pour toi.' },
+  { img: 'cava/shoot-mains.avif',       phrase: 'Moins de jugements,\nplus de mains tendues.' },
+  { img: 'cava/shoot-respire.avif',     phrase: 'Respire,\nc\'est résister.' },
+  { img: 'cava/shoot-regard.avif',      phrase: 'Un regard, un geste,\nune parole, peuvent sauver.' },
+  { img: 'cava/shoot-citron.avif',      phrase: 'À force d\'être pressé,\nj\'ai perdu le goût.' },
+  { img: 'cava/shoot-multiplicite.avif',phrase: 'La multiplicité\nest une nécessité.' },
+  { img: 'cava/shoot-dos.avif',         phrase: 'Ce que tu portes\nparle pour toi.' },
 ]
 
 function BoutiqueScreen({ archetypeKey }) {
@@ -4264,7 +4264,7 @@ function BoutiqueScreen({ archetypeKey }) {
 
       {/* ── Hero ── */}
       <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', overflow: 'hidden', flexShrink: 0 }}>
-        <img src={`${B}cava/shoot-vraiçava.png`} alt="ÇA VA?" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+        <img src={`${B}cava/shoot-vraiçava.avif`} alt="ÇA VA?" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.18) 0%, rgba(5,8,16,0.0) 40%, rgba(5,8,16,0.72) 100%)' }} />
         <div style={{ position: 'absolute', bottom: 28, left: 22, right: 22 }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 8px', animation: 'phrasebreathe 22s ease-in-out infinite', textShadow: `0 0 18px ${arch.color}88` }}>LA MARQUE</p>
@@ -4287,7 +4287,7 @@ function BoutiqueScreen({ archetypeKey }) {
 
       {/* ── Graphisme signature ── */}
       <div style={{ padding: '28px 24px 0', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-        <img src={`${B}cava/graph-masque.png`} alt="" style={{ width: 90, height: 90, objectFit: 'contain', objectPosition: 'center', opacity: 0.88, flexShrink: 0, animation: 'animalfloat 22s ease-in-out infinite' }} />
+        <img src={`${B}cava/graph-masque.avif`} alt="" style={{ width: 90, height: 90, objectFit: 'contain', objectPosition: 'center', opacity: 0.88, flexShrink: 0, animation: 'animalfloat 22s ease-in-out infinite' }} />
         <div style={{ flex: 1, paddingTop: 8 }}>
           <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: arch.color, letterSpacing: '0.06em', margin: '0 0 6px', animation: 'phrasebreathe 26s ease-in-out infinite, milestoneGlow 10s ease-in-out 2s infinite', textShadow: `0 0 16px ${arch.color}66` }}>Et toi, ça va vraiment ?</p>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 38s ease-in-out 2s infinite' }}>La question derrière le vêtement. Celle qui change tout quand elle est sincère.</p>
@@ -4334,7 +4334,7 @@ function BoutiqueScreen({ archetypeKey }) {
       {/* ── Citation + graphisme ── */}
       <div style={{ padding: '32px 24px 0', display: 'flex', flexDirection: 'column', gap: 20 }}>
         <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          <img src={`${B}cava/graph-equilibre.png`} alt="" style={{ width: 72, height: 72, objectFit: 'contain', opacity: 0.80, flexShrink: 0, animation: 'animalfloat 28s ease-in-out 4s infinite' }} />
+          <img src={`${B}cava/graph-equilibre.avif`} alt="" style={{ width: 72, height: 72, objectFit: 'contain', opacity: 0.80, flexShrink: 0, animation: 'animalfloat 28s ease-in-out 4s infinite' }} />
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${arch.color}33, transparent)`, animation: 'worldglow 14s ease-in-out infinite' }} />
         </div>
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 20, color: 'rgba(255,255,255,0.88)', margin: 0, lineHeight: 1.55, animation: 'phrasebreathe 40s ease-in-out infinite', textShadow: `0 0 40px ${arch.color}18` }}>
@@ -4346,7 +4346,7 @@ function BoutiqueScreen({ archetypeKey }) {
       {/* ── Photo couple ── */}
       <div style={{ padding: '24px 20px 0' }}>
         <div style={{ position: 'relative', borderRadius: 18, overflow: 'hidden', aspectRatio: '4/3', border: `1px solid ${arch.color}22` }}>
-          <img src={`${B}cava/shoot-couple.png`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+          <img src={`${B}cava/shoot-couple.avif`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
           <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, transparent 55%, rgba(5,8,16,0.85) 100%)` }} />
           <div style={{ position: 'absolute', bottom: 20, left: 22, right: 22 }}>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 5px', animation: 'phrasebreathe 24s ease-in-out infinite' }}>Unisexe · Capsule 2026</p>
@@ -4357,7 +4357,7 @@ function BoutiqueScreen({ archetypeKey }) {
 
       {/* ── CTA ── */}
       <div style={{ padding: '32px 22px 0', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
-        <img src={`${B}cava/graph-visages.png`} alt="" style={{ width: 88, height: 88, objectFit: 'contain', opacity: 0.72, animation: 'animalfloat 20s ease-in-out 2s infinite' }} />
+        <img src={`${B}cava/graph-visages.avif`} alt="" style={{ width: 88, height: 88, objectFit: 'contain', opacity: 0.72, animation: 'animalfloat 20s ease-in-out 2s infinite' }} />
         <button onClick={openShop} style={{ width: '100%', padding: '17px 0', background: `linear-gradient(135deg, ${arch.color}, ${arch.color}cc)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 13, fontWeight: 500, letterSpacing: '0.22em', color: '#050810', textTransform: 'uppercase', boxShadow: `0 6px 32px rgba(${arch.rgb},0.45), 0 0 0 1px ${arch.color}44`, animation: 'milestoneGlow 5s ease-in-out infinite' }}>
           Découvrir ÇA VA?
         </button>
@@ -4439,7 +4439,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
 
   const mainJourComplète = routinesDone.every(Boolean) && quetesDone.some(Boolean)
   const overlay = `linear-gradient(180deg, rgba(5,8,16,0.62) 0%, rgba(${arch.rgb},${mainJourComplète ? '0.14' : '0.09'}) 100%)`
-  const WORLD_GLOW_PERIOD = { 'bg-brume.png': 30, 'bg-feu.png': 8, 'bg-foret.png': 18, 'bg-eau.png': 24, 'bg-cosmos.png': 42, 'bg-vide.png': 60 }
+  const WORLD_GLOW_PERIOD = { 'bg-brume.avif': 30, 'bg-feu.avif': 8, 'bg-foret.avif': 18, 'bg-eau.avif': 24, 'bg-cosmos.avif': 42, 'bg-vide.avif': 60 }
   const glowPeriod = WORLD_GLOW_PERIOD[arch.bg] || 24
 
   return (
@@ -4567,13 +4567,21 @@ export default function App() {
       @keyframes floatUp      { 0%{transform:translateY(0) scale(1);opacity:0.6} 50%{opacity:0.35} 100%{transform:translateY(-55px) scale(0.55);opacity:0} }
       @keyframes depthBreath  { 0%,100%{transform:scale(1);opacity:0.88} 50%{transform:scale(1.018);opacity:1} }
       @keyframes xpToastIn    { 0%{opacity:0;transform:translateX(-50%) translateY(-14px) scale(0.88)} 14%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} 72%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)} 100%{opacity:0;transform:translateX(-50%) translateY(-10px) scale(0.94)} }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
     `
     if (!document.getElementById('neya-css')) document.head.appendChild(style)
     return () => { const el = document.getElementById('neya-css'); if (el) el.remove() }
   }, [])
 
   useEffect(() => {
-    const assets = ['bg-splash.png','bg-onboarding.png','bg-cosmos.png','bg-cosmos-alt.png','bg-feu.png','bg-eau.png','bg-foret.png','bg-brume.png','bg-vide.png','bg-vrai.png']
+    const assets = ['bg-splash.avif','bg-onboarding.avif']
     assets.forEach(s => { const img = new Image(); img.src = B + s })
   }, [])
 
