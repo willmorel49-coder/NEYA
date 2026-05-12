@@ -197,6 +197,8 @@ export const SOUVENIR_LIBRARY = {
   equinox_autumn:     { glyph: '☾', title: 'Équinoxe d\'automne',       subtitle: 'Le temps de se déposer.' },
   visitor_butterfly:  { glyph: '⌒', title: 'Un papillon est passé',     subtitle: 'Tu l\'as juste vu.' },
   visitor_shooting:   { glyph: '⋆', title: 'Une étoile filante',        subtitle: 'Le ciel a brillé pour toi.' },
+  first_liberation:   { glyph: '◍', title: 'Première libération',       subtitle: 'Tu as posé ce qui pesait.' },
+  liberation_session: { glyph: '◍', title: 'Pensées libérées',          subtitle: 'L\'espace s\'est éclairci.' },
 }
 
 export function getSouvenirs() {

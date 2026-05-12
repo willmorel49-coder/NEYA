@@ -3688,6 +3688,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showPersonalize, setShowPersonalize] = useState(false)
   const [showTrace, setShowTrace] = useState(false)
   const [showShare, setShowShare] = useState(false)
+  const [showLiberation, setShowLiberation] = useState(false)
   const [prenom, setPrenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
   const [mantra, setMantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
   const [coconName, setCoconName] = useState(() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })
@@ -4018,6 +4019,25 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {showBreathing && <BreathingModal archetypeKey={archetypeKey} onClose={() => setShowBreathing(false)} />}
+
+      {/* ── Libération des pensées (mini-jeu thérapeutique) ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowLiberation(true) }} role="button" tabIndex={0} aria-label="Ouvrir Libération des pensées" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.5s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'animalbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <ellipse cx="11" cy="13" rx="5" ry="4" fill={`rgba(120,130,160,0.42)`} />
+          <ellipse cx="20" cy="11" rx="4" ry="3" fill={`rgba(120,130,160,0.30)`} />
+          <ellipse cx="16" cy="19" rx="4" ry="3" fill={`rgba(120,130,160,0.36)`} />
+          <circle cx="24" cy="22" r="1.5" fill={arch.color} opacity="0.85" />
+          <circle cx="6" cy="8"  r="1.0" fill={arch.color} opacity="0.65" />
+          <circle cx="26" cy="6"  r="0.8" fill={arch.color} opacity="0.55" />
+        </svg>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Libération des pensées</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.36)', marginTop: 3 }}>Touche ce qui pèse pour le laisser partir</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+      {showLiberation && <LiberationPenseesModal archetypeKey={archetypeKey} onClose={() => setShowLiberation(false)} />}
 
       {/* ── Ta trace ── carte discrète d'accès au sanctuaire temporel */}
       <div onClick={() => { haptic(6); setShowTrace(true) }} role="button" tabIndex={0} aria-label="Voir ta trace des 30 derniers jours" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.07) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid rgba(${arch.rgb},0.18)`, borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.55s both', boxShadow: `0 4px 20px rgba(${arch.rgb},0.08)`, minHeight: 56 }}>
@@ -4641,6 +4661,179 @@ function BoutiqueScreen({ archetypeKey }) {
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 
+function LiberationPenseesModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  const [thoughts, setThoughts] = useState([])
+  const [released, setReleased] = useState([])
+  const [bursts, setBursts] = useState([])
+
+  const POOL = [
+    'Je ne suis pas assez',
+    "J'ai trop à faire",
+    'Je suis fatigué·e',
+    'Tout va trop vite',
+    "J'ai peur",
+    "Je n'y arrive pas",
+    'Tout le monde fait mieux',
+    'Je dois être parfait·e',
+    'Personne ne me comprend',
+    'Demain sera pire',
+    'Je devrais déjà avoir réussi',
+    'Je suis seul·e',
+    'Ça ne changera jamais',
+    "J'ai honte",
+    'Je suis trop lent·e',
+  ]
+
+  useEffect(() => {
+    const t = setTimeout(() => setVis(true), 30)
+    const shuffled = [...POOL].sort(() => Math.random() - 0.5).slice(0, 5)
+    setThoughts(shuffled.map((text, i) => ({
+      id: `${Date.now()}-${i}`,
+      text,
+      x: 22 + (i * 14) % 56 + (Math.random() - 0.5) * 8,
+      y: 36 + (i * 13) % 32 + (Math.random() - 0.5) * 6,
+      driftSeed: i * 1.7,
+    })))
+    return () => clearTimeout(t)
+  }, [])
+
+  const releaseThought = (id, e) => {
+    if (released.includes(id)) return
+    haptic(8)
+    let x = 0, y = 0
+    try {
+      const rect = e.currentTarget.getBoundingClientRect()
+      x = rect.left + rect.width / 2
+      y = rect.top + rect.height / 2
+    } catch {}
+    const bid = `b-${Date.now()}-${Math.random()}`
+    setBursts(prev => [...prev, { id: bid, x, y }])
+    setReleased(prev => [...prev, id])
+    setTimeout(() => setBursts(prev => prev.filter(b => b.id !== bid)), 1300)
+  }
+
+  const allReleased = thoughts.length > 0 && released.length === thoughts.length
+
+  useEffect(() => {
+    if (allReleased) {
+      haptic([20, 80, 20, 80, 30])
+      try {
+        addSouvenir('first_liberation')
+        addSouvenir('liberation_session', { releasedCount: released.length })
+      } catch {}
+    }
+  }, [allReleased])
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+      {/* Ambient glow that brightens as user releases thoughts */}
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 45%, rgba(${arch.rgb},${0.08 + (released.length / Math.max(1, thoughts.length)) * 0.22}) 0%, transparent 65%)`, transition: 'background 1.6s cubic-bezier(0.45,0,0.55,1)', pointerEvents: 'none' }} />
+
+      <button data-press="true" onClick={close} aria-label="Quitter la libération" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+
+      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 50px)', left: 0, right: 0, textAlign: 'center', zIndex: 5, padding: '0 32px' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◍ Libération des pensées</p>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.32, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>{allReleased ? "L'espace s'est éclairci." : 'Touche ce qui pèse.'}</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '10px 0 0', fontStyle: 'italic', lineHeight: 1.55, maxWidth: 320, marginLeft: 'auto', marginRight: 'auto' }}>{allReleased ? 'Ces pensées ne sont pas toi. Elles n\'étaient que de passage.' : 'Chaque pensée est un nuage. Tu peux la laisser passer.'}</p>
+      </div>
+
+      {/* Thoughts area */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 3 }}>
+        {thoughts.map((t) => {
+          if (released.includes(t.id)) return null
+          return (
+            <button key={t.id} onClick={(e) => releaseThought(t.id, e)} aria-label={`Libérer: ${t.text}`} style={{
+              position: 'absolute',
+              left: `${t.x}%`,
+              top: `${t.y}%`,
+              transform: 'translate(-50%, -50%)',
+              background: 'rgba(20,22,32,0.78)',
+              border: '1px solid rgba(120,130,160,0.30)',
+              borderRadius: 100,
+              padding: '12px 20px',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 300,
+              fontSize: 13.5,
+              color: 'rgba(220,225,240,0.88)',
+              letterSpacing: '0.01em',
+              cursor: 'pointer',
+              boxShadow: '0 4px 22px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04)',
+              animation: `thoughtFloat ${22 + t.driftSeed * 3}s cubic-bezier(0.45,0,0.55,1) infinite, fadeIn 1.4s cubic-bezier(0,0,0.2,1) both`,
+              animationDelay: `${t.driftSeed * 0.5}s, ${t.driftSeed * 0.4}s`,
+              minWidth: 120,
+              maxWidth: 220,
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+            }}>
+              {t.text}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Particle bursts on dissolve */}
+      {bursts.map((b) => (
+        <div key={b.id} style={{ position: 'fixed', left: b.x, top: b.y, pointerEvents: 'none', zIndex: 10, width: 0, height: 0 }}>
+          {[0,1,2,3,4,5,6,7,8,9].map((i) => {
+            const angle = (i / 10) * Math.PI * 2
+            const dist = 80 + (i % 3) * 20
+            const tx = Math.cos(angle) * dist
+            const ty = Math.sin(angle) * dist
+            return (
+              <div key={i} style={{
+                position: 'absolute', left: 0, top: 0,
+                width: 5, height: 5,
+                borderRadius: '50%',
+                background: arch.color,
+                boxShadow: `0 0 8px ${arch.color}, 0 0 16px ${arch.color}88`,
+                opacity: 0,
+                '--tx': `${tx}px`,
+                '--ty': `${ty}px`,
+                animation: `thoughtBurst 1.1s cubic-bezier(0,0,0.2,1) ${i * 0.022}s forwards`,
+              }} />
+            )
+          })}
+        </div>
+      ))}
+
+      {/* Counter dots */}
+      <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 130px)', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 12, zIndex: 5 }}>
+        {thoughts.map((t) => (
+          <div key={`dot-${t.id}`} style={{
+            width: 8, height: 8, borderRadius: '50%',
+            background: released.includes(t.id) ? arch.color : 'rgba(255,255,255,0.18)',
+            boxShadow: released.includes(t.id) ? `0 0 10px ${arch.color}, 0 0 18px ${arch.color}66` : 'none',
+            transition: 'background 480ms cubic-bezier(0,0,0.2,1), box-shadow 480ms cubic-bezier(0,0,0.2,1)',
+            animation: released.includes(t.id) ? 'chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) both' : 'none',
+          }} />
+        ))}
+      </div>
+
+      {allReleased && (
+        <button data-press="true" onClick={close} aria-label="Continuer" style={{
+          position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
+          left: '50%', transform: 'translateX(-50%)',
+          padding: '16px 36px',
+          background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`,
+          border: 'none', borderRadius: 100, color: 'white',
+          fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600,
+          letterSpacing: '0.22em', textTransform: 'uppercase',
+          cursor: 'pointer',
+          boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`,
+          animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.8s infinite',
+          minHeight: 52, zIndex: 5,
+          textShadow: '0 0 14px rgba(255,255,255,0.35)',
+        }}>
+          Continuer ✦
+        </button>
+      )}
+    </div>
+  )
+}
+
 function TraceScreen({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
@@ -5253,6 +5446,8 @@ export default function App() {
       @keyframes signaturePulse{ 0%,100%{opacity:0.88;transform:scale(1)} 50%{opacity:1;transform:scale(1.012)} }
       @keyframes shootingStar  { 0%{opacity:0;stroke-dashoffset:200} 8%{opacity:1} 80%{opacity:1;stroke-dashoffset:-2200} 100%{opacity:0;stroke-dashoffset:-2400} }
       @keyframes butterflyFlight { 0%{transform:translate(0,0) rotate(0deg);opacity:0} 10%{opacity:1} 25%{transform:translate(28vw,-12vh) rotate(8deg)} 50%{transform:translate(56vw,4vh) rotate(-6deg)} 75%{transform:translate(82vw,-8vh) rotate(10deg)} 100%{transform:translate(116vw,12vh) rotate(0deg);opacity:0} }
+      @keyframes thoughtFloat   { 0%,100%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(-7px)} }
+      @keyframes thoughtBurst   { 0%{opacity:1;transform:translate(0,0) scale(1)} 100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0.4)} }
 
       /* Focus rings accessibles */
       *:focus-visible { outline: 2px solid rgba(255,255,255,0.62); outline-offset: 2px; border-radius: 6px; transition: outline-offset 140ms cubic-bezier(0.4,0,0.2,1); }
