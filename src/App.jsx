@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { registerSW } from 'virtual:pwa-register'
+import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 
 const B = import.meta.env.BASE_URL
 
@@ -1660,6 +1662,7 @@ function ChoiceIcon({ type, active }) {
 // ─── QUIZ ─────────────────────────────────────────────────────────────────────
 
 function QuizScreen({ onComplete }) {
+  useEffect(() => { try { localStorage.setItem('neya_quiz_start', String(Date.now())) } catch {} }, [])
   const [idx, setIdx] = useState(0)
   const [answers, setAnswers] = useState(Array(QUESTIONS.length).fill(null))
   const [selected, setSelected] = useState(null)
@@ -2355,7 +2358,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   const handlePointerUp = () => clearTimeout(longPressTimer.current)
   const handleClick = () => {
     if (!longPressDetected.current) {
-      if (sessionQualified.current) addEvraiFragment(archetypeKey)
+      if (sessionQualified.current) { addEvraiFragment(archetypeKey); try { trackEspaceVraiQualified(18) } catch {} }
       onClose()
     }
   }
@@ -2393,7 +2396,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
         )
       })()}
       {/* Close hint + button */}
-      <button onClick={(e) => { e.stopPropagation(); haptic(6); if (sessionQualified.current) addEvraiFragment(archetypeKey); onClose() }} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, width: 40, height: 40, color: 'rgba(255,255,255,0.72)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }} aria-label="Quitter l'espace">✕</button>
+      <button onClick={(e) => { e.stopPropagation(); haptic(6); if (sessionQualified.current) { addEvraiFragment(archetypeKey); try { trackEspaceVraiQualified(18) } catch {} } onClose() }} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, width: 40, height: 40, color: 'rgba(255,255,255,0.72)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }} aria-label="Quitter l'espace">✕</button>
       <div style={{ position: 'absolute', top: '-2.5%', left: '-2.5%', right: '-2.5%', bottom: '-2.5%', backgroundImage: `url(${B}bg-vrai.avif)`, backgroundSize: 'cover', backgroundPosition: 'center', animation: `bgbreathe ${bgPeriod}s ease-in-out infinite` }} />
       {(() => { const vraiOverlay = `linear-gradient(to bottom, rgba(5,8,16,0.45) 0%, rgba(${arch.rgb},0.12) 50%, rgba(5,8,16,0.52) 100%)`; return <div style={{ position: 'absolute', inset: 0, background: vraiOverlay }} /> })()}
       {typingDone && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '28%', background: `linear-gradient(to top, rgba(${arch.rgb},0.08) 0%, transparent 100%)`, pointerEvents: 'none', zIndex: 2, animation: 'fadeIn 3s ease forwards, worldglow 16s ease-in-out 4s infinite' }} />}
@@ -3232,6 +3235,11 @@ function BreathingModal({ archetypeKey, onClose }) {
         sessions[sessions.length - 1].moodEnd = moodEnd
         localStorage.setItem('neya_breath_sessions', JSON.stringify(sessions))
         localStorage.setItem('neya_mood_last', String(moodEnd))
+      }
+      const lastSession = sessions[sessions.length - 1]
+      if (lastSession) {
+        const durS = Math.max(0, Math.round(((lastSession.ts ? Date.now() - lastSession.ts : 0)) / 1000))
+        trackBreathComplete(archetypeKey, durS, moodStart, moodEnd)
       }
     } catch {}
     onClose()
@@ -4433,6 +4441,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
     setRoutinesDone(next); saveRoutines(next)
     if (!routinesDone[i]) {
       addXP(15)
+      try { trackRoutineComplete(i) } catch {}
       const allNowDone = next.every(Boolean)
       showXpToast(15, allNowDone)
       if (allNowDone) haptic([20, 50, 20, 50, 40])
@@ -4443,6 +4452,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
     const next = [...quetesDone]; next[i] = true
     setQuetesDone(next); saveQuetes(archetypeKey, next)
     addXP(30)
+    try { trackQueteComplete(i) } catch {}
     showXpToast(30, false)
   }
 
@@ -4520,6 +4530,50 @@ class ErrorBoundary extends React.Component {
 }
 
 // ─── APP ──────────────────────────────────────────────────────────────────────
+
+function ConsentToast() {
+  const [show, setShow] = useState(false)
+  useEffect(() => {
+    if (!getConsent()) { const t = setTimeout(() => setShow(true), 2400); return () => clearTimeout(t) }
+  }, [])
+  if (!show) return null
+  return (
+    <div role="dialog" aria-label="Consentement analytics" style={{ position: 'fixed', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)', left: 12, right: 12, zIndex: 9500, background: 'rgba(5,8,16,0.94)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 10, animation: 'fadeIn 0.5s ease', boxShadow: '0 8px 32px rgba(0,0,0,0.55)' }}>
+      <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12.5, color: 'rgba(255,255,255,0.82)', flex: 1, lineHeight: 1.5 }}>
+        Pour améliorer NÉYA — un suivi anonyme de ton usage ? Aucun contenu personnel.
+      </span>
+      <button onClick={() => { setConsent('no'); setShow(false) }} aria-label="Refuser le suivi" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '8px 14px', color: 'rgba(255,255,255,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, cursor: 'pointer', minHeight: 36 }}>Non</button>
+      <button onClick={() => { setConsent('yes'); setShow(false) }} aria-label="Accepter le suivi anonyme" style={{ background: 'rgba(99,102,241,0.88)', border: 'none', borderRadius: 100, padding: '8px 18px', color: 'white', fontFamily: 'Inter, sans-serif', fontSize: 12, fontWeight: 600, cursor: 'pointer', minHeight: 36, boxShadow: '0 4px 14px rgba(99,102,241,0.42)' }}>OK</button>
+    </div>
+  )
+}
+
+function InstallPromptButton({ visible }) {
+  const [evt, setEvt] = useState(null)
+  const [dismissed, setDismissed] = useState(() => { try { return !!localStorage.getItem('neya_install_dismissed') } catch { return false } })
+  useEffect(() => {
+    const handler = (e) => { e.preventDefault(); setEvt(e) }
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => window.removeEventListener('beforeinstallprompt', handler)
+  }, [])
+  if (!evt || dismissed || !visible) return null
+  const install = async () => {
+    try { evt.prompt(); await evt.userChoice } catch {}
+    try { localStorage.setItem('neya_install_dismissed', '1') } catch {}
+    setDismissed(true)
+    setEvt(null)
+  }
+  const dismiss = () => {
+    try { localStorage.setItem('neya_install_dismissed', '1') } catch {}
+    setDismissed(true)
+  }
+  return (
+    <div style={{ position: 'fixed', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 76px)', right: 14, zIndex: 750, display: 'flex', alignItems: 'center', gap: 6, animation: 'fadeIn 0.6s ease 1.5s both' }}>
+      <button onClick={dismiss} aria-label="Masquer la proposition d'installation" style={{ background: 'rgba(5,8,16,0.78)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '50%', width: 28, height: 28, color: 'rgba(255,255,255,0.55)', fontSize: 13, lineHeight: 1, cursor: 'pointer', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>✕</button>
+      <button onClick={install} aria-label="Installer NÉYA sur cet appareil" style={{ background: 'rgba(99,102,241,0.92)', border: 'none', borderRadius: 100, padding: '10px 18px', color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 6px 24px rgba(99,102,241,0.45)', animation: 'milestoneGlow 4s ease-in-out infinite', minHeight: 40 }}>Installer</button>
+    </div>
+  )
+}
 
 export default function App() {
   const [screen, setScreen] = useState(() => {
@@ -4607,6 +4661,18 @@ export default function App() {
     assets.forEach(s => { const img = new Image(); img.src = B + s })
   }, [])
 
+  useEffect(() => {
+    initAnalytics()
+    try {
+      const firstKey = 'neya_first_seen'
+      const isFirst = !localStorage.getItem(firstKey)
+      if (isFirst) localStorage.setItem(firstKey, String(Date.now()))
+      trackAppOpen(isFirst)
+    } catch {}
+    // Service Worker: PWA register avec auto-update
+    try { registerSW({ immediate: true }) } catch {}
+  }, [])
+
   const go = useCallback((nextScreen, fn) => {
     setBlackout(true)
     clearTimeout(goTimer.current)
@@ -4633,12 +4699,16 @@ export default function App() {
           const result = computeArchetype(answers)
           saveProfile(result)
           const ts = Date.now()
+          try { trackQuizComplete(result, ts - (parseInt(localStorage.getItem('neya_quiz_start') || String(ts), 10))) } catch {}
           go('world-reveal', () => { setArchetype(result); setSavedAt(ts) })
         }} />}
         {screen === 'world-reveal' && <WorldRevealBridge onContinue={() => go('transition')} />}
         {screen === 'transition' && <TransitionScreen archetypeKey={archetype} onReveal={() => go('result')} />}
         {screen === 'result'     && archetype && <ResultScreen archetypeKey={archetype} onContinue={() => go('main')} />}
         {screen === 'main'       && archetype && <MainApp archetypeKey={archetype} onRestart={handleRestart} savedAt={savedAt} />}
+
+        <ConsentToast />
+        <InstallPromptButton visible={screen === 'main' || screen === 'returning'} />
 
         <div style={{ position: 'fixed', inset: 0, background: '#050810', zIndex: 9999, opacity: blackout ? 1 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: blackout ? 'all' : 'none' }} />
         {archetype && ARCHETYPES[archetype] && (
