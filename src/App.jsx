@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
-import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory, setMoodQuick, getMoodQuickToday, getMoodQuickHistory, getMoodCombined, getMoodQuickStreak, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit, getBilanSoir, hasSeenBilanToday, markBilanSeen, getBilanSoirStreak } from './inner-world'
+import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory, setMoodQuick, getMoodQuickToday, getMoodQuickHistory, getMoodCombined, getMoodQuickStreak, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit, getBilanSoir, hasSeenBilanToday, markBilanSeen, getBilanSoirStreak, getBilanSemaine, hasSeenWeeklyBilan, markWeeklyBilanSeen, getWeeklyBilanCount } from './inner-world'
 import { getNextLetter, markLetterReceived, sendLetter, getReceivedLetters, getSentLetters, getCollectiveCount, ARCHETYPE_PLURAL } from './community'
 import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, playOpen, playClose, initAudioPressFeedback } from './audio'
 import { tokens as T } from './design-tokens'
@@ -4035,10 +4035,17 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {/* ── Invitation du jour ── */}
       <InvitationCard archetypeKey={archetypeKey} onXp={showXpToast ? (amt) => showXpToast(amt, false) : undefined} />
 
-      {/* ── Bilan du soir (h≥20, contemplatif) ── */}
-      {(new Date().getHours() >= 20 && !hasSeenBilanToday()) && (
-        <BilanDuSoirCard archetypeKey={archetypeKey} onClose={() => { /* reflow handled by markBilanSeen */ }} />
-      )}
+      {/* ── Bilan de la semaine (dim≥18h, prioritaire sur soir le dimanche) ── */}
+      {(() => {
+        const now = new Date()
+        const isSunday = now.getDay() === 0
+        const h = now.getHours()
+        const showWeekly = isSunday && h >= 18 && !hasSeenWeeklyBilan()
+        const showEvening = !showWeekly && h >= 20 && !hasSeenBilanToday()
+        if (showWeekly) return <BilanSemaineCard archetypeKey={archetypeKey} onClose={() => {}} />
+        if (showEvening) return <BilanDuSoirCard archetypeKey={archetypeKey} onClose={() => {}} />
+        return null
+      })()}
 
       {/* ── Aujourd'hui (quick mood + suggestion) ── */}
       <AujourdhuiCard archetypeKey={archetypeKey} onOpenTool={(key) => {
@@ -6335,6 +6342,173 @@ function BilanDuSoirCard({ archetypeKey, onClose }) {
             boxShadow: `0 6px 22px rgba(${arch.rgb},0.40), inset 0 1px 0 rgba(255,255,255,0.18)`,
             animation: 'milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite, fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.6s both',
           }}>Border la journée ☾</button>
+        </>
+      )}
+    </div>
+  )
+}
+
+function BilanSemaineCard({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const [closed, setClosed] = useState(false)
+  const bilan = useMemo(() => getBilanSemaine(), [])
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  // Mood label par valeur moyenne
+  const moodAvgLabel = bilan.moodAvg
+    ? (bilan.moodAvg < 2 ? 'lourde' : bilan.moodAvg < 2.8 ? 'difficile' : bilan.moodAvg < 3.6 ? 'fluctuante' : bilan.moodAvg < 4.4 ? 'douce' : 'lumineuse')
+    : null
+
+  // Phrase d'ouverture selon présence
+  const opening =
+    bilan.activeDays === 0 ? "Tu es ici. Le reste viendra." :
+    bilan.activeDays === 1 ? "Un jour cette semaine. C'est un commencement." :
+    bilan.activeDays <= 3  ? `${bilan.activeDays} jours posés cette semaine.` :
+    bilan.activeDays <= 5  ? `Tu as habité ${bilan.activeDays} jours cette semaine.` :
+    bilan.activeDays === 7 ? 'Sept jours entiers. Tu as tenu un fil.' :
+                              `Six jours. Une semaine pleine.`
+
+  // Lignes du bilan (n'affiche que ce qui a été fait)
+  const lines = []
+  if (moodAvgLabel) lines.push({ glyph: '◐', label: `Humeur ${moodAvgLabel}`, sub: `${bilan.moodDays} jour${bilan.moodDays > 1 ? 's' : ''} d'écoute` })
+  if (bilan.breathTotal) lines.push({ glyph: '◇', label: `${bilan.breathTotal} respiration${bilan.breathTotal > 1 ? 's' : ''} guidée${bilan.breathTotal > 1 ? 's' : ''}`, sub: 'Le souffle revient' })
+  if (bilan.liberationDays) lines.push({ glyph: '◍', label: `${bilan.liberationDays} jour${bilan.liberationDays > 1 ? 's' : ''} à libérer`, sub: 'Des pensées posées' })
+  if (bilan.apaisementDays) lines.push({ glyph: '◌', label: `${bilan.apaisementDays} apaisement${bilan.apaisementDays > 1 ? 's' : ''}`, sub: 'Le corps revient' })
+  if (bilan.concentrationDays) lines.push({ glyph: '◉', label: `${bilan.concentrationDays} attention${bilan.concentrationDays > 1 ? 's' : ''} soutenue${bilan.concentrationDays > 1 ? 's' : ''}`, sub: 'L\'esprit s\'ancre' })
+  if (bilan.reparationDays) lines.push({ glyph: '◈', label: `${bilan.reparationDays} cocon${bilan.reparationDays > 1 ? 's' : ''} réparé${bilan.reparationDays > 1 ? 's' : ''}`, sub: 'Recoller doucement' })
+  if (bilan.carnetDays) lines.push({ glyph: '◊', label: `${bilan.carnetDays} page${bilan.carnetDays > 1 ? 's' : ''} écrite${bilan.carnetDays > 1 ? 's' : ''}`, sub: 'Le Carnet a porté' })
+  if (bilan.lettersTotal) lines.push({ glyph: '✉', label: `${bilan.lettersTotal} lettre${bilan.lettersTotal > 1 ? 's' : ''} échangée${bilan.lettersTotal > 1 ? 's' : ''}`, sub: 'Lien anonyme' })
+  if (bilan.cercleTotal) lines.push({ glyph: '◐', label: `${bilan.cercleTotal} lumière${bilan.cercleTotal > 1 ? 's' : ''} partagée${bilan.cercleTotal > 1 ? 's' : ''}`, sub: 'Tu as pensé aux autres' })
+
+  // Phrase de clôture poétique
+  const closing =
+    bilan.activeDays === 0   ? "Bienvenue. La semaine prochaine reste ouverte." :
+    bilan.activeDays <= 2    ? "Pas de mesure ici. Juste un fil qui commence." :
+    bilan.activeDays <= 4    ? "Tu reviens régulièrement. C'est tout ce qu'il faut." :
+    bilan.activeDays <= 6    ? "Une présence constante. Sans bruit." :
+                                "Sept jours. Tu as tenu ta lumière allumée."
+
+  const handleClose = () => {
+    haptic([4, 50, 8])
+    try { playClose() } catch {}
+    setClosed(true)
+    setExpanded(false)
+    markWeeklyBilanSeen()
+    try {
+      addSouvenir('first_bilan_semaine')
+      if (getWeeklyBilanCount() >= 4) addSouvenir('bilan_mois')
+    } catch {}
+    setTimeout(() => { if (onClose) onClose() }, 720)
+  }
+
+  const handleOpen = () => {
+    if (expanded) return
+    haptic([6, 40, 6])
+    try { playOpen() } catch {}
+    setExpanded(true)
+  }
+
+  // Sparkline mini : 7 dots verticaux selon activité du jour
+  const maxTotal = Math.max(1, ...bilan.days.map(d => d.total))
+
+  return (
+    <div onClick={!expanded ? handleOpen : undefined} role={!expanded ? "button" : undefined} tabIndex={!expanded ? 0 : undefined} aria-label={!expanded ? "Ouvrir le bilan de la semaine" : undefined} style={{
+      position: 'relative',
+      cursor: !expanded ? 'pointer' : 'default',
+      background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(18,22,42,0.36) 50%, rgba(${arch.rgb},0.08) 100%)`,
+      border: `1px solid rgba(${arch.rgb},0.46)`,
+      borderRadius: 18,
+      padding: expanded ? '24px 22px 22px' : '20px 22px',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      boxShadow: `0 12px 42px rgba(${arch.rgb},0.20), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 28px rgba(${arch.rgb},0.12)`,
+      animation: closed ? 'sheetExit 0.7s cubic-bezier(0.4,0,0.6,1) both' : (vis ? 'fadeIn 0.9s cubic-bezier(0,0,0.2,1) 0.05s both' : 'none'),
+      opacity: closed ? 0 : (vis ? 1 : 0),
+      transition: 'padding 380ms cubic-bezier(0.4,0,0.2,1)',
+      overflow: 'hidden',
+    }}>
+      {/* Halo cercle décoratif */}
+      <div style={{ position: 'absolute', top: -40, right: -40, width: 130, height: 130, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, transparent 70%)`, animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />
+
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10, position: 'relative' }}>
+        <div>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.88)`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>Bilan de la semaine</p>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '4px 0 0', letterSpacing: '0.02em' }}>Dimanche soir</p>
+        </div>
+        <div style={{ fontSize: 22, lineHeight: 1, opacity: 0.85, filter: `drop-shadow(0 0 12px ${arch.color}88)`, animation: 'phrasebreathe 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>◯</div>
+      </div>
+
+      {!expanded ? (
+        <>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16.5, color: 'rgba(255,255,255,0.92)', margin: '4px 0 14px', lineHeight: 1.5, fontStyle: 'italic', letterSpacing: '-0.005em', textShadow: `0 0 18px ${arch.color}22` }}>
+            {opening}
+          </p>
+          {/* Mini sparkline 7 jours */}
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 6, marginBottom: 14, height: 22 }}>
+            {bilan.days.map((d, i) => {
+              const h = Math.max(3, (d.total / maxTotal) * 22)
+              return <div key={i} style={{ flex: 1, height: h, background: d.total > 0 ? `linear-gradient(180deg, ${arch.color}cc, ${arch.color}66)` : 'rgba(255,255,255,0.08)', borderRadius: 2, boxShadow: d.total > 0 ? `0 0 6px ${arch.color}44` : 'none', animation: `fadeIn 0.5s cubic-bezier(0,0,0.2,1) ${0.1 + i * 0.06}s both` }} />
+            })}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.20em', textTransform: 'uppercase', margin: 0 }}>Toucher pour refléter</p>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: `rgba(${arch.rgb},0.75)`, letterSpacing: '0.08em' }}>→</span>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Sparkline détaillée */}
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 6, marginBottom: 14, height: 32 }}>
+            {bilan.days.map((d, i) => {
+              const h = Math.max(4, (d.total / maxTotal) * 32)
+              return (
+                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <div style={{ width: '100%', height: h, background: d.total > 0 ? `linear-gradient(180deg, ${arch.color}, ${arch.color}88)` : 'rgba(255,255,255,0.10)', borderRadius: 3, boxShadow: d.total > 0 ? `0 0 8px ${arch.color}66` : 'none', animation: `fadeIn 0.5s cubic-bezier(0,0,0.2,1) ${0.08 + i * 0.07}s both` }} />
+                </div>
+              )
+            })}
+          </div>
+
+          {lines.length > 0 ? (
+            <div style={{ margin: '12px 0 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {lines.map((line, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, animation: `fadeIn 0.55s cubic-bezier(0,0,0.2,1) ${0.12 + i * 0.07}s both` }}>
+                  <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 20, color: arch.color, opacity: 0.92, filter: `drop-shadow(0 0 8px ${arch.color}66)`, lineHeight: 1, width: 24, textAlign: 'center', flexShrink: 0 }}>{line.glyph}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.005em', margin: 0 }}>{line.label}</p>
+                    <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.50)', letterSpacing: '0.02em', margin: '2px 0 0', fontStyle: 'italic' }}>{line.sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.74)', margin: '14px 0 18px', lineHeight: 1.55, fontStyle: 'italic', letterSpacing: '-0.005em' }}>Tu es passé·e cette semaine. Ta présence compte.</p>
+          )}
+
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.74)', margin: '0 0 18px', lineHeight: 1.55, fontStyle: 'italic', letterSpacing: '-0.005em', textAlign: 'center', textShadow: `0 0 14px ${arch.color}22`, animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.5s both' }}>
+            « {closing} »
+          </p>
+
+          <button data-press="true" onClick={handleClose} aria-label="Fermer la semaine" style={{
+            width: '100%',
+            padding: '14px 0',
+            background: `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))`,
+            border: 'none',
+            borderRadius: 12,
+            color: 'white',
+            fontFamily: 'Sora, sans-serif',
+            fontWeight: 500,
+            fontSize: 13,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            minHeight: 48,
+            boxShadow: `0 6px 22px rgba(${arch.rgb},0.40), inset 0 1px 0 rgba(255,255,255,0.18)`,
+            animation: 'milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite, fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.6s both',
+          }}>Fermer la semaine ◯</button>
         </>
       )}
     </div>

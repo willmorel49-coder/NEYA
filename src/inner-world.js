@@ -221,6 +221,8 @@ export const SOUVENIR_LIBRARY = {
   welcome_back_30:    { glyph: '◯', title: 'Tu reviens de loin',           subtitle: 'Un mois, et tout est encore là pour toi.' },
   first_bilan_soir:   { glyph: '☾', title: 'Premier bilan du soir',        subtitle: 'Tu as bordé ta journée avec douceur.' },
   bilan_week:         { glyph: '☾', title: 'Sept soirs déposés',           subtitle: 'Une semaine entière de couchers conscients.' },
+  first_bilan_semaine:{ glyph: '◯', title: 'Première semaine refléchie',  subtitle: 'Tu as regardé sept jours en arrière.' },
+  bilan_mois:         { glyph: '◯', title: 'Un mois en regards',           subtitle: 'Quatre dimanches à se poser.' },
 }
 
 // ─── Dernière visite (pour Welcome Back) ──────────────────────
@@ -579,6 +581,160 @@ export function getBilanSoir() {
   }
 }
 
+// ─── Bilan de la semaine ────────────────────────────────────────
+// Activé dimanches ≥ 18h. Agrège les 7 derniers jours en une réflexion
+// douce sur le rythme, les humeurs, les gestes posés.
+
+const BILAN_SEMAINE_PREFIX = 'neya_bilan_semaine_'
+
+function weekKey() {
+  // Clé hebdo basée sur le dimanche courant (ou prochain dimanche si on est avant)
+  try {
+    const d = new Date()
+    const day = d.getDay() // 0 = dimanche
+    const offset = day === 0 ? 0 : -day
+    const sunday = new Date(d)
+    sunday.setDate(d.getDate() + offset)
+    return sunday.toISOString().split('T')[0]
+  } catch { return '0' }
+}
+
+export function hasSeenWeeklyBilan() {
+  try { return !!localStorage.getItem(BILAN_SEMAINE_PREFIX + weekKey()) }
+  catch { return false }
+}
+
+export function markWeeklyBilanSeen() {
+  try { localStorage.setItem(BILAN_SEMAINE_PREFIX + weekKey(), String(Date.now())) }
+  catch {}
+}
+
+export function getWeeklyBilanCount() {
+  let count = 0
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i)
+      if (k && k.startsWith(BILAN_SEMAINE_PREFIX)) count++
+    }
+  } catch {}
+  return count
+}
+
+// Agrège les 7 derniers jours. Retourne un objet riche pour réflexion.
+export function getBilanSemaine() {
+  const days = []
+  let totalActivities = 0
+  let moodSum = 0
+  let moodDays = 0
+  let breathTotal = 0
+  let carnetDays = 0
+  let liberationDays = 0
+  let apaisementDays = 0
+  let concentrationDays = 0
+  let reparationDays = 0
+  let lettersTotal = 0
+  let cercleTotal = 0
+  let activeDays = 0
+
+  try {
+    const today = new Date()
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today); d.setDate(d.getDate() - i)
+      const ds = d.toISOString().split('T')[0]
+      let dayMood = null
+      let dayBreath = 0
+      let dayCarnet = false
+      let dayLib = 0
+      let dayApa = 0
+      let dayConc = 0
+      let dayRep = 0
+      let dayLetters = 0
+      let dayCercle = 0
+      try {
+        const m = JSON.parse(localStorage.getItem(`neya_mood_quick_${ds}`) || 'null')
+        if (m && typeof m.value === 'number') {
+          dayMood = m.value
+          moodSum += m.value
+          moodDays++
+        }
+      } catch {}
+      try {
+        const sessions = JSON.parse(localStorage.getItem('neya_breath_sessions') || '[]')
+        dayBreath = sessions.filter(s => {
+          try { return new Date(s.ts || 0).toISOString().split('T')[0] === ds } catch { return false }
+        }).length
+        breathTotal += dayBreath
+      } catch {}
+      try {
+        const souvenirs = getSouvenirs()
+        const todays = souvenirs.filter(s => {
+          try { return new Date(s.ts).toISOString().split('T')[0] === ds } catch { return false }
+        })
+        dayLib  = todays.filter(s => s.type === 'liberation_session' || s.type === 'first_liberation').length
+        dayApa  = todays.filter(s => s.type === 'apaisement_session' || s.type === 'first_apaisement').length
+        dayConc = todays.filter(s => s.type === 'concentration_complete' || s.type === 'first_concentration').length
+        dayRep  = todays.filter(s => s.type === 'reparation_complete' || s.type === 'first_reparation').length
+      } catch {}
+      try {
+        const carnet = getCarnetEntries()
+        dayCarnet = carnet.some(e => e.date === ds)
+        if (dayCarnet) carnetDays++
+      } catch {}
+      try {
+        const received = JSON.parse(localStorage.getItem('neya_letters_received') || '[]')
+        const sent = JSON.parse(localStorage.getItem('neya_letters_sent') || '[]')
+        dayLetters = received.filter(l => {
+          try { return new Date(l.receivedAt || 0).toISOString().split('T')[0] === ds } catch { return false }
+        }).length + sent.filter(l => {
+          try { return new Date(l.ts || 0).toISOString().split('T')[0] === ds } catch { return false }
+        }).length
+        lettersTotal += dayLetters
+      } catch {}
+      try {
+        const cercle = getCercle()
+        dayCercle = cercle.reduce((acc, p) => {
+          const list = Array.isArray(p.lumieres) ? p.lumieres : []
+          return acc + list.filter(ts => {
+            try { return new Date(ts).toISOString().split('T')[0] === ds } catch { return false }
+          }).length
+        }, 0)
+        cercleTotal += dayCercle
+      } catch {}
+
+      if (dayLib) liberationDays++
+      if (dayApa) apaisementDays++
+      if (dayConc) concentrationDays++
+      if (dayRep) reparationDays++
+
+      const dayTotal = dayBreath + dayLib + dayApa + dayConc + dayRep + dayLetters + dayCercle + (dayCarnet ? 1 : 0) + (dayMood !== null ? 1 : 0)
+      if (dayTotal > 0) activeDays++
+      totalActivities += dayTotal
+
+      days.push({ date: ds, mood: dayMood, breath: dayBreath, carnet: dayCarnet, total: dayTotal })
+    }
+  } catch {}
+
+  const moodAvg = moodDays > 0 ? +(moodSum / moodDays).toFixed(1) : null
+
+  return {
+    weekKey: weekKey(),
+    days,
+    activeDays,
+    totalActivities,
+    moodAvg,
+    moodDays,
+    breathTotal,
+    carnetDays,
+    liberationDays,
+    apaisementDays,
+    concentrationDays,
+    reparationDays,
+    lettersTotal,
+    cercleTotal,
+    hasAnything: totalActivities > 0,
+  }
+}
+
 export function formatSouvenirDate(ts) {
   try {
     const d = new Date(ts)
@@ -588,4 +744,4 @@ export function formatSouvenirDate(ts) {
   } catch { return '' }
 }
 
-export default { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, TIME_LABELS, formatSouvenirDate, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit, getBilanSoir, hasSeenBilanToday, markBilanSeen, getBilanSoirStreak }
+export default { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, TIME_LABELS, formatSouvenirDate, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit, getBilanSoir, hasSeenBilanToday, markBilanSeen, getBilanSoirStreak, getBilanSemaine, hasSeenWeeklyBilan, markWeeklyBilanSeen, getWeeklyBilanCount }
