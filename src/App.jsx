@@ -3,6 +3,7 @@ import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
 import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat } from './inner-world'
+import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, initAudioPressFeedback } from './audio'
 import { tokens as T } from './design-tokens'
 
 const B = import.meta.env.BASE_URL
@@ -2766,7 +2767,7 @@ function CoconScreen({ archetypeKey, onClose }) {
                 {souvenirs.map((s, i) => {
                   const def = SOUVENIR_LIBRARY[s.type] || { glyph: '✦', title: s.type, subtitle: '' }
                   return (
-                    <div key={s.ts} onClick={() => { haptic(6); setSelectedSouvenir(s) }} role="button" tabIndex={0} aria-label={`Voir l'éclat ${def.title}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, minWidth: 84, animation: `chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) ${i * 70}ms both`, cursor: 'pointer' }}>
+                    <div key={s.ts} onClick={() => { haptic(6); try { playSouvenir() } catch {} ; setSelectedSouvenir(s) }} role="button" tabIndex={0} aria-label={`Voir l'éclat ${def.title}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, minWidth: 84, animation: `chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) ${i * 70}ms both`, cursor: 'pointer' }}>
                       <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, rgba(${arch.rgb},0.04) 70%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 14px rgba(${arch.rgb},0.20), inset 0 0 8px rgba(${arch.rgb},0.10)`, animation: `signaturePulse ${10 + i * 2}s cubic-bezier(0.45,0,0.55,1) ${i * 1.2}s infinite` }}>
                         <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, color: arch.color, lineHeight: 1, textShadow: `0 0 8px ${arch.color}88` }}>{def.glyph}</span>
                       </div>
@@ -3384,6 +3385,10 @@ function BreathingModal({ archetypeKey, onClose }) {
         stateRef.current = { ...st, phaseIdx: nextIdx, cycle: nextCycle, timeLeft: np.dur }
         setPhaseIdx(nextIdx); setCycle(nextCycle); setTimeLeft(np.dur); setIsExpanded(np.expand)
         haptic(6)
+        try {
+          if (np.expand && np.label.toLowerCase().includes('inspire')) playBreathIn(np.dur)
+          else if (!np.expand && np.label.toLowerCase().includes('expire')) playBreathOut(np.dur)
+        } catch {}
       } else {
         stateRef.current = { ...st, timeLeft: st.timeLeft - 1 }
         setTimeLeft(prev => prev - 1)
@@ -3395,7 +3400,13 @@ function BreathingModal({ archetypeKey, onClose }) {
   const startSession = () => {
     haptic([10, 40, 10])
     setStage('active')
-    setTimeout(() => setIsExpanded(tech.phases[0].expand), 100)
+    setTimeout(() => {
+      setIsExpanded(tech.phases[0].expand)
+      try {
+        const p0 = tech.phases[0]
+        if (p0.expand && p0.label.toLowerCase().includes('inspire')) playBreathIn(p0.dur)
+      } catch {}
+    }, 100)
   }
   const togglePause = () => {
     haptic(8)
@@ -3584,6 +3595,7 @@ function PersonalizationModal({ archetypeKey, onClose }) {
   const [prenom, setPrenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
   const [mantra, setMantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
   const [coconName, setCoconName] = useState(() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })
+  const [audioOn, setAudioOn] = useState(() => getAudioEnabled())
   const [vis, setVis] = useState(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 40); return () => clearTimeout(t) }, [])
 
@@ -3627,6 +3639,17 @@ function PersonalizationModal({ archetypeKey, onClose }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
           <label style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.58)`, letterSpacing: '0.20em', textTransform: 'uppercase' }}>Nom de ton cocon</label>
           <input value={coconName} onChange={e => setCoconName(e.target.value)} placeholder="Mon Cocon Néya" maxLength={40} style={inputStyle} />
+        </div>
+
+        {/* Sons doux toggle */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+          <label style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.58)`, letterSpacing: '0.20em', textTransform: 'uppercase' }}>Sons doux <span style={{ opacity: 0.40, fontSize: 8.5 }}>· facultatif</span></label>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(${arch.rgb},0.28)`, borderRadius: 12, padding: '14px 16px' }}>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.78)', fontStyle: 'italic', lineHeight: 1.4 }}>Toucher, souvenir, souffle. Subtil, jamais envahissant.</span>
+            <button onClick={() => { const next = !audioOn; setAudioOn(next); setAudioEnabled(next); if (next) { try { playConfirm() } catch {} } }} aria-label={audioOn ? 'Désactiver les sons' : 'Activer les sons'} role="switch" aria-checked={audioOn} style={{ width: 44, height: 26, borderRadius: 100, background: audioOn ? `rgba(${arch.rgb},0.85)` : 'rgba(255,255,255,0.10)', border: `1px solid ${audioOn ? arch.color + 'aa' : 'rgba(255,255,255,0.15)'}`, position: 'relative', cursor: 'pointer', flexShrink: 0, marginLeft: 14, transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), border-color 240ms cubic-bezier(0.4,0,0.2,1)', boxShadow: audioOn ? `0 0 14px rgba(${arch.rgb},0.40)` : 'none' }}>
+              <div style={{ position: 'absolute', top: 2, left: audioOn ? 20 : 2, width: 20, height: 20, borderRadius: '50%', background: 'white', boxShadow: '0 2px 6px rgba(0,0,0,0.3)', transition: 'left 280ms cubic-bezier(0.34,1.56,0.64,1)' }} />
+            </button>
+          </div>
         </div>
 
         {/* Boutons */}
@@ -4723,8 +4746,11 @@ function ApaisementSensorielModal({ archetypeKey, onClose }) {
       const dy = (dot.y - y) * 1.25 // compensate ratio
       const dist = Math.sqrt(dx * dx + dy * dy)
       if (dist < 7) {
-        haptic(4)
-        setLitDots(prev => prev.includes(dot.id) ? prev : [...prev, dot.id])
+        if (!litDots.includes(dot.id)) {
+          haptic(4)
+          try { playChime(dot.id) } catch {}
+          setLitDots(prev => prev.includes(dot.id) ? prev : [...prev, dot.id])
+        }
       }
     })
   }
@@ -4892,6 +4918,7 @@ function LiberationPenseesModal({ archetypeKey, onClose }) {
   const releaseThought = (id, e) => {
     if (released.includes(id)) return
     haptic(8)
+    try { playRelease() } catch {}
     let x = 0, y = 0
     try {
       const rect = e.currentTarget.getBoundingClientRect()
@@ -5340,7 +5367,11 @@ function ShareArchetype({ archetypeKey, onClose }) {
 function MilestoneCelebration({ count, archetypeKey }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
-  useEffect(() => { const t = setTimeout(() => setVis(true), 50); return () => clearTimeout(t) }, [])
+  useEffect(() => {
+    const t = setTimeout(() => setVis(true), 50)
+    try { playMilestone() } catch {}
+    return () => clearTimeout(t)
+  }, [])
   const message = count === 3 ? '3 jours d\'affilée' :
                   count === 7 ? 'Une semaine de présence' :
                   count === 14 ? 'Deux semaines complètes' :
@@ -5670,7 +5701,8 @@ export default function App() {
     } catch {}
     try { registerSW({ immediate: true }) } catch {}
     const cleanupPress = initPressFeedback()
-    return cleanupPress
+    const cleanupAudio = initAudioPressFeedback()
+    return () => { cleanupPress && cleanupPress(); cleanupAudio && cleanupAudio() }
   }, [])
 
   const go = useCallback((nextScreen, fn) => {
