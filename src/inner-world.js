@@ -205,6 +205,8 @@ export const SOUVENIR_LIBRARY = {
   first_lumiere:      { glyph: '✦', title: 'Première lumière envoyée',    subtitle: 'Un geste invisible vers un·e proche.' },
   lumiere_session:    { glyph: '✦', title: 'Lumière partagée',            subtitle: 'Tu as pensé à quelqu\'un avec soin.' },
   first_invite:       { glyph: '◈', title: 'Première invitation',         subtitle: 'Tu as ouvert une porte.' },
+  first_carnet:       { glyph: '◊', title: 'Première page du Carnet',     subtitle: 'Tu as déposé un mot pour toi.' },
+  carnet_week:        { glyph: '◊', title: 'Une semaine d\'écriture',     subtitle: '7 jours, 7 traces.' },
 }
 
 // ─── Cercle de présence ──────────────────────────────────────
@@ -269,6 +271,70 @@ export function sendLumiere(prenom) {
 export function getLumieresTotal() {
   try { return parseInt(localStorage.getItem('neya_lumieres_total') || '0', 10) }
   catch { return 0 }
+}
+
+// ─── Carnet du Voyage — note quotidienne ──────────────────────
+//
+// Un espace d'écriture libre par jour. Max 200 caractères (twitter-like,
+// encourage la condensation). Max 90 entrées (3 mois rolling).
+// Stockage: array de { ts, date: 'YYYY-MM-DD', text } trié chronologique.
+
+const CARNET_KEY = 'neya_carnet'
+const CARNET_MAX_LEN = 200
+const CARNET_MAX_ENTRIES = 90
+
+export function getCarnetEntries() {
+  try { return JSON.parse(localStorage.getItem(CARNET_KEY) || '[]') }
+  catch { return [] }
+}
+
+export function getCarnetEntryForDate(dateStr) {
+  return getCarnetEntries().find(e => e.date === dateStr) || null
+}
+
+export function getCarnetEntryToday() {
+  const today = new Date().toISOString().split('T')[0]
+  return getCarnetEntryForDate(today)
+}
+
+export function saveCarnetEntry(text) {
+  const clean = (text || '').trim().slice(0, CARNET_MAX_LEN)
+  const today = new Date().toISOString().split('T')[0]
+  try {
+    const list = getCarnetEntries()
+    const idx = list.findIndex(e => e.date === today)
+    if (clean === '') {
+      // Suppression : si vide, on retire l'entrée du jour
+      if (idx >= 0) {
+        list.splice(idx, 1)
+        localStorage.setItem(CARNET_KEY, JSON.stringify(list))
+      }
+      return null
+    }
+    const entry = { ts: Date.now(), date: today, text: clean }
+    if (idx >= 0) list[idx] = entry
+    else list.push(entry)
+    // Sort + truncate
+    list.sort((a, b) => (a.ts || 0) - (b.ts || 0))
+    const trimmed = list.slice(-CARNET_MAX_ENTRIES)
+    localStorage.setItem(CARNET_KEY, JSON.stringify(trimmed))
+    return entry
+  } catch { return null }
+}
+
+// ─── Mood data extraction ─────────────────────────────────────
+//
+// Extrait les sessions de breath avec moodStart/moodEnd renseignés.
+// Retourne array trié par ts, max N items.
+
+export function getMoodHistory(limit = 14) {
+  try {
+    const sessions = JSON.parse(localStorage.getItem('neya_breath_sessions') || '[]')
+    return sessions
+      .filter(s => s && typeof s.moodEnd === 'number' && typeof s.moodStart === 'number' && s.ts)
+      .slice(-limit)
+      .map(s => ({ ts: s.ts, before: s.moodStart, after: s.moodEnd, delta: s.moodEnd - s.moodStart }))
+  } catch { return [] }
 }
 
 export function getSouvenirs() {

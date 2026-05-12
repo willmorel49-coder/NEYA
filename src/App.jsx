@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
-import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal } from './inner-world'
+import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory } from './inner-world'
 import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, initAudioPressFeedback } from './audio'
 import { tokens as T } from './design-tokens'
 
@@ -3714,6 +3714,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showLiberation, setShowLiberation] = useState(false)
   const [showApaisement, setShowApaisement] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showCarnet, setShowCarnet] = useState(false)
   const [prenom, setPrenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
   const [mantra, setMantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
   const [coconName, setCoconName] = useState(() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })
@@ -4086,6 +4087,23 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
       {showApaisement && <ApaisementSensorielModal archetypeKey={archetypeKey} onClose={() => setShowApaisement(false)} />}
+
+      {/* ── Carnet du Voyage (écriture quotidienne) ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowCarnet(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon Carnet du Voyage" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.7s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <path d="M7 6 L7 26 L22 26 L25 23 L25 6 Z" fill={`rgba(${arch.rgb},0.18)`} stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" opacity="0.85"/>
+          <line x1="10" y1="11" x2="22" y2="11" stroke={arch.color} strokeWidth="0.8" opacity="0.55" strokeLinecap="round"/>
+          <line x1="10" y1="15" x2="22" y2="15" stroke={arch.color} strokeWidth="0.8" opacity="0.45" strokeLinecap="round"/>
+          <line x1="10" y1="19" x2="19" y2="19" stroke={arch.color} strokeWidth="0.8" opacity="0.35" strokeLinecap="round"/>
+        </svg>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Écriture libre</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Carnet du Voyage</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>{getCarnetEntryToday() ? "Tu as déposé un mot aujourd'hui ✦" : 'Une phrase pour ce jour'}</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+      {showCarnet && <CarnetModal archetypeKey={archetypeKey} onClose={() => setShowCarnet(false)} />}
 
       {/* ── Ta trace ── carte discrète d'accès au sanctuaire temporel */}
       <div onClick={() => { haptic(6); setShowTrace(true) }} role="button" tabIndex={0} aria-label="Voir ta trace des 30 derniers jours" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.07) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid rgba(${arch.rgb},0.36)`, borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.55s both', boxShadow: `0 4px 20px rgba(${arch.rgb},0.08)`, minHeight: 56 }}>
@@ -5064,6 +5082,132 @@ function LiberationPenseesModal({ archetypeKey, onClose }) {
   )
 }
 
+function MoodGraph({ data, archetypeKey }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  if (!data || data.length === 0) return null
+  // Plot 14 dots vertically positioned by mood (1-10), x = chronological index
+  const W = 320, H = 60, padX = 8, padY = 6
+  const n = Math.max(data.length, 2)
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} style={{ display: 'block' }} preserveAspectRatio="none">
+      {/* Baseline doux */}
+      <line x1={padX} y1={H / 2} x2={W - padX} y2={H / 2} stroke={`rgba(${arch.rgb},0.18)`} strokeWidth="1" strokeDasharray="2 4" />
+      {/* Connect dots line */}
+      <polyline
+        fill="none"
+        stroke={`rgba(${arch.rgb},0.55)`}
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        points={data.map((d, i) => {
+          const x = padX + (i / Math.max(1, n - 1)) * (W - padX * 2)
+          const y = padY + (1 - (d.after - 1) / 9) * (H - padY * 2)
+          return `${x.toFixed(1)},${y.toFixed(1)}`
+        }).join(' ')}
+      />
+      {/* Dots */}
+      {data.map((d, i) => {
+        const x = padX + (i / Math.max(1, n - 1)) * (W - padX * 2)
+        const y = padY + (1 - (d.after - 1) / 9) * (H - padY * 2)
+        const recency = i / Math.max(1, n - 1)
+        const opacity = 0.4 + recency * 0.55
+        const r = 2.5 + recency * 1.5
+        return (
+          <circle key={i} cx={x} cy={y} r={r} fill={arch.color} style={{ opacity, filter: `drop-shadow(0 0 ${4 + recency * 4}px ${arch.color})` }} />
+        )
+      })}
+    </svg>
+  )
+}
+
+function CarnetModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  const todayEntry = getCarnetEntryToday()
+  const [text, setText] = useState(todayEntry ? todayEntry.text : '')
+  const [saved, setSaved] = useState(!!todayEntry)
+  const [recent, setRecent] = useState(() => getCarnetEntries().slice(-8).reverse())
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const handleSave = () => {
+    haptic([8, 50, 8])
+    const entry = saveCarnetEntry(text)
+    setSaved(!!entry)
+    setRecent(getCarnetEntries().slice(-8).reverse())
+    if (entry) {
+      try {
+        playConfirm()
+        addSouvenir('first_carnet')
+        if (getCarnetEntries().length >= 7) addSouvenir('carnet_week')
+      } catch {}
+    }
+  }
+
+  const max = 200
+  const remaining = max - text.length
+  const dateLong = (() => {
+    const d = new Date()
+    const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre']
+    const days = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi']
+    return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`
+  })()
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(5,8,16,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 30%, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+
+      <button data-press="true" onClick={close} aria-label="Fermer le Carnet" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 24px calc(env(safe-area-inset-bottom, 0px) + 40px)', display: 'flex', flexDirection: 'column', gap: 22, maxWidth: 520, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 12px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◊ Carnet du Voyage</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.3, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>{dateLong}</h2>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12.5, color: 'rgba(255,255,255,0.55)', margin: '8px 0 0', fontStyle: 'italic' }}>Une phrase, un mot, un silence. Ce que tu veux.</p>
+        </div>
+
+        {/* Today entry */}
+        <div style={{ background: `rgba(${arch.rgb},0.06)`, border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 18, padding: '18px 20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}aa, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+          <textarea
+            value={text}
+            onChange={(e) => { setText(e.target.value.slice(0, max)); setSaved(false) }}
+            placeholder="Ce qui passe en toi aujourd'hui..."
+            rows={5}
+            style={{ width: '100%', boxSizing: 'border-box', background: 'transparent', border: 'none', outline: 'none', color: 'rgba(255,255,255,0.92)', fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 15, lineHeight: 1.7, letterSpacing: '0.01em', resize: 'none', minHeight: 110, caretColor: arch.color }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, paddingTop: 8, borderTop: `1px solid rgba(${arch.rgb},0.18)` }}>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: remaining < 30 ? `${arch.color}cc` : 'rgba(255,255,255,0.45)', letterSpacing: '0.08em', transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{text.length}/{max}</span>
+            <button data-press="true" onClick={handleSave} disabled={saved && text === (todayEntry?.text || '')} style={{ padding: '8px 18px', background: (saved && text === (todayEntry?.text || '')) ? `rgba(${arch.rgb},0.16)` : `rgba(${arch.rgb},0.85)`, border: (saved && text === (todayEntry?.text || '')) ? `1px solid rgba(${arch.rgb},0.40)` : 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12, letterSpacing: '0.14em', cursor: 'pointer', minHeight: 36, opacity: (saved && text === (todayEntry?.text || '')) ? 0.7 : 1, transition: 'opacity 240ms cubic-bezier(0.4,0,0.2,1)' }}>{(saved && text === (todayEntry?.text || '')) ? '✓ Déposé' : 'Déposer'}</button>
+          </div>
+        </div>
+
+        {/* Recent entries */}
+        {recent.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 8 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.65)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0, textAlign: 'center' }}>Tes dernières pages</p>
+            {recent.filter(e => e.date !== new Date().toISOString().split('T')[0]).slice(0, 7).map((e) => {
+              const d = new Date(e.ts)
+              const months = ['janv.','févr.','mars','avril','mai','juin','juil.','août','sept.','oct.','nov.','déc.']
+              const dateShort = `${d.getDate()} ${months[d.getMonth()]}`
+              return (
+                <div key={e.ts} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '12px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
+                    <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 11, color: arch.color, letterSpacing: '0.10em' }}>{dateShort}</span>
+                  </div>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.65, fontStyle: 'italic' }}>« {e.text} »</p>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', margin: '8px 0 0', fontStyle: 'italic', lineHeight: 1.6 }}>Tes notes restent sur ton appareil.<br />Elles ne sont jamais envoyées nulle part.</p>
+      </div>
+    </div>
+  )
+}
+
 function CercleDePresenceModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const [vis, setVis] = useState(false)
@@ -5350,6 +5494,20 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
               <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 16, color: arch.color, textShadow: `0 0 10px ${arch.color}66` }}>{totalDays}</span>
             </div>
           </div>
+          {(() => {
+            const moodData = getMoodHistory(14)
+            if (moodData.length < 2) return null
+            return (
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Ton humeur · derniers souffles</span>
+                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.42)', fontStyle: 'italic' }}>{moodData.length} session{moodData.length > 1 ? 's' : ''}</span>
+                </div>
+                <MoodGraph data={moodData} archetypeKey={archetypeKey} />
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.42)', margin: 0, fontStyle: 'italic', textAlign: 'center', letterSpacing: '0.04em' }}>Plus haut = plus léger. Plus bas = plus lourd. Aucun jugement.</p>
+              </div>
+            )
+          })()}
           <button data-press="true" onClick={exportData} style={{ width: '100%', padding: '14px 0', background: `rgba(${arch.rgb},0.14)`, border: `1px solid rgba(${arch.rgb},0.40)`, borderRadius: 100, color: 'rgba(255,255,255,0.92)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, letterSpacing: '0.16em', cursor: 'pointer', minHeight: 48 }}>↓ Exporter mes souvenirs</button>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.50)', margin: 0, fontStyle: 'italic', textAlign: 'center' }}>Un fichier JSON sur ton appareil. Tu en gardes la trace.</p>
         </div>
