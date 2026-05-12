@@ -213,6 +213,8 @@ export const SOUVENIR_LIBRARY = {
   mood_week:          { glyph: '◐', title: 'Une semaine d\'écoute',       subtitle: 'Sept jours à te regarder doucement.' },
   first_concentration:{ glyph: '◉', title: 'Première concentration',      subtitle: 'Tu as ramené ton attention.' },
   concentration_complete: { glyph: '◉', title: 'Attention soutenue',      subtitle: 'Soixante secondes de présence focalisée.' },
+  first_reparation:   { glyph: '◈', title: 'Première réparation',         subtitle: 'Tu as commencé à rassembler.' },
+  reparation_complete:{ glyph: '◈', title: 'Cocon entier',                 subtitle: 'Toutes les pièces ont retrouvé leur place.' },
 }
 
 // ─── Cercle de présence ──────────────────────────────────────

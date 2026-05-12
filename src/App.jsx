@@ -3715,6 +3715,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showLiberation, setShowLiberation] = useState(false)
   const [showApaisement, setShowApaisement] = useState(false)
   const [showConcentration, setShowConcentration] = useState(false)
+  const [showReparation, setShowReparation] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showCarnet, setShowCarnet] = useState(false)
   const [showLetters, setShowLetters] = useState(false)
@@ -4110,6 +4111,27 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
       {showConcentration && <ConcentrationZenModal archetypeKey={archetypeKey} onClose={() => setShowConcentration(false)} />}
+
+      {/* ── Reparation du cocon (mini-jeu reconstruction) ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowReparation(true) }} role="button" tabIndex={0} aria-label="Ouvrir Reparation du cocon" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.7s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <circle cx="16" cy="16" r="3" fill={arch.color} opacity="0.85"/>
+          <circle cx="6"  cy="10" r="1.8" fill={arch.color} opacity="0.65"/>
+          <circle cx="26" cy="10" r="1.8" fill={arch.color} opacity="0.65"/>
+          <circle cx="26" cy="22" r="1.8" fill={arch.color} opacity="0.65"/>
+          <circle cx="6"  cy="22" r="1.8" fill={arch.color} opacity="0.65"/>
+          <circle cx="16" cy="4"  r="1.6" fill={arch.color} opacity="0.55"/>
+          <circle cx="16" cy="28" r="1.6" fill={arch.color} opacity="0.55"/>
+          <path d="M16 16 L6 10 M16 16 L26 10 M16 16 L26 22 M16 16 L6 22 M16 16 L16 4 M16 16 L16 28" stroke={arch.color} strokeWidth="0.6" opacity="0.32"/>
+        </svg>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Réparation du cocon</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Reconnecter six fragments dispersés</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+      {showReparation && <ReparationCoconModal archetypeKey={archetypeKey} onClose={() => setShowReparation(false)} />}
 
       {/* ── Carnet du Voyage (écriture quotidienne) ── */}
       <div onClick={() => { haptic([6,40,6]); setShowCarnet(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon Carnet du Voyage" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.7s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
@@ -4777,6 +4799,235 @@ function BoutiqueScreen({ archetypeKey }) {
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
+function ReparationCoconModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  const containerRef = useRef(null)
+  const [dragging, setDragging] = useState(null)
+  const [placed, setPlaced] = useState([])
+  const [pointerPos, setPointerPos] = useState(null)
+  const [showPhrase, setShowPhrase] = useState(null)
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  // 6 pieces avec phrase poétique et position initiale autour du périmètre
+  const PIECES = useMemo(() => {
+    const phrases = [
+      'Tu es entier·ère',
+      'Tu reviens à toi',
+      'Chaque morceau compte',
+      'Rien n\'est perdu',
+      'Le centre tient',
+      'Doucement, c\'est tout',
+    ]
+    return phrases.map((phrase, i) => {
+      const angle = (i / 6) * Math.PI * 2 - Math.PI / 2
+      return {
+        id: i,
+        phrase,
+        initX: 50 + Math.cos(angle) * 36,
+        initY: 50 + Math.sin(angle) * 30,
+      }
+    })
+  }, [])
+
+  const CENTER = { x: 50, y: 50 }
+  const SNAP_THRESHOLD = 14
+
+  const distToCenter = (x, y) => Math.sqrt((x - CENTER.x) ** 2 + ((y - CENTER.y) * 1.4) ** 2)
+
+  const handlePointerDown = (pieceId, e) => {
+    if (placed.includes(pieceId)) return
+    e.preventDefault && e.preventDefault()
+    e.stopPropagation && e.stopPropagation()
+    setDragging(pieceId)
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect()
+      const cx = e.touches ? e.touches[0].clientX : e.clientX
+      const cy = e.touches ? e.touches[0].clientY : e.clientY
+      setPointerPos({
+        x: ((cx - rect.left) / rect.width) * 100,
+        y: ((cy - rect.top) / rect.height) * 100,
+      })
+    }
+  }
+  const handlePointerMove = (e) => {
+    if (dragging === null || !containerRef.current) return
+    e.preventDefault && e.preventDefault()
+    const rect = containerRef.current.getBoundingClientRect()
+    const cx = e.touches ? e.touches[0].clientX : e.clientX
+    const cy = e.touches ? e.touches[0].clientY : e.clientY
+    setPointerPos({
+      x: ((cx - rect.left) / rect.width) * 100,
+      y: ((cy - rect.top) / rect.height) * 100,
+    })
+  }
+  const handlePointerUp = () => {
+    if (dragging === null) return
+    if (pointerPos && distToCenter(pointerPos.x, pointerPos.y) < SNAP_THRESHOLD) {
+      // SNAPPED
+      haptic([6, 50, 8])
+      try { playSouvenir() } catch {}
+      const pieceJustPlaced = dragging
+      setPlaced(prev => {
+        const next = prev.includes(pieceJustPlaced) ? prev : [...prev, pieceJustPlaced]
+        if (next.length === PIECES.length) {
+          // ALL DONE
+          setTimeout(() => {
+            haptic([10, 60, 10, 60, 20, 60, 30])
+            try {
+              playMilestone()
+              addSouvenir('first_reparation')
+              addSouvenir('reparation_complete')
+            } catch {}
+          }, 250)
+        } else if (next.length === 1) {
+          try { addSouvenir('first_reparation') } catch {}
+        }
+        return next
+      })
+      // Show phrase for 2.4s
+      const piece = PIECES.find(p => p.id === pieceJustPlaced)
+      if (piece) {
+        setShowPhrase(piece.phrase)
+        setTimeout(() => setShowPhrase(null), 2400)
+      }
+    } else {
+      // Pas snappé — return piece to origin via no change in placed
+      haptic(4)
+    }
+    setDragging(null)
+    setPointerPos(null)
+  }
+
+  const allDone = placed.length === PIECES.length
+
+  return (
+    <div ref={containerRef}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onTouchMove={handlePointerMove}
+      onTouchEnd={handlePointerUp}
+      style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', touchAction: 'none', userSelect: 'none', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 50%, rgba(${arch.rgb},${0.06 + (placed.length / PIECES.length) * 0.22}) 0%, transparent 65%)`, transition: 'background 900ms cubic-bezier(0.45,0,0.55,1)', pointerEvents: 'none' }} />
+
+      <button data-press="true" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); close() }} aria-label="Quitter" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.62)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)' }}>✕</button>
+
+      {/* Title */}
+      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 50px)', left: 0, right: 0, textAlign: 'center', padding: '0 32px', zIndex: 5, pointerEvents: 'none' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Réparation du cocon</p>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.32, textShadow: `0 0 22px ${arch.color}33` }}>{allDone ? 'Le cocon est entier.' : 'Reconnecte les fragments.'}</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '10px 0 0', fontStyle: 'italic', lineHeight: 1.55, maxWidth: 320, marginLeft: 'auto', marginRight: 'auto' }}>{allDone ? 'Toutes les pièces ont retrouvé leur place.' : 'Glisse chaque pièce vers le centre, à son rythme.'}</p>
+      </div>
+
+      {/* Target zone (center mandala) */}
+      <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: 160, height: 160, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},${0.08 + placed.length * 0.04}) 0%, rgba(${arch.rgb},${0.04 + placed.length * 0.02}) 50%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},${0.18 + placed.length * 0.10})`, pointerEvents: 'none', zIndex: 2, transition: 'all 800ms cubic-bezier(0.45,0,0.55,1)', boxShadow: allDone ? `0 0 80px rgba(${arch.rgb},0.40), 0 0 160px rgba(${arch.rgb},0.20), inset 0 0 32px rgba(${arch.rgb},0.18)` : `0 0 ${20 + placed.length * 8}px rgba(${arch.rgb},${0.10 + placed.length * 0.04})` }}>
+        <div style={{ position: 'absolute', inset: '36%', borderRadius: '50%', border: `1px solid rgba(${arch.rgb},${0.20 + placed.length * 0.08})`, pointerEvents: 'none', animation: placed.length > 0 ? 'presencePulse 4s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', transition: 'border-color 800ms cubic-bezier(0.45,0,0.55,1)' }} />
+        {/* Petals — visible quand pièces placées */}
+        {PIECES.map((p, i) => {
+          if (!placed.includes(p.id)) return null
+          const angle = (i / 6) * Math.PI * 2 - Math.PI / 2
+          const r = 56
+          const x = 50 + Math.cos(angle) * r / 1.6
+          const y = 50 + Math.sin(angle) * r / 1.6
+          return (
+            <div key={p.id} style={{
+              position: 'absolute',
+              left: `${x}%`, top: `${y}%`,
+              width: 14, height: 14, borderRadius: '50%',
+              background: `radial-gradient(circle, ${arch.color} 0%, rgba(${arch.rgb},0.40) 60%, transparent 100%)`,
+              transform: 'translate(-50%, -50%)',
+              boxShadow: `0 0 14px ${arch.color}, 0 0 28px ${arch.color}88`,
+              animation: 'chipPop 540ms cubic-bezier(0.34,1.56,0.64,1) both, signaturePulse 8s cubic-bezier(0.45,0,0.55,1) 0.6s infinite',
+            }} />
+          )
+        })}
+        {allDone && (
+          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'fadeIn 1.2s cubic-bezier(0,0,0.2,1) 0.3s both' }}>
+            <span style={{ fontSize: 32, color: 'white', textShadow: `0 0 24px ${arch.color}` }}>✦</span>
+          </div>
+        )}
+      </div>
+
+      {/* Phrase that appears when piece is placed */}
+      {showPhrase && (
+        <div style={{ position: 'absolute', top: '32%', left: 0, right: 0, textAlign: 'center', pointerEvents: 'none', zIndex: 10, animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) both' }}>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 18, color: 'white', margin: 0, textShadow: `0 0 22px ${arch.color}88`, animation: 'phrasebreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' }}>« {showPhrase} »</p>
+        </div>
+      )}
+
+      {/* Pieces */}
+      {PIECES.map((p) => {
+        if (placed.includes(p.id)) return null
+        const isDragging = dragging === p.id
+        const x = (isDragging && pointerPos) ? pointerPos.x : p.initX
+        const y = (isDragging && pointerPos) ? pointerPos.y : p.initY
+        const near = isDragging && pointerPos && distToCenter(pointerPos.x, pointerPos.y) < SNAP_THRESHOLD
+        return (
+          <div
+            key={p.id}
+            onPointerDown={(e) => handlePointerDown(p.id, e)}
+            onTouchStart={(e) => handlePointerDown(p.id, e)}
+            role="button"
+            tabIndex={0}
+            aria-label={`Pièce: ${p.phrase}`}
+            style={{
+              position: 'absolute',
+              left: `${x}%`, top: `${y}%`,
+              transform: `translate(-50%, -50%) scale(${isDragging ? (near ? 1.12 : 1.06) : 1})`,
+              width: 56, height: 56,
+              borderRadius: '50%',
+              background: near ? `radial-gradient(circle, ${arch.color} 0%, rgba(${arch.rgb},0.45) 60%, transparent 100%)` : `radial-gradient(circle, rgba(${arch.rgb},0.55) 0%, rgba(${arch.rgb},0.18) 60%, transparent 100%)`,
+              border: `1.5px solid rgba(${arch.rgb},${near ? 0.95 : 0.65})`,
+              boxShadow: near ? `0 0 30px ${arch.color}, 0 0 60px ${arch.color}88` : `0 0 16px rgba(${arch.rgb},0.50), 0 4px 18px rgba(0,0,0,0.6)`,
+              transition: isDragging ? 'transform 120ms cubic-bezier(0.4,0,0.2,1), background 280ms cubic-bezier(0.4,0,0.2,1), box-shadow 280ms cubic-bezier(0.4,0,0.2,1)' : 'transform 420ms cubic-bezier(0.34,1.56,0.64,1), left 420ms cubic-bezier(0.34,1.56,0.64,1), top 420ms cubic-bezier(0.34,1.56,0.64,1)',
+              cursor: 'grab',
+              zIndex: isDragging ? 30 : 8,
+              touchAction: 'none',
+              backdropFilter: 'blur(6px)',
+              WebkitBackdropFilter: 'blur(6px)',
+              animation: !isDragging ? `animalfloat ${10 + (p.id % 3)}s cubic-bezier(0.45,0,0.55,1) ${p.id * 0.6}s infinite` : 'none',
+            }}
+          />
+        )
+      })}
+
+      {/* Progress dots */}
+      <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 140px)', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 10, pointerEvents: 'none', zIndex: 5 }}>
+        {PIECES.map((p) => (
+          <div key={p.id} style={{
+            width: 8, height: 8, borderRadius: '50%',
+            background: placed.includes(p.id) ? arch.color : 'rgba(255,255,255,0.18)',
+            boxShadow: placed.includes(p.id) ? `0 0 10px ${arch.color}, 0 0 20px ${arch.color}55` : 'none',
+            transition: 'background 480ms cubic-bezier(0,0,0.2,1), box-shadow 480ms cubic-bezier(0,0,0.2,1)',
+            animation: placed.includes(p.id) ? 'chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) both' : 'none',
+          }} />
+        ))}
+      </div>
+
+      {allDone && (
+        <button data-press="true" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); close() }} aria-label="Continuer" style={{
+          position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
+          left: '50%', transform: 'translateX(-50%)',
+          padding: '16px 36px',
+          background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`,
+          border: 'none', borderRadius: 100, color: 'white',
+          fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600,
+          letterSpacing: '0.22em', textTransform: 'uppercase',
+          cursor: 'pointer',
+          boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`,
+          animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.8s infinite',
+          minHeight: 52, zIndex: 30,
+          textShadow: '0 0 14px rgba(255,255,255,0.35)',
+        }}>Continuer ✦</button>
+      )}
+    </div>
+  )
+}
 
 function ConcentrationZenModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
