@@ -4036,7 +4036,19 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <InvitationCard archetypeKey={archetypeKey} onXp={showXpToast ? (amt) => showXpToast(amt, false) : undefined} />
 
       {/* ── Aujourd'hui (quick mood + suggestion) ── */}
-      <AujourdhuiCard archetypeKey={archetypeKey} />
+      <AujourdhuiCard archetypeKey={archetypeKey} onOpenTool={(key) => {
+        if (key === 'apaisement') setShowApaisement(true)
+        else if (key === 'liberation') setShowLiberation(true)
+        else if (key === 'carnet') setShowCarnet(true)
+        else if (key === 'concentration') setShowConcentration(true)
+        else if (key === 'lettres') setShowLetters(true)
+        else if (key === 'reparation') setShowReparation(true)
+        else if (key === 'jardin') setShowJardin(true)
+        else if (key === 'breathing') setShowBreathing(true)
+      }} />
+
+      {/* SECTION: Outils du moment */}
+      <HomeSection label="Outils du moment" archRgb={arch.rgb} />
 
       {/* ── Exercice de souffle ── */}
       <div onClick={() => { haptic([6,40,6]); setShowBreathing(true) }} style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.09) 0%, rgba(255,255,255,0.05) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.40)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.4s both', boxShadow: `0 4px 24px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
@@ -4155,6 +4167,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
       {showJardin && <JardinModal archetypeKey={archetypeKey} onClose={() => setShowJardin(false)} />}
 
+      {/* SECTION: Tes espaces */}
+      <HomeSection label="Tes espaces" archRgb={arch.rgb} />
+
       {/* ── Carnet du Voyage (écriture quotidienne) ── */}
       <div onClick={() => { haptic([6,40,6]); setShowCarnet(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon Carnet du Voyage" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.7s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>
@@ -4171,6 +4186,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
       {showCarnet && <CarnetModal archetypeKey={archetypeKey} onClose={() => setShowCarnet(false)} />}
+
+      {/* SECTION: Lien aux autres */}
+      <HomeSection label="Lien aux autres" archRgb={arch.rgb} />
 
       {/* ── Lettres a un·e inconnu·e (community anonyme) ── */}
       <div onClick={() => { haptic([6,40,6]); setShowLetters(true) }} role="button" tabIndex={0} aria-label="Ouvrir les lettres anonymes" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.8s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
@@ -5905,13 +5923,33 @@ function LiberationPenseesModal({ archetypeKey, onClose }) {
   )
 }
 
-function AujourdhuiCard({ archetypeKey, onSetMood }) {
+function HomeSection({ label, archRgb }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '6px 0 0', animation: 'fadeIn 0.8s cubic-bezier(0,0,0.2,1) both' }}>
+      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, rgba(${archRgb},0.30), transparent)` }} />
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${archRgb},0.70)`, letterSpacing: '0.30em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>{label}</p>
+      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, rgba(${archRgb},0.30), transparent)` }} />
+    </div>
+  )
+}
+
+function AujourdhuiCard({ archetypeKey, onSetMood, onOpenTool }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const [currentMood, setCurrentMood] = useState(() => {
     const t = getMoodQuickToday()
     return t ? t.value : null
   })
   const [tapped, setTapped] = useState(false)
+  const [showReco, setShowReco] = useState(false)
+
+  // Recommandation contextuelle par mood
+  const TOOL_FOR_MOOD = {
+    1: { key: 'apaisement',   title: 'Apaisement sensoriel', reason: 'Pour revenir doucement au corps' },
+    2: { key: 'liberation',   title: 'Libération des pensées', reason: 'Pour poser ce qui pèse' },
+    3: { key: 'carnet',       title: 'Carnet du Voyage', reason: 'Pour écrire ce qui passe' },
+    4: { key: 'concentration', title: 'Concentration zen', reason: 'Pour entraîner ton attention' },
+    5: { key: 'lettres',      title: 'Lettres à un·e inconnu·e', reason: 'Pour offrir un peu de ta lumière' },
+  }
 
   const MOODS = [
     { v: 1, emoji: '😔', label: 'Lourd' },
@@ -5926,6 +5964,7 @@ function AujourdhuiCard({ archetypeKey, onSetMood }) {
     setMoodQuick(v)
     setCurrentMood(v)
     setTapped(true)
+    setShowReco(true)
     try {
       playConfirm()
       addSouvenir('first_quick_mood')
@@ -6001,6 +6040,20 @@ function AujourdhuiCard({ archetypeKey, onSetMood }) {
           })}
         </div>
       </div>
+
+      {/* Recommandation contextuelle apres mood selected */}
+      {currentMood && showReco && onOpenTool && TOOL_FOR_MOOD[currentMood] && (
+        <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid rgba(${arch.rgb},0.22)`, animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.3s both' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px' }}>Pour ce moment</p>
+              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.94)', margin: '0 0 3px', letterSpacing: '-0.005em' }}>{TOOL_FOR_MOOD[currentMood].title}</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: 'rgba(255,255,255,0.60)', margin: 0, fontStyle: 'italic', lineHeight: 1.45 }}>{TOOL_FOR_MOOD[currentMood].reason}</p>
+            </div>
+            <button data-press="true" onClick={() => { haptic(8); onOpenTool(TOOL_FOR_MOOD[currentMood].key) }} aria-label={`Ouvrir ${TOOL_FOR_MOOD[currentMood].title}`} style={{ flexShrink: 0, padding: '11px 18px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.92), rgba(${arch.rgb},0.72))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontWeight: 500, fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', minHeight: 40, boxShadow: `0 4px 18px rgba(${arch.rgb},0.36)`, animation: 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>Y aller →</button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
