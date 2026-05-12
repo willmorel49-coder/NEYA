@@ -2559,7 +2559,7 @@ function SouvenirDetailModal({ souvenir, archetypeKey, onClose }) {
   })()
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 920, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 38%, rgba(${arch.rgb},0.18) 0%, transparent 60%)`, pointerEvents: 'none' }} />
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
         {[{x:14,y:22,r:1.6,d:0},{x:82,y:30,r:1.4,d:3.2},{x:24,y:76,r:1.8,d:1.4},{x:78,y:70,r:1.2,d:6.4},{x:52,y:18,r:1.6,d:2.8}].map((m,i) => (
@@ -4146,8 +4146,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
       {showReparation && <ReparationCoconModal archetypeKey={archetypeKey} onClose={() => setShowReparation(false)} />}
 
+      {/* SECTION: Tes espaces */}
+      <HomeSection label="Tes espaces" archRgb={arch.rgb} />
+
       {/* ── Mon jardin interieur (ecran contemplatif long-terme) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowJardin(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon jardin interieur" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.75s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+      <div onClick={() => { haptic([6,40,6]); setShowJardin(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon jardin interieur" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.78s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 11s cubic-bezier(0.45,0,0.55,1) infinite' }}>
           <line x1="16" y1="28" x2="16" y2="18" stroke={arch.color} strokeWidth="1" opacity="0.65"/>
           <circle cx="16" cy="14" r="3" fill={arch.color} opacity="0.78"/>
@@ -4167,11 +4170,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
       {showJardin && <JardinModal archetypeKey={archetypeKey} onClose={() => setShowJardin(false)} />}
 
-      {/* SECTION: Tes espaces */}
-      <HomeSection label="Tes espaces" archRgb={arch.rgb} />
-
       {/* ── Carnet du Voyage (écriture quotidienne) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowCarnet(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon Carnet du Voyage" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.7s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+      <div onClick={() => { haptic([6,40,6]); setShowCarnet(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon Carnet du Voyage" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.82s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>
           <path d="M7 6 L7 26 L22 26 L25 23 L25 6 Z" fill={`rgba(${arch.rgb},0.18)`} stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" opacity="0.85"/>
           <line x1="10" y1="11" x2="22" y2="11" stroke={arch.color} strokeWidth="0.8" opacity="0.55" strokeLinecap="round"/>
@@ -4187,80 +4187,13 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
       {showCarnet && <CarnetModal archetypeKey={archetypeKey} onClose={() => setShowCarnet(false)} />}
 
-      {/* SECTION: Lien aux autres */}
-      <HomeSection label="Lien aux autres" archRgb={arch.rgb} />
-
-      {/* ── Lettres a un·e inconnu·e (community anonyme) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowLetters(true) }} role="button" tabIndex={0} aria-label="Ouvrir les lettres anonymes" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.8s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 11s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <path d="M5 9 L16 17 L27 9 L27 24 L5 24 Z" fill={`rgba(${arch.rgb},0.18)`} stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" opacity="0.85"/>
-          <path d="M5 9 L16 17 L27 9" stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" fill="none"/>
-          <circle cx="22" cy="6" r="1.4" fill={arch.color} opacity="0.85"/>
-        </svg>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Communauté silencieuse</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Lettres à un·e inconnu·e</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>{getCollectiveCount(archetypeKey)} autres {ARCHETYPE_PLURAL[archetypeKey] || 'âmes'} ici en ce moment</div>
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
-      </div>
-      {showLetters && <LettresInconnusModal archetypeKey={archetypeKey} onClose={() => setShowLetters(false)} />}
-
-      {/* ── Ta trace ── carte discrète d'accès au sanctuaire temporel */}
-      <div onClick={() => { haptic(6); setShowTrace(true) }} role="button" tabIndex={0} aria-label="Voir ta trace des 30 derniers jours" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.07) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid rgba(${arch.rgb},0.36)`, borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.55s both', boxShadow: `0 4px 20px rgba(${arch.rgb},0.08)`, minHeight: 56 }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 6px ${arch.color}66)`, animation: 'animalbreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <circle cx="8" cy="10" r="1.6" fill={arch.color} opacity="0.85" />
-          <circle cx="22" cy="6" r="1.2" fill={arch.color} opacity="0.55" />
-          <circle cx="16" cy="14" r="2.2" fill={arch.color} opacity="0.95" />
-          <circle cx="26" cy="18" r="1.4" fill={arch.color} opacity="0.65" />
-          <circle cx="6" cy="22" r="1.0" fill={arch.color} opacity="0.45" />
-          <circle cx="20" cy="24" r="1.6" fill={arch.color} opacity="0.75" />
-          <circle cx="12" cy="26" r="1.2" fill={arch.color} opacity="0.55" />
-        </svg>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Ta trace</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.82)', letterSpacing: '-0.01em' }}>Ta constellation des 30 jours</div>
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
-      </div>
-
-      {showTrace && <TraceScreen archetypeKey={archetypeKey} onClose={() => setShowTrace(false)} />}
-      {showShare && <ShareArchetype archetypeKey={archetypeKey} onClose={() => setShowShare(false)} />}
-      {showSettings && <SettingsScreen archetypeKey={archetypeKey} onClose={() => setShowSettings(false)} onRestart={onRestart} onRetakeQuiz={onRestart} />}
-
-      {/* ── Prochaine découverte ── */}
-      {(() => {
-        const totalDays = getTotalDaysVisited()
-        const daysToNext = getDaysToNextWorld(archetypeKey)
-        const unlockedWorlds = getUnlockedWorlds(archetypeKey)
-        const order = WORLD_ORDER[archetypeKey] || WORLD_ORDER.resilience
-        const nextWorldKey = order[unlockedWorlds.length]
-        const nextWorld = nextWorldKey ? WORLDS[nextWorldKey] : null
-        if (!nextWorld) return null
-        const prevThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length - 1] || 0
-        const nextThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length] || prevThreshold
-        const progress = nextThreshold > prevThreshold ? Math.min(1, (totalDays - prevThreshold) / (nextThreshold - prevThreshold)) : 1
-        return (
-          <div style={{ background: `linear-gradient(135deg, rgba(${nextWorld.rgb},0.10) 0%, rgba(255,255,255,0.03) 60%, rgba(${nextWorld.rgb},0.05) 100%)`, border: `1px solid rgba(${nextWorld.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', animation: 'fadeIn 0.6s ease 0.8s both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 4px 28px rgba(${nextWorld.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.52)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Prochain monde</span>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${nextWorld.rgb},0.65)`, letterSpacing: '0.06em' }}>{daysToNext} jour{daysToNext > 1 ? 's' : ''}</span>
-            </div>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.82)', marginBottom: 10, animation: 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 20px ${nextWorld.color}66` }}>{nextWorld.name}</div>
-            <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2 }}>
-              <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${nextWorld.color}66, ${nextWorld.color})`, borderRadius: 2, boxShadow: `0 0 8px ${nextWorld.color}55`, transition: 'width 1s ease', animation: 'worldglow 5s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-            </div>
-          </div>
-        )
-      })()}
-
       {/* ── Mon Espace Néya ── */}
       <div onClick={() => { haptic([6,40,6]); setShowCocon(true) }}
         style={{ cursor: 'pointer', background: `linear-gradient(rgba(5,8,16,0.7), rgba(5,8,16,0.7)) padding-box, linear-gradient(135deg, ${arch.color}44, transparent 40%, ${arch.color}28) border-box`,
           border: '1px solid transparent', borderRadius: 14, padding: '18px 18px',
           display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)',
           WebkitBackdropFilter: 'blur(10px)', transition: 'box-shadow 0.3s ease',
-          animation: 'fadeIn 0.6s ease 0.6s both',
+          animation: 'fadeIn 0.6s ease 0.86s both',
           boxShadow: `0 0 32px rgba(${arch.rgb},0.14), inset 0 1px 0 rgba(${arch.rgb},0.12)` }}>
         <div style={{ width: 44, height: 44, borderRadius: '50%',
           background: `radial-gradient(circle, rgba(${arch.rgb},0.25) 0%, transparent 70%)`,
@@ -4305,6 +4238,77 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {showCocon && <CoconScreen archetypeKey={archetypeKey} onClose={() => setShowCocon(false)} />}
+
+      {/* SECTION: Lien aux autres */}
+      <HomeSection label="Lien aux autres" archRgb={arch.rgb} />
+
+      {/* ── Lettres a un·e inconnu·e (community anonyme) ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowLetters(true) }} role="button" tabIndex={0} aria-label="Ouvrir les lettres anonymes" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.8s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 11s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <path d="M5 9 L16 17 L27 9 L27 24 L5 24 Z" fill={`rgba(${arch.rgb},0.18)`} stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" opacity="0.85"/>
+          <path d="M5 9 L16 17 L27 9" stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" fill="none"/>
+          <circle cx="22" cy="6" r="1.4" fill={arch.color} opacity="0.85"/>
+        </svg>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Communauté silencieuse</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Lettres à un·e inconnu·e</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>{getCollectiveCount(archetypeKey)} autres {ARCHETYPE_PLURAL[archetypeKey] || 'âmes'} ici en ce moment</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+      {showLetters && <LettresInconnusModal archetypeKey={archetypeKey} onClose={() => setShowLetters(false)} />}
+
+      {/* ── Ta trace ── carte discrète d'accès au sanctuaire temporel */}
+      <div onClick={() => { haptic(6); setShowTrace(true) }} role="button" tabIndex={0} aria-label="Voir ta trace des 30 derniers jours" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.07) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid rgba(${arch.rgb},0.36)`, borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.55s both', boxShadow: `0 4px 20px rgba(${arch.rgb},0.08)`, minHeight: 56 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 6px ${arch.color}66)`, animation: 'animalbreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <circle cx="8" cy="10" r="1.6" fill={arch.color} opacity="0.85" />
+          <circle cx="22" cy="6" r="1.2" fill={arch.color} opacity="0.55" />
+          <circle cx="16" cy="14" r="2.2" fill={arch.color} opacity="0.95" />
+          <circle cx="26" cy="18" r="1.4" fill={arch.color} opacity="0.65" />
+          <circle cx="6" cy="22" r="1.0" fill={arch.color} opacity="0.45" />
+          <circle cx="20" cy="24" r="1.6" fill={arch.color} opacity="0.75" />
+          <circle cx="12" cy="26" r="1.2" fill={arch.color} opacity="0.55" />
+        </svg>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Ta trace</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.82)', letterSpacing: '-0.01em' }}>Ta constellation des 30 jours</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+
+      {showTrace && <TraceScreen archetypeKey={archetypeKey} onClose={() => setShowTrace(false)} />}
+      {showShare && <ShareArchetype archetypeKey={archetypeKey} onClose={() => setShowShare(false)} />}
+      {showSettings && <SettingsScreen archetypeKey={archetypeKey} onClose={() => setShowSettings(false)} onRestart={onRestart} onRetakeQuiz={onRestart} />}
+
+      {/* SECTION: Ton voyage */}
+      <HomeSection label="Ton voyage" archRgb={arch.rgb} />
+
+      {/* ── Prochaine découverte ── */}
+      {(() => {
+        const totalDays = getTotalDaysVisited()
+        const daysToNext = getDaysToNextWorld(archetypeKey)
+        const unlockedWorlds = getUnlockedWorlds(archetypeKey)
+        const order = WORLD_ORDER[archetypeKey] || WORLD_ORDER.resilience
+        const nextWorldKey = order[unlockedWorlds.length]
+        const nextWorld = nextWorldKey ? WORLDS[nextWorldKey] : null
+        if (!nextWorld) return null
+        const prevThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length - 1] || 0
+        const nextThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length] || prevThreshold
+        const progress = nextThreshold > prevThreshold ? Math.min(1, (totalDays - prevThreshold) / (nextThreshold - prevThreshold)) : 1
+        return (
+          <div style={{ background: `linear-gradient(135deg, rgba(${nextWorld.rgb},0.10) 0%, rgba(255,255,255,0.03) 60%, rgba(${nextWorld.rgb},0.05) 100%)`, border: `1px solid rgba(${nextWorld.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', animation: 'fadeIn 0.6s ease 0.8s both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 4px 28px rgba(${nextWorld.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.52)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Prochain monde</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${nextWorld.rgb},0.65)`, letterSpacing: '0.06em' }}>{daysToNext} jour{daysToNext > 1 ? 's' : ''}</span>
+            </div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.82)', marginBottom: 10, animation: 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 20px ${nextWorld.color}66` }}>{nextWorld.name}</div>
+            <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2 }}>
+              <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${nextWorld.color}66, ${nextWorld.color})`, borderRadius: 2, boxShadow: `0 0 8px ${nextWorld.color}55`, transition: 'width 1s ease', animation: 'worldglow 5s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+            </div>
+          </div>
+        )
+      })()}
+
       {showPersonalize && <PersonalizationModal archetypeKey={archetypeKey} onClose={() => setShowPersonalize(false)} />}
 
       {/* ── Graines de présence (7 jours) ── */}
@@ -4930,7 +4934,7 @@ function JardinModal({ archetypeKey, onClose }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 760, opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 540ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 760, opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', background: '#050810', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 540ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
 
       {/* SKY background */}
       <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, ${skyTop} 0%, ${skyMid} 45%, ${skyBottom} 100%)`, transition: 'background 2s cubic-bezier(0.45,0,0.55,1)' }} />
@@ -4950,9 +4954,9 @@ function JardinModal({ archetypeKey, onClose }) {
 
       {/* Sun (day) or Moon (night/dusk) */}
       {!isNight && !isDusk && days >= 1 ? (
-        <div onClick={(e) => handleTap('soleil', e)} role="button" aria-label="Soleil" style={{ position: 'absolute', top: '12%', right: '14%', width: 48, height: 48, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,220,150,0.85) 0%, rgba(255,200,120,0.45) 50%, transparent 100%)`, boxShadow: '0 0 32px rgba(255,210,140,0.65), 0 0 64px rgba(255,180,80,0.30)', cursor: 'pointer', animation: 'signaturePulse 18s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+        <div onClick={(e) => handleTap('soleil', e)} role="button" aria-label="Soleil" style={{ position: 'absolute', top: '12%', right: 'max(14%, 22px)', width: 48, height: 48, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,220,150,0.85) 0%, rgba(255,200,120,0.45) 50%, transparent 100%)`, boxShadow: '0 0 32px rgba(255,210,140,0.65), 0 0 64px rgba(255,180,80,0.30)', cursor: 'pointer', animation: 'signaturePulse 18s cubic-bezier(0.45,0,0.55,1) infinite' }} />
       ) : (
-        <div onClick={(e) => handleTap('lune', e)} role="button" aria-label="Lune" style={{ position: 'absolute', top: '10%', right: '16%', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle at 35% 35%, rgba(255,255,255,0.92) 0%, rgba(220,225,255,0.55) 50%, transparent 100%)`, boxShadow: '0 0 24px rgba(255,255,255,0.42), 0 0 60px rgba(180,200,255,0.30)', cursor: 'pointer', animation: 'signaturePulse 22s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+        <div onClick={(e) => handleTap('lune', e)} role="button" aria-label="Lune" style={{ position: 'absolute', top: '10%', right: 'max(16%, 22px)', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle at 35% 35%, rgba(255,255,255,0.92) 0%, rgba(220,225,255,0.55) 50%, transparent 100%)`, boxShadow: '0 0 24px rgba(255,255,255,0.42), 0 0 60px rgba(180,200,255,0.30)', cursor: 'pointer', animation: 'signaturePulse 22s cubic-bezier(0.45,0,0.55,1) infinite' }} />
       )}
 
       {/* Close button */}
@@ -5511,7 +5515,7 @@ function ConcentrationZenModal({ archetypeKey, onClose }) {
 
   if (stage === 'active') {
     return (
-      <div ref={containerRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onTouchStart={handlePointerDown} onTouchMove={handlePointerMove} onTouchEnd={handlePointerUp} style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(2,3,8,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: vis ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', touchAction: 'none', userSelect: 'none', cursor: 'crosshair' }}>
+      <div ref={containerRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onTouchStart={handlePointerDown} onTouchMove={handlePointerMove} onTouchEnd={handlePointerUp} style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(2,3,8,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', touchAction: 'none', userSelect: 'none', cursor: 'crosshair', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : 'none' }}>
         <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 50%, rgba(${arch.rgb},${0.05 + (focus / 100) * 0.18}) 0%, transparent 70%)`, pointerEvents: 'none', transition: 'background 600ms cubic-bezier(0.45,0,0.55,1)' }} />
 
         <button data-press="true" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); close() }} aria-label="Arrêter" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.62)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, padding: '9px 16px', color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 60, minHeight: 40, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>Arrêter</button>
@@ -5967,7 +5971,7 @@ function WelcomeBackOverlay({ archetypeKey, days, onDismiss }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9400, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `radial-gradient(ellipse at 50% 45%, rgba(${arch.rgb},0.22) 0%, rgba(5,8,16,0.78) 50%, rgba(5,8,16,0.96) 100%)`, backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', pointerEvents: 'none', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 720ms cubic-bezier(0,0,0.2,1)' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 1500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `radial-gradient(ellipse at 50% 45%, rgba(${arch.rgb},0.22) 0%, rgba(5,8,16,0.78) 50%, rgba(5,8,16,0.96) 100%)`, backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', pointerEvents: 'none', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 720ms cubic-bezier(0,0,0.2,1)' }}>
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
         {[{x:14,y:20,r:2.2,d:0},{x:78,y:24,r:1.8,d:0.4},{x:28,y:74,r:2.6,d:0.2},{x:72,y:78,r:1.8,d:0.6},{x:48,y:16,r:2.0,d:0.1},{x:88,y:54,r:1.8,d:0.7},{x:10,y:58,r:1.6,d:0.5},{x:60,y:88,r:2.4,d:0.3},{x:90,y:30,r:1.4,d:0.55},{x:6,y:34,r:1.6,d:0.45}].map((m,i)=>(
           <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0, animation: `milestoneMote 3.4s cubic-bezier(0,0,0.2,1) ${m.d}s both`, filter: `drop-shadow(0 0 10px ${arch.color}88)` }} />
@@ -7227,7 +7231,7 @@ function MilestoneCelebration({ count, archetypeKey }) {
                   count === 100 ? '100 jours — ta lumière brûle' :
                   `${count} jours`
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9400, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `radial-gradient(ellipse at center, rgba(${arch.rgb},0.16) 0%, transparent 65%)`, backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)', pointerEvents: 'none', opacity: vis ? 1 : 0, transition: 'opacity 480ms cubic-bezier(0,0,0.2,1)' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 1500, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `radial-gradient(ellipse at center, rgba(${arch.rgb},0.16) 0%, transparent 65%)`, backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)', pointerEvents: 'none', opacity: vis ? 1 : 0, transition: 'opacity 480ms cubic-bezier(0,0,0.2,1)' }}>
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
         {[{x:18,y:32,r:3,d:0},{x:78,y:38,r:2.5,d:0.15},{x:30,y:74,r:3.2,d:0.32},{x:68,y:70,r:2.4,d:0.50},{x:48,y:18,r:2.8,d:0.10},{x:88,y:54,r:2.6,d:0.60},{x:14,y:58,r:2.2,d:0.40},{x:62,y:30,r:2.0,d:0.05},{x:42,y:88,r:3.0,d:0.25},{x:80,y:14,r:1.8,d:0.35}].map((m,i)=>(
           <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0, animation: `milestoneMote 2.2s cubic-bezier(0,0,0.2,1) ${m.d}s both`, filter: `drop-shadow(0 0 8px ${arch.color})` }} />
