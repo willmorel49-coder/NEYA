@@ -3689,6 +3689,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showTrace, setShowTrace] = useState(false)
   const [showShare, setShowShare] = useState(false)
   const [showLiberation, setShowLiberation] = useState(false)
+  const [showApaisement, setShowApaisement] = useState(false)
   const [prenom, setPrenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
   const [mantra, setMantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
   const [coconName, setCoconName] = useState(() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })
@@ -4038,6 +4039,28 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
       {showLiberation && <LiberationPenseesModal archetypeKey={archetypeKey} onClose={() => setShowLiberation(false)} />}
+
+      {/* ── Apaisement sensoriel (mini-jeu) ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowApaisement(true) }} role="button" tabIndex={0} aria-label="Ouvrir Apaisement sensoriel" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.6s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <circle cx="10" cy="8"  r="1.6" fill={arch.color} opacity="0.85"/>
+          <circle cx="22" cy="11" r="1.4" fill={arch.color} opacity="0.70"/>
+          <circle cx="6"  cy="18" r="1.2" fill={arch.color} opacity="0.60"/>
+          <circle cx="16" cy="16" r="2.2" fill={arch.color} opacity="0.95"/>
+          <circle cx="26" cy="20" r="1.4" fill={arch.color} opacity="0.65"/>
+          <circle cx="11" cy="25" r="1.6" fill={arch.color} opacity="0.78"/>
+          <circle cx="22" cy="26" r="1.2" fill={arch.color} opacity="0.55"/>
+          <path d="M16 16 Q14 20 11 25" stroke={arch.color} strokeWidth="0.8" opacity="0.42" strokeLinecap="round" fill="none"/>
+          <path d="M16 16 Q19 13 22 11" stroke={arch.color} strokeWidth="0.8" opacity="0.42" strokeLinecap="round" fill="none"/>
+        </svg>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Apaisement sensoriel</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.36)', marginTop: 3 }}>Glisse ton doigt sur les douze présences</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+      {showApaisement && <ApaisementSensorielModal archetypeKey={archetypeKey} onClose={() => setShowApaisement(false)} />}
 
       {/* ── Ta trace ── carte discrète d'accès au sanctuaire temporel */}
       <div onClick={() => { haptic(6); setShowTrace(true) }} role="button" tabIndex={0} aria-label="Voir ta trace des 30 derniers jours" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.07) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid rgba(${arch.rgb},0.18)`, borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.55s both', boxShadow: `0 4px 20px rgba(${arch.rgb},0.08)`, minHeight: 56 }}>
@@ -4660,6 +4683,172 @@ function BoutiqueScreen({ archetypeKey }) {
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
+function ApaisementSensorielModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  const [pointerPos, setPointerPos] = useState(null)
+  const [litDots, setLitDots] = useState([])
+  const containerRef = useRef(null)
+  const dragRef = useRef(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setVis(true), 30)
+    return () => clearTimeout(t)
+  }, [])
+
+  const DOTS = useMemo(() => {
+    const arr = []
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2 - Math.PI / 2
+      const r = 26 + (i % 3) * 7
+      arr.push({ id: i, x: 50 + Math.cos(a) * r, y: 50 + Math.sin(a) * r * 0.78 })
+    }
+    return arr
+  }, [])
+
+  const handlePointer = (e) => {
+    if (!containerRef.current) return
+    const rect = containerRef.current.getBoundingClientRect()
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX)
+    const cy = (e.touches ? e.touches[0].clientY : e.clientY)
+    const x = ((cx - rect.left) / rect.width) * 100
+    const y = ((cy - rect.top) / rect.height) * 100
+    setPointerPos({ x, y })
+
+    DOTS.forEach(dot => {
+      if (litDots.includes(dot.id)) return
+      const dx = dot.x - x
+      const dy = (dot.y - y) * 1.25 // compensate ratio
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      if (dist < 7) {
+        haptic(4)
+        setLitDots(prev => prev.includes(dot.id) ? prev : [...prev, dot.id])
+      }
+    })
+  }
+
+  const handleStart = (e) => {
+    dragRef.current = true
+    handlePointer(e)
+  }
+  const handleMove = (e) => {
+    if (!dragRef.current) return
+    e.preventDefault && e.preventDefault()
+    handlePointer(e)
+  }
+  const handleEnd = () => {
+    dragRef.current = false
+    setTimeout(() => setPointerPos(null), 400)
+  }
+
+  const allLit = litDots.length === DOTS.length
+
+  useEffect(() => {
+    if (allLit) {
+      haptic([20, 80, 20, 80, 30])
+      try {
+        addSouvenir('first_apaisement')
+        addSouvenir('apaisement_session', { count: 12 })
+      } catch {}
+    }
+  }, [allLit])
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none'), touchAction: 'none' }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 48%, rgba(${arch.rgb},${0.08 + (litDots.length / 12) * 0.20}) 0%, transparent 65%)`, transition: 'background 1.2s cubic-bezier(0.45,0,0.55,1)', pointerEvents: 'none' }} />
+
+      <button data-press="true" onClick={close} aria-label="Quitter l'apaisement" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+
+      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 50px)', left: 0, right: 0, textAlign: 'center', zIndex: 5, padding: '0 32px' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◌ Apaisement sensoriel</p>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'white', margin: 0, lineHeight: 1.32, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>{allLit ? 'Le corps est revenu.' : 'Glisse ton doigt sur les points.'}</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '10px 0 0', fontStyle: 'italic', lineHeight: 1.55, maxWidth: 320, marginLeft: 'auto', marginRight: 'auto' }}>{allLit ? "Tu as touché à douze présences. Tu es là." : 'Aucune séquence, aucune hâte. Touche, sens, respire.'}</p>
+      </div>
+
+      {/* Touch container */}
+      <div
+        ref={containerRef}
+        onPointerDown={handleStart}
+        onPointerMove={handleMove}
+        onPointerUp={handleEnd}
+        onPointerCancel={handleEnd}
+        onPointerLeave={handleEnd}
+        style={{ position: 'absolute', inset: 0, zIndex: 3, cursor: 'crosshair' }}
+      >
+        {/* Dots */}
+        {DOTS.map((dot) => {
+          const lit = litDots.includes(dot.id)
+          return (
+            <div key={dot.id} style={{
+              position: 'absolute',
+              left: `${dot.x}%`,
+              top: `${dot.y}%`,
+              transform: 'translate(-50%, -50%)',
+              width: lit ? 28 : 22,
+              height: lit ? 28 : 22,
+              borderRadius: '50%',
+              background: lit ? `radial-gradient(circle, ${arch.color} 0%, rgba(${arch.rgb},0.30) 60%, transparent 100%)` : 'rgba(255,255,255,0.08)',
+              border: lit ? `1px solid ${arch.color}88` : `1px solid rgba(255,255,255,0.18)`,
+              boxShadow: lit ? `0 0 16px ${arch.color}, 0 0 32px ${arch.color}66` : 'none',
+              transition: 'width 380ms cubic-bezier(0.34,1.56,0.64,1), height 380ms cubic-bezier(0.34,1.56,0.64,1), background 480ms cubic-bezier(0,0,0.2,1), box-shadow 480ms cubic-bezier(0,0,0.2,1), border-color 380ms cubic-bezier(0,0,0.2,1)',
+              animation: lit ? 'chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) both, signaturePulse 8s cubic-bezier(0.45,0,0.55,1) 0.6s infinite' : 'none',
+              pointerEvents: 'none',
+            }} />
+          )
+        })}
+
+        {/* Glow follower */}
+        {pointerPos && (
+          <div style={{
+            position: 'absolute',
+            left: `${pointerPos.x}%`,
+            top: `${pointerPos.y}%`,
+            transform: 'translate(-50%, -50%)',
+            width: 80, height: 80,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, rgba(${arch.rgb},0.42) 0%, rgba(${arch.rgb},0.18) 40%, transparent 75%)`,
+            boxShadow: `0 0 32px ${arch.color}99`,
+            transition: 'left 80ms cubic-bezier(0.45,0,0.55,1), top 80ms cubic-bezier(0.45,0,0.55,1), opacity 240ms ease',
+            pointerEvents: 'none',
+          }} />
+        )}
+      </div>
+
+      {/* Counter */}
+      <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 130px)', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 6, zIndex: 5, flexWrap: 'wrap', padding: '0 32px', maxWidth: 320, margin: '0 auto' }}>
+        {DOTS.map((dot) => (
+          <div key={`c-${dot.id}`} style={{
+            width: 7, height: 7, borderRadius: '50%',
+            background: litDots.includes(dot.id) ? arch.color : 'rgba(255,255,255,0.18)',
+            boxShadow: litDots.includes(dot.id) ? `0 0 8px ${arch.color}` : 'none',
+            transition: 'background 480ms cubic-bezier(0,0,0.2,1), box-shadow 480ms cubic-bezier(0,0,0.2,1)',
+          }} />
+        ))}
+      </div>
+
+      {allLit && (
+        <button data-press="true" onClick={close} aria-label="Continuer" style={{
+          position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
+          left: '50%', transform: 'translateX(-50%)',
+          padding: '16px 36px',
+          background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`,
+          border: 'none', borderRadius: 100, color: 'white',
+          fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600,
+          letterSpacing: '0.22em', textTransform: 'uppercase',
+          cursor: 'pointer',
+          boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`,
+          animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.8s infinite',
+          minHeight: 52, zIndex: 5,
+          textShadow: '0 0 14px rgba(255,255,255,0.35)',
+        }}>
+          Continuer ✦
+        </button>
+      )}
+    </div>
+  )
+}
 
 function LiberationPenseesModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence

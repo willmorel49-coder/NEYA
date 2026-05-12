@@ -199,6 +199,8 @@ export const SOUVENIR_LIBRARY = {
   visitor_shooting:   { glyph: '⋆', title: 'Une étoile filante',        subtitle: 'Le ciel a brillé pour toi.' },
   first_liberation:   { glyph: '◍', title: 'Première libération',       subtitle: 'Tu as posé ce qui pesait.' },
   liberation_session: { glyph: '◍', title: 'Pensées libérées',          subtitle: 'L\'espace s\'est éclairci.' },
+  first_apaisement:   { glyph: '◌', title: 'Premier apaisement',         subtitle: 'Tu as touché à douze présences.' },
+  apaisement_session: { glyph: '◌', title: 'Apaisement sensoriel',       subtitle: 'Le corps est revenu au présent.' },
 }
 
 export function getSouvenirs() {
