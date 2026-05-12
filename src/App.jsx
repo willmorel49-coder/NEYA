@@ -3713,6 +3713,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showShare, setShowShare] = useState(false)
   const [showLiberation, setShowLiberation] = useState(false)
   const [showApaisement, setShowApaisement] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [prenom, setPrenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
   const [mantra, setMantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
   const [coconName, setCoconName] = useState(() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })
@@ -3912,6 +3913,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         {/* Bouton personnalisation */}
         <button onClick={() => setShowPersonalize(true)} style={{ position: 'absolute', top: 0, right: 0, background: 'none', border: 'none', cursor: 'pointer', color: `rgba(${arch.rgb},0.55)`, fontSize: 17, padding: '6px 8px', lineHeight: 1, transition: 'color 0.2s ease', minWidth: 44, minHeight: 44, animation: 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' }} title="Personnaliser" aria-label="Personnaliser ton espace">✎</button>
         <button onClick={() => { haptic(6); setShowShare(true) }} style={{ position: 'absolute', top: 0, right: 48, background: 'none', border: 'none', cursor: 'pointer', color: `rgba(${arch.rgb},0.55)`, fontSize: 15, padding: '6px 8px', lineHeight: 1, transition: 'color 0.2s ease', minWidth: 44, minHeight: 44, animation: 'phrasebreathe 22s ease-in-out 1s infinite' }} title="Partager ton archétype" aria-label="Partager ton archétype">↗</button>
+        <button onClick={() => { haptic(6); setShowSettings(true) }} style={{ position: 'absolute', top: 0, right: 96, background: 'none', border: 'none', cursor: 'pointer', color: `rgba(${arch.rgb},0.55)`, fontSize: 15, padding: '6px 8px', lineHeight: 1, transition: 'color 0.2s ease', minWidth: 44, minHeight: 44, animation: 'phrasebreathe 22s ease-in-out 2s infinite' }} title="Réglages" aria-label="Ouvrir les réglages">⚙</button>
         {prenom ? (
           <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 18, background: `linear-gradient(135deg, ${arch.color}, rgba(255,255,255,0.95) 55%, ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '0.02em', margin: '0 0 2px', animation: jourComplète ? 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 10s ease-in-out 3s infinite' : 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite' }}>{greetingStr()}, {prenom}</p>
         ) : (
@@ -4105,6 +4107,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {showTrace && <TraceScreen archetypeKey={archetypeKey} onClose={() => setShowTrace(false)} />}
       {showShare && <ShareArchetype archetypeKey={archetypeKey} onClose={() => setShowShare(false)} />}
+      {showSettings && <SettingsScreen archetypeKey={archetypeKey} onClose={() => setShowSettings(false)} onRestart={onRestart} onRetakeQuiz={onRestart} />}
 
       {/* ── Prochaine découverte ── */}
       {(() => {
@@ -4485,6 +4488,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
   const [vis, setVis] = useState(false)
   const [flash, setFlash] = useState(false)
   const [celebrateIdx, setCelebrateIdx] = useState(null)
+  const [guideIdx, setGuideIdx] = useState(null)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
 
   const handleComplete = (i) => {
@@ -4520,7 +4524,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
         const locked = i > 0 && !completed[i - 1]
         const isNext = !done && !locked && (i === 0 || completed[i - 1])
         return (
-          <div key={i} style={{ background: done ? `rgba(${arch.rgb},0.1)` : locked ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : locked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', opacity: locked ? 0.35 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s', position: 'relative', overflow: 'hidden', boxShadow: done ? `0 0 20px rgba(${arch.rgb},0.12), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
+          <div key={i} onClick={() => { if (!locked) { haptic(6); setGuideIdx(i) } }} role={!locked ? "button" : undefined} tabIndex={!locked ? 0 : undefined} aria-label={!locked ? `Voir la quête ${q.title}` : undefined} style={{ background: done ? `rgba(${arch.rgb},0.1)` : locked ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)', border: `1px solid ${done ? arch.color + '55' : locked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.09)'}`, borderRadius: 14, padding: '18px 16px', opacity: locked ? 0.35 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s', position: 'relative', overflow: 'hidden', boxShadow: done ? `0 0 20px rgba(${arch.rgb},0.12), inset 0 0 0 1px ${arch.color}22` : 'none', cursor: !locked ? 'pointer' : 'default' }}>
             {done && <div style={{ position: 'absolute', left: 0, top: '16%', bottom: '16%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}cc, transparent)`, borderRadius: '0 2px 2px 0', animation: 'milestoneGlow 4.8s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />}
             {celebrateIdx === i && [0,1,2,3,4,5].map(j => (
               <div key={j} style={{ position: 'absolute', top: 10, left: `${8 + j * 16}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.0 + j * 0.2}s ease-out ${j * 0.07}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 8px ${arch.color}cc` }} />
@@ -4536,7 +4540,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
             </p>
             {!done && !locked && (
-              <button onClick={() => handleComplete(i)} style={{ width: '100%', padding: '12px 0', background: isNext ? `rgba(${arch.rgb},0.88)` : `rgba(${arch.rgb},0.60)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.18em', color: 'white', textTransform: 'uppercase', boxShadow: isNext ? `0 4px 28px rgba(${arch.rgb},0.40)` : `0 2px 16px rgba(${arch.rgb},0.25)`, animation: isNext ? 'milestoneGlow 3.8s cubic-bezier(0.45,0,0.55,1) infinite' : 'milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: isNext ? `0 0 12px ${arch.color}66` : 'none' }}>
+              <button data-press="true" onClick={(e) => { e.stopPropagation(); handleComplete(i) }} style={{ width: '100%', padding: '12px 0', background: isNext ? `rgba(${arch.rgb},0.88)` : `rgba(${arch.rgb},0.60)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 11.5, fontWeight: 600, letterSpacing: '0.18em', color: 'white', textTransform: 'uppercase', boxShadow: isNext ? `0 4px 28px rgba(${arch.rgb},0.40)` : `0 2px 16px rgba(${arch.rgb},0.25)`, animation: isNext ? 'milestoneGlow 3.8s cubic-bezier(0.45,0,0.55,1) infinite' : 'milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: isNext ? `0 0 12px ${arch.color}66` : 'none' }}>
                 Marquer accomplie
               </button>
             )}
@@ -4544,6 +4548,16 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
         )
       })}
 
+      {guideIdx !== null && (
+        <QuetesGuideModal
+          archetypeKey={archetypeKey}
+          quete={arch.quetes[guideIdx]}
+          done={completed[guideIdx]}
+          locked={guideIdx > 0 && !completed[guideIdx - 1]}
+          onClose={() => setGuideIdx(null)}
+          onComplete={() => { if (!completed[guideIdx]) onComplete(guideIdx) }}
+        />
+      )}
       {allDone && (
         <div style={{ position: 'relative', background: `rgba(${arch.rgb},0.1)`, border: `1px solid ${arch.color}44`, borderRadius: 12, padding: '20px 16px', textAlign: 'center', marginTop: 4, display: 'flex', flexDirection: 'column', gap: 14, overflow: 'hidden', animation: 'presencePulse 7s ease-in-out 1.5s infinite' }}>
           <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
@@ -5046,6 +5060,183 @@ function LiberationPenseesModal({ archetypeKey, onClose }) {
           Continuer ✦
         </button>
       )}
+    </div>
+  )
+}
+
+function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  const [audioOn, setAudioOn] = useState(() => getAudioEnabled())
+  const [confirmRestart, setConfirmRestart] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const totalSouvenirs = getSouvenirs().length
+  const totalBreath = (() => { try { return parseInt(localStorage.getItem('neya_breath_count') || '0', 10) } catch { return 0 } })()
+  const totalDays = (() => { let n = 0; try { for (const k of Object.keys(localStorage)) { if (k.startsWith('neya_routines_') && JSON.parse(localStorage.getItem(k) || '[]').some(Boolean)) n++ } } catch {} return n })()
+
+  const exportData = () => {
+    haptic(10)
+    try {
+      const data = { exported_at: new Date().toISOString(), app_version: '1.0', archetype: archetypeKey }
+      for (const key of Object.keys(localStorage)) {
+        if (key.startsWith('neya_')) data[key] = localStorage.getItem(key)
+      }
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `neya-souvenirs-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a); a.click(); document.body.removeChild(a)
+      setTimeout(() => URL.revokeObjectURL(url), 2000)
+    } catch {}
+  }
+
+  const handleRetakeQuiz = () => {
+    if (confirmRestart) {
+      haptic([8, 60, 8])
+      try { localStorage.removeItem('neya_profile') } catch {}
+      onRetakeQuiz()
+    } else {
+      haptic(6); setConfirmRestart(true)
+      setTimeout(() => setConfirmRestart(false), 4000)
+    }
+  }
+
+  const handleFullReset = () => {
+    if (confirmReset) {
+      haptic([12, 80, 12])
+      try {
+        for (const k of Object.keys(localStorage)) {
+          if (k.startsWith('neya_')) localStorage.removeItem(k)
+        }
+      } catch {}
+      onRestart()
+    } else {
+      haptic(8); setConfirmReset(true)
+      setTimeout(() => setConfirmReset(false), 4000)
+    }
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(5,8,16,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 38%, rgba(${arch.rgb},0.08) 0%, transparent 60%)`, pointerEvents: 'none' }} />
+
+      <button data-press="true" onClick={close} aria-label="Fermer les réglages" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 24px calc(env(safe-area-inset-bottom, 0px) + 40px)', display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 480, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 12px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Réglages</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.22, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>Ton espace, tes règles</h2>
+        </div>
+
+        {/* SECTION: Préférences */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0 }}>Préférences</p>
+          <div style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(${arch.rgb},0.22)`, borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ flex: 1, paddingRight: 14 }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.92)' }}>Sons doux</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.58)', marginTop: 3, fontStyle: 'italic', lineHeight: 1.4 }}>Toucher, souvenir, souffle. Subtil.</div>
+            </div>
+            <button onClick={() => { const next = !audioOn; setAudioOn(next); setAudioEnabled(next); if (next) { try { playConfirm() } catch {} } }} aria-label={audioOn ? 'Désactiver les sons' : 'Activer les sons'} role="switch" aria-checked={audioOn} style={{ width: 44, height: 26, borderRadius: 100, background: audioOn ? `rgba(${arch.rgb},0.85)` : 'rgba(255,255,255,0.10)', border: `1px solid ${audioOn ? arch.color + 'aa' : 'rgba(255,255,255,0.15)'}`, position: 'relative', cursor: 'pointer', flexShrink: 0, transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), border-color 240ms cubic-bezier(0.4,0,0.2,1)', boxShadow: audioOn ? `0 0 14px rgba(${arch.rgb},0.40)` : 'none' }}>
+              <div style={{ position: 'absolute', top: 2, left: audioOn ? 20 : 2, width: 20, height: 20, borderRadius: '50%', background: 'white', boxShadow: '0 2px 6px rgba(0,0,0,0.3)', transition: 'left 280ms cubic-bezier(0.34,1.56,0.64,1)' }} />
+            </button>
+          </div>
+        </div>
+
+        {/* SECTION: Mémoire */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0 }}>Ta mémoire</p>
+          <div style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(${arch.rgb},0.22)`, borderRadius: 14, padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.72)' }}>Souvenirs collectés</span>
+              <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 16, color: arch.color, textShadow: `0 0 10px ${arch.color}66` }}>{totalSouvenirs}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.72)' }}>Sessions de souffle</span>
+              <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 16, color: arch.color, textShadow: `0 0 10px ${arch.color}66` }}>{totalBreath}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.72)' }}>Jours de présence</span>
+              <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 16, color: arch.color, textShadow: `0 0 10px ${arch.color}66` }}>{totalDays}</span>
+            </div>
+          </div>
+          <button data-press="true" onClick={exportData} style={{ width: '100%', padding: '14px 0', background: `rgba(${arch.rgb},0.14)`, border: `1px solid rgba(${arch.rgb},0.40)`, borderRadius: 100, color: 'rgba(255,255,255,0.92)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, letterSpacing: '0.16em', cursor: 'pointer', minHeight: 48 }}>↓ Exporter mes souvenirs</button>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.50)', margin: 0, fontStyle: 'italic', textAlign: 'center' }}>Un fichier JSON sur ton appareil. Tu en gardes la trace.</p>
+        </div>
+
+        {/* SECTION: Recommencer */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0 }}>Recommencer</p>
+          <button data-press="true" onClick={handleRetakeQuiz} style={{ width: '100%', padding: '14px 0', background: confirmRestart ? `rgba(${arch.rgb},0.32)` : 'rgba(255,255,255,0.04)', border: `1px solid ${confirmRestart ? arch.color + '88' : 'rgba(255,255,255,0.14)'}`, borderRadius: 100, color: confirmRestart ? arch.color : 'rgba(255,255,255,0.78)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, letterSpacing: '0.10em', cursor: 'pointer', minHeight: 48, transition: 'all 240ms cubic-bezier(0.4,0,0.2,1)' }}>{confirmRestart ? 'Tape encore pour confirmer' : 'Refaire le quiz'}</button>
+          <button data-press="true" onClick={handleFullReset} style={{ width: '100%', padding: '14px 0', background: confirmReset ? 'rgba(236,72,153,0.22)' : 'rgba(255,255,255,0.02)', border: `1px solid ${confirmReset ? 'rgba(236,72,153,0.55)' : 'rgba(255,255,255,0.08)'}`, borderRadius: 100, color: confirmReset ? 'rgba(236,72,153,0.92)' : 'rgba(255,255,255,0.45)', fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', minHeight: 44, transition: 'all 240ms cubic-bezier(0.4,0,0.2,1)' }}>{confirmReset ? 'Tape pour effacer toute trace' : 'Tout réinitialiser'}</button>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.50)', margin: 0, fontStyle: 'italic', textAlign: 'center', lineHeight: 1.5 }}>Refaire le quiz garde tes souvenirs.<br />Tout réinitialiser efface tout.</p>
+        </div>
+
+        {/* SECTION: À propos */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0 }}>À propos</p>
+          <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '18px 20px' }}>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.86)', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>« NÉYA est un refuge.<br />Pas une app de méditation. Pas un journal.<br />Juste un espace pour ce que tu ressens vraiment. »</p>
+            <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}44, transparent)`, margin: '14px 0' }} />
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.52)', margin: 0, letterSpacing: '0.04em' }}>Version 1.0 · Une extension de la marque ÇA VA?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function QuetesGuideModal({ archetypeKey, quete, done, locked, onClose, onComplete }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const [completing, setCompleting] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const handleComplete = () => {
+    if (done || locked) { close(); return }
+    haptic([20, 50, 30, 50, 20])
+    setCompleting(true)
+    setTimeout(() => { onComplete(); setTimeout(close, 540) }, 1200)
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(5,8,16,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 36%, rgba(${arch.rgb},0.14) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        {[{x:12,y:22,r:1.8,dur:30,del:0},{x:84,y:30,r:1.4,dur:34,del:3.5},{x:22,y:74,r:2.0,dur:28,del:1.8},{x:76,y:80,r:1.4,dur:36,del:6.2},{x:50,y:18,r:1.6,dur:32,del:9.1}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0.10, animation: `splashmote ${m.dur}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${m.del}s` }} />
+        ))}
+      </svg>
+      {completing && (
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 50 }}>
+          {[{x:20,y:30,r:3.2,del:0},{x:80,y:38,r:2.8,del:0.15},{x:32,y:70,r:3.4,del:0.32},{x:70,y:74,r:2.6,del:0.50},{x:50,y:18,r:3.0,del:0.70},{x:88,y:58,r:2.8,del:0.90},{x:14,y:60,r:2.4,del:0.40},{x:62,y:34,r:2.2,del:0.20}].map((m,i)=>(
+            <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0, animation: `milestoneMote 1.8s ease-out ${m.del}s both`, filter: `drop-shadow(0 0 10px ${arch.color})` }} />
+          ))}
+        </svg>
+      )}
+      <button data-press="true" onClick={close} aria-label="Fermer" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '9px 18px', color: 'rgba(255,255,255,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 10, minHeight: 44 }}>Fermer</button>
+
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 72px) 28px calc(env(safe-area-inset-bottom, 0px) + 40px)', display: 'flex', flexDirection: 'column', gap: 26, minHeight: '100%', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}66`, borderRadius: 100, padding: '8px 20px', marginBottom: 20, animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+            <span style={{ fontSize: 16, color: arch.color, lineHeight: 1, textShadow: `0 0 10px ${arch.color}66` }}>{quete.icon}</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase' }}>Quête</span>
+          </div>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 28, color: 'white', margin: 0, lineHeight: 1.22, letterSpacing: '-0.01em', textShadow: `0 0 32px ${arch.color}44`, animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>{quete.title}</h2>
+        </div>
+        <div style={{ background: `rgba(${arch.rgb},0.08)`, border: `1px solid ${arch.color}33`, borderRadius: 18, padding: '26px 24px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', left: 0, top: '14%', bottom: '14%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}aa, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 12s cubic-bezier(0.45,0,0.55,1) 3s infinite' }} />
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', margin: 0, lineHeight: 1.72, fontStyle: 'italic', textShadow: `0 0 14px ${arch.color}22`, animation: 'phrasebreathe 28s cubic-bezier(0.45,0,0.55,1) infinite' }}>{quete.desc}</p>
+        </div>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.50)', textAlign: 'center', margin: 0, lineHeight: 1.65, padding: '0 12px', animation: 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite' }}>Une quête n'est pas une obligation. C'est un appel à aller un peu plus loin que d'habitude.</p>
+        <button data-press="true" onClick={handleComplete} disabled={completing || locked} style={{ width: '100%', padding: '18px 0', background: done ? `rgba(${arch.rgb},0.20)` : locked ? 'rgba(255,255,255,0.05)' : `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: (done || locked) ? `1px solid ${done ? arch.color + '66' : 'rgba(255,255,255,0.10)'}` : 'none', borderRadius: 100, cursor: (completing || locked) ? 'not-allowed' : 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.24em', color: done ? arch.color : locked ? 'rgba(255,255,255,0.30)' : 'white', textTransform: 'uppercase', boxShadow: (done || locked) ? 'none' : `0 6px 36px rgba(${arch.rgb},0.42), 0 0 60px rgba(${arch.rgb},0.18)`, animation: completing ? 'milestoneGlow 1.4s cubic-bezier(0.45,0,0.55,1) infinite' : (!done && !locked) ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', textShadow: (done || locked) ? 'none' : '0 0 14px rgba(255,255,255,0.35)', minHeight: 54, opacity: completing ? 0.88 : 1, transition: 'opacity 0.3s ease' }}>
+          {completing ? '✦ Bien joué' : done ? '✓ Quête accomplie' : locked ? 'Encore verrouillée' : 'Marquer accomplie'}
+        </button>
+      </div>
     </div>
   )
 }
