@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
-import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory, setMoodQuick, getMoodQuickToday, getMoodQuickHistory, getMoodCombined, getMoodQuickStreak, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit } from './inner-world'
+import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory, setMoodQuick, getMoodQuickToday, getMoodQuickHistory, getMoodCombined, getMoodQuickStreak, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit, getBilanSoir, hasSeenBilanToday, markBilanSeen, getBilanSoirStreak } from './inner-world'
 import { getNextLetter, markLetterReceived, sendLetter, getReceivedLetters, getSentLetters, getCollectiveCount, ARCHETYPE_PLURAL } from './community'
-import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, initAudioPressFeedback } from './audio'
+import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, playOpen, playClose, initAudioPressFeedback } from './audio'
 import { tokens as T } from './design-tokens'
 
 const B = import.meta.env.BASE_URL
@@ -4035,6 +4035,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {/* ── Invitation du jour ── */}
       <InvitationCard archetypeKey={archetypeKey} onXp={showXpToast ? (amt) => showXpToast(amt, false) : undefined} />
 
+      {/* ── Bilan du soir (h≥20, contemplatif) ── */}
+      {(new Date().getHours() >= 20 && !hasSeenBilanToday()) && (
+        <BilanDuSoirCard archetypeKey={archetypeKey} onClose={() => { /* reflow handled by markBilanSeen */ }} />
+      )}
+
       {/* ── Aujourd'hui (quick mood + suggestion) ── */}
       <AujourdhuiCard archetypeKey={archetypeKey} onOpenTool={(key) => {
         if (key === 'apaisement') setShowApaisement(true)
@@ -6195,6 +6200,142 @@ function AujourdhuiCard({ archetypeKey, onSetMood, onOpenTool }) {
             <button data-press="true" onClick={() => { haptic(8); onOpenTool(TOOL_FOR_MOOD[currentMood].key) }} aria-label={`Ouvrir ${TOOL_FOR_MOOD[currentMood].title}`} style={{ flexShrink: 0, padding: '11px 18px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.92), rgba(${arch.rgb},0.72))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontWeight: 500, fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', minHeight: 40, boxShadow: `0 4px 18px rgba(${arch.rgb},0.36)`, animation: 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>Y aller →</button>
           </div>
         </div>
+      )}
+    </div>
+  )
+}
+
+function BilanDuSoirCard({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const [closed, setClosed] = useState(false)
+  const bilan = useMemo(() => getBilanSoir(), [])
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const MOODS = { 1: '😔', 2: '😟', 3: '😐', 4: '🙂', 5: '✨' }
+  const MOOD_LABELS = { 1: 'lourd', 2: 'difficile', 3: 'neutre', 4: 'bien', 5: 'lumineux' }
+
+  // Lignes du bilan (n'affiche que ce qui a été fait)
+  const lines = []
+  if (bilan.moodValue) lines.push({ glyph: MOODS[bilan.moodValue], label: `Tu t'es senti·e ${MOOD_LABELS[bilan.moodValue]}` })
+  if (bilan.breathCount) lines.push({ glyph: '◇', label: `${bilan.breathCount} respiration${bilan.breathCount > 1 ? 's' : ''} guidée${bilan.breathCount > 1 ? 's' : ''}` })
+  if (bilan.liberationCount) lines.push({ glyph: '◍', label: 'Pensées libérées' })
+  if (bilan.apaisementCount) lines.push({ glyph: '◌', label: 'Apaisement sensoriel' })
+  if (bilan.concentrationCount) lines.push({ glyph: '◉', label: 'Attention soutenue' })
+  if (bilan.reparationCount) lines.push({ glyph: '◈', label: 'Cocon réparé' })
+  if (bilan.carnetWritten) lines.push({ glyph: '◊', label: 'Une page écrite au Carnet' })
+  if (bilan.lettersReceived) lines.push({ glyph: '✉', label: `${bilan.lettersReceived} lettre${bilan.lettersReceived > 1 ? 's' : ''} reçue${bilan.lettersReceived > 1 ? 's' : ''}` })
+  if (bilan.lettersSent) lines.push({ glyph: '✉', label: `${bilan.lettersSent} lettre${bilan.lettersSent > 1 ? 's' : ''} envoyée${bilan.lettersSent > 1 ? 's' : ''}` })
+  if (bilan.cercleLumieres) lines.push({ glyph: '◐', label: `${bilan.cercleLumieres} lumière${bilan.cercleLumieres > 1 ? 's' : ''} envoyée${bilan.cercleLumieres > 1 ? 's' : ''}` })
+
+  // Phrase de clôture poétique
+  const closing =
+    lines.length === 0    ? "Tu es venu·e. C'est déjà beaucoup." :
+    lines.length === 1    ? "Un geste, et la journée se borde." :
+    lines.length <= 3     ? "Quelques traces déposées. Elles te suivent." :
+    lines.length <= 6     ? "Une journée pleine. Repose-la maintenant." :
+                            "Tu as habité cette journée tout entière."
+
+  const handleClose = () => {
+    haptic([4, 50, 8])
+    try { playClose() } catch {}
+    setClosed(true)
+    setExpanded(false)
+    markBilanSeen()
+    try {
+      addSouvenir('first_bilan_soir')
+      const streak = getBilanSoirStreak()
+      if (streak >= 7) addSouvenir('bilan_week')
+    } catch {}
+    setTimeout(() => { if (onClose) onClose() }, 720)
+  }
+
+  const handleOpen = () => {
+    if (expanded) return
+    haptic([6, 40, 6])
+    try { playOpen() } catch {}
+    setExpanded(true)
+  }
+
+  const h = new Date().getHours()
+  const period = h < 22 ? 'Ce soir' : 'À la nuit qui vient'
+
+  return (
+    <div onClick={!expanded ? handleOpen : undefined} role={!expanded ? "button" : undefined} tabIndex={!expanded ? 0 : undefined} aria-label={!expanded ? "Ouvrir le bilan du soir" : undefined} style={{
+      position: 'relative',
+      cursor: !expanded ? 'pointer' : 'default',
+      background: `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(20,18,38,0.34) 50%, rgba(${arch.rgb},0.06) 100%)`,
+      border: `1px solid rgba(${arch.rgb},0.42)`,
+      borderRadius: 18,
+      padding: expanded ? '24px 22px 22px' : '20px 22px',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      boxShadow: `0 10px 38px rgba(${arch.rgb},0.18), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 24px rgba(${arch.rgb},0.10)`,
+      animation: closed ? 'sheetExit 0.7s cubic-bezier(0.4,0,0.6,1) both' : (vis ? 'fadeIn 0.9s cubic-bezier(0,0,0.2,1) 0.08s both' : 'none'),
+      opacity: closed ? 0 : (vis ? 1 : 0),
+      transition: 'padding 380ms cubic-bezier(0.4,0,0.2,1)',
+      overflow: 'hidden',
+    }}>
+      {/* Halo Lune décoratif */}
+      <div style={{ position: 'absolute', top: -32, right: -32, width: 110, height: 110, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, transparent 70%)`, animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />
+
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10, position: 'relative' }}>
+        <div>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.86)`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>Bilan du soir</p>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '4px 0 0', letterSpacing: '0.02em' }}>{period}</p>
+        </div>
+        <div style={{ fontSize: 22, lineHeight: 1, opacity: 0.85, filter: `drop-shadow(0 0 12px ${arch.color}88)`, animation: 'phrasebreathe 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>☾</div>
+      </div>
+
+      {!expanded ? (
+        <>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16.5, color: 'rgba(255,255,255,0.92)', margin: '4px 0 14px', lineHeight: 1.5, fontStyle: 'italic', letterSpacing: '-0.005em', textShadow: `0 0 18px ${arch.color}22` }}>
+            {bilan.hasAnything ? `Tu as déposé ${lines.length} trace${lines.length > 1 ? 's' : ''} aujourd'hui.` : 'Tu es venu·e. C\'est suffisant.'}
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.20em', textTransform: 'uppercase', margin: 0 }}>Toucher pour border</p>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: `rgba(${arch.rgb},0.75)`, letterSpacing: '0.08em' }}>→</span>
+          </div>
+        </>
+      ) : (
+        <>
+          {lines.length > 0 ? (
+            <div style={{ margin: '12px 0 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {lines.map((line, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, animation: `fadeIn 0.5s cubic-bezier(0,0,0.2,1) ${0.08 + i * 0.07}s both` }}>
+                  <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 20, color: arch.color, opacity: 0.92, filter: `drop-shadow(0 0 8px ${arch.color}66)`, lineHeight: 1, width: 24, textAlign: 'center', flexShrink: 0 }}>{line.glyph}</span>
+                  <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.005em' }}>{line.label}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.74)', margin: '14px 0 18px', lineHeight: 1.55, fontStyle: 'italic', letterSpacing: '-0.005em' }}>Tu as ouvert l'app. Tu es là. C'est suffisant pour ce soir.</p>
+          )}
+
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.72)', margin: '0 0 18px', lineHeight: 1.55, fontStyle: 'italic', letterSpacing: '-0.005em', textAlign: 'center', textShadow: `0 0 14px ${arch.color}22`, animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.5s both' }}>
+            « {closing} »
+          </p>
+
+          <button data-press="true" onClick={handleClose} aria-label="Border la journée" style={{
+            width: '100%',
+            padding: '14px 0',
+            background: `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))`,
+            border: 'none',
+            borderRadius: 12,
+            color: 'white',
+            fontFamily: 'Sora, sans-serif',
+            fontWeight: 500,
+            fontSize: 13,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            minHeight: 48,
+            boxShadow: `0 6px 22px rgba(${arch.rgb},0.40), inset 0 1px 0 rgba(255,255,255,0.18)`,
+            animation: 'milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite, fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.6s both',
+          }}>Border la journée ☾</button>
+        </>
       )}
     </div>
   )

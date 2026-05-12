@@ -219,6 +219,8 @@ export const SOUVENIR_LIBRARY = {
   jardin_florissant:  { glyph: '⚘', title: 'Jardin florissant',           subtitle: 'Sept jours et le sol s\'éveille.' },
   welcome_back_7:     { glyph: '◯', title: 'Tu es revenu·e',               subtitle: 'Une semaine, et ton refuge t\'attendait.' },
   welcome_back_30:    { glyph: '◯', title: 'Tu reviens de loin',           subtitle: 'Un mois, et tout est encore là pour toi.' },
+  first_bilan_soir:   { glyph: '☾', title: 'Premier bilan du soir',        subtitle: 'Tu as bordé ta journée avec douceur.' },
+  bilan_week:         { glyph: '☾', title: 'Sept soirs déposés',           subtitle: 'Une semaine entière de couchers conscients.' },
 }
 
 // ─── Dernière visite (pour Welcome Back) ──────────────────────
@@ -459,6 +461,124 @@ export function addSouvenir(type, payload = {}) {
   } catch { return null }
 }
 
+// ─── Bilan du soir ──────────────────────────────────────────────
+// Rituel contemplatif de fin de journée. Agrège tout ce que la personne
+// a touché aujourd'hui (mood, souffle, mini-jeux, carnet, lettres) en
+// un récit doux. Activé seulement si hour >= 20 et au moins 1 trace.
+
+const BILAN_SEEN_PREFIX = 'neya_bilan_seen_'
+
+function todayStr() {
+  try { return new Date().toISOString().split('T')[0] } catch { return '0' }
+}
+
+export function hasSeenBilanToday() {
+  try { return !!localStorage.getItem(BILAN_SEEN_PREFIX + todayStr()) }
+  catch { return false }
+}
+
+export function markBilanSeen() {
+  try { localStorage.setItem(BILAN_SEEN_PREFIX + todayStr(), String(Date.now())) }
+  catch {}
+}
+
+export function getBilanSoirStreak() {
+  let streak = 0
+  try {
+    const today = new Date()
+    for (let i = 0; i < 90; i++) {
+      const d = new Date(today); d.setDate(d.getDate() - i)
+      const ds = d.toISOString().split('T')[0]
+      if (localStorage.getItem(BILAN_SEEN_PREFIX + ds)) streak++
+      else if (i > 0) break
+      else continue
+    }
+  } catch {}
+  return streak
+}
+
+// Agrège l'activité de la journée. Lit principalement les souvenirs
+// (chaque mini-jeu en crée un, déjà timestampé) + mood quick + carnet.
+export function getBilanSoir() {
+  const ds = todayStr()
+  let moodValue = null
+  let breathCount = 0
+  let liberationCount = 0
+  let apaisementCount = 0
+  let concentrationCount = 0
+  let reparationCount = 0
+  let carnetWritten = false
+  let lettersReceived = 0
+  let lettersSent = 0
+  let cercleLumieres = 0
+  try {
+    const m = JSON.parse(localStorage.getItem(`neya_mood_quick_${ds}`) || 'null')
+    if (m && typeof m.value === 'number') moodValue = m.value
+  } catch {}
+  try {
+    const sessions = JSON.parse(localStorage.getItem('neya_breath_sessions') || '[]')
+    breathCount = sessions.filter(s => {
+      try { return new Date(s.ts || 0).toISOString().split('T')[0] === ds } catch { return false }
+    }).length
+  } catch {}
+  // Activités tirées du journal des souvenirs (chaque mini-jeu en crée un)
+  try {
+    const souvenirs = getSouvenirs()
+    const todays = souvenirs.filter(s => {
+      try { return new Date(s.ts).toISOString().split('T')[0] === ds } catch { return false }
+    })
+    liberationCount    = todays.filter(s => s.type === 'liberation_session' || s.type === 'first_liberation').length
+    apaisementCount    = todays.filter(s => s.type === 'apaisement_session' || s.type === 'first_apaisement').length
+    concentrationCount = todays.filter(s => s.type === 'concentration_complete' || s.type === 'first_concentration').length
+    reparationCount    = todays.filter(s => s.type === 'reparation_complete' || s.type === 'first_reparation').length
+  } catch {}
+  try {
+    const carnet = getCarnetEntries()
+    carnetWritten = carnet.some(e => e.date === ds)
+  } catch {}
+  try {
+    const received = JSON.parse(localStorage.getItem('neya_letters_received') || '[]')
+    lettersReceived = received.filter(l => {
+      try { return new Date(l.receivedAt || 0).toISOString().split('T')[0] === ds } catch { return false }
+    }).length
+  } catch {}
+  try {
+    const sent = JSON.parse(localStorage.getItem('neya_letters_sent') || '[]')
+    lettersSent = sent.filter(l => {
+      try { return new Date(l.ts || 0).toISOString().split('T')[0] === ds } catch { return false }
+    }).length
+  } catch {}
+  try {
+    const cercle = getCercle()
+    cercleLumieres = cercle.reduce((acc, p) => {
+      const list = Array.isArray(p.lumieres) ? p.lumieres : []
+      return acc + list.filter(ts => {
+        try { return new Date(ts).toISOString().split('T')[0] === ds } catch { return false }
+      }).length
+    }, 0)
+  } catch {}
+
+  const totalActivities = breathCount + liberationCount + apaisementCount +
+    concentrationCount + reparationCount + lettersReceived + lettersSent +
+    cercleLumieres + (carnetWritten ? 1 : 0) + (moodValue !== null ? 1 : 0)
+
+  return {
+    date: ds,
+    moodValue,
+    breathCount,
+    liberationCount,
+    apaisementCount,
+    concentrationCount,
+    reparationCount,
+    carnetWritten,
+    lettersReceived,
+    lettersSent,
+    cercleLumieres,
+    totalActivities,
+    hasAnything: totalActivities > 0,
+  }
+}
+
 export function formatSouvenirDate(ts) {
   try {
     const d = new Date(ts)
@@ -468,4 +588,4 @@ export function formatSouvenirDate(ts) {
   } catch { return '' }
 }
 
-export default { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, TIME_LABELS, formatSouvenirDate, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit }
+export default { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, TIME_LABELS, formatSouvenirDate, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit, getBilanSoir, hasSeenBilanToday, markBilanSeen, getBilanSoirStreak }
