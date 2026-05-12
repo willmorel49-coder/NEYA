@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 
@@ -3506,6 +3506,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showBreathing, setShowBreathing] = useState(false)
   const [showCocon, setShowCocon] = useState(false)
   const [showPersonalize, setShowPersonalize] = useState(false)
+  const [showTrace, setShowTrace] = useState(false)
   const [prenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
   const [mantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
   const coconName = (() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })()
@@ -3825,6 +3826,26 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {showBreathing && <BreathingModal archetypeKey={archetypeKey} onClose={() => setShowBreathing(false)} />}
+
+      {/* ── Ta trace ── carte discrète d'accès au sanctuaire temporel */}
+      <div onClick={() => { haptic(6); setShowTrace(true) }} role="button" tabIndex={0} aria-label="Voir ta trace des 30 derniers jours" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.07) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.03) 100%)`, border: `1px solid rgba(${arch.rgb},0.18)`, borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 0.3s ease', animation: 'fadeIn 0.6s ease 0.55s both', boxShadow: `0 4px 20px rgba(${arch.rgb},0.08)`, minHeight: 56 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 6px ${arch.color}66)`, animation: 'animalbreathe 6s ease-in-out infinite' }}>
+          <circle cx="8" cy="10" r="1.6" fill={arch.color} opacity="0.85" />
+          <circle cx="22" cy="6" r="1.2" fill={arch.color} opacity="0.55" />
+          <circle cx="16" cy="14" r="2.2" fill={arch.color} opacity="0.95" />
+          <circle cx="26" cy="18" r="1.4" fill={arch.color} opacity="0.65" />
+          <circle cx="6" cy="22" r="1.0" fill={arch.color} opacity="0.45" />
+          <circle cx="20" cy="24" r="1.6" fill={arch.color} opacity="0.75" />
+          <circle cx="12" cy="26" r="1.2" fill={arch.color} opacity="0.55" />
+        </svg>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Ta trace</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.82)', letterSpacing: '-0.01em' }}>Ta constellation des 30 jours</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+
+      {showTrace && <TraceScreen archetypeKey={archetypeKey} onClose={() => setShowTrace(false)} />}
 
       {/* ── Prochaine découverte ── */}
       {(() => {
@@ -4407,6 +4428,109 @@ function BoutiqueScreen({ archetypeKey }) {
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
+function TraceScreen({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey]
+  const [vis, setVis] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const days = useMemo(() => {
+    const result = []
+    const today = new Date()
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today); d.setDate(d.getDate() - i)
+      const dateStr = d.toISOString().split('T')[0]
+      let routinesCount = 0
+      try { routinesCount = JSON.parse(localStorage.getItem(`neya_routines_${dateStr}`) || '[]').filter(Boolean).length } catch {}
+      result.push({ idx: 29 - i, dateStr, routinesCount, isToday: i === 0 })
+    }
+    return result
+  }, [])
+
+  const breathSessions = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('neya_breath_sessions') || '[]').slice(-30) } catch { return [] }
+  }, [])
+
+  const activeDays = days.filter(d => d.routinesCount > 0).length
+  const totalBreath = breathSessions.length
+
+  const footerText =
+    activeDays === 0 ? (totalBreath > 0 ? 'Tes premières lueurs apparaissent.' : 'Ton premier passage est à venir.') :
+    activeDays < 3   ? "Quelques lueurs. Ainsi commence un voyage." :
+    activeDays < 7   ? 'Ta présence dessine quelque chose.' :
+    activeDays < 14  ? 'Tu reviens. C\'est un signe.' :
+    activeDays < 21  ? 'Une constellation se forme.' :
+                       'Ton ciel intérieur est habité.'
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 760, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 50%, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 95%, rgba(${arch.rgb},0.06) 0%, transparent 60%)`, pointerEvents: 'none' }} />
+
+      <button onClick={onClose} aria-label="Fermer ta trace" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+
+      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 38px)', left: 0, right: 0, textAlign: 'center', padding: '0 32px', zIndex: 5 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 12px', animation: 'phrasebreathe 18s ease-in-out infinite, milestoneGlow 6s ease-in-out infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Ta trace</p>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.3, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33`, animation: 'phrasebreathe 22s ease-in-out infinite' }}>Tes 30 derniers jours</h2>
+      </div>
+
+      {/* Constellation des jours */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}>
+        {days.map((d, i) => {
+          const angle = (i / 30) * Math.PI * 2 * 1.32 + 0.6
+          const radius = 15 + (i / 30) * 30
+          const cx = 50 + Math.cos(angle) * radius
+          const cy = 52 + Math.sin(angle) * radius * 0.78
+          const intensity = Math.min(1, d.routinesCount / 3)
+          const r = 1.2 + intensity * 2.8
+          const opacity = d.routinesCount > 0 ? (0.30 + intensity * 0.62) : 0.10
+          return (
+            <g key={i}>
+              {d.routinesCount > 0 && intensity > 0.3 && (
+                <circle cx={`${cx}%`} cy={`${cy}%`} r={r * 3.5} fill={arch.color}
+                  style={{ opacity: opacity * 0.18, animation: `presencePulse ${5 + (i % 4)}s ease-in-out ${(i * 0.18) % 4}s infinite` }} />
+              )}
+              <circle cx={`${cx}%`} cy={`${cy}%`} r={r}
+                fill={d.routinesCount > 0 ? arch.color : 'rgba(255,255,255,0.18)'}
+                style={{
+                  opacity,
+                  animation: d.isToday ? 'seedPulse 2.6s ease-in-out infinite, milestoneGlow 4s ease-in-out infinite' : `seedPulse ${5 + (i % 4)}s ease-in-out ${(i * 0.18) % 3}s infinite`,
+                }}
+              />
+            </g>
+          )
+        })}
+        {/* Breath sessions — petites étoiles indigo claires */}
+        {breathSessions.map((b, i) => {
+          const seed = ((b && b.ts) || (i * 137)) % 10000
+          const cx = 8 + ((seed * 17) % 84)
+          const cy = 22 + ((seed * 31) % 64)
+          return (
+            <circle key={`b${i}`} cx={`${cx}%`} cy={`${cy}%`} r={1.4}
+              fill="#dadcff"
+              style={{
+                opacity: 0.46,
+                animation: `seedPulse ${4 + (i % 3)}s ease-in-out ${(i * 0.22) % 3}s infinite`,
+              }}
+            />
+          )
+        })}
+      </svg>
+
+      {/* Centre — silhouette NeyaGirl très discrète */}
+      <div style={{ position: 'absolute', top: '52%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 4, opacity: 0.32, animation: 'animalfloat 26s ease-in-out infinite' }}>
+        <NeyaGirl size={92} color={arch.color} />
+      </div>
+
+      {/* Footer poétique */}
+      <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 36px)', left: 0, right: 0, textAlign: 'center', padding: '0 32px', zIndex: 5 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13.5, color: 'rgba(255,255,255,0.62)', margin: 0, lineHeight: 1.7, textShadow: `0 0 18px ${arch.color}33`, animation: 'phrasebreathe 24s ease-in-out infinite' }}>
+          {footerText}
+        </p>
+      </div>
+    </div>
+  )
+}
 
 function MainApp({ archetypeKey, onRestart, savedAt }) {
   const arch = ARCHETYPES[archetypeKey]
