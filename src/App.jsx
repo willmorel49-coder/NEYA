@@ -3507,6 +3507,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showCocon, setShowCocon] = useState(false)
   const [showPersonalize, setShowPersonalize] = useState(false)
   const [showTrace, setShowTrace] = useState(false)
+  const [showShare, setShowShare] = useState(false)
   const [prenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
   const [mantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
   const coconName = (() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })()
@@ -3695,6 +3696,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ position: 'absolute', inset: '-30px -30px 0 -30px', background: `radial-gradient(ellipse 70% 50% at 50% 30%, rgba(${arch.rgb},0.09) 0%, transparent 70%)`, pointerEvents: 'none', animation: 'depthBreath 12s ease-in-out infinite' }} />
         {/* Bouton personnalisation */}
         <button onClick={() => setShowPersonalize(true)} style={{ position: 'absolute', top: 0, right: 0, background: 'none', border: 'none', cursor: 'pointer', color: `rgba(${arch.rgb},0.55)`, fontSize: 17, padding: '6px 8px', lineHeight: 1, transition: 'color 0.2s ease', minWidth: 44, minHeight: 44, animation: 'phrasebreathe 22s ease-in-out infinite' }} title="Personnaliser" aria-label="Personnaliser ton espace">✎</button>
+        <button onClick={() => { haptic(6); setShowShare(true) }} style={{ position: 'absolute', top: 0, right: 48, background: 'none', border: 'none', cursor: 'pointer', color: `rgba(${arch.rgb},0.55)`, fontSize: 15, padding: '6px 8px', lineHeight: 1, transition: 'color 0.2s ease', minWidth: 44, minHeight: 44, animation: 'phrasebreathe 22s ease-in-out 1s infinite' }} title="Partager ton archétype" aria-label="Partager ton archétype">↗</button>
         {prenom ? (
           <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 18, background: `linear-gradient(135deg, ${arch.color}, rgba(255,255,255,0.95) 55%, ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '0.02em', margin: '0 0 2px', animation: jourComplète ? 'phrasebreathe 32s ease-in-out infinite, milestoneGlow 10s ease-in-out 3s infinite' : 'phrasebreathe 32s ease-in-out infinite' }}>{greetingStr()}, {prenom}</p>
         ) : (
@@ -3846,6 +3848,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       </div>
 
       {showTrace && <TraceScreen archetypeKey={archetypeKey} onClose={() => setShowTrace(false)} />}
+      {showShare && <ShareArchetype archetypeKey={archetypeKey} onClose={() => setShowShare(false)} />}
 
       {/* ── Prochaine découverte ── */}
       {(() => {
@@ -4526,6 +4529,215 @@ function TraceScreen({ archetypeKey, onClose }) {
       <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 36px)', left: 0, right: 0, textAlign: 'center', padding: '0 32px', zIndex: 5 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13.5, color: 'rgba(255,255,255,0.62)', margin: 0, lineHeight: 1.7, textShadow: `0 0 18px ${arch.color}33`, animation: 'phrasebreathe 24s ease-in-out infinite' }}>
           {footerText}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function ShareArchetype({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey]
+  const canvasRef = useRef(null)
+  const [vis, setVis] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState(null)
+  const [building, setBuilding] = useState(true)
+  const [sharing, setSharing] = useState(false)
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const wrapText = (ctx, text, x, y, maxWidth, lineHeight) => {
+    const words = text.split(' ')
+    let line = ''
+    const lines = []
+    for (const w of words) {
+      const test = line ? `${line} ${w}` : w
+      if (ctx.measureText(test).width > maxWidth && line) {
+        lines.push(line); line = w
+      } else { line = test }
+    }
+    if (line) lines.push(line)
+    const startY = y - ((lines.length - 1) * lineHeight) / 2
+    lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineHeight))
+  }
+
+  useEffect(() => {
+    let cancelled = false
+    const build = async () => {
+      try { if (document.fonts && document.fonts.ready) await document.fonts.ready } catch {}
+
+      const canvas = canvasRef.current
+      if (!canvas || cancelled) return
+      const W = 1080, H = 1920
+      canvas.width = W; canvas.height = H
+      const ctx = canvas.getContext('2d')
+
+      // Fond — dégradé radial sombre
+      const bg = ctx.createRadialGradient(W/2, H*0.38, 0, W/2, H*0.5, H*0.85)
+      bg.addColorStop(0, `rgba(${arch.rgb}, 0.30)`)
+      bg.addColorStop(0.42, '#0a1024')
+      bg.addColorStop(1, '#050810')
+      ctx.fillStyle = bg
+      ctx.fillRect(0, 0, W, H)
+
+      // Halo central
+      const halo = ctx.createRadialGradient(W/2, H*0.43, 60, W/2, H*0.43, 560)
+      halo.addColorStop(0, `rgba(${arch.rgb}, 0.45)`)
+      halo.addColorStop(0.6, `rgba(${arch.rgb}, 0.12)`)
+      halo.addColorStop(1, 'rgba(5,8,16,0)')
+      ctx.fillStyle = halo
+      ctx.fillRect(0, 0, W, H)
+
+      // Particules pseudo-aléatoires déterministes
+      const seedRand = (s) => { let x = Math.sin(s) * 10000; return x - Math.floor(x) }
+      for (let i = 0; i < 80; i++) {
+        const x = seedRand(i * 13.37) * W
+        const y = seedRand(i * 71.13) * H
+        const r = 0.6 + seedRand(i * 9.91) * 2.6
+        ctx.fillStyle = `rgba(${arch.rgb}, ${0.12 + seedRand(i * 17.31) * 0.30})`
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill()
+      }
+
+      // Logo NÉYA
+      ctx.fillStyle = 'rgba(255,255,255,0.92)'
+      ctx.font = '300 64px Sora, system-ui, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText('NÉYA', W/2, 168)
+
+      // Eyebrow
+      ctx.fillStyle = arch.color
+      ctx.font = '500 28px Inter, system-ui, sans-serif'
+      ctx.fillText('◈   TON ARCHÉTYPE', W/2, 240)
+
+      // Charger l'image spirit (préfère WebP pour Canvas compat)
+      try {
+        const img = new Image()
+        img.crossOrigin = 'anonymous'
+        const src = `${B}spirit-${archetypeKey}.webp`
+        await new Promise((res, rej) => {
+          img.onload = res; img.onerror = rej; img.src = src
+        })
+        const imgSize = 580
+        const cx = W/2, cy = H*0.43
+        ctx.save()
+        ctx.beginPath()
+        ctx.arc(cx, cy, imgSize/2, 0, Math.PI * 2)
+        ctx.closePath()
+        ctx.clip()
+        // Place image with objectPosition center 45% equivalent
+        const ratio = Math.max(imgSize / img.width, imgSize / img.height)
+        const drawW = img.width * ratio
+        const drawH = img.height * ratio
+        const offsetY = drawH * 0.05
+        ctx.drawImage(img, cx - drawW/2, cy - drawH/2 - offsetY, drawW, drawH)
+        ctx.restore()
+        // Anneau lumineux
+        ctx.shadowColor = arch.color
+        ctx.shadowBlur = 32
+        ctx.strokeStyle = `${arch.color}aa`
+        ctx.lineWidth = 4
+        ctx.beginPath(); ctx.arc(cx, cy, imgSize/2 + 4, 0, Math.PI * 2); ctx.stroke()
+        ctx.shadowBlur = 0
+      } catch (e) {
+        // Fallback : cercle plein
+        const cx = W/2, cy = H*0.43, r = 290
+        const fg = ctx.createRadialGradient(cx, cy - 50, 20, cx, cy, r)
+        fg.addColorStop(0, `${arch.color}cc`)
+        fg.addColorStop(1, `${arch.color}22`)
+        ctx.fillStyle = fg
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill()
+      }
+
+      // Nom de l'animal
+      ctx.fillStyle = 'rgba(255,255,255,0.96)'
+      ctx.font = '300 84px Sora, system-ui, sans-serif'
+      ctx.fillText(arch.animal, W/2, H*0.70)
+
+      // Profil
+      ctx.fillStyle = `${arch.color}dd`
+      ctx.font = 'italic 300 42px Inter, system-ui, sans-serif'
+      ctx.fillText(arch.profil, W/2, H*0.755)
+
+      // Intention rotative — basée sur le jour
+      const pool = arch.intentions || ['Tu es là, pleinement.']
+      const dayIdx = Math.floor(Date.now() / 86400000) % pool.length
+      const intention = pool[dayIdx]
+      ctx.fillStyle = 'rgba(255,255,255,0.82)'
+      ctx.font = 'italic 300 38px Inter, system-ui, sans-serif'
+      wrapText(ctx, `« ${intention} »`, W/2, H*0.86, W * 0.78, 56)
+
+      // Footer
+      ctx.fillStyle = 'rgba(255,255,255,0.46)'
+      ctx.font = '300 24px Inter, system-ui, sans-serif'
+      ctx.fillText('neya-kappa.vercel.app', W/2, H*0.955)
+
+      if (cancelled) return
+      canvas.toBlob((blob) => {
+        if (cancelled || !blob) return
+        const url = URL.createObjectURL(blob)
+        setPreviewUrl(url)
+        setBuilding(false)
+      }, 'image/png', 0.92)
+    }
+    build()
+    return () => { cancelled = true }
+  }, [archetypeKey])
+
+  useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl) }, [previewUrl])
+
+  const handleShare = async () => {
+    if (!canvasRef.current || sharing) return
+    setSharing(true)
+    haptic([6, 30, 6])
+    canvasRef.current.toBlob(async (blob) => {
+      try {
+        const file = new File([blob], `neya-${archetypeKey}.png`, { type: 'image/png' })
+        if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'Mon archétype NÉYA',
+            text: `${arch.animal} · ${arch.profil}`,
+          })
+        } else {
+          const a = document.createElement('a')
+          a.href = URL.createObjectURL(blob)
+          a.download = `neya-${archetypeKey}.png`
+          document.body.appendChild(a); a.click(); document.body.removeChild(a)
+          setTimeout(() => URL.revokeObjectURL(a.href), 2000)
+        }
+      } catch { /* user cancelled */ }
+      finally { setSharing(false) }
+    }, 'image/png', 0.92)
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 780, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', opacity: vis ? 1 : 0, transition: 'opacity 0.5s ease', overflowY: 'auto' }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 38%, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+
+      <button onClick={onClose} aria-label="Fermer le partage" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 24px 36px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, minHeight: '100%' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 12px', animation: 'phrasebreathe 14s ease-in-out infinite, milestoneGlow 5s ease-in-out infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Partage</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.22, letterSpacing: '-0.01em' }}>Ton archétype, en image</h2>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '8px 0 0', lineHeight: 1.55 }}>Un visuel à partager — pas un score.</p>
+        </div>
+
+        <div style={{ width: '78%', maxWidth: 340, aspectRatio: '9 / 16', borderRadius: 20, overflow: 'hidden', boxShadow: `0 16px 56px rgba(0,0,0,0.65), 0 0 60px rgba(${arch.rgb},0.22)`, position: 'relative', background: '#050810' }}>
+          <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
+          {building && (
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5,8,16,0.85)', backdropFilter: 'blur(8px)' }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.62)', letterSpacing: '0.2em', textTransform: 'uppercase', animation: 'phrasebreathe 2.4s ease-in-out infinite' }}>Composition…</p>
+            </div>
+          )}
+        </div>
+
+        <button onClick={handleShare} disabled={building || sharing} aria-label="Partager ton archétype" style={{ width: '78%', maxWidth: 340, padding: '17px 0', background: building ? 'rgba(255,255,255,0.06)' : `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: 'none', borderRadius: 100, cursor: (building || sharing) ? 'wait' : 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.24em', color: 'white', textTransform: 'uppercase', boxShadow: building ? 'none' : `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.18)`, animation: (!building && !sharing) ? 'milestoneGlow 4s ease-in-out infinite' : 'none', textShadow: building ? 'none' : '0 0 14px rgba(255,255,255,0.35)', minHeight: 54, opacity: (building || sharing) ? 0.7 : 1, transition: 'opacity 0.3s ease' }}>
+          {sharing ? '…' : building ? 'Composition…' : 'Partager'}
+        </button>
+
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11.5, color: 'rgba(255,255,255,0.46)', textAlign: 'center', margin: 0, lineHeight: 1.55, padding: '0 16px' }}>
+          Cette image ne contient aucun chiffre, aucun score.<br />Juste ton animal, ton archétype, ta phrase.
         </p>
       </div>
     </div>

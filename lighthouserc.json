@@ -1,0 +1,46 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./dist",
+      "url": ["http://localhost/index.html"],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "cpuSlowdownMultiplier": 1
+        },
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        }
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "categories:performance":     ["warn", { "minScore": 0.85 }],
+        "categories:accessibility":   ["warn", { "minScore": 0.90 }],
+        "categories:best-practices":  ["warn", { "minScore": 0.90 }],
+        "categories:seo":             ["warn", { "minScore": 0.85 }],
+        "categories:pwa":             ["off"],
+        "first-contentful-paint":     ["warn", { "maxNumericValue": 1800 }],
+        "largest-contentful-paint":   ["warn", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift":    ["warn", { "maxNumericValue": 0.1 }],
+        "total-blocking-time":        ["warn", { "maxNumericValue": 300 }],
+        "uses-responsive-images":     "off",
+        "csp-xss":                    "off",
+        "color-contrast":             ["warn", {}],
+        "unused-javascript":          ["warn", { "maxNumericValue": 60000 }],
+        "uses-text-compression":      "off"
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
