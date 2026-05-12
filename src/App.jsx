@@ -1484,7 +1484,7 @@ function SplashScreen({ onStart }) {
           </p>
         </div>
 
-        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.84)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.26em', color: 'white', textTransform: 'uppercase', opacity: showBtn ? 1 : 0, transition: 'opacity 1.4s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1.6s infinite' : 'none', boxShadow: showBtn ? '0 6px 40px rgba(99,102,241,0.44)' : 'none', textShadow: showBtn ? '0 0 16px rgba(99,102,241,0.55)' : 'none' }}>
+        <button onClick={() => { haptic(20); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'rgba(99,102,241,0.84)', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.26em', color: 'white', textTransform: 'uppercase', pointerEvents: showBtn ? 'auto' : 'none', opacity: showBtn ? 1 : 0, transition: 'opacity 1.4s ease', animation: showBtn ? 'milestoneGlow 5s ease-in-out 1.6s infinite' : 'none', boxShadow: showBtn ? '0 6px 40px rgba(99,102,241,0.44)' : 'none', textShadow: showBtn ? '0 0 16px rgba(99,102,241,0.55)' : 'none' }}>
           Commencer
         </button>
       </div>
@@ -1641,7 +1641,7 @@ function QuizIntroScreen({ onStart }) {
           </p>
         </div>
 
-        <button onClick={() => { haptic([15, 40, 15]); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.92), rgba(200,140,25,0.88))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', boxShadow: showBtn ? '0 6px 36px rgba(225,168,40,0.46), 0 2px 12px rgba(0,0,0,0.3)' : 'none', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 1s ease, transform 0.3s ease', animation: showBtn ? 'milestoneGlow 4s ease-in-out 1.5s infinite' : 'none' }}>
+        <button onClick={() => { haptic([15, 40, 15]); onStart() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.92), rgba(200,140,25,0.88))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', boxShadow: showBtn ? '0 6px 36px rgba(225,168,40,0.46), 0 2px 12px rgba(0,0,0,0.3)' : 'none', pointerEvents: showBtn ? 'auto' : 'none', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 1s ease, transform 0.3s ease', animation: showBtn ? 'milestoneGlow 4s ease-in-out 1.5s infinite' : 'none' }}>
           Commencer l'aventure
         </button>
       </div>
@@ -1663,7 +1663,7 @@ function ChoiceIcon({ type, active }) {
 
 // ─── QUIZ ─────────────────────────────────────────────────────────────────────
 
-function QuizScreen({ onComplete }) {
+function QuizScreen({ onComplete, onQuit }) {
   useEffect(() => { try { localStorage.setItem('neya_quiz_start', String(Date.now())) } catch {} }, [])
   const [idx, setIdx] = useState(0)
   const [answers, setAnswers] = useState(Array(QUESTIONS.length).fill(null))
@@ -1731,7 +1731,8 @@ function QuizScreen({ onComplete }) {
   const handleQuit = () => {
     if (window.confirm('Quitter le quiz ? Tes réponses ne seront pas conservées.')) {
       haptic(8)
-      window.location.reload()
+      if (onQuit) onQuit()
+      else window.location.reload()
     }
   }
 
@@ -1966,7 +1967,7 @@ function TransitionScreen({ archetypeKey, onReveal }) {
             </p>
           </div>
         </div>
-        <button onClick={() => { haptic([30, 50, 20]); onReveal() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.90), rgba(200,140,25,0.86))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 13.5, fontWeight: 500, letterSpacing: '0.12em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(10px)', transition: 'opacity 1.0s ease, transform 0.8s ease', animation: showBtn ? 'milestoneGlow 4s ease-in-out 1s infinite' : 'none', boxShadow: showBtn ? '0 6px 32px rgba(225,168,40,0.38), 0 2px 12px rgba(0,0,0,0.3)' : 'none' }}>
+        <button onClick={() => { haptic([30, 50, 20]); onReveal() }} style={{ width: '100%', padding: '17px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.90), rgba(200,140,25,0.86))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 13.5, fontWeight: 500, letterSpacing: '0.12em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', pointerEvents: showBtn ? 'auto' : 'none', opacity: showBtn ? 1 : 0, transform: showBtn ? 'translateY(0)' : 'translateY(10px)', transition: 'opacity 1.0s ease, transform 0.8s ease', animation: showBtn ? 'milestoneGlow 4s ease-in-out 1s infinite' : 'none', boxShadow: showBtn ? '0 6px 32px rgba(225,168,40,0.38), 0 2px 12px rgba(0,0,0,0.3)' : 'none' }}>
           Découvrir mon guide
         </button>
       </div>
@@ -2357,13 +2358,13 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
       setTimeout(() => setShowSummary(false), 4000)
     }, 800)
   }
-  const handlePointerUp = () => clearTimeout(longPressTimer.current)
-  const handleClick = () => {
-    if (!longPressDetected.current) {
-      if (sessionQualified.current) { addEvraiFragment(archetypeKey); try { trackEspaceVraiQualified(18) } catch {} }
-      onClose()
-    }
+  const handlePointerUp = () => {
+    clearTimeout(longPressTimer.current)
+    // Reset après usage pour éviter modale bloquée en ouverture
+    setTimeout(() => { longPressDetected.current = false }, 100)
   }
+  // Le close se fait UNIQUEMENT via le bouton ✕ (tap-anywhere supprimé pour éviter fermeture accidentelle)
+  // const handleClick supprimé — pas utilisé
 
   useEffect(() => {
     const t0 = setTimeout(() => haptic([3, 50, 3]), 800)
@@ -2380,7 +2381,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   }, [])
 
   return (
-    <div onClick={handleClick} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp} style={{ position: 'fixed', inset: 0, zIndex: 700, opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease', overflow: 'hidden' }}>
+    <div onPointerDown={handlePointerDown} onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp} style={{ position: 'fixed', inset: 0, zIndex: 700, opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease', overflow: 'hidden' }}>
       {showSummary && (() => {
         const routinesDoneToday = loadRoutines().filter(Boolean).length
         const quetesDoneNow = loadQuetes(archetypeKey).filter(Boolean).length
@@ -2840,7 +2841,7 @@ function WorldCard({ worldKey, archetypeKey, isUnlocked, isHome, daysToUnlock, o
   const latestFragment = visibleFragments > 0 ? w.fragments[visibleFragments - 1] : null
 
   return (
-    <div onClick={() => isUnlocked && onEnter(worldKey)}
+    <div onClick={() => { if (isUnlocked) onEnter(worldKey); else { haptic([6,30,6]) } }}
       style={{
         position: 'relative', borderRadius: 18, overflow: 'hidden', marginBottom: 14,
         minHeight: 160, cursor: isUnlocked ? 'pointer' : 'default',
@@ -3510,9 +3511,19 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showPersonalize, setShowPersonalize] = useState(false)
   const [showTrace, setShowTrace] = useState(false)
   const [showShare, setShowShare] = useState(false)
-  const [prenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
-  const [mantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
-  const coconName = (() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })()
+  const [prenom, setPrenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
+  const [mantra, setMantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
+  const [coconName, setCoconName] = useState(() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })
+  // Re-sync depuis localStorage quand PersonalizationModal se ferme
+  useEffect(() => {
+    if (!showPersonalize) {
+      try {
+        setPrenom(localStorage.getItem('neya_prenom') || '')
+        setMantra(localStorage.getItem('neya_mantra') || '')
+        setCoconName(localStorage.getItem('neya_cocon_name') || '')
+      } catch {}
+    }
+  }, [showPersonalize])
   const prevJourComplete = useRef(false)
   const restartTimer = useRef(null)
 
@@ -5047,7 +5058,7 @@ export default function App() {
         {screen === 'splash'     && <SplashScreen onStart={() => go('intro')} />}
         {screen === 'intro'      && <IntroScreen onStart={() => go('quiz-intro')} />}
         {screen === 'quiz-intro' && <QuizIntroScreen onStart={() => go('quiz')} />}
-        {screen === 'quiz'       && <QuizScreen onComplete={(answers) => {
+        {screen === 'quiz'       && <QuizScreen onQuit={() => go('splash')} onComplete={(answers) => {
           const result = computeArchetype(answers)
           saveProfile(result)
           const ts = Date.now()
