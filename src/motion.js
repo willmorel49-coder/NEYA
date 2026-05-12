@@ -93,4 +93,41 @@ export function initPressFeedback() {
 
 export const ms = (n) => `${n}ms`
 
-export default { easing, duration, initPressFeedback, ms }
+// ─── Modal exit helper ─────────────────────────────────────────
+//
+// Pattern : interpose une animation 'sheetExit' avant le vrai onClose.
+// Usage :
+//   const { exiting, close } = useExitAnimation(onClose)
+//   <div style={{ animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : 'modalEnter ...' }}>
+//   <button onClick={close}>Fermer</button>
+
+import { useState, useCallback } from 'react'
+
+export function useExitAnimation(onClose, exitMs = 280) {
+  const [exiting, setExiting] = useState(false)
+  const close = useCallback(() => {
+    if (exiting) return
+    setExiting(true)
+    setTimeout(() => onClose && onClose(), exitMs)
+  }, [exiting, onClose, exitMs])
+  return { exiting, close }
+}
+
+// ─── Streak milestones — détection one-shot ────────────────────
+//
+// Retourne le palier atteint (3/7/14/30/60/100) la première fois,
+// puis null sur les passages suivants. Persiste via localStorage.
+
+const MILESTONE_STEPS = [3, 7, 14, 30, 60, 100]
+
+export function checkStreakMilestone(streak) {
+  if (!MILESTONE_STEPS.includes(streak)) return null
+  try {
+    const key = `neya_milestone_${streak}_reached`
+    if (localStorage.getItem(key)) return null
+    localStorage.setItem(key, String(Date.now()))
+    return streak
+  } catch { return null }
+}
+
+export default { easing, duration, initPressFeedback, ms, useExitAnimation, checkStreakMilestone }

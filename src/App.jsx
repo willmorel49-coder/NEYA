@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
-import { initPressFeedback, easing as EASE, duration as DUR } from './motion'
+import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
 import { tokens as T } from './design-tokens'
 
 const B = import.meta.env.BASE_URL
@@ -4063,17 +4063,18 @@ function RoutineGuideModal({ archetypeKey, routine, done, onClose, onComplete })
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
   const [completing, setCompleting] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
   useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
 
   const handleComplete = () => {
-    if (done) { onClose(); return }
+    if (done) { close(); return }
     haptic([10, 50, 30, 50, 10])
     setCompleting(true)
-    setTimeout(() => { onComplete(); setTimeout(onClose, 460) }, 1100)
+    setTimeout(() => { onComplete(); setTimeout(close, 460) }, 1100)
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(5,8,16,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: vis ? 1 : 0, transition: 'opacity 360ms cubic-bezier(0,0,0.2,1)', overflowY: 'auto', animation: vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(5,8,16,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 36%, rgba(${arch.rgb},0.12) 0%, transparent 65%)`, pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 92%, rgba(${arch.rgb},0.08) 0%, transparent 60%)`, pointerEvents: 'none' }} />
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
@@ -4090,7 +4091,7 @@ function RoutineGuideModal({ archetypeKey, routine, done, onClose, onComplete })
         </svg>
       )}
 
-      <button data-press="true" onClick={onClose} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '9px 18px', color: 'rgba(255,255,255,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 10, minHeight: 44 }} aria-label="Fermer">Fermer</button>
+      <button data-press="true" onClick={close} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '9px 18px', color: 'rgba(255,255,255,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 10, minHeight: 44 }} aria-label="Fermer">Fermer</button>
 
       <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 72px) 28px 40px', display: 'flex', flexDirection: 'column', gap: 26, minHeight: '100%', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
@@ -4145,7 +4146,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
   }, [allDone])
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
+    <div style={{ flex: 1, overflowY: 'auto', scrollBehavior: 'smooth', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 20s cubic-bezier(0.45,0,0.55,1) infinite' }} />
@@ -4237,7 +4238,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
   const allDone = doneCount === arch.quetes.length
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
+    <div style={{ flex: 1, overflowY: 'auto', scrollBehavior: 'smooth', padding: '52px 22px 100px', display: 'flex', flexDirection: 'column', gap: 14, opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', position: 'relative' }}>
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 22s ease-in-out 4s infinite' }} />
@@ -4448,6 +4449,7 @@ function BoutiqueScreen({ archetypeKey }) {
 function TraceScreen({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey]
   const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
   useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
 
   const days = useMemo(() => {
@@ -4479,11 +4481,11 @@ function TraceScreen({ archetypeKey, onClose }) {
                        'Ton ciel intérieur est habité.'
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 760, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', opacity: vis ? 1 : 0, transition: 'opacity 0.6s ease', overflow: 'hidden' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 760, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : 'none' }}>
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 50%, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 95%, rgba(${arch.rgb},0.06) 0%, transparent 60%)`, pointerEvents: 'none' }} />
 
-      <button data-press="true" onClick={onClose} aria-label="Fermer ta trace" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+      <button data-press="true" onClick={close} aria-label="Fermer ta trace" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
 
       <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 38px)', left: 0, right: 0, textAlign: 'center', padding: '0 32px', zIndex: 5 }}>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 12px', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Ta trace</p>
@@ -4555,6 +4557,7 @@ function ShareArchetype({ archetypeKey, onClose }) {
   const [previewUrl, setPreviewUrl] = useState(null)
   const [building, setBuilding] = useState(true)
   const [sharing, setSharing] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
 
   useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
 
@@ -4724,10 +4727,10 @@ function ShareArchetype({ archetypeKey, onClose }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 780, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', opacity: vis ? 1 : 0, transition: 'opacity 0.5s ease', overflowY: 'auto' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 780, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : 'none' }}>
       <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 38%, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, pointerEvents: 'none' }} />
 
-      <button data-press="true" onClick={onClose} aria-label="Fermer le partage" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
+      <button data-press="true" onClick={close} aria-label="Fermer le partage" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>✕</button>
 
       <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 24px 36px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, minHeight: '100%' }}>
         <div style={{ textAlign: 'center' }}>
@@ -4757,9 +4760,43 @@ function ShareArchetype({ archetypeKey, onClose }) {
   )
 }
 
+function MilestoneCelebration({ count, archetypeKey }) {
+  const arch = ARCHETYPES[archetypeKey]
+  const [vis, setVis] = useState(false)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 50); return () => clearTimeout(t) }, [])
+  const message = count === 3 ? '3 jours d\'affilée' :
+                  count === 7 ? 'Une semaine de présence' :
+                  count === 14 ? 'Deux semaines complètes' :
+                  count === 30 ? 'Un mois de constance' :
+                  count === 60 ? 'Deux mois — phénoménal' :
+                  count === 100 ? '100 jours — ta lumière brûle' :
+                  `${count} jours`
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9400, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `radial-gradient(ellipse at center, rgba(${arch.rgb},0.16) 0%, transparent 65%)`, backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)', pointerEvents: 'none', opacity: vis ? 1 : 0, transition: 'opacity 480ms cubic-bezier(0,0,0.2,1)' }}>
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+        {[{x:18,y:32,r:3,d:0},{x:78,y:38,r:2.5,d:0.15},{x:30,y:74,r:3.2,d:0.32},{x:68,y:70,r:2.4,d:0.50},{x:48,y:18,r:2.8,d:0.10},{x:88,y:54,r:2.6,d:0.60},{x:14,y:58,r:2.2,d:0.40},{x:62,y:30,r:2.0,d:0.05},{x:42,y:88,r:3.0,d:0.25},{x:80,y:14,r:1.8,d:0.35}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0, animation: `milestoneMote 2.2s cubic-bezier(0,0,0.2,1) ${m.d}s both`, filter: `drop-shadow(0 0 8px ${arch.color})` }} />
+        ))}
+      </svg>
+      <div style={{ textAlign: 'center', animation: vis ? 'streakIgnite 800ms cubic-bezier(0.34,1.56,0.64,1) both' : 'none', padding: '32px 40px' }}>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 200, fontSize: 96, color: arch.color, lineHeight: 1, letterSpacing: '-0.04em', textShadow: `0 0 48px ${arch.color}99, 0 0 96px ${arch.color}55`, marginBottom: 14 }}>
+          {count}
+        </div>
+        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.96)', letterSpacing: '0.04em', textShadow: `0 0 22px ${arch.color}55`, animation: 'signaturePulse 4s cubic-bezier(0.45,0,0.55,1) 1s infinite' }}>
+          {message}
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `${arch.color}cc`, letterSpacing: '0.30em', textTransform: 'uppercase', marginTop: 14, animation: 'phrasebreathe 12s cubic-bezier(0.45,0,0.55,1) 1.5s infinite' }}>
+          ✦ ta constance
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function MainApp({ archetypeKey, onRestart, savedAt }) {
   const arch = ARCHETYPES[archetypeKey]
   const [tab, setTab] = useState('home')
+  const [milestoneCount, setMilestoneCount] = useState(null)
   const [tabVis, setTabVis] = useState(true)
   const [routinesDone, setRoutinesDone] = useState(() => loadRoutines())
   const [quetesDone, setQuetesDone] = useState(() => loadQuetes(archetypeKey))
@@ -4793,7 +4830,21 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
       try { trackRoutineComplete(i) } catch {}
       const allNowDone = next.every(Boolean)
       showXpToast(15, allNowDone)
-      if (allNowDone) haptic([20, 50, 20, 50, 40])
+      if (allNowDone) {
+        haptic([20, 50, 20, 50, 40])
+        // Streak milestone check — déclenche overlay si nouveau palier atteint
+        setTimeout(() => {
+          try {
+            const streak = getCurrentStreak()
+            const milestone = checkStreakMilestone(streak)
+            if (milestone) {
+              setMilestoneCount(milestone)
+              haptic([40, 80, 40, 80, 60])
+              setTimeout(() => setMilestoneCount(null), 3600)
+            }
+          } catch {}
+        }, 220)
+      }
     }
   }
 
@@ -4842,6 +4893,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
         <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ routines: routinesDone.filter(Boolean).length < arch.routines.length, quetes: quetesDone.filter(Boolean).length < arch.quetes.length }} />
         {pendingWorldUnlock && <WorldUnlockModal worldKey={pendingWorldUnlock} onClose={() => { setPendingWorldUnlock(null); changeTab('voyage') }} />}
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
+        {milestoneCount && <MilestoneCelebration count={milestoneCount} archetypeKey={archetypeKey} />}
         {xpToast && (
           <div key={xpToast.amount + xpToast.bonus} style={{ position: 'fixed', top: 22, left: '50%', transform: 'translateX(-50%)', zIndex: 300, pointerEvents: 'none', animation: 'xpToastIn 2.2s ease forwards', whiteSpace: 'nowrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: xpToast.bonus ? 'linear-gradient(135deg, rgba(225,168,40,0.95), rgba(200,140,25,0.92))' : `rgba(${arch.rgb},0.92)`, borderRadius: 100, padding: '9px 20px', boxShadow: xpToast.bonus ? '0 6px 28px rgba(225,168,40,0.55), 0 2px 10px rgba(0,0,0,0.3)' : `0 6px 28px rgba(${arch.rgb},0.50), 0 2px 10px rgba(0,0,0,0.3)`, backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}>
