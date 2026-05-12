@@ -211,6 +211,8 @@ export const SOUVENIR_LIBRARY = {
   first_letter_sent:  { glyph: '✉', title: 'Première lettre envoyée',     subtitle: 'Tu as confié un mot au silence.' },
   first_quick_mood:   { glyph: '◐', title: 'Première écoute de soi',      subtitle: 'Tu as nommé ce que tu ressens.' },
   mood_week:          { glyph: '◐', title: 'Une semaine d\'écoute',       subtitle: 'Sept jours à te regarder doucement.' },
+  first_concentration:{ glyph: '◉', title: 'Première concentration',      subtitle: 'Tu as ramené ton attention.' },
+  concentration_complete: { glyph: '◉', title: 'Attention soutenue',      subtitle: 'Soixante secondes de présence focalisée.' },
 }
 
 // ─── Cercle de présence ──────────────────────────────────────

@@ -3714,6 +3714,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showShare, setShowShare] = useState(false)
   const [showLiberation, setShowLiberation] = useState(false)
   const [showApaisement, setShowApaisement] = useState(false)
+  const [showConcentration, setShowConcentration] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showCarnet, setShowCarnet] = useState(false)
   const [showLetters, setShowLetters] = useState(false)
@@ -4092,6 +4093,23 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
       {showApaisement && <ApaisementSensorielModal archetypeKey={archetypeKey} onClose={() => setShowApaisement(false)} />}
+
+      {/* ── Concentration zen (mini-jeu attention soutenue) ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowConcentration(true) }} role="button" tabIndex={0} aria-label="Ouvrir Concentration zen" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.65s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <circle cx="16" cy="16" r="13" fill="none" stroke={arch.color} strokeWidth="0.6" opacity="0.32"/>
+          <circle cx="16" cy="16" r="8" fill="none" stroke={arch.color} strokeWidth="0.8" opacity="0.52"/>
+          <circle cx="16" cy="16" r="4" fill={`rgba(${arch.rgb},0.40)`} stroke={arch.color} strokeWidth="0.8"/>
+          <circle cx="16" cy="16" r="1.6" fill={arch.color}/>
+        </svg>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Concentration zen</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Suivre une lumière, soixante secondes</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+      </div>
+      {showConcentration && <ConcentrationZenModal archetypeKey={archetypeKey} onClose={() => setShowConcentration(false)} />}
 
       {/* ── Carnet du Voyage (écriture quotidienne) ── */}
       <div onClick={() => { haptic([6,40,6]); setShowCarnet(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon Carnet du Voyage" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.7s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
@@ -4759,6 +4777,254 @@ function BoutiqueScreen({ archetypeKey }) {
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
+
+function ConcentrationZenModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  const [stage, setStage] = useState('intro')  // intro | active | complete
+  const [focus, setFocus] = useState(0)
+  const [elapsedSec, setElapsedSec] = useState(0)
+  const [finalScore, setFinalScore] = useState(0)
+  const dotRef = useRef(null)
+  const followerRef = useRef(null)
+  const pointerRef = useRef(null)
+  const containerRef = useRef(null)
+  const trailRef = useRef([])
+  const focusSamplesRef = useRef([])
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  // Active loop — requestAnimationFrame
+  useEffect(() => {
+    if (stage !== 'active') return
+    let rafId = null
+    const startTime = Date.now()
+    let lastFocusUpdate = 0
+    let currentFocus = 0
+    let lastTrailUpdate = 0
+
+    const loop = () => {
+      const now = Date.now()
+      const elapsed = (now - startTime) / 1000
+
+      // Dot position (smooth Lissajous-like curve)
+      const t = elapsed
+      const x = 50 + 32 * Math.sin(t * 0.28)
+      const y = 48 + 22 * Math.sin(t * 0.41 + Math.PI / 3)
+
+      if (dotRef.current) {
+        dotRef.current.style.left = `${x}%`
+        dotRef.current.style.top  = `${y}%`
+      }
+
+      // Trail (snapshot every 80ms)
+      if (now - lastTrailUpdate > 80) {
+        lastTrailUpdate = now
+        trailRef.current = [{ x, y, ts: now }, ...trailRef.current.slice(0, 9)]
+        const trailEl = containerRef.current && containerRef.current.querySelector('[data-trail]')
+        if (trailEl) {
+          trailEl.innerHTML = trailRef.current.map((p, i) => {
+            const opacity = (1 - i / 10) * 0.5
+            const size = 8 - i * 0.5
+            return `<circle cx="${p.x}%" cy="${p.y}%" r="${size}" fill="${arch.color}" opacity="${opacity}" />`
+          }).join('')
+        }
+      }
+
+      // Follower position (user pointer)
+      if (followerRef.current && pointerRef.current) {
+        followerRef.current.style.left = `${pointerRef.current.x}%`
+        followerRef.current.style.top = `${pointerRef.current.y}%`
+        followerRef.current.style.opacity = '1'
+      } else if (followerRef.current) {
+        followerRef.current.style.opacity = '0'
+      }
+
+      // Focus update (throttled 100ms)
+      if (now - lastFocusUpdate > 100) {
+        lastFocusUpdate = now
+        const pointerData = pointerRef.current
+        let proximityGood = false
+        if (pointerData) {
+          const dx = pointerData.x - x
+          const dy = pointerData.y - y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          proximityGood = dist < 10
+        }
+        if (proximityGood) {
+          currentFocus = Math.min(100, currentFocus + 4.5)
+          if (currentFocus > 30 && Math.floor(elapsed) % 6 === 0 && Math.floor(elapsed * 10) % 10 === 0) {
+            try { haptic(2) } catch {}
+          }
+        } else {
+          currentFocus = Math.max(0, currentFocus - 3)
+        }
+        focusSamplesRef.current.push(currentFocus)
+        setFocus(currentFocus)
+        setElapsedSec(Math.floor(elapsed))
+      }
+
+      if (elapsed >= 60) {
+        const avg = focusSamplesRef.current.length > 0
+          ? Math.round(focusSamplesRef.current.reduce((a, b) => a + b, 0) / focusSamplesRef.current.length)
+          : 0
+        setFinalScore(avg)
+        setStage('complete')
+        haptic([10, 60, 10, 60, 30])
+        try {
+          playMilestone()
+          addSouvenir('first_concentration')
+          if (avg >= 70) addSouvenir('concentration_complete')
+        } catch {}
+        return
+      }
+
+      rafId = requestAnimationFrame(loop)
+    }
+    rafId = requestAnimationFrame(loop)
+    return () => { if (rafId) cancelAnimationFrame(rafId) }
+  }, [stage])
+
+  const handlePointerDown = (e) => {
+    if (stage !== 'active') return
+    if (!containerRef.current) return
+    e.preventDefault && e.preventDefault()
+    const rect = containerRef.current.getBoundingClientRect()
+    const cx = e.touches ? e.touches[0].clientX : e.clientX
+    const cy = e.touches ? e.touches[0].clientY : e.clientY
+    pointerRef.current = {
+      x: ((cx - rect.left) / rect.width) * 100,
+      y: ((cy - rect.top) / rect.height) * 100,
+    }
+  }
+  const handlePointerMove = (e) => {
+    if (stage !== 'active' || !pointerRef.current) return
+    if (!containerRef.current) return
+    e.preventDefault && e.preventDefault()
+    const rect = containerRef.current.getBoundingClientRect()
+    const cx = e.touches ? e.touches[0].clientX : e.clientX
+    const cy = e.touches ? e.touches[0].clientY : e.clientY
+    pointerRef.current = {
+      x: ((cx - rect.left) / rect.width) * 100,
+      y: ((cy - rect.top) / rect.height) * 100,
+    }
+  }
+  const handlePointerUp = () => {
+    pointerRef.current = null
+  }
+
+  const startGame = () => {
+    haptic([10, 40, 10])
+    trailRef.current = []
+    focusSamplesRef.current = []
+    setFocus(0)
+    setElapsedSec(0)
+    setStage('active')
+  }
+
+  if (stage === 'intro') {
+    return (
+      <div style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 36%, rgba(${arch.rgb},0.10) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+        <button data-press="true" onClick={close} aria-label="Quitter" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+        <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 72px) 28px 40px', display: 'flex', flexDirection: 'column', gap: 22, minHeight: '100%', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◉ Concentration zen</p>
+            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 26, color: 'white', margin: 0, lineHeight: 1.22, textShadow: `0 0 22px ${arch.color}33` }}>Ramener l'attention</h2>
+          </div>
+          <div style={{ background: `rgba(${arch.rgb},0.08)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 8px' }}>Ce que tu vas faire</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.88)', margin: 0, lineHeight: 1.62 }}>Une lumière va se déplacer doucement sur l'écran. Suis-la avec ton doigt, sans pression. Pendant soixante secondes.</p>
+            </div>
+            <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}33, transparent)` }} />
+            <div>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 8px' }}>Idéal pour</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.55 }}>Surcharge mentale · pensées éparpillées · fatigue cognitive · besoin de calme avant une décision</p>
+            </div>
+            <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}33, transparent)` }} />
+            <div>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 8px' }}>Ce que ça change</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.55 }}>Active l'attention soutenue. Calme le système nerveux. Rappelle au cerveau qu'il peut se poser sur une chose.</p>
+            </div>
+          </div>
+          <button data-press="true" onClick={startGame} style={{ width: '100%', padding: '18px 0', background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.24em', cursor: 'pointer', textTransform: 'uppercase', boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`, animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: '0 0 14px rgba(255,255,255,0.35)', minHeight: 54 }}>Commencer</button>
+        </div>
+      </div>
+    )
+  }
+
+  if (stage === 'active') {
+    return (
+      <div ref={containerRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onTouchStart={handlePointerDown} onTouchMove={handlePointerMove} onTouchEnd={handlePointerUp} style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(2,3,8,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: vis ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflow: 'hidden', touchAction: 'none', userSelect: 'none', cursor: 'crosshair' }}>
+        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 50%, rgba(${arch.rgb},${0.05 + (focus / 100) * 0.18}) 0%, transparent 70%)`, pointerEvents: 'none', transition: 'background 600ms cubic-bezier(0.45,0,0.55,1)' }} />
+
+        <button data-press="true" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); close() }} aria-label="Arrêter" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.62)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, padding: '9px 16px', color: 'rgba(255,255,255,0.78)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 60, minHeight: 40, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>Arrêter</button>
+
+        {/* Timer */}
+        <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 26px)', left: 0, right: 0, textAlign: 'center', pointerEvents: 'none', zIndex: 5 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 200, fontSize: 38, color: 'rgba(255,255,255,0.62)', margin: 0, letterSpacing: '0.04em', lineHeight: 1, textShadow: `0 0 20px ${arch.color}33`, fontVariantNumeric: 'tabular-nums' }}>{60 - elapsedSec}</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.30em', textTransform: 'uppercase', margin: '4px 0 0' }}>secondes</p>
+        </div>
+
+        {/* Trail (last 10 positions) */}
+        <svg data-trail style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3, filter: `drop-shadow(0 0 4px ${arch.color}99)` }} />
+
+        {/* User finger follower */}
+        <div ref={followerRef} style={{ position: 'absolute', width: 60, height: 60, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.30) 0%, rgba(${arch.rgb},0.12) 45%, transparent 75%)`, transform: 'translate(-50%, -50%)', pointerEvents: 'none', opacity: 0, transition: 'opacity 280ms cubic-bezier(0.4,0,0.2,1)', zIndex: 5, boxShadow: `0 0 20px ${arch.color}66` }} />
+
+        {/* The dot to follow */}
+        <div ref={dotRef} style={{ position: 'absolute', width: 22, height: 22, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, white 0%, ${arch.color} 38%, rgba(${arch.rgb},0.42) 70%, transparent 100%)`, transform: 'translate(-50%, -50%)', boxShadow: `0 0 18px ${arch.color}, 0 0 36px ${arch.color}88, 0 0 60px ${arch.color}44`, pointerEvents: 'none', zIndex: 6, animation: 'signaturePulse 3.4s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+
+        {/* Focus meter */}
+        <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 38px)', left: 32, right: 32, pointerEvents: 'none', zIndex: 5 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.22em', textTransform: 'uppercase' }}>Attention</span>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 14, color: focus > 70 ? arch.color : 'rgba(255,255,255,0.65)', fontVariantNumeric: 'tabular-nums', textShadow: focus > 70 ? `0 0 12px ${arch.color}66` : 'none', transition: 'color 480ms cubic-bezier(0.4,0,0.2,1), text-shadow 480ms cubic-bezier(0.4,0,0.2,1)' }}>{Math.round(focus)}%</span>
+          </div>
+          <div style={{ height: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
+            <div style={{ position: 'absolute', inset: 0, width: `${focus}%`, background: `linear-gradient(90deg, ${arch.color}77, ${arch.color})`, borderRadius: 2, boxShadow: focus > 30 ? `0 0 10px ${arch.color}99, 0 0 20px ${arch.color}66` : 'none', transition: 'width 480ms cubic-bezier(0.45,0,0.55,1), box-shadow 480ms cubic-bezier(0.4,0,0.2,1)' }} />
+          </div>
+        </div>
+
+        {/* Hint when no pointer */}
+        {!pointerRef.current && elapsedSec > 3 && (
+          <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 100px)', left: 0, right: 0, textAlign: 'center', pointerEvents: 'none', zIndex: 5, animation: 'fadeIn 0.8s cubic-bezier(0,0,0.2,1) both' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.55)', margin: 0, fontStyle: 'italic', letterSpacing: '0.04em' }}>Pose ton doigt sur la lumière</p>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // stage === 'complete'
+  const performance = finalScore >= 70 ? 'rayonnante' : finalScore >= 45 ? 'douce' : 'éveillée'
+  const message = finalScore >= 70 ? "L'attention est revenue. Vraiment." : finalScore >= 45 ? "Une présence s'est installée." : "C'est déjà un début. Et c'est suffisant."
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 880, background: 'rgba(2,3,8,0.98)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : 'modalEnter 540ms cubic-bezier(0.16,1.36,0.32,1) both' }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 38%, rgba(${arch.rgb},0.18) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        {[{x:18,y:24,r:2.4,d:0},{x:82,y:32,r:2.0,d:0.2},{x:30,y:72,r:2.6,d:0.4},{x:74,y:80,r:1.8,d:0.6},{x:50,y:14,r:2.2,d:0.1},{x:88,y:60,r:2.0,d:0.7},{x:12,y:54,r:1.6,d:0.3},{x:62,y:90,r:2.4,d:0.5}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0, animation: `milestoneMote 2.4s ease-out ${m.d}s both`, filter: `drop-shadow(0 0 8px ${arch.color}99)` }} />
+        ))}
+      </svg>
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 28px 40px', display: 'flex', flexDirection: 'column', gap: 24, minHeight: '100%', justifyContent: 'center', textAlign: 'center' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: 0, animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite, signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 16px ${arch.color}88` }}>✦ Session accomplie</p>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 26, color: 'white', margin: 0, lineHeight: 1.32, textShadow: `0 0 22px ${arch.color}44`, animation: 'phrasebreathe 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>{message}</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, margin: '8px 0' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.50)', letterSpacing: '0.30em', textTransform: 'uppercase', margin: 0 }}>Présence {performance}</p>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+            <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 200, fontSize: 64, color: arch.color, lineHeight: 1, letterSpacing: '-0.02em', textShadow: `0 0 32px ${arch.color}66, 0 0 64px ${arch.color}33`, animation: 'chipPop 720ms cubic-bezier(0.34,1.56,0.64,1) both' }}>{finalScore}</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 16, color: `${arch.color}cc` }}>%</span>
+          </div>
+        </div>
+        <button data-press="true" onClick={close} style={{ width: '100%', padding: '17px 0', background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.22em', cursor: 'pointer', textTransform: 'uppercase', boxShadow: `0 6px 36px rgba(${arch.rgb},0.42), 0 0 60px rgba(${arch.rgb},0.18)`, animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.8s infinite', minHeight: 54, textShadow: '0 0 14px rgba(255,255,255,0.35)' }}>Continuer ✦</button>
+      </div>
+    </div>
+  )
+}
 
 function ApaisementSensorielModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
