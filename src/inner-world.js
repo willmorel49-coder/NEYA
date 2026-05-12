@@ -207,6 +207,8 @@ export const SOUVENIR_LIBRARY = {
   first_invite:       { glyph: '◈', title: 'Première invitation',         subtitle: 'Tu as ouvert une porte.' },
   first_carnet:       { glyph: '◊', title: 'Première page du Carnet',     subtitle: 'Tu as déposé un mot pour toi.' },
   carnet_week:        { glyph: '◊', title: 'Une semaine d\'écriture',     subtitle: '7 jours, 7 traces.' },
+  first_letter_received: { glyph: '✉', title: 'Première lettre reçue',   subtitle: 'Quelqu\'un t\'a écrit, sans te connaître.' },
+  first_letter_sent:  { glyph: '✉', title: 'Première lettre envoyée',     subtitle: 'Tu as confié un mot au silence.' },
 }
 
 // ─── Cercle de présence ──────────────────────────────────────
