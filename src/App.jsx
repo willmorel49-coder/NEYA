@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
-import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory, setMoodQuick, getMoodQuickToday, getMoodQuickHistory, getMoodCombined, getMoodQuickStreak } from './inner-world'
+import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory, setMoodQuick, getMoodQuickToday, getMoodQuickHistory, getMoodCombined, getMoodQuickStreak, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit } from './inner-world'
 import { getNextLetter, markLetterReceived, sendLetter, getReceivedLetters, getSentLetters, getCollectiveCount, ARCHETYPE_PLURAL } from './community'
 import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, initAudioPressFeedback } from './audio'
 import { tokens as T } from './design-tokens'
@@ -5933,6 +5933,144 @@ function HomeSection({ label, archRgb }) {
   )
 }
 
+function WelcomeBackOverlay({ archetypeKey, days, onDismiss }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const [exiting, setExiting] = useState(false)
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setVis(true), 40)
+    const t2 = setTimeout(() => setExiting(true), 3500)
+    const t3 = setTimeout(() => onDismiss && onDismiss(), 4100)
+    try {
+      haptic([6, 80, 6, 80, 10])
+      playSouvenir()
+      if (days >= 30) addSouvenir('welcome_back_30')
+      else if (days >= 7) addSouvenir('welcome_back_7')
+    } catch {}
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, [])
+
+  let title, subtitle
+  if (days >= 30) {
+    title = 'Tu reviens de loin.'
+    subtitle = "Un mois, et tout est encore là pour toi."
+  } else if (days >= 14) {
+    title = 'Deux semaines.'
+    subtitle = "Tu trouveras tout comme tu l'as laissé."
+  } else if (days >= 7) {
+    title = 'Une semaine.'
+    subtitle = "Bienvenue chez toi à nouveau."
+  } else {
+    title = 'Tu reviens.'
+    subtitle = "Ton cocon t'attendait."
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9400, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `radial-gradient(ellipse at 50% 45%, rgba(${arch.rgb},0.22) 0%, rgba(5,8,16,0.78) 50%, rgba(5,8,16,0.96) 100%)`, backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', pointerEvents: 'none', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 720ms cubic-bezier(0,0,0.2,1)' }}>
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+        {[{x:14,y:20,r:2.2,d:0},{x:78,y:24,r:1.8,d:0.4},{x:28,y:74,r:2.6,d:0.2},{x:72,y:78,r:1.8,d:0.6},{x:48,y:16,r:2.0,d:0.1},{x:88,y:54,r:1.8,d:0.7},{x:10,y:58,r:1.6,d:0.5},{x:60,y:88,r:2.4,d:0.3},{x:90,y:30,r:1.4,d:0.55},{x:6,y:34,r:1.6,d:0.45}].map((m,i)=>(
+          <circle key={i} cx={`${m.x}%`} cy={`${m.y}%`} r={m.r} fill={arch.color} style={{ opacity: 0, animation: `milestoneMote 3.4s cubic-bezier(0,0,0.2,1) ${m.d}s both`, filter: `drop-shadow(0 0 10px ${arch.color}88)` }} />
+        ))}
+      </svg>
+      <div style={{ position: 'relative', textAlign: 'center', padding: '32px 40px', maxWidth: 420, animation: vis ? 'modalEnter 720ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none' }}>
+        <div style={{ fontSize: 56, color: arch.color, lineHeight: 1, marginBottom: 22, textShadow: `0 0 36px ${arch.color}99, 0 0 72px ${arch.color}44`, animation: 'signaturePulse 6s cubic-bezier(0.45,0,0.55,1) infinite' }}>◯</div>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 30, color: 'white', margin: '0 0 12px', letterSpacing: '-0.01em', lineHeight: 1.22, textShadow: `0 0 28px ${arch.color}55` }}>{title}</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 15.5, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.6, textShadow: '0 1px 12px rgba(0,0,0,0.5)', animation: 'phrasebreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>{subtitle}</p>
+      </div>
+    </div>
+  )
+}
+
+function SouvenirsGalleryModal({ archetypeKey, onClose, onSelect }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 280)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const souvenirs = getSouvenirs().slice().reverse()  // plus recent en premier
+
+  // Grouping par mois pour > 12 souvenirs
+  const groupByMonth = (list) => {
+    const groups = {}
+    list.forEach(s => {
+      try {
+        const d = new Date(s.ts)
+        const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre']
+        const key = `${months[d.getMonth()]} ${d.getFullYear()}`
+        if (!groups[key]) groups[key] = []
+        groups[key].push(s)
+      } catch {}
+    })
+    return groups
+  }
+
+  const showGroups = souvenirs.length > 12
+  const grouped = showGroups ? groupByMonth(souvenirs) : null
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(2,3,8,0.97)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', opacity: (vis && !exiting) ? 1 : 0, transition: 'opacity 280ms cubic-bezier(0.4,0,1,1)', overflowY: 'auto', animation: exiting ? 'sheetExit 280ms cubic-bezier(0.4,0,1,1) both' : (vis ? 'modalEnter 440ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none') }}>
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 30%, rgba(${arch.rgb},0.12) 0%, transparent 65%)`, pointerEvents: 'none' }} />
+
+      <button data-press="true" onClick={close} aria-label="Fermer la galerie" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, background: 'rgba(5,8,16,0.42)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 100, width: 44, height: 44, color: 'rgba(255,255,255,0.82)', fontFamily: 'Inter, sans-serif', fontSize: 18, lineHeight: 1, cursor: 'pointer', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)' }}>✕</button>
+
+      <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 24px calc(env(safe-area-inset-bottom, 0px) + 40px)', display: 'flex', flexDirection: 'column', gap: 22, maxWidth: 600, margin: '0 auto' }}>
+
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Tes éclats</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'white', margin: 0, lineHeight: 1.3, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>{souvenirs.length === 0 ? "Pas encore d'éclat" : souvenirs.length === 1 ? '1 éclat collecté' : `${souvenirs.length} éclats collectés`}</h2>
+          {souvenirs.length === 0 && (
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.55)', margin: '12px 0 0', fontStyle: 'italic', lineHeight: 1.55, maxWidth: 320, marginLeft: 'auto', marginRight: 'auto' }}>Tes premiers moments apparaîtront ici. Une routine, une respiration, une lettre — tout laisse une trace.</p>
+          )}
+        </div>
+
+        {/* Gallery grid */}
+        {souvenirs.length > 0 && !showGroups && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
+            {souvenirs.map((s, i) => {
+              const def = SOUVENIR_LIBRARY[s.type] || { glyph: '✦', title: s.type, subtitle: '' }
+              return (
+                <div key={s.ts} onClick={() => { haptic(6); try { playSouvenir() } catch {} ; if (onSelect) onSelect(s) }} role="button" tabIndex={0} aria-label={`Ouvrir l'éclat ${def.title}`} style={{ cursor: 'pointer', background: `rgba(${arch.rgb},0.06)`, border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 14, padding: '16px 14px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, minHeight: 130, animation: `chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) ${i * 35}ms both`, transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1), background 240ms cubic-bezier(0.4,0,0.2,1)' }}>
+                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.05) 70%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.45)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 14px rgba(${arch.rgb},0.22)`, animation: `signaturePulse ${10 + i % 4}s cubic-bezier(0.45,0,0.55,1) ${i * 0.5}s infinite` }}>
+                    <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, color: arch.color, lineHeight: 1, textShadow: `0 0 8px ${arch.color}88` }}>{def.glyph}</span>
+                  </div>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, fontWeight: 300, color: 'rgba(255,255,255,0.82)', textAlign: 'center', margin: 0, lineHeight: 1.35, letterSpacing: '0.01em' }}>{def.title}</p>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}aa`, margin: 0, letterSpacing: '0.06em' }}>{formatSouvenirDate(s.ts)}</p>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Grouped view */}
+        {showGroups && grouped && Object.keys(grouped).map(monthKey => (
+          <div key={monthKey} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0 }}>{monthKey}</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
+              {grouped[monthKey].map((s, i) => {
+                const def = SOUVENIR_LIBRARY[s.type] || { glyph: '✦', title: s.type }
+                return (
+                  <div key={s.ts} onClick={() => { haptic(6); try { playSouvenir() } catch {} ; if (onSelect) onSelect(s) }} role="button" tabIndex={0} aria-label={`Ouvrir l'éclat ${def.title}`} style={{ cursor: 'pointer', background: `rgba(${arch.rgb},0.06)`, border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 14, padding: '16px 14px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, minHeight: 130, animation: `chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) ${i * 35}ms both` }}>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, transparent 70%)`, border: `1px solid rgba(${arch.rgb},0.45)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 14px rgba(${arch.rgb},0.22)`, animation: `signaturePulse ${10 + i % 4}s cubic-bezier(0.45,0,0.55,1) ${i * 0.5}s infinite` }}>
+                      <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, color: arch.color, lineHeight: 1, textShadow: `0 0 8px ${arch.color}88` }}>{def.glyph}</span>
+                    </div>
+                    <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.82)', textAlign: 'center', margin: 0, lineHeight: 1.35 }}>{def.title}</p>
+                    <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}aa`, margin: 0 }}>{formatSouvenirDate(s.ts)}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        ))}
+
+        {souvenirs.length > 0 && (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', margin: '12px 0 0', fontStyle: 'italic', lineHeight: 1.6 }}>Touche un éclat pour le revivre.</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function AujourdhuiCard({ archetypeKey, onSetMood, onOpenTool }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const [currentMood, setCurrentMood] = useState(() => {
@@ -6545,6 +6683,8 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
   const [confirmReset, setConfirmReset] = useState(false)
   const [showCercle, setShowCercle] = useState(false)
   const [showInvite, setShowInvite] = useState(false)
+  const [showGallery, setShowGallery] = useState(false)
+  const [galleryFocus, setGalleryFocus] = useState(null)
   useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
 
   const totalSouvenirs = getSouvenirs().length
@@ -6651,6 +6791,9 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
               </div>
             )
           })()}
+          {getSouvenirs().length > 0 && (
+            <button data-press="true" onClick={() => { haptic(6); setShowGallery(true) }} style={{ width: '100%', padding: '14px 0', background: `rgba(${arch.rgb},0.08)`, border: `1px solid rgba(${arch.rgb},0.32)`, borderRadius: 100, color: 'rgba(255,255,255,0.88)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, letterSpacing: '0.14em', cursor: 'pointer', minHeight: 48 }}>✦ Voir tous tes éclats</button>
+          )}
           <button data-press="true" onClick={exportData} style={{ width: '100%', padding: '14px 0', background: `rgba(${arch.rgb},0.14)`, border: `1px solid rgba(${arch.rgb},0.40)`, borderRadius: 100, color: 'rgba(255,255,255,0.92)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, letterSpacing: '0.16em', cursor: 'pointer', minHeight: 48 }}>↓ Exporter mes souvenirs</button>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.50)', margin: 0, fontStyle: 'italic', textAlign: 'center' }}>Un fichier JSON sur ton appareil. Tu en gardes la trace.</p>
         </div>
@@ -6696,6 +6839,8 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
       </div>
       {showCercle && <CercleDePresenceModal archetypeKey={archetypeKey} onClose={() => setShowCercle(false)} />}
       {showInvite && <InviteFriendModal archetypeKey={archetypeKey} onClose={() => setShowInvite(false)} />}
+      {showGallery && <SouvenirsGalleryModal archetypeKey={archetypeKey} onClose={() => setShowGallery(false)} onSelect={(s) => setGalleryFocus(s)} />}
+      {galleryFocus && <SouvenirDetailModal souvenir={galleryFocus} archetypeKey={archetypeKey} onClose={() => setGalleryFocus(null)} />}
     </div>
   )
 }
@@ -7288,6 +7433,7 @@ function InstallPromptButton({ visible }) {
 }
 
 export default function App() {
+  const [welcomeBackDays, setWelcomeBackDays] = useState(0)
   const [screen, setScreen] = useState(() => {
     try { const p = JSON.parse(localStorage.getItem('neya_profile') || 'null'); return p?.archetype ? 'returning' : 'splash' } catch { return 'splash' }
   })
@@ -7404,6 +7550,12 @@ export default function App() {
     try { registerSW({ immediate: true }) } catch {}
     const cleanupPress = initPressFeedback()
     const cleanupAudio = initAudioPressFeedback()
+    // Welcome back detection — avant markVisit
+    try {
+      const days = getDaysSinceLastVisit()
+      if (days >= 3) setWelcomeBackDays(days)
+      markVisitNow()
+    } catch {}
     return () => { cleanupPress && cleanupPress(); cleanupAudio && cleanupAudio() }
   }, [])
 
@@ -7443,6 +7595,9 @@ export default function App() {
 
         <ConsentToast />
         <InstallPromptButton visible={screen === 'main' || screen === 'returning'} />
+        {welcomeBackDays >= 3 && screen === 'main' && archetype && (
+          <WelcomeBackOverlay archetypeKey={archetype} days={welcomeBackDays} onDismiss={() => setWelcomeBackDays(0)} />
+        )}
 
         <div style={{ position: 'fixed', inset: 0, background: '#050810', zIndex: 9999, opacity: blackout ? 1 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: blackout ? 'all' : 'none' }} />
         {archetype && ARCHETYPES[archetype] && (

@@ -217,6 +217,28 @@ export const SOUVENIR_LIBRARY = {
   reparation_complete:{ glyph: '◈', title: 'Cocon entier',                 subtitle: 'Toutes les pièces ont retrouvé leur place.' },
   first_jardin:       { glyph: '⚘', title: 'Premier passage au Jardin',   subtitle: 'Quelque chose pousse ici.' },
   jardin_florissant:  { glyph: '⚘', title: 'Jardin florissant',           subtitle: 'Sept jours et le sol s\'éveille.' },
+  welcome_back_7:     { glyph: '◯', title: 'Tu es revenu·e',               subtitle: 'Une semaine, et ton refuge t\'attendait.' },
+  welcome_back_30:    { glyph: '◯', title: 'Tu reviens de loin',           subtitle: 'Un mois, et tout est encore là pour toi.' },
+}
+
+// ─── Dernière visite (pour Welcome Back) ──────────────────────
+
+const LAST_VISIT_KEY = 'neya_last_visit'
+
+export function getLastVisitTimestamp() {
+  try { return parseInt(localStorage.getItem(LAST_VISIT_KEY) || '0', 10) }
+  catch { return 0 }
+}
+
+export function markVisitNow() {
+  try { localStorage.setItem(LAST_VISIT_KEY, String(Date.now())) }
+  catch {}
+}
+
+export function getDaysSinceLastVisit() {
+  const last = getLastVisitTimestamp()
+  if (!last) return 0
+  return Math.floor((Date.now() - last) / 86400000)
 }
 
 // ─── Cercle de présence ──────────────────────────────────────
@@ -446,4 +468,4 @@ export function formatSouvenirDate(ts) {
   } catch { return '' }
 }
 
-export default { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, TIME_LABELS, formatSouvenirDate, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal }
+export default { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, TIME_LABELS, formatSouvenirDate, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit }
