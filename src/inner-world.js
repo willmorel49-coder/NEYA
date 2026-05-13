@@ -223,6 +223,7 @@ export const SOUVENIR_LIBRARY = {
   bilan_week:         { glyph: '☾', title: 'Sept soirs déposés',           subtitle: 'Une semaine entière de couchers conscients.' },
   first_bilan_semaine:{ glyph: '◯', title: 'Première semaine refléchie',  subtitle: 'Tu as regardé sept jours en arrière.' },
   bilan_mois:         { glyph: '◯', title: 'Un mois en regards',           subtitle: 'Quatre dimanches à se poser.' },
+  first_visualisation:{ glyph: '✧', title: 'Première visualisation',       subtitle: 'Tu as fermé les yeux et fait le chemin.' },
 }
 
 // ─── Dernière visite (pour Welcome Back) ──────────────────────

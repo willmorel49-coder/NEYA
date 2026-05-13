@@ -1234,25 +1234,24 @@ const SpiritAnimal = React.memo(function SpiritAnimal({ archetype, size = 120, s
 // ─── LOGO ─────────────────────────────────────────────────────────────────────
 
 function NeyaLogo({ size = 'md', onTap, glowColor = 'rgba(255,255,255,0.32)' }) {
-  const cfg = { sm: [20, 13], md: [28, 17], lg: [36, 22] }[size]
-  const w = cfg[0], h = Math.round(cfg[0] * 1.28)
+  const cfg = { sm: [22, 13], md: [30, 17], lg: [40, 22] }[size]
+  const w = cfg[0], h = Math.round(cfg[0] * 0.92)
   return (
-    <div onClick={onTap} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, cursor: onTap ? 'pointer' : 'default' }}>
-      <svg width={w} height={h} viewBox="0 0 30 38" fill="none" style={{ animation: 'compassbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite', filter: `drop-shadow(0 0 6px ${glowColor})${onTap ? ' drop-shadow(0 0 14px rgba(255,255,255,0.25))' : ''}` }}>
-        {/* Leaf/tree crown */}
-        <path d="M15 2 C8.5 3.5 4 9.5 4 16.5 C4 22.5 8.5 27.5 15 28.5 C21.5 27.5 26 22.5 26 16.5 C26 9.5 21.5 3.5 15 2Z" fill="white" opacity="0.90"/>
-        {/* Central vein */}
-        <line x1="15" y1="5.5" x2="15" y2="27" stroke="rgba(5,8,16,0.22)" strokeWidth="0.85" strokeLinecap="round"/>
-        {/* Upper branches */}
-        <path d="M15 11 L10 15" stroke="rgba(5,8,16,0.17)" strokeWidth="0.75" fill="none" strokeLinecap="round"/>
-        <path d="M15 11 L20 15" stroke="rgba(5,8,16,0.17)" strokeWidth="0.75" fill="none" strokeLinecap="round"/>
-        {/* Lower branches */}
-        <path d="M15 17.5 L11 21.5" stroke="rgba(5,8,16,0.13)" strokeWidth="0.65" fill="none" strokeLinecap="round"/>
-        <path d="M15 17.5 L19 21.5" stroke="rgba(5,8,16,0.13)" strokeWidth="0.65" fill="none" strokeLinecap="round"/>
-        {/* Trunk */}
-        <path d="M14.1 28.5 L14.1 36.5 Q14.1 38 15 38 Q15.9 38 15.9 36.5 L15.9 28.5Z" fill="white" opacity="0.82"/>
+    <div onClick={onTap} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: onTap ? 'pointer' : 'default' }}>
+      <svg width={w} height={h} viewBox="0 0 44 40" fill="none" style={{ animation: 'compassbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite', filter: `drop-shadow(0 0 8px ${glowColor})${onTap ? ' drop-shadow(0 0 16px rgba(255,255,255,0.28))' : ''}` }}>
+        {/* Lotus — 5 pétales lumineux en outline (signature mockups originaux) */}
+        {/* Pétale central vertical */}
+        <path d="M22 4 Q19 12 19 22 Q22 26 25 22 Q25 12 22 4 Z" stroke="white" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(255,255,255,0.10)" opacity="0.95"/>
+        {/* Pétales latéraux internes */}
+        <path d="M22 22 Q14 18 9 26 Q14 30 22 26 Z" stroke="white" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(255,255,255,0.08)" opacity="0.90"/>
+        <path d="M22 22 Q30 18 35 26 Q30 30 22 26 Z" stroke="white" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(255,255,255,0.08)" opacity="0.90"/>
+        {/* Pétales externes (ouverture) */}
+        <path d="M22 24 Q12 22 4 32 Q14 34 22 28 Z" stroke="white" strokeWidth="1.3" strokeLinejoin="round" fill="rgba(255,255,255,0.05)" opacity="0.78"/>
+        <path d="M22 24 Q32 22 40 32 Q30 34 22 28 Z" stroke="white" strokeWidth="1.3" strokeLinejoin="round" fill="rgba(255,255,255,0.05)" opacity="0.78"/>
+        {/* Base trait subtil */}
+        <path d="M10 33 Q22 36 34 33" stroke="white" strokeWidth="1" strokeLinecap="round" fill="none" opacity="0.62"/>
       </svg>
-      <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: cfg[1], letterSpacing: '0.4em', color: 'white', textShadow: '0 0 20px rgba(255,255,255,0.3)', animation: 'phrasebreathe 55s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 22s ease-in-out 8s infinite' }}>NÉYA</span>
+      <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: cfg[1], letterSpacing: '0.42em', color: 'white', textShadow: '0 0 20px rgba(255,255,255,0.3)', animation: 'phrasebreathe 55s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 22s ease-in-out 8s infinite' }}>NÉYA</span>
     </div>
   )
 }
@@ -3879,6 +3878,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showSettings, setShowSettings] = useState(false)
   const [showCarnet, setShowCarnet] = useState(false)
   const [showLetters, setShowLetters] = useState(false)
+  const [showSOS, setShowSOS] = useState(false)
   const [prenom, setPrenom] = useState(() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })
   const [mantra, setMantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
   const [coconName, setCoconName] = useState(() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })
@@ -4190,6 +4190,9 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           {intentionReady && <TypingText key={intentionIdx} text={`"${intention}"`} delay={0} speed={34} cursorColor={arch.color} />}
         </div>
       </div>
+
+      {/* ── NÉYA — personnage incarné, accueil intime ── */}
+      <NeyaPresenceCard archetypeKey={archetypeKey} prenom={prenom} />
 
       {/* ── Invitation du jour ── */}
       <InvitationCard archetypeKey={archetypeKey} onXp={showXpToast ? (amt) => showXpToast(amt, false) : undefined} />
@@ -4610,7 +4613,15 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           {restartPending ? 'Toucher encore pour confirmer' : 'Refaire le parcours'}
         </button>
 
+        {/* ── SOS poétique (lien discret, toujours visible) ── */}
+        <button onClick={() => { haptic(8); setShowSOS(true) }} aria-label="Espace SOS — si tu ne vas pas bien" style={{ marginTop: 18, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 12, color: 'rgba(255,210,180,0.62)', letterSpacing: '0.03em', padding: '12px 18px', borderRadius: 100, transition: 'color 0.3s ease, text-shadow 0.3s ease', textShadow: '0 0 14px rgba(255,180,140,0.18)', animation: 'phrasebreathe 28s cubic-bezier(0.45,0,0.55,1) infinite', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 13, opacity: 0.85 }}>✿</span>
+          <span>Si ça ne va pas du tout</span>
+        </button>
+
       </div>
+
+      {showSOS && <SOSModal archetypeKey={archetypeKey} onClose={() => setShowSOS(false)} />}
     </div>
   )
 }
@@ -6669,6 +6680,438 @@ function BilanSemaineCard({ archetypeKey, onClose }) {
             animation: 'milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite, fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.6s both',
           }}>Fermer la semaine ◯</button>
         </>
+      )}
+    </div>
+  )
+}
+
+// ─── NÉYA — Personnage incarné en accueil ──────────────────────────
+// Carte premium en haut de HomeScreen qui personnifie NÉYA (femme aux
+// cheveux bleus, signature des mockups originaux). Bulle d'accueil
+// time-aware et personnalisée au prénom. Geste : NÉYA est une présence,
+// pas une fonctionnalité.
+
+function NeyaPortrait({ size = 64 }) {
+  // SVG silhouette femme cheveux bleus longs - signature visuelle NÉYA
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" style={{ display: 'block' }}>
+      <defs>
+        <radialGradient id="neyaGlow" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stopColor="rgba(99,102,241,0.42)" />
+          <stop offset="60%" stopColor="rgba(99,102,241,0.18)" />
+          <stop offset="100%" stopColor="rgba(99,102,241,0)" />
+        </radialGradient>
+        <linearGradient id="neyaHair" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#3b5fd9" />
+          <stop offset="50%" stopColor="#5a7dfa" />
+          <stop offset="100%" stopColor="#2d4ab8" />
+        </linearGradient>
+        <linearGradient id="neyaSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#f5dcc4" />
+          <stop offset="100%" stopColor="#e0c0a0" />
+        </linearGradient>
+        <linearGradient id="neyaRobe" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#4a6fd9" />
+          <stop offset="100%" stopColor="#2a4099" />
+        </linearGradient>
+      </defs>
+      {/* Halo lumineux */}
+      <circle cx="32" cy="28" r="28" fill="url(#neyaGlow)" />
+      {/* Cheveux derrière */}
+      <path d="M 18 26 Q 16 38 18 50 L 22 52 Q 20 38 22 28 Z" fill="url(#neyaHair)" opacity="0.92" />
+      <path d="M 46 26 Q 48 38 46 50 L 42 52 Q 44 38 42 28 Z" fill="url(#neyaHair)" opacity="0.92" />
+      {/* Visage ovale (profil 3/4 vers nous) */}
+      <ellipse cx="32" cy="26" rx="9" ry="11" fill="url(#neyaSkin)" />
+      {/* Cheveux dessus */}
+      <path d="M 22 22 Q 22 14 32 12 Q 42 14 42 22 Q 42 18 38 17 Q 36 14 32 14 Q 28 14 26 17 Q 22 18 22 22 Z" fill="url(#neyaHair)" />
+      <path d="M 22 22 Q 23 26 22 32 Q 24 28 26 27 Q 24 24 22 22 Z" fill="url(#neyaHair)" opacity="0.88" />
+      <path d="M 42 22 Q 41 26 42 32 Q 40 28 38 27 Q 40 24 42 22 Z" fill="url(#neyaHair)" opacity="0.88" />
+      {/* Yeux fermés (paisible) */}
+      <path d="M 28 26 Q 29.5 27 31 26" stroke="rgba(40,30,50,0.78)" strokeWidth="0.8" strokeLinecap="round" fill="none" />
+      <path d="M 33 26 Q 34.5 27 36 26" stroke="rgba(40,30,50,0.78)" strokeWidth="0.8" strokeLinecap="round" fill="none" />
+      {/* Bouche douce */}
+      <path d="M 30 31 Q 32 32 34 31" stroke="rgba(150,90,90,0.72)" strokeWidth="0.7" strokeLinecap="round" fill="none" />
+      {/* Cou + robe bleue */}
+      <path d="M 28 36 L 26 42 Q 32 46 38 42 L 36 36 Z" fill="url(#neyaSkin)" opacity="0.88" />
+      <path d="M 24 42 Q 18 56 22 64 L 42 64 Q 46 56 40 42 Q 32 46 24 42 Z" fill="url(#neyaRobe)" />
+      {/* Reflets cheveux lumineux */}
+      <path d="M 26 16 Q 28 14 32 14 Q 30 16 28 18 Z" fill="rgba(180,200,255,0.42)" />
+      <path d="M 38 16 Q 36 14 32 14 Q 34 16 36 18 Z" fill="rgba(180,200,255,0.32)" />
+    </svg>
+  )
+}
+
+function NeyaPresenceCard({ archetypeKey, prenom }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [tapped, setTapped] = useState(false)
+  const [showVisu, setShowVisu] = useState(false)
+  const h = new Date().getHours()
+
+  // Salutation time-aware
+  const greeting =
+    h < 5  ? 'La nuit s\'étire.' :
+    h < 11 ? 'Bonjour' :
+    h < 14 ? 'Doux midi' :
+    h < 18 ? 'Cet après-midi' :
+    h < 22 ? 'Bonsoir' :
+             'La nuit revient'
+
+  // Bulle d'accueil time-aware + personnalisée
+  const bubble = (() => {
+    const name = prenom ? `, ${prenom}` : ''
+    if (h < 5)  return `Tu es là${name}. Le silence n'est pas vide — il fait place.`
+    if (h < 11) return `Tu es revenu·e${name}. Pose-toi une intention douce ce matin.`
+    if (h < 14) return `Souffle un peu${name}. Le jour peut se déposer là, doucement.`
+    if (h < 18) return `Tu es ici${name}. Ce moment t'appartient — sans presse.`
+    if (h < 22) return `Bonsoir${name}. Comment a glissé ta journée ?`
+    return `Reste avec toi${name}. La nuit te rend à toi-même.`
+  })()
+
+  return (
+    <>
+    <div onClick={() => { haptic([4, 30, 4]); setTapped(true); try { playOpen() } catch {}; setTimeout(() => { setTapped(false); setShowVisu(true) }, 280) }} role="button" tabIndex={0} aria-label="Ouvrir la visualisation guidée avec NÉYA" style={{
+      position: 'relative',
+      cursor: 'pointer',
+      background: `linear-gradient(135deg, rgba(99,102,241,0.14) 0%, rgba(16,18,32,0.62) 50%, rgba(${arch.rgb},0.08) 100%)`,
+      border: `1px solid rgba(99,102,241,0.42)`,
+      borderRadius: 20,
+      padding: '18px 18px 18px 18px',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      boxShadow: `0 8px 32px rgba(99,102,241,0.18), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 24px rgba(99,102,241,0.10)`,
+      animation: 'fadeIn 0.9s cubic-bezier(0,0,0.2,1) 0.08s both',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 16,
+      overflow: 'hidden',
+    }}>
+      {/* Halo étoilé background subtil */}
+      <div style={{ position: 'absolute', top: -20, right: -20, width: 90, height: 90, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.22) 0%, transparent 70%)', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />
+
+      {/* Portrait NÉYA */}
+      <div style={{ flexShrink: 0, width: 64, height: 64, position: 'relative', filter: tapped ? 'drop-shadow(0 0 18px rgba(99,102,241,0.62))' : 'drop-shadow(0 0 12px rgba(99,102,241,0.35))', transition: 'filter 0.4s ease', animation: 'animalbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+        <NeyaPortrait size={64} />
+      </div>
+
+      {/* Texte + bulle */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(180,190,255,0.86)', letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 4px', animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>NÉYA · {greeting}</p>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, fontStyle: 'italic', color: 'rgba(255,255,255,0.92)', margin: 0, lineHeight: 1.5, letterSpacing: '-0.005em', textShadow: '0 0 14px rgba(99,102,241,0.30)', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          « {bubble} »
+        </p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(180,190,255,0.55)', letterSpacing: '0.16em', textTransform: 'uppercase', margin: '8px 0 0', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>Toucher pour une visualisation →</p>
+      </div>
+    </div>
+    {showVisu && <VisualisationGuideeModal archetypeKey={archetypeKey} onClose={() => setShowVisu(false)} />}
+    </>
+  )
+}
+
+// ─── VISUALISATION GUIDÉE — Rituel d'ouverture poétique 60s ────────
+// Inspiré des mockups originaux: "Ferme les yeux. Imagine un chemin
+// devant toi, éclairé par une lumière douce..." Chemin doré qui
+// avance par étapes textuelles, respiration synchronisée.
+
+function VisualisationGuideeModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 380)
+  const [phase, setPhase] = useState(0) // 0..4 + 5=ending
+  const [breathPhase, setBreathPhase] = useState('in') // in/hold/out
+
+  const STEPS = [
+    { text: 'Ferme doucement les yeux.', dur: 8000, hint: 'Ou laisse ton regard se poser.' },
+    { text: 'Sens ton souffle se déposer.', dur: 12000, hint: 'Sans rien forcer.' },
+    { text: 'Imagine un chemin devant toi,\néclairé par une lumière douce.', dur: 14000, hint: 'Vois-le se dessiner.' },
+    { text: 'À chaque pas, le brouillard s\'éloigne.\nTu t\'approches de toi-même.', dur: 14000, hint: 'Le chemin sait où aller.' },
+    { text: 'Quelque chose en toi\nsait déjà où aller.', dur: 12000, hint: 'Fais-lui confiance.' },
+  ]
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  useEffect(() => {
+    if (phase >= STEPS.length) return
+    const t = setTimeout(() => setPhase(p => p + 1), STEPS[phase].dur)
+    return () => clearTimeout(t)
+  }, [phase])
+
+  // Respiration cycle 6s in / 8s out
+  useEffect(() => {
+    let mounted = true
+    const cycle = () => {
+      if (!mounted) return
+      setBreathPhase('in')
+      try { playBreathIn(5.8) } catch {}
+      setTimeout(() => { if (!mounted) return; setBreathPhase('out'); try { playBreathOut(7.8) } catch {} }, 6000)
+      setTimeout(() => { if (mounted) cycle() }, 14000)
+    }
+    cycle()
+    return () => { mounted = false }
+  }, [])
+
+  const handleClose = () => { haptic(4); try { playClose() } catch {}; close() }
+  const isEnded = phase >= STEPS.length
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 1800,
+      background: `linear-gradient(180deg, rgba(8,12,28,0.95) 0%, rgba(${arch.rgb},0.12) 40%, rgba(8,12,28,0.95) 100%)`,
+      backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '40px 28px',
+      animation: exiting ? 'fadeOut 0.38s cubic-bezier(0.4,0,0.6,1) both' : 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both',
+    }}>
+      {/* Chemin doré central qui pulse */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        <defs>
+          <linearGradient id="visuPath" x1="50%" y1="100%" x2="50%" y2="0%">
+            <stop offset="0%" stopColor={`${arch.color}cc`} />
+            <stop offset="50%" stopColor={`${arch.color}88`} />
+            <stop offset="100%" stopColor={`${arch.color}00`} />
+          </linearGradient>
+        </defs>
+        <path d="M 50% 100% Q 48% 60% 50% 30% T 50% 0%" stroke="url(#visuPath)" strokeWidth="2.5" fill="none" style={{ filter: `drop-shadow(0 0 12px ${arch.color}88)`, animation: 'worldglow 6s cubic-bezier(0.45,0,0.55,1) infinite, signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+        {/* Points-étapes lumineux */}
+        {[20, 38, 56, 74, 88].map((y, i) => (
+          <circle key={i} cx="50%" cy={`${y}%`} r={i <= phase ? 4 : 2.5} fill={arch.color} style={{ opacity: i <= phase ? 0.95 : 0.30, filter: i <= phase ? `drop-shadow(0 0 10px ${arch.color}cc)` : 'none', transition: 'all 1.2s cubic-bezier(0.45,0,0.55,1)' }} />
+        ))}
+      </svg>
+
+      {/* Particules ambiantes */}
+      {[
+        { x: 14, y: 22, dur: 24, del: 0 },
+        { x: 84, y: 18, dur: 28, del: 3 },
+        { x: 22, y: 78, dur: 26, del: 5 },
+        { x: 80, y: 74, dur: 22, del: 1.5 },
+      ].map((m, i) => (
+        <div key={i} style={{ position: 'absolute', top: `${m.y}%`, left: `${m.x}%`, width: 4, height: 4, borderRadius: '50%', background: arch.color, opacity: 0.45, filter: `drop-shadow(0 0 8px ${arch.color}cc)`, animation: `splashmote ${m.dur}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${m.del}s`, pointerEvents: 'none' }} />
+      ))}
+
+      {/* Bouton fermer discret */}
+      <button onClick={handleClose} aria-label="Fermer la visualisation" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 16px)', right: 18, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: '50%', width: 36, height: 36, color: 'rgba(255,255,255,0.62)', fontSize: 16, lineHeight: 1, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', zIndex: 10 }}>✕</button>
+
+      {/* Cercle respiration central qui souffle */}
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: `translate(-50%, -50%) scale(${breathPhase === 'in' ? 1.18 : 1})`, width: 160, height: 160, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.18) 0%, rgba(${arch.rgb},0.06) 50%, transparent 90%)`, border: `1px solid rgba(${arch.rgb},0.36)`, transition: 'transform 6s cubic-bezier(0.45,0,0.55,1)', pointerEvents: 'none', boxShadow: `0 0 60px rgba(${arch.rgb},0.18), inset 0 0 30px rgba(${arch.rgb},0.10)` }} />
+
+      <div style={{
+        position: 'relative',
+        maxWidth: 440, width: '100%',
+        textAlign: 'center',
+        zIndex: 2,
+        animation: vis && !exiting ? 'fadeIn 1.2s cubic-bezier(0,0,0.2,1) 0.3s both' : 'none',
+      }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.30em', textTransform: 'uppercase', margin: '0 0 28px', animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>Visualisation guidée</p>
+
+        {!isEnded ? (
+          <>
+            <p key={phase} style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(20px, 5.5vw, 26px)', color: 'rgba(255,255,255,0.96)', margin: '0 0 20px', lineHeight: 1.55, letterSpacing: '-0.01em', fontStyle: 'italic', textShadow: `0 0 24px ${arch.color}55, 0 2px 14px rgba(0,0,0,0.5)`, whiteSpace: 'pre-line', animation: 'fadeIn 1.4s cubic-bezier(0,0,0.2,1) both' }}>
+              {STEPS[phase].text}
+            </p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.55)', margin: 0, letterSpacing: '0.04em', fontStyle: 'italic', animation: 'fadeIn 1.8s cubic-bezier(0,0,0.2,1) 0.6s both, phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) 1.5s infinite' }}>
+              {STEPS[phase].hint}
+            </p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.20em', textTransform: 'uppercase', margin: '36px 0 0', animation: 'phrasebreathe 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+              {breathPhase === 'in' ? '◯ Inspire' : '◌ Expire'}
+            </p>
+          </>
+        ) : (
+          <>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 26, color: 'rgba(255,255,255,0.96)', margin: '0 0 16px', lineHeight: 1.4, letterSpacing: '-0.01em', textShadow: `0 0 28px ${arch.color}66`, animation: 'fadeIn 1.5s cubic-bezier(0,0,0.2,1) both' }}>Tu es arrivé·e.</p>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 15, color: 'rgba(255,255,255,0.78)', margin: '0 0 30px', lineHeight: 1.65, maxWidth: 340, marginLeft: 'auto', marginRight: 'auto', animation: 'fadeIn 1.8s cubic-bezier(0,0,0.2,1) 0.5s both' }}>« Le plus beau chemin commence en toi. »</p>
+            <button data-press="true" onClick={() => { try { addSouvenir('first_visualisation') } catch {}; handleClose() }} style={{
+              padding: '14px 32px',
+              background: `linear-gradient(135deg, rgba(${arch.rgb},0.92), rgba(${arch.rgb},0.62))`,
+              border: 'none',
+              borderRadius: 100,
+              color: 'white',
+              fontFamily: 'Sora, sans-serif',
+              fontWeight: 500,
+              fontSize: 12,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              minHeight: 48,
+              boxShadow: `0 8px 28px rgba(${arch.rgb},0.40)`,
+              animation: 'fadeIn 1.4s cubic-bezier(0,0,0.2,1) 1s both, milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) 2s infinite',
+            }}>Revenir doucement</button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── SOS POÉTIQUE — Espace d'urgence emotionnelle ──────────────────
+// Activé via lien discret en bas de HomeScreen ("Si ça ne va pas du tout").
+// Combine : ressources d'aide officielles FR + ancres personnelles
+// (proche de confiance / mot qui m'apaise / souvenir lumineux).
+// Esthétique : papillons orange sur fond pastel, "Tu n'es pas seul·e".
+
+function SOSModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 360)
+  const [proche, setProche] = useState(() => { try { return localStorage.getItem('neya_sos_proche') || '' } catch { return '' } })
+  const [mot, setMot] = useState(() => { try { return localStorage.getItem('neya_sos_mot') || '' } catch { return '' } })
+  const [souvenir, setSouvenir] = useState(() => { try { return localStorage.getItem('neya_sos_souvenir') || '' } catch { return '' } })
+  const [editField, setEditField] = useState(null)
+  const [draft, setDraft] = useState('')
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const handleClose = () => { haptic(4); try { playClose() } catch {}; close() }
+
+  const startEdit = (field, current) => { haptic(6); setEditField(field); setDraft(current) }
+  const saveEdit = () => {
+    const clean = (draft || '').trim().slice(0, 140)
+    try {
+      if (editField === 'proche')   { localStorage.setItem('neya_sos_proche', clean); setProche(clean) }
+      if (editField === 'mot')      { localStorage.setItem('neya_sos_mot', clean); setMot(clean) }
+      if (editField === 'souvenir') { localStorage.setItem('neya_sos_souvenir', clean); setSouvenir(clean) }
+    } catch {}
+    haptic([6, 40, 6])
+    try { playConfirm() } catch {}
+    setEditField(null); setDraft('')
+  }
+
+  // Ressources d'aide officielles France (libres, validées)
+  const RESOURCES = [
+    { label: 'Urgence vitale',           number: '112',  desc: 'Appeler immédiatement' },
+    { label: 'Prévention du suicide',     number: '3114', desc: '24h/24 · gratuit · confidentiel' },
+    { label: 'Souffrance psychique',      number: '0 800 130 000', desc: 'Numéro national gratuit' },
+    { label: 'Violences faites aux femmes', number: '3919', desc: 'Gratuit · anonyme · 24/7' },
+    { label: 'Harcèlement scolaire',      number: '3018', desc: 'Jeunes · gratuit · 7j/7' },
+    { label: 'Enfance en danger',         number: '119',  desc: 'Gratuit · 24/7' },
+  ]
+
+  return (
+    <div onClick={handleClose} style={{
+      position: 'fixed', inset: 0, zIndex: 2000,
+      background: 'linear-gradient(180deg, rgba(40,20,30,0.55) 0%, rgba(20,15,25,0.75) 50%, rgba(15,10,18,0.85) 100%)',
+      backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+      display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+      overflowY: 'auto',
+      padding: '40px 18px',
+      animation: exiting ? 'fadeOut 0.36s cubic-bezier(0.4,0,0.6,1) both' : 'fadeIn 0.5s cubic-bezier(0,0,0.2,1) both',
+    }}>
+      {/* Papillons orange flottants - signature visuelle SOS */}
+      {[
+        { x: 12, y: 14, dur: 18, del: 0,   size: 22 },
+        { x: 82, y: 10, dur: 22, del: 2.3, size: 18 },
+        { x: 18, y: 78, dur: 26, del: 4.1, size: 20 },
+        { x: 88, y: 70, dur: 20, del: 1.5, size: 24 },
+        { x: 50, y: 88, dur: 24, del: 6.2, size: 16 },
+      ].map((p, i) => (
+        <div key={i} style={{ position: 'fixed', top: `${p.y}%`, left: `${p.x}%`, fontSize: p.size, color: 'rgba(255,180,120,0.42)', filter: 'drop-shadow(0 0 12px rgba(255,180,120,0.45))', animation: `splashmote ${p.dur}s cubic-bezier(0.45,0,0.55,1) infinite, phrasebreathe ${p.dur*0.6}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${p.del}s`, pointerEvents: 'none', zIndex: 0 }}>✿</div>
+      ))}
+
+      <div onClick={(e) => e.stopPropagation()} style={{
+        position: 'relative',
+        maxWidth: 460, width: '100%',
+        background: 'linear-gradient(135deg, rgba(28,22,36,0.88) 0%, rgba(38,28,42,0.82) 50%, rgba(28,22,36,0.88) 100%)',
+        border: '1px solid rgba(255,180,140,0.32)',
+        borderRadius: 22,
+        padding: '34px 24px 28px',
+        backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)',
+        boxShadow: '0 14px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 36px rgba(255,180,140,0.10)',
+        animation: vis && !exiting ? 'modalEnter 0.6s cubic-bezier(0.34,1.56,0.64,1) both' : (exiting ? 'sheetExit 0.36s cubic-bezier(0.4,0,0.6,1) both' : 'none'),
+        zIndex: 1,
+      }}>
+        {/* Halo central */}
+        <div style={{ position: 'absolute', top: 22, left: '50%', transform: 'translateX(-50%)', width: 100, height: 100, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,180,140,0.30) 0%, transparent 70%)', animation: 'signaturePulse 8s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />
+
+        {/* Logo + titre */}
+        <div style={{ textAlign: 'center', marginBottom: 22, position: 'relative' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,200,170,0.92)', letterSpacing: '0.30em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>Tu n'es pas seul·e</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 26, color: 'rgba(255,255,255,0.96)', margin: '12px 0 8px', letterSpacing: '-0.02em', lineHeight: 1.25, textShadow: '0 0 24px rgba(255,180,140,0.35), 0 2px 12px rgba(0,0,0,0.5)' }}>Reste avec toi.<br />Reste avec nous.</h2>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(255,255,255,0.74)', margin: '10px auto 0', maxWidth: 360, lineHeight: 1.6, letterSpacing: '-0.005em' }}>Même dans les moments les plus sombres, la vie peut doucement changer. Tu mérites d'être entendu·e, aidé·e, aimé·e.</p>
+        </div>
+
+        {/* Ressources d'aide officielles */}
+        <div style={{ marginBottom: 22 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,200,170,0.78)', letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center' }}>Numéros qui répondent maintenant</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+            {RESOURCES.map((r, i) => (
+              <a key={i} href={`tel:${r.number.replace(/\s/g,'')}`} onClick={() => haptic([8,40,8])} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+                padding: '13px 16px',
+                background: i === 0 ? 'rgba(255,140,100,0.16)' : 'rgba(255,255,255,0.05)',
+                border: `1px solid ${i === 0 ? 'rgba(255,160,120,0.55)' : 'rgba(255,200,170,0.22)'}`,
+                borderRadius: 12,
+                textDecoration: 'none',
+                color: 'inherit',
+                animation: `fadeIn 0.5s cubic-bezier(0,0,0.2,1) ${0.1 + i * 0.05}s both`,
+                boxShadow: i === 0 ? '0 4px 16px rgba(255,140,100,0.20)' : 'none',
+              }}>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 14, color: 'rgba(255,255,255,0.94)', margin: 0, letterSpacing: '-0.005em' }}>{r.label}</p>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.52)', margin: '2px 0 0', letterSpacing: '0.02em', fontStyle: 'italic' }}>{r.desc}</p>
+                </div>
+                <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 500, fontSize: 14, color: i === 0 ? 'rgba(255,180,140,1)' : 'rgba(255,200,170,0.92)', letterSpacing: '0.04em', flexShrink: 0, textShadow: i === 0 ? '0 0 12px rgba(255,160,120,0.6)' : 'none' }}>{r.number}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Ancres personnelles */}
+        <div style={{ borderTop: '1px solid rgba(255,200,170,0.18)', paddingTop: 22, marginBottom: 22 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,200,170,0.78)', letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center' }}>Tes ancres à toi</p>
+          {[
+            { key: 'proche',   value: proche,   label: 'Un·e proche de confiance', placeholder: 'Un prénom, un numéro qui te tient...' },
+            { key: 'mot',      value: mot,      label: 'Un mot qui t\'apaise',     placeholder: 'Une phrase, un mantra à toi...' },
+            { key: 'souvenir', value: souvenir, label: 'Un souvenir lumineux',     placeholder: 'Un lieu, un moment, un visage...' },
+          ].map((anchor, i) => (
+            <div key={anchor.key} onClick={() => startEdit(anchor.key, anchor.value)} style={{
+              padding: '12px 14px',
+              background: anchor.value ? 'rgba(255,200,170,0.08)' : 'rgba(255,255,255,0.03)',
+              border: `1px dashed ${anchor.value ? 'rgba(255,200,170,0.36)' : 'rgba(255,200,170,0.20)'}`,
+              borderRadius: 12,
+              marginBottom: 9,
+              cursor: 'pointer',
+              animation: `fadeIn 0.6s cubic-bezier(0,0,0.2,1) ${0.4 + i * 0.08}s both`,
+            }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,200,170,0.75)', letterSpacing: '0.16em', textTransform: 'uppercase', margin: '0 0 4px' }}>{anchor.label}</p>
+              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: anchor.value ? 'normal' : 'italic', fontSize: 14, color: anchor.value ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.40)', margin: 0, lineHeight: 1.45, letterSpacing: '-0.005em' }}>
+                {anchor.value || anchor.placeholder}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Disclaimer + fermeture */}
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.40)', textAlign: 'center', margin: '0 0 18px', lineHeight: 1.65, fontStyle: 'italic', letterSpacing: '0.02em' }}>
+          NÉYA ne remplace personne. Ces ressources sont conçues pour t'accompagner vers une aide réelle.
+        </p>
+
+        <button data-press="true" onClick={handleClose} style={{
+          width: '100%',
+          padding: '14px 0',
+          background: 'rgba(255,200,170,0.14)',
+          border: '1px solid rgba(255,200,170,0.40)',
+          borderRadius: 100,
+          color: 'rgba(255,230,210,0.94)',
+          fontFamily: 'Sora, sans-serif',
+          fontWeight: 300,
+          fontSize: 12,
+          letterSpacing: '0.20em',
+          textTransform: 'uppercase',
+          cursor: 'pointer',
+          minHeight: 48,
+          boxShadow: '0 4px 18px rgba(255,180,140,0.14)',
+        }}>Refermer doucement</button>
+      </div>
+
+      {/* Edit overlay */}
+      {editField && (
+        <div onClick={() => setEditField(null)} style={{ position: 'fixed', inset: 0, zIndex: 2100, background: 'rgba(0,0,0,0.66)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.3s cubic-bezier(0,0,0.2,1)' }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 380, background: 'rgba(28,22,36,0.96)', border: '1px solid rgba(255,200,170,0.42)', borderRadius: 18, padding: '24px 20px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)' }}>
+            <textarea autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} maxLength={140} placeholder="Écris ici..." style={{ width: '100%', minHeight: 80, padding: '12px 14px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,200,170,0.32)', borderRadius: 12, color: 'rgba(255,255,255,0.94)', fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 300, lineHeight: 1.5, letterSpacing: '-0.005em', resize: 'none', outline: 'none' }} />
+            <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+              <button data-press="true" onClick={() => setEditField(null)} style={{ flex: 1, padding: '12px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 100, color: 'rgba(255,255,255,0.62)', fontFamily: 'Sora, sans-serif', fontSize: 11.5, letterSpacing: '0.16em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 42 }}>Annuler</button>
+              <button data-press="true" onClick={saveEdit} style={{ flex: 1, padding: '12px 0', background: 'rgba(255,200,170,0.22)', border: '1px solid rgba(255,200,170,0.55)', borderRadius: 100, color: 'rgba(255,230,210,0.96)', fontFamily: 'Sora, sans-serif', fontSize: 11.5, letterSpacing: '0.16em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 42, boxShadow: '0 4px 14px rgba(255,180,140,0.18)' }}>Garder</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
