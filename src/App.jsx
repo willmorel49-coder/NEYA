@@ -4,7 +4,7 @@ import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete,
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
 import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory, setMoodQuick, getMoodQuickToday, getMoodQuickHistory, getMoodCombined, getMoodQuickStreak, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit, getBilanSoir, hasSeenBilanToday, markBilanSeen, getBilanSoirStreak, getBilanSemaine, hasSeenWeeklyBilan, markWeeklyBilanSeen, getWeeklyBilanCount } from './inner-world'
 import { getNextLetter, markLetterReceived, sendLetter, getReceivedLetters, getSentLetters, getCollectiveCount, ARCHETYPE_PLURAL } from './community'
-import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, playOpen, playClose, initAudioPressFeedback } from './audio'
+import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, playOpen, playClose, initAudioPressFeedback, setAmbientTrack, stopAmbient, crossfadeAmbient, pickAmbientForContext, isAmbientEnabled, setAmbientEnabled } from './audio'
 import { tokens as T } from './design-tokens'
 
 const B = import.meta.env.BASE_URL
@@ -1609,7 +1609,7 @@ function QuizIntroScreen({ onStart }) {
             {showBtn && <div style={{ position: 'absolute', width: 130, height: 130, borderRadius: '50%', border: '1px solid rgba(99,102,241,0.08)', animation: 'pulsering 8s cubic-bezier(0.45,0,0.55,1) infinite 3.2s', opacity: 0 }} />}
             <div style={{ position: 'absolute', width: 100, height: 100, borderRadius: '50%', border: '1px solid rgba(99,102,241,0.12)', animation: 'pulsering 6.5s cubic-bezier(0.45,0,0.55,1) infinite 1.8s' }} />
             <div style={{ position: 'absolute', width: 72, height: 72, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)', animation: 'compassbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-            <div style={{ animation: showBtn ? 'compassbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 10s ease-in-out 4s infinite' : 'compassbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite', display: 'flex', filter: showBtn ? 'drop-shadow(0 0 14px rgba(99,102,241,0.55)) drop-shadow(0 0 28px rgba(99,102,241,0.22))' : 'none', transition: 'filter 1.4s ease' }}>
+            <div style={{ animation: showBtn ? 'compassbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite' : 'compassbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite', display: 'flex', filter: showBtn ? 'drop-shadow(0 0 14px rgba(99,102,241,0.55)) drop-shadow(0 0 28px rgba(99,102,241,0.22))' : 'none', transition: 'filter 1.4s ease' }}>
               <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
                 <circle cx="24" cy="24" r="21" stroke="rgba(255,255,255,0.50)" strokeWidth="1.5"/>
                 <path d="M24 6v4M24 38v4M6 24h4M38 24h4" stroke="rgba(255,255,255,0.38)" strokeWidth="1.5" strokeLinecap="round"/>
@@ -1888,7 +1888,7 @@ function WorldRevealBridge({ onContinue }) {
     <BgScreen bg="bg-foret.avif" overlay="rgba(2,5,14,0.74)" breathe>
       {/* Golden star at top */}
       <div style={{ position: 'absolute', top: '9%', left: '50%', transform: 'translateX(-50%)', zIndex: 3, opacity: vis ? 1 : 0, transition: 'opacity 1.6s ease' }}>
-        <svg width={48} height={48} viewBox="0 0 48 48" fill="none" style={{ animation: 'seedPulse 3.2s cubic-bezier(0.45,0,0.55,1) infinite', filter: 'drop-shadow(0 0 14px rgba(245,195,60,0.85)) drop-shadow(0 0 32px rgba(245,195,60,0.4))' }}>
+        <svg width={48} height={48} viewBox="0 0 48 48" fill="none" style={{ animation: 'none', filter: 'drop-shadow(0 0 14px rgba(245,195,60,0.85)) drop-shadow(0 0 32px rgba(245,195,60,0.4))' }}>
           <path d="M24 4 L26.8 19 L42 24 L26.8 29 L24 44 L21.2 29 L6 24 L21.2 19Z" fill="rgba(248,200,70,0.96)"/>
         </svg>
       </div>
@@ -2151,7 +2151,7 @@ function PatronusReveal({ arch, archetypeKey, onDone }) {
       {step >= 6 && (
         <button
           onClick={() => { haptic([20, 60, 20]); onDone() }}
-          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: `rgba(${arch.rgb},0.88)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', zIndex: 12, animation: `fadeIn 1.0s ease forwards, milestoneGlow 4.5s ease-in-out 1.2s infinite`, boxShadow: `0 6px 36px ${arch.color}66, 0 0 60px ${arch.color}33`, textShadow: `0 0 16px ${arch.color}44` }}
+          style={{ position: 'absolute', bottom: '9%', left: '7%', right: '7%', padding: '17px 0', background: `rgba(${arch.rgb},0.88)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.22em', color: 'white', textTransform: 'uppercase', zIndex: 12, animation: `fadeIn 1.0s ease forwards`, boxShadow: `0 6px 36px ${arch.color}66, 0 0 60px ${arch.color}33`, textShadow: `0 0 16px ${arch.color}44` }}
         >
           {{ resilience: 'Voir mon profil · feu', presence: 'Voir mon profil · présence', sagesse: 'Voir mon profil · sagesse', lumiere: 'Voir mon profil · lumière' }[archetypeKey] || 'Découvrir mon profil'}
         </button>
@@ -2380,7 +2380,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
     const t7 = setTimeout(() => setShowEncoreIci(true), 18000)
     const t8 = setTimeout(() => { setShowDeep(true); haptic([1, 100, 1]) }, 90000)
     const tq = setTimeout(() => { sessionQualified.current = true }, 18000)
-    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); clearTimeout(t7); clearTimeout(t8); clearTimeout(tq) }
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); clearTimeout(t6); clearTimeout(t7); clearTimeout(t8); clearTimeout(tq); try { stopAmbient() } catch {} }
   }, [])
 
   return (
@@ -2395,7 +2395,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>Ton avancée</p>
               <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 20, color: 'white', margin: 0, animation: 'milestoneGlow 3s cubic-bezier(0.45,0,0.55,1) infinite' }}>{routinesDoneToday}/{arch.routines.length} routine{routinesDoneToday !== 1 ? 's' : ''}</p>
               <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: quetesDoneNow > 0 ? `${arch.color}88` : `rgba(255,255,255,0.55)`, margin: 0, transition: 'color 0.5s ease', animation: 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite' }}>{quetesDoneNow}/{arch.quetes.length} quête{quetesDoneNow !== 1 ? 's' : ''} accomplie{quetesDoneNow !== 1 ? 's' : ''}</p>
-              {streak >= 2 && <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: arch.color, margin: 0, opacity: 0.9, animation: 'chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.5s infinite', textShadow: `0 0 12px ${arch.color}66` }}>{streak} jours d'affilée ✦</p>}
+              {streak >= 2 && <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: arch.color, margin: 0, opacity: 0.9, animation: 'chipPop 480ms cubic-bezier(0.34,1.56,0.64,1) both', textShadow: `0 0 12px ${arch.color}66` }}>{streak} jours d'affilée ✦</p>}
               <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `${arch.color}88`, margin: 0, fontStyle: 'italic', animation: 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 12px ${arch.color}33` }}>{arch.worldInsight}</p>
             </div>
           </div>
@@ -2461,12 +2461,12 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
           {{ resilience: 'Espace de feu', presence: 'Espace de présence', sagesse: 'Espace de silence', lumiere: 'Espace de lumière' }[archetypeKey] || 'Espace de présence'}
         </p>
         <div style={{ position: 'relative', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(255,255,255,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340, animation: typingDone ? 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>
-          {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} onDone={() => setTypingDone(true)} cursorColor={arch.color} />}
+          {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} onDone={() => { setTypingDone(true); try { crossfadeAmbient('monCoeur', 6) } catch {} }} cursorColor={arch.color} />}
           {typingDone && [0,1,2,3].map(j => (
             <div key={j} style={{ position: 'absolute', bottom: '100%', left: `${22 + j * 18}%`, width: 4, height: 4, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.1 + j * 0.22}s ease-out ${j * 0.12}s both`, pointerEvents: 'none', boxShadow: `0 0 6px ${arch.color}bb` }} />
           ))}
         </div>
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, fontStyle: 'italic', color: 'white', margin: 0, letterSpacing: '0.06em', textShadow: typingDone ? `0 0 28px ${arch.color}44` : `0 0 20px ${arch.color}2a`, transition: 'text-shadow 2.5s ease', animation: showText ? (typingDone ? 'fadeIn 1.5s ease 3s both, solbreathe 22s cubic-bezier(0.45,0,0.55,1) infinite 4.5s, milestoneGlow 10s ease-in-out 8s infinite' : 'fadeIn 1.5s ease 3s both, solbreathe 22s cubic-bezier(0.45,0,0.55,1) infinite 4.5s') : 'none' }}>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, fontStyle: 'italic', color: 'white', margin: 0, letterSpacing: '0.06em', textShadow: typingDone ? `0 0 28px ${arch.color}44` : `0 0 20px ${arch.color}2a`, transition: 'text-shadow 2.5s ease', animation: showText ? (typingDone ? 'fadeIn 1.5s ease 3s both, solbreathe 22s cubic-bezier(0.45,0,0.55,1) infinite 4.5s' : 'fadeIn 1.5s ease 3s both, solbreathe 22s cubic-bezier(0.45,0,0.55,1) infinite 4.5s') : 'none' }}>
           Tu n'es pas seul·e.
         </p>
         {showSecond && (
@@ -2497,7 +2497,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
             </p>
           </>
         )}
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}55`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both, solbreathe 22s ease-in-out 5s infinite, milestoneGlow 8s ease-in-out 6s infinite', textShadow: `0 0 16px ${arch.color}33` }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}55`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both, solbreathe 22s ease-in-out 5s infinite', textShadow: `0 0 16px ${arch.color}33` }}>
           {(() => {
             const h = new Date().getHours()
             const night = { resilience: 'que le feu garde ta nuit', presence: 'bonne nuit, l\'eau veille', sagesse: 'la brume t\'enveloppe cette nuit', lumiere: 'que ta lumière guide ta nuit' }[archetypeKey] || 'bonne nuit'
@@ -2918,6 +2918,12 @@ function CoconScreen({ archetypeKey, onClose }) {
         setTimeout(() => setShowVisitor(null), 6400)
       }
     } catch {}
+    // Ambient MP3 — Cocon sanctuaire (silencieuse nuit / surMaPlanete jour)
+    try {
+      const track = pickAmbientForContext({ screen: 'cocon', archetype: archetypeKey })
+      if (track) setAmbientTrack(track)
+    } catch {}
+    return () => { try { stopAmbient() } catch {} }
   }, [])
   const coconName = (() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })()
 
@@ -3198,7 +3204,7 @@ function CoconScreen({ archetypeKey, onClose }) {
             const current = item.by === 'streak' ? streak : totalDays
             const unlocked = current >= item.unlockAt
             return (
-              <div onClick={() => togglePlaced(item.id, unlocked)} style={{ position: 'relative', marginTop: 12, background: unlocked ? `linear-gradient(135deg, rgba(${arch.rgb},0.14) 0%, rgba(255,255,255,0.04) 50%, rgba(${arch.rgb},0.10) 100%)` : 'rgba(255,255,255,0.04)', border: `1px solid ${unlocked ? (placed.includes(item.id) ? arch.color + '88' : arch.color + '66') : 'rgba(255,255,255,0.09)'}`, cursor: unlocked ? 'pointer' : 'default', borderRadius: 14, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 18, opacity: unlocked ? 1 : 0.55, boxShadow: unlocked ? `0 0 40px rgba(${arch.rgb},0.22), inset 0 0 20px rgba(${arch.rgb},0.06)` : 'none', animation: unlocked ? 'auroraHue 8s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 360ms cubic-bezier(0,0,0.2,1), color 240ms cubic-bezier(0.4,0,0.2,1)' }}>
+              <div onClick={() => togglePlaced(item.id, unlocked)} style={{ position: 'relative', marginTop: 12, background: unlocked ? `linear-gradient(135deg, rgba(${arch.rgb},0.14) 0%, rgba(255,255,255,0.04) 50%, rgba(${arch.rgb},0.10) 100%)` : 'rgba(255,255,255,0.04)', border: `1px solid ${unlocked ? (placed.includes(item.id) ? arch.color + '88' : arch.color + '66') : 'rgba(255,255,255,0.09)'}`, cursor: unlocked ? 'pointer' : 'default', borderRadius: 14, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 18, opacity: unlocked ? 1 : 0.55, boxShadow: unlocked ? `0 0 40px rgba(${arch.rgb},0.22), inset 0 0 20px rgba(${arch.rgb},0.06)` : 'none', animation: unlocked ? 'auroraHue 8s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 360ms cubic-bezier(0,0,0.2,1), color 240ms cubic-bezier(0.4,0,0.2,1)' }}>
                 {unlocked && (
                   <button data-press="true" onClick={(e) => { e.stopPropagation(); haptic(6); try { playOpen() } catch {}; setItemInfo(item) }} aria-label={`Sens de ${item.label}`} style={{ position: 'absolute', top: 10, right: 10, width: 24, height: 24, borderRadius: '50%', background: 'rgba(0,0,0,0.34)', border: `1px solid rgba(${arch.rgb},0.46)`, color: `rgba(${arch.rgb},0.95)`, fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 300, lineHeight: 1, cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)', boxShadow: `0 0 10px rgba(${arch.rgb},0.22)` }}>ⓘ</button>
                 )}
@@ -3349,7 +3355,7 @@ function WorldUnlockModal({ worldKey, onClose }) {
           </div>
 
           {/* CTA (phase 2+) */}
-          <button onClick={onClose} data-press="true" style={{ opacity: phase >= 2 ? 1 : 0, transform: phase >= 2 ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 480ms cubic-bezier(0,0,0.2,1), transform 560ms cubic-bezier(0.22,1,0.36,1)', background: `rgba(${w.rgb},0.88)`, border: 'none', borderRadius: 100, padding: '16px 40px', color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 13, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: `0 6px 36px rgba(${w.rgb},0.44), 0 2px 12px rgba(0,0,0,0.3)`, animation: phase >= 2 ? 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.8s infinite' : 'none', pointerEvents: phase >= 2 ? 'auto' : 'none' }}>
+          <button onClick={onClose} data-press="true" style={{ opacity: phase >= 2 ? 1 : 0, transform: phase >= 2 ? 'translateY(0)' : 'translateY(12px)', transition: 'opacity 480ms cubic-bezier(0,0,0.2,1), transform 560ms cubic-bezier(0.22,1,0.36,1)', background: `rgba(${w.rgb},0.88)`, border: 'none', borderRadius: 100, padding: '16px 40px', color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 13, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: `0 6px 36px rgba(${w.rgb},0.44), 0 2px 12px rgba(0,0,0,0.3)`, animation: phase >= 2 ? 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both' : 'none', pointerEvents: phase >= 2 ? 'auto' : 'none' }}>
             Explorer ce monde →
           </button>
         </div>
@@ -3397,7 +3403,7 @@ function WorldCard({ worldKey, archetypeKey, isUnlocked, isHome, daysToUnlock, o
           <>
             {isHome && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <div style={{ width: 6, height: 6, borderRadius: '50%', background: w.color, boxShadow: `0 0 8px ${w.color}`, animation: 'seedPulse 3s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: w.color, boxShadow: `0 0 8px ${w.color}`, animation: 'none' }} />
                 <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: w.color, letterSpacing: '0.14em', textTransform: 'uppercase', animation: 'milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: '0 1px 8px rgba(0,0,0,0.55)' }}>Ton monde natal</span>
               </div>
             )}
@@ -3601,7 +3607,7 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
             {active && <div style={{ position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${color.length > 7 ? '99,102,241' : color.replace('#','').match(/.{2}/g).map(x=>parseInt(x,16)).join(',')},0.14) 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 4.5s cubic-bezier(0.45,0,0.55,1) infinite' }} />}
             <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.25s ease', animation: active ? 'animalbreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>
               <t.Icon active={active} color={color} />
-              {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85, animation: 'seedPulse 3s cubic-bezier(0.45,0,0.55,1) infinite' }} />}
+              {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85, animation: 'none' }} />}
             </span>
             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, letterSpacing: '0.09em', color: active ? color : 'rgba(255,255,255,0.42)', transition: 'color 0.25s ease', textTransform: 'uppercase', animation: active ? 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{t.label}</span>
             <div style={{ width: active ? 26 : 3, height: active ? 2 : 1.5, borderRadius: 1, background: active ? `linear-gradient(90deg, ${color}88, ${color}, ${color}88)` : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 10px ${color}, 0 0 20px ${color}88, 0 0 35px ${color}44` : 'none', animation: active ? 'worldglow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }} />
@@ -3705,7 +3711,12 @@ function BreathingModal({ archetypeKey, onClose }) {
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 30)
     try { setSessionCount(parseInt(localStorage.getItem('neya_breath_count') || '0', 10)) } catch {}
-    return () => clearTimeout(t)
+    // Ambient MP3 — souffleCourt pour resilience, entreTension pour les autres
+    try {
+      const track = pickAmbientForContext({ screen: 'breathing', archetype: archetypeKey })
+      if (track) setAmbientTrack(track)
+    } catch {}
+    return () => { clearTimeout(t); try { stopAmbient() } catch {} }
   }, [])
 
   useEffect(() => {
@@ -3913,7 +3924,7 @@ function BreathingModal({ archetypeKey, onClose }) {
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'center', animation: 'fadeIn 1s ease 0.3s both' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '9px 20px', animation: 'chipPop 520ms cubic-bezier(0.34,1.56,0.64,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.5s infinite', boxShadow: `0 0 24px rgba(${arch.rgb},0.25)` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '9px 20px', animation: 'chipPop 520ms cubic-bezier(0.34,1.56,0.64,1) both', boxShadow: `0 0 24px rgba(${arch.rgb},0.25)` }}>
             <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 13, color: arch.color, letterSpacing: '-0.01em', textShadow: `0 0 14px ${arch.color}88` }}>{`+${tech.xp}`}</span>
             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}cc`, letterSpacing: '0.18em', textTransform: 'uppercase' }}>{`XP · ${sessionCount}${sessionCount === 1 ? 're' : 'e'} session`}</span>
           </div>
@@ -3945,6 +3956,7 @@ function PersonalizationModal({ archetypeKey, onClose }) {
   const [mantra, setMantra] = useState(() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })
   const [coconName, setCoconName] = useState(() => { try { return localStorage.getItem('neya_cocon_name') || '' } catch { return '' } })
   const [audioOn, setAudioOn] = useState(() => getAudioEnabled())
+  const [ambientOn, setAmbientOn] = useState(() => isAmbientEnabled())
   const [vis, setVis] = useState(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 40); return () => clearTimeout(t) }, [])
 
@@ -3997,6 +4009,17 @@ function PersonalizationModal({ archetypeKey, onClose }) {
             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.78)', fontStyle: 'italic', lineHeight: 1.4 }}>Toucher, souvenir, souffle. Subtil, jamais envahissant.</span>
             <button onClick={() => { const next = !audioOn; setAudioOn(next); setAudioEnabled(next); if (next) { try { playConfirm() } catch {} } }} aria-label={audioOn ? 'Désactiver les sons' : 'Activer les sons'} role="switch" aria-checked={audioOn} style={{ width: 44, height: 26, borderRadius: 100, background: audioOn ? `rgba(${arch.rgb},0.85)` : 'rgba(255,255,255,0.10)', border: `1px solid ${audioOn ? arch.color + 'aa' : 'rgba(255,255,255,0.15)'}`, position: 'relative', cursor: 'pointer', flexShrink: 0, marginLeft: 14, transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), border-color 240ms cubic-bezier(0.4,0,0.2,1)', boxShadow: audioOn ? `0 0 14px rgba(${arch.rgb},0.40)` : 'none' }}>
               <div style={{ position: 'absolute', top: 2, left: audioOn ? 20 : 2, width: 20, height: 20, borderRadius: '50%', background: 'white', boxShadow: '0 2px 6px rgba(0,0,0,0.3)', transition: 'left 280ms cubic-bezier(0.34,1.56,0.64,1)' }} />
+            </button>
+          </div>
+        </div>
+
+        {/* Musique d'ambiance toggle (tracks émotionnels) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+          <label style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.58)`, letterSpacing: '0.20em', textTransform: 'uppercase' }}>Musique d'ambiance <span style={{ opacity: 0.40, fontSize: 8.5 }}>· silencieux par défaut</span></label>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(${arch.rgb},0.28)`, borderRadius: 12, padding: '14px 16px' }}>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.78)', fontStyle: 'italic', lineHeight: 1.4 }}>Textures sonores composées. Très basses, contextuelles.</span>
+            <button onClick={() => { const next = !ambientOn; setAmbientOn(next); setAmbientEnabled(next); if (next) { try { playConfirm() } catch {} } }} aria-label={ambientOn ? "Désactiver l'ambiance" : "Activer l'ambiance"} role="switch" aria-checked={ambientOn} style={{ width: 44, height: 26, borderRadius: 100, background: ambientOn ? `rgba(${arch.rgb},0.85)` : 'rgba(255,255,255,0.10)', border: `1px solid ${ambientOn ? arch.color + 'aa' : 'rgba(255,255,255,0.15)'}`, position: 'relative', cursor: 'pointer', flexShrink: 0, marginLeft: 14, transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), border-color 240ms cubic-bezier(0.4,0,0.2,1)', boxShadow: ambientOn ? `0 0 14px rgba(${arch.rgb},0.40)` : 'none' }}>
+              <div style={{ position: 'absolute', top: 2, left: ambientOn ? 20 : 2, width: 20, height: 20, borderRadius: '50%', background: 'white', boxShadow: '0 2px 6px rgba(0,0,0,0.3)', transition: 'left 280ms cubic-bezier(0.34,1.56,0.64,1)' }} />
             </button>
           </div>
         </div>
@@ -4322,7 +4345,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
             {isMilestone && [0,1,2,3,4].map(i => (
               <div key={i} style={{ position: 'absolute', bottom: '100%', left: `${18 + i * 14}%`, width: 4, height: 4, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.4 + i * 0.3}s ease-out ${0.8 + i * 0.18}s both` }} />
             ))}
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: isMilestone ? 400 : 300, fontSize: isMilestone ? 12.5 : 11.5, color: isMilestone ? arch.color : 'rgba(255,255,255,0.3)', letterSpacing: isMilestone ? '0.04em' : '0.05em', margin: '4px 0 0', fontStyle: 'italic', animation: isMilestone ? 'fadeIn 1.2s ease both, milestoneGlow 3.8s ease-in-out 1.4s infinite' : 'phrasebreathe 34s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: isMilestone ? `0 0 18px ${arch.color}55` : '0 0 14px rgba(255,255,255,0.12)', transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 360ms cubic-bezier(0,0,0.2,1), color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{msg}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: isMilestone ? 400 : 300, fontSize: isMilestone ? 12.5 : 11.5, color: isMilestone ? arch.color : 'rgba(255,255,255,0.3)', letterSpacing: isMilestone ? '0.04em' : '0.05em', margin: '4px 0 0', fontStyle: 'italic', animation: isMilestone ? 'fadeIn 1.2s ease both' : 'phrasebreathe 34s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: isMilestone ? `0 0 18px ${arch.color}55` : '0 0 14px rgba(255,255,255,0.12)', transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 360ms cubic-bezier(0,0,0.2,1), color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{msg}</p>
           </div>
         ) : (
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `${arch.color}33`, letterSpacing: '0.12em', margin: '4px 0 0', animation: jourComplète ? 'seedPulse 4s cubic-bezier(0.45,0,0.55,1) infinite' : 'seedPulse 4s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 10px ${arch.color}22` }}>{{ resilience: 'touche · entre dans le feu', presence: 'touche · entre en présence', sagesse: 'touche · entre dans la brume', lumiere: 'touche · entre dans ta lumière' }[archetypeKey] || 'touche · instant de présence'}</p>
@@ -4339,7 +4362,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.50)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: jourComplète ? 'phrasebreathe 40s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 40s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: jourComplète ? `0 0 12px ${arch.color}33` : `0 0 8px ${arch.color}22` }}>
             {{ resilience: 'Intention de feu', presence: 'Intention de présence', sagesse: 'Intention de sagesse', lumiere: 'Intention de lumière' }[archetypeKey] || 'Intention du jour'}
-            {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9, animation: 'seedPulse 3s cubic-bezier(0.45,0,0.55,1) infinite' }}>◎</span>}
+            {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9, animation: 'none' }}>◎</span>}
           </p>
           <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, display: 'inline-block', transform: cycleSpin ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.38s ease, color 0.2s ease', animation: jourComplète ? 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 30s cubic-bezier(0.45,0,0.55,1) infinite' }} title="Autre intention">↻</button>
         </div>
@@ -4640,7 +4663,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {/* ── Journée complète ── */}
       {jourComplète && (
-        <div style={{ position: 'relative', background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}44`, borderRadius: 14, padding: '18px 20px', textAlign: 'center', animation: 'fadeIn 0.9s ease both, milestoneGlow 6s ease-in-out 1s infinite', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 0 28px rgba(${arch.rgb},0.14), 0 4px 16px rgba(0,0,0,0.2)`, display: 'flex', flexDirection: 'column', gap: 12, overflow: 'hidden' }}>
+        <div style={{ position: 'relative', background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}44`, borderRadius: 14, padding: '18px 20px', textAlign: 'center', animation: 'fadeIn 0.9s ease both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 0 28px rgba(${arch.rgb},0.14), 0 4px 16px rgba(0,0,0,0.2)`, display: 'flex', flexDirection: 'column', gap: 12, overflow: 'hidden' }}>
           <div style={{ position: 'absolute', left: 0, top: '16%', bottom: '16%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}cc, transparent)`, borderRadius: '0 2px 2px 0', animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite' }} />
           <div>
             <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: arch.color, margin: '0 0 5px', textShadow: `0 0 18px ${arch.color}66`, letterSpacing: '0.03em', animation: 'milestoneGlow 4.2s cubic-bezier(0.45,0,0.55,1) infinite' }}>✦ Journée complète.</p>
@@ -4949,129 +4972,113 @@ const CAVA_PIECES = [
   { img: 'cava/shoot-dos.avif',         phrase: 'Ce que tu portes\nparle pour toi.' },
 ]
 
+// ─── ÇA VA? — REFONTE EDITORIALE COUTURE ────────────────────────────
+// Plus une boutique. Une galerie mode émotionnelle scroll-snap.
+// 6 tableaux pleine page : Cover · Manifeste · Tableau I · II · III × totem · Coda.
+// Palette propre : ivoire/ocre/pierre (abandon des tints archétype).
+// Anti-patterns retirés : grille e-commerce, CTA pill agressif, badges, gradient archétype.
+
+const CAVA_TABLEAUX = [
+  { img: 'cava/shoot-dos.avif',          phrase: 'On a fait du silence\nune étoffe.',                   roman: 'I',   pos: 'center' },
+  { img: 'cava/shoot-mains.avif',        phrase: 'Habiter son corps —\nc\'est déjà répondre.',          roman: 'II',  pos: 'center' },
+  { img: 'cava/shoot-citron.avif',       phrase: 'Le tissu se souvient\nde ce que la voix oublie.',    roman: 'III', pos: 'center 45%' },
+]
+
+function FadeOnScroll({ children }) {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    if (!ref.current) return
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setVisible(true); obs.disconnect() }
+    }, { threshold: 0.25 })
+    obs.observe(ref.current)
+    return () => obs.disconnect()
+  }, [])
+  return (
+    <div ref={ref} style={{ opacity: visible ? 1 : 0, transition: 'opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+      {children}
+    </div>
+  )
+}
+
 function BoutiqueScreen({ archetypeKey }) {
-  const arch = ARCHETYPES[archetypeKey]
+  // Note : archetypeKey reçu mais ignoré — ÇA VA? a son propre territoire chromatique
+  const CREAM = '#EFE9DC'
+  const OCRE  = '#A8593A'
+  const STONE = '#7A7568'
   const [vis, setVis] = useState(false)
-  const [activeIdx, setActiveIdx] = useState(null)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
 
-  const openShop = () => {
-    haptic([10, 40, 10])
-    window.open('https://cava-brand.com', '_blank', 'noopener')
-  }
-
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '0 0 100px', display: 'flex', flexDirection: 'column', opacity: vis ? 1 : 0, transition: 'opacity 0.7s ease' }}>
+    <div style={{
+      flex: 1,
+      overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      background: '#050810',
+      color: CREAM,
+      opacity: vis ? 1 : 0,
+      transition: 'opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+      scrollSnapType: 'y proximity',
+      paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 110px)',
+    }}>
 
-      {/* ── Hero ── */}
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', overflow: 'hidden', flexShrink: 0 }}>
-        <img src={`${B}cava/shoot-vraiçava.avif`} alt="ÇA VA?" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.18) 0%, rgba(5,8,16,0.0) 40%, rgba(5,8,16,0.72) 100%)' }} />
-        <div style={{ position: 'absolute', bottom: 28, left: 22, right: 22 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 8px', animation: 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 18px ${arch.color}88` }}>LA MARQUE</p>
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 42, color: 'white', margin: '0 0 10px', letterSpacing: '0.08em', lineHeight: 1, textShadow: '0 2px 40px rgba(0,0,0,0.6)' }}>ÇA VA?</h1>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.82)', margin: 0, lineHeight: 1.55, textShadow: '0 1px 20px rgba(0,0,0,0.5)', maxWidth: 260 }}>Des vêtements qui posent<br />la vraie question.</p>
-        </div>
-      </div>
+      {/* ─── 1 · COVER éditoriale plein écran ─── */}
+      <section style={{ position: 'relative', height: '92vh', scrollSnapAlign: 'start', overflow: 'hidden' }}>
+        <img src={`${B}cava/shoot-vraiçava.avif`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'brightness(0.86) contrast(1.04)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.12) 0%, transparent 35%, rgba(5,8,16,0.58) 100%)' }} />
+        {/* Wordmark bottom-left tiny */}
+        <p style={{ position: 'absolute', bottom: 28, left: 24, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 11, letterSpacing: '0.42em', color: CREAM, margin: 0, textShadow: '0 2px 14px rgba(0,0,0,0.65)' }}>ÇA VA ?</p>
+        {/* Year top-right */}
+        <span style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 20px)', right: 24, fontFamily: 'Inter, sans-serif', fontSize: 9.5, letterSpacing: '0.36em', color: `${CREAM}88`, textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>MMXXVI</span>
+        {/* Scroll indicator */}
+        <div style={{ position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)', width: 1, height: 40, background: `linear-gradient(180deg, ${CREAM}88, transparent)`, animation: 'worldglow 5s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+      </section>
 
-      {/* ── Manifeste ── */}
-      <div style={{ padding: '32px 24px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}44, transparent)`, animation: 'worldglow 12s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,0.92)', margin: 0, lineHeight: 1.65, animation: 'phrasebreathe 34s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 30px ${arch.color}22` }}>
-          "Ça va ?" — on le dit tous les jours,<br />mais on attend rarement la vraie réponse.
-        </p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.68)', margin: 0, lineHeight: 1.75, animation: 'phrasebreathe 42s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          ÇA VA? est une marque de streetwear émotionnel. Chaque pièce porte une phrase, une question, une vérité qu'on n'ose pas toujours dire à voix haute. Porter ÇA VA?, c'est choisir l'authenticité.
-        </p>
-        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}22, transparent)`, animation: 'worldglow 16s ease-in-out 4s infinite' }} />
-      </div>
-
-      {/* ── Graphisme signature ── */}
-      <div style={{ padding: '28px 24px 0', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-        <img src={`${B}cava/graph-masque.avif`} alt="" style={{ width: 90, height: 90, objectFit: 'contain', objectPosition: 'center', opacity: 0.88, flexShrink: 0, animation: 'animalfloat 22s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-        <div style={{ flex: 1, paddingTop: 8 }}>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: arch.color, letterSpacing: '0.06em', margin: '0 0 6px', animation: 'phrasebreathe 26s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 16px ${arch.color}66` }}>Et toi, ça va vraiment ?</p>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.60)', margin: 0, lineHeight: 1.7, animation: 'phrasebreathe 38s ease-in-out 2s infinite' }}>La question derrière le vêtement. Celle qui change tout quand elle est sincère.</p>
-        </div>
-      </div>
-
-      {/* ── Grille pièces ── */}
-      <div style={{ padding: '28px 20px 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 6px', animation: 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' }}>— Les pièces</p>
-
-        {/* Rangée 1 : grande + petite */}
-        <div style={{ display: 'flex', gap: 10, height: 280 }}>
-          <div onClick={() => setActiveIdx(activeIdx === 0 ? null : 0)} style={{ flex: 1.4, position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'pointer', border: activeIdx === 0 ? `1px solid ${arch.color}55` : '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.3s ease' }}>
-            <img src={`${B}${CAVA_PIECES[0].img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block', transition: 'transform 0.5s ease', transform: activeIdx === 0 ? 'scale(1.04)' : 'scale(1)' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 45%, rgba(5,8,16,0.88) 100%)' }} />
-            <p style={{ position: 'absolute', bottom: 14, left: 14, right: 14, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12.5, color: 'white', margin: 0, lineHeight: 1.45, textShadow: '0 1px 12px rgba(0,0,0,0.7)', whiteSpace: 'pre-line' }}>{CAVA_PIECES[0].phrase}</p>
+      {/* ─── 2 · MANIFESTE — silence textuel ─── */}
+      <FadeOnScroll>
+        <section style={{ minHeight: '75vh', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 36px', background: '#050810' }}>
+          <div style={{ maxWidth: 320, textAlign: 'center' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.32em', textTransform: 'uppercase', color: `${CREAM}66`, margin: '0 0 32px' }}>— Manifeste —</p>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, lineHeight: 1.7, color: CREAM, margin: 0, letterSpacing: '-0.005em' }}>
+              Ce que l'on porte<br />parle pour ce que l'on tait.
+            </p>
           </div>
-          <div onClick={() => setActiveIdx(activeIdx === 1 ? null : 1)} style={{ flex: 1, position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'pointer', border: activeIdx === 1 ? `1px solid ${arch.color}55` : '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.3s ease' }}>
-            <img src={`${B}${CAVA_PIECES[1].img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', transition: 'transform 0.5s ease', transform: activeIdx === 1 ? 'scale(1.04)' : 'scale(1)' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 40%, rgba(5,8,16,0.90) 100%)' }} />
-            <p style={{ position: 'absolute', bottom: 12, left: 12, right: 12, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 11.5, color: 'white', margin: 0, lineHeight: 1.4, textShadow: '0 1px 12px rgba(0,0,0,0.7)', whiteSpace: 'pre-line' }}>{CAVA_PIECES[1].phrase}</p>
+        </section>
+      </FadeOnScroll>
+
+      {/* ─── 3-5 · TABLEAUX I, II, III ─── */}
+      {CAVA_TABLEAUX.map((t, i) => (
+        <FadeOnScroll key={i}>
+          <section style={{ position: 'relative', height: '94vh', scrollSnapAlign: 'start', overflow: 'hidden', background: '#050810' }}>
+            <img src={`${B}${t.img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: t.pos, filter: 'brightness(0.92) contrast(1.02)', transition: 'opacity 1.8s cubic-bezier(0.16,1,0.3,1)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,8,16,0.18) 0%, transparent 45%, rgba(5,8,16,0.62) 100%)' }} />
+            {/* Numéro romain top-right */}
+            <span style={{ position: 'absolute', top: 32, right: 32, fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.42em', color: `${CREAM}55`, textShadow: '0 1px 8px rgba(0,0,0,0.65)' }}>{t.roman}</span>
+            {/* Phrase chuchotée bottom-left */}
+            <p style={{ position: 'absolute', bottom: 56, left: 28, maxWidth: 280, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 16, lineHeight: 1.65, letterSpacing: '-0.005em', color: CREAM, margin: 0, whiteSpace: 'pre-line', textShadow: '0 2px 14px rgba(0,0,0,0.55)' }}>{t.phrase}</p>
+            {/* Animal totem subtil sur Tableau III */}
+            {t.roman === 'III' && (
+              <img src={`${B}spirit-presence.avif`} alt="" style={{ position: 'absolute', right: 22, bottom: '38%', width: 78, height: 78, borderRadius: '50%', objectFit: 'cover', opacity: 0.42, filter: `drop-shadow(0 0 18px ${OCRE}66) brightness(1.05) saturate(1.05)`, animation: 'animalfloat 28s cubic-bezier(0.45,0,0.55,1) infinite', mixBlendMode: 'screen' }} />
+            )}
+          </section>
+        </FadeOnScroll>
+      ))}
+
+      {/* ─── 6 · CODA — citation + signature ─── */}
+      <FadeOnScroll>
+        <section style={{ minHeight: '72vh', padding: '88px 32px 60px', display: 'flex', flexDirection: 'column', gap: 48, alignItems: 'center', justifyContent: 'center', textAlign: 'center', background: '#050810' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.32em', textTransform: 'uppercase', color: `${CREAM}66`, margin: 0 }}>— Coda —</p>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 21, lineHeight: 1.7, color: CREAM, margin: 0, maxWidth: 320, letterSpacing: '-0.005em' }}>
+            « Un vrai "ça va"<br />peut tout changer. »
+          </p>
+          <div style={{ width: 36, height: 1, background: OCRE }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
+            <a href="https://cava-brand.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12, letterSpacing: '0.36em', color: CREAM, textDecoration: 'none', borderBottom: `1px solid ${CREAM}55`, paddingBottom: 6 }}>CAVA—BRAND.COM</a>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, letterSpacing: '0.38em', textTransform: 'uppercase', color: STONE, margin: 0 }}>ÇA VA ? — MMXXVI</p>
           </div>
-        </div>
-
-        {/* Rangée 2 : pleine largeur */}
-        <div onClick={() => setActiveIdx(activeIdx === 2 ? null : 2)} style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', height: 200, cursor: 'pointer', border: activeIdx === 2 ? `1px solid ${arch.color}55` : '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.3s ease' }}>
-          <img src={`${B}${CAVA_PIECES[2].img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%', display: 'block', transition: 'transform 0.5s ease', transform: activeIdx === 2 ? 'scale(1.03)' : 'scale(1)' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(5,8,16,0.0) 40%, rgba(5,8,16,0.80) 100%)' }} />
-          <p style={{ position: 'absolute', bottom: 20, right: 20, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: 'white', margin: 0, lineHeight: 1.5, textShadow: '0 1px 12px rgba(0,0,0,0.7)', textAlign: 'right', maxWidth: '55%', whiteSpace: 'pre-line' }}>{CAVA_PIECES[2].phrase}</p>
-        </div>
-
-        {/* Rangée 3 : deux égales */}
-        <div style={{ display: 'flex', gap: 10, height: 240 }}>
-          {[3, 4].map((idx) => (
-            <div key={idx} onClick={() => setActiveIdx(activeIdx === idx ? null : idx)} style={{ flex: 1, position: 'relative', borderRadius: 14, overflow: 'hidden', cursor: 'pointer', border: activeIdx === idx ? `1px solid ${arch.color}55` : '1px solid rgba(255,255,255,0.07)', transition: 'border-color 0.3s ease' }}>
-              <img src={`${B}${CAVA_PIECES[idx].img}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', transition: 'transform 0.5s ease', transform: activeIdx === idx ? 'scale(1.04)' : 'scale(1)' }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 40%, rgba(5,8,16,0.92) 100%)' }} />
-              <p style={{ position: 'absolute', bottom: 12, left: 12, right: 12, fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 11, color: 'white', margin: 0, lineHeight: 1.4, textShadow: '0 1px 10px rgba(0,0,0,0.8)', whiteSpace: 'pre-line' }}>{CAVA_PIECES[idx].phrase}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Citation + graphisme ── */}
-      <div style={{ padding: '32px 24px 0', display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          <img src={`${B}cava/graph-equilibre.avif`} alt="" style={{ width: 72, height: 72, objectFit: 'contain', opacity: 0.80, flexShrink: 0, animation: 'animalfloat 28s ease-in-out 4s infinite' }} />
-          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${arch.color}33, transparent)`, animation: 'worldglow 14s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-        </div>
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 20, color: 'rgba(255,255,255,0.88)', margin: 0, lineHeight: 1.55, animation: 'phrasebreathe 40s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 40px ${arch.color}18` }}>
-          "Un vrai 'ça va'<br />peut tout changer."
-        </p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}88`, letterSpacing: '0.18em', margin: 0, textTransform: 'uppercase', animation: 'phrasebreathe 28s ease-in-out 1s infinite' }}>— ÇA VA? · Collection 2026</p>
-      </div>
-
-      {/* ── Photo couple ── */}
-      <div style={{ padding: '24px 20px 0' }}>
-        <div style={{ position: 'relative', borderRadius: 18, overflow: 'hidden', aspectRatio: '4/3', border: `1px solid ${arch.color}22` }}>
-          <img src={`${B}cava/shoot-couple.avif`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
-          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, transparent 55%, rgba(5,8,16,0.85) 100%)` }} />
-          <div style={{ position: 'absolute', bottom: 20, left: 22, right: 22 }}>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: arch.color, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 5px', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite' }}>Unisexe · Capsule 2026</p>
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.90)', margin: 0, lineHeight: 1.4 }}>Pour ceux qui portent leurs émotions à fleur de peau.</p>
-          </div>
-        </div>
-      </div>
-
-      {/* ── CTA ── */}
-      <div style={{ padding: '32px 22px 0', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
-        <img src={`${B}cava/graph-visages.avif`} alt="" style={{ width: 88, height: 88, objectFit: 'contain', opacity: 0.72, animation: 'animalfloat 20s ease-in-out 2s infinite' }} />
-        <button data-press="true" onClick={openShop} style={{ width: '100%', padding: '17px 0', background: `linear-gradient(135deg, ${arch.color}, ${arch.color}cc)`, border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 13, fontWeight: 500, letterSpacing: '0.22em', color: '#050810', textTransform: 'uppercase', boxShadow: `0 6px 32px rgba(${arch.rgb},0.45), 0 0 0 1px ${arch.color}44`, animation: 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          Découvrir ÇA VA?
-        </button>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.28)', margin: 0, textAlign: 'center', letterSpacing: '0.04em', lineHeight: 1.6 }}>
-          cava-brand.com
-        </p>
-      </div>
-
-      {/* ── Footer ── */}
-      <div style={{ padding: '28px 24px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}22, transparent)` }} />
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `${arch.color}44`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 30s cubic-bezier(0.45,0,0.55,1) infinite' }}>ÇA VA? × NÉYA · 2026</p>
-      </div>
+        </section>
+      </FadeOnScroll>
 
     </div>
   )
@@ -5562,7 +5569,7 @@ function ReparationCoconModal({ archetypeKey, onClose }) {
           letterSpacing: '0.22em', textTransform: 'uppercase',
           cursor: 'pointer',
           boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`,
-          animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.8s infinite',
+          animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both',
           minHeight: 52, zIndex: 30,
           textShadow: '0 0 14px rgba(255,255,255,0.35)',
         }}>Continuer ✦</button>
@@ -5813,7 +5820,7 @@ function ConcentrationZenModal({ archetypeKey, onClose }) {
             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 16, color: `${arch.color}cc` }}>%</span>
           </div>
         </div>
-        <button data-press="true" onClick={close} style={{ width: '100%', padding: '17px 0', background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.22em', cursor: 'pointer', textTransform: 'uppercase', boxShadow: `0 6px 36px rgba(${arch.rgb},0.42), 0 0 60px rgba(${arch.rgb},0.18)`, animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.8s infinite', minHeight: 54, textShadow: '0 0 14px rgba(255,255,255,0.35)' }}>Continuer ✦</button>
+        <button data-press="true" onClick={close} style={{ width: '100%', padding: '17px 0', background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.22em', cursor: 'pointer', textTransform: 'uppercase', boxShadow: `0 6px 36px rgba(${arch.rgb},0.42), 0 0 60px rgba(${arch.rgb},0.18)`, animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both', minHeight: 54, textShadow: '0 0 14px rgba(255,255,255,0.35)' }}>Continuer ✦</button>
       </div>
     </div>
   )
@@ -5977,7 +5984,7 @@ function ApaisementSensorielModal({ archetypeKey, onClose }) {
           letterSpacing: '0.22em', textTransform: 'uppercase',
           cursor: 'pointer',
           boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`,
-          animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.8s infinite',
+          animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both',
           minHeight: 52, zIndex: 5,
           textShadow: '0 0 14px rgba(255,255,255,0.35)',
         }}>
@@ -6151,7 +6158,7 @@ function LiberationPenseesModal({ archetypeKey, onClose }) {
           letterSpacing: '0.22em', textTransform: 'uppercase',
           cursor: 'pointer',
           boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`,
-          animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both, milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) 0.8s infinite',
+          animation: 'breathExpand 620ms cubic-bezier(0.22,1,0.36,1) both',
           minHeight: 52, zIndex: 5,
           textShadow: '0 0 14px rgba(255,255,255,0.35)',
         }}>
@@ -7128,7 +7135,7 @@ function VisualisationGuideeModal({ archetypeKey, onClose }) {
               cursor: 'pointer',
               minHeight: 48,
               boxShadow: `0 8px 28px rgba(${arch.rgb},0.40)`,
-              animation: 'fadeIn 1.4s cubic-bezier(0,0,0.2,1) 1s both, milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) 2s infinite',
+              animation: 'fadeIn 1.4s cubic-bezier(0,0,0.2,1) 1s both',
             }}>Revenir doucement</button>
           </>
         )}
@@ -7322,7 +7329,7 @@ function PulseCollectif({ archetypeKey, onClick }) {
   return (
     <div onClick={onClick} role={onClick ? "button" : undefined} tabIndex={onClick ? 0 : undefined} aria-label={onClick ? "Ouvrir les lettres anonymes" : undefined} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '12px 18px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.06) 0%, rgba(255,255,255,0.03) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: 100, cursor: onClick ? 'pointer' : 'default', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', animation: 'fadeIn 0.8s cubic-bezier(0,0,0.2,1) 0.4s both' }}>
       <div style={{ position: 'relative', width: 10, height: 10 }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: arch.color, boxShadow: `0 0 8px ${arch.color}, 0 0 16px ${arch.color}88`, animation: 'seedPulse 3.2s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: arch.color, boxShadow: `0 0 8px ${arch.color}, 0 0 16px ${arch.color}88`, animation: 'none' }} />
       </div>
       <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12.5, color: 'rgba(255,255,255,0.78)', margin: 0, letterSpacing: '0.02em', textAlign: 'center', lineHeight: 1.5 }}>
         <span style={{ color: arch.color, fontWeight: 400 }}>{count}</span> autres {plural} <span style={{ fontStyle: 'italic', opacity: 0.78 }}>{period}</span>

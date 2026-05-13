@@ -309,6 +309,137 @@ export function isCoconAmbiencePlaying() {
   return droneState !== null
 }
 
+// ─── Ambient MP3 layer (V3.1 — tracks émotionnels Will) ────────────
+// 11 tracks composés par Will, jouées en fond très doux (gain ≤0.12).
+// Toggle séparé du UI sounds (neya_ambient_enabled). OFF par défaut.
+// Crossfade équal-power approximé, lazy fetch + decode, cache mémoire.
+//
+// Mutuellement exclusif avec startCoconAmbience (drone synthétique).
+
+const AMBIENT_CONSENT_KEY = 'neya_ambient_enabled'
+const AMBIENT_BASE = '/musique/'
+const AMBIENT_TRACKS = {
+  silencieuse:    { file: 'silencieuse.mp3',              gain: 0.10, fadeIn: 8, fadeOut: 4, pan:  0.00 },
+  monCoeur:       { file: 'mon-cœur.mp3',                 gain: 0.11, fadeIn: 6, fadeOut: 3, pan: -0.10 },
+  entreTension:   { file: 'entre-tension-et-douceur.mp3', gain: 0.10, fadeIn: 5, fadeOut: 3, pan:  0.00 },
+  surMaPlanete:   { file: 'sur-ma-planète.mp3',           gain: 0.12, fadeIn: 8, fadeOut: 4, pan:  0.05 },
+  ceQuiReste:     { file: 'ce-qui-reste 2.mp3',           gain: 0.10, fadeIn: 6, fadeOut: 4, pan: -0.05 },
+  caVa:           { file: 'ça-va.mp3',                    gain: 0.09, fadeIn: 6, fadeOut: 3, pan:  0.00 },
+  souffleCourt:   { file: 'souffle-court.mp3',            gain: 0.10, fadeIn: 4, fadeOut: 2, pan:  0.00 },
+  masque:         { file: 'Masque.mp3',                   gain: 0.08, fadeIn: 5, fadeOut: 3, pan:  0.10 },
+  debordement:    { file: 'À débordement.mp3',            gain: 0.08, fadeIn: 3, fadeOut: 2, pan:  0.00 },
+  burnOut:        { file: 'burn-out.mp3',                 gain: 0.08, fadeIn: 4, fadeOut: 3, pan:  0.00 },
+  spt:            { file: 'stress-post-traumatique.mp3',  gain: 0.06, fadeIn: 6, fadeOut: 4, pan:  0.00 },
+}
+
+const bufferCache = new Map()
+let ambientState = null
+
+export function isAmbientEnabled() {
+  try { return localStorage.getItem(AMBIENT_CONSENT_KEY) === 'yes' } catch { return false }
+}
+export function setAmbientEnabled(value) {
+  try { localStorage.setItem(AMBIENT_CONSENT_KEY, value ? 'yes' : 'no') } catch {}
+  if (!value) stopAmbient(true)
+}
+
+async function loadBuffer(key) {
+  if (bufferCache.has(key)) return bufferCache.get(key)
+  const def = AMBIENT_TRACKS[key]
+  if (!def) return null
+  try {
+    const res = await fetch(AMBIENT_BASE + encodeURIComponent(def.file))
+    if (!res.ok) return null
+    const arr = await res.arrayBuffer()
+    ensureContext()
+    if (!ctx) return null
+    const buf = await ctx.decodeAudioData(arr)
+    bufferCache.set(key, buf)
+    return buf
+  } catch { return null }
+}
+
+export async function setAmbientTrack(key) {
+  if (!isAmbientEnabled() || !key) return
+  if (ambientState?.key === key) return
+  ensureContext()
+  resume()
+  if (!ctx) return
+  if (ambientState) return crossfadeAmbient(key)
+  const def = AMBIENT_TRACKS[key]
+  const buf = await loadBuffer(key)
+  if (!buf || !isAmbientEnabled()) return  // re-check after async
+  const t = ctx.currentTime
+  const src = ctx.createBufferSource()
+  src.buffer = buf
+  src.loop = true
+  const g = ctx.createGain()
+  g.gain.setValueAtTime(0, t)
+  g.gain.linearRampToValueAtTime(def.gain, t + def.fadeIn)
+  const p = ctx.createStereoPanner()
+  p.pan.value = def.pan
+  src.connect(p).connect(g).connect(masterGain)
+  src.start(t)
+  ambientState = { key, src, gain: g, panner: p, def }
+}
+
+export function stopAmbient(immediate = false) {
+  if (!ambientState || !ctx) return
+  const t = ctx.currentTime
+  const fade = immediate ? 0.2 : ambientState.def.fadeOut
+  const s = ambientState
+  ambientState = null
+  try {
+    s.gain.gain.cancelScheduledValues(t)
+    s.gain.gain.setValueAtTime(s.gain.gain.value, t)
+    s.gain.gain.linearRampToValueAtTime(0, t + fade)
+  } catch {}
+  setTimeout(() => { try { s.src.stop() } catch {} }, fade * 1000 + 120)
+}
+
+export async function crossfadeAmbient(toKey, duration = 5) {
+  if (!isAmbientEnabled() || !ctx) return
+  if (!ambientState) return setAmbientTrack(toKey)
+  if (ambientState.key === toKey) return
+  const def = AMBIENT_TRACKS[toKey]
+  const buf = await loadBuffer(toKey)
+  if (!buf || !isAmbientEnabled()) return
+  const t = ctx.currentTime
+  const src = ctx.createBufferSource()
+  src.buffer = buf
+  src.loop = true
+  const g = ctx.createGain()
+  g.gain.setValueAtTime(0, t)
+  g.gain.linearRampToValueAtTime(def.gain, t + duration)
+  const p = ctx.createStereoPanner()
+  p.pan.value = def.pan
+  src.connect(p).connect(g).connect(masterGain)
+  src.start(t)
+  const old = ambientState
+  try {
+    old.gain.gain.cancelScheduledValues(t)
+    old.gain.gain.setValueAtTime(old.gain.gain.value, t)
+    old.gain.gain.linearRampToValueAtTime(0, t + duration)
+  } catch {}
+  setTimeout(() => { try { old.src.stop() } catch {} }, duration * 1000 + 120)
+  ambientState = { key: toKey, src, gain: g, panner: p, def }
+}
+
+export function pickAmbientForContext({ screen, archetype, hour }) {
+  const h = hour ?? new Date().getHours()
+  if (screen === 'cocon')         return (h >= 22 || h < 6) ? 'silencieuse' : 'surMaPlanete'
+  if (screen === 'espaceVrai')    return 'monCoeur'
+  if (screen === 'breathing')     return archetype === 'resilience' ? 'souffleCourt' : 'entreTension'
+  if (screen === 'liberation')    return 'debordement'
+  if (screen === 'returning-long') return 'ceQuiReste'
+  if (screen === 'home')          return (h >= 22 || h < 6) ? 'silencieuse' : 'caVa'
+  return null
+}
+
+export function getAmbientTracks() {
+  return Object.keys(AMBIENT_TRACKS)
+}
+
 // Initialize global press tap (subtle) — call from App boot
 export function initAudioPressFeedback() {
   if (typeof document === 'undefined') return () => {}
@@ -321,4 +452,4 @@ export function initAudioPressFeedback() {
   return () => document.removeEventListener('pointerdown', handler)
 }
 
-export default { setAudioEnabled, getAudioEnabled, playTap, playConfirm, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playOpen, playClose, playMilestone, initAudioPressFeedback, startCoconAmbience, stopCoconAmbience, isCoconAmbiencePlaying }
+export default { setAudioEnabled, getAudioEnabled, playTap, playConfirm, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playOpen, playClose, playMilestone, initAudioPressFeedback, startCoconAmbience, stopCoconAmbience, isCoconAmbiencePlaying, setAmbientTrack, stopAmbient, crossfadeAmbient, pickAmbientForContext, isAmbientEnabled, setAmbientEnabled, getAmbientTracks }
