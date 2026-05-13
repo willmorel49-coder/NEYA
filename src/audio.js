@@ -217,6 +217,98 @@ export function playMilestone() {
   })
 }
 
+// ─── Ambient drone (Cocon) ─────────────────────────────────────
+// Texture sonore basse, sustained, archetype-colorée. Fade in 4s,
+// fade out 2s. Bandpass noise LFO-modulated pour qualité respirante.
+// Volume très bas (~0.06) — c'est une présence, pas un son.
+
+let droneState = null  // { oscs: [], noise, noiseGain, filter, mainGain, lfoOsc, lfoGain }
+
+const DRONE_PROFILES = {
+  resilience: { f1: 82.41,  f2: 123.47, lfoRate: 0.13, lfoDepth: 240, filterBase: 380, filterPeak: 720, peak: 0.058, qFilter: 1.2 },
+  presence:   { f1: 73.42,  f2: 110.00, lfoRate: 0.08, lfoDepth: 180, filterBase: 320, filterPeak: 540, peak: 0.052, qFilter: 1.0 },
+  sagesse:    { f1: 77.78,  f2: 116.54, lfoRate: 0.06, lfoDepth: 160, filterBase: 340, filterPeak: 600, peak: 0.048, qFilter: 0.9 },
+  lumiere:    { f1: 92.50,  f2: 138.59, lfoRate: 0.16, lfoDepth: 280, filterBase: 420, filterPeak: 840, peak: 0.064, qFilter: 1.4 },
+}
+
+export function startCoconAmbience(archetypeKey = 'presence') {
+  if (!isEnabled()) return
+  if (droneState) stopCoconAmbience(true)
+  resume()
+  if (!ctx || !masterGain) return
+
+  const profile = DRONE_PROFILES[archetypeKey] || DRONE_PROFILES.presence
+  const t = ctx.currentTime
+
+  // Main gain (fade in)
+  const mainGain = ctx.createGain()
+  mainGain.gain.setValueAtTime(0, t)
+  mainGain.gain.linearRampToValueAtTime(profile.peak, t + 4)
+  mainGain.connect(masterGain)
+
+  // 2 low oscillators in fifth interval
+  const oscs = []
+  ;[profile.f1, profile.f2].forEach((freq, i) => {
+    const o = ctx.createOscillator()
+    o.type = i === 0 ? 'sine' : 'triangle'
+    o.frequency.value = freq
+    const og = ctx.createGain()
+    og.gain.value = i === 0 ? 1.0 : 0.42
+    o.connect(og).connect(mainGain)
+    o.start(t)
+    oscs.push(o)
+  })
+
+  // Filtered noise texture
+  const bufferSize = 2 * ctx.sampleRate
+  const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
+  const data = noiseBuffer.getChannelData(0)
+  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1
+  const noise = ctx.createBufferSource()
+  noise.buffer = noiseBuffer
+  noise.loop = true
+  const filter = ctx.createBiquadFilter()
+  filter.type = 'bandpass'
+  filter.frequency.value = profile.filterBase
+  filter.Q.value = profile.qFilter
+  const noiseGain = ctx.createGain()
+  noiseGain.gain.value = 0.18  // relative to mainGain
+  noise.connect(filter).connect(noiseGain).connect(mainGain)
+  noise.start(t)
+
+  // LFO on filter frequency (breathing quality)
+  const lfoOsc = ctx.createOscillator()
+  lfoOsc.frequency.value = profile.lfoRate
+  const lfoGain = ctx.createGain()
+  lfoGain.gain.value = profile.lfoDepth
+  lfoOsc.connect(lfoGain).connect(filter.frequency)
+  lfoOsc.start(t)
+
+  droneState = { oscs, noise, noiseGain, filter, mainGain, lfoOsc, lfoGain }
+}
+
+export function stopCoconAmbience(immediate = false) {
+  if (!droneState || !ctx) return
+  const t = ctx.currentTime
+  const fadeDur = immediate ? 0.15 : 2.0
+  try {
+    droneState.mainGain.gain.cancelScheduledValues(t)
+    droneState.mainGain.gain.setValueAtTime(droneState.mainGain.gain.value, t)
+    droneState.mainGain.gain.linearRampToValueAtTime(0, t + fadeDur)
+  } catch {}
+  const state = droneState
+  droneState = null
+  setTimeout(() => {
+    try { state.oscs.forEach(o => o.stop()) } catch {}
+    try { state.noise.stop() } catch {}
+    try { state.lfoOsc.stop() } catch {}
+  }, (fadeDur * 1000) + 100)
+}
+
+export function isCoconAmbiencePlaying() {
+  return droneState !== null
+}
+
 // Initialize global press tap (subtle) — call from App boot
 export function initAudioPressFeedback() {
   if (typeof document === 'undefined') return () => {}
@@ -229,4 +321,4 @@ export function initAudioPressFeedback() {
   return () => document.removeEventListener('pointerdown', handler)
 }
 
-export default { setAudioEnabled, getAudioEnabled, playTap, playConfirm, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playOpen, playClose, playMilestone, initAudioPressFeedback }
+export default { setAudioEnabled, getAudioEnabled, playTap, playConfirm, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playOpen, playClose, playMilestone, initAudioPressFeedback, startCoconAmbience, stopCoconAmbience, isCoconAmbiencePlaying }
