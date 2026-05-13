@@ -4073,18 +4073,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       )}
 
       {/* ── Cocoon header ── */}
+      {/* ── HERO SECTION — Vision originale mockup : silhouette + cosmos + greeting majestueux ── */}
+      <NeyaHeroSection archetypeKey={archetypeKey} prenom={prenom} jourComplète={jourComplète} dateStr={dateStr} mantra={mantra} onOpenPersonalize={() => setShowPersonalize(true)} onOpenShare={() => { haptic(6); setShowShare(true) }} onOpenSettings={() => { haptic(6); setShowSettings(true) }} />
+
       <div style={{ textAlign: 'center', paddingBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', inset: '-30px -30px 0 -30px', background: `radial-gradient(ellipse 70% 50% at 50% 30%, rgba(${arch.rgb},0.09) 0%, transparent 70%)`, pointerEvents: 'none', animation: 'depthBreath 12s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-        {/* Bouton personnalisation */}
-        <button onClick={() => setShowPersonalize(true)} style={{ position: 'absolute', top: 0, right: 0, background: 'none', border: 'none', cursor: 'pointer', color: `rgba(${arch.rgb},0.55)`, fontSize: 17, padding: '6px 8px', lineHeight: 1, transition: 'color 0.2s ease', minWidth: 44, minHeight: 44, animation: 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' }} title="Personnaliser" aria-label="Personnaliser ton espace">✎</button>
-        <button onClick={() => { haptic(6); setShowShare(true) }} style={{ position: 'absolute', top: 0, right: 48, background: 'none', border: 'none', cursor: 'pointer', color: `rgba(${arch.rgb},0.55)`, fontSize: 15, padding: '6px 8px', lineHeight: 1, transition: 'color 0.2s ease', minWidth: 44, minHeight: 44, animation: 'phrasebreathe 22s ease-in-out 1s infinite' }} title="Partager ton archétype" aria-label="Partager ton archétype">↗</button>
-        <button onClick={() => { haptic(6); setShowSettings(true) }} style={{ position: 'absolute', top: 0, right: 96, background: 'none', border: 'none', cursor: 'pointer', color: `rgba(${arch.rgb},0.55)`, fontSize: 15, padding: '6px 8px', lineHeight: 1, transition: 'color 0.2s ease', minWidth: 44, minHeight: 44, animation: 'phrasebreathe 22s ease-in-out 2s infinite' }} title="Réglages" aria-label="Ouvrir les réglages">⚙</button>
-        {prenom ? (
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 18, background: `linear-gradient(135deg, ${arch.color}, rgba(255,255,255,0.95) 55%, ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '0.02em', margin: '0 0 2px', animation: jourComplète ? 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 10s ease-in-out 3s infinite' : 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite' }}>{greetingStr()}, {prenom}</p>
-        ) : (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.58)', letterSpacing: '0.07em', margin: '0 0 4px', textTransform: 'capitalize', textShadow: `0 0 20px ${arch.color}22`, animation: jourComplète ? 'phrasebreathe 46s ease-in-out 2s infinite, milestoneGlow 18s ease-in-out 8s infinite' : 'phrasebreathe 46s ease-in-out 2s infinite' }}>{greetingStr()}{archetypeKey ? ` · ${({ resilience: 'Phénix', presence: 'Cerf', sagesse: 'Loup', lumiere: 'Ours' }[archetypeKey] || '')}` : ''}</p>
-        )}
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.46)', letterSpacing: '0.05em', margin: '0 0 8px', textTransform: 'capitalize', animation: jourComplète ? 'phrasebreathe 50s ease-in-out 3s infinite, milestoneGlow 22s ease-in-out 10s infinite' : 'phrasebreathe 50s ease-in-out 3s infinite', textShadow: `0 0 12px ${arch.color}18` }}>{dateStr}</p>
         {mantra && <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12.5, color: `rgba(${arch.rgb},0.52)`, letterSpacing: '0.03em', fontStyle: 'italic', margin: '2px 0 16px', lineHeight: 1.65, animation: 'phrasebreathe 40s cubic-bezier(0.45,0,0.55,1) infinite' }}>"{mantra}"</p>}
         {!mantra && <div style={{ marginBottom: 12 }} />}
 
@@ -6681,6 +6674,149 @@ function BilanSemaineCard({ archetypeKey, onClose }) {
           }}>Fermer la semaine ◯</button>
         </>
       )}
+    </div>
+  )
+}
+
+// ─── HERO SECTION — Inspiré directement des mockups MVP NÉYA ───────
+// Silhouette femme cheveux bleus de dos contemplant un cosmos/sunset.
+// Greeting majestueux time-aware. C'est la signature visuelle de la
+// vision originale appliquée sur HomeScreen.
+
+function WomanSilhouette({ archetypeKey = 'presence', size = 160 }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  // SVG silhouette femme de dos — robe + cheveux longs ondulés bleu nuit
+  return (
+    <svg width={size} height={size * 1.6} viewBox="0 0 100 160" fill="none" style={{ display: 'block', filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.55))' }}>
+      <defs>
+        <linearGradient id="womanHair" x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stopColor="#3b5fd9" />
+          <stop offset="40%" stopColor="#4a6fe8" />
+          <stop offset="100%" stopColor="#1e2f7a" />
+        </linearGradient>
+        <linearGradient id="womanRobe" x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stopColor="#2a4099" />
+          <stop offset="60%" stopColor="#1e2f7a" />
+          <stop offset="100%" stopColor="#0f1948" />
+        </linearGradient>
+        <radialGradient id="womanGlow" cx="50%" cy="35%" r="60%">
+          <stop offset="0%" stopColor={`${arch.color}55`} />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
+      </defs>
+      {/* Halo derrière la tête */}
+      <circle cx="50" cy="32" r="36" fill="url(#womanGlow)" />
+      {/* Cheveux longs (cascade derrière) */}
+      <path d="M 32 28 Q 28 50 26 88 Q 30 96 36 92 Q 38 60 42 36 Z" fill="url(#womanHair)" opacity="0.95" />
+      <path d="M 68 28 Q 72 50 74 88 Q 70 96 64 92 Q 62 60 58 36 Z" fill="url(#womanHair)" opacity="0.95" />
+      <path d="M 38 24 Q 34 48 32 82 Q 38 86 42 80 Q 44 50 46 30 Z" fill="url(#womanHair)" opacity="0.88" />
+      <path d="M 62 24 Q 66 48 68 82 Q 62 86 58 80 Q 56 50 54 30 Z" fill="url(#womanHair)" opacity="0.88" />
+      {/* Nuque (peau) */}
+      <ellipse cx="50" cy="28" rx="13" ry="16" fill="#2a3556" opacity="0.92" />
+      {/* Cheveux dessus crâne */}
+      <path d="M 36 22 Q 36 12 50 10 Q 64 12 64 22 Q 64 18 60 16 Q 56 12 50 12 Q 44 12 40 16 Q 36 18 36 22 Z" fill="url(#womanHair)" />
+      {/* Cheveux qui retombent autour du visage */}
+      <path d="M 36 22 Q 35 30 36 38 Q 40 32 42 28 Q 38 24 36 22 Z" fill="url(#womanHair)" opacity="0.90" />
+      <path d="M 64 22 Q 65 30 64 38 Q 60 32 58 28 Q 62 24 64 22 Z" fill="url(#womanHair)" opacity="0.90" />
+      {/* Épaules + cou */}
+      <path d="M 42 42 Q 38 46 36 52 L 32 56 Q 30 60 34 62 L 50 60 L 66 62 Q 70 60 68 56 L 64 52 Q 62 46 58 42 Z" fill="url(#womanRobe)" opacity="0.94" />
+      {/* Robe qui descend (V triangulaire évasé) */}
+      <path d="M 30 58 Q 22 100 20 145 L 50 156 L 80 145 Q 78 100 70 58 Q 60 62 50 60 Q 40 62 30 58 Z" fill="url(#womanRobe)" />
+      {/* Reflets lumineux cheveux */}
+      <path d="M 40 14 Q 44 12 50 12 Q 46 16 42 18 Z" fill="rgba(180,200,255,0.55)" />
+      <path d="M 60 14 Q 56 12 50 12 Q 54 16 58 18 Z" fill="rgba(180,200,255,0.40)" />
+      {/* Mèches lumineuses cascade */}
+      <path d="M 34 45 Q 32 60 30 75" stroke="rgba(140,170,250,0.32)" strokeWidth="0.6" fill="none" />
+      <path d="M 66 45 Q 68 60 70 75" stroke="rgba(140,170,250,0.32)" strokeWidth="0.6" fill="none" />
+      {/* Robe : pli central délicat */}
+      <path d="M 50 60 Q 49 100 49 155" stroke="rgba(100,130,220,0.32)" strokeWidth="0.5" fill="none" />
+    </svg>
+  )
+}
+
+function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra, onOpenPersonalize, onOpenShare, onOpenSettings }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const h = new Date().getHours()
+
+  // Greeting majestueux selon période
+  const greetingTitle =
+    h < 5  ? 'La nuit veille' :
+    h < 11 ? 'Doux matin' :
+    h < 14 ? 'Lumière de midi' :
+    h < 18 ? 'Après-midi suspendu' :
+    h < 22 ? 'Crépuscule doux' :
+             'La nuit revient'
+
+  const greetingPoem =
+    h < 5  ? 'Le silence te garde\nencore un peu.' :
+    h < 11 ? 'Ton voyage continue\navec la lumière.' :
+    h < 14 ? 'Pose-toi un instant\ndans cette heure pleine.' :
+    h < 18 ? 'L\'heure dorée s\'étire\npour toi seul·e.' :
+    h < 22 ? 'Le jour se dépose,\nrespire-le doucement.' :
+             'La nuit te rend\nà toi-même.'
+
+  return (
+    <div style={{
+      position: 'relative',
+      minHeight: 320,
+      margin: '0 -22px 8px',
+      paddingTop: 26,
+      paddingBottom: 28,
+      overflow: 'hidden',
+      animation: 'fadeIn 0.9s cubic-bezier(0,0,0.2,1) both',
+    }}>
+      {/* Background cosmos/sunset radial */}
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 90% 70% at 50% 30%, rgba(${arch.rgb},0.18) 0%, rgba(8,12,28,0.42) 60%, transparent 100%), linear-gradient(180deg, rgba(20,30,72,0.32) 0%, rgba(8,12,28,0) 100%)`, pointerEvents: 'none' }} />
+
+      {/* Étoiles ambient */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        {[
+          { x: 12, y: 18, r: 1.4, dur: 14, del: 0 },
+          { x: 28, y: 8,  r: 1.0, dur: 18, del: 3.2 },
+          { x: 44, y: 22, r: 1.6, dur: 12, del: 1.8 },
+          { x: 72, y: 12, r: 1.2, dur: 16, del: 5.5 },
+          { x: 85, y: 28, r: 1.5, dur: 14, del: 2.4 },
+          { x: 18, y: 38, r: 0.9, dur: 20, del: 7.1 },
+          { x: 92, y: 48, r: 1.3, dur: 17, del: 4.0 },
+          { x: 8,  y: 58, r: 1.0, dur: 19, del: 6.8 },
+          { x: 56, y: 36, r: 1.1, dur: 15, del: 0.9 },
+        ].map((s, i) => (
+          <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill="white" style={{ opacity: 0.78, animation: `startwinkle ${s.dur}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${s.del}s`, filter: 'drop-shadow(0 0 4px white)' }} />
+        ))}
+      </svg>
+
+      {/* Boutons utilitaires top-right */}
+      <div style={{ position: 'absolute', top: 16, right: 18, display: 'flex', gap: 4, zIndex: 5 }}>
+        <button onClick={onOpenSettings} aria-label="Réglages" style={{ background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', color: `rgba(255,255,255,0.78)`, fontSize: 13, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>⚙</button>
+        <button onClick={onOpenShare} aria-label="Partager" style={{ background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', color: `rgba(255,255,255,0.78)`, fontSize: 13, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>↗</button>
+        <button onClick={onOpenPersonalize} aria-label="Personnaliser" style={{ background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', color: `rgba(255,255,255,0.82)`, fontSize: 15, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>✎</button>
+      </div>
+
+      {/* Silhouette femme de dos centrée bas */}
+      <div style={{ position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)', opacity: 0.94, animation: 'animalbreathe 14s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }}>
+        <WomanSilhouette archetypeKey={archetypeKey} size={130} />
+      </div>
+
+      {/* Greeting + poème */}
+      <div style={{ position: 'relative', zIndex: 3, textAlign: 'center', padding: '8px 28px 0' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.88)`, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', textShadow: `0 0 12px ${arch.color}66`, animation: jourComplète ? 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 8s ease-in-out 2s infinite' : 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          {greetingTitle}{prenom ? ` · ${prenom}` : ''}
+        </p>
+
+        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(24px, 6.5vw, 30px)', color: 'rgba(255,255,255,0.96)', margin: 0, lineHeight: 1.3, letterSpacing: '-0.015em', textShadow: `0 0 28px ${arch.color}66, 0 2px 16px rgba(0,0,0,0.55)`, whiteSpace: 'pre-line', animation: jourComplète ? 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 14s ease-in-out 4s infinite' : 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          {greetingPoem}
+        </h1>
+
+        {mantra ? (
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13.5, color: 'rgba(255,255,255,0.74)', margin: '14px auto 0', maxWidth: 300, lineHeight: 1.55, letterSpacing: '-0.005em', textShadow: `0 0 14px ${arch.color}33`, animation: 'phrasebreathe 38s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+            « {mantra} »
+          </p>
+        ) : (
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.42)', margin: '14px 0 0', letterSpacing: '0.06em', textTransform: 'capitalize', textShadow: `0 0 10px ${arch.color}22`, animation: 'phrasebreathe 50s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+            {dateStr}
+          </p>
+        )}
+      </div>
     </div>
   )
 }
