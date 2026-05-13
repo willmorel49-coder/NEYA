@@ -2595,6 +2595,153 @@ function SouvenirDetailModal({ souvenir, archetypeKey, onClose }) {
   )
 }
 
+// Sens symbolique des objets du Cocon par archétype.
+// Tap sur ⓘ d'un item → ouvre cette overlay contemplative.
+const COCON_ITEM_SENSE = {
+  bougie: {
+    glyph: '⊙',
+    name: 'La Bougie',
+    essence: 'Flamme intérieure',
+    poem: 'Ce qui brûle bas. Ce qui résiste au vent.\nLa petite lumière que tu portes même les soirs où tout semble éteint.',
+    byArchetype: {
+      resilience: 'Phénix, c\'est ta braise qui n\'a jamais cessé de couver.',
+      presence:   'Cerf, c\'est ton calme tranquille qui éclaire sans bruit.',
+      sagesse:    'Loup, c\'est ta clarté patiente qui ne s\'éteint pas.',
+      lumiere:    'Ours, c\'est ta tendresse intacte qui chauffe sans crier.',
+    },
+  },
+  cristal: {
+    glyph: '⟁',
+    name: 'Le Cristal',
+    essence: 'Clarté et ancrage',
+    poem: 'Quelque chose en toi qui ne bouge plus.\nUn point fixe au milieu du flou. La vue, quand tout reprend son contour.',
+    byArchetype: {
+      resilience: 'Phénix, ton cristal est la certitude après l\'incendie.',
+      presence:   'Cerf, ton cristal est la respiration au bord du lac.',
+      sagesse:    'Loup, ton cristal est la pensée qui ne tremble plus.',
+      lumiere:    'Ours, ton cristal est la chaleur stable qui apaise.',
+    },
+  },
+  plante: {
+    glyph: '⚘',
+    name: 'La Plante',
+    essence: 'Ce qui grandit',
+    poem: 'Ce qui pousse sans bruit.\nInvisible aux autres, réel pour toi. Une chose tendre que tu as nourrie en silence.',
+    byArchetype: {
+      resilience: 'Phénix, ta plante est ce qui repousse après chaque saison.',
+      presence:   'Cerf, ta plante est le rythme lent qui se déroule en toi.',
+      sagesse:    'Loup, ta plante est la patience qui devient verte avec le temps.',
+      lumiere:    'Ours, ta plante est ce que tu cultives pour les autres.',
+    },
+  },
+  totem: {
+    glyph: '◈',
+    name: 'Ton Totem',
+    essence: 'L\'animal qui veille',
+    poem: 'La part de toi qui sait avant que tu saches.\nQui te tient debout quand tu doutes. Qui regarde le monde par tes yeux.',
+    byArchetype: {
+      resilience: 'Phénix, ton totem te rappelle que tu sais renaître.',
+      presence:   'Cerf, ton totem te rappelle que la présence suffit.',
+      sagesse:    'Loup, ton totem te rappelle que ta solitude est précieuse.',
+      lumiere:    'Ours, ton totem te rappelle que ta force protège.',
+    },
+  },
+  portail: {
+    glyph: '◉',
+    name: 'Le Portail',
+    essence: 'Vers l\'inconnu',
+    poem: 'L\'ouverture vers ce qui n\'est pas encore.\nLe seuil entre celle ou celui que tu es ce soir et celui ou celle que tu seras demain.',
+    byArchetype: {
+      resilience: 'Phénix, ton portail s\'ouvre toujours après la traversée.',
+      presence:   'Cerf, ton portail s\'ouvre dans le silence partagé.',
+      sagesse:    'Loup, ton portail s\'ouvre quand tu poses la question juste.',
+      lumiere:    'Ours, ton portail s\'ouvre par la chaleur que tu offres.',
+    },
+  },
+}
+
+function CoconItemDetailModal({ item, archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const sense = COCON_ITEM_SENSE[item.id]
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 320)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  if (!sense) return null
+  const personal = sense.byArchetype[archetypeKey] || ''
+
+  const handleClose = () => {
+    haptic(4)
+    try { playClose() } catch {}
+    close()
+  }
+
+  return (
+    <div onClick={handleClose} style={{
+      position: 'fixed', inset: 0, zIndex: 1100,
+      background: `radial-gradient(ellipse at 50% 50%, rgba(${arch.rgb},0.14) 0%, rgba(5,8,16,0.72) 60%, rgba(5,8,16,0.88) 100%)`,
+      backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '40px 24px',
+      animation: exiting ? 'fadeOut 0.32s cubic-bezier(0.4,0,0.6,1) both' : 'fadeIn 0.4s cubic-bezier(0,0,0.2,1) both',
+      cursor: 'pointer',
+    }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        position: 'relative',
+        maxWidth: 420, width: '100%',
+        background: `linear-gradient(135deg, rgba(${arch.rgb},0.16) 0%, rgba(16,18,32,0.62) 50%, rgba(${arch.rgb},0.10) 100%)`,
+        border: `1px solid rgba(${arch.rgb},0.50)`,
+        borderRadius: 22,
+        padding: '32px 28px 28px',
+        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: `0 14px 48px rgba(${arch.rgb},0.24), inset 0 1px 0 rgba(255,255,255,0.10), 0 0 32px rgba(${arch.rgb},0.14)`,
+        cursor: 'default',
+        animation: vis && !exiting ? 'modalEnter 0.5s cubic-bezier(0.34,1.56,0.64,1) both' : (exiting ? 'sheetExit 0.32s cubic-bezier(0.4,0,0.6,1) both' : 'none'),
+        textAlign: 'center',
+      }}>
+        {/* Glyph central avec halo */}
+        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginBottom: 18 }}>
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 92, height: 92, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.30) 0%, transparent 70%)`, animation: 'signaturePulse 7s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />
+          <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 56, color: arch.color, lineHeight: 1, position: 'relative', filter: `drop-shadow(0 0 16px ${arch.color}aa) drop-shadow(0 0 32px ${arch.color}44)`, animation: 'phrasebreathe 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>{sense.glyph}</span>
+        </div>
+
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.86)`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 6px', animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>Sens</p>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'rgba(255,255,255,0.96)', margin: '0 0 4px', letterSpacing: '-0.02em', textShadow: `0 0 20px ${arch.color}33` }}>{sense.name}</h2>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13.5, color: `rgba(${arch.rgb},0.92)`, margin: '0 0 22px', letterSpacing: '0.04em', animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>{sense.essence}</p>
+
+        {/* Poème */}
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15.5, color: 'rgba(255,255,255,0.88)', margin: '0 0 18px', lineHeight: 1.7, letterSpacing: '-0.005em', whiteSpace: 'pre-line', fontStyle: 'italic', textShadow: `0 0 18px ${arch.color}22`, animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.2s both' }}>
+          {sense.poem}
+        </p>
+
+        {/* Ligne archétype */}
+        {personal && (
+          <div style={{ padding: '14px 16px', borderTop: `1px solid rgba(${arch.rgb},0.28)`, borderBottom: `1px solid rgba(${arch.rgb},0.28)`, margin: '8px 0 22px', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.4s both' }}>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 13.5, color: arch.color, margin: 0, lineHeight: 1.55, letterSpacing: '-0.005em', fontStyle: 'italic', textShadow: `0 0 14px ${arch.color}55` }}>« {personal} »</p>
+          </div>
+        )}
+
+        <button data-press="true" onClick={handleClose} aria-label="Refermer" style={{
+          padding: '13px 32px',
+          background: `rgba(${arch.rgb},0.18)`,
+          border: `1px solid rgba(${arch.rgb},0.55)`,
+          borderRadius: 100,
+          color: 'rgba(255,255,255,0.92)',
+          fontFamily: 'Sora, sans-serif',
+          fontWeight: 300,
+          fontSize: 12,
+          letterSpacing: '0.20em',
+          textTransform: 'uppercase',
+          cursor: 'pointer',
+          minHeight: 44,
+          boxShadow: `0 4px 18px rgba(${arch.rgb},0.18)`,
+          animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.55s both',
+        }}>Refermer</button>
+      </div>
+    </div>
+  )
+}
+
 function CoconScreen({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const [visible, setVisible] = useState(false)
@@ -2634,6 +2781,7 @@ function CoconScreen({ archetypeKey, onClose }) {
   const [placed, setPlaced] = useState(() => {
     try { return JSON.parse(localStorage.getItem('neya_cocon_placed') || '[]') } catch { return [] }
   })
+  const [itemInfo, setItemInfo] = useState(null)
   const [selectedSouvenir, setSelectedSouvenir] = useState(null)
   const [coconNameLocal, setCoconNameLocal] = useState(coconName)
   const [editingName, setEditingName] = useState(false)
@@ -2858,6 +3006,7 @@ function CoconScreen({ archetypeKey, onClose }) {
               })()
               return (
                 <div key={item.id} onClick={() => togglePlaced(item.id, unlocked)} style={{
+                  position: 'relative',
                   background: unlocked ? (placed.includes(item.id) ? `rgba(${arch.rgb},0.16)` : `rgba(${arch.rgb},0.10)`) : 'rgba(255,255,255,0.04)',
                   border: `1px solid ${unlocked ? (placed.includes(item.id) ? arch.color + '88' : arch.color + '55') : 'rgba(255,255,255,0.09)'}`,
                   cursor: unlocked ? 'pointer' : 'default',
@@ -2869,6 +3018,9 @@ function CoconScreen({ archetypeKey, onClose }) {
                   transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 360ms cubic-bezier(0,0,0.2,1), color 240ms cubic-bezier(0.4,0,0.2,1)',
                   backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
                 }}>
+                  {unlocked && (
+                    <button data-press="true" onClick={(e) => { e.stopPropagation(); haptic(6); try { playOpen() } catch {}; setItemInfo(item) }} aria-label={`Sens de ${item.label}`} style={{ position: 'absolute', top: 8, right: 8, width: 22, height: 22, borderRadius: '50%', background: 'rgba(0,0,0,0.32)', border: `1px solid rgba(${arch.rgb},0.42)`, color: `rgba(${arch.rgb},0.95)`, fontFamily: 'Sora, sans-serif', fontSize: 11, fontWeight: 300, lineHeight: 1, cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)', boxShadow: `0 0 8px rgba(${arch.rgb},0.20)` }}>ⓘ</button>
+                  )}
                   <div style={{ filter: placed.includes(item.id) ? `drop-shadow(0 0 12px ${arch.color}cc) drop-shadow(0 0 22px ${arch.color}66)` : (unlocked ? `drop-shadow(0 0 8px ${arch.color}88)` : 'none'), animation: unlocked ? 'animalbreathe 8s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>
                     <ItemIcon icon={item.icon} color={arch.color} unlocked={unlocked} />
                   </div>
@@ -2889,7 +3041,10 @@ function CoconScreen({ archetypeKey, onClose }) {
             const current = item.by === 'streak' ? streak : totalDays
             const unlocked = current >= item.unlockAt
             return (
-              <div onClick={() => togglePlaced(item.id, unlocked)} style={{ marginTop: 12, background: unlocked ? `linear-gradient(135deg, rgba(${arch.rgb},0.14) 0%, rgba(255,255,255,0.04) 50%, rgba(${arch.rgb},0.10) 100%)` : 'rgba(255,255,255,0.04)', border: `1px solid ${unlocked ? (placed.includes(item.id) ? arch.color + '88' : arch.color + '66') : 'rgba(255,255,255,0.09)'}`, cursor: unlocked ? 'pointer' : 'default', borderRadius: 14, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 18, opacity: unlocked ? 1 : 0.55, boxShadow: unlocked ? `0 0 40px rgba(${arch.rgb},0.22), inset 0 0 20px rgba(${arch.rgb},0.06)` : 'none', animation: unlocked ? 'auroraHue 8s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 360ms cubic-bezier(0,0,0.2,1), color 240ms cubic-bezier(0.4,0,0.2,1)' }}>
+              <div onClick={() => togglePlaced(item.id, unlocked)} style={{ position: 'relative', marginTop: 12, background: unlocked ? `linear-gradient(135deg, rgba(${arch.rgb},0.14) 0%, rgba(255,255,255,0.04) 50%, rgba(${arch.rgb},0.10) 100%)` : 'rgba(255,255,255,0.04)', border: `1px solid ${unlocked ? (placed.includes(item.id) ? arch.color + '88' : arch.color + '66') : 'rgba(255,255,255,0.09)'}`, cursor: unlocked ? 'pointer' : 'default', borderRadius: 14, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 18, opacity: unlocked ? 1 : 0.55, boxShadow: unlocked ? `0 0 40px rgba(${arch.rgb},0.22), inset 0 0 20px rgba(${arch.rgb},0.06)` : 'none', animation: unlocked ? 'auroraHue 8s cubic-bezier(0.45,0,0.55,1) infinite, milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 360ms cubic-bezier(0,0,0.2,1), color 240ms cubic-bezier(0.4,0,0.2,1)' }}>
+                {unlocked && (
+                  <button data-press="true" onClick={(e) => { e.stopPropagation(); haptic(6); try { playOpen() } catch {}; setItemInfo(item) }} aria-label={`Sens de ${item.label}`} style={{ position: 'absolute', top: 10, right: 10, width: 24, height: 24, borderRadius: '50%', background: 'rgba(0,0,0,0.34)', border: `1px solid rgba(${arch.rgb},0.46)`, color: `rgba(${arch.rgb},0.95)`, fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 300, lineHeight: 1, cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)', boxShadow: `0 0 10px rgba(${arch.rgb},0.22)` }}>ⓘ</button>
+                )}
                 <div style={{ filter: placed.includes(item.id) ? `drop-shadow(0 0 12px ${arch.color}cc) drop-shadow(0 0 22px ${arch.color}66)` : (unlocked ? `drop-shadow(0 0 12px ${arch.color}cc)` : 'none'), animation: unlocked ? 'animalbreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', flexShrink: 0 }}>
                   <ItemIcon icon={item.icon} color={arch.color} unlocked={unlocked} />
                 </div>
@@ -2905,6 +3060,7 @@ function CoconScreen({ archetypeKey, onClose }) {
         </div>
 
         {selectedSouvenir && <SouvenirDetailModal souvenir={selectedSouvenir} archetypeKey={archetypeKey} onClose={() => setSelectedSouvenir(null)} />}
+        {itemInfo && <CoconItemDetailModal item={itemInfo} archetypeKey={archetypeKey} onClose={() => setItemInfo(null)} />}
       {showVisitor && (
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 6, animation: 'fadeIn 1.2s cubic-bezier(0.45,0,0.55,1) both' }}>
           {showVisitor === 'shooting_star' ? (
