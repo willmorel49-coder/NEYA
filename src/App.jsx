@@ -2816,6 +2816,237 @@ function MiniJeuxSelectorModal({ archetypeKey, onClose, onSelect }) {
   )
 }
 
+// ─── Musique Modal — Lecteur des 11 compositions de Will ─────────
+// Pas une playlist Spotify. Une galerie sonore intime. Un seul son
+// à la fois. Pas de skip/next/prev — tu choisis ce que tu écoutes.
+// Pause auto à la fermeture, pas d'autoplay au mount.
+
+const MUSIQUE_TRACKS = [
+  { id: 'caVa',           file: 'ça-va.mp3',                    title: 'Ça va',                          axe: 'Question' },
+  { id: 'monCoeur',       file: 'mon-cœur.mp3',                 title: 'Mon cœur',                       axe: 'Intimité' },
+  { id: 'silencieuse',    file: 'silencieuse.mp3',              title: 'Silencieuse',                    axe: 'Refuge' },
+  { id: 'surMaPlanete',   file: 'sur-ma-planète.mp3',           title: 'Sur ma planète',                 axe: 'Refuge' },
+  { id: 'ceQuiReste',     file: 'ce-qui-reste 2.mp3',           title: 'Ce qui reste',                   axe: 'Intimité' },
+  { id: 'entreTension',   file: 'entre-tension-et-douceur.mp3', title: 'Entre tension et douceur',       axe: 'Souffle' },
+  { id: 'souffleCourt',   file: 'souffle-court.mp3',            title: 'Souffle court',                  axe: 'Souffle' },
+  { id: 'masque',         file: 'Masque.mp3',                   title: 'Masque',                         axe: 'Traversée' },
+  { id: 'debordement',    file: 'À débordement.mp3',            title: 'À débordement',                  axe: 'Traversée' },
+  { id: 'burnOut',        file: 'burn-out.mp3',                 title: 'Burn-out',                       axe: 'Traversée' },
+  { id: 'spt',            file: 'stress-post-traumatique.mp3',  title: 'Stress post-traumatique',        axe: 'Traversée' },
+]
+
+function MusiqueModal({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 360)
+  const audioRef = useRef(null)
+  const [currentId, setCurrentId] = useState(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [loadingId, setLoadingId] = useState(null)
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  // Cleanup : stop audio à l'unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        try { audioRef.current.pause(); audioRef.current.src = '' } catch {}
+        audioRef.current = null
+      }
+    }
+  }, [])
+
+  const handleClose = () => {
+    if (audioRef.current) { try { audioRef.current.pause() } catch {} }
+    setIsPlaying(false)
+    haptic(4)
+    try { playClose() } catch {}
+    close()
+  }
+
+  const togglePlay = (track) => {
+    haptic([6, 30, 6])
+    // Si déjà en lecture sur cette piste → pause
+    if (currentId === track.id && isPlaying) {
+      try { audioRef.current?.pause() } catch {}
+      setIsPlaying(false)
+      return
+    }
+    // Si pausé sur cette piste → reprend
+    if (currentId === track.id && !isPlaying && audioRef.current) {
+      try { audioRef.current.play(); setIsPlaying(true) } catch {}
+      return
+    }
+    // Nouvelle piste → stop ancienne, charge nouvelle
+    if (audioRef.current) {
+      try { audioRef.current.pause(); audioRef.current.src = '' } catch {}
+    }
+    setLoadingId(track.id)
+    const audio = new Audio(`/musique/${encodeURIComponent(track.file)}`)
+    audio.preload = 'auto'
+    audio.volume = 0.72
+    audioRef.current = audio
+    audio.addEventListener('loadedmetadata', () => {
+      setDuration(audio.duration || 0)
+      setLoadingId(null)
+    })
+    audio.addEventListener('timeupdate', () => {
+      setProgress(audio.currentTime || 0)
+    })
+    audio.addEventListener('ended', () => {
+      setIsPlaying(false)
+      setProgress(0)
+    })
+    audio.addEventListener('error', () => {
+      setLoadingId(null)
+      setIsPlaying(false)
+    })
+    audio.play().then(() => {
+      setCurrentId(track.id)
+      setIsPlaying(true)
+      setProgress(0)
+    }).catch(() => {
+      setLoadingId(null)
+      setIsPlaying(false)
+    })
+  }
+
+  const seek = (e) => {
+    if (!audioRef.current || !duration) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    audioRef.current.currentTime = ratio * duration
+    setProgress(ratio * duration)
+  }
+
+  const fmt = (s) => {
+    if (!s || !isFinite(s)) return '—'
+    const m = Math.floor(s / 60)
+    const sec = Math.floor(s % 60)
+    return `${m}:${String(sec).padStart(2, '0')}`
+  }
+
+  // Regroupe par axe
+  const groups = {}
+  MUSIQUE_TRACKS.forEach(t => {
+    if (!groups[t.axe]) groups[t.axe] = []
+    groups[t.axe].push(t)
+  })
+  const AXE_ORDER = ['Question', 'Refuge', 'Intimité', 'Souffle', 'Traversée']
+
+  return (
+    <div onClick={handleClose} style={{
+      position: 'fixed', inset: 0, zIndex: 1200,
+      background: `radial-gradient(ellipse at 50% 30%, rgba(${arch.rgb},0.14) 0%, rgba(5,8,16,0.86) 60%, rgba(5,8,16,0.94) 100%)`,
+      backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)',
+      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      animation: exiting ? 'fadeOut 0.36s cubic-bezier(0.4,0,0.6,1) both' : 'fadeIn 0.5s cubic-bezier(0,0,0.2,1) both',
+    }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        width: '100%',
+        maxWidth: 480,
+        maxHeight: '92vh',
+        background: 'linear-gradient(180deg, rgba(22,18,32,0.94) 0%, rgba(10,12,22,0.96) 100%)',
+        border: `1px solid rgba(${arch.rgb},0.30)`,
+        borderTopLeftRadius: 26,
+        borderTopRightRadius: 26,
+        padding: '18px 0 calc(env(safe-area-inset-bottom, 0px) + 24px)',
+        backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+        boxShadow: `0 -12px 48px rgba(0,0,0,0.62), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 32px rgba(${arch.rgb},0.10)`,
+        animation: vis && !exiting ? 'modalEnter 0.5s cubic-bezier(0.34,1.56,0.64,1) both' : (exiting ? 'sheetExit 0.36s cubic-bezier(0.4,0,0.6,1) both' : 'none'),
+        display: 'flex', flexDirection: 'column',
+        overflow: 'hidden',
+      }}>
+        {/* Pull tab */}
+        <div style={{ width: 40, height: 4, background: 'rgba(255,255,255,0.22)', borderRadius: 2, margin: '0 auto 14px' }} />
+
+        {/* Header */}
+        <div style={{ padding: '0 22px 14px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 6px' }}>Musique de NÉYA</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 21, color: 'rgba(255,255,255,0.94)', margin: '0 0 4px', letterSpacing: '-0.015em' }}>Onze textures émotionnelles</h2>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontStyle: 'italic', fontWeight: 300, fontSize: 12.5, color: 'rgba(255,255,255,0.58)', margin: 0, letterSpacing: '-0.005em' }}>Compositions par Will · à écouter doucement</p>
+        </div>
+
+        {/* Liste regroupée par axe — scrollable */}
+        <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '14px 18px 16px' }}>
+          {AXE_ORDER.map(axe => {
+            const tracks = groups[axe]
+            if (!tracks?.length) return null
+            return (
+              <div key={axe} style={{ marginBottom: 22 }}>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: 'rgba(255,255,255,0.42)', letterSpacing: '0.30em', textTransform: 'uppercase', margin: '0 0 10px 4px' }}>· {axe}</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {tracks.map(t => {
+                    const isActive = currentId === t.id
+                    const isLoading = loadingId === t.id
+                    const pct = isActive && duration > 0 ? (progress / duration) * 100 : 0
+                    return (
+                      <button key={t.id} data-press="true" onClick={() => togglePlay(t)} aria-label={`${isActive && isPlaying ? 'Pause' : 'Écouter'} ${t.title}`} style={{
+                        display: 'flex', alignItems: 'center', gap: 14,
+                        padding: '11px 14px',
+                        background: isActive ? `linear-gradient(135deg, rgba(${arch.rgb},0.18), rgba(${arch.rgb},0.06))` : 'transparent',
+                        border: `1px solid ${isActive ? `rgba(${arch.rgb},0.42)` : 'transparent'}`,
+                        borderRadius: 12,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        color: 'inherit',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        minHeight: 56,
+                        transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), border-color 240ms cubic-bezier(0.4,0,0.2,1)',
+                      }}>
+                        {/* Progress bar de fond (active track) */}
+                        {isActive && (
+                          <div style={{ position: 'absolute', left: 0, bottom: 0, width: `${pct}%`, height: 2, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, transition: 'width 200ms linear', boxShadow: `0 0 6px ${arch.color}66` }} />
+                        )}
+                        {/* Icône play / pause / loading */}
+                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: isActive ? `rgba(${arch.rgb},0.30)` : 'rgba(255,255,255,0.06)', border: `1px solid ${isActive ? arch.color : 'rgba(255,255,255,0.12)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 240ms cubic-bezier(0.4,0,0.2,1)', boxShadow: isActive ? `0 0 10px ${arch.color}55` : 'none' }}>
+                          {isLoading ? (
+                            <div style={{ width: 14, height: 14, border: `1.5px solid ${arch.color}55`, borderTopColor: arch.color, borderRadius: '50%', animation: 'spin 0.9s linear infinite' }} />
+                          ) : isActive && isPlaying ? (
+                            <svg width="11" height="11" viewBox="0 0 11 11" fill={arch.color}><rect x="2" y="1" width="2.4" height="9" rx="0.6"/><rect x="6.6" y="1" width="2.4" height="9" rx="0.6"/></svg>
+                          ) : (
+                            <svg width="11" height="11" viewBox="0 0 11 11" fill={isActive ? arch.color : 'rgba(255,255,255,0.78)'}><path d="M2.5 1.5 L9 5.5 L2.5 9.5 Z"/></svg>
+                          )}
+                        </div>
+                        {/* Titre + état */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: isActive ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0.82)', letterSpacing: '-0.005em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.title}</div>
+                          {isActive && (
+                            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.78)`, marginTop: 2, letterSpacing: '0.04em' }}>
+                              {fmt(progress)} / {fmt(duration)}
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Footer — barre de progression cliquable + close */}
+        {currentId && duration > 0 && (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', padding: '12px 22px 6px' }}>
+            <div onClick={seek} style={{ position: 'relative', height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2, cursor: 'pointer', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: `${(progress / duration) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, boxShadow: `0 0 8px ${arch.color}55`, transition: 'width 200ms linear' }} />
+            </div>
+          </div>
+        )}
+
+        {/* Bouton refermer */}
+        <div style={{ padding: '6px 22px 0' }}>
+          <button data-press="true" onClick={handleClose} style={{ width: '100%', padding: '12px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.16)', borderRadius: 100, color: 'rgba(255,255,255,0.62)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12, letterSpacing: '0.20em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 42 }}>Refermer</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function CoconItemDetailModal({ item, archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const sense = COCON_ITEM_SENSE[item.id]
@@ -2949,6 +3180,7 @@ function CoconScreen({ archetypeKey, onClose }) {
   const [editingName, setEditingName] = useState(false)
   const [showVisitor, setShowVisitor] = useState(null)
   const [showJardinFromCocon, setShowJardinFromCocon] = useState(false)
+  const [showMusique, setShowMusique] = useState(false)
   const season = getSeason()
   const meteo = getMeteo(vitality)
 
@@ -3257,6 +3489,37 @@ function CoconScreen({ archetypeKey, onClose }) {
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
         </div>
         {showJardinFromCocon && <JardinModal archetypeKey={archetypeKey} onClose={() => setShowJardinFromCocon(false)} />}
+
+        {/* ── Musique de NÉYA (compositions de Will, écoute libre) ── */}
+        <div onClick={() => { haptic([6, 40, 6]); try { playOpen() } catch {}; setShowMusique(true) }} role="button" tabIndex={0} aria-label="Ouvrir la musique de NÉYA" style={{
+          marginTop: 10,
+          cursor: 'pointer',
+          background: `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(28,22,42,0.40) 50%, rgba(${arch.rgb},0.06) 100%)`,
+          border: `1px solid rgba(${arch.rgb},0.36)`,
+          borderRadius: 14,
+          padding: '16px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          boxShadow: `0 4px 22px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)`,
+          animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.45s both',
+          minHeight: 64,
+        }}>
+          <svg width="34" height="34" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)` }}>
+            <circle cx="11" cy="22" r="3.2" fill={arch.color} opacity="0.92"/>
+            <circle cx="23" cy="20" r="2.8" fill={arch.color} opacity="0.78"/>
+            <path d="M14 22 L14 6 L26 4 L26 20" stroke={arch.color} strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.82"/>
+          </svg>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 4 }}>Sons composés · 11 morceaux</div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.90)', letterSpacing: '-0.01em' }}>Musique de NÉYA</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.56)', marginTop: 3, fontStyle: 'italic' }}>Des textures émotionnelles à écouter</div>
+          </div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+        </div>
+        {showMusique && <MusiqueModal archetypeKey={archetypeKey} onClose={() => setShowMusique(false)} />}
 
         {selectedSouvenir && <SouvenirDetailModal souvenir={selectedSouvenir} archetypeKey={archetypeKey} onClose={() => setSelectedSouvenir(null)} />}
         {itemInfo && <CoconItemDetailModal item={itemInfo} archetypeKey={archetypeKey} onClose={() => setItemInfo(null)} />}
@@ -8636,6 +8899,7 @@ export default function App() {
     const style = document.createElement('style')
     style.id = 'neya-css'
     style.textContent = `
+      @keyframes spin         { 0%{transform:rotate(0deg)}                    100%{transform:rotate(360deg)} }
       @keyframes bgbreathe    { 0%,100%{transform:scale(1)}                   50%{transform:scale(1.04)} }
       @keyframes ob0breathe   { 0%,100%{transform:scale(1)}                   50%{transform:scale(1.028)} }
       @keyframes pulsering    { 0%,100%{transform:scale(1);opacity:0.42}       50%{transform:scale(1.24);opacity:0.88} }
