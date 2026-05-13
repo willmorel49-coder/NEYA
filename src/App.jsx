@@ -2662,6 +2662,160 @@ const COCON_ITEM_SENSE = {
   },
 }
 
+// ─── Mini-jeux Sélecteur — Fusion des 4 mini-jeux en 1 entrée unique ───
+// Le HomeScreen ne montre plus qu'une carte "Mini-jeux doux". Tap →
+// ouvre ce sélecteur qui présente les 4 options par axe thérapeutique :
+// cognitif / corporel / attentionnel / reconstructif.
+
+function MiniJeuxSelectorModal({ archetypeKey, onClose, onSelect }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 320)
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const MINIJEUX = [
+    {
+      key: 'liberation',
+      axe: 'cognitif',
+      title: 'Libération des pensées',
+      desc: 'Touche ce qui pèse pour le laisser partir',
+      duration: '~2 min',
+      glyph: '◍',
+      Icon: () => (
+        <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
+          <ellipse cx="11" cy="13" rx="5" ry="4" fill="rgba(120,130,160,0.42)" />
+          <ellipse cx="20" cy="11" rx="4" ry="3" fill="rgba(120,130,160,0.30)" />
+          <ellipse cx="16" cy="19" rx="4" ry="3" fill="rgba(120,130,160,0.36)" />
+          <circle cx="24" cy="22" r="1.5" fill={arch.color} opacity="0.85" />
+          <circle cx="6" cy="8" r="1.0" fill={arch.color} opacity="0.65" />
+        </svg>
+      ),
+    },
+    {
+      key: 'apaisement',
+      axe: 'corporel',
+      title: 'Apaisement sensoriel',
+      desc: 'Glisse ton doigt sur les douze présences',
+      duration: '~3 min',
+      glyph: '◌',
+      Icon: () => (
+        <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
+          <circle cx="10" cy="8"  r="1.6" fill={arch.color} opacity="0.85"/>
+          <circle cx="22" cy="11" r="1.4" fill={arch.color} opacity="0.70"/>
+          <circle cx="16" cy="16" r="2.2" fill={arch.color} opacity="0.95"/>
+          <circle cx="26" cy="20" r="1.4" fill={arch.color} opacity="0.65"/>
+          <circle cx="11" cy="25" r="1.6" fill={arch.color} opacity="0.78"/>
+          <path d="M16 16 Q14 20 11 25 M16 16 Q19 13 22 11" stroke={arch.color} strokeWidth="0.8" opacity="0.42" strokeLinecap="round" fill="none"/>
+        </svg>
+      ),
+    },
+    {
+      key: 'concentration',
+      axe: 'attentionnel',
+      title: 'Concentration zen',
+      desc: 'Suivre une lumière, soixante secondes',
+      duration: '1 min',
+      glyph: '◉',
+      Icon: () => (
+        <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="13" fill="none" stroke={arch.color} strokeWidth="0.6" opacity="0.32"/>
+          <circle cx="16" cy="16" r="8" fill="none" stroke={arch.color} strokeWidth="0.8" opacity="0.52"/>
+          <circle cx="16" cy="16" r="4" fill={`rgba(${arch.rgb},0.40)`} stroke={arch.color} strokeWidth="0.8"/>
+          <circle cx="16" cy="16" r="1.6" fill={arch.color}/>
+        </svg>
+      ),
+    },
+    {
+      key: 'reparation',
+      axe: 'reconstructif',
+      title: 'Réparation du cocon',
+      desc: 'Reconnecter six fragments dispersés',
+      duration: '~4 min',
+      glyph: '◈',
+      Icon: () => (
+        <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="3" fill={arch.color} opacity="0.85"/>
+          <circle cx="6"  cy="10" r="1.8" fill={arch.color} opacity="0.65"/>
+          <circle cx="26" cy="10" r="1.8" fill={arch.color} opacity="0.65"/>
+          <circle cx="26" cy="22" r="1.8" fill={arch.color} opacity="0.65"/>
+          <circle cx="6"  cy="22" r="1.8" fill={arch.color} opacity="0.65"/>
+          <path d="M16 16 L6 10 M16 16 L26 10 M16 16 L26 22 M16 16 L6 22" stroke={arch.color} strokeWidth="0.6" opacity="0.32"/>
+        </svg>
+      ),
+    },
+  ]
+
+  const handleClose = () => { haptic(4); try { playClose() } catch {}; close() }
+  const handleSelect = (key) => {
+    haptic([6, 40, 6])
+    try { playOpen() } catch {}
+    if (onSelect) onSelect(key)
+  }
+
+  return (
+    <div onClick={handleClose} style={{
+      position: 'fixed', inset: 0, zIndex: 1100,
+      background: `radial-gradient(ellipse at 50% 30%, rgba(${arch.rgb},0.12) 0%, rgba(5,8,16,0.72) 60%, rgba(5,8,16,0.90) 100%)`,
+      backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      animation: exiting ? 'fadeOut 0.32s cubic-bezier(0.4,0,0.6,1) both' : 'fadeIn 0.4s cubic-bezier(0,0,0.2,1) both',
+    }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        width: '100%',
+        maxWidth: 480,
+        background: `linear-gradient(180deg, rgba(20,22,38,0.92) 0%, rgba(12,14,28,0.96) 100%)`,
+        border: `1px solid rgba(${arch.rgb},0.36)`,
+        borderTopLeftRadius: 26,
+        borderTopRightRadius: 26,
+        padding: '20px 22px calc(env(safe-area-inset-bottom, 0px) + 28px)',
+        backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)',
+        boxShadow: `0 -10px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 30px rgba(${arch.rgb},0.12)`,
+        animation: vis && !exiting ? 'modalEnter 0.5s cubic-bezier(0.34,1.56,0.64,1) both' : (exiting ? 'sheetExit 0.32s cubic-bezier(0.4,0,0.6,1) both' : 'none'),
+      }}>
+        {/* Pull tab */}
+        <div style={{ width: 40, height: 4, background: 'rgba(255,255,255,0.22)', borderRadius: 2, margin: '0 auto 18px' }} />
+
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.86)`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: '0 0 6px', textAlign: 'center', animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>Mini-jeux doux</p>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'rgba(255,255,255,0.96)', margin: '0 0 6px', textAlign: 'center', letterSpacing: '-0.015em', textShadow: `0 0 18px ${arch.color}33` }}>Quel axe ce moment&nbsp;?</h2>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13.5, color: 'rgba(255,255,255,0.62)', margin: '0 0 22px', textAlign: 'center', lineHeight: 1.55 }}>Quatre mini-jeux thérapeutiques, un par axe.</p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {MINIJEUX.map((m, i) => (
+            <button key={m.key} data-press="true" onClick={() => handleSelect(m.key)} aria-label={`Ouvrir ${m.title}`} style={{
+              display: 'flex', alignItems: 'center', gap: 14,
+              padding: '14px 16px',
+              background: `linear-gradient(135deg, rgba(${arch.rgb},0.09) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.05) 100%)`,
+              border: `1px solid rgba(${arch.rgb},0.40)`,
+              borderRadius: 14,
+              cursor: 'pointer',
+              minHeight: 68,
+              textAlign: 'left',
+              color: 'inherit',
+              boxShadow: `0 4px 18px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.05)`,
+              animation: `fadeIn 0.5s cubic-bezier(0,0,0.2,1) ${0.1 + i * 0.07}s both`,
+            }}>
+              <div style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)` }}>
+                <m.Icon />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 3 }}>
+                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.20em', textTransform: 'uppercase' }}>{m.axe}</span>
+                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.40)', letterSpacing: '0.04em', fontStyle: 'italic' }}>· {m.duration}</span>
+                </div>
+                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em', marginBottom: 2 }}>{m.title}</div>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.45 }}>{m.desc}</div>
+              </div>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, color: `rgba(${arch.rgb},0.78)`, flexShrink: 0 }}>{m.glyph}</div>
+            </button>
+          ))}
+        </div>
+
+        <button data-press="true" onClick={handleClose} style={{ marginTop: 18, width: '100%', padding: '13px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.16)', borderRadius: 100, color: 'rgba(255,255,255,0.62)', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12, letterSpacing: '0.20em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 44 }}>Refermer</button>
+      </div>
+    </div>
+  )
+}
+
 function CoconItemDetailModal({ item, archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const sense = COCON_ITEM_SENSE[item.id]
@@ -2788,6 +2942,7 @@ function CoconScreen({ archetypeKey, onClose }) {
   const [coconNameLocal, setCoconNameLocal] = useState(coconName)
   const [editingName, setEditingName] = useState(false)
   const [showVisitor, setShowVisitor] = useState(null)
+  const [showJardinFromCocon, setShowJardinFromCocon] = useState(false)
   const season = getSeason()
   const meteo = getMeteo(vitality)
 
@@ -3060,6 +3215,42 @@ function CoconScreen({ archetypeKey, onClose }) {
             )
           })()}
         </div>
+
+        {/* ── Mon Jardin intérieur (fusion : sous-section du Cocon) ── */}
+        <div onClick={() => { haptic([6, 40, 6]); try { playOpen() } catch {}; setShowJardinFromCocon(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon jardin intérieur" style={{
+          marginTop: 24,
+          cursor: 'pointer',
+          background: `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(20,40,30,0.32) 50%, rgba(${arch.rgb},0.06) 100%)`,
+          border: `1px solid rgba(${arch.rgb},0.36)`,
+          borderRadius: 14,
+          padding: '16px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          boxShadow: `0 4px 22px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)`,
+          animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.4s both',
+          minHeight: 64,
+        }}>
+          <svg width="34" height="34" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 11s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+            <line x1="16" y1="28" x2="16" y2="18" stroke={arch.color} strokeWidth="1" opacity="0.65"/>
+            <circle cx="16" cy="14" r="3" fill={arch.color} opacity="0.78"/>
+            <circle cx="13" cy="15" r="2" fill={arch.color} opacity="0.60"/>
+            <circle cx="19" cy="15" r="2" fill={arch.color} opacity="0.60"/>
+            <circle cx="16" cy="12" r="1" fill="white" opacity="0.85"/>
+            <line x1="4"  y1="28" x2="4"  y2="22" stroke={arch.color} strokeWidth="0.6" opacity="0.45"/>
+            <line x1="28" y1="28" x2="28" y2="22" stroke={arch.color} strokeWidth="0.6" opacity="0.45"/>
+            <line x1="0"  y1="28" x2="32" y2="28" stroke={arch.color} strokeWidth="0.5" opacity="0.30"/>
+          </svg>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 4 }}>Espace vivant · sous-section</div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.90)', letterSpacing: '-0.01em' }}>Mon jardin intérieur</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.56)', marginTop: 3, fontStyle: 'italic' }}>Il pousse avec ta présence</div>
+          </div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+        </div>
+        {showJardinFromCocon && <JardinModal archetypeKey={archetypeKey} onClose={() => setShowJardinFromCocon(false)} />}
 
         {selectedSouvenir && <SouvenirDetailModal souvenir={selectedSouvenir} archetypeKey={archetypeKey} onClose={() => setSelectedSouvenir(null)} />}
         {itemInfo && <CoconItemDetailModal item={itemInfo} archetypeKey={archetypeKey} onClose={() => setItemInfo(null)} />}
@@ -3395,11 +3586,10 @@ function NavIconVoyage({ active, color }) {
 
 function BottomNav({ tab, onChange, color, badges = {} }) {
   const tabs = [
-    { key: 'home',     label: 'Accueil',  Icon: NavIconHome },
-    { key: 'routines', label: 'Routines', Icon: NavIconRoutines },
-    { key: 'voyage',   label: 'Voyage',   Icon: NavIconVoyage },
-    { key: 'quetes',   label: 'Quêtes',   Icon: NavIconQuetes },
-    { key: 'boutique', label: 'Boutique', Icon: NavIconBoutique },
+    { key: 'home',      label: 'Accueil',   Icon: NavIconHome },
+    { key: 'pratiques', label: 'Pratiques', Icon: NavIconRoutines },
+    { key: 'voyage',    label: 'Voyage',    Icon: NavIconVoyage },
+    { key: 'boutique',  label: 'Boutique',  Icon: NavIconBoutique },
   ]
   return (
     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.65) 0%, rgba(5,8,16,0.92) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: `1px solid ${color}18`, boxShadow: '0 -12px 40px rgba(5,8,16,0.7), 0 -1px 0 rgba(255,255,255,0.04)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
@@ -3875,6 +4065,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
   const [showConcentration, setShowConcentration] = useState(false)
   const [showReparation, setShowReparation] = useState(false)
   const [showJardin, setShowJardin] = useState(false)
+  const [showMiniJeux, setShowMiniJeux] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showCarnet, setShowCarnet] = useState(false)
   const [showLetters, setShowLetters] = useState(false)
@@ -4184,112 +4375,44 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         else if (key === 'breathing') setShowBreathing(true)
       }} />
 
-      {/* SECTION: Outils du moment */}
-      <HomeSection label="Mini-jeux doux" archRgb={arch.rgb} />
-
       {showBreathing && <BreathingModal archetypeKey={archetypeKey} onClose={() => setShowBreathing(false)} />}
 
-      {/* ── Libération des pensées (mini-jeu thérapeutique) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowLiberation(true) }} role="button" tabIndex={0} aria-label="Ouvrir Libération des pensées" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.5s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'animalbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <ellipse cx="11" cy="13" rx="5" ry="4" fill={`rgba(120,130,160,0.42)`} />
-          <ellipse cx="20" cy="11" rx="4" ry="3" fill={`rgba(120,130,160,0.30)`} />
-          <ellipse cx="16" cy="19" rx="4" ry="3" fill={`rgba(120,130,160,0.36)`} />
-          <circle cx="24" cy="22" r="1.5" fill={arch.color} opacity="0.85" />
-          <circle cx="6" cy="8"  r="1.0" fill={arch.color} opacity="0.65" />
-          <circle cx="26" cy="6"  r="0.8" fill={arch.color} opacity="0.55" />
-        </svg>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Libération des pensées</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Touche ce qui pèse pour le laisser partir</div>
+      {/* ── Mini-jeux doux (sélecteur unique pour les 4 mini-jeux fusionnés) ── */}
+      <div onClick={() => { haptic([6,40,6]); setShowMiniJeux(true) }} role="button" tabIndex={0} aria-label="Ouvrir les mini-jeux doux" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(255,255,255,0.05) 60%, rgba(${arch.rgb},0.05) 100%)`, border: `1px solid rgba(${arch.rgb},0.42)`, borderRadius: 16, padding: '18px 18px', display: 'flex', alignItems: 'center', gap: 16, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.45s both', boxShadow: `0 6px 24px rgba(${arch.rgb},0.14), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 72 }}>
+        <div style={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style={{ filter: `drop-shadow(0 0 10px ${arch.color}77)`, animation: 'signaturePulse 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+            <circle cx="14" cy="14" r="3.2" fill={arch.color} opacity="0.88"/>
+            <circle cx="30" cy="14" r="2.4" fill={arch.color} opacity="0.68"/>
+            <circle cx="14" cy="30" r="2.4" fill={arch.color} opacity="0.68"/>
+            <circle cx="30" cy="30" r="3.0" fill={arch.color} opacity="0.82"/>
+            <circle cx="22" cy="22" r="1.6" fill="white" opacity="0.92"/>
+            <path d="M14 14 L22 22 L30 14 M14 30 L22 22 L30 30" stroke={arch.color} strokeWidth="0.6" opacity="0.32" fill="none"/>
+          </svg>
         </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 4 }}>4 mini-jeux thérapeutiques</div>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em', marginBottom: 3 }}>Mini-jeux doux</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.58)', fontStyle: 'italic' }}>Libération · Apaisement · Concentration · Réparation</div>
+        </div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
+      {showMiniJeux && <MiniJeuxSelectorModal archetypeKey={archetypeKey} onClose={() => setShowMiniJeux(false)} onSelect={(key) => {
+        setShowMiniJeux(false)
+        setTimeout(() => {
+          if (key === 'liberation') setShowLiberation(true)
+          else if (key === 'apaisement') setShowApaisement(true)
+          else if (key === 'concentration') setShowConcentration(true)
+          else if (key === 'reparation') setShowReparation(true)
+        }, 320)
+      }} />}
       {showLiberation && <LiberationPenseesModal archetypeKey={archetypeKey} onClose={() => setShowLiberation(false)} />}
-
-      {/* ── Apaisement sensoriel (mini-jeu) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowApaisement(true) }} role="button" tabIndex={0} aria-label="Ouvrir Apaisement sensoriel" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.6s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <circle cx="10" cy="8"  r="1.6" fill={arch.color} opacity="0.85"/>
-          <circle cx="22" cy="11" r="1.4" fill={arch.color} opacity="0.70"/>
-          <circle cx="6"  cy="18" r="1.2" fill={arch.color} opacity="0.60"/>
-          <circle cx="16" cy="16" r="2.2" fill={arch.color} opacity="0.95"/>
-          <circle cx="26" cy="20" r="1.4" fill={arch.color} opacity="0.65"/>
-          <circle cx="11" cy="25" r="1.6" fill={arch.color} opacity="0.78"/>
-          <circle cx="22" cy="26" r="1.2" fill={arch.color} opacity="0.55"/>
-          <path d="M16 16 Q14 20 11 25" stroke={arch.color} strokeWidth="0.8" opacity="0.42" strokeLinecap="round" fill="none"/>
-          <path d="M16 16 Q19 13 22 11" stroke={arch.color} strokeWidth="0.8" opacity="0.42" strokeLinecap="round" fill="none"/>
-        </svg>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Apaisement sensoriel</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Glisse ton doigt sur les douze présences</div>
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
-      </div>
       {showApaisement && <ApaisementSensorielModal archetypeKey={archetypeKey} onClose={() => setShowApaisement(false)} />}
-
-      {/* ── Concentration zen (mini-jeu attention soutenue) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowConcentration(true) }} role="button" tabIndex={0} aria-label="Ouvrir Concentration zen" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.65s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <circle cx="16" cy="16" r="13" fill="none" stroke={arch.color} strokeWidth="0.6" opacity="0.32"/>
-          <circle cx="16" cy="16" r="8" fill="none" stroke={arch.color} strokeWidth="0.8" opacity="0.52"/>
-          <circle cx="16" cy="16" r="4" fill={`rgba(${arch.rgb},0.40)`} stroke={arch.color} strokeWidth="0.8"/>
-          <circle cx="16" cy="16" r="1.6" fill={arch.color}/>
-        </svg>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Concentration zen</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Suivre une lumière, soixante secondes</div>
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
-      </div>
       {showConcentration && <ConcentrationZenModal archetypeKey={archetypeKey} onClose={() => setShowConcentration(false)} />}
-
-      {/* ── Reparation du cocon (mini-jeu reconstruction) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowReparation(true) }} role="button" tabIndex={0} aria-label="Ouvrir Reparation du cocon" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.7s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <circle cx="16" cy="16" r="3" fill={arch.color} opacity="0.85"/>
-          <circle cx="6"  cy="10" r="1.8" fill={arch.color} opacity="0.65"/>
-          <circle cx="26" cy="10" r="1.8" fill={arch.color} opacity="0.65"/>
-          <circle cx="26" cy="22" r="1.8" fill={arch.color} opacity="0.65"/>
-          <circle cx="6"  cy="22" r="1.8" fill={arch.color} opacity="0.65"/>
-          <circle cx="16" cy="4"  r="1.6" fill={arch.color} opacity="0.55"/>
-          <circle cx="16" cy="28" r="1.6" fill={arch.color} opacity="0.55"/>
-          <path d="M16 16 L6 10 M16 16 L26 10 M16 16 L26 22 M16 16 L6 22 M16 16 L16 4 M16 16 L16 28" stroke={arch.color} strokeWidth="0.6" opacity="0.32"/>
-        </svg>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mini-jeu doux</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Réparation du cocon</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Reconnecter six fragments dispersés</div>
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
-      </div>
       {showReparation && <ReparationCoconModal archetypeKey={archetypeKey} onClose={() => setShowReparation(false)} />}
 
       {/* SECTION: Tes espaces */}
       <HomeSection label="Tes espaces" archRgb={arch.rgb} />
 
-      {/* ── Mon jardin interieur (ecran contemplatif long-terme) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowJardin(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon jardin interieur" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.78s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 11s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <line x1="16" y1="28" x2="16" y2="18" stroke={arch.color} strokeWidth="1" opacity="0.65"/>
-          <circle cx="16" cy="14" r="3" fill={arch.color} opacity="0.78"/>
-          <circle cx="13" cy="15" r="2" fill={arch.color} opacity="0.60"/>
-          <circle cx="19" cy="15" r="2" fill={arch.color} opacity="0.60"/>
-          <circle cx="16" cy="12" r="1" fill="white" opacity="0.85"/>
-          <line x1="4"  y1="28" x2="4"  y2="22" stroke={arch.color} strokeWidth="0.6" opacity="0.45"/>
-          <line x1="28" y1="28" x2="28" y2="22" stroke={arch.color} strokeWidth="0.6" opacity="0.45"/>
-          <line x1="0"  y1="28" x2="32" y2="28" stroke={arch.color} strokeWidth="0.5" opacity="0.30"/>
-        </svg>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Espace vivant</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Mon jardin intérieur</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>Il pousse avec ta présence</div>
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
-      </div>
       {showJardin && <JardinModal archetypeKey={archetypeKey} onClose={() => setShowJardin(false)} />}
 
       {/* ── Carnet du Voyage (écriture quotidienne) ── */}
@@ -4493,8 +4616,8 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       <div style={{ position: 'relative', display: 'flex', gap: 10 }}>
         {jourComplète && <div style={{ position: 'absolute', inset: '-10px -6px', borderRadius: 18, background: `radial-gradient(ellipse at center, ${arch.color}0d 0%, transparent 68%)`, animation: 'presencePulse 7s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none', zIndex: 0 }} />}
         {[
-          { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈', tab: 'routines', nextHint: routinesCount < arch.routines.length ? arch.routines[routinesCount]?.title : null },
-          { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇', tab: 'quetes', nextHint: quetesCount < arch.quetes.length ? arch.quetes.find((q, qi) => !quetesDone[qi])?.title : null },
+          { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈', tab: 'pratiques', nextHint: routinesCount < arch.routines.length ? arch.routines[routinesCount]?.title : null },
+          { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇', tab: 'pratiques', nextHint: quetesCount < arch.quetes.length ? arch.quetes.find((q, qi) => !quetesDone[qi])?.title : null },
         ].map((s, i) => (
           <div key={i} onClick={() => { haptic(8); onChangeTab(s.tab) }} style={{ flex: 1, position: 'relative', zIndex: 1, background: s.count === s.total ? `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.07) 100%)` : s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count === s.total ? arch.color + '88' : s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 12, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s', cursor: 'pointer', boxShadow: s.count === s.total ? `0 0 22px rgba(${arch.rgb},0.22), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -8242,6 +8365,69 @@ function MilestoneCelebration({ count, archetypeKey }) {
   )
 }
 
+// ─── PRATIQUES SCREEN — Fusion Routines + Quêtes en sous-tabs ──────
+// Remplace les 2 onglets distincts (routines/quetes) par 1 onglet
+// unique "Pratiques" avec un toggle interne. Routines = court terme,
+// Quêtes = profond. Même promesse UX, navigation simplifiée.
+
+function PratiquesScreen({ archetypeKey, routinesDone, quetesDone, onToggleRoutine, onCompleteQuete, onOpenVrai }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [subTab, setSubTab] = useState(() => {
+    try { return localStorage.getItem('neya_pratiques_subtab') || 'routines' } catch { return 'routines' }
+  })
+  useEffect(() => { try { localStorage.setItem('neya_pratiques_subtab', subTab) } catch {} }, [subTab])
+
+  const routinesCount = routinesDone.filter(Boolean).length
+  const routinesTotal = arch.routines.length
+  const quetesCount = quetesDone.filter(Boolean).length
+  const quetesTotal = arch.quetes.length
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', position: 'relative' }}>
+      {/* Sous-tabs Court / Profond */}
+      <div style={{ display: 'flex', gap: 8, padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 22px 8px', position: 'relative', zIndex: 5 }}>
+        {[
+          { key: 'routines', label: 'Court terme', sub: 'Routines du jour', count: routinesCount, total: routinesTotal },
+          { key: 'quetes',   label: 'Profond',     sub: 'Quêtes intérieures', count: quetesCount,    total: quetesTotal },
+        ].map((t) => {
+          const active = subTab === t.key
+          const complete = t.count === t.total
+          return (
+            <button key={t.key} data-press="true" onClick={() => { haptic([6, 30, 6]); setSubTab(t.key) }} aria-label={t.label} style={{
+              flex: 1,
+              padding: '10px 12px',
+              background: active ? `linear-gradient(135deg, rgba(${arch.rgb},0.18) 0%, rgba(8,12,22,0.62) 100%)` : 'rgba(8,12,22,0.42)',
+              border: `1px solid ${active ? `rgba(${arch.rgb},0.55)` : 'rgba(255,255,255,0.10)'}`,
+              borderRadius: 14,
+              cursor: 'pointer',
+              transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), border-color 240ms cubic-bezier(0.4,0,0.2,1)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              textAlign: 'left',
+              color: 'inherit',
+              boxShadow: active ? `0 4px 20px rgba(${arch.rgb},0.20), inset 0 1px 0 rgba(255,255,255,0.06)` : '0 2px 10px rgba(0,0,0,0.18)',
+              minHeight: 64,
+              display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2,
+            }}>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: active ? `rgba(${arch.rgb},0.92)` : 'rgba(255,255,255,0.48)', letterSpacing: '0.22em', textTransform: 'uppercase', transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.label}</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: active ? 'rgba(255,255,255,0.94)' : 'rgba(255,255,255,0.62)', letterSpacing: '-0.005em', transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.sub}</div>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: complete ? arch.color : `rgba(${arch.rgb},0.62)`, letterSpacing: '0.06em', marginLeft: 'auto', flexShrink: 0, textShadow: complete ? `0 0 10px ${arch.color}66` : 'none' }}>{complete ? '✦' : `${t.count}/${t.total}`}</div>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Contenu sous-tab actif */}
+      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        {subTab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={onToggleRoutine} onOpenVrai={onOpenVrai} />}
+        {subTab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={onCompleteQuete} onOpenVrai={onOpenVrai} />}
+      </div>
+    </div>
+  )
+}
+
 function MainApp({ archetypeKey, onRestart, savedAt }) {
   const arch = ARCHETYPES[archetypeKey]
   const [tab, setTab] = useState('home')
@@ -8335,12 +8521,11 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
       </svg>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 320ms cubic-bezier(0.34,1.56,0.64,1)' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} showXpToast={showXpToast} />}
-          {tab === 'routines' && <RoutinesScreen archetypeKey={archetypeKey} completed={routinesDone} onToggle={toggleRoutine} onOpenVrai={() => setVraiOpen(true)} />}
-          {tab === 'quetes' && <QuetesScreen archetypeKey={archetypeKey} completed={quetesDone} onComplete={completeQuete} onOpenVrai={() => setVraiOpen(true)} />}
+          {tab === 'pratiques' && <PratiquesScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onToggleRoutine={toggleRoutine} onCompleteQuete={completeQuete} onOpenVrai={() => setVraiOpen(true)} />}
           {tab === 'voyage' && <GrandVoyageScreen archetypeKey={archetypeKey} />}
           {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>
-        <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ routines: routinesDone.filter(Boolean).length < arch.routines.length, quetes: quetesDone.filter(Boolean).length < arch.quetes.length }} />
+        <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ pratiques: (routinesDone.filter(Boolean).length < arch.routines.length) || (quetesDone.filter(Boolean).length < arch.quetes.length) }} />
         {pendingWorldUnlock && <WorldUnlockModal worldKey={pendingWorldUnlock} onClose={() => { try { addSouvenir('world_unlock', { world: pendingWorldUnlock }) } catch {} ; setPendingWorldUnlock(null); changeTab('voyage') }} />}
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
         {milestoneCount && <MilestoneCelebration count={milestoneCount} archetypeKey={archetypeKey} />}
