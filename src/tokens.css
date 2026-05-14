@@ -246,6 +246,79 @@
   --cava-font-display: 'Garet', 'Sora', system-ui, sans-serif;
   --cava-font-script: 'I Eat Crayons', 'Caveat', cursive;
 
+
+  /* ═══════════════════════════════════════════════════════════
+     V3 — DAWN MODE (palette poudrée, light-first sanctuaire)
+     ═══════════════════════════════════════════════════════════
+     Source : cavalerie inspirations Pinterest 2026-05-14.
+     Direction : photographic blur backgrounds + glassmorphism XL +
+     display serif italic. Le dark cosmic actuel est CONSERVÉ pour
+     les moments rituels (Splash, Quiz, EspaceVrai, Milestone) —
+     dawn mode est pour le quotidien (Home, Communauté, Profil).
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Fond du sanctuaire diurne — ivoire textile chaud */
+  --surface-dawn: oklch(0.92 0.010 75);
+  /* fallback hex : #E8E4DE */
+
+  /* Fond brume — bleu poudré clair */
+  --surface-mist: oklch(0.86 0.020 240);
+  /* fallback hex : #D6DCE5 */
+
+  /* Fond voile profond — bleu poudré mid */
+  --surface-veil: oklch(0.74 0.035 245);
+  /* fallback hex : #B8C5D6 */
+
+  /* Encre primary sur fond clair — bleu nuit doux (pas noir pur) */
+  --ink-primary: oklch(0.24 0.030 260);
+  /* fallback hex : #2A3142 */
+
+  /* Encre soft sur fond clair — bleu-gris doux */
+  --ink-soft: oklch(0.48 0.025 260);
+  /* fallback hex : #5A6478 */
+
+  /* Encre whisper — pour labels caps secondaires */
+  --ink-whisper: oklch(0.62 0.018 260);
+  /* fallback hex : #828A99 */
+
+  /* Accent spirit poudré (bleu cornflower désaturé, pont CAVA) */
+  --accent-spirit-soft: oklch(0.66 0.060 245);
+  /* fallback hex : #7397BC */
+
+  /* Accent bloom — peach humain, chaleur photographique */
+  --accent-bloom: oklch(0.82 0.060 35);
+  /* fallback hex : #E8B8A8 */
+
+  /* Accent introspect — lavande poudrée (chemin intérieur) */
+  --accent-introspect: oklch(0.74 0.060 305);
+  /* fallback hex : #B8A8D4 */
+
+  /* Accent sacred — or champagne désaturé */
+  --accent-sacred-soft: oklch(0.84 0.080 80);
+  /* fallback hex : #E8C16A */
+
+  /* Glass — translucides pour cards XL sur fond photo */
+  --glass-cream: rgba(232, 228, 222, 0.55);
+  --glass-light: rgba(255, 247, 232, 0.45);
+  --glass-frost: rgba(255, 255, 255, 0.18);
+
+  /* Blur tokens explicites */
+  --blur-sm: 14px;
+  --blur-md: 22px;
+  --blur-xl: 32px;
+
+  /* Display serif V3 — Fraunces (Google Fonts, variable, italic ornemental) */
+  --font-display-serif: 'Fraunces', 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-display-serif-italic-settings: "opsz" 96, "SOFT" 50, "WONK" 1;
+
+  /* Radius V3 — XL pour glassmorphism */
+  --r-xxl: 28px;
+  --r-mega: 36px;
+
+  /* Shadows V3 — doux pour fond clair */
+  --shadow-soft: 0 12px 32px -10px rgba(42, 49, 66, 0.18);
+  --shadow-card: 0 18px 48px -16px rgba(42, 49, 66, 0.24);
+  --shadow-deep: 0 24px 64px -20px rgba(42, 49, 66, 0.32);
 }
 
 /* ───────────────────────────────────────────────────────────

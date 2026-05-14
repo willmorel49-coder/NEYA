@@ -2232,7 +2232,7 @@ function ResultScreen({ archetypeKey, onContinue }) {
                   <img src={`${B}spirit-${archetypeKey}.avif`} alt={arch.animal} style={{ width: 60, height: 60, borderRadius: '50%', objectFit: 'cover', objectPosition: 'center 45%', display: 'block', opacity: 0.75, filter: `brightness(1.05) saturate(1.1) drop-shadow(0 0 14px ${arch.color}88)`, animation: 'animalfloat 18s cubic-bezier(0.45,0,0.55,1) infinite, animalbreathe 22s cubic-bezier(0.45,0,0.55,1) infinite', willChange: 'transform' }} />
                 </div>
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.95)`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 4px', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: '0 1px 8px rgba(0,0,0,0.55)' }}>Profil mental</p>
-                <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: 22, margin: 0, background: `linear-gradient(135deg, rgba(239,233,220,0.96), ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite', transition: 'animation 0.4s ease' }}>{arch.profil}</h2>
+                <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(28px, 7vw, 36px)', margin: 0, letterSpacing: '-0.02em', lineHeight: 1.15, background: `linear-gradient(135deg, rgba(239,233,220,0.96), ${arch.color}cc)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', animation: forcesShown === arch.forces.length ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite', transition: 'animation 0.4s ease' }}>{arch.profil}</h2>
                 <div style={{ width: 32, height: 1, background: `${arch.color}55`, borderRadius: 1, margin: '4px auto 6px', animation: 'worldglow 8s cubic-bezier(0.45,0,0.55,1) infinite' }} />
                 <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(239,233,220,0.62)', letterSpacing: '0.18em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 28s ease-in-out 1s infinite', textShadow: '0 1px 8px rgba(0,0,0,0.55)' }}>Tes forces naturelles</p>
               </div>
@@ -5462,11 +5462,11 @@ function BoutiqueScreen({ archetypeKey }) {
         <section style={{ minHeight: '85vh', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 36px', background: 'var(--surface-void)' }}>
           <div style={{ maxWidth: 360, textAlign: 'center' }}>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.32em', textTransform: 'uppercase', color: `${CREAM}66`, margin: '0 0 36px' }}>— Manifeste —</p>
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 26, lineHeight: 1.55, color: CREAM, margin: '0 0 32px', letterSpacing: '-0.005em' }}>
-              Nous existons pour briser<br />le masque du <span style={{ fontStyle: 'italic', color: OCRE }}>«&nbsp;ça va&nbsp;».</span>
+            <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontSize: 32, lineHeight: 1.30, color: CREAM, margin: '0 0 32px', letterSpacing: '-0.020em', fontVariationSettings: '"opsz" 96, "SOFT" 50' }}>
+              Nous existons pour briser<br />le masque du <span style={{ fontStyle: 'italic', color: OCRE, fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1' }}>«&nbsp;ça va&nbsp;».</span>
             </p>
             <div style={{ width: 32, height: 1, background: OCRE, margin: '0 auto 32px' }} />
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 16, lineHeight: 1.7, color: `${CREAM}aa`, margin: 0, letterSpacing: '0.005em' }}>
+            <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 18, lineHeight: 1.6, color: `${CREAM}aa`, margin: 0, letterSpacing: '-0.005em', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1' }}>
               Faire de la mode un langage<br />qui libère la parole sur la santé mentale.
             </p>
           </div>
@@ -7297,12 +7297,12 @@ function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra,
           {greetingTitle}{prenom ? ` · ${prenom}` : ''}
         </p>
 
-        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(24px, 6.5vw, 30px)', color: 'rgba(239,233,220,0.96)', margin: 0, lineHeight: 1.3, letterSpacing: '-0.015em', textShadow: `0 0 28px ${arch.color}66, 0 2px 16px rgba(0,0,0,0.55)`, whiteSpace: 'pre-line', animation: 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+        <h1 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(32px, 8.5vw, 44px)', color: 'rgba(239,233,220,0.96)', margin: 0, lineHeight: 1.15, letterSpacing: '-0.025em', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', textShadow: `0 0 28px ${arch.color}55, 0 2px 16px rgba(0,0,0,0.55)`, whiteSpace: 'pre-line', animation: 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite' }}>
           {greetingPoem}
         </h1>
 
         {mantra ? (
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(239,233,220,0.74)', margin: '14px auto 0', maxWidth: 300, lineHeight: 1.55, letterSpacing: '-0.005em', textShadow: `0 0 14px ${arch.color}33`, animation: 'none' }}>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 17, color: 'rgba(239,233,220,0.78)', margin: '18px auto 0', maxWidth: 300, lineHeight: 1.55, letterSpacing: '-0.005em', textShadow: `0 0 14px ${arch.color}33`, animation: 'none' }}>
             « {mantra} »
           </p>
         ) : (
@@ -9037,10 +9037,10 @@ function FragmentsView({ archetypeKey }) {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, padding: '36px 18px 24px', textAlign: 'center', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both' }}>
         <div style={{ width: 84, height: 84, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.06) 60%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.40)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: arch.color, animation: 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite', boxShadow: `0 0 28px rgba(${arch.rgb},0.18)` }}>◯</div>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.30em', textTransform: 'uppercase', margin: 0 }}>Fragments éphémères · 24h</p>
-        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'rgba(239,233,220,0.94)', margin: 0, lineHeight: 1.4, letterSpacing: '-0.015em', maxWidth: 320, textShadow: `0 0 18px ${arch.color}33` }}>
+        <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 32, color: 'rgba(239,233,220,0.94)', margin: 0, lineHeight: 1.20, letterSpacing: '-0.025em', maxWidth: 340, fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', textShadow: `0 0 18px ${arch.color}33` }}>
           Pose un mot.<br />Il rejoindra l'essaim.
         </h2>
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(239,233,220,0.66)', margin: 0, lineHeight: 1.65, maxWidth: 320, letterSpacing: '-0.005em' }}>
+        <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 15, color: 'rgba(239,233,220,0.72)', margin: 0, lineHeight: 1.65, maxWidth: 320, letterSpacing: '-0.005em', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1' }}>
           Dépose ton souffle d'abord — puis tu pourras lire ceux des autres présences. Pas de retour. Pas de signature. 24 heures, et il s'efface.
         </p>
         <button data-press="true" onClick={() => { haptic([6, 30, 6]); setComposing(true) }} style={{ padding: '14px 30px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))`, border: 'none', borderRadius: 100, color: '#EFE9DC', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 48, boxShadow: `0 6px 24px rgba(${arch.rgb},0.40)`, animation: 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>Déposer un souffle</button>
