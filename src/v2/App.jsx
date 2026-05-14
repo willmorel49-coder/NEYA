@@ -13,6 +13,7 @@ import Onboarding from './screens/Onboarding';
 import Aventure from './screens/Aventure';
 import Cocon from './screens/Cocon';
 import Communaute from './screens/Communaute';
+import CaVa from './screens/CaVa';
 import Meditation from './screens/Meditation';
 import BottomNav from '../components/BottomNav';
 
@@ -42,8 +43,10 @@ export default function V2App() {
     activeTab === 'aventure'
       ? (WORLDS[activeWorldKey] || WORLDS.foret).accent
       : activeTab === 'cocon'
-        ? (WORLDS[getProfile().totem === 'lion' ? 'foret' : getTotemWorld(getProfile().totem)] || WORLDS.foret).accent
-        : WORLDS.communaute.accent;
+        ? (WORLDS[getTotemWorld(getProfile().totem)] || WORLDS.foret).accent
+        : activeTab === 'communaute'
+          ? WORLDS.communaute.accent
+          : 'var(--cava-warm)';
 
   if (!onboarded) {
     return <Onboarding onComplete={handleOnboardingComplete} />;
@@ -59,6 +62,7 @@ export default function V2App() {
       )}
       {activeTab === 'cocon' && <Cocon />}
       {activeTab === 'communaute' && <Communaute />}
+      {activeTab === 'cava' && <CaVa />}
 
       <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />
 

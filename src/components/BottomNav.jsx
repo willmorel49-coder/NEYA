@@ -11,6 +11,7 @@ const TABS = [
   { key: 'aventure',   label: 'Aventure',   icon: '↑' },
   { key: 'cocon',      label: 'Cocon',      icon: '◇' },
   { key: 'communaute', label: 'Communauté', icon: '◯' },
+  { key: 'cava',       label: 'Ça va ?',    icon: '✿' },
 ];
 
 export default function BottomNav({ active, onChange, accent = 'var(--amber)' }) {
@@ -80,11 +81,12 @@ export default function BottomNav({ active, onChange, accent = 'var(--amber)' })
             <span style={{ fontSize: 18, lineHeight: 1 }}>{t.icon}</span>
             <span
               style={{
-                fontSize: 10,
+                fontSize: 9,
                 fontWeight: 500,
-                letterSpacing: '0.05em',
+                letterSpacing: '0.04em',
                 textTransform: 'uppercase',
                 lineHeight: 1,
+                whiteSpace: 'nowrap',
               }}
             >
               {t.label}
