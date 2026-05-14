@@ -5433,9 +5433,15 @@ function FadeOnScroll({ children }) {
 
 function BoutiqueScreen({ archetypeKey }) {
   // Note : archetypeKey reçu mais ignoré — ÇA VA? a son propre territoire chromatique
-  const CREAM = '#EFE9DC'
-  const OCRE  = '#A8593A'
-  const STONE = '#7A7568'
+  // Palette officielle ÇA VA? (moodboard 2026-05-14)
+  // Voir src/tokens.css section "Brand extension"
+  const CREAM       = '#D4C8BA'  // --cava-cream (ivoire textile chaud, body sur void)
+  const OCRE        = '#9F584E'  // --cava-terracotta (rouge passion, accent principal)
+  const STONE       = '#8A8275'  // pierre tiède, whisper text sur void
+  const MUSTARD     = '#C29051'  // --cava-ochre (chaleur broderie)
+  const EMERALD     = '#34917F'  // --cava-emerald (mode contemporaine)
+  const SAGE        = '#9AAFA0'  // --cava-sage (sérénité textile)
+  const MIST        = '#7397BC'  // --cava-mist-blue (pont chromatique NÉYA)
   const [vis, setVis] = useState(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
 
@@ -5464,13 +5470,17 @@ function BoutiqueScreen({ archetypeKey }) {
         <div style={{ position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)', width: 1, height: 40, background: `linear-gradient(180deg, ${CREAM}88, transparent)`, animation: 'worldglow 5s cubic-bezier(0.45,0,0.55,1) infinite' }} />
       </section>
 
-      {/* ─── 2 · MANIFESTE — silence textuel ─── */}
+      {/* ─── 2 · MANIFESTE — mission officielle ÇA VA? ─── */}
       <FadeOnScroll>
-        <section style={{ minHeight: '75vh', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 36px', background: '#050810' }}>
-          <div style={{ maxWidth: 320, textAlign: 'center' }}>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.32em', textTransform: 'uppercase', color: `${CREAM}66`, margin: '0 0 32px' }}>— Manifeste —</p>
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, lineHeight: 1.7, color: CREAM, margin: 0, letterSpacing: '-0.005em' }}>
-              Ce que l'on porte<br />parle pour ce que l'on tait.
+        <section style={{ minHeight: '85vh', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 36px', background: '#050810' }}>
+          <div style={{ maxWidth: 360, textAlign: 'center' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.32em', textTransform: 'uppercase', color: `${CREAM}66`, margin: '0 0 36px' }}>— Manifeste —</p>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 26, lineHeight: 1.55, color: CREAM, margin: '0 0 32px', letterSpacing: '-0.005em' }}>
+              Nous existons pour briser<br />le masque du <span style={{ fontStyle: 'italic', color: OCRE }}>«&nbsp;ça va&nbsp;».</span>
+            </p>
+            <div style={{ width: 32, height: 1, background: OCRE, margin: '0 auto 32px' }} />
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 16, lineHeight: 1.7, color: `${CREAM}aa`, margin: 0, letterSpacing: '0.005em' }}>
+              Faire de la mode un langage<br />qui libère la parole sur la santé mentale.
             </p>
           </div>
         </section>

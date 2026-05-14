@@ -1,0 +1,255 @@
+/* ============================================================
+   NÉYA — Tokens fondations · couleurs + typo
+   ============================================================
+   Système émotionnel programmable. Pas une palette UI.
+   Chaque token = un rôle narratif, jamais "joli".
+
+   Règle 40/60 : 40% rigueur systémique (Linear/Stripe-grade),
+   60% direction émotionnelle (A24/Aesop/Jacquemus).
+
+   Le sujet n'est pas la couleur. C'est la lumière.
+   ============================================================ */
+
+:root {
+
+  /* ───────────────────────────────────────────────────────────
+     SURFACES — Du plus profond au plus haut
+     ───────────────────────────────────────────────────────────
+     Les surfaces NÉYA ne sont jamais noires pures. Toujours
+     teintées bleu-nuit cosmique avec une chaleur résiduelle.
+     La progression Void → Elevated forme l'épaisseur du monde. */
+
+  /* Le néant respirant — fond le plus profond, jamais utilisé seul.
+     Sert d'arrière-plan absolu (vidéos, splash, transitions). */
+  --surface-void: oklch(0.10 0.025 260);
+  /* fallback hex : #050810 */
+
+  /* Le sol — fond de tous les écrans principaux.
+     Légèrement plus chaud que void, pour qu'on sente le vivant. */
+  --surface-base: oklch(0.14 0.030 258);
+  /* fallback hex : #0E1626 */
+
+  /* La carte qui flotte — surfaces des modules contemplatifs,
+     cards Cocon, Aujourd'hui, Bilan. Glassmorphism par défaut. */
+  --surface-raised: oklch(0.20 0.035 256);
+  /* fallback hex : #1A2438 */
+
+  /* L'élévation modale — sheets, overlays, Espace Vrai,
+     Profil immersif. Avec backdrop-filter blur(20px). */
+  --surface-elevated: oklch(0.24 0.040 255);
+  /* fallback hex : #232E4A */
+
+
+  /* ───────────────────────────────────────────────────────────
+     TEXTE — Hiérarchie en cream ivoire (jamais blanc pur)
+     ───────────────────────────────────────────────────────────
+     Le blanc pur fatigue l'œil et casse le climat crépusculaire.
+     Cream ivoire = continuité avec ÇA VA?, chaleur narrative. */
+
+  /* La voix qui porte — titres, body principal, tous les
+     contenus à lire vraiment. Contraste AAA ≥ 7:1 sur base. */
+  --text-primary: oklch(0.94 0.020 90);
+  /* fallback hex : #EFE9DC */
+
+  /* La voix qui accompagne — sous-titres, descriptions,
+     metadata. Contraste AA ≥ 4.5:1. */
+  --text-secondary: oklch(0.74 0.018 88);
+  /* fallback hex : #B8B0A0 */
+
+  /* Le murmure — labels caps espacés, hints, captions.
+     Contraste 3:1 minimum, usage exclusif labels < 14px. */
+  --text-whisper: oklch(0.56 0.015 86);
+  /* fallback hex : #84807A */
+
+  /* Texte sur fond accent saturé (CTA actif, bouton spirit).
+     Toujours sombre pour préserver l'élégance. */
+  --text-on-light: oklch(0.14 0.030 258);
+  /* fallback hex : #0E1626 */
+
+
+  /* ───────────────────────────────────────────────────────────
+     ACCENTS ÉMOTIONNELS — 4 maximum, chacun avec rôle clair
+     ───────────────────────────────────────────────────────────
+     Chaque accent = un état intérieur traversable. Pas des
+     "couleurs primaires". Le rôle prime sur la teinte. */
+
+  /* Le bleu signature — cyan cheveux héroïne. Présence du soi
+     incarné. Utilisé pour : halos rituels, anneaux de présence,
+     accents identitaires (Espace Vrai, ProfilScreen). */
+  --accent-spirit: oklch(0.78 0.130 230);
+  /* fallback hex : #3AA8D8 */
+
+  /* L'or sacré — auréole des animaux totems. Couleur du seuil
+     entre toi et plus grand. Utilisé pour : milestones, animal
+     reveal, WelcomeBack, célébrations rares. */
+  --accent-sacred: oklch(0.85 0.110 85);
+  /* fallback hex : #E8C16A */
+
+  /* La lavande introspective — chemin intérieur, fleurs en
+     marche. Utilisé pour : Carnet, Bilans, écriture, retraite. */
+  --accent-introspection: oklch(0.68 0.130 305);
+  /* fallback hex : #9F7AD4 */
+
+  /* Le vert grounding — forêt profonde, racines, ancrage.
+     Utilisé pour : Routines actives, Pratiques validées,
+     états "tu es là maintenant". */
+  --accent-grounding: oklch(0.58 0.080 158);
+  /* fallback hex : #4A8B68 */
+
+
+  /* ───────────────────────────────────────────────────────────
+     ÉTATS — Pas de rouge urgence. Tendresse + chaleur sacrée
+     ─────────────────────────────────────────────────────────── */
+
+  /* L'état accompli — souvenir gagné, milestone atteint,
+     respiration complétée. Or chaud doux, jamais agressif. */
+  --state-cherished: oklch(0.82 0.115 78);
+  /* fallback hex : #E8B870 */
+
+  /* L'état traversée — Crisis Mode, mode tempête. Ambre
+     papillon, halo rassurant et non anxiogène. Fonctionne sur
+     fond sombre ET clair (cf. ÇA VA? cream backdrop). */
+  --state-tender: oklch(0.75 0.095 50);
+  /* fallback hex : #E8B894 */
+
+  /* L'état mouvement — feedback action utilisateur, transition
+     douce vers un autre territoire. Spirit légèrement tamisé. */
+  --state-flowing: oklch(0.72 0.100 220);
+  /* fallback hex : #6FB8D8 */
+
+
+  /* ───────────────────────────────────────────────────────────
+     LUMIÈRE — Le vrai sujet, plus important que les couleurs
+     ───────────────────────────────────────────────────────────
+     Pas de glow néon, pas de drop-shadow gaming. Halos profonds
+     organiques, gradients imperceptibles. */
+
+  /* Halo intérieur — appliqué en box-shadow inset ou radial
+     background sur surfaces actives. Donne la sensation que la
+     surface "respire" depuis l'intérieur. */
+  --light-inner: oklch(0.78 0.130 230 / 0.18);
+  /* fallback : rgba(58, 168, 216, 0.18) */
+
+  /* Halo sacré — appliqué autour des spirit animals, WelcomeBack,
+     milestones. Auréole or chaud diffuse. */
+  --light-sacred: oklch(0.85 0.110 85 / 0.22);
+  /* fallback : rgba(232, 193, 106, 0.22) */
+
+  /* Voile profond — overlay sombre appliqué sur backgrounds image
+     pour garantir le contraste texte. ~55% opacity, jamais 100%. */
+  --light-veil: oklch(0.10 0.025 260 / 0.55);
+  /* fallback : rgba(5, 8, 16, 0.55) */
+
+
+  /* ───────────────────────────────────────────────────────────
+     BORDURES & SÉPARATEURS — Subtiles, organiques
+     ─────────────────────────────────────────────────────────── */
+
+  /* Le voile — bordure quasi-invisible, juste pour suggérer un
+     bord sans le souligner. Cards principales. */
+  --border-veil: oklch(0.94 0.020 90 / 0.10);
+  /* fallback : rgba(239, 233, 220, 0.10) */
+
+  /* La présence — bordure visible, indique une zone interactive.
+     Cards tappables, boutons secondaires. */
+  --border-presence: oklch(0.94 0.020 90 / 0.24);
+  /* fallback : rgba(239, 233, 220, 0.24) */
+
+
+  /* ───────────────────────────────────────────────────────────
+     TYPOGRAPHIE — 2 familles, 6 niveaux, ratio 1.250
+     ───────────────────────────────────────────────────────────
+     Sora reste pour le display (humaniste contemplative).
+     Inter remplacé à terme par Geist ou Söhne. Pour V1, Inter
+     conservé via stack progressive enhancement. */
+
+  /* Display — moments rituels, titres écran-clé. */
+  --font-display: 'Sora', 'Inter', system-ui, sans-serif;
+
+  /* Body — contenu lisible, navigation, descriptions. */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Échelle 1.250 (minor third) — 6 niveaux, ratio cohérent.
+     Aucune valeur intermédiaire. Si tu en as besoin, tu refondes. */
+  --text-xs: 11px;       /* labels caps, micro-helpers */
+  --text-sm: 13px;       /* body secondary, captions */
+  --text-base: 16px;     /* body principal lisible */
+  --text-lg: 20px;       /* titres section, mantras */
+  --text-xl: 26px;       /* titres écran */
+  --text-display: 34px;  /* hero greeting, ResultScreen */
+
+  /* Line-heights — proportions calibrées par taille */
+  --leading-tight: 1.20;      /* display, xl */
+  --leading-normal: 1.50;     /* base, lg */
+  --leading-relaxed: 1.65;    /* body long, italiques */
+
+  /* Tracking (letter-spacing) — convention NÉYA conservée */
+  --tracking-tight: -0.015em;    /* display, hero greetings */
+  --tracking-normal: 0em;        /* body */
+  --tracking-wide: 0.04em;       /* sous-titres italiques */
+  --tracking-caps: 0.22em;       /* labels caps NÉYA-signature */
+  --tracking-monument: 0.38em;   /* logo NÉYA, MMXXVI */
+
+  /* Font-weights — usage strict */
+  --weight-light: 300;     /* Sora display, body italique */
+  --weight-regular: 400;   /* body lisible standard */
+  --weight-medium: 500;    /* CTA, labels caps importants */
+
+
+
+  /* ═══════════════════════════════════════════════════════════
+     ÇA VA? — Brand extension (marque sœur, palette propre)
+     ═══════════════════════════════════════════════════════════
+     Source : moodboard officiel 2026-05-14. Palette mode
+     contemporaine éditoriale. Cohabite avec NÉYA sans fusion.
+     Le `--cava-mist-blue` est le pont chromatique (écho
+     désaturé de `--accent-spirit`).
+
+     Mission textuelle :
+     « Nous existons pour briser le masque du "ça va". »
+     « Faire de la mode un langage qui libère la parole sur la
+       santé mentale. »
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Rouge terracotta — passion, vie, sang. Accent principal
+     ÇA VA? sur typographies broderies, manifeste, citations. */
+  --cava-terracotta: oklch(0.52 0.110 30);
+  /* fallback hex : #9F584E */
+
+  /* Ocre mustard — chaleur tissu, broderie main, hoodie
+     signature. Accent chaud secondaire. */
+  --cava-ochre: oklch(0.66 0.110 75);
+  /* fallback hex : #C29051 */
+
+  /* Émeraude profond — racines, mode contemporaine, intérieurs
+     mode. Accent grounding éditorial. */
+  --cava-emerald: oklch(0.60 0.075 175);
+  /* fallback hex : #34917F */
+
+  /* Sage gris-vert — sérénité textile, hoodie eucalyptus.
+     Surface alternative ÇA VA?, jamais NÉYA. */
+  --cava-sage: oklch(0.71 0.025 165);
+  /* fallback hex : #9AAFA0 */
+
+  /* Ivoire textile chaud — fond pièces, cream pièce coton.
+     PAS le même que `--text-primary` NÉYA. Plus chaud, plus tissu. */
+  --cava-cream: oklch(0.84 0.020 85);
+  /* fallback hex : #D4C8BA */
+
+  /* Bleu poudré — pont chromatique avec NÉYA. Écho désaturé
+     du `--accent-spirit`. Utilisé pour : ponts UI Profil → Boutique,
+     éléments où la sœur appelle l'autre. */
+  --cava-mist-blue: oklch(0.66 0.060 245);
+  /* fallback hex : #7397BC */
+
+  /* Typo ÇA VA? — Garet (display bold mode) + I Eat Crayons (script). */
+  --cava-font-display: 'Garet', 'Sora', system-ui, sans-serif;
+  --cava-font-script: 'I Eat Crayons', 'Caveat', cursive;
+
+}
+
+/* ───────────────────────────────────────────────────────────
+   Dark mode = mode natif NÉYA. Pas de light mode prévu pour
+   le rituel principal. ÇA VA? Boutique reste sur surface-void
+   ou sur --cava-cream selon l'ambiance éditoriale.
+   ─────────────────────────────────────────────────────────── */

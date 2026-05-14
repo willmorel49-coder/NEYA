@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NÉYA — Tokens fondations</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--surface-base);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    line-height: var(--leading-normal);
+    min-height: 100dvh;
+  }
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 56px 28px 80px;
+  }
+  section {
+    margin-bottom: 72px;
+  }
+  .section-label {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-whisper);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-primary);
+    margin-bottom: 28px;
+    line-height: var(--leading-tight);
+  }
+
+  /* === Swatches === */
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .swatch {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-veil);
+    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .swatch-color {
+    height: 96px;
+    border-bottom: 1px solid var(--border-veil);
+  }
+  .swatch-body {
+    padding: 14px 16px 16px;
+  }
+  .swatch-name {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--text-primary);
+    letter-spacing: var(--tracking-normal);
+  }
+  .swatch-role {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    margin-top: 4px;
+    line-height: 1.45;
+  }
+  .swatch-ratio {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    font-family: var(--font-body);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-whisper);
+  }
+  .ratio-pass { color: var(--accent-grounding); }
+  .ratio-warn { color: var(--state-tender); }
+  .ratio-fail { color: oklch(0.62 0.180 25); }
+
+  /* Light overlay swatches (états/lumières) */
+  .swatch-light .swatch-color {
+    background-image:
+      linear-gradient(135deg, var(--surface-void) 0%, var(--surface-elevated) 100%);
+    position: relative;
+  }
+  .swatch-light .swatch-color::after {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border-radius: 50%;
+    background: var(--light-glow-preview);
+    filter: blur(20px);
+  }
+
+  /* === Typo === */
+  .type-row {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 24px;
+    align-items: baseline;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border-veil);
+  }
+  .type-row:last-child { border-bottom: none; }
+  .type-meta {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    color: var(--text-whisper);
+    letter-spacing: 0.04em;
+    line-height: 1.55;
+  }
+  .type-meta strong {
+    display: block;
+    color: var(--text-secondary);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .type-example {
+    color: var(--text-primary);
+  }
+
+  /* === Reference screen === */
+  .ref-screen {
+    width: 100%;
+    max-width: 393px;
+    margin: 0 auto;
+    aspect-ratio: 393 / 800;
+    background: var(--surface-base);
+    border-radius: 32px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border-veil);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.42),
+      0 24px 64px -16px rgba(0,0,0,0.62);
+  }
+  .ref-hero {
+    position: relative;
+    height: 52%;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 35%, var(--light-inner) 0%, transparent 60%),
+      linear-gradient(180deg, var(--surface-base) 0%, var(--surface-void) 100%);
+  }
+  .ref-stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, var(--text-primary), transparent),
+      radial-gradient(1px 1px at 84% 28%, var(--text-secondary), transparent),
+      radial-gradient(1.5px 1.5px at 44% 22%, var(--text-primary), transparent),
+      radial-gradient(1px 1px at 72% 12%, var(--accent-spirit), transparent),
+      radial-gradient(1px 1px at 28% 38%, var(--accent-sacred), transparent);
+    opacity: 0.62;
+  }
+  .ref-silhouette {
+    position: absolute;
+    bottom: -2%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 200px;
+  }
+  .ref-silhouette svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 0 24px var(--light-inner)); }
+  .ref-greeting {
+    position: relative;
+    z-index: 2;
+    padding: 32px 32px 0;
+    text-align: center;
+  }
+  .ref-greeting-label {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--accent-spirit);
+    opacity: 0.88;
+    margin-bottom: 14px;
+  }
+  .ref-greeting-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-light);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    color: var(--text-primary);
+  }
+  .ref-body {
+    padding: 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ref-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-presence);
+    border-radius: 16px;
+    padding: 16px 18px;
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.18),
+      0 12px 32px -10px rgba(0,0,0,0.32);
+  }
+  .ref-card-label {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--accent-spirit);
+    opacity: 0.82;
+    margin-bottom: 6px;
+  }
+  .ref-card-title {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: var(--weight-light);
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+  }
+  .ref-card-hint {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+  .ref-mantra {
+    text-align: center;
+    padding: 12px 22px 0;
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-style: italic;
+    font-weight: var(--weight-light);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+    letter-spacing: var(--tracking-wide);
+  }
+  .ref-fab {
+    position: absolute;
+    right: 14px;
+    bottom: 22px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--state-tender);
+    opacity: 0.10;
+    border: 1px solid var(--state-tender);
+    border-color: oklch(0.75 0.095 50 / 0.36);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: oklch(0.92 0.030 50);
+    font-size: 16px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 18px var(--light-sacred);
+  }
+
+  /* Layout 2 cols on desktop */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  @media (max-width: 700px) { .row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<main>
+
+  <!-- ─── Header ─── -->
+  <section style="margin-bottom: 56px;">
+    <div class="section-label">Design system · v1 fondations</div>
+    <h1 style="font-family: var(--font-display); font-size: var(--text-display); font-weight: var(--weight-light); letter-spacing: var(--tracking-tight); line-height: var(--leading-tight); color: var(--text-primary);">NÉYA</h1>
+    <p style="font-family: var(--font-display); font-style: italic; font-weight: var(--weight-light); font-size: var(--text-lg); color: var(--text-secondary); line-height: var(--leading-relaxed); max-width: 540px; margin-top: 14px;">
+      Et toi, ça va vraiment ?
+    </p>
+  </section>
+
+  <!-- ─── Surfaces ─── -->
+  <section>
+    <div class="section-label">Surfaces</div>
+    <h2 class="section-title">L'épaisseur du monde</h2>
+    <div class="swatches">
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--surface-void);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--surface-void</div>
+          <div class="swatch-role">Le néant respirant. Splash, transitions, arrière-plan absolu.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--surface-base);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--surface-base</div>
+          <div class="swatch-role">Le sol. Fond standard de tous les écrans principaux.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--surface-raised);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--surface-raised</div>
+          <div class="swatch-role">La carte qui flotte. Cocon, Aujourd'hui, Bilan, modules.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--surface-elevated);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--surface-elevated</div>
+          <div class="swatch-role">L'élévation modale. Sheets, Espace Vrai, Profil immersif.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── Texte ─── -->
+  <section>
+    <div class="section-label">Texte</div>
+    <h2 class="section-title">Hiérarchie en cream ivoire</h2>
+    <div class="swatches">
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--surface-base); display: flex; align-items: center; justify-content: center; color: var(--text-primary); font-family: var(--font-display); font-size: 22px; font-weight: 300;">Tu es là.</div>
+        <div class="swatch-body">
+          <div class="swatch-name">--text-primary</div>
+          <div class="swatch-role">La voix qui porte. Titres et body principal.</div>
+          <div class="swatch-ratio">
+            <span class="ratio-pass">18.5:1 AAA</span>
+            <span>vs base</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--surface-base); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-family: var(--font-body); font-size: 16px;">Tu peux respirer.</div>
+        <div class="swatch-body">
+          <div class="swatch-name">--text-secondary</div>
+          <div class="swatch-role">La voix qui accompagne. Sous-titres, descriptions.</div>
+          <div class="swatch-ratio">
+            <span class="ratio-pass">8.2:1 AAA</span>
+            <span>vs base</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--surface-base); display: flex; align-items: center; justify-content: center; color: var(--text-whisper); font-family: var(--font-body); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;">Présence</div>
+        <div class="swatch-body">
+          <div class="swatch-name">--text-whisper</div>
+          <div class="swatch-role">Le murmure. Labels caps uniquement, &lt; 14px.</div>
+          <div class="swatch-ratio">
+            <span class="ratio-warn">4.5:1 AA</span>
+            <span>caps only</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── Accents émotionnels ─── -->
+  <section>
+    <div class="section-label">Accents émotionnels</div>
+    <h2 class="section-title">Quatre états traversables</h2>
+    <div class="swatches">
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--accent-spirit);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--accent-spirit</div>
+          <div class="swatch-role">Le soi incarné. Cyan signature (cheveux héroïne). Halos rituels, Espace Vrai, Profil.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--accent-sacred);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--accent-sacred</div>
+          <div class="swatch-role">L'or des animaux totems. Seuil du grand. Milestones, animal reveal, WelcomeBack.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--accent-introspection);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--accent-introspection</div>
+          <div class="swatch-role">Chemin intérieur, fleurs en marche. Carnet, Bilans, écriture.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--accent-grounding);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--accent-grounding</div>
+          <div class="swatch-role">Forêt profonde, racines. Routines actives, états "tu es là".</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── États ─── -->
+  <section>
+    <div class="section-label">États</div>
+    <h2 class="section-title">Pas de rouge urgence — tendresse</h2>
+    <div class="swatches">
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--state-cherished);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--state-cherished</div>
+          <div class="swatch-role">L'accompli. Souvenir gagné, respiration complétée.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--state-tender);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--state-tender</div>
+          <div class="swatch-role">La traversée. Crisis Mode papillon ambre. Pas anxiogène.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--state-flowing);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--state-flowing</div>
+          <div class="swatch-role">Le mouvement. Feedback action, transition douce.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── Lumière ─── -->
+  <section>
+    <div class="section-label">Lumière</div>
+    <h2 class="section-title">Le sujet, pas la couleur</h2>
+    <div class="swatches">
+
+      <div class="swatch swatch-light" style="--light-glow-preview: var(--light-inner);">
+        <div class="swatch-color"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--light-inner</div>
+          <div class="swatch-role">Halo intérieur. Surfaces actives, Espace Vrai. Inset ou radial.</div>
+        </div>
+      </div>
+
+      <div class="swatch swatch-light" style="--light-glow-preview: var(--light-sacred);">
+        <div class="swatch-color"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--light-sacred</div>
+          <div class="swatch-role">Halo sacré. Animal totem, milestones, célébrations rares.</div>
+        </div>
+      </div>
+
+      <div class="swatch swatch-light" style="--light-glow-preview: var(--light-veil); background: var(--surface-base);">
+        <div class="swatch-color" style="background-image: linear-gradient(135deg, transparent, var(--light-veil));"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--light-veil</div>
+          <div class="swatch-role">Voile profond. Overlay sur backgrounds image. Garantit contraste.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── Bordures ─── -->
+  <section>
+    <div class="section-label">Bordures</div>
+    <h2 class="section-title">Subtilité organique</h2>
+    <div class="swatches">
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--surface-base); border-bottom: none; border-radius: 14px 14px 0 0; display: flex; align-items: center; justify-content: center;">
+          <div style="width: 70%; height: 70%; border-radius: 10px; border: 1px solid var(--border-veil); background: var(--surface-raised);"></div>
+        </div>
+        <div class="swatch-body">
+          <div class="swatch-name">--border-veil</div>
+          <div class="swatch-role">Quasi-invisible. Cards principales, suggère un bord.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--surface-base); border-bottom: none; border-radius: 14px 14px 0 0; display: flex; align-items: center; justify-content: center;">
+          <div style="width: 70%; height: 70%; border-radius: 10px; border: 1px solid var(--border-presence); background: var(--surface-raised);"></div>
+        </div>
+        <div class="swatch-body">
+          <div class="swatch-name">--border-presence</div>
+          <div class="swatch-role">Visible. Zones interactives, cards tappables.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── Typographie ─── -->
+  <section>
+    <div class="section-label">Typographie</div>
+    <h2 class="section-title">Échelle 1.250 — six niveaux, pas un de plus</h2>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>display</strong>
+        Sora 34px<br>1.20 / -0.015em<br>weight 300
+      </div>
+      <div class="type-example" style="font-family: var(--font-display); font-size: var(--text-display); font-weight: var(--weight-light); letter-spacing: var(--tracking-tight); line-height: var(--leading-tight);">Bienvenue dans ton Grand Voyage…</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>xl</strong>
+        Sora 26px<br>1.20 / -0.015em<br>weight 300
+      </div>
+      <div class="type-example" style="font-family: var(--font-display); font-size: var(--text-xl); font-weight: var(--weight-light); letter-spacing: var(--tracking-tight); line-height: var(--leading-tight);">Le plus beau chemin commence en toi.</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>lg</strong>
+        Sora 20px italic<br>1.50 / 0.04em<br>weight 300
+      </div>
+      <div class="type-example" style="font-family: var(--font-display); font-size: var(--text-lg); font-style: italic; font-weight: var(--weight-light); letter-spacing: var(--tracking-wide); line-height: var(--leading-normal); color: var(--text-secondary);">T'as pas besoin d'aller bien pour commencer.</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>base</strong>
+        Inter 16px<br>1.50 / 0em<br>weight 400
+      </div>
+      <div class="type-example" style="font-family: var(--font-body); font-size: var(--text-base); font-weight: var(--weight-regular); line-height: var(--leading-normal);">Tu n'es pas seul·e dans cette nuit. Le silence respire avec toi, et le souffle suffit.</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>sm</strong>
+        Inter 13px italic<br>1.65 / 0em<br>weight 300
+      </div>
+      <div class="type-example" style="font-family: var(--font-body); font-size: var(--text-sm); font-style: italic; font-weight: var(--weight-light); line-height: var(--leading-relaxed); color: var(--text-secondary);">Tu peux poser ce que tu portes. Même une minute. Tout ne dépend pas de toi.</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <strong>xs</strong>
+        Inter 11px caps<br>1.40 / 0.22em<br>weight 500
+      </div>
+      <div class="type-example" style="font-family: var(--font-body); font-size: var(--text-xs); font-weight: var(--weight-medium); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--text-whisper);">Présence · Crépuscule · MMXXVI</div>
+    </div>
+
+  </section>
+
+  <!-- ─── Écran de référence reconstruit ─── -->
+  <section>
+    <div class="section-label">Test ultime</div>
+    <h2 class="section-title">Écran d'accueil — reconstruit avec tokens seuls</h2>
+    <p style="color: var(--text-secondary); font-size: var(--text-sm); margin-bottom: 28px; max-width: 540px; line-height: var(--leading-relaxed);">Si cet écran tient debout uniquement avec les tokens définis ci-dessus, le système est juste. Aucune valeur en dur, aucun blanc pur, aucun hex non-déclaré.</p>
+
+    <div class="ref-screen">
+
+      <div class="ref-hero">
+        <div class="ref-stars"></div>
+
+        <div class="ref-greeting">
+          <div class="ref-greeting-label">Crépuscule doux · Will</div>
+          <div class="ref-greeting-title">Le jour se dépose,<br>respire-le doucement.</div>
+        </div>
+
+        <div class="ref-silhouette">
+          <svg viewBox="0 0 100 160" fill="none">
+            <defs>
+              <linearGradient id="prevHair" x1="50%" y1="0%" x2="50%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-spirit)"/>
+                <stop offset="100%" stop-color="var(--surface-elevated)"/>
+              </linearGradient>
+              <linearGradient id="prevRobe" x1="50%" y1="0%" x2="50%" y2="100%">
+                <stop offset="0%" stop-color="var(--accent-spirit)" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="var(--surface-void)"/>
+              </linearGradient>
+            </defs>
+            <path d="M 32 28 Q 28 50 26 88 Q 30 96 36 92 Q 38 60 42 36 Z" fill="url(#prevHair)" opacity="0.95"/>
+            <path d="M 68 28 Q 72 50 74 88 Q 70 96 64 92 Q 62 60 58 36 Z" fill="url(#prevHair)" opacity="0.95"/>
+            <ellipse cx="50" cy="28" rx="13" ry="16" fill="var(--surface-elevated)" opacity="0.92"/>
+            <path d="M 36 22 Q 36 12 50 10 Q 64 12 64 22 Q 64 18 60 16 Q 56 12 50 12 Q 44 12 40 16 Q 36 18 36 22 Z" fill="url(#prevHair)"/>
+            <path d="M 30 58 Q 22 100 20 145 L 50 156 L 80 145 Q 78 100 70 58 Q 60 62 50 60 Q 40 62 30 58 Z" fill="url(#prevRobe)"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="ref-mantra">« Tu n'es pas seul·e dans cette nuit. »</div>
+
+      <div class="ref-body">
+        <div class="ref-card">
+          <div class="ref-card-label">Pour ce moment</div>
+          <div class="ref-card-title">Souffle d'Ancrage</div>
+          <div class="ref-card-hint">4·7·8 — Le souffle qui dépose.</div>
+        </div>
+
+        <div class="ref-card">
+          <div class="ref-card-label">Communauté · Fragments</div>
+          <div class="ref-card-title">Quelqu'un a déposé un mot.</div>
+          <div class="ref-card-hint">Tu n'es pas le·la seul·e à porter ça ce soir.</div>
+        </div>
+      </div>
+
+      <div class="ref-fab" title="Crisis Mode — long-press logo ou tap ici">✿</div>
+    </div>
+  </section>
+
+  <!-- ─── ÇA VA? — Brand sister section ─── -->
+  <section>
+    <div class="section-label">Brand extension</div>
+    <h2 class="section-title">ÇA VA ? — Maison sœur</h2>
+    <p style="color: var(--text-secondary); font-size: var(--text-sm); margin-bottom: 28px; max-width: 540px; line-height: var(--leading-relaxed);">Palette officielle (moodboard 2026-05-14). Cohabite avec NÉYA sans fusion. Le bleu poudré <code style="background: var(--surface-raised); padding: 2px 6px; border-radius: 4px; font-size: 11px;">--cava-mist-blue</code> est le pont chromatique entre les deux marques.</p>
+
+    <div class="swatches">
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: oklch(0.52 0.110 30);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--cava-terracotta</div>
+          <div class="swatch-role">Rouge terracotta. Passion, sang, vie. Manifeste.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: oklch(0.66 0.110 75);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--cava-ochre</div>
+          <div class="swatch-role">Ocre mustard. Chaleur tissu, broderie main.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: oklch(0.60 0.075 175);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--cava-emerald</div>
+          <div class="swatch-role">Émeraude profond. Racines, mode contemporaine.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: oklch(0.71 0.025 165);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--cava-sage</div>
+          <div class="swatch-role">Sage gris-vert. Sérénité textile.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: oklch(0.84 0.020 85);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--cava-cream</div>
+          <div class="swatch-role">Ivoire textile chaud. Fond pièces. ≠ text-primary.</div>
+        </div>
+      </div>
+
+      <div class="swatch">
+        <div class="swatch-color" style="background: oklch(0.66 0.060 245);"></div>
+        <div class="swatch-body">
+          <div class="swatch-name">--cava-mist-blue</div>
+          <div class="swatch-role">Bleu poudré. <strong>Pont</strong> avec NÉYA `--accent-spirit`.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mini éditorial ÇA VA? -->
+    <div style="margin-top: 36px; padding: 48px 32px; background: var(--cava-cream); color: oklch(0.18 0.020 30); border-radius: 20px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.32);">
+      <p style="font-family: 'Caveat', cursive; font-size: 22px; color: var(--cava-terracotta); margin-bottom: 14px; letter-spacing: 0.02em;">Police principale — Garet</p>
+      <p style="font-family: 'Sora', sans-serif; font-weight: 500; font-size: 32px; letter-spacing: -0.02em; line-height: 1.15; color: oklch(0.18 0.020 30); margin-bottom: 18px;">
+        ÇA&nbsp;VA ?
+      </p>
+      <p style="font-family: 'Sora', sans-serif; font-weight: 300; font-size: 15px; line-height: 1.65; color: oklch(0.38 0.020 30); max-width: 380px; margin: 0 auto 22px;">
+        Nous existons pour briser le masque du « ça va ».<br>
+        Faire de la mode un langage qui libère la parole sur la santé mentale.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 8px; margin-top: 22px;">
+        <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--cava-terracotta);"></span>
+        <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--cava-ochre);"></span>
+        <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--cava-emerald);"></span>
+        <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--cava-sage);"></span>
+        <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--cava-mist-blue);"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <section style="text-align: center; padding-top: 32px; border-top: 1px solid var(--border-veil); margin-bottom: 0;">
+    <p style="font-family: var(--font-body); font-size: var(--text-xs); letter-spacing: var(--tracking-monument); text-transform: uppercase; color: var(--text-whisper);">NÉYA · MMXXVI · Tokens v1 · 26 (NÉYA) + 8 (ÇA VA?)</p>
+  </section>
+
+</main>
+
+</body>
+</html>
