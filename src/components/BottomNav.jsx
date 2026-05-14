@@ -1,8 +1,8 @@
 /* ============================================================
-   BottomNav — NÉYA V2 (3 tabs floating glass)
+   BottomNav — NÉYA V3 (LIGHT MODE, pearl glass)
    ============================================================
-   Apple mix : pill shape global · backdrop-filter blur(20) ·
-   data-press scale(0.95) · iOS easing.
+   4 tabs floating cream glass · backdrop-filter blur 20 ·
+   ink text · accent dot indicator.
    ============================================================ */
 
 import { haptic } from '../v2/state';
@@ -14,7 +14,7 @@ const TABS = [
   { key: 'cava',       label: 'Ça va ?',    icon: '✿' },
 ];
 
-export default function BottomNav({ active, onChange, accent = 'var(--amber)' }) {
+export default function BottomNav({ active, onChange, accent = 'var(--terracotta)' }) {
   return (
     <div
       style={{
@@ -23,17 +23,17 @@ export default function BottomNav({ active, onChange, accent = 'var(--amber)' })
         right: 16,
         bottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)',
         height: 60,
-        background: 'var(--surface-overlay)',
-        backdropFilter: 'blur(20px) saturate(150%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(150%)',
-        border: '0.5px solid var(--hairline-strong)',
+        background: 'rgba(255, 252, 245, 0.85)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        border: '0.5px solid rgba(26, 26, 47, 0.08)',
         borderRadius: 'var(--radius-pill)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-around',
         padding: '0 12px',
         zIndex: 50,
-        boxShadow: '0 8px 32px -8px rgba(0,0,0,0.4)',
+        boxShadow: '0 8px 32px rgba(26, 26, 47, 0.12)',
       }}
     >
       {TABS.map((t) => {
@@ -65,7 +65,6 @@ export default function BottomNav({ active, onChange, accent = 'var(--amber)' })
             aria-label={t.label}
             aria-current={isActive ? 'page' : undefined}
           >
-            {/* Top dot indicator when active */}
             {isActive && (
               <span
                 style={{

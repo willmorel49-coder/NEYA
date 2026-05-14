@@ -1,66 +1,74 @@
 /* ============================================================
-   NÉYA — Design System v2 · Studio VØR painterly cinematographic
-   + Apple mix supplements (iOS easings, scale(0.95) press,
-   SF Pro fallback dans Sora/Inter stacks)
+   NÉYA — V3 Light · Direction Artistique ÇA VA?
    ============================================================
-   Reference: NEYA_DESIGN_SYSTEM_v2.md (locked).
-   Soul: Studio VØR painterly. Structural rigor: Apple.
+   Pivot : light-mode first. Cream ivoire + palette ÇA VA? (D.A
+   officielle 2026) + pastel gradient washes par monde. Aligné
+   avec les inspirations Will (Sleepiest, Meditation Reminder,
+   Soft & Inviting, copies 3/4/5, Therapist Brand).
+
+   La sœur NÉYA + ÇA VA? partagent la même palette = écosystème
+   visuel unifié. Plus de scission dark/cream.
    ============================================================ */
 
 :root {
 
-  /* ── DAWN PALETTE ───────────────────────────────────────── */
-  --void:           #050810;
-  --deep-night:     #0A0E1F;
-  --night:          #1F2D52;
-  --twilight:       #3D4D85;
-  --lavender-warm:  #7B6FA8;
-  --peach-deep:     #D49880;
-  --amber:          #D4A878;
-  --peach-light:    #F4D4A8;
-  --light-diffuse:  #FBE8D8;
-  --cream:          #FBF6E8;
-  --tilleul:        #D4E08C;
+  /* ── PALETTE BASE — ÇA VA? D.A. officielle ───────────────── */
+  --cream:          #FBF6E8;       /* base canvas (ivoire chaud) */
+  --cream-light:    #FFFCF5;       /* surface cards éclairées */
+  --cream-dim:      #F0EBDD;       /* surface alternative */
+  --ink:            #1A1A2F;       /* deep navy text (pas pur noir) */
+  --ink-soft:       #4A4A5F;       /* secondary text */
+  --ink-whisper:    #7A7A8C;       /* tertiary */
+  --ink-faint:      #B0B0BC;       /* very faint */
 
-  /* ── NIGHT PALETTE ──────────────────────────────────────── */
-  --shadow-purple:  #1F1535;
-  --deep-purple:    #3D2F6B;
-  --mid-purple:     #5D4F8B;
-  --moon-blue:      #8FA4D4;
-  --lavender-lit:   #C3BEEF;
-  --moon-white:     #CADFFD;
+  /* Accents — D.A. ÇA VA? unifié sur tout l'écosystème */
+  --terracotta:     #9F584C;       /* passion, vie, sang */
+  --ochre:          #C29051;       /* chaleur tissu, broderie */
+  --emerald:        #34917F;       /* racines, grounding */
+  --sage:           #9AAFA0;       /* sérénité, eucalyptus */
+  --mist-blue:      #7397BC;       /* pont chromatique NÉYA <-> CAVA */
+  --tilleul:        #D4E08C;       /* présence vitale (rare, précieux) */
 
-  /* ── ÇA VA? PALETTE ─────────────────────────────────────── */
-  --cava-bg:        #F4F0E8;
-  --cava-ink:       #1A1A1F;
-  --cava-warm:      #D49880;
-  --cava-blue:      #5D7BB8;
-  --cava-purple:    #3D2F6B;
+  /* Soft pastel washes — pour les fonds dégradés par moment */
+  --wash-peach:     #FBE8D8;       /* dawn warmth */
+  --wash-rose:      #F4D4D4;       /* tendresse */
+  --wash-lavender:  #DDD4EC;       /* introspection */
+  --wash-azure:     #D6E3EE;       /* presence */
+  --wash-sage:      #DCE6DE;       /* grounding */
+  --wash-cream:     #F8F2E0;       /* default warm */
 
-  /* ── SEMANTIC ───────────────────────────────────────────── */
-  --success:        #8AB87A;
-  --warning:        #D49880;
-  --crisis:         #C97171;
-  --info:           #8FA4D4;
+  /* Hairlines & borders sur cream */
+  --hairline:       rgba(26, 26, 47, 0.08);
+  --hairline-strong: rgba(26, 26, 47, 0.15);
+  --hairline-faint: rgba(26, 26, 47, 0.04);
+
+  /* Semantic */
+  --success:        #34917F;       /* emerald */
+  --warning:        #C29051;       /* ochre */
+  --crisis:         #9F584C;       /* terracotta */
+  --info:           #7397BC;       /* mist-blue */
+
 
   /* ── SURFACES ───────────────────────────────────────────── */
-  --surface-base:    var(--void);
-  --surface-scene:   var(--deep-night);
-  --surface-overlay: rgba(10, 14, 31, 0.85);
+  --surface-base:    var(--cream);
+  --surface-card:    var(--cream-light);
+  --surface-tinted:  rgba(255, 252, 245, 0.65);
+  --surface-overlay: rgba(251, 246, 232, 0.92);
 
-  /* ── CONTENT ────────────────────────────────────────────── */
-  --content-primary:        var(--cream);
-  --content-secondary:      rgba(251, 246, 232, 0.65);
-  --content-tertiary:       rgba(251, 246, 232, 0.45);
-  --content-accent-dawn:    var(--amber);
-  --content-accent-night:   var(--moon-white);
+
+  /* ── CONTENT (sur fond cream) ───────────────────────────── */
+  --content-primary:        var(--ink);
+  --content-secondary:      var(--ink-soft);
+  --content-tertiary:       var(--ink-whisper);
+  --content-accent-dawn:    var(--terracotta);
+  --content-accent-night:   var(--mist-blue);
+
 
   /* ── TYPOGRAPHY ─────────────────────────────────────────── */
-  /* Apple mix: SF Pro Display/Text en fallback prioritaire dans
-     Sora/Inter stacks pour rendu natif sur appareils Apple. */
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
   --font-ui:      'Sora', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  --font-mono:    ui-monospace, 'SF Mono', Menlo, monospace;
 
   --type-hero:    32px;
   --type-h1:      28px;
@@ -72,30 +80,30 @@
   --type-mark:    9px;
   --type-stat:    24px;
 
-  --weight-light:     300;
-  --weight-regular:   400;
-  --weight-medium:    500;
-  --weight-semibold:  600;
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
 
-  --lh-hero:    1.05;
-  --lh-h1:      1.05;
-  --lh-h2:      1.10;
-  --lh-h3:      1.20;
-  --lh-body:    1.55;
-  --lh-body-sm: 1.50;
-  --lh-label:   1.30;
-  --lh-mark:    1.00;
-  --lh-stat:    1.00;
+  --lh-hero:        1.05;
+  --lh-h1:          1.05;
+  --lh-h2:          1.10;
+  --lh-h3:          1.20;
+  --lh-body:        1.55;
+  --lh-body-sm:     1.50;
+  --lh-label:       1.30;
+  --lh-mark:        1.00;
+  --lh-stat:        1.00;
 
-  --ls-hero:    -0.016em;   /* approx -0.5px @ 32px */
-  --ls-h1:      -0.018em;   /* approx -0.5px @ 28px */
-  --ls-h2:      -0.014em;   /* approx -0.3px @ 22px */
-  --ls-mark:     0.222em;   /* approx +2px @ 9px */
-  --ls-stat:    -0.021em;   /* approx -0.5px @ 24px */
+  --ls-hero:        -0.016em;
+  --ls-h1:          -0.018em;
+  --ls-h2:          -0.014em;
+  --ls-mark:         0.222em;
+  --ls-stat:        -0.021em;
 
-  /* Fraunces variable settings */
   --fraunces-opsz-large:   "opsz" 144, "SOFT" 0, "WONK" 0;
   --fraunces-italic-soft:  "opsz" 144, "SOFT" 100, "WONK" 1;
+
 
   /* ── SPACING (base 4) ───────────────────────────────────── */
   --sp-1: 4px;
@@ -108,6 +116,7 @@
   --sp-8: 64px;
   --sp-9: 96px;
 
+
   /* ── RADIUS ─────────────────────────────────────────────── */
   --radius-xs:     4px;
   --radius-sm:     8px;
@@ -117,6 +126,14 @@
   --radius-pill:   9999px;
   --radius-circle: 50%;
 
+
+  /* ── ELEVATION (soft shadows sur light) ─────────────────── */
+  --shadow-soft:    0 2px 14px rgba(26, 26, 47, 0.06);
+  --shadow-card:    0 4px 24px rgba(26, 26, 47, 0.08);
+  --shadow-deep:    0 12px 40px rgba(26, 26, 47, 0.12);
+  --shadow-product: 0 3px 30px 5px rgba(26, 26, 47, 0.10);
+
+
   /* ── DURATION ───────────────────────────────────────────── */
   --duration-fast:       200ms;
   --duration-base:       400ms;
@@ -124,36 +141,104 @@
   --duration-narrative:  1200ms;
   --duration-cinematic:  1800ms;
 
+
   /* ── EASING ─────────────────────────────────────────────── */
   --ease-out:        cubic-bezier(0.4, 0, 0.2, 1);
   --ease-in-out:     cubic-bezier(0.65, 0, 0.35, 1);
   --ease-narrative:  cubic-bezier(0.25, 0.46, 0.45, 0.94);
-
-  /* Apple mix supplement — pour press feedback snappy */
   --ease-out-ios:    cubic-bezier(0.32, 0.72, 0, 1);
   --ease-in-ios:     cubic-bezier(0.32, 0, 0.72, 1);
 
 
   /* ════════════════════════════════════════════════════════════
-     LEGACY ALIASES — back-compat avec App.jsx existant
+     LEGACY ALIASES — back-compat avec App.legacy + atomes existants
      ════════════════════════════════════════════════════════════ */
-  --ink:                 var(--cream);
-  --ink-soft:            var(--content-secondary);
-  --ink-whisper:         var(--content-tertiary);
-  --ink-faint:           rgba(251, 246, 232, 0.26);
-  --tile-1:              var(--deep-night);
-  --tile-2:              #121A2C;
-  --tile-3:              #0A1020;
-  --hairline:            rgba(251, 246, 232, 0.08);
-  --hairline-strong:     rgba(251, 246, 232, 0.18);
+  --void:                var(--cream);     /* mapping inverse — l'app n'est plus dark */
+  --deep-night:          var(--ink);
+  --night:               var(--ink-soft);
+  --twilight:            var(--mist-blue);
+  --lavender-warm:       #7B6FA8;
+  --peach-deep:          #D49880;
+  --amber:               var(--ochre);
+  --peach-light:         var(--wash-peach);
+  --light-diffuse:       var(--cream-light);
+  --shadow-purple:       #1F1535;
+  --deep-purple:         #3D2F6B;
+  --mid-purple:          #5D4F8B;
+  --moon-blue:           var(--mist-blue);
+  --lavender-lit:        #C3BEEF;
+  --moon-white:          var(--cream);
+
+  --cava-bg:             var(--cream);
+  --cava-ink:            var(--ink);
+  --cava-warm:           var(--terracotta);
+  --cava-blue:           var(--mist-blue);
+  --cava-purple:         #3D2F6B;
+  --cava-terracotta:     var(--terracotta);
+  --cava-ochre:          var(--ochre);
+  --cava-emerald:        var(--emerald);
+  --cava-sage:           var(--sage);
+  --cava-cream:          var(--cream);
+  --cava-mist-blue:      var(--mist-blue);
+
+  --tile-1:              var(--cream-dim);
+  --tile-2:              var(--cream-light);
+  --tile-3:              var(--cream-dim);
   --line:                var(--hairline);
   --line-strong:         var(--hairline-strong);
-  --veil:                rgba(5, 8, 16, 0.60);
-  --veil-strong:         rgba(5, 8, 16, 0.82);
-  --accent-resilience:   var(--amber);
-  --accent-presence:     var(--moon-blue);
-  --accent-sagesse:      var(--lavender-lit);
-  --accent-lumiere:      var(--success);
+  --veil:                rgba(251, 246, 232, 0.55);
+  --veil-strong:         rgba(251, 246, 232, 0.85);
+
+  --surface-void:        var(--cream);
+  --surface-scene:       var(--cream-light);
+  --surface-raised:      var(--cream-light);
+  --surface-elevated:    var(--cream-light);
+  --surface-dawn:        var(--cream);
+  --surface-mist:        var(--wash-azure);
+  --surface-veil:        var(--veil);
+
+  --text-primary:        var(--ink);
+  --text-secondary:      var(--ink-soft);
+  --text-whisper:        var(--ink-whisper);
+  --text-on-light:       var(--ink);
+
+  --ink-primary:         var(--ink);
+
+  --accent-spirit:       var(--mist-blue);
+  --accent-spirit-soft:  var(--mist-blue);
+  --accent-sacred:       var(--ochre);
+  --accent-sacred-soft:  var(--ochre);
+  --accent-introspection: #7B6FA8;
+  --accent-introspect:   #7B6FA8;
+  --accent-grounding:    var(--emerald);
+  --accent-bloom:        var(--terracotta);
+  --accent-resilience:   var(--ochre);
+  --accent-presence:     var(--mist-blue);
+  --accent-sagesse:      #7B6FA8;
+  --accent-lumiere:      var(--emerald);
+
+  --state-cherished:     var(--ochre);
+  --state-tender:        var(--terracotta);
+  --state-flowing:       var(--mist-blue);
+
+  --light-inner:         rgba(115, 151, 188, 0.18);
+  --light-sacred:        rgba(194, 144, 81, 0.22);
+  --light-veil:          var(--veil);
+
+  --border-veil:         var(--hairline);
+  --border-presence:     var(--hairline-strong);
+
+  --glass-cream:         var(--surface-tinted);
+  --glass-light:         var(--surface-tinted);
+  --glass-frost:         rgba(255, 255, 255, 0.45);
+
+  --blur-sm:             0px;     /* glass via background + hairline, pas backdrop-filter sur cream */
+  --blur-md:             0px;
+  --blur-xl:             0px;
+
+  --font-display-serif:  var(--font-display);
+  --r-xxl:               var(--radius-lg);
+  --r-mega:              var(--radius-xl);
 
   --r-none:    0;
   --r-xs:      var(--radius-xs);
@@ -164,8 +249,7 @@
   --r-pill:    var(--radius-pill);
   --r-full:    var(--radius-pill);
   --r-sheet:   var(--radius-lg);
-  --r-xxl:     var(--radius-lg);
-  --r-mega:    var(--radius-lg);
+  --r-circle:  var(--radius-circle);
 
   --s-xxs:     var(--sp-1);
   --s-xs:      var(--sp-2);
@@ -221,8 +305,6 @@
   --ls-micro:           -0.008em;
   --ls-caps:             var(--tracking-caps);
 
-  --shadow-product: 0 3px 30px 5px rgba(0, 0, 0, 0.22);
-
   --d-fast:    var(--duration-fast);
   --d-base:    var(--duration-base);
   --d-slow:    var(--duration-slow);
@@ -233,12 +315,12 @@
 
 
 /* ════════════════════════════════════════════════════════════
-   BODY RESET — Canvas NÉYA dark cosmic
+   BODY RESET — Canvas cream
    ════════════════════════════════════════════════════════════ */
 
 html, body {
-  background: var(--void);
-  color: var(--content-primary);
+  background: var(--cream);
+  color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--type-body);
   font-weight: var(--weight-regular);
@@ -249,12 +331,12 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
-#root  { font-family: var(--font-body); color: var(--content-primary); }
+#root  { font-family: var(--font-body); color: var(--ink); background: var(--cream); }
 button { font-family: inherit; cursor: pointer; }
 
 
 /* ════════════════════════════════════════════════════════════
-   APPLE PRESS RESPONSE — scale(0.95) universel (Apple mix)
+   APPLE PRESS RESPONSE — scale(0.95) universel
    ════════════════════════════════════════════════════════════ */
 
 [data-press]:active {
@@ -264,59 +346,44 @@ button { font-family: inherit; cursor: pointer; }
 
 
 /* ════════════════════════════════════════════════════════════
-   iOS SHEET DRAG HANDLE
+   iOS SHEET DRAG HANDLE (sur cream)
    ════════════════════════════════════════════════════════════ */
 
 .drag-handle {
   width: 36px;
   height: 5px;
   border-radius: var(--radius-pill);
-  background: var(--ink-faint);
+  background: rgba(26, 26, 47, 0.18);
   margin: 8px auto 0;
 }
 
 
 /* ════════════════════════════════════════════════════════════
-   ANIMATIONS — minimal library
+   ANIMATIONS
    ════════════════════════════════════════════════════════════ */
 
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-/* Breathing cycle — 4s inhale, 7s hold, 8s exhale = 19s total */
 @keyframes breathe-19s {
   0%      { transform: scale(1);   }
-  21.05%  { transform: scale(1.4); }  /* 4s inhale */
-  57.89%  { transform: scale(1.4); }  /* +7s hold  */
-  100%    { transform: scale(1);   }  /* +8s exhale */
+  21.05%  { transform: scale(1.4); }
+  57.89%  { transform: scale(1.4); }
+  100%    { transform: scale(1);   }
 }
-
-/* Totem idle pulse (4s, max 0.4↔0.5 forbidden intensity) */
 @keyframes totem-idle {
   0%, 100% { transform: scale(1);    }
   50%      { transform: scale(1.05); }
 }
-
-/* Light ray oscillation (8s, opacity 0.3 ↔ 0.5) */
-@keyframes ray-oscillate {
-  0%, 100% { opacity: 0.30; }
-  50%      { opacity: 0.50; }
-}
-
-/* Particle drift (12s) */
 @keyframes particle-drift {
-  0%, 100% { transform: translateY(0);   opacity: 0.4; }
+  0%, 100% { transform: translateY(0);    opacity: 0.4; }
   50%      { transform: translateY(-8px); opacity: 0.8; }
 }
-
-/* Tilleul check pop (400ms, no bounce) */
 @keyframes check-pop {
   0%   { opacity: 0; transform: scale(0);   }
   60%  { opacity: 1; transform: scale(1.2); }
@@ -328,9 +395,8 @@ button { font-family: inherit; cursor: pointer; }
 
 
 /* ════════════════════════════════════════════════════════════
-   GLOBAL TYPOGRAPHY CLASSES — V2 tokens
-   ════════════════════════════════════════════════════════════
-   À utiliser tel quel pour conformité spec. */
+   TYPOGRAPHY CLASSES
+   ════════════════════════════════════════════════════════════ */
 
 .neya-hero {
   font-family: var(--font-display);
@@ -341,7 +407,6 @@ button { font-family: inherit; cursor: pointer; }
   font-variation-settings: var(--fraunces-opsz-large);
   color: var(--content-primary);
 }
-
 .neya-h1 {
   font-family: var(--font-display);
   font-size: var(--type-h1);
@@ -351,7 +416,6 @@ button { font-family: inherit; cursor: pointer; }
   font-variation-settings: var(--fraunces-opsz-large);
   color: var(--content-primary);
 }
-
 .neya-h2 {
   font-family: var(--font-display);
   font-size: var(--type-h2);
@@ -361,7 +425,6 @@ button { font-family: inherit; cursor: pointer; }
   font-variation-settings: var(--fraunces-opsz-large);
   color: var(--content-primary);
 }
-
 .neya-h3 {
   font-family: var(--font-ui);
   font-size: var(--type-h3);
@@ -369,7 +432,6 @@ button { font-family: inherit; cursor: pointer; }
   line-height: var(--lh-h3);
   color: var(--content-primary);
 }
-
 .neya-body {
   font-family: var(--font-body);
   font-size: var(--type-body);
@@ -377,7 +439,6 @@ button { font-family: inherit; cursor: pointer; }
   line-height: var(--lh-body);
   color: var(--content-primary);
 }
-
 .neya-body-sm {
   font-family: var(--font-body);
   font-size: var(--type-body-sm);
@@ -385,7 +446,6 @@ button { font-family: inherit; cursor: pointer; }
   line-height: var(--lh-body-sm);
   color: var(--content-secondary);
 }
-
 .neya-label {
   font-family: var(--font-ui);
   font-size: var(--type-label);
@@ -393,7 +453,6 @@ button { font-family: inherit; cursor: pointer; }
   line-height: var(--lh-label);
   color: var(--content-primary);
 }
-
 .neya-mark {
   font-family: var(--font-ui);
   font-size: var(--type-mark);
@@ -403,7 +462,6 @@ button { font-family: inherit; cursor: pointer; }
   text-transform: uppercase;
   color: var(--content-tertiary);
 }
-
 .neya-stat {
   font-family: var(--font-ui);
   font-size: var(--type-stat);
@@ -413,9 +471,50 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--content-primary);
 }
 
-/* Italic emotional keyword utility for Fraunces hero/h1/h2 */
 em.neya-key {
   font-style: italic;
   font-weight: var(--weight-light);
   font-variation-settings: var(--fraunces-italic-soft);
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   WASH BACKGROUNDS — gradient soft par monde
+   ════════════════════════════════════════════════════════════ */
+
+.wash-dawn {
+  background:
+    radial-gradient(circle at 70% 20%, var(--wash-peach) 0%, transparent 55%),
+    radial-gradient(circle at 20% 80%, var(--wash-rose) 0%, transparent 55%),
+    var(--cream);
+}
+.wash-temple {
+  background:
+    radial-gradient(circle at 60% 20%, var(--wash-azure) 0%, transparent 60%),
+    radial-gradient(circle at 20% 70%, var(--wash-sage) 0%, transparent 50%),
+    var(--cream);
+}
+.wash-oasis {
+  background:
+    radial-gradient(circle at 50% 20%, var(--wash-peach) 0%, transparent 65%),
+    radial-gradient(circle at 30% 80%, var(--wash-cream) 0%, transparent 70%),
+    var(--cream);
+}
+.wash-lac {
+  background:
+    radial-gradient(circle at 70% 30%, var(--wash-lavender) 0%, transparent 60%),
+    radial-gradient(circle at 25% 75%, var(--wash-azure) 0%, transparent 55%),
+    var(--cream);
+}
+.wash-montagne {
+  background:
+    radial-gradient(circle at 70% 20%, var(--wash-rose) 0%, transparent 55%),
+    radial-gradient(circle at 30% 70%, var(--wash-lavender) 0%, transparent 60%),
+    var(--cream);
+}
+.wash-renard {
+  background:
+    radial-gradient(circle at 50% 15%, var(--wash-peach) 0%, transparent 60%),
+    radial-gradient(circle at 25% 80%, var(--wash-rose) 0%, transparent 55%),
+    var(--cream);
 }

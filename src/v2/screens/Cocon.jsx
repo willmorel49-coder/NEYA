@@ -1,15 +1,13 @@
 /* ============================================================
-   NÉYA V2 — Cocon (sanctuaire personnalisable)
+   NÉYA V3 — Cocon (LIGHT MODE, wash personnalisable)
    ============================================================
-   Identité : pseudo (edit) · totem (6 choix) · mantra
-   Items : 5 items grid (bougie/cristal/plante/totem/portail) toggle placed
-   Stats : jours connectés · minutes totales · mondes explorés
+   Sanctuaire 100% personnalisable. Cream base + wash totem.
+   Cards pearl translucides + ink text.
    ============================================================ */
 
 import { useState, useEffect } from 'react';
 import { WORLDS } from '../worlds';
-import { getProfile, setProfile, haptic, ls } from '../state';
-import GlassCard from '../../components/GlassCard';
+import { getProfile, setProfile, haptic } from '../state';
 import Button from '../../components/Button';
 
 const TOTEMS = [
@@ -71,124 +69,91 @@ export default function Cocon() {
 
   return (
     <div
+      className={totemWorld.wash}
       style={{
         position: 'absolute',
         inset: 0,
-        background: 'var(--void)',
+        color: 'var(--ink)',
       }}
     >
-      {/* Subtle atmospheric bg */}
       <div
         style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${totemWorld.bg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.18,
-          filter: 'blur(10px) brightness(0.6)',
-          transform: 'scale(1.08)',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(to bottom, rgba(5,8,16,0.92) 0%, rgba(5,8,16,0.75) 50%, rgba(5,8,16,0.95) 100%)',
-        }}
-      />
-
-      {/* Scrollable content */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 2,
           height: '100%',
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 24px) var(--sp-5) calc(env(safe-area-inset-bottom, 0px) + 110px)',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 22px) 22px calc(env(safe-area-inset-bottom, 0px) + 110px)',
         }}
       >
         {/* Header */}
         <div className="neya-mark" style={{ color: 'var(--content-tertiary)', marginBottom: 6 }}>
-          MON COCON
+          MON COCON · {currentTotem.label.toUpperCase()}
         </div>
-        <div
+        <h1
           className="neya-h1"
-          style={{ fontFamily: 'var(--font-display)', marginBottom: 24 }}
+          style={{ fontFamily: 'var(--font-display)', marginBottom: 28 }}
         >
           {profile.pseudo ? (
             <>Bienvenue, <em className="neya-key">{profile.pseudo}.</em></>
           ) : (
             <>Pose-toi <em className="neya-key">ici.</em></>
           )}
-        </div>
+        </h1>
 
-        {/* Identité — pseudo & mantra */}
+        {/* Identité */}
         <SectionTitle accent={totemWorld.accent}>Identité</SectionTitle>
 
-        <GlassCard variant="default" style={{ marginBottom: 12 }}>
-          <FieldRow label="Prénom" editing={editingPseudo}>
-            {editingPseudo ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <input
-                  autoFocus
-                  value={tempPseudo}
-                  onChange={(e) => setTempPseudo(e.target.value)}
-                  placeholder="Ton prénom"
-                  style={inputStyle}
-                  onKeyDown={(e) => { if (e.key === 'Enter') savePseudo(); }}
-                />
-                <Button size="sm" variant="primary" onClick={savePseudo}>OK</Button>
-              </div>
-            ) : (
-              <ValueButton onClick={() => { setTempPseudo(profile.pseudo || ''); setEditingPseudo(true); }}>
-                {profile.pseudo || <span style={{ color: 'var(--content-whisper, var(--content-tertiary))' }}>Toucher pour poser ton prénom</span>}
-              </ValueButton>
-            )}
-          </FieldRow>
-        </GlassCard>
+        <PearlCard>
+          <FieldLabel>Prénom</FieldLabel>
+          {editingPseudo ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+              <input
+                autoFocus
+                value={tempPseudo}
+                onChange={(e) => setTempPseudo(e.target.value)}
+                placeholder="Ton prénom"
+                style={inputStyle}
+                onKeyDown={(e) => { if (e.key === 'Enter') savePseudo(); }}
+              />
+              <Button size="sm" variant="primary" style={primaryDarkBtn} onClick={savePseudo}>OK</Button>
+            </div>
+          ) : (
+            <ValueButton onClick={() => { setTempPseudo(profile.pseudo || ''); setEditingPseudo(true); }}>
+              {profile.pseudo || <span style={{ color: 'var(--content-tertiary)' }}>Toucher pour poser ton prénom</span>}
+            </ValueButton>
+          )}
+        </PearlCard>
 
-        <GlassCard variant="default" style={{ marginBottom: 24 }}>
-          <FieldRow label="Mantra du moment">
-            {editingMantra ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <textarea
-                  autoFocus
-                  value={tempMantra}
-                  onChange={(e) => setTempMantra(e.target.value)}
-                  placeholder="Une phrase pour toi…"
-                  rows={2}
-                  style={{ ...inputStyle, resize: 'none', lineHeight: 1.5 }}
-                />
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <Button size="sm" variant="primary" onClick={saveMantra}>Garder</Button>
-                  <Button size="sm" variant="ghost" onClick={() => { setTempMantra(profile.mantra || ''); setEditingMantra(false); }}>Annuler</Button>
-                </div>
+        <PearlCard style={{ marginTop: 10 }}>
+          <FieldLabel>Mantra du moment</FieldLabel>
+          {editingMantra ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 6 }}>
+              <textarea
+                autoFocus
+                value={tempMantra}
+                onChange={(e) => setTempMantra(e.target.value)}
+                placeholder="Une phrase pour toi…"
+                rows={2}
+                style={{ ...inputStyle, resize: 'none', lineHeight: 1.5, borderBottom: 'none', background: 'rgba(26, 26, 47, 0.04)', borderRadius: 8, padding: 10 }}
+              />
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Button size="sm" variant="primary" style={primaryDarkBtn} onClick={saveMantra}>Garder</Button>
+                <Button size="sm" variant="ghost" onClick={() => { setTempMantra(profile.mantra || ''); setEditingMantra(false); }}>Annuler</Button>
               </div>
-            ) : (
-              <ValueButton onClick={() => { setTempMantra(profile.mantra || ''); setEditingMantra(true); }}>
-                {profile.mantra ? (
-                  <span style={{ fontStyle: 'italic', fontFamily: 'var(--font-display)', fontSize: 17 }}>« {profile.mantra} »</span>
-                ) : (
-                  <span style={{ color: 'var(--content-tertiary)' }}>Toucher pour poser un mantra…</span>
-                )}
-              </ValueButton>
-            )}
-          </FieldRow>
-        </GlassCard>
+            </div>
+          ) : (
+            <ValueButton onClick={() => { setTempMantra(profile.mantra || ''); setEditingMantra(true); }}>
+              {profile.mantra ? (
+                <span style={{ fontStyle: 'italic', fontFamily: 'var(--font-display)', fontSize: 17, fontVariationSettings: 'var(--fraunces-italic-soft)' }}>« {profile.mantra} »</span>
+              ) : (
+                <span style={{ color: 'var(--content-tertiary)' }}>Toucher pour poser un mantra…</span>
+              )}
+            </ValueButton>
+          )}
+        </PearlCard>
 
         {/* Totem — 6 choix */}
-        <SectionTitle accent={totemWorld.accent}>Mon totem</SectionTitle>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr 1fr',
-            gap: 8,
-            marginBottom: 24,
-          }}
-        >
+        <SectionTitle accent={totemWorld.accent} style={{ marginTop: 32 }}>Mon totem</SectionTitle>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 8 }}>
           {TOTEMS.map((t) => {
             const isActive = t.key === totemKey;
             const w = WORLDS[t.world];
@@ -200,17 +165,20 @@ export default function Cocon() {
                 style={{
                   appearance: 'none',
                   padding: '14px 8px',
-                  background: isActive ? `${w.accentRgb}, 0.12)` : 'rgba(245,242,236,0.04)',
-                  border: `0.5px solid ${isActive ? w.accent : 'var(--hairline)'}`,
+                  background: isActive ? `${w.accentRgb}, 0.18)` : 'rgba(255, 252, 245, 0.6)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: `0.5px solid ${isActive ? w.accent : 'rgba(26, 26, 47, 0.08)'}`,
                   borderRadius: 'var(--radius-md)',
-                  color: 'var(--content-primary)',
+                  color: 'var(--ink)',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: 6,
                   WebkitTapHighlightColor: 'transparent',
-                  transition: 'background 200ms var(--ease-out), border-color 200ms var(--ease-out)',
+                  transition: 'all 200ms var(--ease-out)',
+                  boxShadow: isActive ? '0 2px 12px rgba(26, 26, 47, 0.06)' : 'none',
                 }}
               >
                 <span style={{ fontSize: 22, color: isActive ? w.accent : 'var(--content-secondary)', lineHeight: 1 }}>
@@ -223,7 +191,7 @@ export default function Cocon() {
                     fontWeight: 500,
                     lineHeight: 1.2,
                     textAlign: 'center',
-                    color: isActive ? 'var(--content-primary)' : 'var(--content-secondary)',
+                    color: isActive ? 'var(--ink)' : 'var(--content-secondary)',
                   }}
                 >
                   {t.label}
@@ -233,22 +201,12 @@ export default function Cocon() {
           })}
         </div>
 
-        {/* Items à placer */}
-        <SectionTitle accent={totemWorld.accent}>Mon sanctuaire</SectionTitle>
-        <div
-          className="neya-body-sm"
-          style={{ color: 'var(--content-tertiary)', marginBottom: 12 }}
-        >
+        {/* Items */}
+        <SectionTitle accent={totemWorld.accent} style={{ marginTop: 32 }}>Mon sanctuaire</SectionTitle>
+        <div className="neya-body-sm" style={{ color: 'var(--content-tertiary)', marginBottom: 12 }}>
           Touche pour poser ou retirer un objet.
         </div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 10,
-            marginBottom: 24,
-          }}
-        >
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 8 }}>
           {ITEMS.map((item, i) => {
             const isPlaced = placed[item.key];
             return (
@@ -259,21 +217,24 @@ export default function Cocon() {
                 style={{
                   gridColumn: i === 4 ? '1 / -1' : 'auto',
                   appearance: 'none',
-                  padding: '16px 14px',
-                  background: isPlaced ? `${totemWorld.accentRgb}, 0.10)` : 'rgba(245,242,236,0.04)',
-                  border: `0.5px solid ${isPlaced ? totemWorld.accent : 'var(--hairline)'}`,
+                  padding: '18px 14px',
+                  background: isPlaced ? `${totemWorld.accentRgb}, 0.14)` : 'rgba(255, 252, 245, 0.6)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: `0.5px solid ${isPlaced ? totemWorld.accent : 'rgba(26, 26, 47, 0.08)'}`,
                   borderRadius: 'var(--radius-md)',
-                  color: 'var(--content-primary)',
+                  color: 'var(--ink)',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: 6,
                   WebkitTapHighlightColor: 'transparent',
-                  transition: 'background 240ms var(--ease-out), border-color 240ms var(--ease-out)',
+                  transition: 'all 240ms var(--ease-out)',
+                  boxShadow: isPlaced ? '0 2px 12px rgba(26, 26, 47, 0.06)' : 'none',
                 }}
               >
-                <span style={{ fontSize: 26, color: isPlaced ? totemWorld.accent : 'var(--content-secondary)', lineHeight: 1 }}>
+                <span style={{ fontSize: 28, color: isPlaced ? totemWorld.accent : 'var(--content-secondary)', lineHeight: 1 }}>
                   {item.glyph}
                 </span>
                 <span style={{ fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 500 }}>
@@ -288,14 +249,13 @@ export default function Cocon() {
         </div>
 
         {/* Stats */}
-        <SectionTitle accent={totemWorld.accent}>Ton chemin</SectionTitle>
-        <div style={{ display: 'flex', gap: 10, marginBottom: 32 }}>
-          <Stat label="Jours" value={profile.progress?.joursConnectes || 1} />
-          <Stat label="Minutes" value={profile.progress?.minutesTotales || 0} />
-          <Stat label="Mondes" value={profile.progress?.worldsExplored?.length || 1} />
+        <SectionTitle accent={totemWorld.accent} style={{ marginTop: 32 }}>Ton chemin</SectionTitle>
+        <div style={{ display: 'flex', gap: 10, marginBottom: 28 }}>
+          <Stat label="Jours" value={profile.progress?.joursConnectes || 1} accent={totemWorld.accent} />
+          <Stat label="Minutes" value={profile.progress?.minutesTotales || 0} accent={totemWorld.accent} />
+          <Stat label="Mondes" value={profile.progress?.worldsExplored?.length || 1} accent={totemWorld.accent} />
         </div>
 
-        {/* Footer whisper */}
         <div
           style={{
             textAlign: 'center',
@@ -316,29 +276,39 @@ export default function Cocon() {
   );
 }
 
-function SectionTitle({ children, accent }) {
+function PearlCard({ children, style }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, marginTop: 4 }}>
-      <span style={{ width: 18, height: 1, background: accent, opacity: 0.7 }} />
-      <span
-        className="neya-mark"
-        style={{ color: accent }}
-      >
+    <div
+      style={{
+        background: 'rgba(255, 252, 245, 0.78)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        border: '0.5px solid rgba(26, 26, 47, 0.08)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '16px 18px',
+        boxShadow: '0 2px 14px rgba(26, 26, 47, 0.04)',
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function SectionTitle({ children, accent, style }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, ...style }}>
+      <span style={{ width: 18, height: 1, background: accent, opacity: 0.8 }} />
+      <span className="neya-mark" style={{ color: accent }}>
         {children}
       </span>
     </div>
   );
 }
 
-function FieldRow({ label, editing, children }) {
+function FieldLabel({ children }) {
   return (
-    <div>
-      <div
-        className="neya-mark"
-        style={{ color: 'var(--content-tertiary)', marginBottom: 8 }}
-      >
-        {label}
-      </div>
+    <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
       {children}
     </div>
   );
@@ -354,9 +324,9 @@ function ValueButton({ onClick, children }) {
         width: '100%',
         background: 'transparent',
         border: 'none',
-        padding: 0,
+        padding: '8px 0 0',
         textAlign: 'left',
-        color: 'var(--content-primary)',
+        color: 'var(--ink)',
         fontFamily: 'var(--font-body)',
         fontSize: 15,
         lineHeight: 1.45,
@@ -369,34 +339,24 @@ function ValueButton({ onClick, children }) {
   );
 }
 
-const inputStyle = {
-  flex: 1,
-  background: 'transparent',
-  border: 'none',
-  borderBottom: '0.5px solid var(--hairline-strong)',
-  outline: 'none',
-  padding: '6px 0',
-  fontFamily: 'var(--font-body)',
-  fontSize: 15,
-  color: 'var(--content-primary)',
-};
-
-function Stat({ label, value }) {
+function Stat({ label, value, accent }) {
   return (
     <div
       style={{
         flex: 1,
-        background: 'rgba(245,242,236,0.04)',
-        border: '0.5px solid var(--hairline)',
+        background: 'rgba(255, 252, 245, 0.6)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        border: '0.5px solid rgba(26, 26, 47, 0.06)',
         borderRadius: 'var(--radius-md)',
         padding: '14px 12px',
         display: 'flex',
         flexDirection: 'column',
-        gap: 4,
+        gap: 6,
         alignItems: 'flex-start',
       }}
     >
-      <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
+      <div className="neya-mark" style={{ color: accent }}>
         {label}
       </div>
       <div
@@ -405,7 +365,7 @@ function Stat({ label, value }) {
           fontSize: 22,
           fontWeight: 600,
           letterSpacing: '-0.02em',
-          color: 'var(--content-primary)',
+          color: 'var(--ink)',
           fontVariantNumeric: 'tabular-nums',
           lineHeight: 1,
         }}
@@ -415,3 +375,20 @@ function Stat({ label, value }) {
     </div>
   );
 }
+
+const inputStyle = {
+  flex: 1,
+  background: 'transparent',
+  border: 'none',
+  borderBottom: '0.5px solid rgba(26, 26, 47, 0.18)',
+  outline: 'none',
+  padding: '6px 0',
+  fontFamily: 'var(--font-body)',
+  fontSize: 15,
+  color: 'var(--ink)',
+};
+
+const primaryDarkBtn = {
+  background: 'var(--ink)',
+  color: 'var(--cream)',
+};

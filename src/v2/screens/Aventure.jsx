@@ -1,17 +1,14 @@
 /* ============================================================
-   NÉYA V2 — Aventure (main screen, vertical ascent metaphor)
+   NÉYA V3 — Aventure (LIGHT MODE, wash pastel + ink text)
    ============================================================
-   Header fixe : "NÉYA" gauche + "Jour 07 · 12 min" droite
-   Scroll vertical : 6 mondes (Forêt → Communauté), avec
-   completed / current / locked checkpoints.
-   Footer fixe : primary CTA "Continuer la montée →" + secondary "Carte"
+   Vertical ascent : 6 mondes en checkpoints le long d'un chemin.
+   Wash dawn par défaut. Cards pearl translucides.
    ============================================================ */
 
 import { useState, useEffect, useMemo } from 'react';
 import { WORLDS, WORLD_ORDER } from '../worlds';
 import { getProfile, greet, recordVisitToday } from '../state';
 import Button from '../../components/Button';
-import GlassCard from '../../components/GlassCard';
 
 export default function Aventure({ onOpenMeditation, onOpenWorld }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
@@ -29,85 +26,78 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
 
   return (
     <div
+      className={currentWorld.wash}
       style={{
         position: 'absolute',
         inset: 0,
-        background: 'var(--void)',
-        color: 'var(--content-primary)',
+        color: 'var(--ink)',
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      {/* Background — current world bg, very dim, atmospheric */}
+      {/* Header */}
       <div
         style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${currentWorld.bg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.32,
-          filter: 'blur(6px) brightness(0.7)',
-          transform: 'scale(1.06)',
-          transition: 'background-image 800ms var(--ease-out)',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(to bottom, rgba(5,8,16,0.85) 0%, rgba(5,8,16,0.65) 40%, rgba(5,8,16,0.92) 100%)',
-        }}
-      />
-
-      {/* Header fixe */}
-      <div
-        style={{
-          position: 'relative',
           padding:
-            'calc(env(safe-area-inset-top, 0px) + 16px) var(--sp-5) var(--sp-4)',
+            'calc(env(safe-area-inset-top, 0px) + 22px) 22px var(--sp-4)',
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'space-between',
-          zIndex: 2,
         }}
       >
         <div>
           <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
-            {`N É Y A`}
+            {`N É Y A`}
           </div>
-          <div
+          <h1
+            className="neya-h2"
             style={{
               marginTop: 8,
               fontFamily: 'var(--font-display)',
-              fontSize: 'var(--type-h2)',
-              fontWeight: 'var(--weight-regular)',
-              lineHeight: 'var(--lh-h2)',
-              letterSpacing: 'var(--ls-h2)',
-              fontVariationSettings: 'var(--fraunces-opsz-large)',
-              color: 'var(--content-primary)',
             }}
           >
             {greet()}.
-          </div>
+          </h1>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
           <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
             JOUR {String(profile.progress.joursConnectes || 1).padStart(2, '0')}
           </div>
           <div
             style={{
               fontFamily: 'var(--font-ui)',
-              fontSize: 'var(--type-label)',
-              fontWeight: 'var(--weight-medium)',
-              color: 'var(--content-secondary)',
+              fontSize: 12,
+              fontWeight: 500,
+              color: currentWorld.accent,
             }}
           >
             {profile.progress.minutesTotales || 0} min
           </div>
         </div>
+      </div>
+
+      {/* Continuer la montée CTA */}
+      <div style={{ padding: '0 22px 24px' }}>
+        <Button
+          variant="primary"
+          size="md"
+          onClick={onOpenMeditation}
+          style={{
+            background: 'var(--ink)',
+            color: 'var(--cream)',
+            width: '100%',
+            justifyContent: 'space-between',
+            paddingLeft: 22,
+            paddingRight: 22,
+          }}
+        >
+          <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
+            <span style={{ fontSize: 9, opacity: 0.65, letterSpacing: '0.18em', textTransform: 'uppercase' }}>Maintenant</span>
+            <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: 0, textTransform: 'none' }}>Continuer la montée</span>
+          </span>
+          <span style={{ fontSize: 14, opacity: 0.65, letterSpacing: 0, textTransform: 'none' }}>→</span>
+        </Button>
       </div>
 
       {/* Scrollable ascent */}
@@ -116,24 +106,11 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
           flex: 1,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          position: 'relative',
-          zIndex: 2,
-          padding: 'var(--sp-4) var(--sp-5) calc(env(safe-area-inset-bottom, 0px) + 110px)',
+          padding: '0 22px calc(env(safe-area-inset-bottom, 0px) + 110px)',
         }}
       >
-        {/* Primary CTA — Méditer maintenant */}
-        <div style={{ marginBottom: 'var(--sp-5)', display: 'flex', justifyContent: 'flex-start' }}>
-          <Button
-            variant="primary"
-            size="md"
-            worldAccent={currentWorld.accent}
-            onClick={onOpenMeditation}
-          >
-            Continuer la montée →
-          </Button>
-        </div>
-        {/* Vertical ascent line behind the worlds */}
         <div style={{ position: 'relative', minHeight: '100%' }}>
+          {/* Ligne d'ascension */}
           <div
             style={{
               position: 'absolute',
@@ -142,7 +119,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
               bottom: 12,
               width: 1,
               background:
-                'linear-gradient(to bottom, transparent, rgba(251,246,232,0.22) 12%, rgba(251,246,232,0.22) 88%, transparent)',
+                'linear-gradient(to bottom, transparent, rgba(26, 26, 47, 0.18) 12%, rgba(26, 26, 47, 0.18) 88%, transparent)',
             }}
           />
 
@@ -165,7 +142,6 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
                   paddingBottom: 'var(--sp-4)',
                 }}
               >
-                {/* Checkpoint */}
                 <div
                   style={{
                     display: 'flex',
@@ -174,58 +150,26 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
                     width: 53,
                   }}
                 >
-                  <Checkpoint state={isCurrent ? 'current' : isExplored ? 'done' : 'locked'} accent={w.accent} />
+                  <Checkpoint
+                    state={isCurrent ? 'current' : isExplored ? 'done' : 'locked'}
+                    accent={w.accent}
+                  />
                 </div>
 
-                {/* World card */}
-                <GlassCard
-                  variant={isLocked ? 'default' : 'glass'}
-                  worldAccent={w.accentRgb}
+                <WorldCard
+                  world={w}
+                  isCurrent={isCurrent}
+                  isLocked={isLocked}
                   onClick={isLocked ? undefined : () => onOpenWorld?.(wKey)}
-                  style={{
-                    opacity: isLocked ? 0.42 : 1,
-                    cursor: isLocked ? 'default' : 'pointer',
-                    padding: '14px 16px',
-                    minHeight: 70,
-                  }}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    <div className="neya-mark" style={{ color: w.accent }}>
-                      CHAPITRE {String(w.chapter).padStart(2, '0')}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-ui)',
-                        fontSize: 'var(--type-h3)',
-                        fontWeight: 'var(--weight-medium)',
-                        lineHeight: 'var(--lh-h3)',
-                        color: 'var(--content-primary)',
-                      }}
-                    >
-                      {w.name}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-body)',
-                        fontSize: 'var(--type-body-sm)',
-                        fontWeight: 'var(--weight-regular)',
-                        color: 'var(--content-secondary)',
-                        lineHeight: 'var(--lh-body-sm)',
-                      }}
-                    >
-                      {w.totem} · {w.moment}
-                    </div>
-                  </div>
-                </GlassCard>
+                />
               </div>
             );
           })}
 
-          {/* Bottom whisper */}
           <div
             style={{
-              marginTop: 'var(--sp-6)',
-              padding: '0 var(--sp-5)',
+              marginTop: 28,
+              padding: '0 24px',
               textAlign: 'center',
               fontFamily: 'var(--font-body)',
               fontSize: 12,
@@ -240,8 +184,76 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
           </div>
         </div>
       </div>
-
     </div>
+  );
+}
+
+function WorldCard({ world, isCurrent, isLocked, onClick }) {
+  const baseBg = isLocked
+    ? 'rgba(255, 252, 245, 0.5)'
+    : isCurrent
+      ? `${world.accentRgb}, 0.12)`
+      : 'rgba(255, 252, 245, 0.78)';
+  const borderColor = isLocked
+    ? 'rgba(26, 26, 47, 0.06)'
+    : isCurrent
+      ? `${world.accentRgb}, 0.40)`
+      : 'rgba(26, 26, 47, 0.10)';
+
+  return (
+    <button
+      data-press={isLocked ? undefined : true}
+      onClick={onClick}
+      disabled={isLocked}
+      style={{
+        appearance: 'none',
+        background: baseBg,
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        border: `0.5px solid ${borderColor}`,
+        borderRadius: 'var(--radius-lg)',
+        padding: '14px 16px',
+        minHeight: 70,
+        textAlign: 'left',
+        cursor: isLocked ? 'default' : 'pointer',
+        opacity: isLocked ? 0.55 : 1,
+        WebkitTapHighlightColor: 'transparent',
+        boxShadow: isCurrent ? '0 4px 24px rgba(26, 26, 47, 0.08)' : '0 1px 6px rgba(26, 26, 47, 0.04)',
+        transition: 'all 240ms var(--ease-out)',
+      }}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div
+          className="neya-mark"
+          style={{ color: world.accent }}
+        >
+          CHAPITRE {String(world.chapter).padStart(2, '0')}
+        </div>
+        <div
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 18,
+            fontWeight: 400,
+            lineHeight: 1.15,
+            color: 'var(--ink)',
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+          }}
+        >
+          {world.name}
+        </div>
+        <div
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: 12,
+            color: 'var(--content-secondary)',
+            lineHeight: 1.5,
+          }}
+        >
+          {world.totem} · {world.moment}
+        </div>
+      </div>
+    </button>
   );
 }
 
@@ -250,19 +262,17 @@ function Checkpoint({ state, accent }) {
     return (
       <div
         style={{
-          width: 11,
-          height: 11,
+          width: 12,
+          height: 12,
           borderRadius: '50%',
-          background: 'var(--cream)',
+          background: 'var(--ink)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          position: 'relative',
         }}
       >
         <span
           style={{
-            position: 'absolute',
             color: 'var(--tilleul)',
             fontSize: 8,
             fontWeight: 700,
@@ -290,22 +300,21 @@ function Checkpoint({ state, accent }) {
             width: 14,
             height: 14,
             borderRadius: '50%',
-            border: `1.5px solid var(--cream)`,
-            background: 'transparent',
+            background: 'var(--cream)',
+            border: `1.5px solid ${accent}`,
             position: 'relative',
           }}
         />
       </div>
     );
   }
-  // locked
   return (
     <div
       style={{
         width: 11,
         height: 11,
         borderRadius: '50%',
-        border: '1.5px dashed rgba(251, 246, 232, 0.30)',
+        border: '1.5px dashed rgba(26, 26, 47, 0.30)',
         background: 'transparent',
       }}
     />

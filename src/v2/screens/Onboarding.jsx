@@ -1,17 +1,14 @@
 /* ============================================================
-   NÉYA V2 — Onboarding (5 questions immersives)
+   NÉYA V3 — Onboarding (5 questions immersives, LIGHT MODE)
    ============================================================
-   1 question = 1 monde = 1 chapter mark. Pas de progress bar.
-   Cross-fade 800ms entre mondes. Tap pill = scale 0.96 + advance.
-   Q5 = primary CTA "Commencer mon aventure".
+   Wash pastel par monde + ink text + cards pearl translucides.
+   Aligné palette ÇA VA? + inspirations soft/inviting.
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
 import { WORLDS } from '../worlds';
-import { haptic, ls, getProfile, setProfile } from '../state';
+import { haptic, getProfile, setProfile } from '../state';
 import Button from '../../components/Button';
-import GlassCard from '../../components/GlassCard';
-import ChapterMark from '../../components/ChapterMark';
 import HeroTitle from '../../components/HeroTitle';
 
 const STEPS = [
@@ -77,7 +74,7 @@ const STEPS = [
     titleBefore: 'Et toi, ça va ',
     titleEm: 'vraiment ?',
     titleAfter: '',
-    field: null,                        // single CTA, no pill
+    field: null,
     cta: 'Commencer mon aventure',
   },
 ];
@@ -89,7 +86,6 @@ export default function Onboarding({ onComplete }) {
   const [exiting, setExiting] = useState(false);
   const transitioningRef = useRef(false);
 
-  // Enter animation on mount + on step change
   useEffect(() => {
     setShow(false);
     setExiting(false);
@@ -106,15 +102,12 @@ export default function Onboarding({ onComplete }) {
     transitioningRef.current = true;
     haptic(6);
 
-    const nextAnswers = step.field
-      ? { ...answers, [step.field]: value }
-      : answers;
+    const nextAnswers = step.field ? { ...answers, [step.field]: value } : answers;
     setAnswers(nextAnswers);
 
     setExiting(true);
 
     if (stepIdx === STEPS.length - 1) {
-      // Save and finish
       const profile = getProfile();
       profile.onboarding = {
         ...nextAnswers,
@@ -128,44 +121,99 @@ export default function Onboarding({ onComplete }) {
       setTimeout(() => {
         haptic([8, 60, 8]);
         onComplete?.();
-      }, 800);
+      }, 700);
     } else {
-      setTimeout(() => setStepIdx(stepIdx + 1), 800);
+      setTimeout(() => setStepIdx(stepIdx + 1), 700);
     }
   };
 
   return (
-    <div style={{ position: 'absolute', inset: 0, background: 'var(--void)' }}>
-      {/* Stage — photo + vignette */}
+    <div
+      className={world.wash}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        opacity: exiting ? 0 : (show ? 1 : 0),
+        transition: 'opacity 700ms var(--ease-narrative)',
+      }}
+    >
+      {/* Top mark — chapter info */}
       <div
         style={{
           position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${world.bg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: exiting ? 0 : (show ? 1 : 0),
-          transition: 'opacity 800ms var(--ease-narrative)',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(to top, rgba(5,8,16,0.88) 0%, rgba(5,8,16,0.55) 28%, rgba(5,8,16,0.18) 60%, rgba(5,8,16,0.04) 100%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Chapter Mark */}
-      <div
-        style={{
-          opacity: exiting ? 0 : (show ? 1 : 0),
-          transition: 'opacity 600ms var(--ease-out) 120ms',
+          top: 'calc(env(safe-area-inset-top, 0px) + 22px)',
+          left: 22,
+          right: 22,
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          zIndex: 2,
         }}
       >
-        <ChapterMark brand chapter={world.chapter} world={world.name} />
+        <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
+          {`N É Y A`}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+          <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
+            {`CHAPITRE ${String(world.chapter).padStart(2, '0')}`}
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 9,
+              fontWeight: 500,
+              color: world.accent,
+              letterSpacing: 0,
+            }}
+          >
+            {world.name}
+          </div>
+        </div>
+      </div>
+
+      {/* Center totem glyph + emotional cue */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '24%',
+          left: 0,
+          right: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          opacity: show && !exiting ? 1 : 0,
+          transform: show && !exiting ? 'translateY(0)' : 'translateY(8px)',
+          transition: 'opacity 800ms var(--ease-out) 100ms, transform 800ms var(--ease-out) 100ms',
+        }}
+      >
+        <div
+          style={{
+            width: 88,
+            height: 88,
+            borderRadius: '50%',
+            background: `radial-gradient(circle at 30% 30%, ${world.accent} 0%, transparent 70%)`,
+            opacity: 0.45,
+            position: 'absolute',
+            top: -22,
+          }}
+        />
+        <div
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 26,
+            fontWeight: 400,
+            color: world.accent,
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            zIndex: 1,
+            marginBottom: 6,
+          }}
+        >
+          {world.totem}
+        </div>
+        <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
+          {world.moment}
+        </div>
       </div>
 
       {/* Bottom content : HeroTitle + pills/CTA */}
@@ -175,19 +223,19 @@ export default function Onboarding({ onComplete }) {
           left: 0,
           right: 0,
           bottom: 0,
-          padding: 'var(--sp-5) var(--sp-5) calc(env(safe-area-inset-bottom, 0px) + var(--sp-6))',
+          padding: '22px 22px calc(env(safe-area-inset-bottom, 0px) + 32px)',
           display: 'flex',
           flexDirection: 'column',
-          gap: 'var(--sp-6)',
-          opacity: exiting ? 0 : (show ? 1 : 0),
-          transform: exiting ? 'translateY(8px)' : (show ? 'translateY(0)' : 'translateY(16px)'),
+          gap: 28,
+          opacity: show && !exiting ? 1 : 0,
+          transform: show && !exiting ? 'translateY(0)' : 'translateY(16px)',
           transition:
             'opacity 800ms var(--ease-out) 180ms, transform 800ms var(--ease-out) 180ms',
         }}
       >
         <HeroTitle
           eyebrow={step.eyebrow}
-          paletteMode={world.palette}
+          paletteMode="dawn"
           size={stepIdx === STEPS.length - 1 ? 'hero' : 'h1'}
           title={
             <>
@@ -198,37 +246,17 @@ export default function Onboarding({ onComplete }) {
           }
         />
 
-        {/* Pills or single CTA */}
         {step.field ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {step.pills.map((p) => (
-              <GlassCard
+              <PillChoice
                 key={String(p.value)}
-                variant="glass"
-                worldAccent={world.accentRgb}
+                accent={world.accent}
+                accentRgb={world.accentRgb}
                 onClick={() => advance(p.value)}
-                style={{
-                  height: 48,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  width: '100%',
-                  padding: '0 18px',
-                }}
               >
-                <span
-                  style={{
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 'var(--type-label)',
-                    fontWeight: 'var(--weight-medium)',
-                    letterSpacing: 0,
-                    color: 'var(--content-primary)',
-                  }}
-                >
-                  {p.label}
-                </span>
-              </GlassCard>
+                {p.label}
+              </PillChoice>
             ))}
           </div>
         ) : (
@@ -238,12 +266,70 @@ export default function Onboarding({ onComplete }) {
               variant="primary"
               worldAccent={world.accent}
               onClick={() => advance(null)}
+              style={{
+                background: 'var(--ink)',
+                color: 'var(--cream)',
+              }}
             >
               {step.cta}
             </Button>
           </div>
         )}
+
+        {/* Progression dots — chapter mark IS the progression */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 4 }}>
+          {STEPS.map((_, i) => (
+            <span
+              key={i}
+              style={{
+                width: i === stepIdx ? 20 : 5,
+                height: 2,
+                borderRadius: 1,
+                background: i <= stepIdx ? world.accent : 'rgba(26, 26, 47, 0.15)',
+                transition: 'all 400ms var(--ease-out)',
+              }}
+            />
+          ))}
+        </div>
       </div>
     </div>
+  );
+}
+
+function PillChoice({ children, accent, accentRgb, onClick }) {
+  return (
+    <button
+      data-press
+      onClick={onClick}
+      style={{
+        appearance: 'none',
+        background: 'rgba(255, 255, 255, 0.55)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        border: `0.5px solid ${accentRgb}, 0.20)`,
+        borderRadius: 'var(--radius-pill)',
+        padding: '15px 22px',
+        textAlign: 'left',
+        cursor: 'pointer',
+        WebkitTapHighlightColor: 'transparent',
+        fontFamily: 'var(--font-ui)',
+        fontSize: 14,
+        fontWeight: 500,
+        color: 'var(--ink)',
+        letterSpacing: 0,
+        transition: 'background 200ms var(--ease-out), border-color 200ms var(--ease-out)',
+        boxShadow: '0 1px 6px rgba(26, 26, 47, 0.04)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = `${accentRgb}, 0.10)`;
+        e.currentTarget.style.borderColor = `${accentRgb}, 0.40)`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.55)';
+        e.currentTarget.style.borderColor = `${accentRgb}, 0.20)`;
+      }}
+    >
+      {children}
+    </button>
   );
 }

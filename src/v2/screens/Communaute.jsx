@@ -1,16 +1,14 @@
 /* ============================================================
-   NÉYA V2 — Communauté · Espace Vrai
+   NÉYA V3 — Communauté · Espace Vrai (LIGHT MODE)
    ============================================================
-   Feed semi-anonyme 24h. Voix seedées + composer localStorage.
-   3 réactions max : ❤️ touché·e · 🤝 je comprends · 👀 je te lis.
-   No comments, no threads, no like counts public, no rankings.
+   Wash renard (peach + rose) + ink text + cards pearl.
+   3 réactions ❤️ 🤝 👀 toggle local. Composer 280 chars.
    ============================================================ */
 
 import { useState, useEffect, useMemo } from 'react';
 import { WORLDS } from '../worlds';
 import { haptic, ls, getProfile } from '../state';
 import Button from '../../components/Button';
-import GlassCard from '../../components/GlassCard';
 
 const REACTIONS = [
   { key: 'touche',    icon: '♡', label: 'Touché·e' },
@@ -18,7 +16,6 @@ const REACTIONS = [
   { key: 'lis',       icon: '○', label: 'Je te lis' },
 ];
 
-// Seeded voices — atmosphere de la communauté avant les premiers posts réels
 const SEEDED = [
   {
     id: 'seed-1',
@@ -88,22 +85,14 @@ function formatTime(min) {
   return 'hier';
 }
 
-function loadOwnPosts() {
-  return ls.get('communaute_posts', []);
-}
-function saveOwnPosts(posts) {
-  ls.set('communaute_posts', posts);
-}
-function loadReactionsState() {
-  return ls.get('communaute_reactions', {});
-}
-function saveReactionsState(state) {
-  ls.set('communaute_reactions', state);
-}
+const loadOwnPosts = () => ls.get('communaute_posts', []);
+const saveOwnPosts = (p) => ls.set('communaute_posts', p);
+const loadReactions = () => ls.get('communaute_reactions', {});
+const saveReactions = (s) => ls.set('communaute_reactions', s);
 
 export default function Communaute() {
   const [ownPosts, setOwnPosts] = useState(() => loadOwnPosts());
-  const [reactionState, setReactionState] = useState(() => loadReactionsState());
+  const [reactionState, setReactionState] = useState(() => loadReactions());
   const [composerOpen, setComposerOpen] = useState(false);
   const [draft, setDraft] = useState('');
   const profile = getProfile();
@@ -125,7 +114,7 @@ export default function Communaute() {
     const next = { ...cur, [rKey]: !cur[rKey] };
     const updated = { ...reactionState, [postId]: next };
     setReactionState(updated);
-    saveReactionsState(updated);
+    saveReactions(updated);
     haptic(4);
   };
 
@@ -150,42 +139,22 @@ export default function Communaute() {
   };
 
   return (
-    <div style={{ position: 'absolute', inset: 0, background: 'var(--void)' }}>
-      {/* Atmospheric bg — Renard de l'aube */}
+    <div
+      className="wash-renard"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        color: 'var(--ink)',
+      }}
+    >
       <div
         style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${wRenard.bg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.22,
-          filter: 'blur(8px) brightness(0.7)',
-          transform: 'scale(1.06)',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(to bottom, rgba(5,8,16,0.88) 0%, rgba(5,8,16,0.70) 50%, rgba(5,8,16,0.95) 100%)',
-        }}
-      />
-
-      {/* Scrollable feed */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 2,
           height: '100%',
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding:
-            'calc(env(safe-area-inset-top, 0px) + 24px) var(--sp-5) calc(env(safe-area-inset-bottom, 0px) + 170px)',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 22px) 22px calc(env(safe-area-inset-bottom, 0px) + 170px)',
         }}
       >
-        {/* Header */}
         <div className="neya-mark" style={{ color: 'var(--content-tertiary)', marginBottom: 6 }}>
           ESPACE VRAI · CHAPITRE 06
         </div>
@@ -199,7 +168,7 @@ export default function Communaute() {
           className="neya-body-sm"
           style={{
             color: 'var(--content-secondary)',
-            marginBottom: 28,
+            marginBottom: 24,
             maxWidth: 360,
           }}
         >
@@ -207,17 +176,22 @@ export default function Communaute() {
           ce qui est vrai.
         </p>
 
-        {/* Feed */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {allVoices.map((v) => {
             const my = reactionState[v.id] || {};
             return (
-              <GlassCard
+              <div
                 key={v.id}
-                variant="default"
-                style={{ padding: '16px 18px' }}
+                style={{
+                  background: 'rgba(255, 252, 245, 0.78)',
+                  backdropFilter: 'blur(14px)',
+                  WebkitBackdropFilter: 'blur(14px)',
+                  border: '0.5px solid rgba(26, 26, 47, 0.08)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: '16px 18px',
+                  boxShadow: '0 2px 14px rgba(26, 26, 47, 0.04)',
+                }}
               >
-                {/* Top row : pseudo + totem + time */}
                 <div
                   style={{
                     display: 'flex',
@@ -232,7 +206,7 @@ export default function Communaute() {
                         fontFamily: 'var(--font-ui)',
                         fontSize: 13,
                         fontWeight: 500,
-                        color: 'var(--content-primary)',
+                        color: 'var(--ink)',
                       }}
                     >
                       {v.pseudo}
@@ -241,7 +215,7 @@ export default function Communaute() {
                           style={{
                             marginLeft: 8,
                             fontSize: 9,
-                            color: 'var(--tilleul)',
+                            color: wRenard.accent,
                             letterSpacing: '0.15em',
                             textTransform: 'uppercase',
                             fontWeight: 500,
@@ -266,14 +240,12 @@ export default function Communaute() {
                       fontFamily: 'var(--font-ui)',
                       fontSize: 10,
                       color: 'var(--content-tertiary)',
-                      letterSpacing: '0.02em',
                     }}
                   >
                     {formatTime(v.minutesAgo)}
                   </span>
                 </div>
 
-                {/* Body — Fraunces italic if short, Inter otherwise */}
                 {v.isShort ? (
                   <p
                     style={{
@@ -283,7 +255,7 @@ export default function Communaute() {
                       fontStyle: 'italic',
                       fontWeight: 400,
                       lineHeight: 1.4,
-                      color: 'var(--content-primary)',
+                      color: 'var(--ink)',
                       fontVariationSettings: 'var(--fraunces-italic-soft)',
                     }}
                   >
@@ -296,21 +268,20 @@ export default function Communaute() {
                       fontFamily: 'var(--font-body)',
                       fontSize: 14,
                       lineHeight: 1.55,
-                      color: 'var(--content-primary)',
+                      color: 'var(--ink)',
                     }}
                   >
                     {v.body}
                   </p>
                 )}
 
-                {/* Reactions row */}
                 <div
                   style={{
                     display: 'flex',
                     gap: 16,
                     marginTop: 14,
                     paddingTop: 12,
-                    borderTop: '0.5px solid var(--hairline)',
+                    borderTop: '0.5px solid rgba(26, 26, 47, 0.08)',
                   }}
                 >
                   {REACTIONS.map((r) => {
@@ -330,7 +301,7 @@ export default function Communaute() {
                           alignItems: 'center',
                           gap: 6,
                           cursor: 'pointer',
-                          color: isOn ? 'var(--tilleul)' : 'var(--content-tertiary)',
+                          color: isOn ? wRenard.accent : 'var(--content-tertiary)',
                           fontFamily: 'var(--font-ui)',
                           fontSize: 11,
                           fontWeight: 500,
@@ -345,15 +316,14 @@ export default function Communaute() {
                     );
                   })}
                 </div>
-              </GlassCard>
+              </div>
             );
           })}
         </div>
 
-        {/* Footer whisper */}
         <div
           style={{
-            marginTop: 32,
+            marginTop: 24,
             textAlign: 'center',
             fontFamily: 'var(--font-body)',
             fontSize: 11,
@@ -367,7 +337,7 @@ export default function Communaute() {
         </div>
       </div>
 
-      {/* Sticky CTA "Partager une voix ↑" */}
+      {/* Sticky composer CTA */}
       <div
         style={{
           position: 'absolute',
@@ -376,7 +346,7 @@ export default function Communaute() {
           bottom: 'calc(env(safe-area-inset-bottom, 0px) + 96px)',
           display: 'flex',
           justifyContent: 'center',
-          padding: '0 var(--sp-5)',
+          padding: '0 22px',
           pointerEvents: 'none',
           zIndex: 5,
         }}
@@ -385,15 +355,18 @@ export default function Communaute() {
           <Button
             size="md"
             variant="primary"
-            worldAccent={wRenard.accent}
             onClick={() => { haptic(6); setComposerOpen(true); }}
+            style={{
+              background: 'var(--ink)',
+              color: 'var(--cream)',
+              boxShadow: '0 8px 24px rgba(26, 26, 47, 0.18)',
+            }}
           >
             Partager une voix ↑
           </Button>
         </div>
       </div>
 
-      {/* Composer overlay */}
       {composerOpen && (
         <Composer
           draft={draft}
@@ -418,7 +391,7 @@ function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
         position: 'absolute',
         inset: 0,
         zIndex: 100,
-        background: 'rgba(5, 8, 16, 0.85)',
+        background: 'rgba(26, 26, 47, 0.30)',
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
         display: 'flex',
@@ -430,10 +403,11 @@ function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
-          background: 'var(--surface-scene)',
-          borderTop: '0.5px solid var(--hairline-strong)',
+          background: 'var(--cream-light)',
+          borderTop: '0.5px solid rgba(26, 26, 47, 0.10)',
           borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
-          padding: 'var(--sp-5) var(--sp-5) calc(env(safe-area-inset-bottom, 0px) + var(--sp-5))',
+          padding: '22px 22px calc(env(safe-area-inset-bottom, 0px) + 22px)',
+          boxShadow: '0 -8px 32px rgba(26, 26, 47, 0.14)',
         }}
       >
         <div className="drag-handle" style={{ marginBottom: 18 }} />
@@ -455,12 +429,12 @@ function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
             aria-label="Fermer"
             style={{
               appearance: 'none',
-              background: 'rgba(245,242,236,0.08)',
+              background: 'rgba(26, 26, 47, 0.06)',
               border: 'none',
               borderRadius: '50%',
               width: 32,
               height: 32,
-              color: 'var(--content-primary)',
+              color: 'var(--ink)',
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
             }}
@@ -478,15 +452,16 @@ function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
           maxLength={280}
           style={{
             width: '100%',
-            background: 'transparent',
+            background: 'rgba(26, 26, 47, 0.04)',
             border: 'none',
             outline: 'none',
             resize: 'none',
             fontFamily: 'var(--font-body)',
             fontSize: 16,
-            color: 'var(--content-primary)',
+            color: 'var(--ink)',
             lineHeight: 1.5,
-            padding: 0,
+            padding: 12,
+            borderRadius: 8,
           }}
         />
 
@@ -513,7 +488,11 @@ function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
             variant="primary"
             disabled={!canSubmit}
             onClick={onSubmit}
-            style={{ background: canSubmit ? 'var(--tilleul)' : undefined, color: 'var(--deep-night)' }}
+            style={{
+              background: canSubmit ? 'var(--tilleul)' : 'rgba(26, 26, 47, 0.10)',
+              color: 'var(--ink)',
+              fontWeight: 600,
+            }}
           >
             Partager
           </Button>
