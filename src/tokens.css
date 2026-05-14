@@ -253,3 +253,40 @@
    le rituel principal. ÇA VA? Boutique reste sur surface-void
    ou sur --cava-cream selon l'ambiance éditoriale.
    ─────────────────────────────────────────────────────────── */
+
+
+/* ═══════════════════════════════════════════════════════════
+   BODY RESET — Apple-grade base
+   ═══════════════════════════════════════════════════════════
+   Tout le rendu hérite des tokens. Le body est le canvas cosmique.
+   Inter par défaut, Sora via class .display. Cream sur void. */
+
+html, body {
+  background: var(--surface-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Press state Apple-grade — scale 0.97 universal */
+[data-press]:active {
+  transform: scale(0.97);
+  transition: transform 120ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Class helpers pour migration progressive */
+.neya-display { font-family: var(--font-display); font-weight: var(--weight-light); }
+.neya-body { font-family: var(--font-body); font-weight: var(--weight-regular); }
+.neya-caps {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--text-whisper);
+}
