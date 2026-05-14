@@ -76,6 +76,7 @@ const STEPS = [
     titleAfter: '',
     field: null,
     cta: 'Commencer mon aventure',
+    manifeste: 'Nous existons pour briser le masque du « ça va ».',
   },
 ];
 
@@ -137,6 +138,19 @@ export default function Onboarding({ onComplete }) {
         transition: 'opacity 700ms var(--ease-narrative)',
       }}
     >
+      {/* Atmospheric bg-photo overlay (Agent D) — 10% opacity behind wash */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url(${world.bg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.10,
+          mixBlendMode: 'multiply',
+          pointerEvents: 'none',
+        }}
+      />
       {/* Top mark — chapter info */}
       <div
         style={{
@@ -247,7 +261,7 @@ export default function Onboarding({ onComplete }) {
         />
 
         {step.field ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {step.pills.map((p) => (
               <PillChoice
                 key={String(p.value)}
@@ -260,7 +274,7 @@ export default function Onboarding({ onComplete }) {
             ))}
           </div>
         ) : (
-          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             <Button
               size="lg"
               variant="primary"
@@ -269,10 +283,26 @@ export default function Onboarding({ onComplete }) {
               style={{
                 background: 'var(--ink)',
                 color: 'var(--cream)',
+                alignSelf: 'flex-start',
               }}
             >
               {step.cta}
             </Button>
+            {step.manifeste && (
+              <div
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontStyle: 'italic',
+                  fontSize: 13,
+                  lineHeight: 1.5,
+                  color: 'var(--content-tertiary)',
+                  fontVariationSettings: 'var(--fraunces-italic-soft)',
+                  maxWidth: 320,
+                }}
+              >
+                — {step.manifeste}
+              </div>
+            )}
           </div>
         )}
 

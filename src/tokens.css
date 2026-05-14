@@ -390,8 +390,45 @@ button { font-family: inherit; cursor: pointer; }
   100% { opacity: 1; transform: scale(1);   }
 }
 
+@keyframes stagger-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tilleul-pop {
+  0%   { transform: scale(1);   filter: brightness(1); }
+  40%  { transform: scale(1.2); filter: brightness(1.15) drop-shadow(0 0 8px rgba(212, 224, 140, 0.7)); }
+  100% { transform: scale(1);   filter: brightness(1); }
+}
+
+@keyframes ray-oscillate {
+  0%, 100% { opacity: 0.30; }
+  50%      { opacity: 0.50; }
+}
+
+@keyframes particle-drift {
+  0%, 100% { transform: translateY(0);    opacity: 0.4; }
+  50%      { transform: translateY(-8px); opacity: 0.8; }
+}
+
 .fade-in    { animation: fade-in var(--duration-slow) var(--ease-out) both; }
 .fade-in-up { animation: fade-in-up var(--duration-slow) var(--ease-out) both; }
+
+/* Staggered reveal — wrap a list, children get 80ms cascade */
+.stagger > * { opacity: 0; animation: stagger-fade-in 500ms var(--ease-out) backwards; }
+.stagger > *:nth-child(1)  { animation-delay: 0ms;   }
+.stagger > *:nth-child(2)  { animation-delay: 80ms;  }
+.stagger > *:nth-child(3)  { animation-delay: 160ms; }
+.stagger > *:nth-child(4)  { animation-delay: 240ms; }
+.stagger > *:nth-child(5)  { animation-delay: 320ms; }
+.stagger > *:nth-child(6)  { animation-delay: 400ms; }
+.stagger > *:nth-child(7)  { animation-delay: 480ms; }
+.stagger > *:nth-child(8)  { animation-delay: 560ms; }
+.stagger > *:nth-child(9)  { animation-delay: 640ms; }
+.stagger > *:nth-child(10) { animation-delay: 720ms; }
+
+/* Tilleul check pop — appliqué momentanément lors d'une complétion */
+.tilleul-pop { animation: tilleul-pop 400ms var(--ease-out) both; }
 
 
 /* ════════════════════════════════════════════════════════════

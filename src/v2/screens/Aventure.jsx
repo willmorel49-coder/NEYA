@@ -10,6 +10,28 @@ import { WORLDS, WORLD_ORDER } from '../worlds';
 import { getProfile, greet, recordVisitToday } from '../state';
 import Button from '../../components/Button';
 
+// Totem → home world mapping (per spec)
+const TOTEM_HOME = {
+  lion: 'foret', ours: 'temple', aigle: 'oasis',
+  daim: 'lac', baleine: 'montagne', renard: 'communaute',
+};
+const TOTEM_GLYPH = {
+  lion: '◆', ours: '◇', aigle: '△', daim: '✦', baleine: '○', renard: '▽',
+};
+
+// Soft whisper rotation — daily quote from ÇA VA? D.A. + NÉYA voice
+const WHISPERS = [
+  'La montée se fait pas à pas. Le daim t’attend.',
+  '« When the power of love overcomes the love of power, the world will know peace. »',
+  'T’as pas besoin d’aller bien pour commencer.',
+  'Le lion blanc s’éveille avec toi.',
+  'Pose-toi. Le daim veille.',
+  'Tu n’es pas seul·e.',
+];
+function whisperOfDay(joursConnectes) {
+  return WHISPERS[(joursConnectes || 0) % WHISPERS.length];
+}
+
 export default function Aventure({ onOpenMeditation, onOpenWorld }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
 
@@ -23,6 +45,10 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
   );
   const currentKey = profile.progress.currentWorld || 'foret';
   const currentWorld = WORLDS[currentKey] || WORLDS.foret;
+  const totemKey = profile.totem || 'lion';
+  const totemHomeKey = TOTEM_HOME[totemKey] || 'foret';
+  const totemHome = WORLDS[totemHomeKey];
+  const totemGlyph = TOTEM_GLYPH[totemKey] || '◆';
 
   return (
     <div
@@ -35,6 +61,20 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
         flexDirection: 'column',
       }}
     >
+      {/* Atmospheric bg-photo overlay (Agent D) */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url(${currentWorld.bg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.08,
+          mixBlendMode: 'multiply',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
       {/* Header */}
       <div
         style={{
@@ -45,7 +85,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
           justifyContent: 'space-between',
         }}
       >
-        <div>
+        <div style={{ maxWidth: '70%' }}>
           <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
             {`N É Y A`}
           </div>
@@ -54,10 +94,46 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
             style={{
               marginTop: 8,
               fontFamily: 'var(--font-display)',
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: 10,
+              flexWrap: 'wrap',
             }}
           >
-            {greet()}.
+            <span>
+              {greet()}
+              {profile.pseudo && (
+                <>, <em className="neya-key">{profile.pseudo}</em></>
+              )}
+              .
+            </span>
+            <span
+              style={{
+                fontSize: 20,
+                color: totemHome.accent,
+                animation: 'totem-idle 4s var(--ease-in-out) infinite',
+                display: 'inline-block',
+              }}
+              aria-label={`Totem ${totemKey}`}
+            >
+              {totemGlyph}
+            </span>
           </h1>
+          {profile.mantra && (
+            <div
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontSize: 14,
+                color: 'var(--content-secondary)',
+                marginTop: 6,
+                fontVariationSettings: 'var(--fraunces-italic-soft)',
+                lineHeight: 1.45,
+              }}
+            >
+              « {profile.mantra} »
+            </div>
+          )}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
@@ -123,11 +199,13 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
             }}
           />
 
+          <div className="stagger" style={{ display: 'contents' }}>
           {WORLD_ORDER.map((wKey, i) => {
             const w = WORLDS[wKey];
             const isExplored = explored.has(wKey);
             const isCurrent = wKey === currentKey;
             const isLocked = !isExplored && !isCurrent;
+            const isHome = wKey === totemHomeKey;
 
             return (
               <div
@@ -160,27 +238,30 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
                   world={w}
                   isCurrent={isCurrent}
                   isLocked={isLocked}
+                  isHome={isHome}
                   onClick={isLocked ? undefined : () => onOpenWorld?.(wKey)}
                 />
               </div>
             );
           })}
+          </div>
 
           <div
             style={{
               marginTop: 28,
               padding: '0 24px',
               textAlign: 'center',
-              fontFamily: 'var(--font-body)',
-              fontSize: 12,
+              fontFamily: 'var(--font-display)',
+              fontSize: 13,
               fontStyle: 'italic',
               color: 'var(--content-tertiary)',
-              lineHeight: 1.55,
+              lineHeight: 1.6,
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
             }}
           >
             {profile.progress.joursConnectes >= 7
               ? `Tu es revenu·e ${profile.progress.joursConnectes} jours d’affilée — c’est ce qui compte.`
-              : 'La montée se fait pas à pas. Le daim t’attend.'}
+              : whisperOfDay(profile.progress.joursConnectes)}
           </div>
         </div>
       </div>
@@ -188,7 +269,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
   );
 }
 
-function WorldCard({ world, isCurrent, isLocked, onClick }) {
+function WorldCard({ world, isCurrent, isLocked, isHome, onClick }) {
   const baseBg = isLocked
     ? 'rgba(255, 252, 245, 0.5)'
     : isCurrent
@@ -211,6 +292,8 @@ function WorldCard({ world, isCurrent, isLocked, onClick }) {
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
         border: `0.5px solid ${borderColor}`,
+        outline: isHome ? `1px dashed ${world.accent}` : 'none',
+        outlineOffset: isHome ? 3 : 0,
         borderRadius: 'var(--radius-lg)',
         padding: '14px 16px',
         minHeight: 70,
@@ -218,16 +301,34 @@ function WorldCard({ world, isCurrent, isLocked, onClick }) {
         cursor: isLocked ? 'default' : 'pointer',
         opacity: isLocked ? 0.55 : 1,
         WebkitTapHighlightColor: 'transparent',
-        boxShadow: isCurrent ? '0 4px 24px rgba(26, 26, 47, 0.08)' : '0 1px 6px rgba(26, 26, 47, 0.04)',
+        boxShadow: isCurrent ? 'var(--shadow-card)' : 'var(--shadow-soft)',
         transition: 'all 240ms var(--ease-out)',
+        width: '100%',
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <div
-          className="neya-mark"
-          style={{ color: world.accent }}
-        >
-          CHAPITRE {String(world.chapter).padStart(2, '0')}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span className="neya-mark" style={{ color: world.accent }}>
+            CHAPITRE {String(world.chapter).padStart(2, '0')}
+          </span>
+          {isHome && (
+            <span
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontSize: 8,
+                fontWeight: 500,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: world.accent,
+                opacity: 0.85,
+                padding: '2px 8px',
+                borderRadius: 'var(--radius-pill)',
+                background: `${world.accentRgb}, 0.14)`,
+              }}
+            >
+              Ton monde
+            </span>
+          )}
         </div>
         <div
           style={{

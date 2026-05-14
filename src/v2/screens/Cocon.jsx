@@ -76,6 +76,19 @@ export default function Cocon() {
         color: 'var(--ink)',
       }}
     >
+      {/* Atmospheric bg overlay du totem world */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url(${totemWorld.bg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.06,
+          mixBlendMode: 'multiply',
+          pointerEvents: 'none',
+        }}
+      />
       <div
         style={{
           height: '100%',
@@ -153,7 +166,7 @@ export default function Cocon() {
 
         {/* Totem — 6 choix */}
         <SectionTitle accent={totemWorld.accent} style={{ marginTop: 32 }}>Mon totem</SectionTitle>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 8 }}>
+        <div className="stagger" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 8 }}>
           {TOTEMS.map((t) => {
             const isActive = t.key === totemKey;
             const w = WORLDS[t.world];
@@ -206,12 +219,12 @@ export default function Cocon() {
         <div className="neya-body-sm" style={{ color: 'var(--content-tertiary)', marginBottom: 12 }}>
           Touche pour poser ou retirer un objet.
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 8 }}>
+        <div className="stagger" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 8 }}>
           {ITEMS.map((item, i) => {
             const isPlaced = placed[item.key];
             return (
               <button
-                key={item.key}
+                key={item.key + '-' + (isPlaced ? 'on' : 'off')}
                 data-press
                 onClick={() => togglePlaced(item.key)}
                 style={{
@@ -234,7 +247,10 @@ export default function Cocon() {
                   boxShadow: isPlaced ? '0 2px 12px rgba(26, 26, 47, 0.06)' : 'none',
                 }}
               >
-                <span style={{ fontSize: 28, color: isPlaced ? totemWorld.accent : 'var(--content-secondary)', lineHeight: 1 }}>
+                <span
+                  className={isPlaced ? 'tilleul-pop' : ''}
+                  style={{ fontSize: 28, color: isPlaced ? totemWorld.accent : 'var(--content-secondary)', lineHeight: 1 }}
+                >
                   {item.glyph}
                 </span>
                 <span style={{ fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 500 }}>

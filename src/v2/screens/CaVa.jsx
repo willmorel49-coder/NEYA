@@ -144,7 +144,7 @@ export default function CaVa() {
                 fontWeight: 500,
                 letterSpacing: '0.222em',
                 textTransform: 'uppercase',
-                color: 'rgba(26, 26, 31, 0.55)',
+                color: 'rgba(26, 26, 47, 0.55)',
                 marginBottom: 8,
               }}
             >
@@ -210,7 +210,7 @@ export default function CaVa() {
               style={{
                 appearance: 'none',
                 background: 'transparent',
-                border: '0.5px solid rgba(26, 26, 31, 0.18)',
+                border: '0.5px solid rgba(26, 26, 47, 0.18)',
                 borderRadius: '50%',
                 width: 36,
                 height: 36,
@@ -259,7 +259,7 @@ export default function CaVa() {
             fontFamily: 'var(--font-body)',
             fontSize: 14,
             lineHeight: 1.55,
-            color: 'rgba(26, 26, 31, 0.65)',
+            color: 'rgba(26, 26, 47, 0.65)',
             maxWidth: 380,
           }}
         >
@@ -274,10 +274,10 @@ export default function CaVa() {
         {passOpen && (
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.7)',
+              background: 'rgba(255, 252, 245, 0.78)',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
-              border: '0.5px solid rgba(26, 26, 31, 0.10)',
+              border: '0.5px solid rgba(26, 26, 47, 0.10)',
               borderRadius: 'var(--radius-lg)',
               padding: 12,
               marginBottom: 24,
@@ -295,7 +295,7 @@ export default function CaVa() {
                   onClick={() => pickPass(p.key)}
                   style={{
                     appearance: 'none',
-                    background: isActive ? 'rgba(26, 26, 31, 0.04)' : 'transparent',
+                    background: isActive ? 'rgba(26, 26, 47, 0.04)' : 'transparent',
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     padding: '12px 14px',
@@ -330,7 +330,7 @@ export default function CaVa() {
                         style={{
                           fontFamily: 'var(--font-body)',
                           fontSize: 11,
-                          color: 'rgba(26, 26, 31, 0.55)',
+                          color: 'rgba(26, 26, 47, 0.55)',
                         }}
                       >
                         {p.discount > 0 ? `${p.discount}% sur tout` : 'Aucune réduction'}
@@ -373,7 +373,7 @@ export default function CaVa() {
             fontSize: 18,
             fontStyle: 'italic',
             lineHeight: 1.45,
-            color: 'rgba(26, 26, 31, 0.75)',
+            color: 'rgba(26, 26, 47, 0.75)',
             fontVariationSettings: 'var(--fraunces-opsz-large)',
           }}
         >
@@ -427,7 +427,7 @@ function CapsuleSection({ capsule, onAddToCart, discountPercent }) {
         style={{
           fontFamily: 'var(--font-body)',
           fontSize: 13,
-          color: 'rgba(26, 26, 31, 0.65)',
+          color: 'rgba(26, 26, 47, 0.65)',
           marginTop: 0,
           marginBottom: 14,
           fontStyle: 'italic',
@@ -465,8 +465,8 @@ function ProductCard({ product, capsule, onAdd, discountPercent }) {
   return (
     <div
       style={{
-        background: 'white',
-        border: '0.5px solid rgba(26, 26, 31, 0.08)',
+        background: 'var(--cream-light)',
+        border: '0.5px solid rgba(26, 26, 47, 0.08)',
         borderRadius: 'var(--radius-md)',
         overflow: 'hidden',
         display: 'flex',
@@ -494,7 +494,7 @@ function ProductCard({ product, capsule, onAdd, discountPercent }) {
             fontSize: 8,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            color: 'rgba(26, 26, 31, 0.40)',
+            color: 'rgba(26, 26, 47, 0.40)',
           }}
         >
           ÇA VA ? · {capsule.name}
@@ -530,7 +530,7 @@ function ProductCard({ product, capsule, onAdd, discountPercent }) {
               style={{
                 fontFamily: 'var(--font-ui)',
                 fontSize: 12,
-                color: 'rgba(26, 26, 31, 0.42)',
+                color: 'rgba(26, 26, 47, 0.42)',
                 textDecoration: 'line-through',
               }}
             >
@@ -585,7 +585,7 @@ function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) 
         position: 'absolute',
         inset: 0,
         zIndex: 100,
-        background: 'rgba(26, 26, 31, 0.45)',
+        background: 'rgba(26, 26, 47, 0.45)',
       }}
       onClick={onClose}
     >
@@ -598,7 +598,7 @@ function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) 
           bottom: 0,
           width: 'min(420px, 92vw)',
           background: 'var(--cava-bg)',
-          borderLeft: '0.5px solid rgba(26, 26, 31, 0.12)',
+          borderLeft: '0.5px solid rgba(26, 26, 47, 0.12)',
           padding: 'calc(env(safe-area-inset-top, 0px) + 24px) 22px calc(env(safe-area-inset-bottom, 0px) + 24px)',
           display: 'flex',
           flexDirection: 'column',
@@ -626,7 +626,7 @@ function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) 
             onClick={onClose}
             style={{
               appearance: 'none',
-              background: 'rgba(26, 26, 31, 0.08)',
+              background: 'rgba(26, 26, 47, 0.08)',
               border: 'none',
               borderRadius: '50%',
               width: 32,
@@ -648,7 +648,7 @@ function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) 
               style={{
                 textAlign: 'center',
                 padding: 32,
-                color: 'rgba(26, 26, 31, 0.55)',
+                color: 'rgba(26, 26, 47, 0.55)',
                 fontStyle: 'italic',
                 fontFamily: 'var(--font-display)',
                 fontSize: 17,
@@ -665,8 +665,8 @@ function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) 
                   alignItems: 'center',
                   gap: 12,
                   padding: 12,
-                  background: 'white',
-                  border: '0.5px solid rgba(26, 26, 31, 0.08)',
+                  background: 'var(--cream-light)',
+                  border: '0.5px solid rgba(26, 26, 47, 0.08)',
                   borderRadius: 'var(--radius-md)',
                 }}
               >
@@ -687,7 +687,7 @@ function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) 
                     style={{
                       fontFamily: 'var(--font-ui)',
                       fontSize: 12,
-                      color: 'rgba(26, 26, 31, 0.65)',
+                      color: 'rgba(26, 26, 47, 0.65)',
                     }}
                   >
                     {(item.price * (1 - discountPercent / 100)).toFixed(0)} € × {item.qty}
@@ -730,7 +730,7 @@ function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) 
         {cart.length > 0 && (
           <div
             style={{
-              borderTop: '0.5px solid rgba(26, 26, 31, 0.10)',
+              borderTop: '0.5px solid rgba(26, 26, 47, 0.10)',
               paddingTop: 14,
               display: 'flex',
               flexDirection: 'column',
@@ -739,7 +739,7 @@ function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) 
           >
             {discountPercent > 0 && (
               <Row>
-                <span style={{ color: 'rgba(26, 26, 31, 0.55)', fontSize: 13 }}>
+                <span style={{ color: 'rgba(26, 26, 47, 0.55)', fontSize: 13 }}>
                   Pass {currentPass.label} · −{discountPercent}%
                 </span>
                 <span
@@ -806,7 +806,7 @@ const Row = ({ children }) => (
 
 const qtyBtnStyle = {
   appearance: 'none',
-  background: 'rgba(26, 26, 31, 0.06)',
+  background: 'rgba(26, 26, 47, 0.06)',
   border: 'none',
   borderRadius: '50%',
   width: 26,

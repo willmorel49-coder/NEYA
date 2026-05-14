@@ -147,6 +147,19 @@ export default function Communaute() {
         color: 'var(--ink)',
       }}
     >
+      {/* Atmospheric bg overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url(${wRenard.bg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.06,
+          mixBlendMode: 'multiply',
+          pointerEvents: 'none',
+        }}
+      />
       <div
         style={{
           height: '100%',
@@ -176,7 +189,7 @@ export default function Communaute() {
           ce qui est vrai.
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {allVoices.map((v) => {
             const my = reactionState[v.id] || {};
             return (
@@ -489,9 +502,8 @@ function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
             disabled={!canSubmit}
             onClick={onSubmit}
             style={{
-              background: canSubmit ? 'var(--tilleul)' : 'rgba(26, 26, 47, 0.10)',
-              color: 'var(--ink)',
-              fontWeight: 600,
+              background: canSubmit ? 'var(--ink)' : 'rgba(26, 26, 47, 0.10)',
+              color: canSubmit ? 'var(--cream)' : 'var(--ink-soft)',
             }}
           >
             Partager

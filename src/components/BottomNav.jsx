@@ -11,7 +11,7 @@ const TABS = [
   { key: 'aventure',   label: 'Aventure',   icon: '↑' },
   { key: 'cocon',      label: 'Cocon',      icon: '◇' },
   { key: 'communaute', label: 'Communauté', icon: '◯' },
-  { key: 'cava',       label: 'Ça va ?',    icon: '✿' },
+  { key: 'cava',       label: 'ça va ♡',    icon: null },  // wordmark D.A. lowercase + heart
 ];
 
 export default function BottomNav({ active, onChange, accent = 'var(--terracotta)' }) {
@@ -77,15 +77,21 @@ export default function BottomNav({ active, onChange, accent = 'var(--terracotta
                 }}
               />
             )}
-            <span style={{ fontSize: 18, lineHeight: 1 }}>{t.icon}</span>
+            {t.icon && <span style={{ fontSize: 18, lineHeight: 1 }}>{t.icon}</span>}
+            {!t.icon && <span style={{ height: 18 }} />}
             <span
               style={{
                 fontSize: 9,
                 fontWeight: 500,
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
+                letterSpacing: t.key === 'cava' ? 0 : '0.18em',
+                textTransform: t.key === 'cava' ? 'none' : 'uppercase',
+                fontFamily: t.key === 'cava' ? 'var(--font-display)' : 'var(--font-ui)',
+                fontStyle: t.key === 'cava' ? 'italic' : 'normal',
+                fontSize: t.key === 'cava' ? 13 : 9,
+                fontVariationSettings: t.key === 'cava' ? 'var(--fraunces-italic-soft)' : 'normal',
                 lineHeight: 1,
                 whiteSpace: 'nowrap',
+                marginTop: t.key === 'cava' ? -6 : 0,
               }}
             >
               {t.label}

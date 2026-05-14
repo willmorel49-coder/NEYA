@@ -6,12 +6,21 @@
 
 import { useState, useEffect } from 'react';
 import { WORLDS } from '../worlds';
-import { haptic, addMinutes } from '../state';
+import { haptic, addMinutes, getProfile } from '../state';
 import BreathingCircle from '../../components/BreathingCircle';
 import Button from '../../components/Button';
 
+const TOTEM_HOME = {
+  lion: 'foret', ours: 'temple', aigle: 'oasis',
+  daim: 'lac', baleine: 'montagne', renard: 'communaute',
+};
+
 export default function Meditation({ worldKey = 'foret', onClose }) {
+  const profile = getProfile();
   const world = WORLDS[worldKey] || WORLDS.foret;
+  // Halo color = totem's world accent (personnalisation Agent C)
+  const totemHome = WORLDS[TOTEM_HOME[profile.totem] || 'foret'];
+  const haloAccent = totemHome.accent;
   const [paused, setPaused] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [show, setShow] = useState(false);
@@ -44,7 +53,21 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         zIndex: 60,
       }}
     >
-      {/* Halo accent derrière le BreathingCircle */}
+      {/* Atmospheric bg overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url(${world.bg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.08,
+          mixBlendMode: 'multiply',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Halo accent — couleur du TOTEM, pas du chapitre (Agent C) */}
       <div
         style={{
           position: 'absolute',
@@ -54,8 +77,9 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           height: 340,
           transform: 'translate(-50%, -50%)',
           borderRadius: '50%',
-          background: `radial-gradient(circle, ${world.accent}33 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${haloAccent}3D 0%, transparent 70%)`,
           pointerEvents: 'none',
+          animation: 'ray-oscillate 8s var(--ease-in-out) infinite',
         }}
       />
 
@@ -109,7 +133,11 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             margin: 0,
           }}
         >
-          Pose-toi. <em className="neya-key">Respire.</em>
+          {profile.mantra ? (
+            <em className="neya-key" style={{ fontStyle: 'italic' }}>« {profile.mantra} »</em>
+          ) : (
+            <>Pose-toi. <em className="neya-key">Respire.</em></>
+          )}
         </h2>
       </div>
 
