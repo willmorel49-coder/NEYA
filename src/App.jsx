@@ -3,7 +3,7 @@ import { registerSW } from 'virtual:pwa-register'
 import { initAnalytics, getConsent, setConsent, trackAppOpen, trackQuizComplete, trackBreathComplete, trackRoutineComplete, trackQueteComplete, trackEspaceVraiQualified, trackError } from './analytics'
 import { initPressFeedback, easing as EASE, duration as DUR, useExitAnimation, checkStreakMilestone } from './motion'
 import { getTimeAmbience, getCoconVitality, getSouvenirs, addSouvenir, SOUVENIR_LIBRARY, formatSouvenirDate, getSeason, getMeteo, getVisitor, checkAstroEclat, getCercle, addToCercle, removeFromCercle, sendLumiere, hasSentLumiereToday, getLumieresTotal, getCarnetEntries, getCarnetEntryToday, saveCarnetEntry, getMoodHistory, setMoodQuick, getMoodQuickToday, getMoodQuickHistory, getMoodCombined, getMoodQuickStreak, getLastVisitTimestamp, markVisitNow, getDaysSinceLastVisit, getBilanSoir, hasSeenBilanToday, markBilanSeen, getBilanSoirStreak, getBilanSemaine, hasSeenWeeklyBilan, markWeeklyBilanSeen, getWeeklyBilanCount } from './inner-world'
-import { getNextLetter, markLetterReceived, sendLetter, getReceivedLetters, getSentLetters, getCollectiveCount, ARCHETYPE_PLURAL } from './community'
+import { getNextLetter, markLetterReceived, sendLetter, getReceivedLetters, getSentLetters, getCollectiveCount, ARCHETYPE_PLURAL, getMyFragments, hasDepositedFragmentRecently, depositFragment, getOthersFragments } from './community'
 import { setAudioEnabled, getAudioEnabled, playSouvenir, playChime, playRelease, playBreathIn, playBreathOut, playMilestone, playConfirm, playOpen, playClose, initAudioPressFeedback, setAmbientTrack, stopAmbient, crossfadeAmbient, pickAmbientForContext, isAmbientEnabled, setAmbientEnabled } from './audio'
 import { tokens as T } from './design-tokens'
 
@@ -4013,12 +4013,24 @@ function NavIconVoyage({ active, color }) {
   )
 }
 
+function NavIconCommunaute({ active, color }) {
+  const c = active ? color : 'rgba(255,255,255,0.26)'
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <circle cx="8" cy="11" r="2.5" stroke={c} strokeWidth="1.3" fill={active ? color + '33' : 'none'} />
+      <circle cx="16" cy="11" r="2.5" stroke={c} strokeWidth="1.3" fill={active ? color + '33' : 'none'} />
+      <circle cx="12" cy="17" r="2.5" stroke={c} strokeWidth="1.3" fill={active ? color + '33' : 'none'} />
+      <circle cx="12" cy="6" r="1" fill={c} />
+    </svg>
+  )
+}
+
 function BottomNav({ tab, onChange, color, badges = {} }) {
   const tabs = [
-    { key: 'home',      label: 'Accueil',   Icon: NavIconHome },
-    { key: 'pratiques', label: 'Pratiques', Icon: NavIconRoutines },
-    { key: 'voyage',    label: 'Voyage',    Icon: NavIconVoyage },
-    { key: 'boutique',  label: 'Boutique',  Icon: NavIconBoutique },
+    { key: 'home',       label: 'Accueil',    Icon: NavIconHome },
+    { key: 'pratiques',  label: 'Pratiques',  Icon: NavIconRoutines },
+    { key: 'communaute', label: 'Communauté', Icon: NavIconCommunaute },
+    { key: 'boutique',   label: 'Boutique',   Icon: NavIconBoutique },
   ]
   return (
     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.65) 0%, rgba(5,8,16,0.92) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: `1px solid ${color}18`, boxShadow: '0 -12px 40px rgba(5,8,16,0.7), 0 -1px 0 rgba(255,255,255,0.04)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
@@ -4930,23 +4942,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {showCocon && <CoconScreen archetypeKey={archetypeKey} onClose={() => setShowCocon(false)} />}
 
-      {/* SECTION: Lien aux autres */}
-      <HomeSection label="Lien aux autres" archRgb={arch.rgb} />
-
-      {/* ── Lettres a un·e inconnu·e (community anonyme) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowLetters(true) }} role="button" tabIndex={0} aria-label="Ouvrir les lettres anonymes" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.8s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 11s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <path d="M5 9 L16 17 L27 9 L27 24 L5 24 Z" fill={`rgba(${arch.rgb},0.18)`} stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" opacity="0.85"/>
-          <path d="M5 9 L16 17 L27 9" stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" fill="none"/>
-          <circle cx="22" cy="6" r="1.4" fill={arch.color} opacity="0.85"/>
-        </svg>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Communauté silencieuse</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(255,255,255,0.86)', letterSpacing: '-0.01em' }}>Lettres à un·e inconnu·e</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>{getCollectiveCount(archetypeKey)} autres {ARCHETYPE_PLURAL[archetypeKey] || 'âmes'} ici en ce moment</div>
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
-      </div>
+      {/* Lien aux autres section retirée : Lettres + Cercle migrés dans l'onglet Communauté */}
       {showLetters && <LettresInconnusModal archetypeKey={archetypeKey} onClose={() => setShowLetters(false)} />}
 
       {showTrace && <TraceScreen archetypeKey={archetypeKey} onClose={() => setShowTrace(false)} />}
@@ -4969,7 +4965,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         const nextThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length] || prevThreshold
         const progress = nextThreshold > prevThreshold ? Math.min(1, (totalDays - prevThreshold) / (nextThreshold - prevThreshold)) : 1
         return (
-          <div style={{ background: `linear-gradient(135deg, rgba(${nextWorld.rgb},0.10) 0%, rgba(255,255,255,0.03) 60%, rgba(${nextWorld.rgb},0.05) 100%)`, border: `1px solid rgba(${nextWorld.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', animation: 'fadeIn 0.6s ease 0.8s both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 4px 28px rgba(${nextWorld.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
+          <div onClick={() => { haptic(6); onChangeTab('voyage') }} role="button" tabIndex={0} aria-label="Voir tous tes mondes" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${nextWorld.rgb},0.10) 0%, rgba(255,255,255,0.03) 60%, rgba(${nextWorld.rgb},0.05) 100%)`, border: `1px solid rgba(${nextWorld.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', animation: 'fadeIn 0.6s ease 0.8s both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 4px 28px rgba(${nextWorld.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(255,255,255,0.52)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Prochain monde</span>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${nextWorld.rgb},0.65)`, letterSpacing: '0.06em' }}>{daysToNext} jour{daysToNext > 1 ? 's' : ''}</span>
@@ -8920,6 +8916,188 @@ function PratiquesScreen({ archetypeKey, routinesDone, quetesDone, onToggleRouti
   )
 }
 
+// ─── COMMUNAUTÉ — Onglet unifié (Fragments cœur · Lettres · Cercle) ───
+// Cœur émotionnel vivant de l'app selon brief Will. Fragments = priorité,
+// Lettres + Cercle en complément, Pulse en signal ambient discret.
+// Anti-réseau-social absolu : aucun like, follow, reply, leaderboard.
+
+function CommunauteScreen({ archetypeKey, onClose }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [subTab, setSubTab] = useState(() => {
+    try { return localStorage.getItem('neya_communaute_subtab') || 'fragments' } catch { return 'fragments' }
+  })
+  useEffect(() => { try { localStorage.setItem('neya_communaute_subtab', subTab) } catch {} }, [subTab])
+  const [showLetters, setShowLetters] = useState(false)
+  const [showCercle, setShowCercle] = useState(false)
+
+  const collectiveCount = getCollectiveCount(archetypeKey)
+  const plural = ARCHETYPE_PLURAL[archetypeKey] || 'âmes'
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', position: 'relative' }}>
+      {/* Header sticky : Pulse ambient discret */}
+      <div style={{ padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 22px 8px', textAlign: 'center', position: 'relative', zIndex: 5 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.30em', textTransform: 'uppercase', margin: '0 0 4px', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', background: arch.color, marginRight: 8, verticalAlign: 'middle', boxShadow: `0 0 6px ${arch.color}`, animation: 'seedPulse 4.2s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+          {collectiveCount} {plural} respirent en ce moment
+        </p>
+      </div>
+
+      {/* Sous-tabs */}
+      <div style={{ display: 'flex', gap: 6, padding: '4px 22px 12px', position: 'relative', zIndex: 5 }}>
+        {[
+          { key: 'fragments', label: 'Fragments', sub: 'Souffles éphémères' },
+          { key: 'lettres',   label: 'Lettres',   sub: 'À un·e inconnu·e' },
+          { key: 'cercle',    label: 'Cercle',    sub: 'Tes proches portés' },
+        ].map((t) => {
+          const active = subTab === t.key
+          return (
+            <button key={t.key} data-press="true" onClick={() => { haptic([6, 30, 6]); setSubTab(t.key) }} aria-label={t.label} style={{
+              flex: 1,
+              padding: '10px 8px 12px',
+              background: 'transparent',
+              border: 'none',
+              borderBottom: active ? `1.5px solid ${arch.color}` : '1px solid rgba(255,255,255,0.06)',
+              cursor: 'pointer',
+              textAlign: 'center',
+              color: 'inherit',
+              transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)',
+            }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: active ? `rgba(255,255,255,0.96)` : 'rgba(255,255,255,0.55)', letterSpacing: '-0.005em', transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.label}</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: active ? `rgba(${arch.rgb},0.86)` : 'rgba(255,255,255,0.32)', letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: 2, transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.sub}</div>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Contenu sous-tab */}
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '14px 22px calc(env(safe-area-inset-bottom, 0px) + 140px)' }}>
+        {subTab === 'fragments' && <FragmentsView archetypeKey={archetypeKey} />}
+        {subTab === 'lettres' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, padding: '40px 0' }}>
+            <div style={{ width: 78, height: 78, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, color: arch.color, animation: 'animalbreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>✉</div>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', textAlign: 'center', maxWidth: 280, lineHeight: 1.55, margin: 0, letterSpacing: '-0.005em' }}>Une lettre, écrite dans le silence. Une lettre, reçue jamais demandée.</p>
+            <button data-press="true" onClick={() => { haptic(8); try { playOpen() } catch {}; setShowLetters(true) }} style={{ padding: '13px 28px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 46, boxShadow: `0 6px 22px rgba(${arch.rgb},0.38)` }}>Ouvrir les lettres</button>
+          </div>
+        )}
+        {subTab === 'cercle' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, padding: '40px 0' }}>
+            <div style={{ width: 78, height: 78, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, color: arch.color, animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>◐</div>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(255,255,255,0.92)', textAlign: 'center', maxWidth: 280, lineHeight: 1.55, margin: 0, letterSpacing: '-0.005em' }}>Trois prénoms. Trois présences que tu portes en intention.</p>
+            <button data-press="true" onClick={() => { haptic(8); try { playOpen() } catch {}; setShowCercle(true) }} style={{ padding: '13px 28px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 46, boxShadow: `0 6px 22px rgba(${arch.rgb},0.38)` }}>Voir mon cercle</button>
+          </div>
+        )}
+      </div>
+
+      {showLetters && <LettresInconnusModal archetypeKey={archetypeKey} onClose={() => setShowLetters(false)} />}
+      {showCercle && <CercleDePresenceModal archetypeKey={archetypeKey} onClose={() => setShowCercle(false)} />}
+    </div>
+  )
+}
+
+// Fragments View — cœur émotionnel vivant
+function FragmentsView({ archetypeKey }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [stage, setStage] = useState(() => hasDepositedFragmentRecently() ? 'read' : 'invite')
+  const [draft, setDraft] = useState('')
+  const [composing, setComposing] = useState(false)
+  const [revealedIdx, setRevealedIdx] = useState(null)
+  const others = useMemo(() => getOthersFragments(12), [])
+
+  const handleDeposit = () => {
+    const clean = draft.trim()
+    if (!clean) return
+    haptic([8, 60, 8])
+    try { playConfirm() } catch {}
+    depositFragment(clean)
+    setComposing(false)
+    setDraft('')
+    setStage('read')
+  }
+
+  // Stage 1 : Invitation à déposer (avant lecture)
+  if (stage === 'invite' && !composing) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, padding: '36px 18px 24px', textAlign: 'center', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both' }}>
+        <div style={{ width: 84, height: 84, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.06) 60%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.40)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: arch.color, animation: 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite', boxShadow: `0 0 28px rgba(${arch.rgb},0.18)` }}>◯</div>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.30em', textTransform: 'uppercase', margin: 0 }}>Fragments éphémères · 24h</p>
+        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'rgba(255,255,255,0.94)', margin: 0, lineHeight: 1.4, letterSpacing: '-0.015em', maxWidth: 320, textShadow: `0 0 18px ${arch.color}33` }}>
+          Pose un mot.<br />Il rejoindra l'essaim.
+        </h2>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(255,255,255,0.66)', margin: 0, lineHeight: 1.65, maxWidth: 320, letterSpacing: '-0.005em' }}>
+          Dépose ton souffle d'abord — puis tu pourras lire ceux des autres présences. Pas de retour. Pas de signature. 24 heures, et il s'efface.
+        </p>
+        <button data-press="true" onClick={() => { haptic([6, 30, 6]); setComposing(true) }} style={{ padding: '14px 30px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 48, boxShadow: `0 6px 24px rgba(${arch.rgb},0.40)`, animation: 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>Déposer un souffle</button>
+        <button onClick={() => setStage('read')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.42)', letterSpacing: '0.08em', padding: '6px 12px', fontStyle: 'italic' }}>Plus tard — juste lire</button>
+      </div>
+    )
+  }
+
+  // Stage composition : textarea
+  if (composing) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '24px 4px', animation: 'fadeIn 0.5s cubic-bezier(0,0,0.2,1) both' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 4px', textAlign: 'center' }}>Ton souffle · 80 char max</p>
+        <textarea autoFocus value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 80))} maxLength={80} placeholder="Ce que tu portes ce soir..." style={{ width: '100%', minHeight: 110, padding: '16px 18px', background: `rgba(${arch.rgb},0.10)`, border: `1px solid rgba(${arch.rgb},0.40)`, borderRadius: 14, color: 'rgba(255,255,255,0.94)', fontFamily: 'Sora, sans-serif', fontSize: 16, fontWeight: 300, lineHeight: 1.55, letterSpacing: '-0.005em', resize: 'none', outline: 'none', boxSizing: 'border-box', backdropFilter: 'blur(10px)' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px' }}>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.48)', letterSpacing: '0.04em' }}>{draft.length}/80 · anonyme · 24h</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.62)`, fontStyle: 'italic' }}>Aucun retour, aucune réponse</span>
+        </div>
+        <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+          <button data-press="true" onClick={() => { setComposing(false); setDraft('') }} style={{ flex: 1, padding: '13px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 100, color: 'rgba(255,255,255,0.62)', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 46 }}>Annuler</button>
+          <button data-press="true" onClick={handleDeposit} disabled={!draft.trim()} style={{ flex: 1, padding: '13px 0', background: draft.trim() ? `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))` : 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 100, color: draft.trim() ? 'white' : 'rgba(255,255,255,0.32)', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: draft.trim() ? 'pointer' : 'not-allowed', minHeight: 46, boxShadow: draft.trim() ? `0 6px 20px rgba(${arch.rgb},0.36)` : 'none' }}>Laisser partir</button>
+        </div>
+      </div>
+    )
+  }
+
+  // Stage 2 : Lecture (après dépôt)
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '12px 0', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both' }}>
+      <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(255,255,255,0.62)', textAlign: 'center', margin: '0 12px 12px', lineHeight: 1.55, letterSpacing: '-0.005em' }}>
+          Ils sont {others.length} ici ce soir.<br />Touche pour lire.
+      </p>
+
+      {/* Grappe de bulles */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10, padding: '0 4px' }}>
+        {others.map((text, i) => {
+          const isRevealed = revealedIdx === i
+          const size = 110 + (i % 3) * 16
+          return (
+            <button key={i} onClick={() => { haptic(4); setRevealedIdx(isRevealed ? null : i) }} aria-label={isRevealed ? 'Masquer' : 'Révéler un fragment'} style={{
+              position: 'relative',
+              padding: '14px 12px',
+              minHeight: isRevealed ? 'auto' : size,
+              background: isRevealed ? `linear-gradient(135deg, rgba(${arch.rgb},0.18) 0%, rgba(8,12,22,0.62) 100%)` : `radial-gradient(ellipse at 30% 30%, rgba(${arch.rgb},0.14) 0%, rgba(${arch.rgb},0.04) 60%, transparent 100%)`,
+              border: `1px solid ${isRevealed ? `rgba(${arch.rgb},0.42)` : `rgba(${arch.rgb},0.22)`}`,
+              borderRadius: 14,
+              cursor: 'pointer',
+              textAlign: 'left',
+              color: 'inherit',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              animation: `splashmote ${22 + i * 3}s cubic-bezier(0.45,0,0.55,1) ${i * 0.6}s infinite, fadeIn 0.5s cubic-bezier(0,0,0.2,1) ${0.08 + i * 0.05}s both`,
+              transition: 'background 320ms cubic-bezier(0.4,0,0.2,1), border-color 320ms cubic-bezier(0.4,0,0.2,1), min-height 320ms cubic-bezier(0.4,0,0.2,1)',
+              boxShadow: isRevealed ? `0 6px 22px rgba(${arch.rgb},0.20)` : `0 2px 12px rgba(${arch.rgb},0.10)`,
+              display: 'flex', flexDirection: 'column', justifyContent: isRevealed ? 'flex-start' : 'center', alignItems: isRevealed ? 'flex-start' : 'center',
+            }}>
+              {isRevealed ? (
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13, color: 'rgba(255,255,255,0.92)', margin: 0, lineHeight: 1.55, letterSpacing: '-0.005em' }}>« {text} »</p>
+              ) : (
+                <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, color: arch.color, opacity: 0.62, animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>◯</span>
+              )}
+            </button>
+          )
+        })}
+      </div>
+
+      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.42)', textAlign: 'center', margin: '20px 12px 0', letterSpacing: '0.04em', fontStyle: 'italic', lineHeight: 1.6 }}>
+        Tu n'es pas seul·e à porter ce que tu portes.<br />Demain, ces souffles seront partis.
+      </p>
+    </div>
+  )
+}
+
 function MainApp({ archetypeKey, onRestart, savedAt }) {
   const arch = ARCHETYPES[archetypeKey]
   const [tab, setTab] = useState('home')
@@ -9014,6 +9192,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, opacity: tabVis ? 1 : 0, animation: tabVis ? 'tabslideIn 320ms cubic-bezier(0.34,1.56,0.64,1)' : 'none', transition: 'opacity 0.19s ease', overflow: 'hidden' }}>
           {tab === 'home' && <HomeScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onRestart={onRestart} onOpenVrai={() => setVraiOpen(true)} onChangeTab={changeTab} savedAt={savedAt} showXpToast={showXpToast} />}
           {tab === 'pratiques' && <PratiquesScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onToggleRoutine={toggleRoutine} onCompleteQuete={completeQuete} onOpenVrai={() => setVraiOpen(true)} />}
+          {tab === 'communaute' && <CommunauteScreen archetypeKey={archetypeKey} onClose={() => changeTab('home')} />}
           {tab === 'voyage' && <GrandVoyageScreen archetypeKey={archetypeKey} />}
           {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>

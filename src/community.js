@@ -147,6 +147,82 @@ export function getCollectiveCount(archetype) {
   return Math.max(8, Math.round(base * factor * (1 + jitter)))
 }
 
+// ─── Fragments éphémères 24h (cœur émotionnel de la Communauté) ──
+// Mécanique : déposer un souffle court anonyme, qui rejoint un essaim
+// de fragments d'autres présences. Auto-expiration H+24. Aucun like,
+// aucune réponse, aucune signature. C'est "quelqu'un ressent ça aussi".
+// V1 = local + seed pool. V2 backend = Vercel Function + KV.
+
+const FRAGMENTS_KEY = 'neya_fragments_mine'
+const FRAGMENTS_SEEN_KEY = 'neya_fragments_seen'
+const FRAGMENT_MAX_LEN = 80
+const FRAGMENT_TTL_MS = 24 * 60 * 60 * 1000
+
+const SEED_FRAGMENTS = [
+  "Ce soir je porte quelque chose de lourd. Je le pose ici.",
+  "J'ai dit que ça allait. Ce n'était pas vrai.",
+  "Quelqu'un peut-il juste rester ?",
+  "J'ai oublié comment respirer profondément aujourd'hui.",
+  "La nuit me fait peur ces derniers temps.",
+  "Je suis fatigué·e d'être fort·e.",
+  "J'ai rêvé de quelqu'un que j'aime, et j'ai pleuré au réveil.",
+  "Personne ne sait que je vais mal. C'est plus simple comme ça.",
+  "Je voulais juste dire bonsoir à quelqu'un.",
+  "Aujourd'hui j'ai souri sans forcer. C'est rare.",
+  "Je me sens flou·e. Comme une photo prise en marchant.",
+  "Mes mains tremblent un peu en écrivant ça.",
+  "Je n'arrive plus à savoir ce que je veux.",
+  "Quelque part en moi, quelque chose attend.",
+  "Ce soir, je suis là. C'est déjà beaucoup.",
+  "Je voudrais qu'on ne me demande plus comment je vais.",
+  "J'ai posé ma tête contre la vitre, le métro était plein.",
+  "Personne ne sait que je viens ici. C'est mon secret doux.",
+  "J'ai pleuré devant un film. Je crois que ça m'a fait du bien.",
+  "Le silence est plus bruyant que tout.",
+  "J'ai envie d'être tenu·e sans avoir à expliquer.",
+  "Je suis en colère et je ne sais pas où la mettre.",
+  "Demain je recommencerai à respirer normalement.",
+  "Si tu lis ça, sache que tu n'es pas seul·e ce soir.",
+]
+
+export function getMyFragments() {
+  try { return JSON.parse(localStorage.getItem(FRAGMENTS_KEY) || '[]') } catch { return [] }
+}
+
+export function hasDepositedFragmentRecently() {
+  const list = getMyFragments()
+  const now = Date.now()
+  return list.some(f => (now - (f.ts || 0)) < FRAGMENT_TTL_MS)
+}
+
+export function depositFragment(text) {
+  const clean = (text || '').trim().slice(0, FRAGMENT_MAX_LEN)
+  if (!clean) return null
+  try {
+    const list = getMyFragments()
+    const entry = { ts: Date.now(), text: clean }
+    list.push(entry)
+    localStorage.setItem(FRAGMENTS_KEY, JSON.stringify(list.slice(-20)))
+    return entry
+  } catch { return null }
+}
+
+// Retourne N fragments "des autres" (seed déterministe par jour)
+export function getOthersFragments(limit = 8) {
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    const seed = today.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+    const shuffled = [...SEED_FRAGMENTS]
+    let s = seed
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      s = (s * 9301 + 49297) % 233280
+      const j = s % (i + 1)
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled.slice(0, limit)
+  } catch { return SEED_FRAGMENTS.slice(0, limit) }
+}
+
 // Pluriel archétype pour affichage
 export const ARCHETYPE_PLURAL = {
   resilience: 'Phénix',
@@ -155,4 +231,4 @@ export const ARCHETYPE_PLURAL = {
   lumiere:    'Ours',
 }
 
-export default { getNextLetter, markLetterReceived, sendLetter, getReceivedLetters, getSentLetters, getCollectiveCount, ARCHETYPE_PLURAL }
+export default { getNextLetter, markLetterReceived, sendLetter, getReceivedLetters, getSentLetters, getCollectiveCount, ARCHETYPE_PLURAL, getMyFragments, hasDepositedFragmentRecently, depositFragment, getOthersFragments }
