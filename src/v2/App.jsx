@@ -1,53 +1,85 @@
 /* ============================================================
-   NÉYA V2 — App Root (router)
+   NÉYA V2 — App Root (Shell + 3 tabs)
    ============================================================
-   Routes :
-   - !isOnboarded()       → Onboarding
-   - otherwise            → Aventure (home)
-   - meditationOpen       → Meditation overlay
+   Onboarding (premier launch) → Shell avec 3 tabs :
+     Aventure (default) · Cocon · Communauté
+   + Meditation overlay (déclenché depuis Aventure)
    ============================================================ */
 
 import { useState, useEffect } from 'react';
-import { isOnboarded, getProfile } from './state';
+import { isOnboarded, getProfile, ls } from './state';
+import { WORLDS } from './worlds';
 import Onboarding from './screens/Onboarding';
 import Aventure from './screens/Aventure';
+import Cocon from './screens/Cocon';
+import Communaute from './screens/Communaute';
 import Meditation from './screens/Meditation';
+import BottomNav from '../components/BottomNav';
 
 export default function V2App() {
   const [onboarded, setOnboarded] = useState(() => isOnboarded());
+  const [activeTab, setActiveTab] = useState(() => ls.get('active_tab', 'aventure'));
   const [meditationOpen, setMeditationOpen] = useState(false);
-  const [activeWorld, setActiveWorld] = useState(() => getProfile().progress.currentWorld || 'foret');
+  const [activeWorldKey, setActiveWorldKey] = useState(
+    () => getProfile().progress.currentWorld || 'foret'
+  );
 
-  const handleOnboardingComplete = () => {
-    setOnboarded(true);
-  };
+  useEffect(() => {
+    ls.set('active_tab', activeTab);
+  }, [activeTab]);
 
-  const handleOpenMeditation = () => {
-    setMeditationOpen(true);
-  };
+  const handleOnboardingComplete = () => setOnboarded(true);
+
+  const handleOpenMeditation = () => setMeditationOpen(true);
 
   const handleOpenWorld = (worldKey) => {
-    setActiveWorld(worldKey);
+    setActiveWorldKey(worldKey);
     setMeditationOpen(true);
   };
+
+  // Determine accent for BottomNav based on active tab/world
+  const navAccent =
+    activeTab === 'aventure'
+      ? (WORLDS[activeWorldKey] || WORLDS.foret).accent
+      : activeTab === 'cocon'
+        ? (WORLDS[getProfile().totem === 'lion' ? 'foret' : getTotemWorld(getProfile().totem)] || WORLDS.foret).accent
+        : WORLDS.communaute.accent;
+
+  if (!onboarded) {
+    return <Onboarding onComplete={handleOnboardingComplete} />;
+  }
 
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-      {!onboarded ? (
-        <Onboarding onComplete={handleOnboardingComplete} />
-      ) : (
+      {activeTab === 'aventure' && (
         <Aventure
           onOpenMeditation={handleOpenMeditation}
           onOpenWorld={handleOpenWorld}
         />
       )}
+      {activeTab === 'cocon' && <Cocon />}
+      {activeTab === 'communaute' && <Communaute />}
+
+      <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />
 
       {meditationOpen && (
         <Meditation
-          worldKey={activeWorld}
+          worldKey={activeWorldKey}
           onClose={() => setMeditationOpen(false)}
         />
       )}
     </div>
   );
+}
+
+function getTotemWorld(totem) {
+  const map = {
+    lion: 'foret',
+    ours: 'temple',
+    aigle: 'oasis',
+    daim: 'lac',
+    baleine: 'montagne',
+    renard: 'communaute',
+  };
+  return map[totem] || 'foret';
 }

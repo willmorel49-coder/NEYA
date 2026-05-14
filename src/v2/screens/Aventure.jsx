@@ -118,9 +118,20 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
           WebkitOverflowScrolling: 'touch',
           position: 'relative',
           zIndex: 2,
-          padding: 'var(--sp-4) var(--sp-5) calc(var(--sp-9) + 60px)',
+          padding: 'var(--sp-4) var(--sp-5) calc(env(safe-area-inset-bottom, 0px) + 110px)',
         }}
       >
+        {/* Primary CTA — Méditer maintenant */}
+        <div style={{ marginBottom: 'var(--sp-5)', display: 'flex', justifyContent: 'flex-start' }}>
+          <Button
+            variant="primary"
+            size="md"
+            worldAccent={currentWorld.accent}
+            onClick={onOpenMeditation}
+          >
+            Continuer la montée →
+          </Button>
+        </div>
         {/* Vertical ascent line behind the worlds */}
         <div style={{ position: 'relative', minHeight: '100%' }}>
           <div
@@ -230,36 +241,6 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
         </div>
       </div>
 
-      {/* Footer fixe */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          padding:
-            '12px var(--sp-5) calc(env(safe-area-inset-bottom, 0px) + 12px)',
-          background:
-            'linear-gradient(to top, rgba(5,8,16,0.95) 0%, rgba(5,8,16,0.85) 60%, rgba(5,8,16,0) 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 'var(--sp-3)',
-          zIndex: 3,
-        }}
-      >
-        <Button
-          variant="primary"
-          size="md"
-          worldAccent={currentWorld.accent}
-          onClick={onOpenMeditation}
-        >
-          Continuer la montée →
-        </Button>
-        <Button variant="ghost" size="md" onClick={() => onOpenWorld?.(currentKey)}>
-          Carte
-        </Button>
-      </div>
     </div>
   );
 }
