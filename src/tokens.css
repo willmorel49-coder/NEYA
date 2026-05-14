@@ -1,136 +1,106 @@
 /* ============================================================
-   NÉYA — V1 Cinéma / Immersif
+   NÉYA — V1 Apple-grade · Cinéma / Immersif
    ============================================================
-   Règle absolue : 1 typo display + 1 body, 5 couleurs, 3 atomes.
-   Le sujet est la photo. Le texte se pose dessus en bas.
-   Tout le reste est bruit.
+   Pilot deck rebuild from 0. Apple grammar structurelle injectée
+   sur le dark cosmic NÉYA. Tokens stricts. Grid 8pt.
    ============================================================ */
 
 :root {
 
-  /* ── PALETTE V1 (5) ─────────────────────────────────────── */
-  --void:         #050810;                       /* canvas */
-  --ink:          #F5F2EC;                       /* cream warm — text */
+  /* ── PALETTE V1 (5 + 4 accents archétype) ───────────────── */
+  --void:         #050810;
+  --void-soft:    #0B1020;
+  --ink:          #F5F2EC;
   --ink-soft:     rgba(245, 242, 236, 0.62);
   --ink-whisper:  rgba(245, 242, 236, 0.42);
-  --line:         rgba(245, 242, 236, 0.10);     /* hairlines */
-  --line-strong:  rgba(245, 242, 236, 0.24);
-  --veil:         rgba(5, 8, 16, 0.55);          /* vignette overlay sur photos */
+  --ink-faint:    rgba(245, 242, 236, 0.26);
+  --line:         rgba(245, 242, 236, 0.10);
+  --line-strong:  rgba(245, 242, 236, 0.18);
+  --veil:         rgba(5, 8, 16, 0.60);
+  --veil-strong:  rgba(5, 8, 16, 0.82);
 
-  /* Accents archétype — 4 mondes, choisis au quiz */
+  /* Accents archétype */
   --accent-resilience: #E8B870;
   --accent-presence:   #3AA8D8;
   --accent-sagesse:    #9F7AD4;
   --accent-lumiere:    #4A8B68;
 
-  /* ── TYPO V1 (2) ────────────────────────────────────────── */
-  --font-display: 'Sora', system-ui, sans-serif;
-  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+  /* ── TYPO — Apple system stack ──────────────────────────── */
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+  --font-mono:    ui-monospace, 'SF Mono', Menlo, monospace;
 
-  --text-xs:      11px;
-  --text-sm:      13px;
-  --text-base:    16px;
-  --text-lg:      20px;
-  --text-xl:      26px;
-  --text-display: 34px;
+  /* Echelle Apple HIG ratio inspired (4 niveaux body + 4 display) */
+  --text-caption: 11px;       /* labels caps, captions */
+  --text-footnote: 13px;      /* footnotes */
+  --text-body:    16px;       /* body lisible */
+  --text-callout: 18px;       /* callouts important */
+  --text-title3:  22px;       /* sub-section titles */
+  --text-title2:  28px;       /* section titles */
+  --text-title1:  34px;       /* screen titles */
+  --text-large:   44px;       /* hero / display */
 
-  --leading-tight:   1.20;
+  --leading-tight:   1.15;
+  --leading-snug:    1.30;
   --leading-normal:  1.50;
   --leading-relaxed: 1.65;
 
-  --tracking-tight:    -0.015em;
+  --tracking-tight:    -0.022em;   /* large display */
+  --tracking-snug:     -0.012em;   /* titles */
   --tracking-normal:    0em;
   --tracking-wide:      0.04em;
-  --tracking-caps:      0.22em;
-  --tracking-monument:  0.38em;
+  --tracking-caps:      0.18em;
 
   --weight-light:    300;
   --weight-regular:  400;
   --weight-medium:   500;
+  --weight-semibold: 600;
 
+  /* ── SPACING — Grid 8pt strict ──────────────────────────── */
+  --s-1:   4px;
+  --s-2:   8px;
+  --s-3:   12px;
+  --s-4:   16px;
+  --s-5:   20px;
+  --s-6:   24px;
+  --s-8:   32px;
+  --s-10:  40px;
+  --s-12:  48px;
+  --s-16:  64px;
+  --s-20:  80px;
+  --s-24:  96px;
 
-  /* ════════════════════════════════════════════════════════════
-     LEGACY COMPAT — Tokens utilisés dans App.jsx, mappés à V1
-     ════════════════════════════════════════════════════════════
-     Pas de surface "raised/elevated" en V1 : tout est sur photo
-     ou sur void. Mappés en transparent ou void pour neutralité. */
+  /* ── CORNERS — Apple continuous radius ──────────────────── */
+  --r-sm:    8px;
+  --r-md:    14px;
+  --r-lg:    22px;     /* cards */
+  --r-xl:    28px;
+  --r-sheet: 36px;     /* sheet top */
+  --r-pill:  100px;    /* buttons */
+  --r-full:  9999px;
 
-  --surface-void:        var(--void);
-  --surface-base:        var(--void);
-  --surface-raised:      transparent;
-  --surface-elevated:    transparent;
-  --surface-dawn:        var(--void);
-  --surface-mist:        var(--void);
-  --surface-veil:        var(--veil);
+  /* ── EASING — iOS spring naturals ───────────────────────── */
+  --ease-out-ios:    cubic-bezier(0.32, 0.72, 0, 1);   /* spring open / forward */
+  --ease-in-ios:     cubic-bezier(0.32, 0, 0.72, 1);   /* dismiss / back */
+  --ease-spring-ios: cubic-bezier(0.5, 1.4, 0.3, 1);    /* overshoot subtil */
 
-  --text-primary:        var(--ink);
-  --text-secondary:      var(--ink-soft);
-  --text-whisper:        var(--ink-whisper);
-  --text-on-light:       var(--void);
-
-  --ink-primary:         var(--ink);
-
-  --accent-spirit:       var(--accent-presence);
-  --accent-spirit-soft:  var(--accent-presence);
-  --accent-sacred:       var(--accent-resilience);
-  --accent-sacred-soft:  var(--accent-resilience);
-  --accent-introspection: var(--accent-sagesse);
-  --accent-introspect:   var(--accent-sagesse);
-  --accent-grounding:    var(--accent-lumiere);
-  --accent-bloom:        var(--accent-resilience);
-
-  --state-cherished:     var(--accent-resilience);
-  --state-tender:        #E8B894;
-  --state-flowing:       var(--accent-presence);
-
-  --light-inner:         rgba(58, 168, 216, 0.18);
-  --light-sacred:        rgba(232, 184, 112, 0.22);
-  --light-veil:          var(--veil);
-
-  --border-veil:         var(--line);
-  --border-presence:     var(--line-strong);
-
-  /* Glass mappés à transparent — purge cinéma */
-  --glass-cream:         transparent;
-  --glass-light:         transparent;
-  --glass-frost:         transparent;
-
-  /* Blur tokens forcés à 0 */
-  --blur-sm:             0px;
-  --blur-md:             0px;
-  --blur-xl:             0px;
-
-  /* Display serif mappé à Sora — purge Fraunces */
-  --font-display-serif:  var(--font-display);
-
-  --r-xxl:               22px;
-  --r-mega:              22px;
-
-  --shadow-soft:         none;
-  --shadow-card:         none;
-  --shadow-deep:         none;
-
-  /* Cava brand tokens (Boutique uniquement) */
-  --cava-terracotta:     #9F584E;
-  --cava-ochre:          #C29051;
-  --cava-emerald:        #34917F;
-  --cava-sage:           #9AAFA0;
-  --cava-cream:          #D4C8BA;
-  --cava-mist-blue:      #7397BC;
-  --cava-font-display:   'Sora', system-ui, sans-serif;
-  --cava-font-script:    'Sora', system-ui, sans-serif;
+  /* ── DURATIONS ──────────────────────────────────────────── */
+  --d-fast:    160ms;
+  --d-base:    240ms;
+  --d-slow:    420ms;
+  --d-page:    600ms;
 }
 
 
 /* ════════════════════════════════════════════════════════════
-   BODY RESET
+   BODY RESET — Canvas Apple-grade
    ════════════════════════════════════════════════════════════ */
 
 html, body {
   background: var(--void);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: var(--leading-normal);
   letter-spacing: 0;
@@ -139,110 +109,96 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   PURGE V3 — Nullification CSS des couches accumulées
-   ════════════════════════════════════════════════════════════
-   On nuke au niveau stylesheet les choses qui font du bruit, sans
-   toucher aux 9000 lignes de JSX inline. Les keyframes décoratifs
-   sont redéfinis vides : les `animation: phrasebreathe ... infinite`
-   présents en JSX deviennent silencieux. Backdrop-filter forcé à
-   `none` partout — les glassmorphism inline ne respirent plus.
-   ════════════════════════════════════════════════════════════ */
-
-* {
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
+#root {
+  font-family: var(--font-body);
+  color: var(--ink);
 }
 
-@keyframes phrasebreathe   { 0%, 100% { opacity: 1; transform: none; } }
-@keyframes milestoneGlow   { 0%, 100% { opacity: 1; transform: none; box-shadow: none; filter: none; } }
-@keyframes seedPulse       { 0%, 100% { opacity: 1; transform: none; } }
-@keyframes ringshimmer     { 0%, 100% { opacity: 1; transform: none; } }
-@keyframes bgbreathe       { 0%, 100% { opacity: 1; transform: none; } }
-@keyframes worldnamebreathe{ 0%, 100% { opacity: 1; transform: none; } }
-@keyframes solbreathe      { 0%, 100% { opacity: 1; transform: none; } }
-@keyframes h1pulse         { 0%, 100% { opacity: 1; transform: none; } }
-@keyframes h2pulse         { 0%, 100% { opacity: 1; transform: none; } }
-@keyframes presencePulse   { 0%, 100% { opacity: 1; transform: none; box-shadow: none; } }
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
 
-
-/* ════════════════════════════════════════════════════════════
-   APPLE TAP RESPONSE
-   ════════════════════════════════════════════════════════════ */
-
+/* Apple tap response — scale 0.97 universal */
 [data-press]:active {
   transform: scale(0.97);
-  transition: transform 120ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform 120ms var(--ease-out-ios);
+}
+
+/* Apple list / sheet drag handle */
+.drag-handle {
+  width: 36px;
+  height: 5px;
+  border-radius: var(--r-full);
+  background: var(--ink-faint);
+  margin: 8px auto 0;
 }
 
 
 /* ════════════════════════════════════════════════════════════
-   ATOMES V1 (3) — Helpers réutilisables
+   STAGE — Photo full-bleed cinema avec vignette bas→haut
    ════════════════════════════════════════════════════════════ */
 
-.neya-display {
-  font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  letter-spacing: var(--tracking-tight);
-}
-
-.neya-body {
-  font-family: var(--font-body);
-  font-weight: var(--weight-regular);
-}
-
-.neya-caps {
-  font-family: var(--font-body);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-caps);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  color: var(--ink-whisper);
-}
-
-.neya-stage {
+.stage {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
 
-.neya-stage::after {
-  content: "";
+.stage__bg {
   position: absolute;
   inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.stage__vignette {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5, 8, 16, 0.85) 0%,
+    rgba(5, 8, 16, 0.55) 22%,
+    rgba(5, 8, 16, 0.15) 50%,
+    rgba(5, 8, 16, 0.05) 100%
+  );
   pointer-events: none;
-  background: linear-gradient(to top, rgba(5,8,16,0.78) 0%, rgba(5,8,16,0.20) 40%, rgba(5,8,16,0) 70%);
+  z-index: 1;
 }
 
-.neya-hairline {
-  display: block;
-  height: 1px;
-  background: var(--line);
-  width: 22px;
+.stage__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
 }
 
-.neya-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 28px;
-  font-family: var(--font-body);
-  font-weight: var(--weight-medium);
-  font-size: var(--text-sm);
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--ink);
-  background: transparent;
-  border: 1px solid var(--line-strong);
-  border-radius: 100px;
-  cursor: pointer;
-  transition: background 220ms ease, color 220ms ease;
+
+/* ════════════════════════════════════════════════════════════
+   ANIMATIONS — Apple-grade minimales
+   ════════════════════════════════════════════════════════════ */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-.neya-action:active {
-  background: var(--ink);
-  color: var(--void);
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+
+@keyframes sheet-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.fade-in    { animation: fade-in var(--d-slow) var(--ease-out-ios) both; }
+.fade-in-up { animation: fade-in-up var(--d-slow) var(--ease-out-ios) both; }
