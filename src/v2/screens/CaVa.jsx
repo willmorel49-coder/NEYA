@@ -95,6 +95,8 @@ export default function CaVa() {
   const [activePass, setActivePass] = useState(() => loadActivePass());
   const [passOpen, setPassOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [lastOrderTotal, setLastOrderTotal] = useState(0);
 
   const currentPass = PASSES.find((p) => p.key === activePass) || PASSES[0];
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
@@ -129,6 +131,27 @@ export default function CaVa() {
     setCart(next);
     saveCart(next);
     haptic(4);
+  };
+
+  const placeOrder = () => {
+    if (cart.length === 0) return;
+    haptic([8, 60, 8]);
+    const orders = ls.get('cava_orders', []);
+    orders.unshift({
+      id: `order-${Date.now()}`,
+      createdAt: Date.now(),
+      items: cart,
+      subtotal: cartTotal,
+      pass: currentPass.key,
+      discount: currentPass.discount,
+      total: discountedTotal,
+    });
+    ls.set('cava_orders', orders);
+    setLastOrderTotal(discountedTotal);
+    setCart([]);
+    saveCart([]);
+    setCartOpen(false);
+    setConfirmOpen(true);
   };
 
   return (
@@ -435,6 +458,16 @@ export default function CaVa() {
           discountPercent={currentPass.discount}
           currentPass={currentPass}
           onClose={() => setCartOpen(false)}
+          onCheckout={placeOrder}
+        />
+      )}
+
+      {/* Checkout confirmation sheet */}
+      {confirmOpen && (
+        <CheckoutConfirm
+          orderTotal={lastOrderTotal}
+          pseudo={pseudo}
+          onClose={() => setConfirmOpen(false)}
         />
       )}
     </div>
@@ -653,7 +686,7 @@ function ProductCard({ product, capsule, onAdd, discountPercent, pseudo, totem }
   );
 }
 
-function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) {
+function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose, onCheckout }) {
   const subTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const finalTotal = subTotal * (1 - discountPercent / 100);
   const savings = subTotal - finalTotal;
@@ -866,7 +899,7 @@ function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose }) 
                 color: 'var(--cava-bg)',
                 marginTop: 8,
               }}
-              onClick={() => { haptic([8, 60, 8]); alert('Passer commande — à connecter avec le backend ÇA VA?'); }}
+              onClick={onCheckout}
             >
               Passer commande
             </Button>
@@ -882,6 +915,203 @@ const Row = ({ children }) => (
     {children}
   </div>
 );
+
+function CheckoutConfirm({ orderTotal, pseudo, onClose }) {
+  const [leaving, setLeaving] = useState(false);
+
+  const handleClose = () => {
+    if (leaving) return;
+    haptic(4);
+    setLeaving(true);
+    setTimeout(() => onClose(), 300);
+  };
+
+  return (
+    <div
+      onClick={handleClose}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        zIndex: 110,
+        background: 'rgba(26, 26, 47, 0.45)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        animation: leaving
+          ? 'cavaFadeOut 300ms var(--ease-out-ios, ease-out) forwards'
+          : 'cavaFadeIn 280ms var(--ease-out-ios, ease-out) forwards',
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: '100%',
+          maxWidth: 520,
+          background: 'var(--cream-light)',
+          borderTopLeftRadius: 'var(--radius-lg)',
+          borderTopRightRadius: 'var(--radius-lg)',
+          padding: '24px 22px calc(env(safe-area-inset-bottom, 0px) + 22px)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 14,
+          boxShadow: '0 -12px 40px rgba(26, 26, 47, 0.18)',
+          animation: leaving
+            ? 'cavaSheetDown 320ms var(--ease-out-ios, ease-out) forwards'
+            : 'cavaSheetUp 420ms var(--ease-out-ios, ease-out) forwards',
+        }}
+      >
+        {/* Drag handle */}
+        <div
+          className="drag-handle"
+          style={{
+            width: 44,
+            height: 4,
+            borderRadius: 999,
+            background: 'rgba(26, 26, 47, 0.18)',
+            marginBottom: 6,
+          }}
+        />
+
+        {/* Tilleul check circle */}
+        <div
+          className="tilleul-pop"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            background: 'var(--tilleul, #c8d97a)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--cava-ink)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 18,
+            fontWeight: 600,
+            marginBottom: 2,
+          }}
+        >
+          ✓
+        </div>
+
+        {/* Caps mark */}
+        <div
+          style={{
+            fontFamily: 'var(--font-ui)',
+            fontSize: 9,
+            fontWeight: 500,
+            letterSpacing: '0.222em',
+            textTransform: 'uppercase',
+            color: 'var(--content-tertiary, rgba(26, 26, 47, 0.50))',
+            textAlign: 'center',
+          }}
+        >
+          COMMANDE NOTÉE · DEMO MVP
+        </div>
+
+        {/* Hero italic */}
+        <div
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 28,
+            fontWeight: 400,
+            lineHeight: 1.15,
+            letterSpacing: '-0.014em',
+            color: 'var(--cava-ink)',
+            fontVariationSettings: 'var(--fraunces-opsz-large)',
+            textAlign: 'center',
+            margin: '4px 0 0',
+          }}
+        >
+          « Merci{pseudo ? `, ${pseudo}` : ''}. »
+        </div>
+
+        {/* Explanatory body */}
+        <p
+          style={{
+            margin: 0,
+            fontFamily: 'var(--font-body)',
+            fontSize: 14,
+            lineHeight: 1.5,
+            color: 'var(--ink-soft, rgba(26, 26, 47, 0.65))',
+            textAlign: 'center',
+            maxWidth: 360,
+          }}
+        >
+          Ta commande est enregistrée localement. Le vrai checkout viendra bientôt —
+          on te préviendra par mail si tu nous as donné une adresse.
+        </p>
+
+        {/* Total */}
+        <div
+          style={{
+            fontFamily: 'var(--font-ui)',
+            fontSize: 22,
+            fontWeight: 500,
+            color: 'var(--cava-ink)',
+            fontVariantNumeric: 'tabular-nums',
+            letterSpacing: '-0.01em',
+            marginTop: 4,
+          }}
+        >
+          {Number(orderTotal || 0).toFixed(0)} €
+        </div>
+
+        {/* Fermer button */}
+        <button
+          data-press
+          onClick={handleClose}
+          style={{
+            appearance: 'none',
+            marginTop: 10,
+            width: '100%',
+            background: 'var(--cava-ink)',
+            color: 'var(--cava-bg)',
+            border: 'none',
+            borderRadius: 'var(--radius-pill)',
+            padding: '14px 24px',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 14,
+            fontWeight: 500,
+            letterSpacing: '0.02em',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            transition: 'transform 120ms var(--ease-out-ios, ease-out)',
+          }}
+          onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.95)'; }}
+          onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+          onTouchStart={(e) => { e.currentTarget.style.transform = 'scale(0.95)'; }}
+          onTouchEnd={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+        >
+          Fermer
+        </button>
+      </div>
+
+      <style>{`
+        @keyframes cavaSheetUp {
+          from { transform: translateY(100%); }
+          to   { transform: translateY(0); }
+        }
+        @keyframes cavaSheetDown {
+          from { transform: translateY(0); }
+          to   { transform: translateY(100%); }
+        }
+        @keyframes cavaFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes cavaFadeOut {
+          from { opacity: 1; }
+          to   { opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+}
 
 const qtyBtnStyle = {
   appearance: 'none',

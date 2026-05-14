@@ -98,6 +98,7 @@ export default function Communaute() {
   const profile = getProfile();
   const wRenard = WORLDS.communaute;
 
+  // allVoices is always seeded; no empty state needed
   const allVoices = useMemo(() => {
     const withMyTimes = ownPosts.map((p) => ({
       ...p,
@@ -108,6 +109,16 @@ export default function Communaute() {
   }, [ownPosts]);
 
   const totalVoices = allVoices.length;
+  const ownCount = ownPosts.length;
+
+  const deletePost = (id) => {
+    haptic([4, 60, 4]);
+    if (typeof window !== 'undefined' && window.confirm('Effacer cette voix ?')) {
+      const remaining = ownPosts.filter((p) => p.id !== id);
+      setOwnPosts(remaining);
+      saveOwnPosts(remaining);
+    }
+  };
 
   const toggleReaction = (postId, rKey) => {
     const cur = reactionState[postId] || {};
@@ -175,7 +186,15 @@ export default function Communaute() {
           className="neya-h1"
           style={{ fontFamily: 'var(--font-display)', marginBottom: 8 }}
         >
-          <em className="neya-key">{totalVoices}</em> voix aujourd’hui.
+          {ownCount > 0 ? (
+            <>
+              <em className="neya-key">{totalVoices}</em> voix aujourd’hui, dont la <em className="neya-key">tienne</em>.
+            </>
+          ) : (
+            <>
+              <em className="neya-key">{totalVoices}</em> voix aujourd’hui.
+            </>
+          )}
         </h1>
         <p
           className="neya-body-sm"
@@ -192,6 +211,8 @@ export default function Communaute() {
         <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {allVoices.map((v) => {
             const my = reactionState[v.id] || {};
+            const isDissipated = v.minutesAgo > 1440;
+            const hoursLeft = v.mine ? Math.max(0, 24 - Math.floor(v.minutesAgo / 60)) : null;
             return (
               <div
                 key={v.id}
@@ -203,6 +224,8 @@ export default function Communaute() {
                   borderRadius: 'var(--radius-lg)',
                   padding: '16px 18px',
                   boxShadow: '0 2px 14px rgba(26, 26, 47, 0.04)',
+                  opacity: isDissipated ? 0.5 : 1,
+                  transition: 'opacity 300ms var(--ease-out)',
                 }}
               >
                 <div
@@ -253,9 +276,10 @@ export default function Communaute() {
                       fontFamily: 'var(--font-ui)',
                       fontSize: 10,
                       color: 'var(--content-tertiary)',
+                      fontStyle: v.mine && !isDissipated ? 'italic' : 'normal',
                     }}
                   >
-                    {formatTime(v.minutesAgo)}
+                    {v.mine && !isDissipated ? `dans ${hoursLeft}h` : formatTime(v.minutesAgo)}
                   </span>
                 </div>
 
@@ -288,9 +312,26 @@ export default function Communaute() {
                   </p>
                 )}
 
+                {isDissipated && (
+                  <p
+                    style={{
+                      margin: '10px 0 0 0',
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: 9,
+                      fontStyle: 'italic',
+                      letterSpacing: '0.18em',
+                      textTransform: 'uppercase',
+                      color: 'var(--content-tertiary)',
+                    }}
+                  >
+                    « Cette voix s’est dissipée. »
+                  </p>
+                )}
+
                 <div
                   style={{
                     display: 'flex',
+                    alignItems: 'center',
                     gap: 16,
                     marginTop: 14,
                     paddingTop: 12,
@@ -328,6 +369,30 @@ export default function Communaute() {
                       </button>
                     );
                   })}
+                  {v.mine && (
+                    <button
+                      data-press
+                      onClick={() => deletePost(v.id)}
+                      style={{
+                        marginLeft: 'auto',
+                        appearance: 'none',
+                        background: 'transparent',
+                        border: 'none',
+                        padding: '4px 8px',
+                        cursor: 'pointer',
+                        color: 'var(--content-tertiary)',
+                        fontFamily: 'var(--font-ui)',
+                        fontSize: 9,
+                        fontWeight: 500,
+                        letterSpacing: '0.18em',
+                        textTransform: 'uppercase',
+                        WebkitTapHighlightColor: 'transparent',
+                      }}
+                      aria-label="Supprimer cette voix"
+                    >
+                      supprimer
+                    </button>
+                  )}
                 </div>
               </div>
             );

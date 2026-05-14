@@ -17,6 +17,7 @@ import CaVa from './screens/CaVa';
 import Meditation from './screens/Meditation';
 import Crise from './screens/Crise';
 import Habitudes from './screens/Habitudes';
+import Tour from './screens/Tour';
 import BottomNav from '../components/BottomNav';
 
 export default function V2App() {
@@ -25,6 +26,7 @@ export default function V2App() {
   const [meditationOpen, setMeditationOpen] = useState(false);
   const [criseOpen, setCriseOpen] = useState(false);
   const [habitudesOpen, setHabitudesOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(() => onboarded && !ls.get('tour_seen', false));
   const [activeWorldKey, setActiveWorldKey] = useState(
     () => getProfile().progress.currentWorld || 'foret'
   );
@@ -58,7 +60,13 @@ export default function V2App() {
     };
   }, []);
 
-  const handleOnboardingComplete = () => setOnboarded(true);
+  const handleOnboardingComplete = () => {
+    setOnboarded(true);
+    // Première entrée → tour si pas encore vu
+    if (!ls.get('tour_seen', false)) {
+      setTimeout(() => setTourOpen(true), 600);
+    }
+  };
 
   const handleOpenMeditation = () => setMeditationOpen(true);
 
@@ -97,16 +105,25 @@ export default function V2App() {
       onMouseUp={cancelLongPress}
       onMouseLeave={cancelLongPress}
     >
-      {activeTab === 'aventure' && (
-        <Aventure
-          onOpenMeditation={handleOpenMeditation}
-          onOpenWorld={handleOpenWorld}
-          onOpenHabitudes={() => setHabitudesOpen(true)}
-        />
-      )}
-      {activeTab === 'cocon' && <Cocon />}
-      {activeTab === 'communaute' && <Communaute />}
-      {activeTab === 'cava' && <CaVa />}
+      <div
+        key={activeTab}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          animation: 'fade-in 320ms var(--ease-out) both',
+        }}
+      >
+        {activeTab === 'aventure' && (
+          <Aventure
+            onOpenMeditation={handleOpenMeditation}
+            onOpenWorld={handleOpenWorld}
+            onOpenHabitudes={() => setHabitudesOpen(true)}
+          />
+        )}
+        {activeTab === 'cocon' && <Cocon />}
+        {activeTab === 'communaute' && <Communaute />}
+        {activeTab === 'cava' && <CaVa />}
+      </div>
 
       <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />
 
@@ -160,6 +177,8 @@ export default function V2App() {
       )}
 
       {criseOpen && <Crise onClose={() => setCriseOpen(false)} />}
+
+      {tourOpen && <Tour onClose={() => setTourOpen(false)} />}
     </div>
   );
 }
