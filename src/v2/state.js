@@ -128,3 +128,125 @@ export function addMinutes(mins) {
   setProfile(p);
   return p;
 }
+
+/* ============================================================
+   COMPLETION LOOP — méditer dans un monde le débloque + avance
+   ============================================================ */
+
+// Ordre canonique des mondes pour l'unlock séquentiel
+const WORLD_PROGRESSION = ['foret', 'temple', 'oasis', 'lac', 'montagne', 'communaute'];
+
+export function completeMeditation(worldKey, minutes) {
+  const p = getProfile();
+  const explored = new Set(p.progress.worldsExplored || []);
+  const wasNew = !explored.has(worldKey);
+  explored.add(worldKey);
+  p.progress.worldsExplored = Array.from(explored);
+
+  // Avance currentWorld au prochain non-exploré dans l'ordre
+  const nextUnexplored = WORLD_PROGRESSION.find((w) => !explored.has(w));
+  if (nextUnexplored) {
+    p.progress.currentWorld = nextUnexplored;
+  } else {
+    // Tous explorés — reste sur le dernier visité
+    p.progress.currentWorld = worldKey;
+  }
+
+  if (minutes >= 1) {
+    p.progress.minutesTotales = (p.progress.minutesTotales || 0) + minutes;
+  }
+  setProfile(p);
+  return { profile: p, wasNew, advancedTo: nextUnexplored };
+}
+
+/* ============================================================
+   ONBOARDING ANSWERS WIRING — utilise les 4 réponses dormantes
+   ============================================================ */
+
+// q3_minutes : 5 | 10 | 15 | 'plus' → target session length en minutes
+export function getOnboardingTargetMinutes() {
+  const ob = getProfile().onboarding || {};
+  const q = ob.q3_minutes;
+  if (q === 5 || q === 10 || q === 15) return q;
+  if (q === 'plus') return 999;            // illimité
+  return 5;                                  // fallback
+}
+
+// q4_rythme + heure : 'dawn' | 'night' palette overlay
+export function getPaletteMode() {
+  const ob = getProfile().onboarding || {};
+  const r = ob.q4_rythme;
+  const h = new Date().getHours();
+  // Préférence utilisateur prime, heure en fallback
+  if (r === 'matin' || r === 'midi') return 'dawn';
+  if (r === 'soir' || r === 'avant-dormir') return 'night';
+  return h >= 5 && h < 18 ? 'dawn' : 'night';
+}
+
+// q2_motif : adapte la wording du CTA principal
+const MOTIF_CTA = {
+  stress:   'Apaise une minute →',
+  sommeil:  'Prépare la nuit →',
+  emotions: 'Pose ce qui pèse →',
+  curieux:  'Explore un monde →',
+};
+export function getMotifCTA() {
+  const m = getProfile().onboarding?.q2_motif;
+  return MOTIF_CTA[m] || 'Continuer la montée →';
+}
+
+// q1_etat : micro-line italic sous le greeting Aventure (varie selon ton du jour)
+const ETAT_LINE = {
+  'pas-terrible':     'Tu peux juste être là. C’est suffisant.',
+  'ca-va-je-gere':    'Belle énergie aujourd’hui.',
+  'plutot-bien':      'Belle journée à toi.',
+  'je-sais-pas-trop': 'Pas besoin de savoir. Pose-toi.',
+};
+export function getEtatLine() {
+  const e = getProfile().onboarding?.q1_etat;
+  return ETAT_LINE[e] || null;
+}
+
+/* ============================================================
+   CRISIS MODE — entry / exit timestamps (safety audit minimum)
+   ============================================================ */
+
+export function recordCrisisEntry() {
+  const p = getProfile();
+  p.crisis = p.crisis || {};
+  p.crisis.lastEntryAt = new Date().toISOString();
+  setProfile(p);
+}
+
+export function recordCrisisExit() {
+  const p = getProfile();
+  p.crisis = p.crisis || {};
+  p.crisis.lastExitAt = new Date().toISOString();
+  setProfile(p);
+}
+
+/* ============================================================
+   HABITUDES DU JOUR — daily reset, persist par date
+   ============================================================ */
+
+function todayKey() {
+  return new Date().toISOString().split('T')[0];
+}
+
+export function getHabitsToday() {
+  return ls.get(`habits_${todayKey()}`, {});
+}
+
+export function markHabitDone(habitId) {
+  const state = getHabitsToday();
+  state[habitId] = { completedAt: new Date().toISOString() };
+  ls.set(`habits_${todayKey()}`, state);
+  return state;
+}
+
+export function unmarkHabit(habitId) {
+  const state = getHabitsToday();
+  delete state[habitId];
+  ls.set(`habits_${todayKey()}`, state);
+  return state;
+}

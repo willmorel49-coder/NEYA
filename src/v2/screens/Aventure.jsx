@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { WORLDS, WORLD_ORDER } from '../worlds';
-import { getProfile, greet, recordVisitToday } from '../state';
+import { getProfile, greet, recordVisitToday, getMotifCTA, getEtatLine, getPaletteMode } from '../state';
 import Button from '../../components/Button';
 
 // Totem → home world mapping (per spec)
@@ -41,9 +41,12 @@ const COCON_AMBIENT_POSITIONS = {
   portail: { glyph: '○', top: '26%',  left: '74%',  size: 16 },
 };
 
-export default function Aventure({ onOpenMeditation, onOpenWorld }) {
+export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitudes }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
   const [scrollY, setScrollY] = useState(0);
+  const motifCTA = getMotifCTA();
+  const etatLine = getEtatLine();
+  const paletteMode = getPaletteMode();
 
   useEffect(() => {
     setProfile(recordVisitToday());
@@ -74,6 +77,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
         color: 'var(--ink)',
         display: 'flex',
         flexDirection: 'column',
+        filter: paletteMode === 'night' ? 'brightness(0.96)' : undefined,
       }}
     >
       {/* Atmospheric bg-photo overlay (Agent D) + scroll parallax 0.4 (Agent B) */}
@@ -186,6 +190,13 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
               « {profile.mantra} »
             </div>
           )}
+          {etatLine && !profile.mantra && (
+            <div style={{
+              fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 13,
+              color: 'var(--content-secondary)', marginTop: 6, lineHeight: 1.45,
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+            }}>{etatLine}</div>
+          )}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
@@ -222,10 +233,63 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
         >
           <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
             <span style={{ fontSize: 9, opacity: 0.65, letterSpacing: '0.18em', textTransform: 'uppercase' }}>Maintenant</span>
-            <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: 0, textTransform: 'none' }}>Continuer la montée</span>
+            <span style={{ fontSize: 14, fontWeight: 500, letterSpacing: 0, textTransform: 'none' }}>{motifCTA.replace(/\s*→\s*$/, '')}</span>
           </span>
           <span style={{ fontSize: 14, opacity: 0.65, letterSpacing: 0, textTransform: 'none' }}>→</span>
         </Button>
+      </div>
+
+      {/* Habitudes du jour entry */}
+      <div style={{ padding: '0 22px 20px' }}>
+        <button
+          data-press={true}
+          onClick={onOpenHabitudes}
+          style={{
+            appearance: 'none',
+            display: 'block',
+            width: '100%',
+            textAlign: 'left',
+            background: 'rgba(255, 252, 245, 0.82)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            border: '0.5px solid rgba(26, 26, 47, 0.10)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '14px 16px',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            boxShadow: 'var(--shadow-soft)',
+            transition: 'all 240ms var(--ease-out)',
+          }}
+        >
+          <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
+            HABITUDES DU JOUR
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontSize: 18,
+              fontWeight: 400,
+              lineHeight: 1.15,
+              color: 'var(--ink)',
+              marginTop: 4,
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+            }}
+          >
+            Tes rituels du moment
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 12,
+              color: 'var(--content-secondary)',
+              lineHeight: 1.5,
+              marginTop: 2,
+            }}
+          >
+            Touche pour ouvrir
+          </div>
+        </button>
       </div>
 
       {/* Scrollable ascent — onScroll drives parallax */}

@@ -2,13 +2,19 @@
    NÉYA V3 — Méditation (LIGHT MODE, wash + halo accent)
    ============================================================
    Wash pastel monde + BreathingCircle centré + ink controls.
+   Complétion : marque le monde exploré + avance currentWorld
+   + toast italique 2.2s avant onClose.
    ============================================================ */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { WORLDS } from '../worlds';
-import { haptic, addMinutes, getProfile } from '../state';
+import {
+  haptic,
+  getProfile,
+  completeMeditation,
+  getOnboardingTargetMinutes,
+} from '../state';
 import BreathingCircle from '../../components/BreathingCircle';
-import Button from '../../components/Button';
 
 const TOTEM_HOME = {
   lion: 'foret', ours: 'temple', aigle: 'oasis',
@@ -21,9 +27,14 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
   // Halo color = totem's world accent (personnalisation Agent C)
   const totemHome = WORLDS[TOTEM_HOME[profile.totem] || 'foret'];
   const haloAccent = totemHome.accent;
+  const target = getOnboardingTargetMinutes(); // 5 | 10 | 15 | 999
   const [paused, setPaused] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [show, setShow] = useState(false);
+  const [pop, setPop] = useState(false);
+  const [toast, setToast] = useState(null); // { minutes, wasNew }
+  const targetReachedRef = useRef(false);
+  const popTimerRef = useRef(null);
 
   useEffect(() => { const t = setTimeout(() => setShow(true), 60); return () => clearTimeout(t); }, []);
 
@@ -36,11 +47,33 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
   const minutes = Math.floor(elapsedMs / 60000);
   const seconds = Math.floor((elapsedMs % 60000) / 1000);
 
+  // One-shot pop quand on atteint la cible (skip si target illimité)
+  useEffect(() => {
+    if (target === 999) return;
+    if (targetReachedRef.current) return;
+    if (minutes >= target) {
+      targetReachedRef.current = true;
+      setPop(true);
+      haptic([6, 40, 6]);
+      popTimerRef.current = setTimeout(() => setPop(false), 420);
+    }
+  }, [minutes, target]);
+
+  useEffect(() => () => { if (popTimerRef.current) clearTimeout(popTimerRef.current); }, []);
+
   const handleClose = () => {
-    if (minutes >= 1) addMinutes(minutes);
+    if (minutes >= 1) {
+      const { wasNew } = completeMeditation(worldKey, minutes);
+      haptic([8, 60, 8]);
+      setToast({ minutes, wasNew });
+      setTimeout(() => { onClose?.(); }, 2200);
+      return;
+    }
     haptic(4);
     onClose?.();
   };
+
+  const objectifLabel = target === 999 ? 'Objectif libre' : `Objectif ${target} min`;
 
   return (
     <div
@@ -194,17 +227,78 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           >
             {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
           </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 11,
+              fontWeight: 500,
+              color: 'var(--content-tertiary)',
+              marginTop: 2,
+            }}
+          >
+            {objectifLabel}
+          </div>
         </div>
 
         <button
           data-press
           onClick={handleClose}
           aria-label="Fermer"
+          className={pop ? 'tilleul-pop' : undefined}
           style={iconBtnStyle}
         >
           ✕
         </button>
       </div>
+
+      {/* Completion toast — full bleed overlay 2.2s */}
+      {toast && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(251, 246, 232, 0.95)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0 32px',
+            gap: 14,
+            zIndex: 80,
+            animation: 'fade-in 360ms var(--ease-narrative) both',
+          }}
+        >
+          <div
+            style={{
+              fontFamily: 'var(--font-display, "Fraunces", serif)',
+              fontStyle: 'italic',
+              fontSize: 26,
+              lineHeight: 1.32,
+              color: 'var(--ink)',
+              textAlign: 'center',
+              maxWidth: 320,
+            }}
+          >
+            {toast.wasNew
+              ? `« Tu as exploré la ${world.name}. »`
+              : `« Tu es passé·e par là. »`}
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 9,
+              fontWeight: 500,
+              letterSpacing: '0.222em',
+              textTransform: 'uppercase',
+              color: 'var(--tilleul)',
+            }}
+          >
+            +{toast.minutes} MIN
+          </div>
+        </div>
+      )}
     </div>
   );
 }
