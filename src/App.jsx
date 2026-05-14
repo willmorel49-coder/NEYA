@@ -3351,6 +3351,7 @@ function CoconScreen({ archetypeKey, onClose }) {
   const [showVisitor, setShowVisitor] = useState(null)
   const [showJardinFromCocon, setShowJardinFromCocon] = useState(false)
   const [showMusique, setShowMusique] = useState(false)
+  const [showCarnetFromCocon, setShowCarnetFromCocon] = useState(false)
   const season = getSeason()
   const meteo = getMeteo(vitality)
 
@@ -3690,6 +3691,38 @@ function CoconScreen({ archetypeKey, onClose }) {
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
         </div>
         {showMusique && <MusiqueModal archetypeKey={archetypeKey} onClose={() => setShowMusique(false)} />}
+
+        {/* ── Carnet du Voyage (écriture intime, sous-section Cocon) ── */}
+        <div onClick={() => { haptic([6, 40, 6]); try { playOpen() } catch {}; setShowCarnetFromCocon(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon Carnet du Voyage" style={{
+          marginTop: 10,
+          cursor: 'pointer',
+          background: `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(28,32,42,0.40) 50%, rgba(${arch.rgb},0.06) 100%)`,
+          border: `1px solid rgba(${arch.rgb},0.36)`,
+          borderRadius: 14,
+          padding: '16px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          boxShadow: `0 4px 22px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(239,233,220,0.06)`,
+          animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.5s both',
+          minHeight: 64,
+        }}>
+          <svg width="34" height="34" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)` }}>
+            <path d="M7 6 L7 26 L22 26 L25 23 L25 6 Z" fill={`rgba(${arch.rgb},0.18)`} stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" opacity="0.85"/>
+            <line x1="10" y1="11" x2="22" y2="11" stroke={arch.color} strokeWidth="0.8" opacity="0.55" strokeLinecap="round"/>
+            <line x1="10" y1="15" x2="22" y2="15" stroke={arch.color} strokeWidth="0.8" opacity="0.45" strokeLinecap="round"/>
+            <line x1="10" y1="19" x2="19" y2="19" stroke={arch.color} strokeWidth="0.8" opacity="0.35" strokeLinecap="round"/>
+          </svg>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 4 }}>Écriture libre · sous-section</div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(239,233,220,0.90)', letterSpacing: '-0.01em' }}>Carnet du Voyage</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(239,233,220,0.56)', marginTop: 3, fontStyle: 'italic' }}>{getCarnetEntryToday() ? "Tu as déposé un mot aujourd'hui ✦" : 'Une phrase pour ce jour'}</div>
+          </div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
+        </div>
+        {showCarnetFromCocon && <CarnetModal archetypeKey={archetypeKey} onClose={() => setShowCarnetFromCocon(false)} />}
 
         {selectedSouvenir && <SouvenirDetailModal souvenir={selectedSouvenir} archetypeKey={archetypeKey} onClose={() => setSelectedSouvenir(null)} />}
         {itemInfo && <CoconItemDetailModal item={itemInfo} archetypeKey={archetypeKey} onClose={() => setItemInfo(null)} />}
@@ -4035,30 +4068,54 @@ function NavIconCommunaute({ active, color }) {
   )
 }
 
-function BottomNav({ tab, onChange, color, badges = {} }) {
-  const tabs = [
+function BottomNav({ tab, onChange, color, badges = {}, onOpenCocon }) {
+  // 4 onglets latéraux + 1 bouton central élargi (logo NÉYA → Cocon)
+  // Le bouton central est le "menu hub" : sanctuaire personnel qui
+  // regroupe les espaces contemplatifs (jardin, musique, carnet).
+  const leftTabs = [
     { key: 'home',       label: 'Accueil',    Icon: NavIconHome },
     { key: 'pratiques',  label: 'Pratiques',  Icon: NavIconRoutines },
+  ]
+  const rightTabs = [
     { key: 'communaute', label: 'Communauté', Icon: NavIconCommunaute },
     { key: 'voyage',     label: 'Voyage',     Icon: NavIconVoyage },
   ]
+  const renderTab = (t) => {
+    const active = tab === t.key
+    const badged = !active && !!badges[t.key]
+    return (
+      <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '13px 0 11px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, position: 'relative', minHeight: 62 }}>
+        {active && <div style={{ position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, ${color}22 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 4.5s cubic-bezier(0.45,0,0.55,1) infinite' }} />}
+        <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.25s ease', animation: active ? 'animalbreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>
+          <t.Icon active={active} color={color} />
+          {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85 }} />}
+        </span>
+        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.10em', color: active ? color : 'rgba(239,233,220,0.42)', transition: 'color 0.25s ease', textTransform: 'uppercase' }}>{t.label}</span>
+        <div style={{ width: active ? 22 : 0, height: 2, borderRadius: 1, background: active ? `linear-gradient(90deg, ${color}88, ${color}, ${color}88)` : 'transparent', transition: 'width 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 8px ${color}` : 'none' }} />
+      </button>
+    )
+  }
   return (
-    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.65) 0%, rgba(5,8,16,0.92) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: `1px solid ${color}18`, boxShadow: '0 -12px 40px rgba(5,8,16,0.7), 0 -1px 0 rgba(255,255,255,0.04)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      {tabs.map(t => {
-        const active = tab === t.key
-        const badged = !active && !!badges[t.key]
-        return (
-          <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '13px 0 11px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, position: 'relative', minHeight: 62 }}>
-            {active && <div style={{ position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, rgba(${color.length > 7 ? '99,102,241' : color.replace('#','').match(/.{2}/g).map(x=>parseInt(x,16)).join(',')},0.14) 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 4.5s cubic-bezier(0.45,0,0.55,1) infinite' }} />}
-            <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.25s ease', animation: active ? 'animalbreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>
-              <t.Icon active={active} color={color} />
-              {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85, animation: 'none' }} />}
-            </span>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, letterSpacing: '0.09em', color: active ? color : 'rgba(255,255,255,0.42)', transition: 'color 0.25s ease', textTransform: 'uppercase', animation: active ? 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{t.label}</span>
-            <div style={{ width: active ? 26 : 3, height: active ? 2 : 1.5, borderRadius: 1, background: active ? `linear-gradient(90deg, ${color}88, ${color}, ${color}88)` : 'transparent', transition: 'all 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 10px ${color}, 0 0 20px ${color}88, 0 0 35px ${color}44` : 'none', animation: active ? 'worldglow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }} />
-          </button>
-        )
-      })}
+    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.62) 0%, rgba(5,8,16,0.94) 100%)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', borderTop: `1px solid ${color}18`, boxShadow: '0 -12px 40px rgba(5,8,16,0.72), 0 -1px 0 rgba(255,255,255,0.04)', display: 'flex', alignItems: 'flex-end', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      {/* Onglets gauche */}
+      {leftTabs.map(renderTab)}
+
+      {/* Bouton central — Logo NÉYA → Cocon (sanctuaire/menu hub) */}
+      <button onClick={() => { try { haptic([6, 40, 6]) } catch {}; if (onOpenCocon) onOpenCocon() }} aria-label="Ouvrir ton Cocon" style={{ flex: 1, padding: 0, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', minHeight: 62 }}>
+        <div style={{ position: 'absolute', top: -22, left: '50%', transform: 'translateX(-50%)', width: 62, height: 62, borderRadius: '50%', background: `radial-gradient(circle, ${color}22 0%, rgba(5,8,16,0.96) 70%)`, border: `1px solid ${color}66`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px rgba(0,0,0,0.55), 0 0 22px ${color}33, inset 0 1px 0 rgba(255,255,255,0.06)`, animation: 'animalbreathe 9s cubic-bezier(0.45,0,0.55,1) infinite', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+          <svg width="30" height="28" viewBox="0 0 44 40" fill="none" style={{ filter: `drop-shadow(0 0 10px ${color}88)` }}>
+            <path d="M22 4 Q19 12 19 22 Q22 26 25 22 Q25 12 22 4 Z" stroke="rgba(239,233,220,0.95)" strokeWidth="1.6" strokeLinejoin="round" fill={`${color}28`}/>
+            <path d="M22 22 Q14 18 9 26 Q14 30 22 26 Z" stroke="rgba(239,233,220,0.88)" strokeWidth="1.5" strokeLinejoin="round" fill={`${color}1c`}/>
+            <path d="M22 22 Q30 18 35 26 Q30 30 22 26 Z" stroke="rgba(239,233,220,0.88)" strokeWidth="1.5" strokeLinejoin="round" fill={`${color}1c`}/>
+            <path d="M22 24 Q12 22 4 32 Q14 34 22 28 Z" stroke="rgba(239,233,220,0.62)" strokeWidth="1.3" strokeLinejoin="round" fill="none"/>
+            <path d="M22 24 Q32 22 40 32 Q30 34 22 28 Z" stroke="rgba(239,233,220,0.62)" strokeWidth="1.3" strokeLinejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <span style={{ marginTop: 42, fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.18em', color: `${color}cc`, textTransform: 'uppercase' }}>Cocon</span>
+      </button>
+
+      {/* Onglets droite */}
+      {rightTabs.map(renderTab)}
     </div>
   )
 }
@@ -4878,80 +4935,11 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {showConcentration && <ConcentrationZenModal archetypeKey={archetypeKey} onClose={() => setShowConcentration(false)} />}
       {showReparation && <ReparationCoconModal archetypeKey={archetypeKey} onClose={() => setShowReparation(false)} />}
 
-      {/* SECTION: Tes espaces */}
-      <HomeSection label="Tes espaces" archRgb={arch.rgb} />
-
+      {/* Section "Tes espaces" retirée : Carnet + Jardin migrés dans le Cocon (bouton central) */}
       {showJardin && <JardinModal archetypeKey={archetypeKey} onClose={() => setShowJardin(false)} />}
-
-      {/* ── Carnet du Voyage (écriture quotidienne) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowCarnet(true) }} role="button" tabIndex={0} aria-label="Ouvrir mon Carnet du Voyage" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.08) 0%, rgba(255,255,255,0.04) 60%, rgba(${arch.rgb},0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.38)`, borderRadius: 14, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.82s both', boxShadow: `0 4px 22px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 60 }}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0, filter: `drop-shadow(0 0 8px ${arch.color}66)`, animation: 'signaturePulse 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <path d="M7 6 L7 26 L22 26 L25 23 L25 6 Z" fill={`rgba(${arch.rgb},0.18)`} stroke={arch.color} strokeWidth="1.1" strokeLinejoin="round" opacity="0.85"/>
-          <line x1="10" y1="11" x2="22" y2="11" stroke={arch.color} strokeWidth="0.8" opacity="0.55" strokeLinecap="round"/>
-          <line x1="10" y1="15" x2="22" y2="15" stroke={arch.color} strokeWidth="0.8" opacity="0.45" strokeLinecap="round"/>
-          <line x1="10" y1="19" x2="19" y2="19" stroke={arch.color} strokeWidth="0.8" opacity="0.35" strokeLinecap="round"/>
-        </svg>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Écriture libre</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.86)', letterSpacing: '-0.01em' }}>Carnet du Voyage</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(239,233,220,0.55)', marginTop: 3 }}>{getCarnetEntryToday() ? "Tu as déposé un mot aujourd'hui ✦" : 'Une phrase pour ce jour'}</div>
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
-      </div>
       {showCarnet && <CarnetModal archetypeKey={archetypeKey} onClose={() => setShowCarnet(false)} />}
 
-      {/* ── Mon Espace Néya ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowCocon(true) }}
-        style={{ cursor: 'pointer', background: `linear-gradient(rgba(5,8,16,0.7), rgba(5,8,16,0.7)) padding-box, linear-gradient(135deg, ${arch.color}44, transparent 40%, ${arch.color}28) border-box`,
-          border: '1px solid transparent', borderRadius: 14, padding: '18px 18px',
-          display: 'flex', alignItems: 'center', gap: 14, backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)', transition: 'box-shadow 0.3s ease',
-          animation: 'fadeIn 0.6s ease 0.86s both',
-          boxShadow: `0 0 32px rgba(${arch.rgb},0.14), inset 0 1px 0 rgba(${arch.rgb},0.12)` }}>
-        <div style={{ width: 44, height: 44, borderRadius: '50%',
-          background: `radial-gradient(circle, rgba(${arch.rgb},0.25) 0%, transparent 70%)`,
-          border: `1px solid rgba(${arch.rgb},0.38)`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-          animation: 'animalbreathe 12s cubic-bezier(0.45,0,0.55,1) infinite',
-          boxShadow: `0 0 20px rgba(${arch.rgb},0.30)` }}>
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style={{ opacity: 0.82 }}>
-            <path d="M11 2 L19 7 L19 15 L11 20 L3 15 L3 7 Z" stroke={arch.color} strokeWidth="1.2" fill="none"/>
-            <path d="M11 2 L11 20 M3 7 L19 7 M3 15 L19 15" stroke={arch.color} strokeWidth="0.6" opacity="0.45"/>
-          </svg>
-        </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.75)`,
-            letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 4 }}>Mon Espace</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14,
-            color: arch.color, letterSpacing: '-0.01em', textShadow: `0 0 16px ${arch.color}55` }}>{coconName || 'Mon Cocon Néya'}</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(239,233,220,0.55)', marginTop: 3 }}>
-            Ton sanctuaire personnel · Objets à débloquer
-          </div>
-          {/* Souvenirs hint : 3 derniers éclats en mini */}
-          {(() => {
-            const souvenirs = getSouvenirs().slice(-3).reverse()
-            if (souvenirs.length === 0) return null
-            return (
-              <div style={{ display: 'flex', gap: 6, marginTop: 8, alignItems: 'center' }}>
-                {souvenirs.map((s, i) => {
-                  const def = SOUVENIR_LIBRARY[s.type] || { glyph: '✦' }
-                  return (
-                    <div key={s.ts} style={{ width: 18, height: 18, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.40)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 6px rgba(${arch.rgb},0.25)`, animation: `signaturePulse ${8 + i * 2}s cubic-bezier(0.45,0,0.55,1) ${i * 0.8}s infinite` }}>
-                      <span style={{ fontSize: 10, color: arch.color, lineHeight: 1, textShadow: `0 0 4px ${arch.color}` }}>{def.glyph}</span>
-                    </div>
-                  )
-                })}
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', marginLeft: 4, fontStyle: 'italic' }}>tes éclats</span>
-              </div>
-            )
-          })()}
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 16, color: arch.color,
-          letterSpacing: '0.08em', flexShrink: 0, animation: 'phrasebreathe 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>→</div>
-      </div>
-
-      {showCocon && <CoconScreen archetypeKey={archetypeKey} onClose={() => setShowCocon(false)} />}
-
+      {/* Carte Cocon retirée — accès via bouton central BottomNav (logo NÉYA) */}
       {/* Lien aux autres section retirée : Lettres + Cercle migrés dans l'onglet Communauté */}
       {showLetters && <LettresInconnusModal archetypeKey={archetypeKey} onClose={() => setShowLetters(false)} />}
 
@@ -9224,7 +9212,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
           {tab === 'communaute' && <CommunauteScreen archetypeKey={archetypeKey} onClose={() => changeTab('home')} />}
           {tab === 'voyage' && <GrandVoyageScreen archetypeKey={archetypeKey} />}
         </div>
-        <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ pratiques: (routinesDone.filter(Boolean).length < arch.routines.length) || (quetesDone.filter(Boolean).length < arch.quetes.length) }} />
+        <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ pratiques: (routinesDone.filter(Boolean).length < arch.routines.length) || (quetesDone.filter(Boolean).length < arch.quetes.length) }} onOpenCocon={() => { try { window.dispatchEvent(new CustomEvent('neya:open-cocon')) } catch {} }} />
         {pendingWorldUnlock && <WorldUnlockModal worldKey={pendingWorldUnlock} onClose={() => { try { addSouvenir('world_unlock', { world: pendingWorldUnlock }) } catch {} ; setPendingWorldUnlock(null); changeTab('voyage') }} />}
         {vraiOpen && <EspaceVraiModal archetypeKey={archetypeKey} onClose={() => setVraiOpen(false)} />}
         {milestoneCount && <MilestoneCelebration count={milestoneCount} archetypeKey={archetypeKey} />}
@@ -9326,8 +9314,10 @@ export default function App() {
   // Crisis Mode global : déclenché par long-press logo OR CrisisFab
   const [crisisOpen, setCrisisOpen] = useState(false)
   const [showCrisisFab, setShowCrisisFab] = useState(() => shouldShowCrisisFab())
-  // Profil immersif : déclenché par tap silhouette Hero
+  // Profil immersif : déclenché par tap avatar Hero
   const [profilOpen, setProfilOpen] = useState(false)
+  // Cocon : déclenché par bouton central BottomNav (logo NÉYA)
+  const [coconOpen, setCoconOpen] = useState(false)
 
   useEffect(() => {
     const style = document.createElement('style')
@@ -9443,10 +9433,13 @@ export default function App() {
     // Crisis Mode : écoute event global déclenché par long-press logo NÉYA
     const crisisHandler = () => setCrisisOpen(true)
     window.addEventListener('neya:crisis', crisisHandler)
-    // Profil immersif : écoute event tap silhouette Hero
+    // Profil immersif : écoute event tap avatar Hero
     const profilHandler = () => { try { haptic([4, 30, 4]) } catch {}; setProfilOpen(true) }
     window.addEventListener('neya:open-profil', profilHandler)
-    return () => { cleanupPress && cleanupPress(); cleanupAudio && cleanupAudio(); window.removeEventListener('neya:crisis', crisisHandler); window.removeEventListener('neya:open-profil', profilHandler) }
+    // Cocon : écoute event tap bouton central BottomNav
+    const coconHandler = () => { try { haptic([6, 40, 6]) } catch {}; setCoconOpen(true) }
+    window.addEventListener('neya:open-cocon', coconHandler)
+    return () => { cleanupPress && cleanupPress(); cleanupAudio && cleanupAudio(); window.removeEventListener('neya:crisis', crisisHandler); window.removeEventListener('neya:open-profil', profilHandler); window.removeEventListener('neya:open-cocon', coconHandler) }
   }, [])
 
   const go = useCallback((nextScreen, fn) => {
@@ -9497,6 +9490,9 @@ export default function App() {
 
         {/* Profil immersif — espace personnel caché (accès via tap silhouette Hero) */}
         {profilOpen && archetype && <ProfilScreen archetypeKey={archetype} onClose={() => setProfilOpen(false)} onRestart={handleRestart} />}
+
+        {/* Cocon — accessible via bouton central BottomNav (logo NÉYA) */}
+        {coconOpen && archetype && <CoconScreen archetypeKey={archetype} onClose={() => setCoconOpen(false)} />}
 
         <div style={{ position: 'fixed', inset: 0, background: '#050810', zIndex: 9999, opacity: blackout ? 1 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: blackout ? 'all' : 'none' }} />
         {archetype && ARCHETYPES[archetype] && (
