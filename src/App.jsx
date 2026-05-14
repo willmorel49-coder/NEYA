@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import PreviewV2 from './v2/Preview';
+import V2App from './v2/App';
 
 // ════════════════════════════════════════════════════════════
-// NÉYA V1 — Apple-grade pilot deck
-// Splash → Onboarding(3) → Quiz → Result → Home + EspaceVrai + Cocon
-//
-// V2 Components Preview accessible via ?preview=v2
+// NÉYA — Router
+// Default     : V2 (Studio VØR painterly × Apple structural)
+// ?v=1        : V1 Apple-grade pilot (legacy)
+// ?preview=v2 : V2 design system components preview
 // ════════════════════════════════════════════════════════════
 
 const B = '/';
@@ -1488,15 +1489,15 @@ function Cocon({ arch, prenom, setPrenom, onClose }) {
 // ════════════════════════════════════════════════════════════
 
 export default function App() {
-  // Router : ?preview=v2 → V2 design system components preview
-  const previewMode = (typeof window !== 'undefined') &&
-    new URLSearchParams(window.location.search).get('preview') === 'v2';
+  const params = (typeof window !== 'undefined')
+    ? new URLSearchParams(window.location.search)
+    : new URLSearchParams();
 
-  if (previewMode) {
-    return <PreviewV2 />;
-  }
+  if (params.get('preview') === 'v2') return <PreviewV2 />;
+  if (params.get('v') === '1')        return <AppV1 />;
 
-  return <AppV1 />;
+  // Default = V2 (the real app now)
+  return <V2App />;
 }
 
 function AppV1() {
