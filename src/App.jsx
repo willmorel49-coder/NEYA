@@ -7301,10 +7301,8 @@ function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra,
         <button onClick={onOpenPersonalize} aria-label="Personnaliser" style={{ background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', color: `rgba(239,233,220,0.82)`, fontSize: 15, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>✎</button>
       </div>
 
-      {/* Silhouette femme de dos centrée bas — TAP = entrer dans Profil immersif (espace personnel caché) */}
-      <div onClick={() => { try { haptic([4, 30, 4]) } catch {}; if (onOpenProfil) onOpenProfil() }} role="button" tabIndex={0} aria-label="Entrer dans ton espace personnel" style={{ position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)', opacity: 0.94, animation: 'animalbreathe 14s cubic-bezier(0.45,0,0.55,1) infinite', cursor: 'pointer', zIndex: 4 }}>
-        <WomanSilhouette archetypeKey={archetypeKey} size={130} />
-      </div>
+      {/* Halo de lumière pure (remplace l'ancienne silhouette SVG) */}
+      <div style={{ position: 'absolute', bottom: '-12%', left: '50%', transform: 'translateX(-50%)', width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.16) 0%, rgba(${arch.rgb},0.04) 50%, transparent 75%)`, animation: 'signaturePulse 16s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none', zIndex: 1 }} />
 
       {/* Greeting + poème */}
       <div style={{ position: 'relative', zIndex: 3, textAlign: 'center', padding: '8px 28px 0' }}>
@@ -7325,6 +7323,14 @@ function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra,
             {dateStr}
           </p>
         )}
+
+        {/* Avatar spirit animal — geste d'accès au Profil immersif (espace personnel caché) */}
+        <button onClick={() => { try { haptic([4, 30, 4]) } catch {}; if (onOpenProfil) onOpenProfil() }} aria-label="Entrer dans ton espace personnel" style={{ marginTop: 22, padding: 0, background: 'transparent', border: 'none', cursor: 'pointer', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <span style={{ display: 'block', width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', border: `1px solid rgba(${arch.rgb},0.42)`, boxShadow: `0 0 16px rgba(${arch.rgb},0.24), inset 0 0 0 1px rgba(239,233,220,0.08)`, animation: 'animalbreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+            <img src={`/spirit-${archetypeKey}.avif`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%', filter: 'brightness(1.05) saturate(1.05)' }} />
+          </span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.24em', textTransform: 'uppercase' }}>Ton espace</span>
+        </button>
       </div>
     </div>
   )
