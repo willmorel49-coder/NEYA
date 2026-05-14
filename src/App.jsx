@@ -3462,8 +3462,8 @@ function CoconScreen({ archetypeKey, onClose }) {
       <div style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 22px 16px', background: 'rgba(5,8,16,0.28)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderBottom: `1px solid rgba(${arch.rgb},0.12)` }}>
         <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '10px 20px', color: 'rgba(239,233,220,0.72)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', minHeight: 40 }} aria-label="Fermer le cocon">← Fermer</button>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.78)', letterSpacing: '0.14em', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>Mon Espace</span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.20em', textTransform: 'uppercase', textShadow: `0 0 10px ${arch.color}33`, animation: 'signaturePulse 22s cubic-bezier(0.45,0,0.55,1) infinite' }}>{{ dawn: "à l'aube", day: 'en pleine clarté', dusk: 'au crépuscule', night: 'sous la nuit' }[ambience.period]} · {season.label} · {meteo.label}</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 11, color: 'rgba(239,233,220,0.82)', letterSpacing: '0.42em', textTransform: 'uppercase', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>Mon Cocon</span>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 9, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.36em', textTransform: 'uppercase', textShadow: `0 0 10px ${arch.color}33`, animation: 'signaturePulse 22s cubic-bezier(0.45,0,0.55,1) infinite' }}>{{ dawn: "à l'aube", day: 'en pleine clarté', dusk: 'au crépuscule', night: 'sous la nuit' }[ambience.period]} · {season.label} · {meteo.label}</span>
         </div>
         <div style={{ width: 72 }} />
       </div>
@@ -3532,11 +3532,11 @@ function CoconScreen({ archetypeKey, onClose }) {
             />
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
-              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, margin: 0, letterSpacing: '0.02em', textAlign: 'center', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite', background: `linear-gradient(135deg, ${arch.color}, rgba(239,233,220,0.92) 55%, ${arch.color}bb)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{coconNameLocal || 'Mon Cocon Néya'}</p>
+              <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 'clamp(28px, 7.5vw, 32px)', margin: 0, letterSpacing: '-0.030em', lineHeight: 1.08, textAlign: 'center', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite', background: `linear-gradient(135deg, ${arch.color}, rgba(239,233,220,0.94) 55%, ${arch.color}bb)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{coconNameLocal || 'Mon Cocon Néya'}</p>
               <button onClick={() => setEditingName(true)} aria-label="Renommer ton cocon" style={{ background: 'none', border: 'none', cursor: 'pointer', color: `${arch.color}88`, fontSize: 13, padding: 6, lineHeight: 1, minWidth: 32, minHeight: 32, animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>✎</button>
             </div>
           )}
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `rgba(${arch.rgb},0.65)`, margin: 0, letterSpacing: '0.08em', textAlign: 'center', fontStyle: 'italic', animation: 'phrasebreathe 30s cubic-bezier(0.45,0,0.55,1) infinite' }}>Ton sanctuaire se construit avec ta présence</p>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 15, color: `rgba(${arch.rgb},0.72)`, margin: 0, letterSpacing: '-0.005em', textAlign: 'center', animation: 'phrasebreathe 30s cubic-bezier(0.45,0,0.55,1) infinite' }}>Ton sanctuaire personnel</p>
         </div>
 
         {/* Stats streak + jours */}
@@ -3557,7 +3557,7 @@ function CoconScreen({ archetypeKey, onClose }) {
 
         {/* Objets du cocon */}
         <div style={{ width: '100%' }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.55)`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center', animation: 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite' }}>Objets de ton sanctuaire</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 10, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.42em', textTransform: 'uppercase', margin: '0 0 16px', textAlign: 'center', animation: 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite' }}>Objets de ton sanctuaire</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {COCON_ITEMS.slice(0, 4).map((item) => {
               const current = item.by === 'streak' ? streak : totalDays
@@ -3591,7 +3591,7 @@ function CoconScreen({ archetypeKey, onClose }) {
                     <ItemIcon icon={item.icon} color={arch.color} unlocked={unlocked} />
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: unlocked ? 'rgba(239,233,220,0.92)' : 'rgba(239,233,220,0.55)', letterSpacing: '-0.01em', marginBottom: 3, animation: unlocked ? 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{item.label}</div>
+                    <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 16, color: unlocked ? 'rgba(239,233,220,0.94)' : 'rgba(239,233,220,0.58)', letterSpacing: '-0.020em', marginBottom: 4, animation: unlocked ? 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{item.label}</div>
                     <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.04em', fontStyle: 'italic', color: unlocked ? (placed.includes(item.id) ? arch.color : `rgba(${arch.rgb},0.85)`) : 'rgba(255,255,255,0.48)', ...(placed.includes(item.id) ? { textShadow: `0 0 12px ${arch.color}88`, animation: 'milestoneGlow 3s cubic-bezier(0.45,0,0.55,1) infinite', fontWeight: 400 } : {}) }}>
                       {unlocked ? (placed.includes(item.id) ? '✦ Dans ton cocon' : 'Touche pour placer') : `${item.unlockAt} jours`}
                     </div>
@@ -3615,7 +3615,7 @@ function CoconScreen({ archetypeKey, onClose }) {
                   <ItemIcon icon={item.icon} color={arch.color} unlocked={unlocked} />
                 </div>
                 <div>
-                  <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: unlocked ? 'rgba(239,233,220,0.92)' : 'rgba(255,255,255,0.38)', letterSpacing: '-0.01em', marginBottom: 4, animation: unlocked ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{item.label}</div>
+                  <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 16, color: unlocked ? 'rgba(239,233,220,0.94)' : 'rgba(255,255,255,0.42)', letterSpacing: '-0.020em', marginBottom: 4, animation: unlocked ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{item.label}</div>
                   <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontStyle: 'italic', letterSpacing: '0.04em', color: unlocked ? (placed.includes(item.id) ? arch.color : `rgba(${arch.rgb},0.92)`) : 'rgba(255,255,255,0.48)', ...(placed.includes(item.id) ? { textShadow: `0 0 12px ${arch.color}88`, animation: 'milestoneGlow 3s cubic-bezier(0.45,0,0.55,1) infinite', fontWeight: 400 } : {}) }}>
                     {unlocked ? (placed.includes(item.id) ? '✦ Dans ton cocon' : 'Touche pour placer') : `${item.unlockAt} jours de présence`}
                   </div>
@@ -4919,24 +4919,41 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {showBreathing && <BreathingModal archetypeKey={archetypeKey} onClose={() => setShowBreathing(false)} />}
 
-      {/* ── Mini-jeux doux (sélecteur unique pour les 4 mini-jeux fusionnés) ── */}
-      <div onClick={() => { haptic([6,40,6]); setShowMiniJeux(true) }} role="button" tabIndex={0} aria-label="Ouvrir les mini-jeux doux" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(255,255,255,0.05) 60%, rgba(${arch.rgb},0.05) 100%)`, border: `1px solid rgba(${arch.rgb},0.42)`, borderRadius: 16, padding: '18px 18px', display: 'flex', alignItems: 'center', gap: 16, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.45s both', boxShadow: `0 6px 24px rgba(${arch.rgb},0.14), inset 0 1px 0 rgba(255,255,255,0.06)`, minHeight: 72 }}>
-        <div style={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
-          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style={{ filter: `drop-shadow(0 0 10px ${arch.color}77)`, animation: 'signaturePulse 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-            <circle cx="14" cy="14" r="3.2" fill={arch.color} opacity="0.88"/>
-            <circle cx="30" cy="14" r="2.4" fill={arch.color} opacity="0.68"/>
-            <circle cx="14" cy="30" r="2.4" fill={arch.color} opacity="0.68"/>
-            <circle cx="30" cy="30" r="3.0" fill={arch.color} opacity="0.82"/>
-            <circle cx="22" cy="22" r="1.6" fill="white" opacity="0.92"/>
-            <path d="M14 14 L22 22 L30 14 M14 30 L22 22 L30 30" stroke={arch.color} strokeWidth="0.6" opacity="0.32" fill="none"/>
-          </svg>
+      {/* ── Mini-jeux doux (sélecteur unique pour les 4 mini-jeux fusionnés) ── atelier editorial */}
+      <div onClick={() => { haptic([6,40,6]); setShowMiniJeux(true) }} role="button" tabIndex={0} aria-label="Ouvrir les mini-jeux doux" style={{ position: 'relative', cursor: 'pointer', borderRadius: 18, overflow: 'hidden', border: '1px solid rgba(239,233,220,0.18)', backdropFilter: 'blur(26px) saturate(140%)', WebkitBackdropFilter: 'blur(26px) saturate(140%)', background: 'rgba(8,12,28,0.42)', boxShadow: `0 14px 44px rgba(0,0,0,0.38), 0 0 28px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(239,233,220,0.06)`, animation: 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) 0.45s both' }}>
+        {/* photo cinématique archétype */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(/${arch.bg})`, backgroundSize: 'cover', backgroundPosition: 'center 50%', filter: 'brightness(0.30) saturate(105%) blur(2px)', transform: 'scale(1.14)', opacity: 0.46, pointerEvents: 'none' }} />
+        {/* veil */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(105deg, rgba(8,12,28,0.78) 0%, rgba(8,12,28,0.42) 55%, rgba(8,12,28,0.74) 100%)', pointerEvents: 'none' }} />
+        {/* grain */}
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.30, mixBlendMode: 'overlay' }}>
+          <filter id={`grainMJ-${archetypeKey}`}>
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" />
+            <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+          </filter>
+          <rect width="100%" height="100%" filter={`url(#grainMJ-${archetypeKey})`} />
+        </svg>
+        {/* hairline top */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}55, transparent)`, pointerEvents: 'none' }} />
+
+        <div style={{ position: 'relative', zIndex: 2, padding: '24px 24px', display: 'flex', alignItems: 'center', gap: 18, minHeight: 84 }}>
+          <div style={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style={{ filter: `drop-shadow(0 0 12px ${arch.color}88)` }}>
+              <circle cx="14" cy="14" r="3.2" fill={arch.color} opacity="0.88"/>
+              <circle cx="30" cy="14" r="2.4" fill={arch.color} opacity="0.68"/>
+              <circle cx="14" cy="30" r="2.4" fill={arch.color} opacity="0.68"/>
+              <circle cx="30" cy="30" r="3.0" fill={arch.color} opacity="0.82"/>
+              <circle cx="22" cy="22" r="1.6" fill="white" opacity="0.92"/>
+              <path d="M14 14 L22 22 L30 14 M14 30 L22 22 L30 30" stroke={arch.color} strokeWidth="0.6" opacity="0.42" fill="none"/>
+            </svg>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: 'rgba(239,233,220,0.58)', letterSpacing: '0.42em', textTransform: 'uppercase', marginBottom: 8 }}>Quatre gestes · §V</div>
+            <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 80, "WONK" 1', fontSize: 'clamp(20px, 5.4vw, 24px)', color: 'rgba(239,233,220,0.96)', letterSpacing: '-0.025em', marginBottom: 6, lineHeight: 1.14, textShadow: '0 2px 14px rgba(0,0,0,0.55)' }}>Mini-jeux doux</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(239,233,220,0.52)', letterSpacing: '0.10em', textTransform: 'uppercase' }}>Libération · Apaisement · Concentration · Réparation</div>
+          </div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 14, color: `rgba(239,233,220,0.62)`, letterSpacing: '0.10em', flexShrink: 0 }}>→</div>
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 4 }}>Quatre gestes intérieurs</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(239,233,220,0.92)', letterSpacing: '-0.01em', marginBottom: 3 }}>Mini-jeux doux</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(239,233,220,0.58)', fontStyle: 'italic' }}>Libération · Apaisement · Concentration · Réparation</div>
-        </div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
       </div>
       {showMiniJeux && <MiniJeuxSelectorModal archetypeKey={archetypeKey} onClose={() => setShowMiniJeux(false)} onSelect={(key) => {
         setShowMiniJeux(false)
@@ -6962,27 +6979,40 @@ function BilanDuSoirCard({ archetypeKey, onClose }) {
     <div onClick={!expanded ? handleOpen : undefined} role={!expanded ? "button" : undefined} tabIndex={!expanded ? 0 : undefined} aria-label={!expanded ? "Ouvrir le bilan du soir" : undefined} style={{
       position: 'relative',
       cursor: !expanded ? 'pointer' : 'default',
-      background: `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(20,18,38,0.34) 50%, rgba(${arch.rgb},0.06) 100%)`,
-      border: `1px solid rgba(${arch.rgb},0.42)`,
-      borderRadius: 18,
-      padding: expanded ? '24px 22px 22px' : '20px 22px',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)',
-      boxShadow: `0 10px 38px rgba(${arch.rgb},0.18), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 24px rgba(${arch.rgb},0.10)`,
+      background: 'rgba(8,12,28,0.42)',
+      border: '1px solid rgba(239,233,220,0.18)',
+      borderRadius: 20,
+      backdropFilter: 'blur(28px) saturate(140%)',
+      WebkitBackdropFilter: 'blur(28px) saturate(140%)',
+      boxShadow: `0 16px 50px rgba(0,0,0,0.42), 0 0 32px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(239,233,220,0.06)`,
       animation: closed ? 'sheetExit 0.7s cubic-bezier(0.4,0,0.6,1) both' : (vis ? 'fadeIn 0.9s cubic-bezier(0,0,0.2,1) 0.08s both' : 'none'),
       opacity: closed ? 0 : (vis ? 1 : 0),
-      transition: 'padding 380ms cubic-bezier(0.4,0,0.2,1)',
       overflow: 'hidden',
     }}>
-      {/* Halo Lune décoratif */}
-      <div style={{ position: 'absolute', top: -32, right: -32, width: 110, height: 110, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, transparent 70%)`, animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />
+      {/* photo cinématique archétype */}
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(/${arch.bg})`, backgroundSize: 'cover', backgroundPosition: 'center 40%', filter: 'brightness(0.30) saturate(105%) blur(2px)', transform: 'scale(1.14)', opacity: 0.50, pointerEvents: 'none' }} />
+      {/* veil cream-on-dark */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(8,12,28,0.78) 0%, rgba(8,12,28,0.42) 55%, rgba(8,12,28,0.80) 100%)', pointerEvents: 'none' }} />
+      {/* grain fractal noise */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.30, mixBlendMode: 'overlay' }}>
+        <filter id={`grainSoir-${archetypeKey}`}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" />
+          <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+        </filter>
+        <rect width="100%" height="100%" filter={`url(#grainSoir-${archetypeKey})`} />
+      </svg>
+      {/* Halo Lune décoratif top-right */}
+      <div style={{ position: 'absolute', top: -32, right: -32, width: 110, height: 110, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.20) 0%, transparent 70%)`, pointerEvents: 'none' }} />
+      {/* hairline top */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}55, transparent)`, pointerEvents: 'none' }} />
 
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10, position: 'relative' }}>
+      <div style={{ position: 'relative', zIndex: 2, padding: expanded ? '28px 26px 24px' : '24px 26px', transition: 'padding 380ms cubic-bezier(0.4,0,0.2,1)' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14, position: 'relative' }}>
         <div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.86)`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>Bilan du soir</p>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13, color: 'rgba(239,233,220,0.62)', margin: '4px 0 0', letterSpacing: '0.02em' }}>Et toi, ça va vraiment ce soir ?</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: 'rgba(239,233,220,0.62)', letterSpacing: '0.42em', textTransform: 'uppercase', margin: 0 }}>Bilan du soir · §III</p>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 80, "WONK" 1', fontSize: 'clamp(20px, 5.6vw, 26px)', color: 'rgba(239,233,220,0.94)', margin: '8px 0 0', letterSpacing: '-0.025em', lineHeight: 1.18, textShadow: '0 2px 14px rgba(0,0,0,0.55)' }}>Et toi, ça va vraiment ce soir&nbsp;?</p>
         </div>
-        <div style={{ fontSize: 22, lineHeight: 1, opacity: 0.85, filter: `drop-shadow(0 0 12px ${arch.color}88)`, animation: 'phrasebreathe 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>☾</div>
+        <div style={{ fontSize: 22, lineHeight: 1, opacity: 0.85, filter: `drop-shadow(0 0 12px ${arch.color}88)` }}>☾</div>
       </div>
 
       {!expanded ? (
@@ -7033,6 +7063,7 @@ function BilanDuSoirCard({ archetypeKey, onClose }) {
           }}>Border la journée ☾</button>
         </>
       )}
+      </div>
     </div>
   )
 }
@@ -7107,27 +7138,40 @@ function BilanSemaineCard({ archetypeKey, onClose }) {
     <div onClick={!expanded ? handleOpen : undefined} role={!expanded ? "button" : undefined} tabIndex={!expanded ? 0 : undefined} aria-label={!expanded ? "Ouvrir le bilan de la semaine" : undefined} style={{
       position: 'relative',
       cursor: !expanded ? 'pointer' : 'default',
-      background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(18,22,42,0.36) 50%, rgba(${arch.rgb},0.08) 100%)`,
-      border: `1px solid rgba(${arch.rgb},0.46)`,
-      borderRadius: 18,
-      padding: expanded ? '24px 22px 22px' : '20px 22px',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)',
-      boxShadow: `0 12px 42px rgba(${arch.rgb},0.20), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 28px rgba(${arch.rgb},0.12)`,
+      background: 'rgba(8,12,28,0.42)',
+      border: '1px solid rgba(239,233,220,0.18)',
+      borderRadius: 20,
+      backdropFilter: 'blur(28px) saturate(140%)',
+      WebkitBackdropFilter: 'blur(28px) saturate(140%)',
+      boxShadow: `0 18px 56px rgba(0,0,0,0.46), 0 0 36px rgba(${arch.rgb},0.14), inset 0 1px 0 rgba(239,233,220,0.06)`,
       animation: closed ? 'sheetExit 0.7s cubic-bezier(0.4,0,0.6,1) both' : (vis ? 'fadeIn 0.9s cubic-bezier(0,0,0.2,1) 0.05s both' : 'none'),
       opacity: closed ? 0 : (vis ? 1 : 0),
-      transition: 'padding 380ms cubic-bezier(0.4,0,0.2,1)',
       overflow: 'hidden',
     }}>
-      {/* Halo cercle décoratif */}
-      <div style={{ position: 'absolute', top: -40, right: -40, width: 130, height: 130, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, transparent 70%)`, animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />
+      {/* photo cinématique archétype */}
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(/${arch.bg})`, backgroundSize: 'cover', backgroundPosition: 'left 35%', filter: 'brightness(0.32) saturate(105%) blur(2px)', transform: 'scale(1.14)', opacity: 0.50, pointerEvents: 'none' }} />
+      {/* veil cream-on-dark */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(125deg, rgba(8,12,28,0.78) 0%, rgba(8,12,28,0.40) 55%, rgba(8,12,28,0.82) 100%)', pointerEvents: 'none' }} />
+      {/* grain fractal noise */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.30, mixBlendMode: 'overlay' }}>
+        <filter id={`grainSem-${archetypeKey}`}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" />
+          <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+        </filter>
+        <rect width="100%" height="100%" filter={`url(#grainSem-${archetypeKey})`} />
+      </svg>
+      {/* Halo cercle décoratif top-right */}
+      <div style={{ position: 'absolute', top: -40, right: -40, width: 130, height: 130, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, transparent 70%)`, pointerEvents: 'none' }} />
+      {/* hairline top */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}55, transparent)`, pointerEvents: 'none' }} />
 
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10, position: 'relative' }}>
+      <div style={{ position: 'relative', zIndex: 2, padding: expanded ? '28px 26px 24px' : '24px 26px', transition: 'padding 380ms cubic-bezier(0.4,0,0.2,1)' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14, position: 'relative' }}>
         <div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.88)`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: 0, animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>Bilan de la semaine</p>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(239,233,220,0.62)', margin: '4px 0 0', letterSpacing: '0.02em' }}>Dimanche soir</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: 'rgba(239,233,220,0.62)', letterSpacing: '0.42em', textTransform: 'uppercase', margin: 0 }}>Bilan de la semaine · §IV</p>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 80, "WONK" 1', fontSize: 'clamp(20px, 5.6vw, 26px)', color: 'rgba(239,233,220,0.94)', margin: '8px 0 0', letterSpacing: '-0.025em', lineHeight: 1.18, textShadow: '0 2px 14px rgba(0,0,0,0.55)' }}>Dimanche soir.</p>
         </div>
-        <div style={{ fontSize: 22, lineHeight: 1, opacity: 0.85, filter: `drop-shadow(0 0 12px ${arch.color}88)`, animation: 'phrasebreathe 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>◯</div>
+        <div style={{ fontSize: 22, lineHeight: 1, opacity: 0.85, filter: `drop-shadow(0 0 12px ${arch.color}88)` }}>◯</div>
       </div>
 
       {!expanded ? (
@@ -7200,6 +7244,7 @@ function BilanSemaineCard({ archetypeKey, onClose }) {
           }}>Fermer la semaine ◯</button>
         </>
       )}
+      </div>
     </div>
   )
 }
@@ -9117,48 +9162,57 @@ function FragmentsView({ archetypeKey }) {
     )
   }
 
-  // Stage 2 : Lecture (après dépôt)
+  // Stage 2 : Lecture (après dépôt) — bubbles glass XL atelier
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '12px 0', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both' }}>
-      <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(239,233,220,0.62)', textAlign: 'center', margin: '0 12px 12px', lineHeight: 1.55, letterSpacing: '-0.005em' }}>
-          Ils sont {others.length} ici ce soir.<br />Touche pour lire.
-      </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '12px 0', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 10, margin: '4px 4px 8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ width: 22, height: 1, background: `rgba(${arch.rgb},0.48)`, display: 'inline-block' }} />
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.42em', textTransform: 'uppercase', margin: 0 }}>L&apos;essaim · ce soir</p>
+        </div>
+        <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 18, color: 'rgba(239,233,220,0.78)', textAlign: 'left', margin: 0, lineHeight: 1.42, letterSpacing: '-0.025em', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1' }}>
+          Ils sont {others.length} ici. Touche pour lire.
+        </p>
+      </div>
 
-      {/* Grappe de bulles */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10, padding: '0 4px' }}>
+      {/* Grappe de bulles glass XL */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 12, padding: '0 4px' }}>
         {others.map((text, i) => {
           const isRevealed = revealedIdx === i
-          const size = 110 + (i % 3) * 16
+          const size = 112 + (i % 3) * 18
           return (
             <button key={i} onClick={() => { haptic(4); setRevealedIdx(isRevealed ? null : i) }} aria-label={isRevealed ? 'Masquer' : 'Révéler un fragment'} style={{
               position: 'relative',
-              padding: '14px 12px',
+              padding: isRevealed ? '18px 16px' : '14px 12px',
               minHeight: isRevealed ? 'auto' : size,
-              background: isRevealed ? `linear-gradient(135deg, rgba(${arch.rgb},0.18) 0%, rgba(8,12,22,0.62) 100%)` : `radial-gradient(ellipse at 30% 30%, rgba(${arch.rgb},0.14) 0%, rgba(${arch.rgb},0.04) 60%, transparent 100%)`,
-              border: `1px solid ${isRevealed ? `rgba(${arch.rgb},0.42)` : `rgba(${arch.rgb},0.22)`}`,
-              borderRadius: 14,
+              background: isRevealed
+                ? `linear-gradient(135deg, rgba(${arch.rgb},0.16) 0%, rgba(8,12,22,0.46) 100%)`
+                : `radial-gradient(ellipse at 28% 28%, rgba(${arch.rgb},0.16) 0%, rgba(${arch.rgb},0.04) 62%, rgba(8,12,22,0.18) 100%)`,
+              border: `1px solid ${isRevealed ? `rgba(${arch.rgb},0.44)` : `rgba(239,233,220,0.12)`}`,
+              borderRadius: isRevealed ? 16 : '50%',
               cursor: 'pointer',
               textAlign: 'left',
               color: 'inherit',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
+              backdropFilter: 'blur(14px) saturate(140%)',
+              WebkitBackdropFilter: 'blur(14px) saturate(140%)',
               animation: `splashmote ${22 + i * 3}s cubic-bezier(0.45,0,0.55,1) ${i * 0.6}s infinite, fadeIn 0.5s cubic-bezier(0,0,0.2,1) ${0.08 + i * 0.05}s both`,
-              transition: 'background 320ms cubic-bezier(0.4,0,0.2,1), border-color 320ms cubic-bezier(0.4,0,0.2,1), min-height 320ms cubic-bezier(0.4,0,0.2,1)',
-              boxShadow: isRevealed ? `0 6px 22px rgba(${arch.rgb},0.20)` : `0 2px 12px rgba(${arch.rgb},0.10)`,
+              transition: 'background 320ms cubic-bezier(0.4,0,0.2,1), border-color 320ms cubic-bezier(0.4,0,0.2,1), border-radius 320ms cubic-bezier(0.4,0,0.2,1), min-height 320ms cubic-bezier(0.4,0,0.2,1)',
+              boxShadow: isRevealed ? `0 8px 28px rgba(${arch.rgb},0.22)` : `0 2px 14px rgba(${arch.rgb},0.10)`,
               display: 'flex', flexDirection: 'column', justifyContent: isRevealed ? 'flex-start' : 'center', alignItems: isRevealed ? 'flex-start' : 'center',
+              aspectRatio: isRevealed ? 'auto' : '1 / 1',
             }}>
               {isRevealed ? (
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13, color: 'rgba(239,233,220,0.92)', margin: 0, lineHeight: 1.55, letterSpacing: '-0.005em' }}>« {text} »</p>
+                <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 14, color: 'rgba(239,233,220,0.94)', margin: 0, lineHeight: 1.55, letterSpacing: '-0.020em', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 0' }}>« {text} »</p>
               ) : (
-                <span style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, color: arch.color, opacity: 0.62, animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>◯</span>
+                <span style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontStyle: 'italic', fontSize: 20, color: arch.color, opacity: 0.68, animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1' }}>◯</span>
               )}
             </button>
           )
         })}
       </div>
 
-      <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.42)', textAlign: 'center', margin: '20px 12px 0', letterSpacing: '0.04em', fontStyle: 'italic', lineHeight: 1.6 }}>
-        Tu n'es pas seul·e à porter ce que tu portes.<br />Demain, ces souffles seront partis.
+      <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontStyle: 'italic', fontWeight: 400, fontSize: 13, color: 'rgba(239,233,220,0.46)', textAlign: 'left', margin: '24px 4px 0', letterSpacing: '-0.015em', lineHeight: 1.65, fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 0' }}>
+        Tu n&apos;es pas seul·e à porter ce que tu portes.<br />Demain, ces souffles seront partis.
       </p>
     </div>
   )
