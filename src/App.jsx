@@ -1236,8 +1236,23 @@ const SpiritAnimal = React.memo(function SpiritAnimal({ archetype, size = 120, s
 function NeyaLogo({ size = 'md', onTap, glowColor = 'rgba(255,255,255,0.32)' }) {
   const cfg = { sm: [22, 13], md: [30, 17], lg: [40, 22] }[size]
   const w = cfg[0], h = Math.round(cfg[0] * 0.92)
+  // Crisis Mode : long-press 600ms sur le logo NÉYA = ouverture SOS partout
+  const pressTimer = useRef(null)
+  const triggered = useRef(false)
+  const handleDown = (e) => {
+    triggered.current = false
+    pressTimer.current = setTimeout(() => {
+      triggered.current = true
+      try { haptic([8, 100, 8, 100, 8]) } catch {}
+      try { window.dispatchEvent(new CustomEvent('neya:crisis')) } catch {}
+    }, 600)
+  }
+  const handleUp = (e) => {
+    clearTimeout(pressTimer.current)
+    if (triggered.current) { e.preventDefault?.(); e.stopPropagation?.() }
+  }
   return (
-    <div onClick={onTap} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: onTap ? 'pointer' : 'default' }}>
+    <div onClick={(e) => { if (triggered.current) { e.preventDefault?.(); return } if (onTap) onTap() }} onPointerDown={handleDown} onPointerUp={handleUp} onPointerLeave={handleUp} onPointerCancel={handleUp} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: onTap ? 'pointer' : 'default', userSelect: 'none', WebkitUserSelect: 'none', touchAction: 'manipulation' }}>
       <svg width={w} height={h} viewBox="0 0 44 40" fill="none" style={{ animation: 'compassbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite', filter: `drop-shadow(0 0 8px ${glowColor})${onTap ? ' drop-shadow(0 0 16px rgba(255,255,255,0.28))' : ''}` }}>
         {/* Lotus — 5 pétales lumineux en outline (signature mockups originaux) */}
         {/* Pétale central vertical */}
@@ -3129,6 +3144,151 @@ function CoconItemDetailModal({ item, archetypeKey, onClose }) {
   )
 }
 
+// ─── PROFIL IMMERSIF — Espace personnel caché ─────────────────────
+// Accessible UNIQUEMENT via tap sur la silhouette du Hero. Pas un 5e
+// onglet : c'est un geste organique. L'utilisateur "entre chez soi".
+// Centralise : Identité (Personalize) · Trace · Souvenirs · Réglages
+// · Partager · ÇA VA? membership (futur)
+
+function ProfilScreen({ archetypeKey, onClose, onRestart }) {
+  const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
+  const [vis, setVis] = useState(false)
+  const { exiting, close } = useExitAnimation(onClose, 420)
+  const [showPerso, setShowPerso] = useState(false)
+  const [showTrace, setShowTrace] = useState(false)
+  const [showGallery, setShowGallery] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [showShare, setShowShare] = useState(false)
+  const [selectedSouvenir, setSelectedSouvenir] = useState(null)
+
+  useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
+
+  const prenom = (() => { try { return localStorage.getItem('neya_prenom') || '' } catch { return '' } })()
+  const mantra = (() => { try { return localStorage.getItem('neya_mantra') || '' } catch { return '' } })()
+  const streak = getCurrentStreak()
+  const totalDays = getTotalDaysVisited()
+  const souvenirs = getSouvenirs()
+  const recentSouvenirs = souvenirs.slice(-5).reverse()
+
+  const handleClose = () => { haptic(4); try { playClose() } catch {}; close() }
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 850,
+      background: `radial-gradient(ellipse at 50% 22%, rgba(${arch.rgb},0.16) 0%, rgba(5,8,16,0.94) 65%, rgba(5,8,16,0.98) 100%)`,
+      backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+      overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+      padding: 'calc(env(safe-area-inset-top, 0px) + 22px) 22px calc(env(safe-area-inset-bottom, 0px) + 40px)',
+      animation: exiting ? 'fadeOut 0.42s cubic-bezier(0.4,0,0.6,1) both' : 'fadeIn 0.6s cubic-bezier(0,0,0.2,1) both',
+      opacity: vis ? 1 : 0,
+      transition: 'opacity 0.5s ease',
+    }}>
+      {/* Halo ambient */}
+      <div style={{ position: 'fixed', top: -80, left: '50%', transform: 'translateX(-50%)', width: 320, height: 320, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.18) 0%, transparent 70%)`, animation: 'signaturePulse 16s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />
+
+      {/* Close discret */}
+      <button onClick={handleClose} aria-label="Refermer ton espace" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 20px)', right: 20, background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 38, height: 38, color: 'rgba(255,255,255,0.78)', fontSize: 14, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', zIndex: 5 }}>✕</button>
+
+      {/* En-tête identité */}
+      <div style={{ position: 'relative', textAlign: 'center', maxWidth: 440, margin: '0 auto', paddingTop: 28 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.86)`, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>Ton espace</p>
+
+        {/* Spirit animal central */}
+        <div style={{ width: 120, height: 120, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 18px', boxShadow: `0 0 32px ${arch.color}55, 0 0 64px ${arch.color}22, inset 0 0 0 1px ${arch.color}66`, animation: 'animalbreathe 16s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <img src={`${B}spirit-${archetypeKey}.avif`} alt={arch.animal} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%', filter: 'brightness(1.05) saturate(1.1)' }} />
+        </div>
+
+        <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 24, color: 'rgba(255,255,255,0.96)', margin: '0 0 4px', letterSpacing: '-0.015em', textShadow: `0 0 18px ${arch.color}44` }}>
+          {prenom ? prenom : arch.profil}
+        </h1>
+        {prenom && (
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13, color: `rgba(${arch.rgb},0.78)`, margin: '0 0 6px', letterSpacing: '-0.005em' }}>{arch.profil}</p>
+        )}
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.20em', textTransform: 'uppercase', margin: '0 0 18px', textShadow: `0 0 8px ${arch.color}33` }}>
+          {streak >= 2 ? `${streak} jours d'affilée` : `${totalDays} jour${totalDays > 1 ? 's' : ''} de présence`}
+        </p>
+        {mantra && (
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14.5, color: 'rgba(255,255,255,0.78)', margin: '0 auto 8px', lineHeight: 1.55, maxWidth: 320, textShadow: `0 0 14px ${arch.color}22` }}>« {mantra} »</p>
+        )}
+      </div>
+
+      {/* Sections */}
+      <div style={{ maxWidth: 440, margin: '32px auto 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
+
+        {/* Identité */}
+        <ProfilSectionCard arch={arch} label="Identité" title="Prénom · Mantra · Cocon" hint="Tes mots à toi" onClick={() => { haptic(6); try { playOpen() } catch {}; setShowPerso(true) }} glyph="◐" />
+
+        {/* Trace 30j */}
+        <ProfilSectionCard arch={arch} label="Ta trace" title="Constellation des 30 jours" hint="Une carte de ton temps" onClick={() => { haptic(6); try { playOpen() } catch {}; setShowTrace(true) }} glyph="✦" />
+
+        {/* Souvenirs */}
+        <ProfilSectionCard arch={arch} label="Tes éclats" title={souvenirs.length > 0 ? `${souvenirs.length} souvenir${souvenirs.length > 1 ? 's' : ''} glané${souvenirs.length > 1 ? 's' : ''}` : 'Tes éclats apparaîtront ici'} hint={souvenirs.length > 0 ? 'Touche pour les revoir' : 'Premier souvenir à venir'} onClick={() => { if (souvenirs.length > 0) { haptic(6); try { playOpen() } catch {}; setShowGallery(true) } }} glyph="◇" disabled={souvenirs.length === 0} />
+
+        {/* Souvenirs preview ribbon (si présents) */}
+        {recentSouvenirs.length > 0 && (
+          <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '4px 2px', WebkitOverflowScrolling: 'touch' }}>
+            {recentSouvenirs.map((s, i) => {
+              const lib = SOUVENIR_LIBRARY[s.type]
+              if (!lib) return null
+              return (
+                <button key={i} onClick={() => setSelectedSouvenir(s)} aria-label={lib.title} style={{ flexShrink: 0, width: 56, height: 56, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.42)`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Sora, sans-serif', fontSize: 18, color: arch.color, padding: 0, animation: `fadeIn 0.5s cubic-bezier(0,0,0.2,1) ${0.1 + i * 0.05}s both`, boxShadow: `0 2px 12px rgba(${arch.rgb},0.18)` }}>{lib.glyph}</button>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Partager */}
+        <ProfilSectionCard arch={arch} label="Partager" title="Offrir ton archétype" hint="À un·e proche, anonymement" onClick={() => { haptic(6); try { playOpen() } catch {}; setShowShare(true) }} glyph="↗" />
+
+        {/* Réglages */}
+        <ProfilSectionCard arch={arch} label="Réglages" title="Sons · Notifications · Reprendre" hint="Ce qui t'accompagne" onClick={() => { haptic(6); try { playOpen() } catch {}; setShowSettings(true) }} glyph="⚙" />
+
+        {/* Phrase de clôture */}
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 12.5, color: 'rgba(255,255,255,0.42)', textAlign: 'center', margin: '32px 0 0', lineHeight: 1.7, textShadow: `0 0 12px ${arch.color}22`, animation: 'phrasebreathe 38s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          Cet espace t'appartient.<br />Personne d'autre n'y entre.
+        </p>
+      </div>
+
+      {/* Modaux internes */}
+      {showPerso && <PersonalizationModal archetypeKey={archetypeKey} onClose={() => setShowPerso(false)} />}
+      {showTrace && <TraceScreen archetypeKey={archetypeKey} onClose={() => setShowTrace(false)} />}
+      {showGallery && <SouvenirsGalleryModal archetypeKey={archetypeKey} onClose={() => setShowGallery(false)} onSelect={(s) => { setShowGallery(false); setTimeout(() => setSelectedSouvenir(s), 200) }} />}
+      {showSettings && <SettingsScreen archetypeKey={archetypeKey} onClose={() => setShowSettings(false)} onRestart={onRestart} onRetakeQuiz={onRestart} />}
+      {showShare && <ShareArchetype archetypeKey={archetypeKey} onClose={() => setShowShare(false)} />}
+      {selectedSouvenir && <SouvenirDetailModal souvenir={selectedSouvenir} archetypeKey={archetypeKey} onClose={() => setSelectedSouvenir(null)} />}
+    </div>
+  )
+}
+
+function ProfilSectionCard({ arch, label, title, hint, onClick, glyph, disabled }) {
+  return (
+    <div onClick={disabled ? undefined : onClick} role={disabled ? undefined : "button"} tabIndex={disabled ? -1 : 0} style={{
+      cursor: disabled ? 'default' : 'pointer',
+      background: disabled ? 'rgba(255,255,255,0.03)' : `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(8,12,22,0.46) 100%)`,
+      border: `1px solid ${disabled ? 'rgba(255,255,255,0.08)' : `rgba(${arch.rgb},0.34)`}`,
+      borderRadius: 14,
+      padding: '16px 18px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 14,
+      backdropFilter: 'blur(10px)',
+      WebkitBackdropFilter: 'blur(10px)',
+      boxShadow: disabled ? 'none' : `0 4px 18px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.05)`,
+      opacity: disabled ? 0.55 : 1,
+      minHeight: 64,
+      transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1), background 240ms cubic-bezier(0.4,0,0.2,1)',
+    }}>
+      <div style={{ width: 34, height: 34, borderRadius: '50%', background: `rgba(${arch.rgb},0.16)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: 'Sora, sans-serif', fontSize: 15, color: arch.color, boxShadow: `0 0 10px rgba(${arch.rgb},0.18)` }}>{glyph}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 3px' }}>{label}</p>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14.5, color: 'rgba(255,255,255,0.92)', margin: '0 0 2px', letterSpacing: '-0.005em' }}>{title}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.50)', margin: 0, fontStyle: 'italic' }}>{hint}</p>
+      </div>
+      {!disabled && <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, flexShrink: 0, letterSpacing: '0.08em' }}>→</span>}
+    </div>
+  )
+}
+
 function CoconScreen({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const [visible, setVisible] = useState(false)
@@ -4551,7 +4711,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
 
       {/* ── Cocoon header ── */}
       {/* ── HERO SECTION — Vision originale mockup : silhouette + cosmos + greeting majestueux ── */}
-      <NeyaHeroSection archetypeKey={archetypeKey} prenom={prenom} jourComplète={jourComplète} dateStr={dateStr} mantra={mantra} onOpenPersonalize={() => setShowPersonalize(true)} onOpenShare={() => { haptic(6); setShowShare(true) }} onOpenSettings={() => { haptic(6); setShowSettings(true) }} />
+      <NeyaHeroSection archetypeKey={archetypeKey} prenom={prenom} jourComplète={jourComplète} dateStr={dateStr} mantra={mantra} onOpenPersonalize={() => setShowPersonalize(true)} onOpenShare={() => { haptic(6); setShowShare(true) }} onOpenSettings={() => { haptic(6); setShowSettings(true) }} onOpenProfil={() => { try { window.dispatchEvent(new CustomEvent('neya:open-profil')) } catch {} }} />
 
       <div style={{ textAlign: 'center', paddingBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', inset: '-30px -30px 0 -30px', background: `radial-gradient(ellipse 70% 50% at 50% 30%, rgba(${arch.rgb},0.09) 0%, transparent 70%)`, pointerEvents: 'none', animation: 'depthBreath 12s cubic-bezier(0.45,0,0.55,1) infinite' }} />
@@ -7064,7 +7224,7 @@ function WomanSilhouette({ archetypeKey = 'presence', size = 160 }) {
   )
 }
 
-function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra, onOpenPersonalize, onOpenShare, onOpenSettings }) {
+function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra, onOpenPersonalize, onOpenShare, onOpenSettings, onOpenProfil }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const h = new Date().getHours()
 
@@ -7122,8 +7282,8 @@ function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra,
         <button onClick={onOpenPersonalize} aria-label="Personnaliser" style={{ background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', color: `rgba(255,255,255,0.82)`, fontSize: 15, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>✎</button>
       </div>
 
-      {/* Silhouette femme de dos centrée bas */}
-      <div style={{ position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)', opacity: 0.94, animation: 'animalbreathe 14s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }}>
+      {/* Silhouette femme de dos centrée bas — TAP = entrer dans Profil immersif (espace personnel caché) */}
+      <div onClick={() => { try { haptic([4, 30, 4]) } catch {}; if (onOpenProfil) onOpenProfil() }} role="button" tabIndex={0} aria-label="Entrer dans ton espace personnel" style={{ position: 'absolute', bottom: -6, left: '50%', transform: 'translateX(-50%)', opacity: 0.94, animation: 'animalbreathe 14s cubic-bezier(0.45,0,0.55,1) infinite', cursor: 'pointer', zIndex: 4 }}>
         <WomanSilhouette archetypeKey={archetypeKey} size={130} />
       </div>
 
@@ -7412,6 +7572,68 @@ function VisualisationGuideeModal({ archetypeKey, onClose }) {
 // Combine : ressources d'aide officielles FR + ancres personnelles
 // (proche de confiance / mot qui m'apaise / souvenir lumineux).
 // Esthétique : papillons orange sur fond pastel, "Tu n'es pas seul·e".
+
+// ─── CrisisFab — Présence rassurante silencieuse ───────────────────
+// Bouton conditionnel intelligent : apparaît uniquement quand des
+// signaux émotionnels détectent un besoin (mood bas récent OR pattern
+// nocturne post-absence). Aucune couleur urgence-médicale, juste un
+// halo papillon ambre extrêmement subtil. Présent au-dessus du
+// BottomNav mais sous les modaux critiques.
+
+function CrisisFab({ visible, onTrigger }) {
+  if (!visible) return null
+  return (
+    <button onClick={() => { try { haptic([8, 40, 8]) } catch {}; onTrigger() }} aria-label="Espace SOS — si tu ne vas pas bien" style={{
+      position: 'fixed',
+      right: 14,
+      bottom: 'calc(env(safe-area-inset-bottom, 0px) + 84px)',
+      width: 40,
+      height: 40,
+      borderRadius: '50%',
+      background: 'rgba(255,180,140,0.10)',
+      border: '1px solid rgba(255,180,140,0.36)',
+      cursor: 'pointer',
+      padding: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backdropFilter: 'blur(10px)',
+      WebkitBackdropFilter: 'blur(10px)',
+      boxShadow: '0 4px 18px rgba(255,180,140,0.14), 0 0 24px rgba(255,180,140,0.08)',
+      animation: 'signaturePulse 8s cubic-bezier(0.45,0,0.55,1) infinite, fadeIn 2.2s cubic-bezier(0,0,0.2,1) both',
+      zIndex: 95,
+      color: 'rgba(255,210,180,0.78)',
+      fontSize: 17,
+      lineHeight: 1,
+    }}>✿</button>
+  )
+}
+
+// Évalue les conditions d'apparition du CrisisFab :
+// - Mood quick ≤2 dans les 24 dernières heures, OU
+// - Pattern nocturne : >7j absence + ouverture entre 22h et 5h
+function shouldShowCrisisFab() {
+  try {
+    const now = Date.now()
+    // Check 1: mood ≤2 récent
+    for (let i = 0; i < 2; i++) {
+      const d = new Date(now - i * 86400000)
+      const ds = d.toISOString().split('T')[0]
+      const raw = localStorage.getItem(`neya_mood_quick_${ds}`)
+      if (raw) {
+        const m = JSON.parse(raw)
+        if (m && typeof m.value === 'number' && m.value <= 2) return true
+      }
+    }
+    // Check 2: nocturne post-absence
+    const h = new Date().getHours()
+    if (h >= 22 || h < 5) {
+      const last = parseInt(localStorage.getItem('neya_last_visit') || '0', 10)
+      if (last && now - last > 7 * 86400000) return true
+    }
+  } catch {}
+  return false
+}
 
 function SOSModal({ archetypeKey, onClose }) {
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
@@ -8894,6 +9116,11 @@ export default function App() {
   })
   const [blackout, setBlackout] = useState(false)
   const goTimer = useRef(null)
+  // Crisis Mode global : déclenché par long-press logo OR CrisisFab
+  const [crisisOpen, setCrisisOpen] = useState(false)
+  const [showCrisisFab, setShowCrisisFab] = useState(() => shouldShowCrisisFab())
+  // Profil immersif : déclenché par tap silhouette Hero
+  const [profilOpen, setProfilOpen] = useState(false)
 
   useEffect(() => {
     const style = document.createElement('style')
@@ -9006,7 +9233,13 @@ export default function App() {
       if (days >= 3) setWelcomeBackDays(days)
       markVisitNow()
     } catch {}
-    return () => { cleanupPress && cleanupPress(); cleanupAudio && cleanupAudio() }
+    // Crisis Mode : écoute event global déclenché par long-press logo NÉYA
+    const crisisHandler = () => setCrisisOpen(true)
+    window.addEventListener('neya:crisis', crisisHandler)
+    // Profil immersif : écoute event tap silhouette Hero
+    const profilHandler = () => { try { haptic([4, 30, 4]) } catch {}; setProfilOpen(true) }
+    window.addEventListener('neya:open-profil', profilHandler)
+    return () => { cleanupPress && cleanupPress(); cleanupAudio && cleanupAudio(); window.removeEventListener('neya:crisis', crisisHandler); window.removeEventListener('neya:open-profil', profilHandler) }
   }, [])
 
   const go = useCallback((nextScreen, fn) => {
@@ -9048,6 +9281,15 @@ export default function App() {
         {welcomeBackDays >= 3 && screen === 'main' && archetype && (
           <WelcomeBackOverlay archetypeKey={archetype} days={welcomeBackDays} onDismiss={() => setWelcomeBackDays(0)} />
         )}
+
+        {/* Crisis Mode global — long-press logo OR FAB conditionnel */}
+        {crisisOpen && archetype && <SOSModal archetypeKey={archetype} onClose={() => setCrisisOpen(false)} />}
+        {showCrisisFab && screen === 'main' && !crisisOpen && !profilOpen && (
+          <CrisisFab visible onTrigger={() => setCrisisOpen(true)} />
+        )}
+
+        {/* Profil immersif — espace personnel caché (accès via tap silhouette Hero) */}
+        {profilOpen && archetype && <ProfilScreen archetypeKey={archetype} onClose={() => setProfilOpen(false)} onRestart={handleRestart} />}
 
         <div style={{ position: 'fixed', inset: 0, background: '#050810', zIndex: 9999, opacity: blackout ? 1 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: blackout ? 'all' : 'none' }} />
         {archetype && ARCHETYPES[archetype] && (
