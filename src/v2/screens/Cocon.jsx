@@ -9,6 +9,8 @@ import { useState, useEffect } from 'react';
 import { WORLDS } from '../worlds';
 import { getProfile, setProfile, patchProfile, haptic, ls } from '../state';
 import Button from '../../components/Button';
+import Carnet from './Carnet';
+import MoodTracker from './MoodTracker';
 
 const Q1_PILLS = [
   { value: 'pas-terrible',     label: 'Pas terrible' },
@@ -78,6 +80,8 @@ export default function Cocon() {
   const [tempMantra, setTempMantra] = useState(profile.mantra || '');
   const [editingAnswer, setEditingAnswer] = useState(null); // field key or null
   const [confirmReset, setConfirmReset] = useState(false);
+  const [carnetOpen, setCarnetOpen] = useState(false);
+  const [moodOpen, setMoodOpen] = useState(false);
 
   const placed = profile.coconPlaced || {};
   const totemKey = profile.totem || 'lion';
@@ -452,6 +456,55 @@ export default function Cocon() {
             : 'Ce cocon est le tien. Touche, pose, change.'}
         </div>
 
+        {/* Espaces — Humeur + Carnet (V1 features réinjectées) */}
+        <SectionTitle accent={totemWorld.accent} style={{ marginTop: 36 }}>Mes espaces</SectionTitle>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <button
+            data-press
+            onClick={() => { haptic(4); setMoodOpen(true); }}
+            style={{
+              appearance: 'none',
+              padding: '16px 14px',
+              background: 'rgba(255, 252, 245, 0.78)',
+              backdropFilter: 'blur(14px)',
+              WebkitBackdropFilter: 'blur(14px)',
+              border: '0.5px solid rgba(26, 26, 47, 0.10)',
+              borderRadius: 'var(--radius-md)',
+              color: 'var(--ink)',
+              textAlign: 'left',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              boxShadow: 'var(--shadow-soft)',
+            }}
+          >
+            <div style={{ fontSize: 22, color: totemWorld.accent, lineHeight: 1, marginBottom: 8 }}>◓</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 16, fontVariationSettings: 'var(--fraunces-italic-soft)', lineHeight: 1.2 }}>Mon humeur</div>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--content-secondary)', marginTop: 2 }}>Pose un instant ce que tu sens.</div>
+          </button>
+          <button
+            data-press
+            onClick={() => { haptic(4); setCarnetOpen(true); }}
+            style={{
+              appearance: 'none',
+              padding: '16px 14px',
+              background: 'rgba(255, 252, 245, 0.78)',
+              backdropFilter: 'blur(14px)',
+              WebkitBackdropFilter: 'blur(14px)',
+              border: '0.5px solid rgba(26, 26, 47, 0.10)',
+              borderRadius: 'var(--radius-md)',
+              color: 'var(--ink)',
+              textAlign: 'left',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              boxShadow: 'var(--shadow-soft)',
+            }}
+          >
+            <div style={{ fontSize: 22, color: totemWorld.accent, lineHeight: 1, marginBottom: 8 }}>✎</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 16, fontVariationSettings: 'var(--fraunces-italic-soft)', lineHeight: 1.2 }}>Mon carnet</div>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--content-secondary)', marginTop: 2 }}>Écrire ce qui traverse, pour toi seul·e.</div>
+          </button>
+        </div>
+
         {/* Mes réponses */}
         <SectionTitle accent={totemWorld.accent} style={{ marginTop: 36 }}>Mes réponses</SectionTitle>
         <PearlCard style={{ padding: '4px 0' }}>
@@ -587,6 +640,9 @@ export default function Cocon() {
           onConfirm={doReset}
         />
       )}
+
+      {moodOpen && <MoodTracker onClose={() => setMoodOpen(false)} />}
+      {carnetOpen && <Carnet onClose={() => setCarnetOpen(false)} />}
     </div>
   );
 }

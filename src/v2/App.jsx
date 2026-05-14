@@ -18,6 +18,8 @@ import CaVa from './screens/CaVa';
 import Meditation from './screens/Meditation';
 import Crise from './screens/Crise';
 import Habitudes from './screens/Habitudes';
+import EspaceVrai from './screens/EspaceVrai';
+import Bilan from './screens/Bilan';
 import Tour from './screens/Tour';
 import BottomNav from '../components/BottomNav';
 
@@ -28,6 +30,8 @@ export default function V2App() {
   const [meditationOpen, setMeditationOpen] = useState(false);
   const [criseOpen, setCriseOpen] = useState(false);
   const [habitudesOpen, setHabitudesOpen] = useState(false);
+  const [espaceVraiOpen, setEspaceVraiOpen] = useState(false);
+  const [bilanOpen, setBilanOpen] = useState(false);
   const [tourOpen, setTourOpen] = useState(() => onboarded && !ls.get('tour_seen', false));
   const [activeWorldKey, setActiveWorldKey] = useState(
     () => getProfile().progress.currentWorld || 'foret'
@@ -124,6 +128,8 @@ export default function V2App() {
             onOpenMeditation={handleOpenMeditation}
             onOpenWorld={handleOpenWorld}
             onOpenHabitudes={() => setHabitudesOpen(true)}
+            onOpenEspaceVrai={() => setEspaceVraiOpen(true)}
+            onOpenBilan={() => setBilanOpen(true)}
           />
         )}
         {activeTab === 'cocon' && <Cocon />}
@@ -183,6 +189,15 @@ export default function V2App() {
       )}
 
       {criseOpen && <Crise onClose={() => setCriseOpen(false)} />}
+
+      {espaceVraiOpen && (
+        <EspaceVrai
+          worldKey={activeWorldKey}
+          onClose={() => setEspaceVraiOpen(false)}
+        />
+      )}
+
+      {bilanOpen && <Bilan onClose={() => setBilanOpen(false)} />}
 
       {tourOpen && <Tour onClose={() => setTourOpen(false)} />}
     </div>

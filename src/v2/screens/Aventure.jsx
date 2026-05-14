@@ -55,7 +55,7 @@ const COCON_AMBIENT_POSITIONS = {
   portail: { glyph: '○', top: '26%',  left: '74%',  size: 16 },
 };
 
-export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitudes }) {
+export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitudes, onOpenEspaceVrai, onOpenBilan }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
   const [scrollY, setScrollY] = useState(0);
   const [celebrating, setCelebrating] = useState(null); // { worldKey } | null
@@ -433,6 +433,121 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           </div>
         </button>
       </div>
+
+      {/* Espace de présence — rituel signature V3 */}
+      <div style={{ padding: '0 22px 20px' }}>
+        <button
+          data-press={true}
+          onClick={onOpenEspaceVrai}
+          style={{
+            appearance: 'none',
+            display: 'block',
+            width: '100%',
+            textAlign: 'left',
+            background: 'rgba(255, 252, 245, 0.82)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            border: '0.5px solid rgba(26, 26, 47, 0.10)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '16px 18px',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            boxShadow: 'var(--shadow-soft)',
+            transition: 'all 240ms var(--ease-out)',
+          }}
+        >
+          <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
+            RITUEL · ESPACE VRAI
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontSize: 18,
+              fontWeight: 400,
+              lineHeight: 1.15,
+              color: 'var(--ink)',
+              marginTop: 4,
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+            }}
+          >
+            Pose-toi un instant.
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 12,
+              color: 'var(--content-secondary)',
+              lineHeight: 1.5,
+              marginTop: 2,
+            }}
+          >
+            5 minutes max. Aucune structure. Juste toi.
+          </div>
+        </button>
+      </div>
+
+      {/* Bilan du soir — conditional 18h+ */}
+      {(() => {
+        const h = new Date().getHours();
+        const isEvening = h >= 18 || h < 5;
+        const today = new Date().toISOString().split('T')[0];
+        const bilanHist = (typeof window !== 'undefined') ? (JSON.parse(localStorage.getItem('neya_v2_bilan_history') || '[]')) : [];
+        const seenToday = bilanHist.some((b) => b.date === today);
+        if (!isEvening || seenToday) return null;
+        return (
+          <div style={{ padding: '0 22px 20px' }}>
+            <button
+              data-press={true}
+              onClick={onOpenBilan}
+              style={{
+                appearance: 'none',
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
+                background: 'rgba(221, 212, 236, 0.42)',
+                backdropFilter: 'blur(14px)',
+                WebkitBackdropFilter: 'blur(14px)',
+                border: `0.5px solid ${WORLDS.lac.accentRgb}, 0.30)`,
+                borderRadius: 'var(--radius-lg)',
+                padding: '16px 18px',
+                cursor: 'pointer',
+                WebkitTapHighlightColor: 'transparent',
+                boxShadow: 'var(--shadow-soft)',
+              }}
+            >
+              <div className="neya-mark" style={{ color: WORLDS.lac.accent }}>
+                LE SOIR · BILAN
+              </div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontStyle: 'italic',
+                  fontSize: 18,
+                  fontWeight: 400,
+                  lineHeight: 1.15,
+                  color: 'var(--ink)',
+                  marginTop: 4,
+                  fontVariationSettings: 'var(--fraunces-italic-soft)',
+                }}
+              >
+                Tu veux poser ta journée&nbsp;?
+              </div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 12,
+                  color: 'var(--content-secondary)',
+                  lineHeight: 1.5,
+                  marginTop: 2,
+                }}
+              >
+                Cinq questions courtes. Pour toi seul·e.
+              </div>
+            </button>
+          </div>
+        );
+      })()}
 
       {/* Scrollable ascent — onScroll drives parallax */}
       <div
