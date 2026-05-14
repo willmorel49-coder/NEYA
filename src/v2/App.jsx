@@ -9,6 +9,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { isOnboarded, getProfile, ls, haptic } from './state';
 import { WORLDS } from './worlds';
+import Splash from './screens/Splash';
 import Onboarding from './screens/Onboarding';
 import Aventure from './screens/Aventure';
 import Cocon from './screens/Cocon';
@@ -21,6 +22,7 @@ import Tour from './screens/Tour';
 import BottomNav from '../components/BottomNav';
 
 export default function V2App() {
+  const [splashDone, setSplashDone] = useState(false);
   const [onboarded, setOnboarded] = useState(() => isOnboarded());
   const [activeTab, setActiveTab] = useState(() => ls.get('active_tab', 'aventure'));
   const [meditationOpen, setMeditationOpen] = useState(false);
@@ -89,6 +91,10 @@ export default function V2App() {
         : activeTab === 'communaute'
           ? WORLDS.communaute.accent
           : 'var(--cava-warm)';
+
+  if (!splashDone) {
+    return <Splash onContinue={() => setSplashDone(true)} />;
+  }
 
   if (!onboarded) {
     return <Onboarding onComplete={handleOnboardingComplete} />;

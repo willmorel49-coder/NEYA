@@ -77,6 +77,15 @@ const TOTEM_GLYPH = {
   lion: '◆', ours: '◇', aigle: '△', daim: '✦', baleine: '○', renard: '▽',
 };
 
+const SPIRIT_PHOTO = {
+  lion:    '/spirit-resilience.avif',
+  ours:    '/spirit-lumiere.avif',
+  aigle:   null,
+  daim:    '/spirit-presence.avif',
+  baleine: '/spirit-sagesse.avif',
+  renard:  null,
+};
+
 function formatTime(min) {
   if (min < 1) return 'à l’instant';
   if (min < 60) return `il y a ${min} min`;
@@ -272,15 +281,30 @@ export default function Communaute() {
                         </span>
                       )}
                     </span>
-                    <span
-                      style={{
-                        fontSize: 12,
-                        color: 'var(--content-tertiary)',
-                        lineHeight: 1,
-                      }}
-                    >
-                      {TOTEM_GLYPH[v.totem] || '◇'}
-                    </span>
+                    {SPIRIT_PHOTO[v.totem] ? (
+                      <img
+                        src={SPIRIT_PHOTO[v.totem]}
+                        alt=""
+                        style={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                          border: '0.5px solid rgba(26, 26, 47, 0.10)',
+                          verticalAlign: 'middle',
+                        }}
+                      />
+                    ) : (
+                      <span
+                        style={{
+                          fontSize: 12,
+                          color: 'var(--content-tertiary)',
+                          lineHeight: 1,
+                        }}
+                      >
+                        {TOTEM_GLYPH[v.totem] || '◇'}
+                      </span>
+                    )}
                   </div>
                   <span
                     style={{

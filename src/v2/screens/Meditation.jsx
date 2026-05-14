@@ -21,6 +21,73 @@ const TOTEM_HOME = {
   daim: 'lac', baleine: 'montagne', renard: 'communaute',
 };
 
+// Ambient audio presets — procedural Web Audio (no mp3 dependencies)
+const AUDIO_PRESETS = {
+  foret:      { name: 'Forêt',    desc: 'Vent dans les feuilles',   type: 'wind',  filter: 800,  q: 1 },
+  temple:     { name: 'Temple',   desc: 'Vent froid sur la pierre', type: 'wind',  filter: 400,  q: 0.7 },
+  oasis:      { name: 'Oasis',    desc: 'Brise tiède du désert',    type: 'wind',  filter: 1200, q: 0.8 },
+  lac:        { name: 'Lac',      desc: 'Eau qui clapote doucement',type: 'water', filter: 600,  q: 2 },
+  montagne:   { name: 'Montagne', desc: 'Vent d’altitude',          type: 'wind',  filter: 300,  q: 0.5 },
+  communaute: { name: 'Brume',    desc: 'Souffle de l’aube',        type: 'wind',  filter: 700,  q: 1 },
+};
+
+function createAmbience(preset) {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    const ctx = new Ctx();
+    const bufferSize = ctx.sampleRate * 3;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
+
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    src.loop = true;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = preset.filter;
+    filter.Q.value = preset.q;
+
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    src.start();
+    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 1.5);
+
+    let osc = null;
+    let oscGain = null;
+    if (preset.type === 'water') {
+      osc = ctx.createOscillator();
+      osc.frequency.value = 0.3;
+      oscGain = ctx.createGain();
+      oscGain.gain.value = 200;
+      osc.connect(oscGain);
+      oscGain.connect(filter.frequency);
+      osc.start();
+    }
+
+    return {
+      stop() {
+        try {
+          gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.6);
+        } catch (_) { /* noop */ }
+        setTimeout(() => {
+          try { src.stop(); } catch (_) { /* noop */ }
+          try { if (osc) osc.stop(); } catch (_) { /* noop */ }
+          try { ctx.close(); } catch (_) { /* noop */ }
+        }, 700);
+      },
+    };
+  } catch (_) {
+    return null;
+  }
+}
+
 export default function Meditation({ worldKey = 'foret', onClose }) {
   const profile = getProfile();
   const world = WORLDS[worldKey] || WORLDS.foret;
@@ -36,6 +103,36 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
   const [reachedShow, setReachedShow] = useState(false);
   const targetReachedRef = useRef(false);
   const popTimerRef = useRef(null);
+
+  // Ambient audio — OPT-IN only
+  const [audioOn, setAudioOn] = useState(false);
+  const audioEngineRef = useRef(null);
+  const audioPreset = AUDIO_PRESETS[worldKey] || AUDIO_PRESETS.foret;
+
+  const toggleAudio = () => {
+    haptic(3);
+    setAudioOn((on) => {
+      if (on) {
+        if (audioEngineRef.current) {
+          audioEngineRef.current.stop();
+          audioEngineRef.current = null;
+        }
+        return false;
+      }
+      const engine = createAmbience(audioPreset);
+      if (!engine) return false;
+      audioEngineRef.current = engine;
+      return true;
+    });
+  };
+
+  // Free audio resources on unmount
+  useEffect(() => () => {
+    if (audioEngineRef.current) {
+      audioEngineRef.current.stop();
+      audioEngineRef.current = null;
+    }
+  }, []);
 
   useEffect(() => { const t = setTimeout(() => setShow(true), 60); return () => clearTimeout(t); }, []);
 
@@ -71,6 +168,10 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
   useEffect(() => () => { if (popTimerRef.current) clearTimeout(popTimerRef.current); }, []);
 
   const handleClose = () => {
+    if (audioEngineRef.current) {
+      audioEngineRef.current.stop();
+      audioEngineRef.current = null;
+    }
     if (minutes >= 1) {
       const { wasNew } = completeMeditation(worldKey, minutes);
       haptic([8, 60, 8]);
@@ -156,6 +257,65 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             {world.name}
           </div>
         </div>
+      </div>
+
+      {/* Audio toggle — discrete floating icon, OPT-IN only */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 70px)',
+          right: 22,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          gap: 4,
+          zIndex: 5,
+        }}
+      >
+        <button
+          data-press
+          onClick={toggleAudio}
+          aria-label={audioOn ? 'Couper l’ambiance' : 'Activer l’ambiance'}
+          aria-pressed={audioOn}
+          style={{
+            appearance: 'none',
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: 'rgba(255, 252, 245, 0.82)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            border: '0.5px solid rgba(26, 26, 47, 0.10)',
+            color: audioOn ? world.accent : 'var(--content-tertiary)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 14,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            WebkitTapHighlightColor: 'transparent',
+            boxShadow: '0 4px 14px rgba(26, 26, 47, 0.08)',
+            transition: 'color 240ms var(--ease-out)',
+          }}
+        >
+          {audioOn ? '♫' : '♪'}
+        </button>
+        {audioOn && (
+          <div
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 10,
+              fontStyle: 'italic',
+              opacity: 0.6,
+              color: 'var(--ink)',
+              maxWidth: 120,
+              textAlign: 'right',
+              lineHeight: 1.3,
+            }}
+          >
+            {audioPreset.desc}
+          </div>
+        )}
       </div>
 
       {/* Title hint top */}

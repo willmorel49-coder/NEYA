@@ -44,6 +44,15 @@ const QUESTIONS = [
 
 const TERRACOTTA = '#c7674a';
 
+const SPIRIT_PHOTO = {
+  lion:    '/spirit-resilience.avif',
+  ours:    '/spirit-lumiere.avif',
+  aigle:   null,
+  daim:    '/spirit-presence.avif',
+  baleine: '/spirit-sagesse.avif',
+  renard:  null,
+};
+
 const TOTEMS = [
   { key: 'lion',    label: 'Lion blanc',    glyph: '◆', world: 'foret' },
   { key: 'ours',    label: 'Ours polaire',  glyph: '◇', world: 'temple' },
@@ -151,6 +160,66 @@ export default function Cocon() {
         }}
       >
         {/* Header */}
+        {SPIRIT_PHOTO[totemKey] && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: 18,
+              marginTop: 4,
+            }}
+          >
+            <div
+              style={{
+                position: 'relative',
+                width: 96,
+                height: 96,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {/* Halo radial */}
+              <div
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  width: 120,
+                  height: 120,
+                  borderRadius: '50%',
+                  background: `radial-gradient(circle, ${totemWorld.accentRgb}, 0.18) 0%, ${totemWorld.accentRgb}, 0) 70%)`,
+                  filter: 'blur(2px)',
+                  pointerEvents: 'none',
+                }}
+              />
+              {/* Avatar portrait */}
+              <div
+                style={{
+                  position: 'relative',
+                  width: 96,
+                  height: 96,
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  border: '0.5px solid var(--hairline-strong)',
+                  boxShadow: 'var(--shadow-product)',
+                  animation: 'totem-idle 4s var(--ease-in-out) infinite',
+                  background: 'var(--cream-light, #fffcf5)',
+                }}
+              >
+                <img
+                  src={SPIRIT_PHOTO[totemKey]}
+                  alt={currentTotem.label}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
         <div className="neya-mark" style={{ color: 'var(--content-tertiary)', marginBottom: 6 }}>
           MON COCON · {currentTotem.label.toUpperCase()}
         </div>
@@ -247,9 +316,29 @@ export default function Cocon() {
                   boxShadow: isActive ? '0 2px 12px rgba(26, 26, 47, 0.06)' : 'none',
                 }}
               >
-                <span style={{ fontSize: 22, color: isActive ? w.accent : 'var(--content-secondary)', lineHeight: 1 }}>
-                  {t.glyph}
-                </span>
+                {isActive && SPIRIT_PHOTO[t.key] ? (
+                  <span
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      display: 'inline-block',
+                      border: '0.5px solid rgba(26, 26, 47, 0.10)',
+                      lineHeight: 0,
+                    }}
+                  >
+                    <img
+                      src={SPIRIT_PHOTO[t.key]}
+                      alt=""
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
+                  </span>
+                ) : (
+                  <span style={{ fontSize: 22, color: isActive ? w.accent : 'var(--content-secondary)', lineHeight: 1 }}>
+                    {t.glyph}
+                  </span>
+                )}
                 <span
                   style={{
                     fontFamily: 'var(--font-ui)',

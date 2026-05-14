@@ -132,6 +132,25 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const totemHomeKey = TOTEM_HOME[totemKey] || 'foret';
   const totemHome = WORLDS[totemHomeKey];
   const totemGlyph = TOTEM_GLYPH[totemKey] || '◆';
+  const SPIRIT_PHOTO = {
+    lion:    '/spirit-resilience.avif',
+    ours:    '/spirit-lumiere.avif',
+    daim:    '/spirit-presence.avif',
+    baleine: '/spirit-sagesse.avif',
+    // aigle and renard fall back to glyph
+  };
+  const totemPhoto = SPIRIT_PHOTO[totemKey];
+
+  const MOTE_POSITIONS = [
+    { top: '12%', left: '18%', delay: 0    },
+    { top: '24%', left: '78%', delay: 1500 },
+    { top: '38%', left: '52%', delay: 800  },
+    { top: '46%', left: '14%', delay: 2200 },
+    { top: '58%', left: '66%', delay: 600  },
+    { top: '72%', left: '36%', delay: 1800 },
+    { top: '82%', left: '78%', delay: 1100 },
+    { top: '88%', left: '20%', delay: 400  },
+  ];
 
   return (
     <div
@@ -196,6 +215,29 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             );
           })}
       </div>
+
+      {/* Ambient motes — V1 magic, 8 particles drift en accent monde */}
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
+        {MOTE_POSITIONS.map((p, i) => (
+          <span
+            key={i}
+            style={{
+              position: 'absolute',
+              top: p.top,
+              left: p.left,
+              width: 4,
+              height: 4,
+              borderRadius: '50%',
+              background: currentWorld.accent,
+              opacity: 0.18,
+              animation: `particle-drift 12s var(--ease-in-out) infinite`,
+              animationDelay: `${p.delay}ms`,
+              transform: `translateY(${scrollY * -0.15}px)`,
+              transition: 'transform 0.1s linear',
+            }}
+          />
+        ))}
+      </div>
       {/* Header */}
       <div
         style={{
@@ -228,17 +270,52 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               )}
               .
             </span>
-            <span
-              style={{
-                fontSize: 20,
-                color: totemHome.accent,
-                animation: 'totem-idle 4s var(--ease-in-out) infinite',
-                display: 'inline-block',
-              }}
-              aria-label={`Totem ${totemKey}`}
-            >
-              {totemGlyph}
-            </span>
+            {totemPhoto ? (
+              <span
+                style={{
+                  position: 'relative',
+                  display: 'inline-block',
+                  width: 28,
+                  height: 28,
+                  animation: 'totem-idle 4s var(--ease-in-out) infinite',
+                }}
+                aria-label={`Totem ${totemKey}`}
+              >
+                <span
+                  style={{
+                    position: 'absolute',
+                    inset: -6,
+                    borderRadius: '50%',
+                    background: `radial-gradient(circle, ${totemHome.accent}55 0%, transparent 70%)`,
+                  }}
+                />
+                <img
+                  src={totemPhoto}
+                  alt={`Totem ${totemKey}`}
+                  style={{
+                    position: 'relative',
+                    width: 28,
+                    height: 28,
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '0.5px solid var(--hairline-strong)',
+                    boxShadow: 'var(--shadow-product)',
+                  }}
+                />
+              </span>
+            ) : (
+              <span
+                style={{
+                  fontSize: 20,
+                  color: totemHome.accent,
+                  animation: 'totem-idle 4s var(--ease-in-out) infinite',
+                  display: 'inline-block',
+                }}
+                aria-label={`Totem ${totemKey}`}
+              >
+                {totemGlyph}
+              </span>
+            )}
           </h1>
           {profile.mantra && (
             <div
