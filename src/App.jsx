@@ -2472,47 +2472,47 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
 
         <div style={{ width: 1, height: 32, background: `linear-gradient(180deg, transparent, ${arch.color}44, transparent)`, borderRadius: 1, margin: '0 auto', animation: 'worldglow 6s cubic-bezier(0.45,0,0.55,1) infinite' }} />
 
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(239,233,220,0.94)', letterSpacing: '0.3em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease, text-shadow 1.5s ease', textShadow: typingDone ? `0 0 24px ${arch.color}aa, 0 0 52px ${arch.color}55, 0 2px 10px rgba(0,0,0,0.6)` : `0 0 20px ${arch.color}88, 0 0 44px ${arch.color}44, 0 2px 8px rgba(0,0,0,0.55)`, animation: typingDone ? 'milestoneGlow 4.2s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 11, color: 'rgba(239,233,220,0.94)', letterSpacing: '0.42em', textTransform: 'uppercase', margin: 0, opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease, text-shadow 1.5s ease', textShadow: typingDone ? `0 0 24px ${arch.color}aa, 0 0 52px ${arch.color}55, 0 2px 10px rgba(0,0,0,0.6)` : `0 0 20px ${arch.color}88, 0 0 44px ${arch.color}44, 0 2px 8px rgba(0,0,0,0.55)`, animation: typingDone ? 'milestoneGlow 4.2s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>
           {{ resilience: 'Espace de feu', presence: 'Espace de présence', sagesse: 'Espace de silence', lumiere: 'Espace de lumière' }[archetypeKey] || 'Espace de présence'}
         </p>
-        <div style={{ position: 'relative', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 'clamp(17px, 4.5vw, 22px)', color: 'rgba(239,233,220,0.9)', lineHeight: 1.72, fontStyle: 'italic', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 340, animation: typingDone ? 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>
+        <div style={{ position: 'relative', fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', fontSize: 'clamp(24px, 6.5vw, 32px)', color: 'rgba(239,233,220,0.94)', lineHeight: 1.32, letterSpacing: '-0.030em', opacity: showText ? 1 : 0, transition: 'opacity 0.9s ease 0.2s', maxWidth: 360, animation: typingDone ? 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>
           {showText && <TypingText text={`"${intention}"`} delay={100} speed={44} onDone={() => { setTypingDone(true); try { crossfadeAmbient('monCoeur', 6) } catch {} }} cursorColor={arch.color} />}
           {typingDone && [0,1,2,3].map(j => (
             <div key={j} style={{ position: 'absolute', bottom: '100%', left: `${22 + j * 18}%`, width: 4, height: 4, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.1 + j * 0.22}s ease-out ${j * 0.12}s both`, pointerEvents: 'none', boxShadow: `0 0 6px ${arch.color}bb` }} />
           ))}
         </div>
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, fontStyle: 'italic', color: '#EFE9DC', margin: 0, letterSpacing: '0.06em', textShadow: typingDone ? `0 0 28px ${arch.color}44` : `0 0 20px ${arch.color}2a`, transition: 'text-shadow 2.5s ease', animation: showText ? (typingDone ? 'fadeIn 1.5s ease 3s both, solbreathe 22s cubic-bezier(0.45,0,0.55,1) infinite 4.5s' : 'fadeIn 1.5s ease 3s both, solbreathe 22s cubic-bezier(0.45,0,0.55,1) infinite 4.5s') : 'none' }}>
+        <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 18, color: '#EFE9DC', margin: 0, letterSpacing: '-0.005em', textShadow: typingDone ? `0 0 28px ${arch.color}44` : `0 0 20px ${arch.color}2a`, transition: 'text-shadow 2.5s ease', animation: showText ? (typingDone ? 'fadeIn 1.5s ease 3s both, solbreathe 22s cubic-bezier(0.45,0,0.55,1) infinite 4.5s' : 'fadeIn 1.5s ease 3s both, solbreathe 22s cubic-bezier(0.45,0,0.55,1) infinite 4.5s') : 'none' }}>
           Tu n'es pas seul·e.
         </p>
         {showSecond && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `${arch.color}66`, letterSpacing: '0.10em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 1.8s ease forwards, phrasebreathe 22s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33` }}>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 16, color: `${arch.color}88`, letterSpacing: '-0.005em', margin: 0, animation: 'fadeIn 1.8s ease forwards, phrasebreathe 22s ease-in-out 2s infinite', textShadow: `0 0 14px ${arch.color}33`, maxWidth: 320, lineHeight: 1.55 }}>
             {secondaryIntention}
           </p>
         )}
         {showAccompany && (
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12, color: `rgba(255,255,255,0.22)`, letterSpacing: '0.04em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 2.2s ease forwards, phrasebreathe 36s ease-in-out 3s infinite', maxWidth: 280, lineHeight: 1.7, }}>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 14, color: `rgba(255,255,255,0.32)`, letterSpacing: '-0.005em', margin: 0, animation: 'fadeIn 2.2s ease forwards, phrasebreathe 36s ease-in-out 3s infinite', maxWidth: 280, lineHeight: 1.7 }}>
             {ESPACEACCOMPANY[archetypeKey]}
           </p>
         )}
         {showPatience && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: `${arch.color}55`, letterSpacing: '0.08em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3s ease forwards, phrasebreathe 36s ease-in-out 4s infinite', maxWidth: 260, lineHeight: 1.75, textAlign: 'center', }}>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 16, color: `${arch.color}66`, letterSpacing: '-0.005em', margin: 0, animation: 'fadeIn 3s ease forwards, phrasebreathe 36s ease-in-out 4s infinite', maxWidth: 280, lineHeight: 1.7, textAlign: 'center' }}>
             {(PATIENCE_TEXTS[archetypeKey] || [])[textVariantIdx] || PATIENCE_TEXTS[archetypeKey]?.[0]}
           </p>
         )}
         {showEncoreIci && (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 10, color: typingDone ? `${arch.color}44` : `${arch.color}22`, letterSpacing: '0.28em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 3.5s ease forwards, phrasebreathe 38s ease-in-out 4s infinite', textShadow: typingDone ? `0 0 22px ${arch.color}44` : `0 0 14px ${arch.color}18`, transition: 'color 1.8s ease, text-shadow 1.8s ease' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 10, color: typingDone ? `${arch.color}55` : `${arch.color}28`, letterSpacing: '0.42em', textTransform: 'uppercase', margin: 0, animation: 'fadeIn 3.5s ease forwards, phrasebreathe 38s ease-in-out 4s infinite', textShadow: typingDone ? `0 0 22px ${arch.color}44` : `0 0 14px ${arch.color}18`, transition: 'color 1.8s ease, text-shadow 1.8s ease' }}>
             {{ resilience: 'encore là, en feu', presence: 'encore présent·e', sagesse: 'encore dans le silence', lumiere: 'encore lumineux·se' }[archetypeKey] || 'encore ici'}
           </p>
         )}
         {showDeep && (
           <>
             <div style={{ width: 20, height: 1, background: `${arch.color}33`, borderRadius: 1, animation: 'fadeIn 4s ease forwards, worldglow 14s ease-in-out 6s infinite' }} />
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `${arch.color}55`, letterSpacing: '0.05em', margin: 0, fontStyle: 'italic', animation: 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite', maxWidth: 280, lineHeight: 1.8, textAlign: 'center', }}>
+            <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 16, color: `${arch.color}66`, letterSpacing: '-0.005em', margin: 0, animation: 'fadeIn 5s ease forwards, phrasebreathe 44s ease-in-out 6s infinite', maxWidth: 300, lineHeight: 1.75, textAlign: 'center' }}>
               {(DEEP_TEXTS[archetypeKey] || [])[textVariantIdx] || DEEP_TEXTS[archetypeKey]?.[0]}
             </p>
           </>
         )}
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}55`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '0.15em', animation: 'fadeIn 1s ease 4s both, solbreathe 22s ease-in-out 5s infinite', textShadow: `0 0 16px ${arch.color}33` }}>
+        <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 14, color: `${arch.color}66`, margin: 0, position: 'absolute', bottom: 'calc(52px + env(safe-area-inset-bottom, 0px))', letterSpacing: '-0.005em', animation: 'fadeIn 1s ease 4s both, solbreathe 22s ease-in-out 5s infinite', textShadow: `0 0 16px ${arch.color}33` }}>
           {(() => {
             const h = new Date().getHours()
             const night = { resilience: 'que le feu garde ta nuit', presence: 'bonne nuit, l\'eau veille', sagesse: 'la brume t\'enveloppe cette nuit', lumiere: 'que ta lumière guide ta nuit' }[archetypeKey] || 'bonne nuit'
@@ -3832,68 +3832,71 @@ function WorldUnlockModal({ worldKey, onClose }) {
 
 // ─── GRAND VOYAGE SCREEN ──────────────────────────────────────────────────────
 
-function WorldCard({ worldKey, archetypeKey, isUnlocked, isHome, daysToUnlock, onEnter }) {
+const WORLD_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
+
+function WorldCard({ worldKey, archetypeKey, isUnlocked, isHome, daysToUnlock, onEnter, idx = 0 }) {
   const w = WORLDS[worldKey]
   const fragmentCount = isUnlocked ? getWorldRealFragmentCount(worldKey) : 0
   const visibleFragments = Math.min(fragmentCount, w.fragments.length)
   const latestFragment = visibleFragments > 0 ? w.fragments[visibleFragments - 1] : null
+  const roman = WORLD_ROMAN[idx] || WORLD_ROMAN[0]
 
   return (
     <div onClick={() => { if (isUnlocked) onEnter(worldKey); else { haptic([6,30,6]) } }}
       style={{
-        position: 'relative', borderRadius: 18, overflow: 'hidden', marginBottom: 14,
-        minHeight: 160, cursor: isUnlocked ? 'pointer' : 'default',
-        border: isHome ? `1.5px solid ${w.color}88` : isUnlocked ? `1px solid ${w.color}44` : '1px solid rgba(255,255,255,0.08)',
-        opacity: isUnlocked ? 1 : 0.55,
-        boxShadow: isHome ? `0 0 32px rgba(${w.rgb},0.18), 0 4px 24px rgba(0,0,0,0.5)` : isUnlocked ? `0 4px 16px rgba(0,0,0,0.4)` : 'none',
-        animation: isHome ? 'fadeIn 0.5s ease both' : 'fadeIn 0.6s ease 0.1s both',
+        position: 'relative', borderRadius: 18, overflow: 'hidden', marginBottom: 16,
+        minHeight: 220, cursor: isUnlocked ? 'pointer' : 'default',
+        border: isHome ? `1px solid ${w.color}66` : isUnlocked ? '1px solid rgba(239,233,220,0.12)' : '1px solid rgba(239,233,220,0.06)',
+        opacity: isUnlocked ? 1 : 0.62,
+        boxShadow: isHome ? `0 10px 40px rgba(0,0,0,0.55), 0 0 32px rgba(${w.rgb},0.16)` : isUnlocked ? '0 8px 30px rgba(0,0,0,0.48)' : '0 4px 16px rgba(0,0,0,0.30)',
+        animation: 'fadeIn 0.55s ease both',
       }}>
-      {/* Background image */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${w.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: isUnlocked ? 'none' : 'grayscale(0.8) brightness(0.4)', transition: 'filter 0.5s ease' }} />
-      {/* Overlay */}
-      <div style={{ position: 'absolute', inset: 0, background: isHome ? `linear-gradient(135deg, rgba(5,8,16,0.62), rgba(${w.rgb},0.18))` : 'linear-gradient(135deg, rgba(5,8,16,0.72), rgba(5,8,16,0.50))' }} />
-      {/* Content */}
-      <div style={{ position: 'relative', zIndex: 1, padding: '18px 18px 16px', height: '100%', display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {/* Header row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: isUnlocked ? 'rgba(239,233,220,0.96)' : 'rgba(239,233,220,0.62)', letterSpacing: '0.01em', animation: isHome ? 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}>{w.name}</div>
-            <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: isUnlocked ? `rgba(${w.rgb},0.95)` : 'rgba(239,233,220,0.50)', letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: 3, textShadow: '0 1px 8px rgba(0,0,0,0.5)' }}>{w.sub}</div>
-          </div>
-          <div style={{ flexShrink: 0, width: 42, height: 42, borderRadius: '50%', background: isUnlocked ? `radial-gradient(circle, rgba(${w.rgb},0.32) 0%, transparent 70%)` : 'transparent', border: isUnlocked ? `1px solid rgba(${w.rgb},0.44)` : '1px solid rgba(255,255,255,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isUnlocked ? 1 : 0.25, animation: isHome ? 'presencePulse 6s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', boxShadow: isHome ? `0 0 18px rgba(${w.rgb},0.25)` : 'none' }}>
-            <span style={{ fontSize: 18, filter: isUnlocked ? `drop-shadow(0 0 8px rgba(${w.rgb},0.80))` : 'none' }}>{{ brume: '🌫', feu: '🔥', foret: '🌿', eau: '💧', cosmos: '✨', vide: '🌀' }[worldKey] || '✦'}</span>
-          </div>
-        </div>
-        {/* Status */}
+      {/* Full-bleed monde photo */}
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${B}${w.bg})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: isUnlocked ? 'saturate(0.95) contrast(1.04)' : 'grayscale(0.9) brightness(0.45)', transition: 'filter 0.5s ease' }} />
+      {/* Cinematographic gradient overlay */}
+      <div style={{ position: 'absolute', inset: 0, background: isUnlocked
+        ? `linear-gradient(180deg, rgba(5,8,16,0.20) 0%, rgba(5,8,16,0.35) 45%, rgba(5,8,16,0.82) 100%), linear-gradient(135deg, rgba(${w.rgb},0.10), transparent 60%)`
+        : 'linear-gradient(180deg, rgba(5,8,16,0.55) 0%, rgba(5,8,16,0.86) 100%)' }} />
+      {/* SVG grain */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.11, mixBlendMode: 'overlay', pointerEvents: 'none' }} xmlns="http://www.w3.org/2000/svg">
+        <filter id={`grain-${worldKey}`}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.92" numOctaves="2" stitchTiles="stitch" />
+          <feColorMatrix values="0 0 0 0 0.94  0 0 0 0 0.91  0 0 0 0 0.86  0 0 0 0.65 0" />
+        </filter>
+        <rect width="100%" height="100%" filter={`url(#grain-${worldKey})`} />
+      </svg>
+      {/* Caps label top-right : Monde I, II, ... */}
+      <div style={{ position: 'absolute', top: 16, right: 18, zIndex: 2, display: 'flex', alignItems: 'center', gap: 12 }}>
+        {isHome && (
+          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, fontWeight: 500, color: w.color, letterSpacing: '0.40em', textTransform: 'uppercase', textShadow: '0 1px 6px rgba(0,0,0,0.7)' }}>Natal</span>
+        )}
+        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, fontWeight: 500, color: isUnlocked ? 'rgba(239,233,220,0.80)' : 'rgba(239,233,220,0.42)', letterSpacing: '0.42em', textTransform: 'uppercase', textShadow: '0 1px 6px rgba(0,0,0,0.7)' }}>Monde {roman}</span>
+      </div>
+      {/* Bottom-left editorial block */}
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 2, padding: '20px 20px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 70, "WONK" 1', fontSize: 'clamp(26px, 7.2vw, 32px)', color: isUnlocked ? 'rgba(239,233,220,0.98)' : 'rgba(239,233,220,0.62)', letterSpacing: '-0.030em', lineHeight: 1.02, textShadow: '0 2px 16px rgba(0,0,0,0.7)' }}>{w.name}</div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, color: isUnlocked ? `rgba(${w.rgb},0.92)` : 'rgba(239,233,220,0.50)', letterSpacing: '0.34em', textTransform: 'uppercase', textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>{w.sub}</div>
+
         {isUnlocked ? (
           <>
-            {isHome && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <div style={{ width: 6, height: 6, borderRadius: '50%', background: w.color, boxShadow: `0 0 8px ${w.color}`, animation: 'none' }} />
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: w.color, letterSpacing: '0.14em', textTransform: 'uppercase', animation: 'milestoneGlow 6s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: '0 1px 8px rgba(0,0,0,0.55)' }}>Ton monde natal</span>
-              </div>
-            )}
             {latestFragment && (
-              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(239,233,220,0.72)', lineHeight: 1.6, margin: 0, fontStyle: 'italic', textShadow: '0 1px 8px rgba(0,0,0,0.55)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>"{latestFragment}"</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(239,233,220,0.80)', lineHeight: 1.55, margin: '4px 0 0', fontStyle: 'italic', letterSpacing: '0.005em', textShadow: '0 1px 10px rgba(0,0,0,0.7)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>« {latestFragment} »</p>
             )}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 6 }}>
               <div style={{ display: 'flex', gap: 5 }}>
                 {w.fragments.map((_, i) => (
-                  <div key={i} style={{ width: i < visibleFragments ? 8 : 6, height: i < visibleFragments ? 8 : 6, borderRadius: '50%', background: i < visibleFragments ? w.color : 'rgba(255,255,255,0.12)', boxShadow: i < visibleFragments ? `0 0 6px ${w.color}88` : 'none', transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 360ms cubic-bezier(0,0,0.2,1), color 240ms cubic-bezier(0.4,0,0.2,1)', animation: i < visibleFragments ? 'seedPulse 4s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', animationDelay: `${i * 0.4}s` }} />
+                  <div key={i} style={{ width: i < visibleFragments ? 7 : 5, height: i < visibleFragments ? 7 : 5, borderRadius: '50%', background: i < visibleFragments ? w.color : 'rgba(239,233,220,0.18)', boxShadow: i < visibleFragments ? `0 0 6px ${w.color}88` : 'none', transition: 'background 240ms cubic-bezier(0.4,0,0.2,1), box-shadow 360ms cubic-bezier(0,0,0.2,1)' }} />
                 ))}
               </div>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: `rgba(${w.rgb},0.95)`, letterSpacing: '0.12em', animation: 'phrasebreathe 12s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: '0 1px 8px rgba(0,0,0,0.55)' }}>Explorer →</span>
+              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, color: `rgba(${w.rgb},0.95)`, letterSpacing: '0.30em', textTransform: 'uppercase', textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>Explorer →</span>
             </div>
           </>
         ) : (
-          <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 13, opacity: 0.45 }}>🔒</span>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(239,233,220,0.62)', letterSpacing: '0.06em', textShadow: '0 1px 8px rgba(0,0,0,0.55)' }}>Débloque dans {daysToUnlock} jours de pratique</span>
+          <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, color: 'rgba(239,233,220,0.55)', letterSpacing: '0.34em', textTransform: 'uppercase', textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>Verrouillé · {daysToUnlock} j</span>
           </div>
         )}
       </div>
-      {/* Home world glow ring */}
-      {isHome && <div style={{ position: 'absolute', inset: -1, borderRadius: 18, border: `1px solid ${w.color}44`, pointerEvents: 'none', animation: 'worldglow 6s cubic-bezier(0.45,0,0.55,1) infinite' }} />}
     </div>
   )
 }
@@ -3972,9 +3975,10 @@ function GrandVoyageScreen({ archetypeKey }) {
   return (
     <div style={{ width: '100%', height: '100%', overflowY: 'auto', padding: '0 20px', paddingBottom: 100, paddingTop: 'calc(env(safe-area-inset-top) + 22px)', opacity: vis ? 1 : 0, transition: 'opacity 0.4s ease' }}>
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 24, color: 'rgba(239,233,220,0.90)', letterSpacing: '-0.01em', animation: 'phrasebreathe 28s cubic-bezier(0.45,0,0.55,1) infinite' }}>Mon Grand Voyage</div>
-        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 6, lineHeight: 1.5, letterSpacing: '0.02em' }}>
+      <div style={{ marginBottom: 26 }}>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, color: 'rgba(239,233,220,0.52)', letterSpacing: '0.38em', textTransform: 'uppercase', marginBottom: 10 }}>Atlas intérieur</div>
+        <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 'clamp(34px, 9.5vw, 44px)', color: 'rgba(239,233,220,0.96)', letterSpacing: '-0.034em', lineHeight: 1.0 }}>Mon Grand Voyage</div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(239,233,220,0.42)', marginTop: 12, lineHeight: 1.55, letterSpacing: '0.005em' }}>
           {unlockedWorlds.length === 6 ? 'Tous les mondes t\'ont été révélés.' : `${unlockedWorlds.length} monde${unlockedWorlds.length > 1 ? 's' : ''} découvert${unlockedWorlds.length > 1 ? 's' : ''} · ${daysToNext} jour${daysToNext > 1 ? 's' : ''} vers le prochain`}
         </div>
       </div>
@@ -4028,6 +4032,7 @@ function GrandVoyageScreen({ archetypeKey }) {
             isUnlocked={isUnlocked}
             isHome={isHome}
             daysToUnlock={daysToUnlock}
+            idx={idx}
             onEnter={setSelectedWorld}
           />
         )
@@ -4084,25 +4089,24 @@ function BottomNav({ tab, onChange, color, badges = {}, onOpenCocon }) {
     const active = tab === t.key
     const badged = !active && !!badges[t.key]
     return (
-      <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '13px 0 11px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, position: 'relative', minHeight: 62 }}>
-        {active && <div style={{ position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)', width: 44, height: 44, borderRadius: '50%', background: `radial-gradient(circle, ${color}22 0%, transparent 70%)`, pointerEvents: 'none', animation: 'presencePulse 4.5s cubic-bezier(0.45,0,0.55,1) infinite' }} />}
-        <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.25s ease', animation: active ? 'animalbreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>
+      <button key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, padding: '14px 0 14px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, position: 'relative', minHeight: 58 }}>
+        <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: active ? 'scale(1.04)' : 'scale(1)', transition: 'transform 320ms cubic-bezier(0.32,0.72,0,1), opacity 320ms cubic-bezier(0.32,0.72,0,1)', opacity: active ? 1 : 0.58 }}>
           <t.Icon active={active} color={color} />
           {badged && <span style={{ position: 'absolute', top: -1, right: -2, width: 5, height: 5, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}`, opacity: 0.85 }} />}
         </span>
-        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.10em', color: active ? color : 'rgba(239,233,220,0.42)', transition: 'color 0.25s ease', textTransform: 'uppercase' }}>{t.label}</span>
-        <div style={{ width: active ? 22 : 0, height: 2, borderRadius: 1, background: active ? `linear-gradient(90deg, ${color}88, ${color}, ${color}88)` : 'transparent', transition: 'width 0.3s ease', marginTop: 2, boxShadow: active ? `0 0 8px ${color}` : 'none' }} />
+        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, letterSpacing: '0.34em', color: active ? 'rgba(239,233,220,0.94)' : 'rgba(239,233,220,0.38)', transition: 'color 320ms cubic-bezier(0.32,0.72,0,1)', textTransform: 'uppercase' }}>{t.label}</span>
+        <div style={{ position: 'absolute', bottom: 7, left: '50%', transform: 'translateX(-50%)', width: active ? 22 : 0, height: 1, borderRadius: 1, background: active ? color : 'transparent', transition: 'width 360ms cubic-bezier(0.32,0.72,0,1)', opacity: active ? 0.88 : 0 }} />
       </button>
     )
   }
   return (
-    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.62) 0%, rgba(5,8,16,0.94) 100%)', backdropFilter: 'blur(22px)', WebkitBackdropFilter: 'blur(22px)', borderTop: `1px solid ${color}18`, boxShadow: '0 -12px 40px rgba(5,8,16,0.72), 0 -1px 0 rgba(255,255,255,0.04)', display: 'flex', alignItems: 'flex-end', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div style={{ position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)', left: 14, right: 14, zIndex: 100, background: 'rgba(8,12,28,0.62)', backdropFilter: 'blur(32px) saturate(140%)', WebkitBackdropFilter: 'blur(32px) saturate(140%)', border: '1px solid rgba(239,233,220,0.10)', borderRadius: 100, boxShadow: '0 24px 56px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', paddingLeft: 6, paddingRight: 6 }}>
       {/* Onglets gauche */}
       {leftTabs.map(renderTab)}
 
       {/* Bouton central — Logo NÉYA → Cocon (sanctuaire/menu hub) */}
-      <button onClick={() => { try { haptic([6, 40, 6]) } catch {}; if (onOpenCocon) onOpenCocon() }} aria-label="Ouvrir ton Cocon" style={{ flex: 1, padding: 0, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', minHeight: 62 }}>
-        <div style={{ position: 'absolute', top: -22, left: '50%', transform: 'translateX(-50%)', width: 62, height: 62, borderRadius: '50%', background: `radial-gradient(circle, ${color}22 0%, rgba(5,8,16,0.96) 70%)`, border: `1px solid ${color}66`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 28px rgba(0,0,0,0.55), 0 0 22px ${color}33, inset 0 1px 0 rgba(255,255,255,0.06)`, animation: 'animalbreathe 9s cubic-bezier(0.45,0,0.55,1) infinite', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+      <button onClick={() => { try { haptic([6, 40, 6]) } catch {}; if (onOpenCocon) onOpenCocon() }} aria-label="Ouvrir ton Cocon" style={{ flex: 1, padding: 0, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', minHeight: 58 }}>
+        <div style={{ position: 'absolute', top: -28, left: '50%', transform: 'translateX(-50%)', width: 64, height: 64, borderRadius: '50%', background: `radial-gradient(circle, ${color}1c 0%, rgba(5,8,16,0.96) 70%)`, border: `1px solid rgba(239,233,220,0.18)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 18px 42px rgba(0,0,0,0.68), 0 0 28px ${color}33, inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.45)`, animation: 'animalbreathe 12s cubic-bezier(0.45,0,0.55,1) infinite', backdropFilter: 'blur(16px) saturate(140%)', WebkitBackdropFilter: 'blur(16px) saturate(140%)' }}>
           <svg width="30" height="28" viewBox="0 0 44 40" fill="none" style={{ filter: `drop-shadow(0 0 10px ${color}88)` }}>
             <path d="M22 4 Q19 12 19 22 Q22 26 25 22 Q25 12 22 4 Z" stroke="rgba(239,233,220,0.95)" strokeWidth="1.6" strokeLinejoin="round" fill={`${color}28`}/>
             <path d="M22 22 Q14 18 9 26 Q14 30 22 26 Z" stroke="rgba(239,233,220,0.88)" strokeWidth="1.5" strokeLinejoin="round" fill={`${color}1c`}/>
@@ -4111,7 +4115,7 @@ function BottomNav({ tab, onChange, color, badges = {}, onOpenCocon }) {
             <path d="M22 24 Q32 22 40 32 Q30 34 22 28 Z" stroke="rgba(239,233,220,0.62)" strokeWidth="1.3" strokeLinejoin="round" fill="none"/>
           </svg>
         </div>
-        <span style={{ marginTop: 42, fontFamily: 'Inter, sans-serif', fontSize: 10, letterSpacing: '0.18em', color: `${color}cc`, textTransform: 'uppercase' }}>Cocon</span>
+        <span style={{ marginTop: 38, fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, letterSpacing: '0.40em', color: 'rgba(239,233,220,0.72)', textTransform: 'uppercase' }}>Cocon</span>
       </button>
 
       {/* Onglets droite */}
@@ -4320,20 +4324,20 @@ function BreathingModal({ archetypeKey, onClose }) {
         <button data-press="true" onClick={onClose} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 22, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '9px 18px', color: 'rgba(239,233,220,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 10, minHeight: 44 }} aria-label="Fermer">Fermer</button>
         <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 72px) 28px 40px', display: 'flex', flexDirection: 'column', gap: 22, minHeight: '100%', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Exercice de souffle</p>
-            <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 26, color: '#EFE9DC', margin: 0, lineHeight: 1.22, textShadow: `0 0 32px ${arch.color}33` }}>{tech.name}</h2>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: `rgba(${arch.rgb},0.85)`, margin: '8px 0 0', letterSpacing: '0.05em' }}>{tech.subtitle}</p>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 11, color: arch.color, letterSpacing: '0.42em', textTransform: 'uppercase', margin: '0 0 18px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>Exercice de souffle</p>
+            <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 'clamp(32px, 8.5vw, 40px)', color: '#EFE9DC', margin: 0, lineHeight: 1.08, letterSpacing: '-0.030em', textShadow: `0 0 32px ${arch.color}33` }}>{tech.name}</h2>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 11, color: `rgba(${arch.rgb},0.78)`, margin: '14px 0 0', letterSpacing: '0.36em', textTransform: 'uppercase' }}>{tech.subtitle}</p>
           </div>
 
-          <div style={{ background: `rgba(${arch.rgb},0.08)`, border: `1px solid ${arch.color}33`, borderRadius: 14, padding: '18px 18px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ background: `rgba(${arch.rgb},0.06)`, border: `1px solid ${arch.color}26`, borderRadius: 18, padding: '22px 22px', display: 'flex', flexDirection: 'column', gap: 18, backdropFilter: 'blur(28px) saturate(140%)', WebkitBackdropFilter: 'blur(28px) saturate(140%)' }}>
             <div>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 8px' }}>Ce que tu vas ressentir</p>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.86)', margin: 0, lineHeight: 1.6 }}>{tech.benefit}</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 10, color: arch.color, letterSpacing: '0.36em', textTransform: 'uppercase', margin: '0 0 10px' }}>Ce que tu vas ressentir</p>
+              <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 17, color: 'rgba(239,233,220,0.88)', margin: 0, lineHeight: 1.65, letterSpacing: '-0.005em' }}>{tech.benefit}</p>
             </div>
             <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}33, transparent)` }} />
             <div>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 8px' }}>Idéal pour</p>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.72)', margin: 0, lineHeight: 1.55 }}>{tech.bestFor}</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 10, color: arch.color, letterSpacing: '0.36em', textTransform: 'uppercase', margin: '0 0 10px' }}>Idéal pour</p>
+              <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 16, color: 'rgba(239,233,220,0.74)', margin: 0, lineHeight: 1.6, letterSpacing: '-0.005em' }}>{tech.bestFor}</p>
             </div>
           </div>
 
@@ -4366,7 +4370,7 @@ function BreathingModal({ archetypeKey, onClose }) {
         <button data-press="true" onClick={togglePause} style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', left: 22, background: paused ? `rgba(${arch.rgb},0.18)` : 'rgba(255,255,255,0.06)', border: `1px solid ${paused ? arch.color + '66' : 'rgba(255,255,255,0.10)'}`, borderRadius: 100, padding: '9px 18px', color: paused ? arch.color : 'rgba(239,233,220,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, letterSpacing: '0.10em', cursor: 'pointer', zIndex: 10, minHeight: 36, transition: 'all 0.3s ease' }} aria-label={paused ? 'Reprendre la respiration' : 'Mettre la respiration en pause'}>{paused ? 'Reprendre' : 'Pause'}</button>
 
         <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 80px)', left: 0, right: 0, textAlign: 'center', padding: '0 80px', zIndex: 4 }}>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: `rgba(${arch.rgb},0.95)`, letterSpacing: '0.18em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>{tech.name}</p>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 22, color: `rgba(${arch.rgb},0.95)`, letterSpacing: '-0.020em', margin: 0, animation: 'phrasebreathe 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>{tech.name}</p>
         </div>
 
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 78 }}>
@@ -4383,10 +4387,10 @@ function BreathingModal({ archetypeKey, onClose }) {
         </div>
 
         <div style={{ textAlign: 'center', minHeight: 144, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 5, position: 'relative' }}>
-          <div key={`${phaseIdx}-${cycle}`} style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 30, color: '#EFE9DC', letterSpacing: '-0.02em', animation: 'fadeIn 0.45s ease', textShadow: `0 0 24px ${arch.color}55` }}>{currentPhase.label}</div>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 200, fontSize: 54, color: `rgba(${arch.rgb},0.92)`, marginTop: 2, letterSpacing: '-0.06em', lineHeight: 1, textShadow: `0 0 30px ${arch.color}55` }}>{timeLeft}</div>
-          {currentPhase.hint && <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(239,233,220,0.55)', marginTop: 10, fontStyle: 'italic', letterSpacing: '0.04em' }}>{currentPhase.hint}</div>}
-          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(255,255,255,0.42)', marginTop: 14, letterSpacing: '0.16em' }}>{`Cycle ${cycle} / ${tech.totalCycles}`}</div>
+          <div key={`${phaseIdx}-${cycle}`} style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 14, color: '#EFE9DC', letterSpacing: '0.42em', textTransform: 'uppercase', animation: 'fadeIn 0.45s ease', textShadow: `0 0 24px ${arch.color}55` }}>{currentPhase.label}</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 200, fontSize: 56, color: `rgba(${arch.rgb},0.94)`, marginTop: 10, letterSpacing: '-0.06em', lineHeight: 1, textShadow: `0 0 32px ${arch.color}66`, fontVariantNumeric: 'tabular-nums' }}>{timeLeft}</div>
+          {currentPhase.hint && <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 14, color: 'rgba(239,233,220,0.62)', marginTop: 14, letterSpacing: '-0.005em' }}>{currentPhase.hint}</div>}
+          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 10, color: 'rgba(255,255,255,0.46)', marginTop: 18, letterSpacing: '0.36em', textTransform: 'uppercase', fontVariantNumeric: 'tabular-nums' }}>{`Cycle ${cycle} / ${tech.totalCycles}`}</div>
         </div>
 
         <div style={{ display: 'flex', gap: 8, position: 'absolute', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 60px)', zIndex: 5 }}>
@@ -4400,10 +4404,10 @@ function BreathingModal({ archetypeKey, onClose }) {
         </div>
 
         {paused && (
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.55)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 20, animation: 'fadeIn 0.3s ease' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,16,0.55)', backdropFilter: 'blur(28px) saturate(140%)', WebkitBackdropFilter: 'blur(28px) saturate(140%)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 20, animation: 'fadeIn 0.3s ease' }}>
             <div style={{ textAlign: 'center', padding: 32, animation: 'phrasebreathe 6s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-              <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 22, color: arch.color, margin: 0, letterSpacing: '0.04em' }}>En pause</p>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: 'rgba(239,233,220,0.62)', margin: '10px 0 0' }}>Reprends quand tu veux.</p>
+              <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 32, color: arch.color, margin: 0, letterSpacing: '-0.020em' }}>En pause</p>
+              <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 15, color: 'rgba(239,233,220,0.66)', margin: '14px 0 0', letterSpacing: '-0.005em' }}>Reprends quand tu veux.</p>
             </div>
           </div>
         )}
@@ -4421,22 +4425,23 @@ function BreathingModal({ archetypeKey, onClose }) {
       </svg>
       <div style={{ position: 'relative', zIndex: 3, padding: 'calc(env(safe-area-inset-top, 0px) + 56px) 28px 40px', display: 'flex', flexDirection: 'column', gap: 22, minHeight: '100%', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', animation: 'fadeIn 0.7s ease' }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite, phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 16px ${arch.color}88` }}>✦ Souffle accompli</p>
-          <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 28, color: '#EFE9DC', margin: 0, letterSpacing: '-0.01em', textShadow: `0 0 28px ${arch.color}44`, animation: 'phrasebreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>Tu es là, pleinement.</h2>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 11, color: arch.color, letterSpacing: '0.42em', textTransform: 'uppercase', margin: '0 0 18px', animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite, phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 16px ${arch.color}88` }}>Souffle accompli</p>
+          <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 'clamp(32px, 8.5vw, 40px)', color: '#EFE9DC', margin: 0, letterSpacing: '-0.030em', lineHeight: 1.08, textShadow: `0 0 28px ${arch.color}44`, animation: 'phrasebreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>Tu es là, pleinement.</h2>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 32, color: `rgba(${arch.rgb},0.94)`, margin: '20px 0 0', letterSpacing: '-0.030em', lineHeight: 1, textShadow: `0 0 24px ${arch.color}55`, fontVariantNumeric: 'tabular-nums' }}>{`${tech.totalCycles} cycles`}</p>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'center', animation: 'fadeIn 1s ease 0.3s both' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: `rgba(${arch.rgb},0.16)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '9px 20px', animation: 'chipPop 520ms cubic-bezier(0.34,1.56,0.64,1) both', boxShadow: `0 0 24px rgba(${arch.rgb},0.25)` }}>
-            <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 13, color: arch.color, letterSpacing: '-0.01em', textShadow: `0 0 14px ${arch.color}88` }}>{`+${tech.xp}`}</span>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `${arch.color}cc`, letterSpacing: '0.18em', textTransform: 'uppercase' }}>{`XP · ${sessionCount}${sessionCount === 1 ? 're' : 'e'} session`}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: `rgba(${arch.rgb},0.14)`, border: `1px solid ${arch.color}55`, borderRadius: 100, padding: '10px 22px', animation: 'chipPop 520ms cubic-bezier(0.34,1.56,0.64,1) both', boxShadow: `0 0 24px rgba(${arch.rgb},0.25)`, backdropFilter: 'blur(28px) saturate(140%)', WebkitBackdropFilter: 'blur(28px) saturate(140%)' }}>
+            <span style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 80, "WONK" 1', fontSize: 16, color: arch.color, letterSpacing: '-0.020em', textShadow: `0 0 14px ${arch.color}88`, fontVariantNumeric: 'tabular-nums' }}>{`+${tech.xp}`}</span>
+            <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 10, color: `${arch.color}cc`, letterSpacing: '0.36em', textTransform: 'uppercase' }}>{`XP · ${sessionCount}${sessionCount === 1 ? 're' : 'e'} session`}</span>
           </div>
         </div>
 
-        <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '20px 18px', animation: 'fadeIn 1s ease 0.6s both' }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(239,233,220,0.55)', letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center' }}>Et maintenant ?</p>
+        <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, padding: '22px 20px', animation: 'fadeIn 1s ease 0.6s both', backdropFilter: 'blur(28px) saturate(140%)', WebkitBackdropFilter: 'blur(28px) saturate(140%)' }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 10, color: 'rgba(239,233,220,0.58)', letterSpacing: '0.36em', textTransform: 'uppercase', margin: '0 0 16px', textAlign: 'center' }}>Et maintenant ?</p>
           <MoodSlider value={moodEnd} onChange={setMoodEnd} color={arch.color} rgb={arch.rgb} />
           {moodDelta !== 0 && (
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: moodDelta > 0 ? arch.color : 'rgba(239,233,220,0.55)', textAlign: 'center', margin: '14px 0 0', letterSpacing: '0.05em', textShadow: moodDelta > 0 ? `0 0 14px ${arch.color}66` : 'none' }}>
+            <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 15, color: moodDelta > 0 ? arch.color : 'rgba(239,233,220,0.62)', textAlign: 'center', margin: '16px 0 0', letterSpacing: '-0.005em', textShadow: moodDelta > 0 ? `0 0 14px ${arch.color}66` : 'none' }}>
               {moodDelta > 0 ? `+${moodDelta} · Tu t'es offert un mieux-être` : `${moodDelta} · Reste avec ce qui est`}
             </p>
           )}
@@ -4854,22 +4859,35 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         )}
       </div>
 
-      {/* ── Intention du jour ── */}
-      <div style={{ position: 'relative', background: `linear-gradient(rgba(5,8,16,0.85), rgba(5,8,16,0.85)) padding-box, linear-gradient(135deg, ${arch.color}55, transparent 45%, ${arch.color}33) border-box`, border: '1px solid transparent', borderRadius: 14, padding: '20px 18px', minHeight: 92, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', overflow: 'visible', boxShadow: jourComplète ? `0 0 28px rgba(${arch.rgb},0.18), inset 0 0 0 1px ${arch.color}18` : routinesCount === arch.routines.length ? `0 0 18px rgba(${arch.rgb},0.12)` : 'none', transition: 'box-shadow 0.5s ease' }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}44, transparent)`, borderRadius: '14px 14px 0 0' }} />
+      {/* ── Intention du jour ── atelier editorial */}
+      <div style={{ position: 'relative', borderRadius: 18, overflow: 'hidden', border: '1px solid rgba(239,233,220,0.18)', backdropFilter: 'blur(26px) saturate(140%)', WebkitBackdropFilter: 'blur(26px) saturate(140%)', background: 'rgba(8,12,28,0.42)', boxShadow: jourComplète ? `0 18px 56px rgba(0,0,0,0.42), 0 0 38px rgba(${arch.rgb},0.16), inset 0 1px 0 rgba(239,233,220,0.06)` : `0 14px 44px rgba(0,0,0,0.38), inset 0 1px 0 rgba(239,233,220,0.05)`, transition: 'box-shadow 0.6s ease' }}>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(/${arch.bg})`, backgroundSize: 'cover', backgroundPosition: 'center 40%', filter: 'brightness(0.38) saturate(108%) blur(2px)', transform: 'scale(1.12)', opacity: 0.55, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(8,12,28,0.62) 0%, rgba(8,12,28,0.32) 55%, rgba(8,12,28,0.78) 100%)', pointerEvents: 'none' }} />
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.32, mixBlendMode: 'overlay' }}>
+          <filter id={`grainIntent-${archetypeKey}`}>
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" />
+            <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+          </filter>
+          <rect width="100%" height="100%" filter={`url(#grainIntent-${archetypeKey})`} />
+        </svg>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}55, transparent)`, pointerEvents: 'none' }} />
         {intentionParticles && [0,1,2].map(j => (
           <div key={j} style={{ position: 'absolute', top: 0, left: `${30 + j * 20}%`, width: 4, height: 4, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${0.9 + j * 0.2}s ease-out ${j * 0.1}s both`, pointerEvents: 'none', zIndex: 5, boxShadow: `0 0 6px ${arch.color}99` }} />
         ))}
-        <div style={{ position: 'absolute', left: 0, top: '18%', bottom: '18%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}bb, transparent)`, borderRadius: '0 2px 2px 0', animation: 'worldglow 8s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(239,233,220,0.50)', letterSpacing: '0.2em', margin: 0, textTransform: 'uppercase', animation: 'none', textShadow: jourComplète ? `0 0 12px ${arch.color}33` : `0 0 8px ${arch.color}22` }}>
-            {{ resilience: 'Intention de feu', presence: 'Intention de présence', sagesse: 'Intention de sagesse', lumiere: 'Intention de lumière' }[archetypeKey] || 'Intention du jour'}
-            {intentionIdx !== 0 && <span style={{ marginLeft: 8, color: `${arch.color}66`, fontSize: 9, animation: 'none' }}>◎</span>}
-          </p>
-          <button onClick={cycleIntention} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: `${arch.color}66`, fontSize: 13, lineHeight: 1, display: 'inline-block', transform: cycleSpin ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.38s ease, color 0.2s ease', animation: jourComplète ? 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 30s cubic-bezier(0.45,0,0.55,1) infinite' }} title="Autre intention">↻</button>
-        </div>
-        <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(239,233,220,0.92)', lineHeight: 1.68, fontStyle: 'italic', opacity: intentionFade ? 1 : 0, transition: 'opacity 0.2s ease', animation: intentionFade ? (jourComplète ? 'phrasebreathe 90s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 90s cubic-bezier(0.45,0,0.55,1) infinite') : 'none' }}>
-          {intentionReady && <TypingText key={intentionIdx} text={`"${intention}"`} delay={0} speed={34} cursorColor={arch.color} />}
+        <div style={{ position: 'relative', zIndex: 2, padding: '28px 26px 26px', minHeight: 112 }}>
+          <div style={{ position: 'absolute', top: 28, right: 14, transform: 'rotate(90deg)', transformOrigin: 'right top', whiteSpace: 'nowrap', fontFamily: 'Inter, sans-serif', fontSize: 8, fontWeight: 500, letterSpacing: '0.42em', color: 'rgba(239,233,220,0.38)', textTransform: 'uppercase' }}>
+            {{ resilience: 'FEU · I', presence: 'EAU · II', sagesse: 'BRUME · III', lumiere: 'LUMIÈRE · IV' }[archetypeKey] || 'PRÉSENCE'}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, fontWeight: 500, color: 'rgba(239,233,220,0.62)', letterSpacing: '0.42em', margin: 0, textTransform: 'uppercase' }}>
+              {{ resilience: 'Intention de feu', presence: 'Intention de présence', sagesse: 'Intention de sagesse', lumiere: 'Intention de lumière' }[archetypeKey] || 'Intention du jour'}
+              {intentionIdx !== 0 && <span style={{ marginLeft: 10, color: `${arch.color}88`, fontSize: 8 }}>◎</span>}
+            </p>
+            <button onClick={cycleIntention} aria-label="Autre intention" style={{ background: 'rgba(8,12,28,0.42)', border: '1px solid rgba(239,233,220,0.18)', cursor: 'pointer', padding: 0, width: 28, height: 28, borderRadius: '50%', color: 'rgba(239,233,220,0.72)', fontSize: 12, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: cycleSpin ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.4s ease, color 0.2s ease', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }} title="Autre intention">↻</button>
+          </div>
+          <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(22px, 6vw, 28px)', color: 'rgba(239,233,220,0.96)', lineHeight: 1.22, letterSpacing: '-0.025em', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', opacity: intentionFade ? 1 : 0, transition: 'opacity 0.3s ease', textShadow: '0 2px 18px rgba(0,0,0,0.55)', maxWidth: '92%' }}>
+            {intentionReady && <TypingText key={intentionIdx} text={`« ${intention} »`} delay={0} speed={34} cursorColor={arch.color} />}
+          </div>
         </div>
       </div>
 
@@ -5211,8 +5229,8 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 20s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: arch.color, letterSpacing: '0.20em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 8px ${arch.color}33` }}>◈ Routines du jour</p>
-        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 24, color: '#EFE9DC', margin: 0, lineHeight: 1.2, animation: allDone ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 30s ease-in-out 1s infinite', textShadow: allDone ? `0 0 28px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` : '0 2px 40px rgba(0,0,0,0.4)', transition: 'text-shadow 0.8s ease' }}>{{ resilience: <>Tes pratiques<br />de feu</>, presence: <>Tes pratiques<br />d'ancrage</>, sagesse: <>Tes pratiques<br />de sagesse</>, lumiere: <>Tes pratiques<br />lumineuses</> }[archetypeKey] || <>Tes pratiques<br />quotidiennes</>}</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, color: arch.color, letterSpacing: '0.38em', margin: '0 0 14px', textTransform: 'uppercase', textShadow: `0 0 8px ${arch.color}33` }}>Routines du jour</p>
+        <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 'clamp(32px, 9vw, 42px)', color: '#EFE9DC', margin: 0, lineHeight: 1.02, letterSpacing: '-0.032em', animation: allDone ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', textShadow: allDone ? `0 0 28px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` : '0 2px 40px rgba(0,0,0,0.4)', transition: 'text-shadow 0.8s ease' }}>{{ resilience: <>Tes pratiques<br />de feu</>, presence: <>Tes pratiques<br />d'ancrage</>, sagesse: <>Tes pratiques<br />de sagesse</>, lumiere: <>Tes pratiques<br />lumineuses</> }[archetypeKey] || <>Tes pratiques<br />quotidiennes</>}</h2>
 
         {/* Barre de progression globale */}
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
@@ -5228,7 +5246,7 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
       {arch.routines.map((r, i) => {
         const done = completed[i]
         return (
-          <div key={i} style={{ background: done ? `linear-gradient(135deg, rgba(8,12,22,0.72), rgba(${arch.rgb},0.18))` : 'rgba(8,12,22,0.68)', border: `1px solid ${done ? arch.color + '88' : `rgba(${arch.rgb},0.32)`}`, borderRadius: 14, padding: '18px 16px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'background 220ms cubic-bezier(0.4,0,0.2,1), border-color 220ms cubic-bezier(0.4,0,0.2,1), box-shadow 320ms cubic-bezier(0,0,0.2,1)', animation: celebrateIdx === i ? 'cardLiftDone 540ms cubic-bezier(0.34,1.56,0.64,1) both' : (vis ? 'tabslideIn 0.32s ease both' : 'none'), animationDelay: vis && celebrateIdx !== i ? `${0.18 + i * 0.08}s` : '0s', position: 'relative', overflow: 'hidden', boxShadow: done ? `0 4px 20px rgba(0,0,0,0.32), 0 0 18px rgba(${arch.rgb},0.18), inset 0 0 0 1px ${arch.color}33` : `0 4px 16px rgba(0,0,0,0.28)`, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+          <div key={i} style={{ background: done ? `linear-gradient(135deg, rgba(${arch.rgb},0.16), rgba(8,12,22,0.55))` : `rgba(${arch.rgb},0.08)`, border: `1px solid ${done ? arch.color + '66' : 'rgba(239,233,220,0.10)'}`, borderRadius: 18, padding: '20px 18px', display: 'flex', gap: 14, alignItems: 'flex-start', transition: 'background 220ms cubic-bezier(0.4,0,0.2,1), border-color 220ms cubic-bezier(0.4,0,0.2,1), box-shadow 320ms cubic-bezier(0,0,0.2,1)', animation: celebrateIdx === i ? 'cardLiftDone 540ms cubic-bezier(0.34,1.56,0.64,1) both' : (vis ? 'tabslideIn 0.32s ease both' : 'none'), animationDelay: vis && celebrateIdx !== i ? `${0.18 + i * 0.08}s` : '0s', position: 'relative', overflow: 'hidden', boxShadow: done ? `0 6px 28px rgba(0,0,0,0.36), 0 0 22px rgba(${arch.rgb},0.20), inset 0 0 0 1px ${arch.color}22` : `0 6px 24px rgba(0,0,0,0.30)`, backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)' }}>
             {done && <div style={{ position: 'absolute', left: 0, top: '16%', bottom: '16%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}cc, transparent)`, borderRadius: '0 2px 2px 0', animation: 'milestoneGlow 4.8s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />}
             {celebrateIdx === i && [0,1,2,3,4].map(j => (
               <div key={j} style={{ position: 'absolute', top: 8, left: `${12 + j * 18}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${0.9 + j * 0.18}s ease-out ${j * 0.08}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 6px ${arch.color}99` }} />
@@ -5238,10 +5256,10 @@ function RoutinesScreen({ archetypeKey, completed, onToggle, onOpenVrai }) {
             </button>
             <div onClick={() => { haptic(6); setGuideIdx(i) }} role="button" tabIndex={0} style={{ flex: 1, cursor: 'pointer', minHeight: 44 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : 'white', margin: 0, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : 'none', animation: done ? 'milestoneGlow 4.8s cubic-bezier(0.45,0,0.55,1) infinite' : (doneCount > 0 ? 'phrasebreathe 36s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 36s cubic-bezier(0.45,0,0.55,1) infinite') }}>{r.title}</p>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: done ? `${arch.color}99` : 'rgba(255,255,255,0.48)', flexShrink: 0, marginLeft: 8, animation: done ? 'seedPulse 3.5s cubic-bezier(0.45,0,0.55,1) infinite' : (doneCount > 0 ? 'phrasebreathe 34s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 34s cubic-bezier(0.45,0,0.55,1) infinite'), transition: 'color 0.4s ease', textShadow: done ? `0 0 8px ${arch.color}44` : `0 0 6px ${arch.color}18` }}>{r.duration}</span>
+                <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 20, color: done ? arch.color : '#EFE9DC', margin: 0, letterSpacing: '-0.022em', lineHeight: 1.15, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : 'none', animation: done ? 'milestoneGlow 4.8s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{r.title}</p>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, color: done ? `${arch.color}99` : 'rgba(239,233,220,0.42)', flexShrink: 0, marginLeft: 8, letterSpacing: '0.18em', textTransform: 'uppercase', animation: done ? 'seedPulse 3.5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', transition: 'color 0.4s ease', textShadow: done ? `0 0 8px ${arch.color}44` : 'none' }}>{r.duration}</span>
               </div>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: done ? 'rgba(255,255,255,0.44)' : 'rgba(239,233,220,0.82)', margin: 0, lineHeight: 1.65, textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease', animation: done ? 'none' : (doneCount > 0 ? 'phrasebreathe 44s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 44s cubic-bezier(0.45,0,0.55,1) infinite'), textShadow: done ? 'none' : `0 0 8px ${arch.color}15` }}>{r.desc}</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: done ? 'rgba(239,233,220,0.44)' : 'rgba(239,233,220,0.78)', margin: 0, lineHeight: 1.55, letterSpacing: '0.005em', textDecoration: done ? 'line-through' : 'none', transition: 'all 0.3s ease' }}>{r.desc}</p>
             </div>
           </div>
         )
@@ -5304,8 +5322,8 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
       {flash && <div style={{ position: 'fixed', inset: 0, background: arch.color, opacity: 0.08, animation: 'lightFlash 0.7s ease forwards', pointerEvents: 'none', zIndex: 50 }} />}
       <div style={{ textAlign: 'center', marginBottom: 6, position: 'relative' }}>
         <div style={{ position: 'absolute', top: -52, left: -22, right: -22, height: 80, background: `linear-gradient(180deg, rgba(${arch.rgb},0.06) 0%, transparent 100%)`, pointerEvents: 'none', animation: 'worldglow 22s ease-in-out 4s infinite' }} />
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: arch.color, letterSpacing: '0.20em', margin: '0 0 10px', textTransform: 'uppercase', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 8px ${arch.color}33` }}>◇ Quêtes</p>
-        <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 24, color: '#EFE9DC', margin: 0, lineHeight: 1.2, animation: allDone ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 34s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: allDone ? `0 0 28px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` : '0 2px 40px rgba(0,0,0,0.4)', transition: 'text-shadow 0.8s ease' }}>{{ resilience: <>Tes défis<br />courageux</>, presence: <>Tes défis<br />de présence</>, sagesse: <>Tes défis<br />intérieurs</>, lumiere: <>Tes défis<br />créatifs</> }[archetypeKey] || <>Tes défis<br />bienveillants</>}</h2>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, color: arch.color, letterSpacing: '0.38em', margin: '0 0 14px', textTransform: 'uppercase', textShadow: `0 0 8px ${arch.color}33` }}>Quêtes intérieures</p>
+        <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 'clamp(32px, 9vw, 42px)', color: '#EFE9DC', margin: 0, lineHeight: 1.02, letterSpacing: '-0.032em', animation: allDone ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'none', textShadow: allDone ? `0 0 28px ${arch.color}55, 0 2px 40px rgba(0,0,0,0.4)` : '0 2px 40px rgba(0,0,0,0.4)', transition: 'text-shadow 0.8s ease' }}>{{ resilience: <>Tes défis<br />courageux</>, presence: <>Tes défis<br />de présence</>, sagesse: <>Tes défis<br />intérieurs</>, lumiere: <>Tes défis<br />créatifs</> }[archetypeKey] || <>Tes défis<br />bienveillants</>}</h2>
         <div style={{ margin: '14px auto 0', width: '72%', maxWidth: 220 }}>
           <div style={{ height: 4, background: 'rgba(255,255,255,0.09)', borderRadius: 3, overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${(doneCount / arch.quetes.length) * 100}%`, background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 2, transition: 'width 0.6s ease', boxShadow: allDone ? `0 0 14px ${arch.color}cc, 0 0 28px ${arch.color}44` : doneCount > 0 ? `0 0 10px ${arch.color}66` : 'none', animation: allDone ? 'milestoneGlow 3.8s cubic-bezier(0.45,0,0.55,1) infinite' : doneCount > 0 ? 'worldglow 8s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }} />
@@ -5321,7 +5339,7 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
         const locked = i > 0 && !completed[i - 1]
         const isNext = !done && !locked && (i === 0 || completed[i - 1])
         return (
-          <div key={i} onClick={() => { if (!locked) { haptic(6); setGuideIdx(i) } }} role={!locked ? "button" : undefined} tabIndex={!locked ? 0 : undefined} aria-label={!locked ? `Voir la quête ${q.title}` : undefined} style={{ background: done ? `linear-gradient(135deg, rgba(8,12,22,0.72), rgba(${arch.rgb},0.18))` : locked ? 'rgba(8,12,22,0.62)' : 'rgba(8,12,22,0.68)', border: `1px solid ${done ? arch.color + '88' : locked ? 'rgba(255,255,255,0.08)' : `rgba(${arch.rgb},0.32)`}`, borderRadius: 14, padding: '18px 16px', opacity: locked ? 0.55 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s', position: 'relative', overflow: 'hidden', boxShadow: done ? `0 4px 20px rgba(0,0,0,0.32), 0 0 20px rgba(${arch.rgb},0.18), inset 0 0 0 1px ${arch.color}33` : `0 4px 16px rgba(0,0,0,0.28)`, cursor: !locked ? 'pointer' : 'default', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+          <div key={i} onClick={() => { if (!locked) { haptic(6); setGuideIdx(i) } }} role={!locked ? "button" : undefined} tabIndex={!locked ? 0 : undefined} aria-label={!locked ? `Voir la quête ${q.title}` : undefined} style={{ background: done ? `linear-gradient(135deg, rgba(${arch.rgb},0.16), rgba(8,12,22,0.55))` : locked ? `rgba(${arch.rgb},0.04)` : `rgba(${arch.rgb},0.08)`, border: `1px solid ${done ? arch.color + '66' : locked ? 'rgba(239,233,220,0.06)' : 'rgba(239,233,220,0.10)'}`, borderRadius: 18, padding: '20px 18px', opacity: locked ? 0.55 : 1, filter: locked ? 'blur(0.6px)' : 'none', transform: locked ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.3s ease', animation: vis ? 'tabslideIn 0.32s ease both' : 'none', animationDelay: vis ? `${0.18 + i * 0.1}s` : '0s', position: 'relative', overflow: 'hidden', boxShadow: done ? `0 6px 28px rgba(0,0,0,0.36), 0 0 22px rgba(${arch.rgb},0.20), inset 0 0 0 1px ${arch.color}22` : `0 6px 24px rgba(0,0,0,0.30)`, cursor: !locked ? 'pointer' : 'default', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)' }}>
             {done && <div style={{ position: 'absolute', left: 0, top: '16%', bottom: '16%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}cc, transparent)`, borderRadius: '0 2px 2px 0', animation: 'milestoneGlow 4.8s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />}
             {celebrateIdx === i && [0,1,2,3,4,5].map(j => (
               <div key={j} style={{ position: 'absolute', top: 10, left: `${8 + j * 16}%`, width: 5, height: 5, borderRadius: '50%', background: arch.color, animation: `milestoneMote ${1.0 + j * 0.2}s ease-out ${j * 0.07}s both`, pointerEvents: 'none', zIndex: 10, boxShadow: `0 0 8px ${arch.color}cc` }} />
@@ -5329,11 +5347,11 @@ function QuetesScreen({ archetypeKey, completed, onComplete, onOpenVrai }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 16, color: done ? arch.color : locked ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.42)', animation: (!done && !locked) ? `seedPulse ${3.4 + i * 0.6}s ease-in-out ${i * 0.5}s infinite` : 'none', textShadow: done ? `0 0 12px ${arch.color}66` : (!locked && !done) ? `0 0 8px ${arch.color}33` : 'none' }}>{locked ? '◻' : q.icon}</span>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 16, color: done ? arch.color : locked ? 'rgba(255,255,255,0.26)' : 'white', margin: 0, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : isNext ? `0 0 12px ${arch.color}33` : 'none', animation: done ? 'milestoneGlow 4.6s cubic-bezier(0.45,0,0.55,1) infinite' : isNext ? 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{q.title}</p>
+                <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 20, color: done ? arch.color : locked ? 'rgba(239,233,220,0.26)' : '#EFE9DC', margin: 0, letterSpacing: '-0.022em', lineHeight: 1.15, transition: 'color 0.3s ease', textShadow: done ? `0 0 16px ${arch.color}66` : isNext ? `0 0 12px ${arch.color}33` : 'none', animation: done ? 'milestoneGlow 4.6s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{q.title}</p>
               </div>
               {done && <span style={{ fontSize: 11, color: arch.color, flexShrink: 0, marginLeft: 8, animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite' }}>✓</span>}
             </div>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: locked ? 'rgba(255,255,255,0.18)' : done ? 'rgba(239,233,220,0.56)' : 'rgba(239,233,220,0.78)', margin: '0 0 14px', lineHeight: 1.62, animation: (!done && !locked) ? (isNext ? 'phrasebreathe 46s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 46s cubic-bezier(0.45,0,0.55,1) infinite') : 'none', textShadow: done ? `0 0 8px ${arch.color}14` : isNext ? `0 0 10px ${arch.color}22` : 'none' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: locked ? 'rgba(239,233,220,0.18)' : done ? 'rgba(239,233,220,0.50)' : 'rgba(239,233,220,0.78)', margin: '0 0 14px', lineHeight: 1.55, letterSpacing: '0.005em', textShadow: done ? `0 0 8px ${arch.color}14` : isNext ? `0 0 10px ${arch.color}22` : 'none' }}>
               {locked ? 'Accomplis la quête précédente pour révéler celle-ci.' : q.desc}
             </p>
             {!done && !locked && (
@@ -6807,18 +6825,29 @@ function AujourdhuiCard({ archetypeKey, onSetMood, onOpenTool }) {
   const moodLabel = currentMood ? MOODS.find(m => m.v === currentMood)?.label : null
 
   return (
-    <div style={{ background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.05) 60%, rgba(255,255,255,0.04) 100%)`, border: `1px solid rgba(${arch.rgb},0.42)`, borderRadius: 18, padding: '20px 20px', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', boxShadow: `0 6px 32px rgba(${arch.rgb},0.16), inset 0 1px 0 rgba(255,255,255,0.08)`, animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.15s both' }}>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
+    <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(239,233,220,0.18)', backdropFilter: 'blur(28px) saturate(140%)', WebkitBackdropFilter: 'blur(28px) saturate(140%)', background: 'rgba(8,12,28,0.42)', boxShadow: `0 16px 50px rgba(0,0,0,0.40), 0 0 32px rgba(${arch.rgb},0.12), inset 0 1px 0 rgba(239,233,220,0.06)`, animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) 0.15s both' }}>
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(/${arch.bg})`, backgroundSize: 'cover', backgroundPosition: 'right 35%', filter: 'brightness(0.32) saturate(106%) blur(2px)', transform: 'scale(1.14)', opacity: 0.48, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(115deg, rgba(8,12,28,0.78) 0%, rgba(8,12,28,0.42) 50%, rgba(8,12,28,0.72) 100%)', pointerEvents: 'none' }} />
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.30, mixBlendMode: 'overlay' }}>
+        <filter id={`grainAuj-${archetypeKey}`}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" />
+          <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+        </filter>
+        <rect width="100%" height="100%" filter={`url(#grainAuj-${archetypeKey})`} />
+      </svg>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}55, transparent)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', zIndex: 2, padding: '26px 24px 24px' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
         <div>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.85)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0, animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>Aujourd'hui</p>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(239,233,220,0.62)', margin: '4px 0 0', letterSpacing: '0.02em' }}>{period}</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, fontWeight: 500, color: 'rgba(239,233,220,0.62)', letterSpacing: '0.42em', textTransform: 'uppercase', margin: 0 }}>Aujourd'hui · §II</p>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 14, color: 'rgba(239,233,220,0.68)', margin: '6px 0 0', letterSpacing: '-0.008em' }}>{period}</p>
         </div>
         {currentMood && (
           <div style={{ fontSize: 20, lineHeight: 1, opacity: 0.95, filter: `drop-shadow(0 0 10px ${arch.color}66)`, animation: tapped ? 'chipPop 480ms cubic-bezier(0.34,1.56,0.64,1)' : 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>{MOODS.find(m => m.v === currentMood)?.emoji}</div>
         )}
       </div>
 
-      <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 22, color: 'rgba(239,233,220,0.94)', margin: '0 0 18px', lineHeight: 1.30, letterSpacing: '-0.020em', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', animation: 'phrasebreathe 28s cubic-bezier(0.45,0,0.55,1) infinite' }}>{suggestion}</p>
+      <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(24px, 6.5vw, 32px)', color: 'rgba(239,233,220,0.96)', margin: '0 0 22px', lineHeight: 1.16, letterSpacing: '-0.030em', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', textShadow: '0 2px 18px rgba(0,0,0,0.55)' }}>{suggestion}</p>
 
       {/* Mood quick check */}
       <div>
@@ -6867,6 +6896,7 @@ function AujourdhuiCard({ archetypeKey, onSetMood, onOpenTool }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }
@@ -8917,14 +8947,14 @@ function PratiquesScreen({ archetypeKey, routinesDone, quetesDone, onToggleRouti
               WebkitBackdropFilter: 'blur(10px)',
               textAlign: 'left',
               color: 'inherit',
-              boxShadow: active ? `0 4px 20px rgba(${arch.rgb},0.20), inset 0 1px 0 rgba(255,255,255,0.06)` : '0 2px 10px rgba(0,0,0,0.18)',
-              minHeight: 64,
-              display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2,
+              boxShadow: active ? `0 4px 24px rgba(${arch.rgb},0.22), inset 0 1px 0 rgba(255,255,255,0.06)` : '0 2px 10px rgba(0,0,0,0.18)',
+              minHeight: 78,
+              display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 6,
             }}>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: active ? `rgba(${arch.rgb},0.92)` : 'rgba(255,255,255,0.48)', letterSpacing: '0.22em', textTransform: 'uppercase', transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.label}</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, fontWeight: 500, color: active ? `rgba(${arch.rgb},0.92)` : 'rgba(255,255,255,0.42)', letterSpacing: '0.34em', textTransform: 'uppercase', transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.label}</div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: active ? 'rgba(239,233,220,0.94)' : 'rgba(239,233,220,0.62)', letterSpacing: '-0.005em', transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.sub}</div>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: complete ? arch.color : `rgba(${arch.rgb},0.62)`, letterSpacing: '0.06em', marginLeft: 'auto', flexShrink: 0, textShadow: complete ? `0 0 10px ${arch.color}66` : 'none' }}>{complete ? '✦' : `${t.count}/${t.total}`}</div>
+                <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 24, color: active ? 'rgba(239,233,220,0.96)' : 'rgba(239,233,220,0.58)', letterSpacing: '-0.028em', lineHeight: 1.05, transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.sub}</div>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: complete ? arch.color : `rgba(${arch.rgb},0.62)`, letterSpacing: '0.10em', marginLeft: 'auto', flexShrink: 0, textShadow: complete ? `0 0 10px ${arch.color}66` : 'none' }}>{complete ? '✦' : `${t.count}/${t.total}`}</div>
               </div>
             </button>
           )
@@ -8959,16 +8989,18 @@ function CommunauteScreen({ archetypeKey, onClose }) {
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden', position: 'relative' }}>
-      {/* Header sticky : Pulse ambient discret */}
-      <div style={{ padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 22px 8px', textAlign: 'center', position: 'relative', zIndex: 5 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.30em', textTransform: 'uppercase', margin: '0 0 4px', animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', background: arch.color, marginRight: 8, verticalAlign: 'middle', boxShadow: `0 0 6px ${arch.color}`, animation: 'seedPulse 4.2s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-          {collectiveCount} {plural} respirent en ce moment
-        </p>
+      {/* Header atelier editorial — bottom-left, caps + filet typographique */}
+      <div style={{ padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 24px 10px', textAlign: 'left', position: 'relative', zIndex: 5 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, animation: 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <span style={{ display: 'inline-block', width: 4, height: 4, borderRadius: '50%', background: arch.color, boxShadow: `0 0 5px ${arch.color}`, animation: 'seedPulse 4.2s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+          <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9.5, color: `rgba(239,233,220,0.66)`, letterSpacing: '0.38em', textTransform: 'uppercase' }}>Pulse ambient</span>
+          <span style={{ width: 18, height: 1, background: `rgba(239,233,220,0.20)`, display: 'inline-block' }} />
+          <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9.5, color: `rgba(${arch.rgb},0.86)`, letterSpacing: '0.34em', textTransform: 'uppercase' }}>{collectiveCount} {plural}</span>
+        </div>
       </div>
 
-      {/* Sous-tabs */}
-      <div style={{ display: 'flex', gap: 6, padding: '4px 22px 12px', position: 'relative', zIndex: 5 }}>
+      {/* Sous-tabs — underline 1.5px archetype, Fraunces italic label, caps soustitre */}
+      <div style={{ display: 'flex', gap: 4, padding: '6px 24px 14px', position: 'relative', zIndex: 5 }}>
         {[
           { key: 'fragments', label: 'Fragments', sub: 'Souffles éphémères' },
           { key: 'lettres',   label: 'Lettres',   sub: 'À un·e inconnu·e' },
@@ -8978,17 +9010,17 @@ function CommunauteScreen({ archetypeKey, onClose }) {
           return (
             <button key={t.key} data-press="true" onClick={() => { haptic([6, 30, 6]); setSubTab(t.key) }} aria-label={t.label} style={{
               flex: 1,
-              padding: '10px 8px 12px',
+              padding: '10px 6px 12px',
               background: 'transparent',
               border: 'none',
-              borderBottom: active ? `1.5px solid ${arch.color}` : '1px solid rgba(255,255,255,0.06)',
+              borderBottom: active ? `1.5px solid ${arch.color}` : '1px solid rgba(239,233,220,0.08)',
               cursor: 'pointer',
-              textAlign: 'center',
+              textAlign: 'left',
               color: 'inherit',
-              transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1)',
+              transition: 'border-color 280ms cubic-bezier(0.4,0,0.2,1)',
             }}>
-              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: active ? `rgba(239,233,220,0.96)` : 'rgba(239,233,220,0.55)', letterSpacing: '-0.005em', transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.label}</div>
-              <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: active ? `rgba(${arch.rgb},0.86)` : 'rgba(255,255,255,0.32)', letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: 2, transition: 'color 240ms cubic-bezier(0.4,0,0.2,1)' }}>{t.sub}</div>
+              <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 18, color: active ? `rgba(239,233,220,0.96)` : 'rgba(239,233,220,0.48)', letterSpacing: '-0.028em', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', transition: 'color 280ms cubic-bezier(0.4,0,0.2,1)' }}>{t.label}</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: active ? `rgba(${arch.rgb},0.88)` : 'rgba(239,233,220,0.32)', letterSpacing: '0.32em', textTransform: 'uppercase', marginTop: 4, transition: 'color 280ms cubic-bezier(0.4,0,0.2,1)' }}>{t.sub}</div>
             </button>
           )
         })}
@@ -8998,17 +9030,19 @@ function CommunauteScreen({ archetypeKey, onClose }) {
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '14px 22px calc(env(safe-area-inset-bottom, 0px) + 140px)' }}>
         {subTab === 'fragments' && <FragmentsView archetypeKey={archetypeKey} />}
         {subTab === 'lettres' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, padding: '40px 0' }}>
-            <div style={{ width: 78, height: 78, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, color: arch.color, animation: 'animalbreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>✉</div>
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(239,233,220,0.92)', textAlign: 'center', maxWidth: 280, lineHeight: 1.55, margin: 0, letterSpacing: '-0.005em' }}>Une lettre, écrite dans le silence. Une lettre, reçue jamais demandée.</p>
-            <button data-press="true" onClick={() => { haptic(8); try { playOpen() } catch {}; setShowLetters(true) }} style={{ padding: '13px 28px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))`, border: 'none', borderRadius: 100, color: '#EFE9DC', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 46, boxShadow: `0 6px 22px rgba(${arch.rgb},0.38)` }}>Ouvrir les lettres</button>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 22, padding: '48px 4px 24px', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both' }}>
+            <div style={{ width: 78, height: 78, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.05) 60%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, color: arch.color, animation: 'animalbreathe 10s cubic-bezier(0.45,0,0.55,1) infinite', boxShadow: `0 0 28px rgba(${arch.rgb},0.22)`, backdropFilter: 'blur(22px) saturate(140%)', WebkitBackdropFilter: 'blur(22px) saturate(140%)' }}>✉</div>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.38em', textTransform: 'uppercase', margin: 0 }}>Lettres · Chapitre I</p>
+            <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 22, color: 'rgba(239,233,220,0.94)', textAlign: 'left', maxWidth: 320, lineHeight: 1.32, margin: 0, letterSpacing: '-0.030em', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', textShadow: `0 0 18px ${arch.color}33` }}>Une lettre, écrite dans le silence.<br />Une lettre, reçue jamais demandée.</h2>
+            <button data-press="true" onClick={() => { haptic(8); try { playOpen() } catch {}; setShowLetters(true) }} style={{ padding: '14px 30px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.92), rgba(${arch.rgb},0.58))`, border: `1px solid rgba(${arch.rgb},0.48)`, borderRadius: 100, color: '#EFE9DC', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 11, letterSpacing: '0.32em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 46, boxShadow: `0 6px 24px rgba(${arch.rgb},0.40)`, backdropFilter: 'blur(22px) saturate(140%)', WebkitBackdropFilter: 'blur(22px) saturate(140%)' }}>Ouvrir les lettres</button>
           </div>
         )}
         {subTab === 'cercle' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18, padding: '40px 0' }}>
-            <div style={{ width: 78, height: 78, borderRadius: '50%', background: `rgba(${arch.rgb},0.12)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, color: arch.color, animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>◐</div>
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 17, color: 'rgba(239,233,220,0.92)', textAlign: 'center', maxWidth: 280, lineHeight: 1.55, margin: 0, letterSpacing: '-0.005em' }}>Trois prénoms. Trois présences que tu portes en intention.</p>
-            <button data-press="true" onClick={() => { haptic(8); try { playOpen() } catch {}; setShowCercle(true) }} style={{ padding: '13px 28px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))`, border: 'none', borderRadius: 100, color: '#EFE9DC', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 46, boxShadow: `0 6px 22px rgba(${arch.rgb},0.38)` }}>Voir mon cercle</button>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 22, padding: '48px 4px 24px', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both' }}>
+            <div style={{ width: 78, height: 78, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.05) 60%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, color: arch.color, animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite', boxShadow: `0 0 28px rgba(${arch.rgb},0.22)`, backdropFilter: 'blur(22px) saturate(140%)', WebkitBackdropFilter: 'blur(22px) saturate(140%)' }}>◐</div>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.38em', textTransform: 'uppercase', margin: 0 }}>Cercle · Chapitre II</p>
+            <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 22, color: 'rgba(239,233,220,0.94)', textAlign: 'left', maxWidth: 320, lineHeight: 1.32, margin: 0, letterSpacing: '-0.030em', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', textShadow: `0 0 18px ${arch.color}33` }}>Trois prénoms.<br />Trois présences que tu portes en intention.</h2>
+            <button data-press="true" onClick={() => { haptic(8); try { playOpen() } catch {}; setShowCercle(true) }} style={{ padding: '14px 30px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.92), rgba(${arch.rgb},0.58))`, border: `1px solid rgba(${arch.rgb},0.48)`, borderRadius: 100, color: '#EFE9DC', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 11, letterSpacing: '0.32em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 46, boxShadow: `0 6px 24px rgba(${arch.rgb},0.40)`, backdropFilter: 'blur(22px) saturate(140%)', WebkitBackdropFilter: 'blur(22px) saturate(140%)' }}>Voir mon cercle</button>
           </div>
         )}
       </div>
@@ -9039,37 +9073,45 @@ function FragmentsView({ archetypeKey }) {
     setStage('read')
   }
 
-  // Stage 1 : Invitation à déposer (avant lecture)
+  // Stage 1 : Invitation à déposer — atelier editorial, bottom-left, asymétrique
   if (stage === 'invite' && !composing) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, padding: '36px 18px 24px', textAlign: 'center', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both' }}>
-        <div style={{ width: 84, height: 84, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.06) 60%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.40)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: arch.color, animation: 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite', boxShadow: `0 0 28px rgba(${arch.rgb},0.18)` }}>◯</div>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.30em', textTransform: 'uppercase', margin: 0 }}>Fragments éphémères · 24h</p>
-        <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 32, color: 'rgba(239,233,220,0.94)', margin: 0, lineHeight: 1.20, letterSpacing: '-0.025em', maxWidth: 340, fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', textShadow: `0 0 18px ${arch.color}33` }}>
-          Pose un mot.<br />Il rejoindra l'essaim.
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 24, padding: '38px 6px 24px', textAlign: 'left', animation: 'fadeIn 0.7s cubic-bezier(0,0,0.2,1) both' }}>
+        <div style={{ width: 84, height: 84, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.22) 0%, rgba(${arch.rgb},0.06) 60%, transparent 100%)`, border: `1px solid rgba(${arch.rgb},0.40)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: arch.color, animation: 'signaturePulse 9s cubic-bezier(0.45,0,0.55,1) infinite', boxShadow: `0 0 32px rgba(${arch.rgb},0.22)`, backdropFilter: 'blur(28px) saturate(140%)', WebkitBackdropFilter: 'blur(28px) saturate(140%)' }}>◯</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ width: 22, height: 1, background: `rgba(${arch.rgb},0.48)`, display: 'inline-block' }} />
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.42em', textTransform: 'uppercase', margin: 0 }}>Fragments éphémères · 24h</p>
+        </div>
+        <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 36, color: 'rgba(239,233,220,0.96)', margin: 0, lineHeight: 1.18, letterSpacing: '-0.030em', maxWidth: 340, fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', textShadow: `0 0 22px ${arch.color}40` }}>
+          Pose un mot.<br />Il rejoindra l&apos;essaim.
         </h2>
-        <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 15, color: 'rgba(239,233,220,0.72)', margin: 0, lineHeight: 1.65, maxWidth: 320, letterSpacing: '-0.005em', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1' }}>
-          Dépose ton souffle d'abord — puis tu pourras lire ceux des autres présences. Pas de retour. Pas de signature. 24 heures, et il s'efface.
+        <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 16, color: 'rgba(239,233,220,0.72)', margin: 0, lineHeight: 1.62, maxWidth: 320, letterSpacing: '-0.020em', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 0' }}>
+          Dépose ton souffle d&apos;abord — puis tu pourras lire ceux des autres présences. Pas de retour. Pas de signature. 24 heures, et il s&apos;efface.
         </p>
-        <button data-press="true" onClick={() => { haptic([6, 30, 6]); setComposing(true) }} style={{ padding: '14px 30px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))`, border: 'none', borderRadius: 100, color: '#EFE9DC', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.22em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 48, boxShadow: `0 6px 24px rgba(${arch.rgb},0.40)`, animation: 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>Déposer un souffle</button>
-        <button onClick={() => setStage('read')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.42)', letterSpacing: '0.08em', padding: '6px 12px', fontStyle: 'italic' }}>Plus tard — juste lire</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4 }}>
+          <button data-press="true" onClick={() => { haptic([6, 30, 6]); setComposing(true) }} style={{ padding: '14px 28px', background: `linear-gradient(135deg, rgba(${arch.rgb},0.92), rgba(${arch.rgb},0.58))`, border: `1px solid rgba(${arch.rgb},0.48)`, borderRadius: 100, color: '#EFE9DC', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 11, letterSpacing: '0.32em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 48, boxShadow: `0 6px 24px rgba(${arch.rgb},0.42)`, animation: 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite', backdropFilter: 'blur(22px) saturate(140%)', WebkitBackdropFilter: 'blur(22px) saturate(140%)' }}>Déposer un souffle</button>
+          <button onClick={() => setStage('read')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontStyle: 'italic', fontSize: 13, color: 'rgba(239,233,220,0.48)', letterSpacing: '-0.015em', padding: '6px 4px', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 0' }}>plus tard — juste lire</button>
+        </div>
       </div>
     )
   }
 
-  // Stage composition : textarea
+  // Stage composition : textarea Fraunces italic 18px sur glass XL
   if (composing) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '24px 4px', animation: 'fadeIn 0.5s cubic-bezier(0,0,0.2,1) both' }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 4px', textAlign: 'center' }}>Ton souffle · 80 char max</p>
-        <textarea autoFocus value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 80))} maxLength={80} placeholder="Ce que tu portes ce soir..." style={{ width: '100%', minHeight: 110, padding: '16px 18px', background: `rgba(${arch.rgb},0.10)`, border: `1px solid rgba(${arch.rgb},0.40)`, borderRadius: 14, color: 'rgba(239,233,220,0.94)', fontFamily: 'Sora, sans-serif', fontSize: 16, fontWeight: 300, lineHeight: 1.55, letterSpacing: '-0.005em', resize: 'none', outline: 'none', boxSizing: 'border-box', backdropFilter: 'blur(10px)' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px' }}>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.48)', letterSpacing: '0.04em' }}>{draft.length}/80 · anonyme · 24h</span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.62)`, fontStyle: 'italic' }}>Aucun retour, aucune réponse</span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '24px 4px', animation: 'fadeIn 0.5s cubic-bezier(0,0,0.2,1) both' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ width: 22, height: 1, background: `rgba(${arch.rgb},0.48)`, display: 'inline-block' }} />
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.38em', textTransform: 'uppercase', margin: 0 }}>Ton souffle · 80 char</p>
         </div>
-        <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
-          <button data-press="true" onClick={() => { setComposing(false); setDraft('') }} style={{ flex: 1, padding: '13px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 100, color: 'rgba(239,233,220,0.62)', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 46 }}>Annuler</button>
-          <button data-press="true" onClick={handleDeposit} disabled={!draft.trim()} style={{ flex: 1, padding: '13px 0', background: draft.trim() ? `linear-gradient(135deg, rgba(${arch.rgb},0.88), rgba(${arch.rgb},0.62))` : 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 100, color: draft.trim() ? 'white' : 'rgba(255,255,255,0.32)', fontFamily: 'Sora, sans-serif', fontWeight: 400, fontSize: 12, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: draft.trim() ? 'pointer' : 'not-allowed', minHeight: 46, boxShadow: draft.trim() ? `0 6px 20px rgba(${arch.rgb},0.36)` : 'none' }}>Laisser partir</button>
+        <textarea autoFocus value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 80))} maxLength={80} placeholder="Ce que tu portes ce soir…" style={{ width: '100%', minHeight: 124, padding: '20px 22px', background: `linear-gradient(180deg, rgba(${arch.rgb},0.10) 0%, rgba(8,12,22,0.32) 100%)`, border: `1px solid rgba(${arch.rgb},0.36)`, borderRadius: 16, color: 'rgba(239,233,220,0.96)', fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontStyle: 'italic', fontSize: 18, fontWeight: 400, lineHeight: 1.55, letterSpacing: '-0.020em', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 0', resize: 'none', outline: 'none', boxSizing: 'border-box', backdropFilter: 'blur(28px) saturate(140%)', WebkitBackdropFilter: 'blur(28px) saturate(140%)', boxShadow: `inset 0 0 22px rgba(${arch.rgb},0.08)` }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px' }}>
+          <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9.5, color: 'rgba(239,233,220,0.48)', letterSpacing: '0.30em', textTransform: 'uppercase' }}>{draft.length}/80 · anonyme · 24h</span>
+          <span style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontStyle: 'italic', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '-0.015em', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 0' }}>aucun retour, aucune réponse</span>
+        </div>
+        <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
+          <button data-press="true" onClick={() => { setComposing(false); setDraft('') }} style={{ flex: 1, padding: '13px 0', background: 'rgba(239,233,220,0.04)', border: '1px solid rgba(239,233,220,0.18)', borderRadius: 100, color: 'rgba(239,233,220,0.62)', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 11, letterSpacing: '0.32em', textTransform: 'uppercase', cursor: 'pointer', minHeight: 46, backdropFilter: 'blur(22px) saturate(140%)', WebkitBackdropFilter: 'blur(22px) saturate(140%)' }}>Annuler</button>
+          <button data-press="true" onClick={handleDeposit} disabled={!draft.trim()} style={{ flex: 1, padding: '13px 0', background: draft.trim() ? `linear-gradient(135deg, rgba(${arch.rgb},0.92), rgba(${arch.rgb},0.58))` : 'rgba(239,233,220,0.06)', border: draft.trim() ? `1px solid rgba(${arch.rgb},0.48)` : '1px solid rgba(239,233,220,0.10)', borderRadius: 100, color: draft.trim() ? '#EFE9DC' : 'rgba(239,233,220,0.32)', fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 11, letterSpacing: '0.32em', textTransform: 'uppercase', cursor: draft.trim() ? 'pointer' : 'not-allowed', minHeight: 46, boxShadow: draft.trim() ? `0 6px 24px rgba(${arch.rgb},0.40)` : 'none', backdropFilter: 'blur(22px) saturate(140%)', WebkitBackdropFilter: 'blur(22px) saturate(140%)' }}>Laisser partir</button>
         </div>
       </div>
     )
