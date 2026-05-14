@@ -3190,26 +3190,37 @@ function ProfilScreen({ archetypeKey, onClose, onRestart }) {
       {/* Close discret */}
       <button onClick={handleClose} aria-label="Refermer ton espace" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 20px)', right: 20, background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 38, height: 38, color: 'rgba(239,233,220,0.78)', fontSize: 14, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', zIndex: 5 }}>✕</button>
 
-      {/* En-tête identité */}
-      <div style={{ position: 'relative', textAlign: 'center', maxWidth: 440, margin: '0 auto', paddingTop: 28 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.86)`, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>Ton espace</p>
-
-        {/* Spirit animal central */}
-        <div style={{ width: 120, height: 120, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 18px', boxShadow: `0 0 32px ${arch.color}55, 0 0 64px ${arch.color}22, inset 0 0 0 1px ${arch.color}66`, animation: 'animalbreathe 16s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          <img src={`${B}spirit-${archetypeKey}.avif`} alt={arch.animal} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%', filter: 'brightness(1.05) saturate(1.1)' }} />
+      {/* En-tête sanctuaire — atelier editorial, bottom-left cinema */}
+      <div style={{ position: 'relative', textAlign: 'left', maxWidth: 440, margin: '0 auto', paddingTop: 32, paddingLeft: 4 }}>
+        {/* Caps label */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 22 }}>
+          <span style={{ width: 22, height: 1, background: `rgba(${arch.rgb},0.48)`, display: 'inline-block' }} />
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.42em', textTransform: 'uppercase', margin: 0 }}>Ton sanctuaire</p>
         </div>
 
-        <h1 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 24, color: 'rgba(239,233,220,0.96)', margin: '0 0 4px', letterSpacing: '-0.015em', textShadow: `0 0 18px ${arch.color}44` }}>
-          {prenom ? prenom : arch.profil}
-        </h1>
+        {/* Spirit animal — halo sacré */}
+        <div style={{ width: 120, height: 120, borderRadius: '50%', overflow: 'hidden', margin: '0 0 26px', position: 'relative', boxShadow: `0 0 0 1px rgba(239,233,220,0.10), 0 18px 48px rgba(0,0,0,0.55), 0 0 38px var(--light-sacred), 0 0 72px ${arch.color}26`, animation: 'animalbreathe 16s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <img src={`${B}spirit-${archetypeKey}.avif`} alt={arch.animal} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%', filter: 'brightness(1.06) saturate(1.08)' }} />
+        </div>
+
+        {/* Prénom — caps above si présent */}
         {prenom && (
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13, color: `rgba(${arch.rgb},0.78)`, margin: '0 0 6px', letterSpacing: '-0.005em' }}>{arch.profil}</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 10, color: 'rgba(239,233,220,0.52)', letterSpacing: '0.38em', textTransform: 'uppercase', margin: '0 0 12px' }}>{prenom}</p>
         )}
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(239,233,220,0.55)', letterSpacing: '0.20em', textTransform: 'uppercase', margin: '0 0 18px', textShadow: `0 0 8px ${arch.color}33` }}>
+
+        {/* Archetype profil — Fraunces italic display atelier */}
+        <h1 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', fontSize: 'clamp(30px, 8.5vw, 36px)', color: 'rgba(239,233,220,0.96)', margin: '0 0 10px', letterSpacing: '-0.030em', lineHeight: 1.04, textShadow: `0 0 22px ${arch.color}33` }}>
+          {arch.profil}
+        </h1>
+
+        {/* Counter présence — caps discret */}
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 10, color: 'rgba(239,233,220,0.42)', letterSpacing: '0.36em', textTransform: 'uppercase', margin: '0 0 18px' }}>
           {streak >= 2 ? `${streak} jours d'affilée` : `${totalDays} jour${totalDays > 1 ? 's' : ''} de présence`}
         </p>
+
+        {/* Mantra — Fraunces italic petite */}
         {mantra && (
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(239,233,220,0.78)', margin: '0 auto 8px', lineHeight: 1.55, maxWidth: 320, }}>« {mantra} »</p>
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 16, color: 'rgba(239,233,220,0.74)', margin: '0 0 4px', lineHeight: 1.55, maxWidth: 340, letterSpacing: '-0.012em' }}>« {mantra} »</p>
         )}
       </div>
 
@@ -3247,8 +3258,8 @@ function ProfilScreen({ archetypeKey, onClose, onRestart }) {
         {/* Réglages */}
         <ProfilSectionCard arch={arch} label="Réglages" title="Sons · Notifications · Reprendre" hint="Ce qui t'accompagne" onClick={() => { haptic(6); try { playOpen() } catch {}; setShowSettings(true) }} glyph="⚙" />
 
-        {/* Phrase de clôture */}
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 12, color: 'rgba(255,255,255,0.42)', textAlign: 'center', margin: '32px 0 0', lineHeight: 1.7, animation: 'none' }}>
+        {/* Phrase de clôture — Fraunces italic discret */}
+        <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 14, color: 'rgba(239,233,220,0.42)', textAlign: 'left', margin: '36px 0 0', paddingLeft: 4, lineHeight: 1.65, letterSpacing: '-0.012em', maxWidth: 320 }}>
           Cet espace t'appartient.<br />Personne d'autre n'y entre.
         </p>
       </div>
@@ -3274,27 +3285,27 @@ function ProfilSectionCard({ arch, label, title, hint, onClick, glyph, disabled 
   return (
     <div onClick={disabled ? undefined : onClick} role={disabled ? undefined : "button"} tabIndex={disabled ? -1 : 0} style={{
       cursor: disabled ? 'default' : 'pointer',
-      background: disabled ? 'rgba(255,255,255,0.03)' : `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(8,12,22,0.46) 100%)`,
-      border: `1px solid ${disabled ? 'rgba(255,255,255,0.08)' : `rgba(${arch.rgb},0.34)`}`,
-      borderRadius: 14,
-      padding: '16px 18px',
+      background: disabled ? 'rgba(239,233,220,0.02)' : 'rgba(8,12,28,0.42)',
+      border: `1px solid ${disabled ? 'rgba(239,233,220,0.06)' : 'rgba(239,233,220,0.10)'}`,
+      borderRadius: 18,
+      padding: '18px 20px',
       display: 'flex',
       alignItems: 'center',
-      gap: 14,
-      backdropFilter: 'blur(10px)',
-      WebkitBackdropFilter: 'blur(10px)',
-      boxShadow: disabled ? 'none' : `0 4px 18px rgba(${arch.rgb},0.10), inset 0 1px 0 rgba(255,255,255,0.05)`,
+      gap: 16,
+      backdropFilter: 'blur(28px) saturate(140%)',
+      WebkitBackdropFilter: 'blur(28px) saturate(140%)',
+      boxShadow: disabled ? 'none' : `0 12px 36px rgba(0,0,0,0.32), inset 0 1px 0 rgba(239,233,220,0.05)`,
       opacity: disabled ? 0.55 : 1,
-      minHeight: 64,
-      transition: 'border-color 240ms cubic-bezier(0.4,0,0.2,1), background 240ms cubic-bezier(0.4,0,0.2,1)',
+      minHeight: 68,
+      transition: 'border-color 280ms cubic-bezier(0.32,0.72,0,1), background 280ms cubic-bezier(0.32,0.72,0,1)',
     }}>
-      <div style={{ width: 34, height: 34, borderRadius: '50%', background: `rgba(${arch.rgb},0.16)`, border: `1px solid rgba(${arch.rgb},0.42)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: 'Sora, sans-serif', fontSize: 15, color: arch.color, boxShadow: `0 0 10px rgba(${arch.rgb},0.18)` }}>{glyph}</div>
+      <div style={{ width: 36, height: 36, borderRadius: '50%', background: `rgba(${arch.rgb},0.10)`, border: `1px solid rgba(${arch.rgb},0.32)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 16, color: arch.color }}>{glyph}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 3px' }}>{label}</p>
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.92)', margin: '0 0 2px', letterSpacing: '-0.005em' }}>{title}</p>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(239,233,220,0.50)', margin: 0, fontStyle: 'italic' }}>{hint}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: `rgba(${arch.rgb},0.72)`, letterSpacing: '0.36em', textTransform: 'uppercase', margin: '0 0 5px' }}>{label}</p>
+        <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 80, "WONK" 1', fontSize: 18, color: 'rgba(239,233,220,0.94)', margin: '0 0 3px', letterSpacing: '-0.020em', lineHeight: 1.20 }}>{title}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 11, color: 'rgba(239,233,220,0.46)', margin: 0, letterSpacing: '0.005em' }}>{hint}</p>
       </div>
-      {!disabled && <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, flexShrink: 0, letterSpacing: '0.08em' }}>→</span>}
+      {!disabled && <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, color: `rgba(${arch.rgb},0.58)`, flexShrink: 0, letterSpacing: '0.08em' }}>→</span>}
     </div>
   )
 }
@@ -4997,14 +5008,26 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         const nextThreshold = WORLD_UNLOCK_DAYS[unlockedWorlds.length] || prevThreshold
         const progress = nextThreshold > prevThreshold ? Math.min(1, (totalDays - prevThreshold) / (nextThreshold - prevThreshold)) : 1
         return (
-          <div onClick={() => { haptic(6); onChangeTab('voyage') }} role="button" tabIndex={0} aria-label="Voir tous tes mondes" style={{ cursor: 'pointer', background: `linear-gradient(135deg, rgba(${nextWorld.rgb},0.10) 0%, rgba(255,255,255,0.03) 60%, rgba(${nextWorld.rgb},0.05) 100%)`, border: `1px solid rgba(${nextWorld.rgb},0.20)`, borderRadius: 14, padding: '16px 18px', animation: 'fadeIn 0.6s ease 0.8s both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 4px 28px rgba(${nextWorld.rgb},0.12), inset 0 1px 0 rgba(255,255,255,0.06)` }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: 'rgba(239,233,220,0.52)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>Prochain monde</span>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${nextWorld.rgb},0.65)`, letterSpacing: '0.06em' }}>{daysToNext} jour{daysToNext > 1 ? 's' : ''}</span>
-            </div>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.82)', marginBottom: 10, animation: 'phrasebreathe 20s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 20px ${nextWorld.color}66` }}>{nextWorld.name}</div>
-            <div style={{ height: 3, background: 'rgba(255,255,255,0.07)', borderRadius: 2 }}>
-              <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${nextWorld.color}66, ${nextWorld.color})`, borderRadius: 2, boxShadow: `0 0 8px ${nextWorld.color}55`, transition: 'width 1s ease', animation: 'worldglow 5s cubic-bezier(0.45,0,0.55,1) infinite' }} />
+          <div onClick={() => { haptic(6); onChangeTab('voyage') }} role="button" tabIndex={0} aria-label="Voir tous tes mondes" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden', borderRadius: 18, border: '1px solid rgba(239,233,220,0.18)', backdropFilter: 'blur(26px) saturate(140%)', WebkitBackdropFilter: 'blur(26px) saturate(140%)', background: 'rgba(8,12,28,0.42)', animation: 'fadeIn 0.6s ease 0.8s both', boxShadow: `0 14px 44px rgba(0,0,0,0.38), 0 0 28px rgba(${nextWorld.rgb},0.10), inset 0 1px 0 rgba(239,233,220,0.06)` }}>
+            <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(/${nextWorld.bg || arch.bg})`, backgroundSize: 'cover', backgroundPosition: 'center 40%', filter: 'brightness(0.30) saturate(105%) blur(2px)', transform: 'scale(1.14)', opacity: 0.48, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(115deg, rgba(8,12,28,0.78) 0%, rgba(8,12,28,0.42) 55%, rgba(8,12,28,0.78) 100%)', pointerEvents: 'none' }} />
+            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.30, mixBlendMode: 'overlay' }}>
+              <filter id={`grainProc-${archetypeKey}`}>
+                <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" />
+                <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+              </filter>
+              <rect width="100%" height="100%" filter={`url(#grainProc-${archetypeKey})`} />
+            </svg>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${nextWorld.color}55, transparent)`, pointerEvents: 'none' }} />
+            <div style={{ position: 'relative', zIndex: 2, padding: '22px 24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: 'rgba(239,233,220,0.58)', letterSpacing: '0.42em', textTransform: 'uppercase' }}>Prochain monde · §VI</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: `rgba(${nextWorld.rgb},0.72)`, letterSpacing: '0.20em', textTransform: 'uppercase', fontVariantNumeric: 'tabular-nums' }}>{daysToNext} J · {Math.round(progress * 100)}%</span>
+              </div>
+              <div style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 'clamp(22px, 5.8vw, 28px)', color: 'rgba(239,233,220,0.96)', marginBottom: 14, letterSpacing: '-0.030em', lineHeight: 1.14, textShadow: `0 2px 16px rgba(0,0,0,0.55), 0 0 28px ${nextWorld.color}44` }}>{nextWorld.name}</div>
+              <div style={{ height: 1.5, background: 'rgba(239,233,220,0.08)', borderRadius: 1 }}>
+                <div style={{ height: '100%', width: `${Math.round(progress * 100)}%`, background: `linear-gradient(90deg, ${nextWorld.color}88, ${nextWorld.color})`, borderRadius: 1, boxShadow: `0 0 10px ${nextWorld.color}66`, transition: 'width 1s ease' }} />
+              </div>
             </div>
           </div>
         )
@@ -5093,36 +5116,55 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           { label: 'Routines', count: routinesCount, total: arch.routines.length, icon: '◈', tab: 'pratiques', nextHint: routinesCount < arch.routines.length ? arch.routines[routinesCount]?.title : null },
           { label: 'Quêtes', count: quetesCount, total: arch.quetes.length, icon: '◇', tab: 'pratiques', nextHint: quetesCount < arch.quetes.length ? arch.quetes.find((q, qi) => !quetesDone[qi])?.title : null },
         ].map((s, i) => (
-          <div key={i} onClick={() => { haptic(8); onChangeTab(s.tab) }} style={{ flex: 1, position: 'relative', zIndex: 1, background: s.count === s.total ? `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.07) 100%)` : s.count > 0 ? `linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(${arch.rgb},0.08) 100%)` : 'rgba(255,255,255,0.07)', border: `1px solid ${s.count === s.total ? arch.color + '88' : s.count > 0 ? arch.color + '66' : 'rgba(255,255,255,0.12)'}`, borderRadius: 14, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, transition: 'border-color 0.4s ease, background 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s', cursor: 'pointer', boxShadow: s.count === s.total ? `0 0 22px rgba(${arch.rgb},0.22), inset 0 0 0 1px ${arch.color}22` : 'none' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 13, color: s.count > 0 ? arch.color : 'rgba(255,255,255,0.24)', transition: 'color 0.3s ease', textShadow: s.count === s.total ? `0 0 12px ${arch.color}88` : 'none', animation: s.count === s.total ? 'seedPulse 3s cubic-bezier(0.45,0,0.55,1) infinite' : s.count > 0 ? 'phrasebreathe 22s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>{s.icon}</span>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: s.count === s.total ? arch.color : 'rgba(255,255,255,0.26)', transition: 'color 0.4s ease', textShadow: s.count === s.total ? `0 0 10px ${arch.color}66` : 'none', animation: s.count === s.total ? 'seedPulse 3.4s cubic-bezier(0.45,0,0.55,1) infinite' : (s.count > 0 ? 'phrasebreathe 26s cubic-bezier(0.45,0,0.55,1) infinite' : 'none') }}>{s.count}/{s.total}</span>
+          <div key={i} onClick={() => { haptic(8); onChangeTab(s.tab) }} style={{ flex: 1, position: 'relative', zIndex: 1, borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(239,233,220,0.18)', backdropFilter: 'blur(24px) saturate(140%)', WebkitBackdropFilter: 'blur(24px) saturate(140%)', background: 'rgba(8,12,28,0.42)', transition: 'border-color 0.4s ease', animation: vis ? 'forcespring 0.55s ease both' : 'none', animationDelay: vis ? `${0.28 + i * 0.1}s` : '0s', cursor: 'pointer', boxShadow: s.count === s.total ? `0 12px 36px rgba(0,0,0,0.36), 0 0 24px rgba(${arch.rgb},0.18), inset 0 1px 0 rgba(239,233,220,0.08)` : `0 10px 28px rgba(0,0,0,0.32), inset 0 1px 0 rgba(239,233,220,0.05)` }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: s.count > 0 ? `linear-gradient(90deg, transparent, ${arch.color}55, transparent)` : 'rgba(239,233,220,0.10)', pointerEvents: 'none' }} />
+            <div style={{ position: 'relative', zIndex: 2, padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: s.count === s.total ? arch.color : 'rgba(239,233,220,0.58)', letterSpacing: '0.42em', textTransform: 'uppercase', transition: 'color 0.4s ease' }}>{s.label}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontVariantNumeric: 'tabular-nums', fontSize: 11, fontWeight: 500, color: s.count === s.total ? arch.color : 'rgba(239,233,220,0.62)', letterSpacing: '0.04em' }}>{s.count}/{s.total}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <span style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 'clamp(38px, 10vw, 48px)', color: s.count > 0 ? 'rgba(239,233,220,0.96)' : 'rgba(239,233,220,0.32)', lineHeight: 0.92, letterSpacing: '-0.04em', textShadow: s.count === s.total ? `0 0 22px ${arch.color}66, 0 2px 14px rgba(0,0,0,0.55)` : '0 2px 14px rgba(0,0,0,0.55)' }}>{s.count}</span>
+                <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: 'rgba(239,233,220,0.42)', letterSpacing: '0.20em', textTransform: 'uppercase' }}>sur {s.total}</span>
+              </div>
+              <div style={{ height: 1.5, background: 'rgba(239,233,220,0.08)', borderRadius: 1 }}>
+                <div style={{ height: '100%', background: `linear-gradient(90deg, ${arch.color}88, ${arch.color})`, borderRadius: 1, width: `${(s.count / s.total) * 100}%`, transition: 'width 0.5s ease', boxShadow: s.count === s.total ? `0 0 10px ${arch.color}88` : s.count > 0 ? `0 0 6px ${arch.color}66` : 'none' }} />
+              </div>
+              {s.nextHint && s.count < s.total && (
+                <span style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 24, "SOFT" 50, "WONK" 1', fontSize: 13, color: 'rgba(239,233,220,0.62)', letterSpacing: '-0.005em', lineHeight: 1.35 }}>« {s.nextHint} »</span>
+              )}
             </div>
-            <div style={{ height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: 1 }}>
-              <div style={{ height: '100%', background: arch.color, borderRadius: 1, width: `${(s.count / s.total) * 100}%`, transition: 'width 0.5s ease', boxShadow: s.count === s.total ? `0 0 12px ${arch.color}cc` : s.count > 0 ? `0 0 7px ${arch.color}88` : 'none', animation: s.count > 0 && s.count < s.total ? 'worldglow 10s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }} />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-              <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 12, color: s.count === s.total ? arch.color : 'rgba(239,233,220,0.52)', transition: 'color 0.4s ease', animation: s.count === s.total ? 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 28s cubic-bezier(0.45,0,0.55,1) infinite' }}>{s.label}</span>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 8, color: s.count === s.total ? `${arch.color}88` : 'rgba(255,255,255,0.14)', letterSpacing: '0.04em', transition: 'color 0.4s ease', animation: s.count === s.total ? 'seedPulse 3.2s cubic-bezier(0.45,0,0.55,1) infinite' : 'none' }}>✦</span>
-            </div>
-            {s.nextHint && s.count < s.total && (
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: s.count > 0 ? `${arch.color}55` : 'rgba(255,255,255,0.22)', letterSpacing: '0.04em', lineHeight: 1.3, marginTop: -2, animation: s.count > 0 ? 'phrasebreathe 26s cubic-bezier(0.45,0,0.55,1) infinite' : 'phrasebreathe 36s cubic-bezier(0.45,0,0.55,1) infinite', transition: 'color 0.5s ease', textShadow: s.count > 0 ? `0 0 8px ${arch.color}33` : 'none' }}>{s.nextHint}</span>
-            )}
           </div>
         ))}
       </div>
 
-      {/* ── Journée complète ── */}
+      {/* ── Journée complète ── atelier editorial */}
       {jourComplète && (
-        <div style={{ position: 'relative', background: `linear-gradient(135deg, rgba(${arch.rgb},0.12) 0%, rgba(${arch.rgb},0.06) 100%)`, border: `1px solid ${arch.color}44`, borderRadius: 14, padding: '18px 20px', textAlign: 'center', animation: 'fadeIn 0.9s ease both', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: `0 0 28px rgba(${arch.rgb},0.14), 0 4px 16px rgba(0,0,0,0.2)`, display: 'flex', flexDirection: 'column', gap: 12, overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', left: 0, top: '16%', bottom: '16%', width: 2.5, background: `linear-gradient(180deg, transparent, ${arch.color}cc, transparent)`, borderRadius: '0 2px 2px 0', animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite' }} />
-          <div>
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: arch.color, margin: '0 0 5px', textShadow: `0 0 18px ${arch.color}66`, letterSpacing: '0.03em', animation: 'milestoneGlow 4.2s cubic-bezier(0.45,0,0.55,1) infinite' }}>✦ Journée complète.</p>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.36)', margin: 0, fontStyle: 'italic', letterSpacing: '0.03em', animation: 'phrasebreathe 28s cubic-bezier(0.45,0,0.55,1) infinite', }}>{{ resilience: 'Tu brûles avec clarté aujourd\'hui.', presence: 'Tu es ancré·e et rayonnant·e.', sagesse: 'Ta sagesse brille dans chaque geste.', lumiere: 'Tu rayonnes aujourd\'hui.' }[archetypeKey] || 'Tu rayonnes aujourd\'hui.'}</p>
+        <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 20, border: '1px solid rgba(239,233,220,0.22)', backdropFilter: 'blur(28px) saturate(140%)', WebkitBackdropFilter: 'blur(28px) saturate(140%)', background: 'rgba(8,12,28,0.42)', animation: 'fadeIn 0.9s ease both', boxShadow: `0 18px 56px rgba(0,0,0,0.46), 0 0 40px rgba(${arch.rgb},0.18), inset 0 1px 0 rgba(239,233,220,0.08)` }}>
+          {/* photo cinématique archétype */}
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(/${arch.bg})`, backgroundSize: 'cover', backgroundPosition: 'center 45%', filter: 'brightness(0.34) saturate(110%) blur(2px)', transform: 'scale(1.14)', opacity: 0.56, pointerEvents: 'none' }} />
+          {/* veil */}
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(125deg, rgba(8,12,28,0.72) 0%, rgba(8,12,28,0.34) 55%, rgba(8,12,28,0.80) 100%)', pointerEvents: 'none' }} />
+          {/* grain */}
+          <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.30, mixBlendMode: 'overlay' }}>
+            <filter id={`grainJC-${archetypeKey}`}>
+              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" />
+              <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+            </filter>
+            <rect width="100%" height="100%" filter={`url(#grainJC-${archetypeKey})`} />
+          </svg>
+          {/* hairline top */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}88, transparent)`, pointerEvents: 'none' }} />
+
+          <div style={{ position: 'relative', zIndex: 2, padding: '32px 28px 26px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500, fontSize: 9, color: arch.color, letterSpacing: '0.42em', textTransform: 'uppercase', margin: '0 0 12px', textShadow: `0 0 12px ${arch.color}66` }}>✦ Journée complète · §VII</p>
+              <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', fontSize: 'clamp(26px, 7vw, 34px)', color: 'rgba(239,233,220,0.96)', margin: '0 0 4px', lineHeight: 1.10, letterSpacing: '-0.032em', textShadow: `0 2px 18px rgba(0,0,0,0.55), 0 0 32px ${arch.color}33` }}>{{ resilience: 'Tu brûles avec clarté.', presence: 'Tu es ancré·e, rayonnant·e.', sagesse: 'Ta sagesse brille dans chaque geste.', lumiere: 'Tu rayonnes pleinement.' }[archetypeKey] || 'Tu rayonnes aujourd\'hui.'}</p>
+            </div>
+            <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '16px 0', background: 'rgba(8,12,28,0.42)', border: '1px solid rgba(239,233,220,0.42)', borderRadius: 100, cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, letterSpacing: '0.42em', color: 'rgba(239,233,220,0.92)', textTransform: 'uppercase', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: `0 6px 26px rgba(0,0,0,0.35), inset 0 1px 0 rgba(239,233,220,0.10)` }}>
+              Entrer en Présence
+            </button>
           </div>
-          <button onClick={() => { haptic([6, 60, 6]); onOpenVrai() }} style={{ width: '100%', padding: '14px 0', background: 'linear-gradient(135deg, rgba(225,168,40,0.94), rgba(200,140,25,0.90))', border: 'none', borderRadius: 100, cursor: 'pointer', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 600, letterSpacing: '0.22em', color: 'rgba(20,12,2,0.90)', textTransform: 'uppercase', animation: 'milestoneGlow 4.5s cubic-bezier(0.45,0,0.55,1) infinite', boxShadow: '0 6px 32px rgba(225,168,40,0.42), 0 2px 12px rgba(0,0,0,0.25)' }}>
-            Entrer en Présence ✦
-          </button>
         </div>
       )}
 
