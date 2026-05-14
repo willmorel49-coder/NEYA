@@ -1,201 +1,260 @@
 /* ============================================================
-   NÉYA — V1 Apple-grade (spec-exact getdesign:apple, dark cosmic)
+   NÉYA — Design System v2 · Studio VØR painterly cinematographic
+   + Apple mix supplements (iOS easings, scale(0.95) press,
+   SF Pro fallback dans Sora/Inter stacks)
    ============================================================
-   Apple grammar AT THE STRUCTURAL LEVEL. NÉYA dark cosmic AT THE
-   SOUL LEVEL. La photo full-bleed est le "tile" NÉYA — équivalent
-   dark de l'alternance light/dark Apple, rythmée par la variation
-   de monde (cosmos/feu/eau/foret/...) plutôt que par la teinte.
+   Reference: NEYA_DESIGN_SYSTEM_v2.md (locked).
+   Soul: Studio VØR painterly. Structural rigor: Apple.
    ============================================================ */
 
 :root {
 
-  /* ── PALETTE ────────────────────────────────────────────── */
-  /* Surface — Apple "near-black tile" adapté à NÉYA cosmic.
-     Apple: #272729 / #2a2a2c / #252527. NÉYA va plus profond. */
+  /* ── DAWN PALETTE ───────────────────────────────────────── */
   --void:           #050810;
-  --tile-1:         #0E1626;        /* surface principale */
-  --tile-2:         #121A2C;        /* micro-step + clair */
-  --tile-3:         #0A1020;        /* micro-step + sombre */
-  --black-true:     #000000;        /* nav globale, video */
+  --deep-night:     #0A0E1F;
+  --night:          #1F2D52;
+  --twilight:       #3D4D85;
+  --lavender-warm:  #7B6FA8;
+  --peach-deep:     #D49880;
+  --amber:          #D4A878;
+  --peach-light:    #F4D4A8;
+  --light-diffuse:  #FBE8D8;
+  --cream:          #FBF6E8;
+  --tilleul:        #D4E08C;
 
-  /* Ink — Apple #1d1d1f sur clair, ici inverse: cream warm sur dark */
-  --ink:            #F5F2EC;
-  --ink-soft:       rgba(245, 242, 236, 0.66);   /* body muted on dark */
-  --ink-whisper:    rgba(245, 242, 236, 0.42);
-  --ink-faint:      rgba(245, 242, 236, 0.26);
+  /* ── NIGHT PALETTE ──────────────────────────────────────── */
+  --shadow-purple:  #1F1535;
+  --deep-purple:    #3D2F6B;
+  --mid-purple:     #5D4F8B;
+  --moon-blue:      #8FA4D4;
+  --lavender-lit:   #C3BEEF;
+  --moon-white:     #CADFFD;
 
-  /* Hairlines — Apple #f0f0f0 (light) ; ici dark equivalents */
-  --hairline:       rgba(245, 242, 236, 0.08);   /* divider soft */
-  --hairline-strong: rgba(245, 242, 236, 0.18);  /* card border */
+  /* ── ÇA VA? PALETTE ─────────────────────────────────────── */
+  --cava-bg:        #F4F0E8;
+  --cava-ink:       #1A1A1F;
+  --cava-warm:      #D49880;
+  --cava-blue:      #5D7BB8;
+  --cava-purple:    #3D2F6B;
 
-  /* Veil — vignette overlay sur photos */
-  --veil:           rgba(5, 8, 16, 0.60);
-  --veil-strong:    rgba(5, 8, 16, 0.82);
+  /* ── SEMANTIC ───────────────────────────────────────────── */
+  --success:        #8AB87A;
+  --warning:        #D49880;
+  --crisis:         #C97171;
+  --info:           #8FA4D4;
 
-  /* Accent archétype — joue le rôle Apple "Action Blue".
-     UN SEUL accent à la fois (selon archetype du user).
-     Tokens dynamiques set via JS au moment du quiz. */
-  --accent-resilience: #E8B870;
-  --accent-presence:   #3AA8D8;
-  --accent-sagesse:    #9F7AD4;
-  --accent-lumiere:    #4A8B68;
+  /* ── SURFACES ───────────────────────────────────────────── */
+  --surface-base:    var(--void);
+  --surface-scene:   var(--deep-night);
+  --surface-overlay: rgba(10, 14, 31, 0.85);
 
+  /* ── CONTENT ────────────────────────────────────────────── */
+  --content-primary:        var(--cream);
+  --content-secondary:      rgba(251, 246, 232, 0.65);
+  --content-tertiary:       rgba(251, 246, 232, 0.45);
+  --content-accent-dawn:    var(--amber);
+  --content-accent-night:   var(--moon-white);
 
-  /* ── TYPOGRAPHY — Apple spec-exact ──────────────────────── */
-  /* SF Pro stack natif. Inter en fallback sur non-Apple. */
-  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
-  --font-body:    -apple-system, BlinkMacSystemFont, 'SF Pro Text',    'Inter', system-ui, sans-serif;
-  --font-mono:    ui-monospace, 'SF Mono', Menlo, monospace;
+  /* ── TYPOGRAPHY ─────────────────────────────────────────── */
+  /* Apple mix: SF Pro Display/Text en fallback prioritaire dans
+     Sora/Inter stacks pour rendu natif sur appareils Apple. */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-ui:      'Sora', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
 
-  /* Ladder Apple exacte */
-  --text-micro-legal: 10px;
-  --text-fine-print:  12px;
-  --text-nav-link:    12px;
-  --text-caption:     14px;
-  --text-body:        17px;        /* Apple signature — pas 16 */
-  --text-button-large: 18px;       /* rare weight 300 */
-  --text-tagline:     21px;
-  --text-lead-airy:   24px;        /* rare weight 300 */
-  --text-lead:        28px;
-  --text-display-md:  34px;
-  --text-display-lg:  40px;
-  --text-hero:        56px;
+  --type-hero:    32px;
+  --type-h1:      28px;
+  --type-h2:      22px;
+  --type-h3:      18px;
+  --type-body:    14px;
+  --type-body-sm: 12px;
+  --type-label:   11px;
+  --type-mark:    9px;
+  --type-stat:    24px;
 
-  /* Weights — Apple ladder strict 300 / 400 / 600 / 700 (no 500) */
-  --w-light:    300;
-  --w-regular:  400;
-  --w-semibold: 600;
-  --w-bold:     700;
+  --weight-light:     300;
+  --weight-regular:   400;
+  --weight-medium:    500;
+  --weight-semibold:  600;
 
-  /* Line-height context-specific */
-  --lh-hero:        1.07;
-  --lh-display-lg:  1.10;
-  --lh-display-md:  1.47;          /* Apple paradox — SF Text proportions */
-  --lh-tagline:     1.19;
-  --lh-lead:        1.14;
-  --lh-lead-airy:   1.50;
-  --lh-body:        1.47;
-  --lh-button-utility: 1.29;
-  --lh-button-large: 1.00;
-  --lh-caption:     1.43;
-  --lh-dense:       2.41;          /* footer link columns */
-  --lh-fine:        1.30;
+  --lh-hero:    1.05;
+  --lh-h1:      1.05;
+  --lh-h2:      1.10;
+  --lh-h3:      1.20;
+  --lh-body:    1.55;
+  --lh-body-sm: 1.50;
+  --lh-label:   1.30;
+  --lh-mark:    1.00;
+  --lh-stat:    1.00;
 
-  /* Letter-spacing — negative at display, signature Apple tight */
-  --ls-hero:        -0.005em;      /* approx -0.28px @ 56px */
-  --ls-display-lg:   0;
-  --ls-display-md:  -0.011em;      /* approx -0.374px @ 34px */
-  --ls-tagline:      0.011em;      /* approx 0.231px @ 21px */
-  --ls-lead:         0.007em;
-  --ls-body:        -0.022em;      /* approx -0.374px @ 17px */
-  --ls-caption:     -0.016em;      /* approx -0.224px @ 14px */
-  --ls-nav-link:    -0.010em;
-  --ls-fine:        -0.010em;
-  --ls-micro:       -0.008em;
-  --ls-caps:         0.18em;       /* labels caps NÉYA */
+  --ls-hero:    -0.016em;   /* approx -0.5px @ 32px */
+  --ls-h1:      -0.018em;   /* approx -0.5px @ 28px */
+  --ls-h2:      -0.014em;   /* approx -0.3px @ 22px */
+  --ls-mark:     0.222em;   /* approx +2px @ 9px */
+  --ls-stat:    -0.021em;   /* approx -0.5px @ 24px */
 
+  /* Fraunces variable settings */
+  --fraunces-opsz-large:   "opsz" 144, "SOFT" 0, "WONK" 0;
+  --fraunces-italic-soft:  "opsz" 144, "SOFT" 100, "WONK" 1;
 
-  /* ── SPACING — Apple grid 8pt strict (+ médian Apple 17/12) ── */
-  --s-xxs:    4px;
-  --s-xs:     8px;
-  --s-sm:    12px;
-  --s-md:    17px;     /* Apple median */
-  --s-lg:    24px;
-  --s-xl:    32px;
-  --s-xxl:   48px;
-  --s-section: 80px;
+  /* ── SPACING (base 4) ───────────────────────────────────── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 22px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
 
+  /* ── RADIUS ─────────────────────────────────────────────── */
+  --radius-xs:     4px;
+  --radius-sm:     8px;
+  --radius-md:     14px;
+  --radius-lg:     22px;
+  --radius-xl:     28px;
+  --radius-pill:   9999px;
+  --radius-circle: 50%;
 
-  /* ── RADIUS — Apple spec-exact ──────────────────────────── */
-  --r-none:    0;
-  --r-xs:      5px;
-  --r-sm:      8px;        /* dark utility button */
-  --r-md:     11px;        /* Pearl Button + iOS sheet top */
-  --r-lg:     18px;        /* utility card, accessory grid */
-  --r-pill:   9999px;
-  --r-full:   9999px;
+  /* ── DURATION ───────────────────────────────────────────── */
+  --duration-fast:       200ms;
+  --duration-base:       400ms;
+  --duration-slow:       800ms;
+  --duration-narrative:  1200ms;
+  --duration-cinematic:  1800ms;
 
-  /* Aliases legacy → Apple */
-  --r-sheet:  11px;        /* iOS sheet top */
+  /* ── EASING ─────────────────────────────────────────────── */
+  --ease-out:        cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out:     cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-narrative:  cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
-
-  /* ── ELEVATION — Single product-shadow Apple ────────────── */
-  /* La SEULE drop-shadow du système — réservée aux portraits
-     spirit qui reposent sur la surface. Pas sur cards, pas sur
-     buttons, pas sur text. */
-  --shadow-product: 0 3px 30px 5px rgba(0, 0, 0, 0.22);
-
-
-  /* ── EASING — iOS spring naturals ───────────────────────── */
+  /* Apple mix supplement — pour press feedback snappy */
   --ease-out-ios:    cubic-bezier(0.32, 0.72, 0, 1);
   --ease-in-ios:     cubic-bezier(0.32, 0, 0.72, 1);
-  --ease-spring-ios: cubic-bezier(0.5, 1.4, 0.3, 1);
-
-  --d-fast:    160ms;
-  --d-base:    240ms;
-  --d-slow:    420ms;
-  --d-page:    600ms;
 
 
-  /* ── LEGACY ALIASES (back-compat avec tokens existants) ─── */
-  --void-soft:           var(--tile-1);
+  /* ════════════════════════════════════════════════════════════
+     LEGACY ALIASES — back-compat avec App.jsx existant
+     ════════════════════════════════════════════════════════════ */
+  --ink:                 var(--cream);
+  --ink-soft:            var(--content-secondary);
+  --ink-whisper:         var(--content-tertiary);
+  --ink-faint:           rgba(251, 246, 232, 0.26);
+  --tile-1:              var(--deep-night);
+  --tile-2:              #121A2C;
+  --tile-3:              #0A1020;
+  --hairline:            rgba(251, 246, 232, 0.08);
+  --hairline-strong:     rgba(251, 246, 232, 0.18);
   --line:                var(--hairline);
   --line-strong:         var(--hairline-strong);
-  --surface-void:        var(--void);
-  --surface-base:        var(--void);
-  --surface-raised:      transparent;
-  --surface-elevated:    transparent;
-  --text-primary:        var(--ink);
-  --text-secondary:      var(--ink-soft);
-  --text-whisper:        var(--ink-whisper);
-  --light-veil:          var(--veil);
-  --border-veil:         var(--hairline);
-  --border-presence:     var(--hairline-strong);
-  --r-xxl:               var(--r-lg);
-  --r-mega:              var(--r-lg);
-  --tracking-tight:      -0.022em;
-  --tracking-snug:       -0.011em;
-  --tracking-normal:      0em;
-  --tracking-wide:        0.011em;
-  --tracking-caps:        0.18em;
-  --tracking-monument:    0.30em;
-  --weight-light:         var(--w-light);
-  --weight-regular:       var(--w-regular);
-  --weight-medium:        var(--w-semibold);  /* drop 500 → 600 */
+  --veil:                rgba(5, 8, 16, 0.60);
+  --veil-strong:         rgba(5, 8, 16, 0.82);
+  --accent-resilience:   var(--amber);
+  --accent-presence:     var(--moon-blue);
+  --accent-sagesse:      var(--lavender-lit);
+  --accent-lumiere:      var(--success);
 
-  /* ÇA VA? brand (Boutique uniquement) */
-  --cava-terracotta:     #9F584E;
-  --cava-ochre:          #C29051;
-  --cava-emerald:        #34917F;
-  --cava-sage:           #9AAFA0;
-  --cava-cream:          #D4C8BA;
-  --cava-mist-blue:      #7397BC;
+  --r-none:    0;
+  --r-xs:      var(--radius-xs);
+  --r-sm:      var(--radius-sm);
+  --r-md:      var(--radius-md);
+  --r-lg:      var(--radius-lg);
+  --r-xl:      var(--radius-xl);
+  --r-pill:    var(--radius-pill);
+  --r-full:    var(--radius-pill);
+  --r-sheet:   var(--radius-lg);
+  --r-xxl:     var(--radius-lg);
+  --r-mega:    var(--radius-lg);
+
+  --s-xxs:     var(--sp-1);
+  --s-xs:      var(--sp-2);
+  --s-sm:      var(--sp-3);
+  --s-md:      var(--sp-4);
+  --s-lg:      var(--sp-5);
+  --s-xl:      var(--sp-6);
+  --s-xxl:     var(--sp-7);
+  --s-section: var(--sp-9);
+
+  --tracking-tight:    -0.018em;
+  --tracking-snug:     -0.014em;
+  --tracking-normal:    0em;
+  --tracking-wide:      0.011em;
+  --tracking-caps:      0.18em;
+  --tracking-monument:  var(--ls-mark);
+  --w-light:            var(--weight-light);
+  --w-regular:          var(--weight-regular);
+  --w-semibold:         var(--weight-semibold);
+
+  --text-micro-legal:    10px;
+  --text-fine-print:     var(--type-mark);
+  --text-nav-link:       var(--type-mark);
+  --text-caption:        var(--type-label);
+  --text-body:           var(--type-body);
+  --text-button-large:   var(--type-h3);
+  --text-tagline:        var(--type-h3);
+  --text-lead-airy:      var(--type-h2);
+  --text-lead:           var(--type-h1);
+  --text-display-md:     var(--type-hero);
+  --text-display-lg:     var(--type-h1);
+  --text-hero:           var(--type-hero);
+
+  --lh-display-lg:       var(--lh-h1);
+  --lh-display-md:       var(--lh-hero);
+  --lh-tagline:          var(--lh-h3);
+  --lh-lead:             var(--lh-h1);
+  --lh-lead-airy:        var(--lh-h2);
+  --lh-button-utility:   var(--lh-label);
+  --lh-button-large:     var(--lh-stat);
+  --lh-caption:          var(--lh-label);
+  --lh-dense:            2.41;
+  --lh-fine:             1.30;
+
+  --ls-display-lg:       var(--ls-h1);
+  --ls-display-md:       var(--ls-hero);
+  --ls-tagline:          0.011em;
+  --ls-lead:             0.007em;
+  --ls-body:             0em;
+  --ls-caption:         -0.016em;
+  --ls-nav-link:        -0.010em;
+  --ls-fine:            -0.010em;
+  --ls-micro:           -0.008em;
+  --ls-caps:             var(--tracking-caps);
+
+  --shadow-product: 0 3px 30px 5px rgba(0, 0, 0, 0.22);
+
+  --d-fast:    var(--duration-fast);
+  --d-base:    var(--duration-base);
+  --d-slow:    var(--duration-slow);
+  --d-page:    var(--duration-narrative);
+
+  --ease-spring-ios: cubic-bezier(0.5, 1.4, 0.3, 1);
 }
 
 
 /* ════════════════════════════════════════════════════════════
-   BODY RESET — Canvas Apple-grade dark cosmic
+   BODY RESET — Canvas NÉYA dark cosmic
    ════════════════════════════════════════════════════════════ */
 
 html, body {
   background: var(--void);
-  color: var(--ink);
+  color: var(--content-primary);
   font-family: var(--font-body);
-  font-size: var(--text-body);            /* 17px Apple signature */
-  font-weight: var(--w-regular);
-  line-height: var(--lh-body);            /* 1.47 */
-  letter-spacing: var(--ls-body);         /* -0.022em */
+  font-size: var(--type-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--lh-body);
+  letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-#root { font-family: var(--font-body); color: var(--ink); }
+#root  { font-family: var(--font-body); color: var(--content-primary); }
 button { font-family: inherit; cursor: pointer; }
 
 
 /* ════════════════════════════════════════════════════════════
-   APPLE PRESS RESPONSE — scale(0.95) universel
+   APPLE PRESS RESPONSE — scale(0.95) universel (Apple mix)
    ════════════════════════════════════════════════════════════ */
 
 [data-press]:active {
@@ -211,14 +270,14 @@ button { font-family: inherit; cursor: pointer; }
 .drag-handle {
   width: 36px;
   height: 5px;
-  border-radius: var(--r-pill);
+  border-radius: var(--radius-pill);
   background: var(--ink-faint);
   margin: 8px auto 0;
 }
 
 
 /* ════════════════════════════════════════════════════════════
-   ANIMATIONS — Apple minimales, fonctionnelles uniquement
+   ANIMATIONS — minimal library
    ════════════════════════════════════════════════════════════ */
 
 @keyframes fade-in {
@@ -231,10 +290,132 @@ button { font-family: inherit; cursor: pointer; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulse-soft {
-  0%, 100% { opacity: 0.7; }
-  50%      { opacity: 1; }
+/* Breathing cycle — 4s inhale, 7s hold, 8s exhale = 19s total */
+@keyframes breathe-19s {
+  0%      { transform: scale(1);   }
+  21.05%  { transform: scale(1.4); }  /* 4s inhale */
+  57.89%  { transform: scale(1.4); }  /* +7s hold  */
+  100%    { transform: scale(1);   }  /* +8s exhale */
 }
 
-.fade-in    { animation: fade-in var(--d-slow) var(--ease-out-ios) both; }
-.fade-in-up { animation: fade-in-up var(--d-slow) var(--ease-out-ios) both; }
+/* Totem idle pulse (4s, max 0.4↔0.5 forbidden intensity) */
+@keyframes totem-idle {
+  0%, 100% { transform: scale(1);    }
+  50%      { transform: scale(1.05); }
+}
+
+/* Light ray oscillation (8s, opacity 0.3 ↔ 0.5) */
+@keyframes ray-oscillate {
+  0%, 100% { opacity: 0.30; }
+  50%      { opacity: 0.50; }
+}
+
+/* Particle drift (12s) */
+@keyframes particle-drift {
+  0%, 100% { transform: translateY(0);   opacity: 0.4; }
+  50%      { transform: translateY(-8px); opacity: 0.8; }
+}
+
+/* Tilleul check pop (400ms, no bounce) */
+@keyframes check-pop {
+  0%   { opacity: 0; transform: scale(0);   }
+  60%  { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1);   }
+}
+
+.fade-in    { animation: fade-in var(--duration-slow) var(--ease-out) both; }
+.fade-in-up { animation: fade-in-up var(--duration-slow) var(--ease-out) both; }
+
+
+/* ════════════════════════════════════════════════════════════
+   GLOBAL TYPOGRAPHY CLASSES — V2 tokens
+   ════════════════════════════════════════════════════════════
+   À utiliser tel quel pour conformité spec. */
+
+.neya-hero {
+  font-family: var(--font-display);
+  font-size: var(--type-hero);
+  font-weight: var(--weight-regular);
+  line-height: var(--lh-hero);
+  letter-spacing: var(--ls-hero);
+  font-variation-settings: var(--fraunces-opsz-large);
+  color: var(--content-primary);
+}
+
+.neya-h1 {
+  font-family: var(--font-display);
+  font-size: var(--type-h1);
+  font-weight: var(--weight-regular);
+  line-height: var(--lh-h1);
+  letter-spacing: var(--ls-h1);
+  font-variation-settings: var(--fraunces-opsz-large);
+  color: var(--content-primary);
+}
+
+.neya-h2 {
+  font-family: var(--font-display);
+  font-size: var(--type-h2);
+  font-weight: var(--weight-regular);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-h2);
+  font-variation-settings: var(--fraunces-opsz-large);
+  color: var(--content-primary);
+}
+
+.neya-h3 {
+  font-family: var(--font-ui);
+  font-size: var(--type-h3);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-h3);
+  color: var(--content-primary);
+}
+
+.neya-body {
+  font-family: var(--font-body);
+  font-size: var(--type-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--lh-body);
+  color: var(--content-primary);
+}
+
+.neya-body-sm {
+  font-family: var(--font-body);
+  font-size: var(--type-body-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--lh-body-sm);
+  color: var(--content-secondary);
+}
+
+.neya-label {
+  font-family: var(--font-ui);
+  font-size: var(--type-label);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-label);
+  color: var(--content-primary);
+}
+
+.neya-mark {
+  font-family: var(--font-ui);
+  font-size: var(--type-mark);
+  font-weight: var(--weight-medium);
+  line-height: var(--lh-mark);
+  letter-spacing: var(--ls-mark);
+  text-transform: uppercase;
+  color: var(--content-tertiary);
+}
+
+.neya-stat {
+  font-family: var(--font-ui);
+  font-size: var(--type-stat);
+  font-weight: var(--weight-semibold);
+  line-height: var(--lh-stat);
+  letter-spacing: var(--ls-stat);
+  color: var(--content-primary);
+}
+
+/* Italic emotional keyword utility for Fraunces hero/h1/h2 */
+em.neya-key {
+  font-style: italic;
+  font-weight: var(--weight-light);
+  font-variation-settings: var(--fraunces-italic-soft);
+}

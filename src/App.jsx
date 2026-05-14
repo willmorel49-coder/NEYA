@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
+import PreviewV2 from './v2/Preview';
 
 // ════════════════════════════════════════════════════════════
 // NÉYA V1 — Apple-grade pilot deck
 // Splash → Onboarding(3) → Quiz → Result → Home + EspaceVrai + Cocon
+//
+// V2 Components Preview accessible via ?preview=v2
 // ════════════════════════════════════════════════════════════
 
 const B = '/';
@@ -1485,6 +1488,18 @@ function Cocon({ arch, prenom, setPrenom, onClose }) {
 // ════════════════════════════════════════════════════════════
 
 export default function App() {
+  // Router : ?preview=v2 → V2 design system components preview
+  const previewMode = (typeof window !== 'undefined') &&
+    new URLSearchParams(window.location.search).get('preview') === 'v2';
+
+  if (previewMode) {
+    return <PreviewV2 />;
+  }
+
+  return <AppV1 />;
+}
+
+function AppV1() {
   const [screen, setScreen] = useState(() => {
     const arch = ls.get('neya_v1_archetype', null);
     return arch ? 'home' : 'splash';
