@@ -184,7 +184,7 @@ function CapsLabel({ children, style }) {
       style={{
         fontFamily: 'var(--font-body)',
         fontSize: 'var(--text-caption)',
-        fontWeight: 500,
+        fontWeight: 600,
         letterSpacing: 'var(--tracking-caps)',
         textTransform: 'uppercase',
         color: 'var(--ink-soft)',
@@ -224,8 +224,8 @@ function Action({ children, onClick, primary, style, disabled }) {
         borderRadius: 'var(--r-pill)',
         padding: '15px 36px',
         fontFamily: 'var(--font-body)',
-        fontSize: 13,
-        fontWeight: 500,
+        fontSize: 14,
+        fontWeight: 600,
         letterSpacing: 'var(--tracking-caps)',
         textTransform: 'uppercase',
         cursor: disabled ? 'default' : 'pointer',
@@ -545,7 +545,7 @@ function Quiz({ onComplete }) {
                     border: `1px solid ${isSelected ? 'rgba(245,242,236,0.92)' : 'var(--line-strong)'}`,
                     borderRadius: 'var(--r-lg)',
                     fontFamily: 'var(--font-body)',
-                    fontSize: 16,
+                    fontSize: 17,
                     fontWeight: 400,
                     lineHeight: 1.4,
                     cursor: selected !== null ? 'default' : 'pointer',
@@ -627,7 +627,7 @@ function Result({ arch, onEnter }) {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: 16,
+              fontSize: 17,
               color: 'var(--ink-soft)',
               margin: '12px 0 28px',
               textAlign: 'center',
@@ -900,7 +900,7 @@ function Home({ arch, prenom, intention, setIntention, streak, presenceToday, op
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 400, letterSpacing: '-0.01em', marginBottom: 2 }}>
                   Mon Cocon
                 </div>
-                <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink-soft)' }}>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink-soft)' }}>
                   Ton sanctuaire personnel
                 </div>
               </div>
@@ -1236,7 +1236,7 @@ function EspaceVrai({ arch, onClose, onComplete }) {
                 width: 32,
                 height: 32,
                 color: 'var(--ink)',
-                fontSize: 16,
+                fontSize: 17,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',

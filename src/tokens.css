@@ -1,183 +1,224 @@
 /* ============================================================
-   NÉYA — V1 Apple-grade · Cinéma / Immersif
+   NÉYA — V1 Apple-grade (spec-exact getdesign:apple, dark cosmic)
    ============================================================
-   Pilot deck rebuild from 0. Apple grammar structurelle injectée
-   sur le dark cosmic NÉYA. Tokens stricts. Grid 8pt.
+   Apple grammar AT THE STRUCTURAL LEVEL. NÉYA dark cosmic AT THE
+   SOUL LEVEL. La photo full-bleed est le "tile" NÉYA — équivalent
+   dark de l'alternance light/dark Apple, rythmée par la variation
+   de monde (cosmos/feu/eau/foret/...) plutôt que par la teinte.
    ============================================================ */
 
 :root {
 
-  /* ── PALETTE V1 (5 + 4 accents archétype) ───────────────── */
-  --void:         #050810;
-  --void-soft:    #0B1020;
-  --ink:          #F5F2EC;
-  --ink-soft:     rgba(245, 242, 236, 0.62);
-  --ink-whisper:  rgba(245, 242, 236, 0.42);
-  --ink-faint:    rgba(245, 242, 236, 0.26);
-  --line:         rgba(245, 242, 236, 0.10);
-  --line-strong:  rgba(245, 242, 236, 0.18);
-  --veil:         rgba(5, 8, 16, 0.60);
-  --veil-strong:  rgba(5, 8, 16, 0.82);
+  /* ── PALETTE ────────────────────────────────────────────── */
+  /* Surface — Apple "near-black tile" adapté à NÉYA cosmic.
+     Apple: #272729 / #2a2a2c / #252527. NÉYA va plus profond. */
+  --void:           #050810;
+  --tile-1:         #0E1626;        /* surface principale */
+  --tile-2:         #121A2C;        /* micro-step + clair */
+  --tile-3:         #0A1020;        /* micro-step + sombre */
+  --black-true:     #000000;        /* nav globale, video */
 
-  /* Accents archétype */
+  /* Ink — Apple #1d1d1f sur clair, ici inverse: cream warm sur dark */
+  --ink:            #F5F2EC;
+  --ink-soft:       rgba(245, 242, 236, 0.66);   /* body muted on dark */
+  --ink-whisper:    rgba(245, 242, 236, 0.42);
+  --ink-faint:      rgba(245, 242, 236, 0.26);
+
+  /* Hairlines — Apple #f0f0f0 (light) ; ici dark equivalents */
+  --hairline:       rgba(245, 242, 236, 0.08);   /* divider soft */
+  --hairline-strong: rgba(245, 242, 236, 0.18);  /* card border */
+
+  /* Veil — vignette overlay sur photos */
+  --veil:           rgba(5, 8, 16, 0.60);
+  --veil-strong:    rgba(5, 8, 16, 0.82);
+
+  /* Accent archétype — joue le rôle Apple "Action Blue".
+     UN SEUL accent à la fois (selon archetype du user).
+     Tokens dynamiques set via JS au moment du quiz. */
   --accent-resilience: #E8B870;
   --accent-presence:   #3AA8D8;
   --accent-sagesse:    #9F7AD4;
   --accent-lumiere:    #4A8B68;
 
-  /* ── TYPO — Apple system stack ──────────────────────────── */
+
+  /* ── TYPOGRAPHY — Apple spec-exact ──────────────────────── */
+  /* SF Pro stack natif. Inter en fallback sur non-Apple. */
   --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
-  --font-body:    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, 'SF Pro Text',    'Inter', system-ui, sans-serif;
   --font-mono:    ui-monospace, 'SF Mono', Menlo, monospace;
 
-  /* Echelle Apple HIG ratio inspired (4 niveaux body + 4 display) */
-  --text-caption: 11px;       /* labels caps, captions */
-  --text-footnote: 13px;      /* footnotes */
-  --text-body:    16px;       /* body lisible */
-  --text-callout: 18px;       /* callouts important */
-  --text-title3:  22px;       /* sub-section titles */
-  --text-title2:  28px;       /* section titles */
-  --text-title1:  34px;       /* screen titles */
-  --text-large:   44px;       /* hero / display */
+  /* Ladder Apple exacte */
+  --text-micro-legal: 10px;
+  --text-fine-print:  12px;
+  --text-nav-link:    12px;
+  --text-caption:     14px;
+  --text-body:        17px;        /* Apple signature — pas 16 */
+  --text-button-large: 18px;       /* rare weight 300 */
+  --text-tagline:     21px;
+  --text-lead-airy:   24px;        /* rare weight 300 */
+  --text-lead:        28px;
+  --text-display-md:  34px;
+  --text-display-lg:  40px;
+  --text-hero:        56px;
 
-  --leading-tight:   1.15;
-  --leading-snug:    1.30;
-  --leading-normal:  1.50;
-  --leading-relaxed: 1.65;
+  /* Weights — Apple ladder strict 300 / 400 / 600 / 700 (no 500) */
+  --w-light:    300;
+  --w-regular:  400;
+  --w-semibold: 600;
+  --w-bold:     700;
 
-  --tracking-tight:    -0.022em;   /* large display */
-  --tracking-snug:     -0.012em;   /* titles */
-  --tracking-normal:    0em;
-  --tracking-wide:      0.04em;
-  --tracking-caps:      0.18em;
+  /* Line-height context-specific */
+  --lh-hero:        1.07;
+  --lh-display-lg:  1.10;
+  --lh-display-md:  1.47;          /* Apple paradox — SF Text proportions */
+  --lh-tagline:     1.19;
+  --lh-lead:        1.14;
+  --lh-lead-airy:   1.50;
+  --lh-body:        1.47;
+  --lh-button-utility: 1.29;
+  --lh-button-large: 1.00;
+  --lh-caption:     1.43;
+  --lh-dense:       2.41;          /* footer link columns */
+  --lh-fine:        1.30;
 
-  --weight-light:    300;
-  --weight-regular:  400;
-  --weight-medium:   500;
-  --weight-semibold: 600;
+  /* Letter-spacing — negative at display, signature Apple tight */
+  --ls-hero:        -0.005em;      /* approx -0.28px @ 56px */
+  --ls-display-lg:   0;
+  --ls-display-md:  -0.011em;      /* approx -0.374px @ 34px */
+  --ls-tagline:      0.011em;      /* approx 0.231px @ 21px */
+  --ls-lead:         0.007em;
+  --ls-body:        -0.022em;      /* approx -0.374px @ 17px */
+  --ls-caption:     -0.016em;      /* approx -0.224px @ 14px */
+  --ls-nav-link:    -0.010em;
+  --ls-fine:        -0.010em;
+  --ls-micro:       -0.008em;
+  --ls-caps:         0.18em;       /* labels caps NÉYA */
 
-  /* ── SPACING — Grid 8pt strict ──────────────────────────── */
-  --s-1:   4px;
-  --s-2:   8px;
-  --s-3:   12px;
-  --s-4:   16px;
-  --s-5:   20px;
-  --s-6:   24px;
-  --s-8:   32px;
-  --s-10:  40px;
-  --s-12:  48px;
-  --s-16:  64px;
-  --s-20:  80px;
-  --s-24:  96px;
 
-  /* ── CORNERS — Apple continuous radius ──────────────────── */
-  --r-sm:    8px;
-  --r-md:    14px;
-  --r-lg:    22px;     /* cards */
-  --r-xl:    28px;
-  --r-sheet: 36px;     /* sheet top */
-  --r-pill:  100px;    /* buttons */
-  --r-full:  9999px;
+  /* ── SPACING — Apple grid 8pt strict (+ médian Apple 17/12) ── */
+  --s-xxs:    4px;
+  --s-xs:     8px;
+  --s-sm:    12px;
+  --s-md:    17px;     /* Apple median */
+  --s-lg:    24px;
+  --s-xl:    32px;
+  --s-xxl:   48px;
+  --s-section: 80px;
+
+
+  /* ── RADIUS — Apple spec-exact ──────────────────────────── */
+  --r-none:    0;
+  --r-xs:      5px;
+  --r-sm:      8px;        /* dark utility button */
+  --r-md:     11px;        /* Pearl Button + iOS sheet top */
+  --r-lg:     18px;        /* utility card, accessory grid */
+  --r-pill:   9999px;
+  --r-full:   9999px;
+
+  /* Aliases legacy → Apple */
+  --r-sheet:  11px;        /* iOS sheet top */
+
+
+  /* ── ELEVATION — Single product-shadow Apple ────────────── */
+  /* La SEULE drop-shadow du système — réservée aux portraits
+     spirit qui reposent sur la surface. Pas sur cards, pas sur
+     buttons, pas sur text. */
+  --shadow-product: 0 3px 30px 5px rgba(0, 0, 0, 0.22);
+
 
   /* ── EASING — iOS spring naturals ───────────────────────── */
-  --ease-out-ios:    cubic-bezier(0.32, 0.72, 0, 1);   /* spring open / forward */
-  --ease-in-ios:     cubic-bezier(0.32, 0, 0.72, 1);   /* dismiss / back */
-  --ease-spring-ios: cubic-bezier(0.5, 1.4, 0.3, 1);    /* overshoot subtil */
+  --ease-out-ios:    cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-in-ios:     cubic-bezier(0.32, 0, 0.72, 1);
+  --ease-spring-ios: cubic-bezier(0.5, 1.4, 0.3, 1);
 
-  /* ── DURATIONS ──────────────────────────────────────────── */
   --d-fast:    160ms;
   --d-base:    240ms;
   --d-slow:    420ms;
   --d-page:    600ms;
+
+
+  /* ── LEGACY ALIASES (back-compat avec tokens existants) ─── */
+  --void-soft:           var(--tile-1);
+  --line:                var(--hairline);
+  --line-strong:         var(--hairline-strong);
+  --surface-void:        var(--void);
+  --surface-base:        var(--void);
+  --surface-raised:      transparent;
+  --surface-elevated:    transparent;
+  --text-primary:        var(--ink);
+  --text-secondary:      var(--ink-soft);
+  --text-whisper:        var(--ink-whisper);
+  --light-veil:          var(--veil);
+  --border-veil:         var(--hairline);
+  --border-presence:     var(--hairline-strong);
+  --r-xxl:               var(--r-lg);
+  --r-mega:              var(--r-lg);
+  --tracking-tight:      -0.022em;
+  --tracking-snug:       -0.011em;
+  --tracking-normal:      0em;
+  --tracking-wide:        0.011em;
+  --tracking-caps:        0.18em;
+  --tracking-monument:    0.30em;
+  --weight-light:         var(--w-light);
+  --weight-regular:       var(--w-regular);
+  --weight-medium:        var(--w-semibold);  /* drop 500 → 600 */
+
+  /* ÇA VA? brand (Boutique uniquement) */
+  --cava-terracotta:     #9F584E;
+  --cava-ochre:          #C29051;
+  --cava-emerald:        #34917F;
+  --cava-sage:           #9AAFA0;
+  --cava-cream:          #D4C8BA;
+  --cava-mist-blue:      #7397BC;
 }
 
 
 /* ════════════════════════════════════════════════════════════
-   BODY RESET — Canvas Apple-grade
+   BODY RESET — Canvas Apple-grade dark cosmic
    ════════════════════════════════════════════════════════════ */
 
 html, body {
   background: var(--void);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: var(--text-body);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-normal);
-  letter-spacing: 0;
+  font-size: var(--text-body);            /* 17px Apple signature */
+  font-weight: var(--w-regular);
+  line-height: var(--lh-body);            /* 1.47 */
+  letter-spacing: var(--ls-body);         /* -0.022em */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-#root {
-  font-family: var(--font-body);
-  color: var(--ink);
-}
+#root { font-family: var(--font-body); color: var(--ink); }
+button { font-family: inherit; cursor: pointer; }
 
-button {
-  font-family: inherit;
-  cursor: pointer;
-}
 
-/* Apple tap response — scale 0.97 universal */
+/* ════════════════════════════════════════════════════════════
+   APPLE PRESS RESPONSE — scale(0.95) universel
+   ════════════════════════════════════════════════════════════ */
+
 [data-press]:active {
-  transform: scale(0.97);
+  transform: scale(0.95);
   transition: transform 120ms var(--ease-out-ios);
 }
 
-/* Apple list / sheet drag handle */
+
+/* ════════════════════════════════════════════════════════════
+   iOS SHEET DRAG HANDLE
+   ════════════════════════════════════════════════════════════ */
+
 .drag-handle {
   width: 36px;
   height: 5px;
-  border-radius: var(--r-full);
+  border-radius: var(--r-pill);
   background: var(--ink-faint);
   margin: 8px auto 0;
 }
 
 
 /* ════════════════════════════════════════════════════════════
-   STAGE — Photo full-bleed cinema avec vignette bas→haut
-   ════════════════════════════════════════════════════════════ */
-
-.stage {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.stage__bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  z-index: 0;
-}
-
-.stage__vignette {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(5, 8, 16, 0.85) 0%,
-    rgba(5, 8, 16, 0.55) 22%,
-    rgba(5, 8, 16, 0.15) 50%,
-    rgba(5, 8, 16, 0.05) 100%
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
-.stage__content {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-}
-
-
-/* ════════════════════════════════════════════════════════════
-   ANIMATIONS — Apple-grade minimales
+   ANIMATIONS — Apple minimales, fonctionnelles uniquement
    ════════════════════════════════════════════════════════════ */
 
 @keyframes fade-in {
@@ -193,11 +234,6 @@ button {
 @keyframes pulse-soft {
   0%, 100% { opacity: 0.7; }
   50%      { opacity: 1; }
-}
-
-@keyframes sheet-in {
-  from { transform: translateY(100%); }
-  to   { transform: translateY(0); }
 }
 
 .fade-in    { animation: fade-in var(--d-slow) var(--ease-out-ios) both; }
