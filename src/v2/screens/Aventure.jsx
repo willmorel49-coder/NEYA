@@ -5,10 +5,24 @@
    Wash dawn par défaut. Cards pearl translucides.
    ============================================================ */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { WORLDS, WORLD_ORDER } from '../worlds';
 import { getProfile, greet, recordVisitToday, getMotifCTA, getEtatLine, getPaletteMode } from '../state';
 import Button from '../../components/Button';
+
+// Animate a number from `from` to `to` over `duration` ms with ease-out cubic
+function animateValue(from, to, duration, onUpdate) {
+  const start = performance.now();
+  let raf;
+  const tick = (now) => {
+    const t = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    onUpdate(Math.round(from + (to - from) * eased));
+    if (t < 1) raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+  return () => cancelAnimationFrame(raf);
+}
 
 // Totem → home world mapping (per spec)
 const TOTEM_HOME = {
@@ -44,6 +58,13 @@ const COCON_AMBIENT_POSITIONS = {
 export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitudes }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
   const [scrollY, setScrollY] = useState(0);
+  const [celebrating, setCelebrating] = useState(null); // { worldKey } | null
+  const [celebrationLeaving, setCelebrationLeaving] = useState(false);
+  const [displayedMinutes, setDisplayedMinutes] = useState(
+    () => profile.progress.minutesTotales || 0
+  );
+  const prevExploredRef = useRef(profile.progress.worldsExplored || []);
+  const prevMinutesRef = useRef(profile.progress.minutesTotales || 0);
   const motifCTA = getMotifCTA();
   const etatLine = getEtatLine();
   const paletteMode = getPaletteMode();
@@ -51,6 +72,50 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   useEffect(() => {
     setProfile(recordVisitToday());
   }, []);
+
+  // Detect newly unlocked world by diffing worldsExplored against previous ref
+  useEffect(() => {
+    const current = profile.progress.worldsExplored || [];
+    const prev = prevExploredRef.current || [];
+    if (current.length > prev.length) {
+      const justUnlocked = current.find((k) => !prev.includes(k));
+      if (justUnlocked) {
+        setCelebrating({ worldKey: justUnlocked });
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+          try { navigator.vibrate([8, 60, 8]); } catch (_) {}
+        }
+      }
+    }
+    prevExploredRef.current = current;
+  }, [profile]);
+
+  // Animate minutesTotales when it changes (return from Meditation)
+  useEffect(() => {
+    const target = profile.progress.minutesTotales || 0;
+    const from = prevMinutesRef.current || 0;
+    if (target === from) {
+      setDisplayedMinutes(target);
+      return;
+    }
+    const cancel = animateValue(from, target, 800, setDisplayedMinutes);
+    prevMinutesRef.current = target;
+    return cancel;
+  }, [profile.progress.minutesTotales]);
+
+  // Auto-dismiss celebration after 4.5s
+  useEffect(() => {
+    if (!celebrating) return;
+    const t = setTimeout(() => dismissCelebration(), 4500);
+    return () => clearTimeout(t);
+  }, [celebrating]);
+
+  function dismissCelebration() {
+    setCelebrationLeaving(true);
+    setTimeout(() => {
+      setCelebrating(null);
+      setCelebrationLeaving(false);
+    }, 280);
+  }
 
   const onScroll = (e) => {
     setScrollY(e.currentTarget.scrollTop);
@@ -211,7 +276,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               color: currentWorld.accent,
             }}
           >
-            {profile.progress.minutesTotales || 0} min
+            {displayedMinutes} min
           </div>
         </div>
       </div>
@@ -382,6 +447,116 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           </div>
         </div>
       </div>
+
+      {celebrating && (() => {
+        const unlockedWorld = WORLDS[celebrating.worldKey];
+        if (!unlockedWorld) return null;
+        return (
+          <div
+            role="dialog"
+            aria-label="Monde débloqué"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 50,
+              background: 'rgba(255, 252, 245, 0.55)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 24,
+              animation: celebrationLeaving
+                ? 'aventureCelebrationOut 280ms var(--ease-out) forwards'
+                : 'aventureCelebrationIn 420ms var(--ease-out) both',
+            }}
+            onClick={dismissCelebration}
+          >
+            <style>{`
+              @keyframes aventureCelebrationIn { from { opacity: 0; } to { opacity: 1; } }
+              @keyframes aventureCelebrationOut { from { opacity: 1; } to { opacity: 0; } }
+            `}</style>
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: 'var(--cream-light, #FFFCF5)',
+                borderRadius: 'var(--radius-lg)',
+                padding: '24px 22px',
+                boxShadow: 'var(--shadow-card)',
+                maxWidth: 320,
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                gap: 12,
+              }}
+            >
+              <span
+                className="tilleul-pop"
+                style={{
+                  color: 'var(--tilleul)',
+                  fontSize: 56,
+                  lineHeight: 1,
+                  fontFamily: 'var(--font-display)',
+                  display: 'inline-block',
+                }}
+                aria-hidden="true"
+              >
+                ✓
+              </span>
+              <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
+                MONDE DÉBLOQUÉ
+              </div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontStyle: 'italic',
+                  fontSize: 28,
+                  lineHeight: 1.2,
+                  color: 'var(--ink)',
+                  fontVariationSettings: 'var(--fraunces-italic-soft)',
+                }}
+              >
+                « Tu as découvert le{' '}
+                <em className="neya-key">{unlockedWorld.name}</em>. »
+              </div>
+              {unlockedWorld.emotion && (
+                <div
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 14,
+                    color: 'var(--content-secondary)',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {unlockedWorld.emotion}
+                </div>
+              )}
+              <button
+                data-press={true}
+                onClick={dismissCelebration}
+                style={{
+                  appearance: 'none',
+                  marginTop: 8,
+                  background: 'var(--ink)',
+                  color: 'var(--cream)',
+                  border: 'none',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '12px 28px',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  WebkitTapHighlightColor: 'transparent',
+                }}
+              >
+                Continuer
+              </button>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

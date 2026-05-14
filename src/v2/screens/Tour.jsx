@@ -130,6 +130,24 @@ export default function Tour({ onClose }) {
     }, TRANSITION_MS);
   };
 
+  const goBack = () => {
+    if (transitioning) return;
+    if (slideIdx === 0) return;
+    haptic(4);
+
+    setTransitioning(true);
+    setVisible(false);
+    setTimeout(() => {
+      setSlideIdx((i) => Math.max(0, i - 1));
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setVisible(true);
+          setTransitioning(false);
+        });
+      });
+    }, TRANSITION_MS);
+  };
+
   const slide = SLIDES[slideIdx];
 
   return (
@@ -283,27 +301,64 @@ export default function Tour({ onClose }) {
           ))}
         </div>
 
-        {/* Primary CTA */}
-        <button
-          type="button"
-          data-press
-          onClick={advance}
+        {/* Actions row — back (left) + primary CTA (right) */}
+        <div
           style={{
-            appearance: 'none',
-            border: 'none',
-            background: 'var(--ink)',
-            color: 'var(--cream)',
-            fontFamily: 'var(--font-body)',
-            fontSize: 14,
-            fontWeight: 500,
-            letterSpacing: '0.011em',
-            padding: '12px 22px',
-            borderRadius: 'var(--radius-pill, 999px)',
-            minWidth: 160,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            gap: 12,
           }}
         >
-          {slide.cta}
-        </button>
+          {slideIdx > 0 ? (
+            <button
+              type="button"
+              data-press
+              onClick={goBack}
+              style={{
+                appearance: 'none',
+                border: 'none',
+                background: 'transparent',
+                color: 'var(--content-tertiary)',
+                fontFamily: 'var(--font-ui)',
+                fontSize: 11,
+                fontWeight: 500,
+                letterSpacing: 'var(--tracking-caps)',
+                textTransform: 'uppercase',
+                padding: '6px 8px',
+                cursor: 'pointer',
+                WebkitTapHighlightColor: 'transparent',
+              }}
+              aria-label="Revenir à l’étape précédente"
+            >
+              ← Retour
+            </button>
+          ) : (
+            <span aria-hidden="true" style={{ display: 'inline-block', width: 1 }} />
+          )}
+
+          <button
+            type="button"
+            data-press
+            onClick={advance}
+            style={{
+              appearance: 'none',
+              border: 'none',
+              background: 'var(--ink)',
+              color: 'var(--cream)',
+              fontFamily: 'var(--font-body)',
+              fontSize: 14,
+              fontWeight: 500,
+              letterSpacing: '0.011em',
+              padding: '12px 22px',
+              borderRadius: 'var(--radius-pill, 999px)',
+              minWidth: 160,
+            }}
+          >
+            {slide.cta}
+          </button>
+        </div>
       </div>
     </div>
   );

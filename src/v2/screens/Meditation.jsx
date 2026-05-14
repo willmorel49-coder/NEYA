@@ -33,6 +33,7 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
   const [show, setShow] = useState(false);
   const [pop, setPop] = useState(false);
   const [toast, setToast] = useState(null); // { minutes, wasNew }
+  const [reachedShow, setReachedShow] = useState(false);
   const targetReachedRef = useRef(false);
   const popTimerRef = useRef(null);
 
@@ -46,6 +47,14 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
 
   const minutes = Math.floor(elapsedMs / 60000);
   const seconds = Math.floor((elapsedMs % 60000) / 1000);
+  const reached = target !== 999 && minutes >= target;
+
+  // Fade-in caption "Tu y es" — 300ms delay overlap avec tilleul-pop end
+  useEffect(() => {
+    if (!reached) { setReachedShow(false); return; }
+    const t = setTimeout(() => setReachedShow(true), 300);
+    return () => clearTimeout(t);
+  }, [reached]);
 
   // One-shot pop quand on atteint la cible (skip si target illimité)
   useEffect(() => {
@@ -110,9 +119,10 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           height: 340,
           transform: 'translate(-50%, -50%)',
           borderRadius: '50%',
-          background: `radial-gradient(circle, ${haloAccent}3D 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${haloAccent}${reached ? '5A' : '3D'} 0%, transparent 70%)`,
           pointerEvents: 'none',
           animation: 'ray-oscillate 8s var(--ease-in-out) infinite',
+          transition: 'background 800ms var(--ease-out)',
         }}
       />
 
@@ -174,7 +184,26 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         </h2>
       </div>
 
-      {/* Centered breathing */}
+      {/* Reached — outer tilleul ring (vital presence completion) */}
+      {reached && (
+        <div
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            width: 260,
+            height: 260,
+            transform: 'translate(-50%, -50%)',
+            borderRadius: '50%',
+            border: '1px solid rgba(212, 224, 140, 0.45)',
+            pointerEvents: 'none',
+            opacity: reachedShow ? 1 : 0,
+            transition: 'opacity 600ms var(--ease-out)',
+          }}
+        />
+      )}
+
+      {/* Centered breathing — opacity dims on pause */}
       <div
         style={{
           position: 'absolute',
@@ -182,10 +211,54 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          opacity: paused ? 0.55 : 1,
+          transition: 'opacity 320ms var(--ease-out)',
         }}
       >
         <BreathingCircle size={220} autoStart={!paused} />
+        {paused && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '32%',
+              left: 0,
+              right: 0,
+              textAlign: 'center',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 9,
+              fontWeight: 500,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'var(--content-tertiary)',
+            }}
+          >
+            EN PAUSE
+          </div>
+        )}
       </div>
+
+      {/* Reached — caption fade-in entre cercle et controls */}
+      {reached && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '38%',
+            left: 0,
+            right: 0,
+            textAlign: 'center',
+            opacity: reachedShow ? 1 : 0,
+            transition: 'opacity 600ms var(--ease-out)',
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 16,
+            color: 'rgba(212, 224, 140, 0.85)',
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            pointerEvents: 'none',
+          }}
+        >
+          Tu y es. Tu peux fermer.
+        </div>
+      )}
 
       {/* Bottom controls */}
       <div

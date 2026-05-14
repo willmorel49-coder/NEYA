@@ -74,6 +74,9 @@ export default function Cocon() {
   const totemKey = profile.totem || 'lion';
   const currentTotem = TOTEMS.find((t) => t.key === totemKey) || TOTEMS[0];
   const totemWorld = WORLDS[currentTotem.world];
+  const placedCount = Object.values(placed).filter(Boolean).length;
+  const allPlaced = placedCount >= ITEMS.length;
+  const TILLEUL = '#d4e08c';
 
   const save = (patch) => {
     const next = { ...profile, ...patch };
@@ -265,7 +268,29 @@ export default function Cocon() {
         </div>
 
         {/* Items */}
-        <SectionTitle accent={totemWorld.accent} style={{ marginTop: 32 }}>Mon sanctuaire</SectionTitle>
+        <SectionTitle
+          accent={totemWorld.accent}
+          style={{ marginTop: 32 }}
+          hairlineColor={allPlaced ? TILLEUL : undefined}
+          trailing={
+            <span
+              style={{
+                fontFamily: '"Sora", system-ui, sans-serif',
+                fontSize: 9,
+                fontWeight: 500,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: allPlaced ? TILLEUL : 'var(--content-tertiary)',
+                fontVariantNumeric: 'tabular-nums',
+                transition: 'color 320ms var(--ease-out-ios)',
+              }}
+            >
+              {placedCount}/5
+            </span>
+          }
+        >
+          Mon sanctuaire
+        </SectionTitle>
         <div className="neya-body-sm" style={{ color: 'var(--content-tertiary)', marginBottom: 12 }}>
           Touche pour poser ou retirer un objet.
         </div>
@@ -620,13 +645,34 @@ function PearlCard({ children, style }) {
   );
 }
 
-function SectionTitle({ children, accent, style }) {
+function SectionTitle({ children, accent, style, trailing, hairlineColor }) {
+  const lineColor = hairlineColor || accent;
+  const labelColor = hairlineColor || accent;
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, ...style }}>
-      <span style={{ width: 18, height: 1, background: accent, opacity: 0.8 }} />
-      <span className="neya-mark" style={{ color: accent }}>
+      <span
+        style={{
+          width: 18,
+          height: 1,
+          background: lineColor,
+          opacity: 0.8,
+          transition: 'background 320ms var(--ease-out-ios, ease-out)',
+        }}
+      />
+      <span
+        className="neya-mark"
+        style={{
+          color: labelColor,
+          transition: 'color 320ms var(--ease-out-ios, ease-out)',
+        }}
+      >
         {children}
       </span>
+      {trailing ? (
+        <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center' }}>
+          {trailing}
+        </span>
+      ) : null}
     </div>
   );
 }

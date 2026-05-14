@@ -59,6 +59,10 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
 
+  // Progress count — subtle marker (no bars, no %, just the number as anchor)
+  const doneCount = HABITS.reduce((acc, h) => acc + (habits[h.id] ? 1 : 0), 0);
+  const TILLEUL = '#d4e08c';
+
   // Slide-up reveal on mount
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
@@ -227,11 +231,84 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
             fontStyle: 'italic',
             fontSize: 14,
             color: 'var(--content-secondary)',
-            marginBottom: 24,
+            marginBottom: 14,
             lineHeight: 1.4,
           }}
         >
           Cinq gestes simples pour ce qui compte.
+        </div>
+
+        {/* Progress marker — subtle, no bar, no % */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            gap: 6,
+            marginBottom: 10,
+          }}
+        >
+          <span
+            style={{
+              fontFamily: '"Fraunces", Georgia, serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              fontSize: 18,
+              lineHeight: 1,
+              color: doneCount >= 1 ? TILLEUL : 'var(--content-tertiary)',
+              fontVariantNumeric: 'tabular-nums',
+              transition: 'color 320ms var(--ease-out-ios)',
+            }}
+          >
+            {doneCount}
+          </span>
+          <span
+            style={{
+              fontFamily: '"Sora", system-ui, sans-serif',
+              fontSize: 9,
+              fontWeight: 500,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'var(--content-tertiary)',
+            }}
+          >
+            / 6 rituels aujourd’hui
+          </span>
+        </div>
+
+        {/* Dot row — tap-to-toggle nav (mirrors habit row tap) */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            marginBottom: 24,
+          }}
+        >
+          {HABITS.map((h) => {
+            const isDone = !!habits[h.id];
+            return (
+              <button
+                key={`dot-${h.id}`}
+                type="button"
+                data-press
+                onClick={() => toggle(h)}
+                aria-label={`${h.title} — ${isDone ? 'complété' : 'à venir'}`}
+                style={{
+                  appearance: 'none',
+                  width: 4,
+                  height: 4,
+                  padding: 0,
+                  borderRadius: '50%',
+                  background: isDone ? TILLEUL : 'transparent',
+                  border: isDone ? `1px solid ${TILLEUL}` : '1px solid var(--hairline)',
+                  cursor: 'pointer',
+                  WebkitTapHighlightColor: 'transparent',
+                  transition: 'background 240ms var(--ease-out-ios), border-color 240ms var(--ease-out-ios)',
+                  boxSizing: 'content-box',
+                }}
+              />
+            );
+          })}
         </div>
 
         {/* Habit list */}

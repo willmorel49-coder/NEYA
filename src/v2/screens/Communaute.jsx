@@ -95,6 +95,17 @@ export default function Communaute() {
   const [reactionState, setReactionState] = useState(() => loadReactions());
   const [composerOpen, setComposerOpen] = useState(false);
   const [draft, setDraft] = useState('');
+  const [expandedSet, setExpandedSet] = useState(() => new Set());
+
+  const toggleExpand = (id) => {
+    haptic(3);
+    setExpandedSet((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
   const profile = getProfile();
   const wRenard = WORLDS.communaute;
 
@@ -299,17 +310,61 @@ export default function Communaute() {
                     « {v.body} »
                   </p>
                 ) : (
-                  <p
-                    style={{
-                      margin: 0,
-                      fontFamily: 'var(--font-body)',
-                      fontSize: 14,
-                      lineHeight: 1.55,
-                      color: 'var(--ink)',
-                    }}
-                  >
-                    {v.body}
-                  </p>
+                  (() => {
+                    const isLong = v.body.length > 220;
+                    const isExpanded = expandedSet.has(v.id);
+                    const truncated = isLong && !isExpanded
+                      ? v.body.slice(0, 180).trimEnd() + ' …'
+                      : v.body;
+                    return (
+                      <p
+                        style={{
+                          margin: 0,
+                          fontFamily: 'var(--font-body)',
+                          fontSize: 14,
+                          lineHeight: 1.55,
+                          color: 'var(--ink)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            opacity: isExpanded ? 1 : (isLong ? 1 : 1),
+                            transition: 'opacity 280ms var(--ease-out)',
+                          }}
+                        >
+                          {truncated}
+                        </span>
+                        {isLong && (
+                          <>
+                            {' '}
+                            <button
+                              data-press
+                              onClick={() => toggleExpand(v.id)}
+                              style={{
+                                appearance: 'none',
+                                background: 'transparent',
+                                border: 'none',
+                                padding: 0,
+                                cursor: 'pointer',
+                                fontFamily: 'var(--font-ui)',
+                                fontSize: 9,
+                                fontWeight: 500,
+                                letterSpacing: '0.18em',
+                                textTransform: 'uppercase',
+                                color: 'var(--content-tertiary)',
+                                WebkitTapHighlightColor: 'transparent',
+                                verticalAlign: 'baseline',
+                                lineHeight: 1.55,
+                              }}
+                              aria-expanded={isExpanded}
+                            >
+                              {isExpanded ? 'réduire' : 'lire plus'}
+                            </button>
+                          </>
+                        )}
+                      </p>
+                    );
+                  })()
                 )}
 
                 {isDissipated && (
