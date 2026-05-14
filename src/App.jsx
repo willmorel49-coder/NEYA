@@ -3816,7 +3816,7 @@ function WorldUnlockModal({ worldKey, onClose }) {
           {/* Textes (phase 1+) */}
           <div style={{ textAlign: 'center', opacity: phase >= 1 ? 1 : 0, transform: phase >= 1 ? 'translateY(0)' : 'translateY(18px)', transition: 'all 0.8s ease' }}>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${w.rgb},0.75)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: '0 0 12px', animation: 'phrasebreathe 8s cubic-bezier(0.45,0,0.55,1) infinite' }}>Nouveau monde découvert</p>
-            <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 28, color: 'rgba(239,233,220,0.94)', margin: '0 0 12px', letterSpacing: '-0.01em', lineHeight: 1.2, textShadow: `0 0 40px rgba(${w.rgb},0.50)`, animation: 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>{w.name}</h2>
+            <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 28, color: 'rgba(239,233,220,0.94)', margin: '0 0 12px', letterSpacing: '-0.01em', lineHeight: 1.2, textShadow: `0 0 40px rgba(${w.rgb},0.50)`, animation: 'milestoneGlow 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>{w.name}</h2>
             <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.52)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>"{w.fragments[0]}"</p>
           </div>
 
@@ -4383,7 +4383,7 @@ function BreathingModal({ archetypeKey, onClose }) {
         </div>
 
         <div style={{ textAlign: 'center', minHeight: 144, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 5, position: 'relative' }}>
-          <div key={`${phaseIdx}-${cycle}`} style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 30, color: '#EFE9DC', letterSpacing: '-0.02em', animation: 'fadeIn 0.45s ease', textShadow: `0 0 24px ${arch.color}55` }}>{currentPhase.label}</div>
+          <div key={`${phaseIdx}-${cycle}`} style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 30, color: '#EFE9DC', letterSpacing: '-0.02em', animation: 'fadeIn 0.45s ease', textShadow: `0 0 24px ${arch.color}55` }}>{currentPhase.label}</div>
           <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 200, fontSize: 54, color: `rgba(${arch.rgb},0.92)`, marginTop: 2, letterSpacing: '-0.06em', lineHeight: 1, textShadow: `0 0 30px ${arch.color}55` }}>{timeLeft}</div>
           {currentPhase.hint && <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(239,233,220,0.55)', marginTop: 10, fontStyle: 'italic', letterSpacing: '0.04em' }}>{currentPhase.hint}</div>}
           <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(255,255,255,0.42)', marginTop: 14, letterSpacing: '0.16em' }}>{`Cycle ${cycle} / ${tech.totalCycles}`}</div>
@@ -4422,7 +4422,7 @@ function BreathingModal({ archetypeKey, onClose }) {
       <div style={{ position: 'relative', zIndex: 3, padding: 'calc(env(safe-area-inset-top, 0px) + 56px) 28px 40px', display: 'flex', flexDirection: 'column', gap: 22, minHeight: '100%', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', animation: 'fadeIn 0.7s ease' }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite, phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 16px ${arch.color}88` }}>✦ Souffle accompli</p>
-          <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 28, color: '#EFE9DC', margin: 0, letterSpacing: '-0.01em', textShadow: `0 0 28px ${arch.color}44`, animation: 'phrasebreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>Tu es là, pleinement.</h2>
+          <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 28, color: '#EFE9DC', margin: 0, letterSpacing: '-0.01em', textShadow: `0 0 28px ${arch.color}44`, animation: 'phrasebreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>Tu es là, pleinement.</h2>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'center', animation: 'fadeIn 1s ease 0.3s both' }}>
@@ -6650,7 +6650,7 @@ function WelcomeBackOverlay({ archetypeKey, days, onDismiss }) {
         <div style={{ width: 96, height: 96, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 22px', boxShadow: `0 0 28px ${arch.color}77, 0 0 64px ${arch.color}33, inset 0 0 0 1px ${arch.color}55`, animation: 'animalbreathe 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>
           <img src={`${B}spirit-${archetypeKey}.avif`} alt={arch.animal} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%', filter: 'brightness(1.08) saturate(1.1)' }} />
         </div>
-        <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 30, color: '#EFE9DC', margin: '0 0 12px', letterSpacing: '-0.01em', lineHeight: 1.22, textShadow: `0 0 28px ${arch.color}55` }}>{title}</h2>
+        <h2 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 50, "WONK" 1', fontSize: 30, color: '#EFE9DC', margin: '0 0 12px', letterSpacing: '-0.01em', lineHeight: 1.22, textShadow: `0 0 28px ${arch.color}55` }}>{title}</h2>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 16, color: 'rgba(239,233,220,0.78)', margin: 0, lineHeight: 1.6, textShadow: '0 1px 12px rgba(0,0,0,0.5)', animation: 'phrasebreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>{subtitle}</p>
       </div>
     </div>
@@ -7234,14 +7234,14 @@ function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra,
   const arch = ARCHETYPES[archetypeKey] || ARCHETYPES.presence
   const h = new Date().getHours()
 
-  // Greeting majestueux selon période
-  const greetingTitle =
-    h < 5  ? 'La nuit veille' :
-    h < 11 ? 'Doux matin' :
-    h < 14 ? 'Lumière de midi' :
-    h < 18 ? 'Après-midi suspendu' :
-    h < 22 ? 'Crépuscule doux' :
-             'La nuit revient'
+  // Greeting time-aware
+  const greetingLabel =
+    h < 5  ? 'NUIT' :
+    h < 11 ? 'MATIN' :
+    h < 14 ? 'MIDI' :
+    h < 18 ? 'APRÈS-MIDI' :
+    h < 22 ? 'CRÉPUSCULE' :
+             'NUIT'
 
   const greetingPoem =
     h < 5  ? 'Le silence te garde\nencore un peu.' :
@@ -7251,74 +7251,82 @@ function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra,
     h < 22 ? 'Le jour se dépose,\nrespire-le doucement.' :
              'La nuit te rend\nà toi-même.'
 
+  const monthNames = ['JANV','FÉVR','MARS','AVRIL','MAI','JUIN','JUIL','AOÛT','SEPT','OCT','NOV','DÉC']
+  const now = new Date()
+  const editorialDate = `${String(now.getDate()).padStart(2,'0')} · ${monthNames[now.getMonth()]} · ${now.getFullYear()}`
+
   return (
     <div style={{
       position: 'relative',
-      minHeight: 320,
-      margin: '0 -22px 8px',
-      paddingTop: 26,
-      paddingBottom: 28,
+      minHeight: 'calc(72vh - 60px)',
+      margin: '0 -22px 18px',
       overflow: 'hidden',
-      animation: 'fadeIn 0.9s cubic-bezier(0,0,0.2,1) both',
+      animation: 'fadeIn 1.1s cubic-bezier(0.22,1,0.36,1) both',
+      background: `linear-gradient(180deg, rgba(8,12,28,0.0) 0%, rgba(8,12,28,0.32) 60%, var(--surface-void) 100%)`,
     }}>
-      {/* Background cosmos/sunset radial */}
-      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse 90% 70% at 50% 30%, rgba(${arch.rgb},0.18) 0%, rgba(8,12,28,0.42) 60%, transparent 100%), linear-gradient(180deg, rgba(20,30,72,0.32) 0%, rgba(8,12,28,0) 100%)`, pointerEvents: 'none' }} />
+      {/* Cinematic full-bleed photo background (archetype-tied) */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: `url(/${arch.bg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 45%',
+        filter: 'brightness(0.62) saturate(108%) blur(1px)',
+        transform: 'scale(1.08)',
+      }} />
 
-      {/* Étoiles ambient */}
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-        {[
-          { x: 12, y: 18, r: 1.4, dur: 14, del: 0 },
-          { x: 28, y: 8,  r: 1.0, dur: 18, del: 3.2 },
-          { x: 44, y: 22, r: 1.6, dur: 12, del: 1.8 },
-          { x: 72, y: 12, r: 1.2, dur: 16, del: 5.5 },
-          { x: 85, y: 28, r: 1.5, dur: 14, del: 2.4 },
-          { x: 18, y: 38, r: 0.9, dur: 20, del: 7.1 },
-          { x: 92, y: 48, r: 1.3, dur: 17, del: 4.0 },
-          { x: 8,  y: 58, r: 1.0, dur: 19, del: 6.8 },
-          { x: 56, y: 36, r: 1.1, dur: 15, del: 0.9 },
-        ].map((s, i) => (
-          <circle key={i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill="white" style={{ opacity: 0.78, animation: `startwinkle ${s.dur}s cubic-bezier(0.45,0,0.55,1) infinite`, animationDelay: `${s.del}s`, filter: 'drop-shadow(0 0 4px white)' }} />
-        ))}
+      {/* Editorial gradient veil — cinematic top-fade + bottom-deep */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(8,12,28,0.32) 0%, rgba(8,12,28,0.0) 35%, rgba(8,12,28,0.42) 70%, var(--surface-void) 100%)', pointerEvents: 'none' }} />
+
+      {/* Grain overlay */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: 0.42, mixBlendMode: 'overlay' }}>
+        <filter id="heroGrain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" />
+          <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#heroGrain)" />
       </svg>
 
-      {/* Boutons utilitaires top-right */}
-      <div style={{ position: 'absolute', top: 16, right: 18, display: 'flex', gap: 4, zIndex: 5 }}>
-        <button onClick={onOpenSettings} aria-label="Réglages" style={{ background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', color: `rgba(239,233,220,0.78)`, fontSize: 13, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>⚙</button>
-        <button onClick={onOpenShare} aria-label="Partager" style={{ background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', color: `rgba(239,233,220,0.78)`, fontSize: 13, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>↗</button>
-        <button onClick={onOpenPersonalize} aria-label="Personnaliser" style={{ background: 'rgba(8,12,22,0.42)', border: `1px solid rgba(${arch.rgb},0.30)`, borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', color: `rgba(239,233,220,0.82)`, fontSize: 15, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>✎</button>
+      {/* Utility buttons — top-right, atelier-style */}
+      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 14px)', right: 16, display: 'flex', gap: 3, zIndex: 6 }}>
+        <button onClick={onOpenSettings} aria-label="Réglages" style={{ background: 'rgba(8,12,22,0.32)', border: '1px solid rgba(239,233,220,0.18)', borderRadius: '50%', width: 34, height: 34, cursor: 'pointer', color: 'rgba(239,233,220,0.82)', fontSize: 12, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}>⚙</button>
+        <button onClick={onOpenShare} aria-label="Partager" style={{ background: 'rgba(8,12,22,0.32)', border: '1px solid rgba(239,233,220,0.18)', borderRadius: '50%', width: 34, height: 34, cursor: 'pointer', color: 'rgba(239,233,220,0.82)', fontSize: 12, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}>↗</button>
+        <button onClick={onOpenPersonalize} aria-label="Personnaliser" style={{ background: 'rgba(8,12,22,0.32)', border: '1px solid rgba(239,233,220,0.18)', borderRadius: '50%', width: 34, height: 34, cursor: 'pointer', color: 'rgba(239,233,220,0.88)', fontSize: 13, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}>✎</button>
       </div>
 
-      {/* Halo de lumière pure (remplace l'ancienne silhouette SVG) */}
-      <div style={{ position: 'absolute', bottom: '-12%', left: '50%', transform: 'translateX(-50%)', width: 280, height: 280, borderRadius: '50%', background: `radial-gradient(circle, rgba(${arch.rgb},0.16) 0%, rgba(${arch.rgb},0.04) 50%, transparent 75%)`, animation: 'signaturePulse 16s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none', zIndex: 1 }} />
+      {/* Editorial vertical label — left side, rotated 90deg */}
+      <div style={{ position: 'absolute', top: '50%', left: 18, transform: 'translateY(-50%) rotate(-90deg)', transformOrigin: 'left center', whiteSpace: 'nowrap', fontFamily: 'Inter, sans-serif', fontSize: 9, fontWeight: 500, letterSpacing: '0.42em', color: 'rgba(239,233,220,0.42)', zIndex: 4 }}>
+        NÉYA — MMXXVI · {arch.profil.toUpperCase()}
+      </div>
 
-      {/* Greeting + poème */}
-      <div style={{ position: 'relative', zIndex: 3, textAlign: 'center', padding: '8px 28px 0' }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.88)`, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', textShadow: `0 0 12px ${arch.color}66`, animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-          {greetingTitle}{prenom ? ` · ${prenom}` : ''}
+      {/* Date editorial chip top-left */}
+      <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', left: 44, fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 500, letterSpacing: '0.32em', color: 'rgba(239,233,220,0.62)', zIndex: 4 }}>
+        {editorialDate}
+      </div>
+
+      {/* Hero copy block — bottom-left editorial */}
+      <div style={{ position: 'absolute', bottom: 84, left: 38, right: 28, zIndex: 5 }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(239,233,220,0.78)', letterSpacing: '0.42em', textTransform: 'uppercase', margin: '0 0 22px', textShadow: '0 0 12px rgba(0,0,0,0.55)', fontWeight: 500 }}>
+          {greetingLabel}{prenom ? ` — ${prenom}` : ''}
         </p>
 
-        <h1 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(32px, 8.5vw, 44px)', color: 'rgba(239,233,220,0.96)', margin: 0, lineHeight: 1.15, letterSpacing: '-0.025em', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', textShadow: `0 0 28px ${arch.color}55, 0 2px 16px rgba(0,0,0,0.55)`, whiteSpace: 'pre-line', animation: 'phrasebreathe 32s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+        <h1 style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 'clamp(38px, 11vw, 58px)', color: 'rgba(239,233,220,0.98)', margin: 0, lineHeight: 1.02, letterSpacing: '-0.035em', fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1', textShadow: '0 2px 24px rgba(0,0,0,0.55), 0 0 48px rgba(0,0,0,0.32)', whiteSpace: 'pre-line' }}>
           {greetingPoem}
         </h1>
 
-        {mantra ? (
-          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 17, color: 'rgba(239,233,220,0.78)', margin: '18px auto 0', maxWidth: 300, lineHeight: 1.55, letterSpacing: '-0.005em', textShadow: `0 0 14px ${arch.color}33`, animation: 'none' }}>
+        {mantra && (
+          <p style={{ fontFamily: 'Fraunces, "Cormorant Garamond", serif', fontWeight: 400, fontStyle: 'italic', fontSize: 16, color: 'rgba(239,233,220,0.78)', margin: '22px 0 0', maxWidth: 320, lineHeight: 1.55, letterSpacing: '-0.005em', textShadow: '0 1px 12px rgba(0,0,0,0.55)', fontVariationSettings: '"opsz" 24, "SOFT" 100, "WONK" 1' }}>
             « {mantra} »
           </p>
-        ) : (
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(255,255,255,0.42)', margin: '14px 0 0', letterSpacing: '0.06em', textTransform: 'capitalize', animation: 'none' }}>
-            {dateStr}
-          </p>
         )}
-
-        {/* Avatar spirit animal — geste d'accès au Profil immersif (espace personnel caché) */}
-        <button onClick={() => { try { haptic([4, 30, 4]) } catch {}; if (onOpenProfil) onOpenProfil() }} aria-label="Entrer dans ton espace personnel" style={{ marginTop: 22, padding: 0, background: 'transparent', border: 'none', cursor: 'pointer', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <span style={{ display: 'block', width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', border: `1px solid rgba(${arch.rgb},0.42)`, boxShadow: `0 0 16px rgba(${arch.rgb},0.24), inset 0 0 0 1px rgba(239,233,220,0.08)`, animation: 'animalbreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>
-            <img src={`/spirit-${archetypeKey}.avif`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%', filter: 'brightness(1.05) saturate(1.05)' }} />
-          </span>
-          <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 9, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.24em', textTransform: 'uppercase' }}>Ton espace</span>
-        </button>
       </div>
+
+      {/* Avatar spirit — bottom-right, accès Profil */}
+      <button onClick={() => { try { haptic([4, 30, 4]) } catch {}; if (onOpenProfil) onOpenProfil() }} aria-label="Entrer dans ton espace personnel" style={{ position: 'absolute', bottom: 24, right: 22, padding: 0, background: 'transparent', border: 'none', cursor: 'pointer', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 6, zIndex: 6 }}>
+        <span style={{ display: 'block', width: 48, height: 48, borderRadius: '50%', overflow: 'hidden', border: '1px solid rgba(239,233,220,0.42)', boxShadow: `0 4px 18px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(239,233,220,0.12)`, animation: 'animalbreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <img src={`/spirit-${archetypeKey}.avif`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%', filter: 'brightness(1.05) saturate(1.05)' }} />
+        </span>
+        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 8, fontWeight: 500, color: 'rgba(239,233,220,0.62)', letterSpacing: '0.32em', textTransform: 'uppercase', textShadow: '0 1px 6px rgba(0,0,0,0.55)' }}>Espace</span>
+      </button>
     </div>
   )
 }
