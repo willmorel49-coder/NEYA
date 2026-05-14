@@ -32,17 +32,32 @@ function whisperOfDay(joursConnectes) {
   return WHISPERS[(joursConnectes || 0) % WHISPERS.length];
 }
 
+// Ambient witnesses — items placés du Cocon (Agent C #5)
+const COCON_AMBIENT_POSITIONS = {
+  bougie:  { glyph: '✺', top: '14%',  right: '12%', size: 22 },
+  cristal: { glyph: '◇', top: '40%',  left:  '8%',  size: 18 },
+  plante:  { glyph: '❦', top: '64%',  right: '18%', size: 20 },
+  totem:   { glyph: '◈', top: '82%',  left: '14%',  size: 18 },
+  portail: { glyph: '○', top: '26%',  left: '74%',  size: 16 },
+};
+
 export default function Aventure({ onOpenMeditation, onOpenWorld }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     setProfile(recordVisitToday());
   }, []);
 
+  const onScroll = (e) => {
+    setScrollY(e.currentTarget.scrollTop);
+  };
+
   const explored = useMemo(
     () => new Set(profile.progress.worldsExplored || []),
     [profile]
   );
+  const placedItems = profile.coconPlaced || {};
   const currentKey = profile.progress.currentWorld || 'foret';
   const currentWorld = WORLDS[currentKey] || WORLDS.foret;
   const totemKey = profile.totem || 'lion';
@@ -61,20 +76,57 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
         flexDirection: 'column',
       }}
     >
-      {/* Atmospheric bg-photo overlay (Agent D) */}
+      {/* Atmospheric bg-photo overlay (Agent D) + scroll parallax 0.4 (Agent B) */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           backgroundImage: `url(${currentWorld.bg})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: `center calc(50% + ${scrollY * -0.4}px)`,
           opacity: 0.08,
           mixBlendMode: 'multiply',
           pointerEvents: 'none',
           zIndex: 0,
+          willChange: 'background-position',
         }}
       />
+
+      {/* Ambient witnesses — items du Cocon placés (Agent C) */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          zIndex: 0,
+          opacity: 0.16,
+        }}
+      >
+        {Object.entries(placedItems)
+          .filter(([_, isPlaced]) => isPlaced)
+          .map(([key]) => {
+            const pos = COCON_AMBIENT_POSITIONS[key];
+            if (!pos) return null;
+            return (
+              <span
+                key={key}
+                style={{
+                  position: 'absolute',
+                  top: pos.top,
+                  left: pos.left,
+                  right: pos.right,
+                  fontSize: pos.size,
+                  color: 'var(--ink)',
+                  transform: `translateY(${scrollY * -0.2}px)`,
+                  transition: 'transform 0.1s linear',
+                  fontFamily: 'var(--font-display)',
+                }}
+              >
+                {pos.glyph}
+              </span>
+            );
+          })}
+      </div>
       {/* Header */}
       <div
         style={{
@@ -176,8 +228,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld }) {
         </Button>
       </div>
 
-      {/* Scrollable ascent */}
+      {/* Scrollable ascent — onScroll drives parallax */}
       <div
+        onScroll={onScroll}
         style={{
           flex: 1,
           overflowY: 'auto',

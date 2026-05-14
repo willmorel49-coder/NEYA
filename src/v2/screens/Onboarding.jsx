@@ -1,8 +1,10 @@
 /* ============================================================
-   NÉYA V3 — Onboarding (5 questions immersives, LIGHT MODE)
+   NÉYA V3.2 — Onboarding (crossfade overlapping 2-layer)
    ============================================================
-   Wash pastel par monde + ink text + cards pearl translucides.
-   Aligné palette ÇA VA? + inspirations soft/inviting.
+   Refactor : pendant transition entre 2 questions, les DEUX
+   couches sont rendues simultanément avec opacity opposée
+   (current 1→0 + next 0→1) — vrai crossfade 900ms ease-narrative.
+   Agent B fix.
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
@@ -20,9 +22,9 @@ const STEPS = [
     titleAfter: ' pour commencer.',
     field: 'q1_etat',
     pills: [
-      { value: 'pas-terrible',    label: 'Pas terrible' },
-      { value: 'ca-va-je-gere',   label: 'Ça va, je gère' },
-      { value: 'plutot-bien',     label: 'Plutôt bien' },
+      { value: 'pas-terrible',     label: 'Pas terrible' },
+      { value: 'ca-va-je-gere',    label: 'Ça va, je gère' },
+      { value: 'plutot-bien',      label: 'Plutôt bien' },
       { value: 'je-sais-pas-trop', label: 'Je sais pas trop' },
     ],
   },
@@ -62,10 +64,10 @@ const STEPS = [
     titleAfter: '',
     field: 'q4_rythme',
     pills: [
-      { value: 'matin',         label: 'Le matin' },
-      { value: 'midi',          label: 'À midi' },
-      { value: 'soir',          label: 'Le soir' },
-      { value: 'avant-dormir',  label: 'Avant de dormir' },
+      { value: 'matin',        label: 'Le matin' },
+      { value: 'midi',         label: 'À midi' },
+      { value: 'soir',         label: 'Le soir' },
+      { value: 'avant-dormir', label: 'Avant de dormir' },
     ],
   },
   {
@@ -80,35 +82,24 @@ const STEPS = [
   },
 ];
 
+const CROSSFADE_MS = 900;
+
 export default function Onboarding({ onComplete }) {
   const [stepIdx, setStepIdx] = useState(0);
-  const [show, setShow] = useState(false);
+  const [transitionToIdx, setTransitionToIdx] = useState(null);  // null = pas en transition
   const [answers, setAnswers] = useState({});
-  const [exiting, setExiting] = useState(false);
-  const transitioningRef = useRef(false);
-
-  useEffect(() => {
-    setShow(false);
-    setExiting(false);
-    transitioningRef.current = false;
-    const t = setTimeout(() => setShow(true), 60);
-    return () => clearTimeout(t);
-  }, [stepIdx]);
-
-  const step = STEPS[stepIdx];
-  const world = WORLDS[step.world];
+  const [completing, setCompleting] = useState(false);
 
   const advance = (value) => {
-    if (transitioningRef.current) return;
-    transitioningRef.current = true;
+    if (transitionToIdx !== null || completing) return;
     haptic(6);
 
+    const step = STEPS[stepIdx];
     const nextAnswers = step.field ? { ...answers, [step.field]: value } : answers;
     setAnswers(nextAnswers);
 
-    setExiting(true);
-
     if (stepIdx === STEPS.length - 1) {
+      // Save + complete
       const profile = getProfile();
       profile.onboarding = {
         ...nextAnswers,
@@ -118,15 +109,71 @@ export default function Onboarding({ onComplete }) {
       profile.progress.currentWorld = 'foret';
       profile.progress.worldsExplored = ['foret'];
       setProfile(profile);
-
+      setCompleting(true);
       setTimeout(() => {
         haptic([8, 60, 8]);
         onComplete?.();
       }, 700);
-    } else {
-      setTimeout(() => setStepIdx(stepIdx + 1), 700);
+      return;
     }
+
+    const next = stepIdx + 1;
+    setTransitionToIdx(next);
+    setTimeout(() => {
+      setStepIdx(next);
+      setTransitionToIdx(null);
+    }, CROSSFADE_MS);
   };
+
+  // Layer state: current is "exiting" if a transition is in flight, otherwise "stable"
+  const currentState = completing ? 'exiting' : (transitionToIdx !== null ? 'exiting' : 'stable');
+  const nextStep = transitionToIdx !== null ? STEPS[transitionToIdx] : null;
+
+  return (
+    <>
+      {/* Current layer */}
+      <StepLayer
+        key={`step-${stepIdx}`}
+        step={STEPS[stepIdx]}
+        stepIdx={stepIdx}
+        totalSteps={STEPS.length}
+        fadeState={currentState}
+        onAdvance={advance}
+        interactive={transitionToIdx === null && !completing}
+      />
+      {/* Next layer (only during transition) */}
+      {nextStep && (
+        <StepLayer
+          key={`step-${transitionToIdx}-next`}
+          step={nextStep}
+          stepIdx={transitionToIdx}
+          totalSteps={STEPS.length}
+          fadeState="entering"
+          onAdvance={advance}
+          interactive={false}
+        />
+      )}
+    </>
+  );
+}
+
+function StepLayer({ step, stepIdx, totalSteps, fadeState, onAdvance, interactive }) {
+  const world = WORLDS[step.world];
+
+  // Opacity logic
+  // - entering: starts 0, becomes 1 after mount (transition CROSSFADE_MS)
+  // - exiting: starts 1, becomes 0 (transition CROSSFADE_MS)
+  // - stable: 1
+  const [mounted, setMounted] = useState(fadeState !== 'entering');
+  useEffect(() => {
+    if (fadeState === 'entering') {
+      // Trigger entrance opacity after first paint
+      const r = requestAnimationFrame(() => setMounted(true));
+      return () => cancelAnimationFrame(r);
+    }
+  }, [fadeState]);
+
+  const opacity = fadeState === 'exiting' ? 0 : (mounted ? 1 : 0);
 
   return (
     <div
@@ -134,11 +181,13 @@ export default function Onboarding({ onComplete }) {
       style={{
         position: 'absolute',
         inset: 0,
-        opacity: exiting ? 0 : (show ? 1 : 0),
-        transition: 'opacity 700ms var(--ease-narrative)',
+        opacity,
+        transition: `opacity ${CROSSFADE_MS}ms var(--ease-narrative)`,
+        zIndex: fadeState === 'entering' ? 2 : 1,
+        pointerEvents: interactive ? 'auto' : 'none',
       }}
     >
-      {/* Atmospheric bg-photo overlay (Agent D) — 10% opacity behind wash */}
+      {/* Atmospheric bg-photo overlay */}
       <div
         style={{
           position: 'absolute',
@@ -151,6 +200,7 @@ export default function Onboarding({ onComplete }) {
           pointerEvents: 'none',
         }}
       />
+
       {/* Top mark — chapter info */}
       <div
         style={{
@@ -165,7 +215,7 @@ export default function Onboarding({ onComplete }) {
         }}
       >
         <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
-          {`N É Y A`}
+          {`N É Y A`}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
           <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
@@ -185,7 +235,7 @@ export default function Onboarding({ onComplete }) {
         </div>
       </div>
 
-      {/* Center totem glyph + emotional cue */}
+      {/* Center totem + emotional cue */}
       <div
         style={{
           position: 'absolute',
@@ -195,9 +245,6 @@ export default function Onboarding({ onComplete }) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          opacity: show && !exiting ? 1 : 0,
-          transform: show && !exiting ? 'translateY(0)' : 'translateY(8px)',
-          transition: 'opacity 800ms var(--ease-out) 100ms, transform 800ms var(--ease-out) 100ms',
         }}
       >
         <div
@@ -230,7 +277,7 @@ export default function Onboarding({ onComplete }) {
         </div>
       </div>
 
-      {/* Bottom content : HeroTitle + pills/CTA */}
+      {/* Bottom content */}
       <div
         style={{
           position: 'absolute',
@@ -241,16 +288,12 @@ export default function Onboarding({ onComplete }) {
           display: 'flex',
           flexDirection: 'column',
           gap: 28,
-          opacity: show && !exiting ? 1 : 0,
-          transform: show && !exiting ? 'translateY(0)' : 'translateY(16px)',
-          transition:
-            'opacity 800ms var(--ease-out) 180ms, transform 800ms var(--ease-out) 180ms',
         }}
       >
         <HeroTitle
           eyebrow={step.eyebrow}
           paletteMode="dawn"
-          size={stepIdx === STEPS.length - 1 ? 'hero' : 'h1'}
+          size={stepIdx === totalSteps - 1 ? 'hero' : 'h1'}
           title={
             <>
               {step.titleBefore}
@@ -267,7 +310,7 @@ export default function Onboarding({ onComplete }) {
                 key={String(p.value)}
                 accent={world.accent}
                 accentRgb={world.accentRgb}
-                onClick={() => advance(p.value)}
+                onClick={() => interactive && onAdvance(p.value)}
               >
                 {p.label}
               </PillChoice>
@@ -279,7 +322,7 @@ export default function Onboarding({ onComplete }) {
               size="lg"
               variant="primary"
               worldAccent={world.accent}
-              onClick={() => advance(null)}
+              onClick={() => interactive && onAdvance(null)}
               style={{
                 background: 'var(--ink)',
                 color: 'var(--cream)',
@@ -306,9 +349,9 @@ export default function Onboarding({ onComplete }) {
           </div>
         )}
 
-        {/* Progression dots — chapter mark IS the progression */}
+        {/* Progression dots */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 4 }}>
-          {STEPS.map((_, i) => (
+          {Array.from({ length: totalSteps }).map((_, i) => (
             <span
               key={i}
               style={{
@@ -333,7 +376,7 @@ function PillChoice({ children, accent, accentRgb, onClick }) {
       onClick={onClick}
       style={{
         appearance: 'none',
-        background: 'rgba(255, 255, 255, 0.55)',
+        background: 'rgba(255, 252, 245, 0.62)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
         border: `0.5px solid ${accentRgb}, 0.20)`,
@@ -351,11 +394,11 @@ function PillChoice({ children, accent, accentRgb, onClick }) {
         boxShadow: '0 1px 6px rgba(26, 26, 47, 0.04)',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.background = `${accentRgb}, 0.10)`;
+        e.currentTarget.style.background = `${accentRgb}, 0.12)`;
         e.currentTarget.style.borderColor = `${accentRgb}, 0.40)`;
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.55)';
+        e.currentTarget.style.background = 'rgba(255, 252, 245, 0.62)';
         e.currentTarget.style.borderColor = `${accentRgb}, 0.20)`;
       }}
     >

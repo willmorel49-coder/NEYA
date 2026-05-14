@@ -13,10 +13,24 @@ import { ls, haptic, getProfile } from '../state';
 import Button from '../../components/Button';
 
 const PASSES = [
-  { key: 'libre',     label: 'Libre',     priceY: 'Gratuit',     discount: 0,  color: 'var(--cava-warm)' },
-  { key: 'cava',      label: 'Ça Va',     priceY: '9,90 €/an',   discount: 10, color: 'var(--cava-blue)' },
-  { key: 'vraiment',  label: 'Vraiment ?', priceY: '24,90 €/an', discount: 25, color: 'var(--cava-purple)' },
+  { key: 'libre',    label: 'Libre',     priceY: 'Gratuit',     discount: 0,  color: 'var(--cava-warm)' },
+  { key: 'cava',     label: 'Ça Va',     priceY: '9,90 €/an',   discount: 10, color: 'var(--cava-blue)' },
+  { key: 'vraiment', label: 'Vraiment ?', priceY: '24,90 €/an', discount: 25, color: 'var(--cava-purple)' },
 ];
+
+// Agent E — Pass Vraiment? offert au 30e jour de présence sur NÉYA
+const PASS_UNLOCK_THRESHOLD = 30;
+function isPassUnlocked(passKey, joursConnectes) {
+  if (passKey === 'libre') return true;
+  if (passKey === 'cava') return true;     // payant, dispo a tout moment
+  if (passKey === 'vraiment') return joursConnectes >= PASS_UNLOCK_THRESHOLD;
+  return false;
+}
+function passLabel(pass, joursConnectes) {
+  if (pass.key !== 'vraiment') return pass.priceY;
+  if (joursConnectes >= PASS_UNLOCK_THRESHOLD) return 'Offert · ta présence';
+  return `${pass.priceY} (à 30 j)`;
+}
 
 const CAPSULES = [
   {
@@ -71,6 +85,12 @@ function saveActivePass(key) {
 }
 
 export default function CaVa() {
+  const profile = getProfile();
+  const joursConnectes = profile.progress?.joursConnectes || 0;
+  const pseudo = profile.pseudo;
+  const totem = profile.totem || 'lion';
+  const vraimentUnlocked = isPassUnlocked('vraiment', joursConnectes);
+
   const [cart, setCart] = useState(() => loadCart());
   const [activePass, setActivePass] = useState(() => loadActivePass());
   const [passOpen, setPassOpen] = useState(false);
@@ -82,6 +102,10 @@ export default function CaVa() {
   const discountedTotal = cartTotal * (1 - currentPass.discount / 100);
 
   const pickPass = (key) => {
+    if (!isPassUnlocked(key, joursConnectes)) {
+      haptic([4, 30, 4]);
+      return;
+    }
     setActivePass(key);
     saveActivePass(key);
     setPassOpen(false);
@@ -288,21 +312,25 @@ export default function CaVa() {
           >
             {PASSES.map((p) => {
               const isActive = p.key === activePass;
+              const unlocked = isPassUnlocked(p.key, joursConnectes);
+              const showGift = p.key === 'vraiment' && unlocked;
               return (
                 <button
                   key={p.key}
-                  data-press
+                  data-press={unlocked ? true : undefined}
                   onClick={() => pickPass(p.key)}
+                  disabled={!unlocked}
                   style={{
                     appearance: 'none',
-                    background: isActive ? 'rgba(26, 26, 47, 0.04)' : 'transparent',
-                    border: 'none',
+                    background: isActive ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
+                    border: showGift ? `0.5px solid ${p.color}` : 'none',
                     borderRadius: 'var(--radius-md)',
                     padding: '12px 14px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    cursor: 'pointer',
+                    cursor: unlocked ? 'pointer' : 'not-allowed',
+                    opacity: unlocked ? 1 : 0.55,
                     WebkitTapHighlightColor: 'transparent',
                   }}
                 >
@@ -316,16 +344,31 @@ export default function CaVa() {
                       }}
                     />
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-ui)',
-                          fontSize: 14,
-                          fontWeight: 500,
-                          color: 'var(--cava-ink)',
-                        }}
-                      >
-                        {p.label}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                        <span
+                          style={{
+                            fontFamily: 'var(--font-ui)',
+                            fontSize: 14,
+                            fontWeight: 500,
+                            color: 'var(--cava-ink)',
+                          }}
+                        >
+                          {p.label}
+                        </span>
+                        {showGift && (
+                          <span
+                            style={{
+                              fontFamily: 'var(--font-display)',
+                              fontStyle: 'italic',
+                              fontSize: 11,
+                              color: p.color,
+                              fontVariationSettings: 'var(--fraunces-italic-soft)',
+                            }}
+                          >
+                            ♡ pour toi
+                          </span>
+                        )}
+                      </div>
                       <span
                         style={{
                           fontFamily: 'var(--font-body)',
@@ -334,6 +377,7 @@ export default function CaVa() {
                         }}
                       >
                         {p.discount > 0 ? `${p.discount}% sur tout` : 'Aucune réduction'}
+                        {!unlocked && p.key === 'vraiment' && ` · ${joursConnectes}/${PASS_UNLOCK_THRESHOLD} j`}
                       </span>
                     </div>
                   </div>
@@ -341,11 +385,11 @@ export default function CaVa() {
                     style={{
                       fontFamily: 'var(--font-ui)',
                       fontSize: 11,
-                      color: 'var(--cava-ink)',
+                      color: showGift ? p.color : 'var(--cava-ink)',
                       fontWeight: 500,
                     }}
                   >
-                    {p.priceY}
+                    {passLabel(p, joursConnectes)}
                   </span>
                 </button>
               );
@@ -360,6 +404,8 @@ export default function CaVa() {
             capsule={c}
             onAddToCart={addToCart}
             discountPercent={currentPass.discount}
+            pseudo={pseudo}
+            totem={totem}
           />
         ))}
 
@@ -395,7 +441,7 @@ export default function CaVa() {
   );
 }
 
-function CapsuleSection({ capsule, onAddToCart, discountPercent }) {
+function CapsuleSection({ capsule, onAddToCart, discountPercent, pseudo, totem }) {
   return (
     <div style={{ marginBottom: 32 }}>
       {/* Capsule header */}
@@ -451,6 +497,8 @@ function CapsuleSection({ capsule, onAddToCart, discountPercent }) {
             capsule={capsule}
             onAdd={() => onAddToCart(p)}
             discountPercent={discountPercent}
+            pseudo={pseudo}
+            totem={totem}
           />
         ))}
       </div>
@@ -458,9 +506,17 @@ function CapsuleSection({ capsule, onAddToCart, discountPercent }) {
   );
 }
 
-function ProductCard({ product, capsule, onAdd, discountPercent }) {
+const TOTEM_LABEL = {
+  lion: 'lion', ours: 'ours', aigle: 'aigle',
+  daim: 'daim', baleine: 'baleine', renard: 'renard',
+};
+
+function ProductCard({ product, capsule, onAdd, discountPercent, pseudo, totem }) {
   const finalPrice = product.price * (1 - discountPercent / 100);
   const isDiscounted = discountPercent > 0;
+  const broderieText = pseudo
+    ? `Pour ${pseudo}${totem ? ` · le ${TOTEM_LABEL[totem] || totem}` : ''}`
+    : null;
 
   return (
     <div
@@ -507,6 +563,29 @@ function ProductCard({ product, capsule, onAdd, discountPercent }) {
             opacity: 0.6,
           }}
         />
+
+        {/* Broderie preview (Agent E) — Pour {pseudo} · le {totem} */}
+        {broderieText && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 14,
+              left: 14,
+              right: 14,
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontSize: 11,
+              lineHeight: 1.3,
+              color: capsule.accent,
+              opacity: 0.7,
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              letterSpacing: '-0.005em',
+              textAlign: 'left',
+            }}
+          >
+            {broderieText}
+          </div>
+        )}
       </div>
 
       {/* Meta */}
