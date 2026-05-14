@@ -1,365 +1,248 @@
 /* ============================================================
-   NÉYA — Tokens fondations · couleurs + typo
+   NÉYA — V1 Cinéma / Immersif
    ============================================================
-   Système émotionnel programmable. Pas une palette UI.
-   Chaque token = un rôle narratif, jamais "joli".
-
-   Règle 40/60 : 40% rigueur systémique (Linear/Stripe-grade),
-   60% direction émotionnelle (A24/Aesop/Jacquemus).
-
-   Le sujet n'est pas la couleur. C'est la lumière.
+   Règle absolue : 1 typo display + 1 body, 5 couleurs, 3 atomes.
+   Le sujet est la photo. Le texte se pose dessus en bas.
+   Tout le reste est bruit.
    ============================================================ */
 
 :root {
 
-  /* ───────────────────────────────────────────────────────────
-     SURFACES — Du plus profond au plus haut
-     ───────────────────────────────────────────────────────────
-     Les surfaces NÉYA ne sont jamais noires pures. Toujours
-     teintées bleu-nuit cosmique avec une chaleur résiduelle.
-     La progression Void → Elevated forme l'épaisseur du monde. */
-
-  /* Le néant respirant — fond le plus profond, jamais utilisé seul.
-     Sert d'arrière-plan absolu (vidéos, splash, transitions). */
-  --surface-void: oklch(0.10 0.025 260);
-  /* fallback hex : #050810 */
-
-  /* Le sol — fond de tous les écrans principaux.
-     Légèrement plus chaud que void, pour qu'on sente le vivant. */
-  --surface-base: oklch(0.14 0.030 258);
-  /* fallback hex : #0E1626 */
-
-  /* La carte qui flotte — surfaces des modules contemplatifs,
-     cards Cocon, Aujourd'hui, Bilan. Glassmorphism par défaut. */
-  --surface-raised: oklch(0.20 0.035 256);
-  /* fallback hex : #1A2438 */
-
-  /* L'élévation modale — sheets, overlays, Espace Vrai,
-     Profil immersif. Avec backdrop-filter blur(20px). */
-  --surface-elevated: oklch(0.24 0.040 255);
-  /* fallback hex : #232E4A */
-
-
-  /* ───────────────────────────────────────────────────────────
-     TEXTE — Hiérarchie en cream ivoire (jamais blanc pur)
-     ───────────────────────────────────────────────────────────
-     Le blanc pur fatigue l'œil et casse le climat crépusculaire.
-     Cream ivoire = continuité avec ÇA VA?, chaleur narrative. */
-
-  /* La voix qui porte — titres, body principal, tous les
-     contenus à lire vraiment. Contraste AAA ≥ 7:1 sur base. */
-  --text-primary: oklch(0.94 0.020 90);
-  /* fallback hex : #EFE9DC */
-
-  /* La voix qui accompagne — sous-titres, descriptions,
-     metadata. Contraste AA ≥ 4.5:1. */
-  --text-secondary: oklch(0.74 0.018 88);
-  /* fallback hex : #B8B0A0 */
-
-  /* Le murmure — labels caps espacés, hints, captions.
-     Contraste 3:1 minimum, usage exclusif labels < 14px. */
-  --text-whisper: oklch(0.56 0.015 86);
-  /* fallback hex : #84807A */
-
-  /* Texte sur fond accent saturé (CTA actif, bouton spirit).
-     Toujours sombre pour préserver l'élégance. */
-  --text-on-light: oklch(0.14 0.030 258);
-  /* fallback hex : #0E1626 */
-
-
-  /* ───────────────────────────────────────────────────────────
-     ACCENTS ÉMOTIONNELS — 4 maximum, chacun avec rôle clair
-     ───────────────────────────────────────────────────────────
-     Chaque accent = un état intérieur traversable. Pas des
-     "couleurs primaires". Le rôle prime sur la teinte. */
-
-  /* Le bleu signature — cyan cheveux héroïne. Présence du soi
-     incarné. Utilisé pour : halos rituels, anneaux de présence,
-     accents identitaires (Espace Vrai, ProfilScreen). */
-  --accent-spirit: oklch(0.78 0.130 230);
-  /* fallback hex : #3AA8D8 */
-
-  /* L'or sacré — auréole des animaux totems. Couleur du seuil
-     entre toi et plus grand. Utilisé pour : milestones, animal
-     reveal, WelcomeBack, célébrations rares. */
-  --accent-sacred: oklch(0.85 0.110 85);
-  /* fallback hex : #E8C16A */
-
-  /* La lavande introspective — chemin intérieur, fleurs en
-     marche. Utilisé pour : Carnet, Bilans, écriture, retraite. */
-  --accent-introspection: oklch(0.68 0.130 305);
-  /* fallback hex : #9F7AD4 */
-
-  /* Le vert grounding — forêt profonde, racines, ancrage.
-     Utilisé pour : Routines actives, Pratiques validées,
-     états "tu es là maintenant". */
-  --accent-grounding: oklch(0.58 0.080 158);
-  /* fallback hex : #4A8B68 */
-
-
-  /* ───────────────────────────────────────────────────────────
-     ÉTATS — Pas de rouge urgence. Tendresse + chaleur sacrée
-     ─────────────────────────────────────────────────────────── */
-
-  /* L'état accompli — souvenir gagné, milestone atteint,
-     respiration complétée. Or chaud doux, jamais agressif. */
-  --state-cherished: oklch(0.82 0.115 78);
-  /* fallback hex : #E8B870 */
-
-  /* L'état traversée — Crisis Mode, mode tempête. Ambre
-     papillon, halo rassurant et non anxiogène. Fonctionne sur
-     fond sombre ET clair (cf. ÇA VA? cream backdrop). */
-  --state-tender: oklch(0.75 0.095 50);
-  /* fallback hex : #E8B894 */
-
-  /* L'état mouvement — feedback action utilisateur, transition
-     douce vers un autre territoire. Spirit légèrement tamisé. */
-  --state-flowing: oklch(0.72 0.100 220);
-  /* fallback hex : #6FB8D8 */
-
-
-  /* ───────────────────────────────────────────────────────────
-     LUMIÈRE — Le vrai sujet, plus important que les couleurs
-     ───────────────────────────────────────────────────────────
-     Pas de glow néon, pas de drop-shadow gaming. Halos profonds
-     organiques, gradients imperceptibles. */
-
-  /* Halo intérieur — appliqué en box-shadow inset ou radial
-     background sur surfaces actives. Donne la sensation que la
-     surface "respire" depuis l'intérieur. */
-  --light-inner: oklch(0.78 0.130 230 / 0.18);
-  /* fallback : rgba(58, 168, 216, 0.18) */
-
-  /* Halo sacré — appliqué autour des spirit animals, WelcomeBack,
-     milestones. Auréole or chaud diffuse. */
-  --light-sacred: oklch(0.85 0.110 85 / 0.22);
-  /* fallback : rgba(232, 193, 106, 0.22) */
-
-  /* Voile profond — overlay sombre appliqué sur backgrounds image
-     pour garantir le contraste texte. ~55% opacity, jamais 100%. */
-  --light-veil: oklch(0.10 0.025 260 / 0.55);
-  /* fallback : rgba(5, 8, 16, 0.55) */
-
-
-  /* ───────────────────────────────────────────────────────────
-     BORDURES & SÉPARATEURS — Subtiles, organiques
-     ─────────────────────────────────────────────────────────── */
-
-  /* Le voile — bordure quasi-invisible, juste pour suggérer un
-     bord sans le souligner. Cards principales. */
-  --border-veil: oklch(0.94 0.020 90 / 0.10);
-  /* fallback : rgba(239, 233, 220, 0.10) */
-
-  /* La présence — bordure visible, indique une zone interactive.
-     Cards tappables, boutons secondaires. */
-  --border-presence: oklch(0.94 0.020 90 / 0.24);
-  /* fallback : rgba(239, 233, 220, 0.24) */
-
-
-  /* ───────────────────────────────────────────────────────────
-     TYPOGRAPHIE — 2 familles, 6 niveaux, ratio 1.250
-     ───────────────────────────────────────────────────────────
-     Sora reste pour le display (humaniste contemplative).
-     Inter remplacé à terme par Geist ou Söhne. Pour V1, Inter
-     conservé via stack progressive enhancement. */
-
-  /* Display — moments rituels, titres écran-clé. */
-  --font-display: 'Sora', 'Inter', system-ui, sans-serif;
-
-  /* Body — contenu lisible, navigation, descriptions. */
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-
-  /* Échelle 1.250 (minor third) — 6 niveaux, ratio cohérent.
-     Aucune valeur intermédiaire. Si tu en as besoin, tu refondes. */
-  --text-xs: 11px;       /* labels caps, micro-helpers */
-  --text-sm: 13px;       /* body secondary, captions */
-  --text-base: 16px;     /* body principal lisible */
-  --text-lg: 20px;       /* titres section, mantras */
-  --text-xl: 26px;       /* titres écran */
-  --text-display: 34px;  /* hero greeting, ResultScreen */
-
-  /* Line-heights — proportions calibrées par taille */
-  --leading-tight: 1.20;      /* display, xl */
-  --leading-normal: 1.50;     /* base, lg */
-  --leading-relaxed: 1.65;    /* body long, italiques */
-
-  /* Tracking (letter-spacing) — convention NÉYA conservée */
-  --tracking-tight: -0.015em;    /* display, hero greetings */
-  --tracking-normal: 0em;        /* body */
-  --tracking-wide: 0.04em;       /* sous-titres italiques */
-  --tracking-caps: 0.22em;       /* labels caps NÉYA-signature */
-  --tracking-monument: 0.38em;   /* logo NÉYA, MMXXVI */
-
-  /* Font-weights — usage strict */
-  --weight-light: 300;     /* Sora display, body italique */
-  --weight-regular: 400;   /* body lisible standard */
-  --weight-medium: 500;    /* CTA, labels caps importants */
-
-
-
-  /* ═══════════════════════════════════════════════════════════
-     ÇA VA? — Brand extension (marque sœur, palette propre)
-     ═══════════════════════════════════════════════════════════
-     Source : moodboard officiel 2026-05-14. Palette mode
-     contemporaine éditoriale. Cohabite avec NÉYA sans fusion.
-     Le `--cava-mist-blue` est le pont chromatique (écho
-     désaturé de `--accent-spirit`).
-
-     Mission textuelle :
-     « Nous existons pour briser le masque du "ça va". »
-     « Faire de la mode un langage qui libère la parole sur la
-       santé mentale. »
-     ═══════════════════════════════════════════════════════════ */
-
-  /* Rouge terracotta — passion, vie, sang. Accent principal
-     ÇA VA? sur typographies broderies, manifeste, citations. */
-  --cava-terracotta: oklch(0.52 0.110 30);
-  /* fallback hex : #9F584E */
-
-  /* Ocre mustard — chaleur tissu, broderie main, hoodie
-     signature. Accent chaud secondaire. */
-  --cava-ochre: oklch(0.66 0.110 75);
-  /* fallback hex : #C29051 */
-
-  /* Émeraude profond — racines, mode contemporaine, intérieurs
-     mode. Accent grounding éditorial. */
-  --cava-emerald: oklch(0.60 0.075 175);
-  /* fallback hex : #34917F */
-
-  /* Sage gris-vert — sérénité textile, hoodie eucalyptus.
-     Surface alternative ÇA VA?, jamais NÉYA. */
-  --cava-sage: oklch(0.71 0.025 165);
-  /* fallback hex : #9AAFA0 */
-
-  /* Ivoire textile chaud — fond pièces, cream pièce coton.
-     PAS le même que `--text-primary` NÉYA. Plus chaud, plus tissu. */
-  --cava-cream: oklch(0.84 0.020 85);
-  /* fallback hex : #D4C8BA */
-
-  /* Bleu poudré — pont chromatique avec NÉYA. Écho désaturé
-     du `--accent-spirit`. Utilisé pour : ponts UI Profil → Boutique,
-     éléments où la sœur appelle l'autre. */
-  --cava-mist-blue: oklch(0.66 0.060 245);
-  /* fallback hex : #7397BC */
-
-  /* Typo ÇA VA? — Garet (display bold mode) + I Eat Crayons (script). */
-  --cava-font-display: 'Garet', 'Sora', system-ui, sans-serif;
-  --cava-font-script: 'I Eat Crayons', 'Caveat', cursive;
-
-
-  /* ═══════════════════════════════════════════════════════════
-     V3 — DAWN MODE (palette poudrée, light-first sanctuaire)
-     ═══════════════════════════════════════════════════════════
-     Source : cavalerie inspirations Pinterest 2026-05-14.
-     Direction : photographic blur backgrounds + glassmorphism XL +
-     display serif italic. Le dark cosmic actuel est CONSERVÉ pour
-     les moments rituels (Splash, Quiz, EspaceVrai, Milestone) —
-     dawn mode est pour le quotidien (Home, Communauté, Profil).
-     ═══════════════════════════════════════════════════════════ */
-
-  /* Fond du sanctuaire diurne — ivoire textile chaud */
-  --surface-dawn: oklch(0.92 0.010 75);
-  /* fallback hex : #E8E4DE */
-
-  /* Fond brume — bleu poudré clair */
-  --surface-mist: oklch(0.86 0.020 240);
-  /* fallback hex : #D6DCE5 */
-
-  /* Fond voile profond — bleu poudré mid */
-  --surface-veil: oklch(0.74 0.035 245);
-  /* fallback hex : #B8C5D6 */
-
-  /* Encre primary sur fond clair — bleu nuit doux (pas noir pur) */
-  --ink-primary: oklch(0.24 0.030 260);
-  /* fallback hex : #2A3142 */
-
-  /* Encre soft sur fond clair — bleu-gris doux */
-  --ink-soft: oklch(0.48 0.025 260);
-  /* fallback hex : #5A6478 */
-
-  /* Encre whisper — pour labels caps secondaires */
-  --ink-whisper: oklch(0.62 0.018 260);
-  /* fallback hex : #828A99 */
-
-  /* Accent spirit poudré (bleu cornflower désaturé, pont CAVA) */
-  --accent-spirit-soft: oklch(0.66 0.060 245);
-  /* fallback hex : #7397BC */
-
-  /* Accent bloom — peach humain, chaleur photographique */
-  --accent-bloom: oklch(0.82 0.060 35);
-  /* fallback hex : #E8B8A8 */
-
-  /* Accent introspect — lavande poudrée (chemin intérieur) */
-  --accent-introspect: oklch(0.74 0.060 305);
-  /* fallback hex : #B8A8D4 */
-
-  /* Accent sacred — or champagne désaturé */
-  --accent-sacred-soft: oklch(0.84 0.080 80);
-  /* fallback hex : #E8C16A */
-
-  /* Glass — translucides pour cards XL sur fond photo */
-  --glass-cream: rgba(232, 228, 222, 0.55);
-  --glass-light: rgba(255, 247, 232, 0.45);
-  --glass-frost: rgba(255, 255, 255, 0.18);
-
-  /* Blur tokens explicites */
-  --blur-sm: 14px;
-  --blur-md: 22px;
-  --blur-xl: 32px;
-
-  /* Display serif V3 — Fraunces (Google Fonts, variable, italic ornemental) */
-  --font-display-serif: 'Fraunces', 'Cormorant Garamond', 'Times New Roman', serif;
-  --font-display-serif-italic-settings: "opsz" 96, "SOFT" 50, "WONK" 1;
-
-  /* Radius V3 — XL pour glassmorphism */
-  --r-xxl: 28px;
-  --r-mega: 36px;
-
-  /* Shadows V3 — doux pour fond clair */
-  --shadow-soft: 0 12px 32px -10px rgba(42, 49, 66, 0.18);
-  --shadow-card: 0 18px 48px -16px rgba(42, 49, 66, 0.24);
-  --shadow-deep: 0 24px 64px -20px rgba(42, 49, 66, 0.32);
+  /* ── PALETTE V1 (5) ─────────────────────────────────────── */
+  --void:         #050810;                       /* canvas */
+  --ink:          #F5F2EC;                       /* cream warm — text */
+  --ink-soft:     rgba(245, 242, 236, 0.62);
+  --ink-whisper:  rgba(245, 242, 236, 0.42);
+  --line:         rgba(245, 242, 236, 0.10);     /* hairlines */
+  --line-strong:  rgba(245, 242, 236, 0.24);
+  --veil:         rgba(5, 8, 16, 0.55);          /* vignette overlay sur photos */
+
+  /* Accents archétype — 4 mondes, choisis au quiz */
+  --accent-resilience: #E8B870;
+  --accent-presence:   #3AA8D8;
+  --accent-sagesse:    #9F7AD4;
+  --accent-lumiere:    #4A8B68;
+
+  /* ── TYPO V1 (2) ────────────────────────────────────────── */
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+
+  --text-xs:      11px;
+  --text-sm:      13px;
+  --text-base:    16px;
+  --text-lg:      20px;
+  --text-xl:      26px;
+  --text-display: 34px;
+
+  --leading-tight:   1.20;
+  --leading-normal:  1.50;
+  --leading-relaxed: 1.65;
+
+  --tracking-tight:    -0.015em;
+  --tracking-normal:    0em;
+  --tracking-wide:      0.04em;
+  --tracking-caps:      0.22em;
+  --tracking-monument:  0.38em;
+
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+
+
+  /* ════════════════════════════════════════════════════════════
+     LEGACY COMPAT — Tokens utilisés dans App.jsx, mappés à V1
+     ════════════════════════════════════════════════════════════
+     Pas de surface "raised/elevated" en V1 : tout est sur photo
+     ou sur void. Mappés en transparent ou void pour neutralité. */
+
+  --surface-void:        var(--void);
+  --surface-base:        var(--void);
+  --surface-raised:      transparent;
+  --surface-elevated:    transparent;
+  --surface-dawn:        var(--void);
+  --surface-mist:        var(--void);
+  --surface-veil:        var(--veil);
+
+  --text-primary:        var(--ink);
+  --text-secondary:      var(--ink-soft);
+  --text-whisper:        var(--ink-whisper);
+  --text-on-light:       var(--void);
+
+  --ink-primary:         var(--ink);
+
+  --accent-spirit:       var(--accent-presence);
+  --accent-spirit-soft:  var(--accent-presence);
+  --accent-sacred:       var(--accent-resilience);
+  --accent-sacred-soft:  var(--accent-resilience);
+  --accent-introspection: var(--accent-sagesse);
+  --accent-introspect:   var(--accent-sagesse);
+  --accent-grounding:    var(--accent-lumiere);
+  --accent-bloom:        var(--accent-resilience);
+
+  --state-cherished:     var(--accent-resilience);
+  --state-tender:        #E8B894;
+  --state-flowing:       var(--accent-presence);
+
+  --light-inner:         rgba(58, 168, 216, 0.18);
+  --light-sacred:        rgba(232, 184, 112, 0.22);
+  --light-veil:          var(--veil);
+
+  --border-veil:         var(--line);
+  --border-presence:     var(--line-strong);
+
+  /* Glass mappés à transparent — purge cinéma */
+  --glass-cream:         transparent;
+  --glass-light:         transparent;
+  --glass-frost:         transparent;
+
+  /* Blur tokens forcés à 0 */
+  --blur-sm:             0px;
+  --blur-md:             0px;
+  --blur-xl:             0px;
+
+  /* Display serif mappé à Sora — purge Fraunces */
+  --font-display-serif:  var(--font-display);
+
+  --r-xxl:               22px;
+  --r-mega:              22px;
+
+  --shadow-soft:         none;
+  --shadow-card:         none;
+  --shadow-deep:         none;
+
+  /* Cava brand tokens (Boutique uniquement) */
+  --cava-terracotta:     #9F584E;
+  --cava-ochre:          #C29051;
+  --cava-emerald:        #34917F;
+  --cava-sage:           #9AAFA0;
+  --cava-cream:          #D4C8BA;
+  --cava-mist-blue:      #7397BC;
+  --cava-font-display:   'Sora', system-ui, sans-serif;
+  --cava-font-script:    'Sora', system-ui, sans-serif;
 }
 
-/* ───────────────────────────────────────────────────────────
-   Dark mode = mode natif NÉYA. Pas de light mode prévu pour
-   le rituel principal. ÇA VA? Boutique reste sur surface-void
-   ou sur --cava-cream selon l'ambiance éditoriale.
-   ─────────────────────────────────────────────────────────── */
 
-
-/* ═══════════════════════════════════════════════════════════
-   BODY RESET — Apple-grade base
-   ═══════════════════════════════════════════════════════════
-   Tout le rendu hérite des tokens. Le body est le canvas cosmique.
-   Inter par défaut, Sora via class .display. Cream sur void. */
+/* ════════════════════════════════════════════════════════════
+   BODY RESET
+   ════════════════════════════════════════════════════════════ */
 
 html, body {
-  background: var(--surface-void);
-  color: var(--text-primary);
+  background: var(--void);
+  color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--text-base);
   font-weight: var(--weight-regular);
   line-height: var(--leading-normal);
-  letter-spacing: var(--tracking-normal);
+  letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* Press state Apple-grade — scale 0.97 universal */
+
+/* ════════════════════════════════════════════════════════════
+   PURGE V3 — Nullification CSS des couches accumulées
+   ════════════════════════════════════════════════════════════
+   On nuke au niveau stylesheet les choses qui font du bruit, sans
+   toucher aux 9000 lignes de JSX inline. Les keyframes décoratifs
+   sont redéfinis vides : les `animation: phrasebreathe ... infinite`
+   présents en JSX deviennent silencieux. Backdrop-filter forcé à
+   `none` partout — les glassmorphism inline ne respirent plus.
+   ════════════════════════════════════════════════════════════ */
+
+* {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+@keyframes phrasebreathe   { 0%, 100% { opacity: 1; transform: none; } }
+@keyframes milestoneGlow   { 0%, 100% { opacity: 1; transform: none; box-shadow: none; filter: none; } }
+@keyframes seedPulse       { 0%, 100% { opacity: 1; transform: none; } }
+@keyframes ringshimmer     { 0%, 100% { opacity: 1; transform: none; } }
+@keyframes bgbreathe       { 0%, 100% { opacity: 1; transform: none; } }
+@keyframes worldnamebreathe{ 0%, 100% { opacity: 1; transform: none; } }
+@keyframes solbreathe      { 0%, 100% { opacity: 1; transform: none; } }
+@keyframes h1pulse         { 0%, 100% { opacity: 1; transform: none; } }
+@keyframes h2pulse         { 0%, 100% { opacity: 1; transform: none; } }
+@keyframes presencePulse   { 0%, 100% { opacity: 1; transform: none; box-shadow: none; } }
+
+
+/* ════════════════════════════════════════════════════════════
+   APPLE TAP RESPONSE
+   ════════════════════════════════════════════════════════════ */
+
 [data-press]:active {
   transform: scale(0.97);
   transition: transform 120ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Class helpers pour migration progressive */
-.neya-display { font-family: var(--font-display); font-weight: var(--weight-light); }
-.neya-body { font-family: var(--font-body); font-weight: var(--weight-regular); }
+
+/* ════════════════════════════════════════════════════════════
+   ATOMES V1 (3) — Helpers réutilisables
+   ════════════════════════════════════════════════════════════ */
+
+.neya-display {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  letter-spacing: var(--tracking-tight);
+}
+
+.neya-body {
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
+}
+
 .neya-caps {
+  font-family: var(--font-body);
   text-transform: uppercase;
   letter-spacing: var(--tracking-caps);
   font-size: var(--text-xs);
   font-weight: var(--weight-medium);
-  color: var(--text-whisper);
+  color: var(--ink-whisper);
+}
+
+.neya-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.neya-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(5,8,16,0.78) 0%, rgba(5,8,16,0.20) 40%, rgba(5,8,16,0) 70%);
+}
+
+.neya-hairline {
+  display: block;
+  height: 1px;
+  background: var(--line);
+  width: 22px;
+}
+
+.neya-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: var(--font-body);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 220ms ease, color 220ms ease;
+}
+
+.neya-action:active {
+  background: var(--ink);
+  color: var(--void);
 }
