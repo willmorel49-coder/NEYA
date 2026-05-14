@@ -2792,7 +2792,7 @@ function MiniJeuxSelectorModal({ archetypeKey, onClose, onSelect }) {
 
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.86)`, letterSpacing: '0.28em', textTransform: 'uppercase', margin: '0 0 6px', textAlign: 'center', animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>Mini-jeux doux</p>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 22, color: 'rgba(255,255,255,0.96)', margin: '0 0 6px', textAlign: 'center', letterSpacing: '-0.015em', textShadow: `0 0 18px ${arch.color}33` }}>Quel axe ce moment&nbsp;?</h2>
-        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13.5, color: 'rgba(255,255,255,0.62)', margin: '0 0 22px', textAlign: 'center', lineHeight: 1.55 }}>Quatre mini-jeux thérapeutiques, un par axe.</p>
+        <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13.5, color: 'rgba(255,255,255,0.62)', margin: '0 0 22px', textAlign: 'center', lineHeight: 1.55 }}>Quatre gestes intérieurs. Quatre manières de revenir à soi quand le dedans s'agite.</p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {MINIJEUX.map((m, i) => (
@@ -3159,6 +3159,7 @@ function ProfilScreen({ archetypeKey, onClose, onRestart }) {
   const [showGallery, setShowGallery] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showShare, setShowShare] = useState(false)
+  const [showBoutique, setShowBoutique] = useState(false)
   const [selectedSouvenir, setSelectedSouvenir] = useState(null)
 
   useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
@@ -3240,6 +3241,9 @@ function ProfilScreen({ archetypeKey, onClose, onRestart }) {
         {/* Partager */}
         <ProfilSectionCard arch={arch} label="Partager" title="Offrir ton archétype" hint="À un·e proche, anonymement" onClick={() => { haptic(6); try { playOpen() } catch {}; setShowShare(true) }} glyph="↗" />
 
+        {/* Boutique ÇA VA? — accès dissimulé élégant (commerce invisible) */}
+        <ProfilSectionCard arch={arch} label="ÇA VA ?" title="Maison émotionnelle" hint="Vêtements qui posent la vraie question" onClick={() => { haptic(6); try { playOpen() } catch {}; setShowBoutique(true) }} glyph="◇" />
+
         {/* Réglages */}
         <ProfilSectionCard arch={arch} label="Réglages" title="Sons · Notifications · Reprendre" hint="Ce qui t'accompagne" onClick={() => { haptic(6); try { playOpen() } catch {}; setShowSettings(true) }} glyph="⚙" />
 
@@ -3255,6 +3259,12 @@ function ProfilScreen({ archetypeKey, onClose, onRestart }) {
       {showGallery && <SouvenirsGalleryModal archetypeKey={archetypeKey} onClose={() => setShowGallery(false)} onSelect={(s) => { setShowGallery(false); setTimeout(() => setSelectedSouvenir(s), 200) }} />}
       {showSettings && <SettingsScreen archetypeKey={archetypeKey} onClose={() => setShowSettings(false)} onRestart={onRestart} onRetakeQuiz={onRestart} />}
       {showShare && <ShareArchetype archetypeKey={archetypeKey} onClose={() => setShowShare(false)} />}
+      {showBoutique && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: '#050810', animation: 'fadeIn 0.5s cubic-bezier(0,0,0.2,1) both' }}>
+          <button onClick={() => setShowBoutique(false)} aria-label="Refermer la maison ÇA VA?" style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', right: 18, zIndex: 950, background: 'rgba(8,12,22,0.62)', border: '1px solid rgba(239,233,220,0.32)', borderRadius: '50%', width: 38, height: 38, color: 'rgba(239,233,220,0.82)', fontSize: 14, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(8px)' }}>✕</button>
+          <BoutiqueScreen archetypeKey={archetypeKey} />
+        </div>
+      )}
       {selectedSouvenir && <SouvenirDetailModal souvenir={selectedSouvenir} archetypeKey={archetypeKey} onClose={() => setSelectedSouvenir(null)} />}
     </div>
   )
@@ -4030,7 +4040,7 @@ function BottomNav({ tab, onChange, color, badges = {} }) {
     { key: 'home',       label: 'Accueil',    Icon: NavIconHome },
     { key: 'pratiques',  label: 'Pratiques',  Icon: NavIconRoutines },
     { key: 'communaute', label: 'Communauté', Icon: NavIconCommunaute },
-    { key: 'boutique',   label: 'Boutique',   Icon: NavIconBoutique },
+    { key: 'voyage',     label: 'Voyage',     Icon: NavIconVoyage },
   ]
   return (
     <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, background: 'linear-gradient(180deg, rgba(5,8,16,0.65) 0%, rgba(5,8,16,0.92) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderTop: `1px solid ${color}18`, boxShadow: '0 -12px 40px rgba(5,8,16,0.7), 0 -1px 0 rgba(255,255,255,0.04)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom)' }}>
@@ -4084,7 +4094,7 @@ function BreathingModal({ archetypeKey, onClose }) {
     resilience: {
       name: 'Souffle du Guerrier',
       subtitle: 'Box Breathing · 4·4·4·4',
-      benefit: 'Calme le système nerveux. Aiguise la concentration. Utilisé par les Navy SEALs avant action.',
+      benefit: 'Le souffle des traversées. Quand le monde se resserre, lui s\'élargit. Quatre temps égaux pour reprendre la mesure de toi.',
       bestFor: 'Avant un défi · stress aigu · moments tendus',
       phases: [
         { label: 'Inspire', dur: 4, expand: true,  hint: 'Par le nez, lentement' },
@@ -4097,7 +4107,7 @@ function BreathingModal({ archetypeKey, onClose }) {
     presence: {
       name: "Souffle d'Ancrage",
       subtitle: '4-7-8 · Calmer · Dormir',
-      benefit: "Active le parasympathique. Ralentit le rythme cardiaque. Aide profondément à s'endormir.",
+      benefit: "Le souffle qui dépose. L'expiration plus longue que l'inspiration — comme la marée qui se retire et laisse le sable nu.",
       bestFor: 'Anxiété · ruminations · avant la nuit',
       phases: [
         { label: 'Inspire', dur: 4, expand: true,  hint: 'Par le nez, paisible' },
@@ -4109,7 +4119,7 @@ function BreathingModal({ archetypeKey, onClose }) {
     sagesse: {
       name: 'Cohérence Cardiaque',
       subtitle: '5·5 · Équilibrer',
-      benefit: 'Synchronise cœur et respiration. Réduit le cortisol. Clarifie la pensée.',
+      benefit: 'Cinq pour entrer, cinq pour sortir. Le cœur et le souffle s\'accordent — et le bruit du dedans baisse d\'un ton.',
       bestFor: 'Avant une décision · concentration · clarté',
       phases: [
         { label: 'Inspire', dur: 5, expand: true,  hint: 'Vague qui monte' },
@@ -4120,7 +4130,7 @@ function BreathingModal({ archetypeKey, onClose }) {
     lumiere: {
       name: 'Souffle Créateur',
       subtitle: '4·8 · Libérer',
-      benefit: "Active la créativité. Détend le diaphragme. Libère l'expression intérieure.",
+      benefit: "Quatre pour respirer, huit pour rendre. Comme un feu qui prend l'air et le rend lumière.",
       bestFor: 'Bloc créatif · avant un projet · réveil',
       phases: [
         { label: 'Inspire', dur: 4, expand: true,  hint: 'Reçois pleinement' },
@@ -4619,7 +4629,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
     if (days <= 0) return FIRST_DAY_MSGS[archetypeKey] || 'Ton voyage commence ici.'
     if (MILESTONES[days]) return MILESTONES[days]
     const day1Msg = { resilience: 'Tu es revenu·e. Le feu est intact.', presence: 'Tu es revenu·e. L\'espace t\'attendait.', sagesse: 'Tu es revenu·e. La brume s\'éclaire.', lumiere: 'Tu es revenu·e. La lumière continue.' }[archetypeKey]
-    if (days === 1) return day1Msg || 'Tu es revenu·e. C\'est bien.'
+    if (days === 1) return day1Msg || 'Tu es revenu·e. Et toi, ça va vraiment ?'
     const short = { resilience: `${days} jours. Ton feu brûle.`, presence: `${days} jours. Tu t'ancres.`, sagesse: `${days} jours. Ta brume prend forme.`, lumiere: `${days} jours. Ta lumière grandit.` }[archetypeKey]
     if (days < 7) return short || `${days} jours. Tu construis quelque chose.`
     const mid = { resilience: `${days} jours de feu — tu avances.`, presence: `${days} jours de présence — c'est réel.`, sagesse: `${days} jours de sagesse — c'est réel.`, lumiere: `${days} jours de lumière — c'est réel.` }[archetypeKey]
@@ -4848,7 +4858,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
           </svg>
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 4 }}>4 mini-jeux thérapeutiques</div>
+          <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 4 }}>Quatre gestes intérieurs</div>
           <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 15, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em', marginBottom: 3 }}>Mini-jeux doux</div>
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.58)', fontStyle: 'italic' }}>Libération · Apaisement · Concentration · Réparation</div>
         </div>
@@ -6165,7 +6175,7 @@ function ConcentrationZenModal({ archetypeKey, onClose }) {
             <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}33, transparent)` }} />
             <div>
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: arch.color, letterSpacing: '0.22em', textTransform: 'uppercase', margin: '0 0 8px' }}>Ce que ça change</p>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.55 }}>Active l'attention soutenue. Calme le système nerveux. Rappelle au cerveau qu'il peut se poser sur une chose.</p>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 13.5, color: 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.55 }}>Soixante secondes pour offrir ton attention à une seule chose. Le reste peut attendre — il attend déjà.</p>
             </div>
           </div>
           <button data-press="true" onClick={startGame} style={{ width: '100%', padding: '18px 0', background: `linear-gradient(135deg, rgba(${arch.rgb},0.95), rgba(${arch.rgb},0.78))`, border: 'none', borderRadius: 100, color: 'white', fontFamily: 'Sora, sans-serif', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.24em', cursor: 'pointer', textTransform: 'uppercase', boxShadow: `0 6px 36px rgba(${arch.rgb},0.45), 0 0 60px rgba(${arch.rgb},0.20)`, animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: '0 0 14px rgba(255,255,255,0.35)', minHeight: 54 }}>Commencer</button>
@@ -6619,13 +6629,13 @@ function WelcomeBackOverlay({ archetypeKey, days, onDismiss }) {
   let title, subtitle
   if (days >= 30) {
     title = 'Tu reviens de loin.'
-    subtitle = "Un mois, et tout est encore là pour toi."
+    subtitle = "T'as pas besoin d'aller bien pour revenir."
   } else if (days >= 14) {
     title = 'Deux semaines.'
-    subtitle = "Tu trouveras tout comme tu l'as laissé."
+    subtitle = "T'as pas besoin d'aller bien pour revenir."
   } else if (days >= 7) {
     title = 'Une semaine.'
-    subtitle = "Bienvenue chez toi à nouveau."
+    subtitle = "T'as pas besoin d'aller bien pour revenir."
   } else {
     title = 'Tu reviens.'
     subtitle = "Ton cocon t'attendait."
@@ -6639,7 +6649,10 @@ function WelcomeBackOverlay({ archetypeKey, days, onDismiss }) {
         ))}
       </svg>
       <div style={{ position: 'relative', textAlign: 'center', padding: '32px 40px', maxWidth: 420, animation: vis ? 'modalEnter 720ms cubic-bezier(0.16,1.36,0.32,1) both' : 'none' }}>
-        <div style={{ fontSize: 56, color: arch.color, lineHeight: 1, marginBottom: 22, textShadow: `0 0 36px ${arch.color}99, 0 0 72px ${arch.color}44`, animation: 'signaturePulse 6s cubic-bezier(0.45,0,0.55,1) infinite' }}>◯</div>
+        {/* Spirit animal — premier signe que le refuge t'attendait */}
+        <div style={{ width: 96, height: 96, borderRadius: '50%', overflow: 'hidden', margin: '0 auto 22px', boxShadow: `0 0 28px ${arch.color}77, 0 0 64px ${arch.color}33, inset 0 0 0 1px ${arch.color}55`, animation: 'animalbreathe 5s cubic-bezier(0.45,0,0.55,1) infinite' }}>
+          <img src={`${B}spirit-${archetypeKey}.avif`} alt={arch.animal} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 45%', filter: 'brightness(1.08) saturate(1.1)' }} />
+        </div>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 30, color: 'white', margin: '0 0 12px', letterSpacing: '-0.01em', lineHeight: 1.22, textShadow: `0 0 28px ${arch.color}55` }}>{title}</h2>
         <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 15.5, color: 'rgba(255,255,255,0.78)', margin: 0, lineHeight: 1.6, textShadow: '0 1px 12px rgba(0,0,0,0.5)', animation: 'phrasebreathe 10s cubic-bezier(0.45,0,0.55,1) infinite' }}>{subtitle}</p>
       </div>
@@ -6781,7 +6794,7 @@ function AujourdhuiCard({ archetypeKey, onSetMood, onOpenTool }) {
   // Suggestion contextuelle par heure
   const h = new Date().getHours()
   const suggestion =
-    h < 6  ? 'Le silence est aussi une présence.' :
+    h < 6  ? 'Tu n\'es pas seul·e dans cette nuit.' :
     h < 12 ? 'Pose une intention douce pour aujourd\'hui.' :
     h < 18 ? 'Une respiration peut tout changer.' :
     h < 22 ? 'Comment s\'est passée ta journée ?' :
@@ -6940,7 +6953,7 @@ function BilanDuSoirCard({ archetypeKey, onClose }) {
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10, position: 'relative' }}>
         <div>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: `rgba(${arch.rgb},0.86)`, letterSpacing: '0.26em', textTransform: 'uppercase', margin: 0, animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>Bilan du soir</p>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '4px 0 0', letterSpacing: '0.02em' }}>{period}</p>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 13, color: 'rgba(255,255,255,0.62)', margin: '4px 0 0', letterSpacing: '0.02em' }}>Et toi, ça va vraiment ce soir ?</p>
         </div>
         <div style={{ fontSize: 22, lineHeight: 1, opacity: 0.85, filter: `drop-shadow(0 0 12px ${arch.color}88)`, animation: 'phrasebreathe 9s cubic-bezier(0.45,0,0.55,1) infinite' }}>☾</div>
       </div>
@@ -7707,13 +7720,13 @@ function SOSModal({ archetypeKey, onClose }) {
         {/* Logo + titre */}
         <div style={{ textAlign: 'center', marginBottom: 22, position: 'relative' }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,200,170,0.92)', letterSpacing: '0.30em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>Tu n'es pas seul·e</p>
-          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 26, color: 'rgba(255,255,255,0.96)', margin: '12px 0 8px', letterSpacing: '-0.02em', lineHeight: 1.25, textShadow: '0 0 24px rgba(255,180,140,0.35), 0 2px 12px rgba(0,0,0,0.5)' }}>Reste avec toi.<br />Reste avec nous.</h2>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(255,255,255,0.74)', margin: '10px auto 0', maxWidth: 360, lineHeight: 1.6, letterSpacing: '-0.005em' }}>Même dans les moments les plus sombres, la vie peut doucement changer. Tu mérites d'être entendu·e, aidé·e, aimé·e.</p>
+          <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 26, color: 'rgba(255,255,255,0.96)', margin: '12px 0 8px', letterSpacing: '-0.02em', lineHeight: 1.25, textShadow: '0 0 24px rgba(255,180,140,0.35), 0 2px 12px rgba(0,0,0,0.5)' }}>Là, maintenant,<br />juste : reste.</h2>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(255,255,255,0.74)', margin: '10px auto 0', maxWidth: 360, lineHeight: 1.6, letterSpacing: '-0.005em' }}>Je suis là. NÉYA est là. Le monde est là. Tu n'as pas à expliquer. Pas à choisir. Pas à comprendre.</p>
         </div>
 
         {/* Ressources d'aide officielles */}
         <div style={{ marginBottom: 22 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,200,170,0.78)', letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center' }}>Numéros qui répondent maintenant</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,200,170,0.78)', letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center' }}>Des voix qui répondent maintenant</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
             {RESOURCES.map((r, i) => (
               <a key={i} href={`tel:${r.number.replace(/\s/g,'')}`} onClick={() => haptic([8,40,8])} style={{
@@ -7739,7 +7752,7 @@ function SOSModal({ archetypeKey, onClose }) {
 
         {/* Ancres personnelles */}
         <div style={{ borderTop: '1px solid rgba(255,200,170,0.18)', paddingTop: 22, marginBottom: 22 }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,200,170,0.78)', letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center' }}>Tes ancres à toi</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,200,170,0.78)', letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 14px', textAlign: 'center' }}>Ce que tu sais de toi quand tout va bien</p>
           {[
             { key: 'proche',   value: proche,   label: 'Un·e proche de confiance', placeholder: 'Un prénom, un numéro qui te tient...' },
             { key: 'mot',      value: mot,      label: 'Un mot qui t\'apaise',     placeholder: 'Une phrase, un mantra à toi...' },
@@ -7764,7 +7777,7 @@ function SOSModal({ archetypeKey, onClose }) {
 
         {/* Disclaimer + fermeture */}
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10.5, color: 'rgba(255,255,255,0.40)', textAlign: 'center', margin: '0 0 18px', lineHeight: 1.65, fontStyle: 'italic', letterSpacing: '0.02em' }}>
-          NÉYA ne remplace personne. Ces ressources sont conçues pour t'accompagner vers une aide réelle.
+          NÉYA est avec toi, pas à la place de. Ces voix-là savent t'écouter.
         </p>
 
         <button data-press="true" onClick={handleClose} style={{
@@ -7782,7 +7795,7 @@ function SOSModal({ archetypeKey, onClose }) {
           cursor: 'pointer',
           minHeight: 48,
           boxShadow: '0 4px 18px rgba(255,180,140,0.14)',
-        }}>Refermer doucement</button>
+        }}>Reste. Le reste peut attendre.</button>
       </div>
 
       {/* Edit overlay */}
@@ -9194,7 +9207,6 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
           {tab === 'pratiques' && <PratiquesScreen archetypeKey={archetypeKey} routinesDone={routinesDone} quetesDone={quetesDone} onToggleRoutine={toggleRoutine} onCompleteQuete={completeQuete} onOpenVrai={() => setVraiOpen(true)} />}
           {tab === 'communaute' && <CommunauteScreen archetypeKey={archetypeKey} onClose={() => changeTab('home')} />}
           {tab === 'voyage' && <GrandVoyageScreen archetypeKey={archetypeKey} />}
-          {tab === 'boutique' && <BoutiqueScreen archetypeKey={archetypeKey} />}
         </div>
         <BottomNav tab={tab} onChange={changeTab} color={arch.color} badges={{ pratiques: (routinesDone.filter(Boolean).length < arch.routines.length) || (quetesDone.filter(Boolean).length < arch.quetes.length) }} />
         {pendingWorldUnlock && <WorldUnlockModal worldKey={pendingWorldUnlock} onClose={() => { try { addSouvenir('world_unlock', { world: pendingWorldUnlock }) } catch {} ; setPendingWorldUnlock(null); changeTab('voyage') }} />}
