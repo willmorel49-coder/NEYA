@@ -47,6 +47,30 @@
 </head>
 <body>
   <div id="root"></div>
+  <script>
+    // V1 Apple unstuck — désinscrit les vieux Service Workers PWA
+    // une seule fois par session, purge les caches Workbox, reload.
+    (function () {
+      try {
+        if (sessionStorage.getItem('neya_v1_apple_unstuck')) return;
+        if (!('serviceWorker' in navigator)) return;
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          if (!regs || regs.length === 0) return;
+          Promise.all(regs.map(function (r) { return r.unregister(); })).then(function () {
+            var purge = ('caches' in window)
+              ? caches.keys().then(function (keys) {
+                  return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+                })
+              : Promise.resolve();
+            purge.then(function () {
+              sessionStorage.setItem('neya_v1_apple_unstuck', '1');
+              location.reload();
+            });
+          });
+        });
+      } catch (e) {}
+    })();
+  </script>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
