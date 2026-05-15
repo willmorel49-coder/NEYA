@@ -46,7 +46,16 @@ export default function V2App() {
     const profile = recordVisitToday();
     const day = profile.progress?.joursConnectes || 0;
     if (checkMilestone(day) && !isMilestoneSeen(day)) {
-      setTimeout(() => setMilestoneDay(day), 1200);
+      setTimeout(() => {
+        // Guard : éviter l'overlap avec les overlays d'intro (Patronus / Tour)
+        const introActive = !ls.get('patronus_seen', false) || !ls.get('tour_seen', false);
+        if (introActive) {
+          // Defer behind intro flow
+          setTimeout(() => setMilestoneDay(day), 6000);
+        } else {
+          setMilestoneDay(day);
+        }
+      }, 1200);
     }
   }, [onboarded]);
   const [activeWorldKey, setActiveWorldKey] = useState(
@@ -138,6 +147,12 @@ export default function V2App() {
       clearTimeout(longPressWarnRef.current);
       longPressWarnRef.current = null;
     }
+  };
+
+  // Separate cleanup for swipe (called on move, but not on plain touchend
+  // since handleSwipeEnd needs swipeRef.started intact to decide direction)
+  const resetSwipe = () => {
+    swipeRef.current.started = false;
   };
 
   useEffect(() => {
@@ -247,27 +262,47 @@ export default function V2App() {
       onMouseUp={cancelLongPress}
       onMouseLeave={cancelLongPress}
     >
-      <div
-        key={activeTab}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          animation: 'fade-in 320ms var(--ease-out) both',
-        }}
-      >
-        {activeTab === 'aventure' && (
-          <Aventure
-            onOpenMeditation={handleOpenMeditation}
-            onOpenWorld={handleOpenWorld}
-            onOpenHabitudes={() => setHabitudesOpen(true)}
-            onOpenEspaceVrai={() => setEspaceVraiOpen(true)}
-            onOpenBilan={() => setBilanOpen(true)}
-            onOpenBilanSemaine={() => setBilanSemaineOpen(true)}
-          />
-        )}
-        {activeTab === 'cocon' && <Cocon />}
-        {activeTab === 'communaute' && <Communaute />}
-        {activeTab === 'cava' && <CaVa />}
+      {/* All 4 screens mounted permanently — state (filters, scroll, drawers)
+          preserved across tab switches. Active screen visible + interactive,
+          others faded out + pointer-events disabled. iOS-native tab behavior. */}
+      <div style={{ position: 'absolute', inset: 0 }}>
+        {[
+          {
+            key: 'aventure',
+            node: (
+              <Aventure
+                onOpenMeditation={handleOpenMeditation}
+                onOpenWorld={handleOpenWorld}
+                onOpenHabitudes={() => setHabitudesOpen(true)}
+                onOpenEspaceVrai={() => setEspaceVraiOpen(true)}
+                onOpenBilan={() => setBilanOpen(true)}
+                onOpenBilanSemaine={() => setBilanSemaineOpen(true)}
+              />
+            ),
+          },
+          { key: 'cocon', node: <Cocon /> },
+          { key: 'communaute', node: <Communaute /> },
+          { key: 'cava', node: <CaVa /> },
+        ].map(({ key, node }) => {
+          const isActive = activeTab === key;
+          return (
+            <div
+              key={key}
+              aria-hidden={!isActive}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                opacity: isActive ? 1 : 0,
+                pointerEvents: isActive ? 'auto' : 'none',
+                transition: 'opacity 280ms var(--ease-out)',
+                zIndex: isActive ? 2 : 1,
+                overflow: 'hidden',
+              }}
+            >
+              {node}
+            </div>
+          );
+        })}
       </div>
 
       <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />

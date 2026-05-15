@@ -177,7 +177,7 @@ export default function Communaute() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [draft, setDraft] = useState('');
   const [expandedSet, setExpandedSet] = useState(() => new Set());
-  const [subFilter, setSubFilter] = useState('all'); // 'all' | 'reacted' | 'mine'
+  const [subFilter, setSubFilter] = useState(() => ls.get('communaute_filter', 'all')); // 'all' | 'reacted' | 'mine'
   const [composerPlaceholder, setComposerPlaceholder] = useState(null);
   const [composerTag, setComposerTag] = useState('présence');
   const [cercleOpen, setCercleOpen] = useState(false);
@@ -189,7 +189,14 @@ export default function Communaute() {
   const longPressTimerRef = useRef(null);
   const longPressFiredRef = useRef(false);
 
-  const prompt = useMemo(() => getDailyPrompt(), []);
+  // Daily prompt — re-computes if the day rolls over (date string as dep).
+  const todayKey = new Date().toISOString().split('T')[0];
+  const prompt = useMemo(() => getDailyPrompt(), [todayKey]);
+
+  // Persist sub-filter selection so user keeps their context across remounts.
+  useEffect(() => {
+    ls.set('communaute_filter', subFilter);
+  }, [subFilter]);
 
   // ── Long-press helpers (iOS standard 500ms) ─────────────
   const clearLongPress = () => {
@@ -583,6 +590,8 @@ export default function Communaute() {
             >
               {subFilter === 'mine'
                 ? 'Tu n’as pas encore partagé de voix. C’est quand tu veux.'
+                : subFilter === 'reacted'
+                ? 'Touche une réaction sur un post pour qu’il apparaisse ici.'
                 : 'Aucune voix dans ce filtre pour le moment.'}
             </div>
           ) : filteredVoices.map((v) => {

@@ -58,20 +58,33 @@ const COCON_AMBIENT_POSITIONS = {
 export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitudes, onOpenEspaceVrai, onOpenBilan, onOpenBilanSemaine }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
   const [scrollY, setScrollY] = useState(0);
-  const [isCompressed, setIsCompressed] = useState(false);
   const [celebrating, setCelebrating] = useState(null); // { worldKey } | null
   const [celebrationLeaving, setCelebrationLeaving] = useState(false);
   const [displayedMinutes, setDisplayedMinutes] = useState(
     () => profile.progress.minutesTotales || 0
   );
+  const [nowHour, setNowHour] = useState(() => new Date().getHours());
   const prevExploredRef = useRef(profile.progress.worldsExplored || []);
   const prevMinutesRef = useRef(profile.progress.minutesTotales || 0);
+  const mountedRef = useRef(true);
   const motifCTA = getMotifCTA();
   const etatLine = getEtatLine();
   const paletteMode = getPaletteMode();
+  // Derived — recomputed each render, no stale-state risk
+  const isCompressed = scrollY > 60;
 
   useEffect(() => {
+    mountedRef.current = true;
     setProfile(recordVisitToday());
+    return () => { mountedRef.current = false; };
+  }, []);
+
+  // Re-render every 60s so conditional cards (Bilan du soir) appear when the clock crosses 18h
+  useEffect(() => {
+    const t = setInterval(() => {
+      setNowHour(new Date().getHours());
+    }, 60000);
+    return () => clearInterval(t);
   }, []);
 
   // Detect newly unlocked world by diffing worldsExplored against previous ref
@@ -111,17 +124,17 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   }, [celebrating]);
 
   function dismissCelebration() {
+    if (!mountedRef.current) return;
     setCelebrationLeaving(true);
     setTimeout(() => {
+      if (!mountedRef.current) return;
       setCelebrating(null);
       setCelebrationLeaving(false);
     }, 280);
   }
 
   const onScroll = (e) => {
-    const y = e.currentTarget.scrollTop;
-    setScrollY(y);
-    setIsCompressed(y > 60);
+    setScrollY(e.currentTarget.scrollTop);
   };
 
   const explored = useMemo(
@@ -369,8 +382,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               )}
             </button>
           </h1>
-          {profile.mantra && (
+          {!isCompressed && profile.mantra && (
             <div
+              key="mantra-expanded"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontStyle: 'italic',
@@ -379,25 +393,20 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 marginTop: 6,
                 fontVariationSettings: 'var(--fraunces-italic-soft)',
                 lineHeight: 1.45,
-                opacity: isCompressed ? 0 : 1,
-                maxHeight: isCompressed ? 0 : 80,
-                overflow: 'hidden',
-                transition: 'opacity 240ms var(--ease-out-ios), max-height 240ms var(--ease-out-ios), margin-top 240ms var(--ease-out-ios)',
               }}
             >
               « {profile.mantra} »
             </div>
           )}
-          {etatLine && !profile.mantra && (
-            <div style={{
-              fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 13,
-              color: 'var(--content-secondary)', marginTop: 6, lineHeight: 1.45,
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              opacity: isCompressed ? 0 : 1,
-              maxHeight: isCompressed ? 0 : 80,
-              overflow: 'hidden',
-              transition: 'opacity 240ms var(--ease-out-ios), max-height 240ms var(--ease-out-ios), margin-top 240ms var(--ease-out-ios)',
-            }}>{etatLine}</div>
+          {!isCompressed && etatLine && !profile.mantra && (
+            <div
+              key="etat-expanded"
+              style={{
+                fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 13,
+                color: 'var(--content-secondary)', marginTop: 6, lineHeight: 1.45,
+                fontVariationSettings: 'var(--fraunces-italic-soft)',
+              }}
+            >{etatLine}</div>
           )}
         </div>
 
@@ -552,9 +561,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         </button>
       </div>
 
-      {/* Bilan du soir — conditional 18h+ */}
+      {/* Bilan du soir — conditional 18h+ (re-evaluated every minute via nowHour) */}
       {(() => {
-        const h = new Date().getHours();
+        const h = nowHour;
         const isEvening = h >= 18 || h < 5;
         const today = new Date().toISOString().split('T')[0];
         const bilanHist = (typeof window !== 'undefined') ? (JSON.parse(localStorage.getItem('neya_v2_bilan_history') || '[]')) : [];

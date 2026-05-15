@@ -97,6 +97,16 @@ export default function Cocon() {
   const allPlaced = placedCount >= ITEMS.length;
   const TILLEUL = '#d4e08c';
 
+  // Sync temp inputs when profile pseudo/mantra changes externally (e.g. another tab updates),
+  // but only when the user is not currently editing — preserves in-flight input.
+  useEffect(() => {
+    if (!editingPseudo) setTempPseudo(profile.pseudo || '');
+  }, [profile.pseudo, editingPseudo]);
+
+  useEffect(() => {
+    if (!editingMantra) setTempMantra(profile.mantra || '');
+  }, [profile.mantra, editingMantra]);
+
   const save = (patch) => {
     const next = { ...profile, ...patch };
     setLocalProfile(next);

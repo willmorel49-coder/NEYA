@@ -232,9 +232,15 @@ function StepLayer({ step, stepIdx, totalSteps, fadeState, onAdvance, interactiv
   const [mounted, setMounted] = useState(fadeState !== 'entering');
   useEffect(() => {
     if (fadeState === 'entering') {
-      // Trigger entrance opacity after first paint
+      // Trigger entrance opacity after first paint.
+      // rAF may not fire when the tab is inactive — setTimeout fallback ensures
+      // the layer never stays stuck at opacity 0.
       const r = requestAnimationFrame(() => setMounted(true));
-      return () => cancelAnimationFrame(r);
+      const t = setTimeout(() => setMounted(true), 50);
+      return () => {
+        cancelAnimationFrame(r);
+        clearTimeout(t);
+      };
     }
   }, [fadeState]);
 

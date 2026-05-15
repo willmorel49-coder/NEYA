@@ -221,24 +221,22 @@ export default function CaVa() {
             }}
           >
             <div style={{ minWidth: 0 }}>
-              <div
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: 9,
-                  fontWeight: 500,
-                  letterSpacing: '0.222em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(26, 26, 47, 0.55)',
-                  marginBottom: compressed ? 0 : 8,
-                  opacity: compressed ? 0 : 1,
-                  maxHeight: compressed ? 0 : 14,
-                  overflow: 'hidden',
-                  transition:
-                    'opacity 240ms var(--ease-out-ios), max-height 240ms var(--ease-out-ios), margin-bottom 240ms var(--ease-out-ios)',
-                }}
-              >
-                CAPSULE · MARQUE SŒUR DE NÉYA
-              </div>
+              {!compressed && (
+                <div
+                  className="neya-mark"
+                  style={{
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 9,
+                    fontWeight: 500,
+                    letterSpacing: '0.222em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(26, 26, 47, 0.55)',
+                    marginBottom: 8,
+                  }}
+                >
+                  CAPSULE · MARQUE SŒUR DE NÉYA
+                </div>
+              )}
               <h1
                 style={{
                   fontFamily: 'var(--font-display)',
@@ -309,17 +307,27 @@ export default function CaVa() {
             </div>
           </div>
 
-          {/* Segmented control — passes */}
+        </div>
+
+        {/* Segmented control — passes (outside sticky header — always at stable size) */}
+        <div
+          style={{
+            padding: '12px 22px 14px',
+            background: compressed ? 'rgba(244, 240, 232, 0.92)' : 'transparent',
+            backdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
+            WebkitBackdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
+            transition:
+              'background 240ms var(--ease-out-ios), backdrop-filter 240ms var(--ease-out-ios)',
+          }}
+        >
           <div
             style={{
-              marginTop: compressed ? 8 : 14,
               position: 'relative',
               display: 'flex',
               background: 'rgba(26, 26, 47, 0.06)',
               borderRadius: 'var(--radius-pill)',
               padding: 3,
               overflow: 'hidden',
-              transition: 'margin-top 240ms var(--ease-out-ios)',
             }}
           >
             {/* Sliding indicator */}
@@ -379,30 +387,27 @@ export default function CaVa() {
         {/* Inner padded body */}
         <div style={{ padding: '0 22px' }}>
 
-        {/* Manifeste tagline (fades + collapses when compressed) */}
-        <p
-          style={{
-            margin: 0,
-            paddingTop: compressed ? 0 : 14,
-            paddingBottom: compressed ? 0 : 28,
-            fontFamily: 'var(--font-body)',
-            fontSize: 14,
-            lineHeight: 1.55,
-            color: 'rgba(26, 26, 47, 0.65)',
-            maxWidth: 380,
-            opacity: compressed ? 0 : 1,
-            maxHeight: compressed ? 0 : 200,
-            overflow: 'hidden',
-            transition:
-              'opacity 240ms var(--ease-out-ios), max-height 240ms var(--ease-out-ios), padding 240ms var(--ease-out-ios)',
-          }}
-        >
-          Faire de la mode un langage qui libère la parole sur la santé mentale.
-          <br />
-          <em style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontVariationSettings: 'var(--fraunces-italic-soft)' }}>
-            Briser le masque du « ça va ».
-          </em>
-        </p>
+        {/* Manifeste tagline — conditional render to avoid stuck opacity transitions */}
+        {!compressed && (
+          <p
+            style={{
+              margin: 0,
+              paddingTop: 14,
+              paddingBottom: 28,
+              fontFamily: 'var(--font-body)',
+              fontSize: 14,
+              lineHeight: 1.55,
+              color: 'rgba(26, 26, 47, 0.65)',
+              maxWidth: 380,
+            }}
+          >
+            Faire de la mode un langage qui libère la parole sur la santé mentale.
+            <br />
+            <em style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontVariationSettings: 'var(--fraunces-italic-soft)' }}>
+              Briser le masque du « ça va ».
+            </em>
+          </p>
+        )}
 
         {/* Horizontal capsule covers strip — scroll-snap */}
         <div
@@ -569,7 +574,7 @@ export default function CaVa() {
         <ProductDetail
           product={productDetail.product}
           capsule={productDetail.capsule}
-          image={productDetail.product.image}
+          image={productDetail.product?.image || null}
           pseudo={pseudo}
           totem={totem}
           onAddToCart={(p) => { addToCart(p); setProductDetail(null); }}

@@ -646,6 +646,7 @@ export default function ProductDetail({
           <img
             src={image}
             alt={product?.name || ''}
+            onClick={(e) => e.stopPropagation()}
             style={{
               maxWidth: '100%',
               maxHeight: '90vh',
