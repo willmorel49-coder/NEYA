@@ -184,7 +184,7 @@ export default function Communaute() {
   const [hideCrisisAlert, setHideCrisisAlert] = useState(false);
   const [aideOpen, setAideOpen] = useState(false);
   const [irlOpen, setIrlOpen] = useState(false);
-  const [actionSheet, setActionSheet] = useState(null); // { type: 'delete-post', postId } | null
+  const [actionSheet, setActionSheet] = useState(null); // { type: 'delete-post' | 'add-cercle' | 'flag-post', payload } | null
   const [contextMenu, setContextMenu] = useState(null); // { post, position } | null
   const longPressTimerRef = useRef(null);
   const longPressFiredRef = useRef(false);
@@ -277,11 +277,18 @@ export default function Communaute() {
   const ownCount = ownPosts.length;
 
   const deletePost = (id) => {
-    haptic([4, 60, 4]);
+    haptic(4);
     setActionSheet({ type: 'delete-post', postId: id });
   };
 
   const toggleReaction = (postId, rKey) => {
+    // Guard : if a long-press just fired its context menu, swallow the
+    // synthetic click iOS dispatches on touch-end so we don't toggle
+    // accidentally. Reset the flag immediately so subsequent taps work.
+    if (longPressFiredRef.current) {
+      longPressFiredRef.current = false;
+      return;
+    }
     const cur = reactionState[postId] || {};
     const next = { ...cur, [rKey]: !cur[rKey] };
     const updated = { ...reactionState, [postId]: next };
@@ -301,6 +308,7 @@ export default function Communaute() {
     setComposerOpen(false);
     setDraft('');
     setComposerPlaceholder(null);
+    setComposerTag('présence');
     setHideCrisisAlert(false);
   };
 
@@ -323,6 +331,7 @@ export default function Communaute() {
     setDraft('');
     setComposerOpen(false);
     setComposerPlaceholder(null);
+    setComposerTag('présence');
     setHideCrisisAlert(false);
     haptic([6, 30, 6]);
   };
@@ -580,19 +589,48 @@ export default function Communaute() {
                 background: 'rgba(255, 252, 245, 0.78)',
                 border: '0.5px solid rgba(26, 26, 47, 0.08)',
                 borderRadius: 'var(--radius-lg)',
-                padding: '20px 18px',
+                padding: '24px 20px',
                 textAlign: 'center',
                 fontFamily: 'var(--font-body)',
                 fontSize: 13,
                 fontStyle: 'italic',
                 color: 'var(--content-tertiary)',
+                lineHeight: 1.5,
               }}
             >
-              {subFilter === 'mine'
-                ? 'Tu n’as pas encore partagé de voix. C’est quand tu veux.'
-                : subFilter === 'reacted'
-                ? 'Touche une réaction sur un post pour qu’il apparaisse ici.'
-                : 'Aucune voix dans ce filtre pour le moment.'}
+              {subFilter === 'mine' ? (
+                <>
+                  <div style={{ marginBottom: 12 }}>
+                    Tu n’as pas encore partagé de voix. C’est quand tu veux.
+                  </div>
+                  <button
+                    data-press
+                    onClick={() => openComposer()}
+                    style={{
+                      appearance: 'none',
+                      background: 'transparent',
+                      border: '0.5px solid rgba(26, 26, 47, 0.16)',
+                      borderRadius: 'var(--radius-pill, 999px)',
+                      padding: '8px 14px',
+                      cursor: 'pointer',
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: 11,
+                      fontWeight: 600,
+                      letterSpacing: '0.16em',
+                      textTransform: 'uppercase',
+                      color: 'var(--ink)',
+                      fontStyle: 'normal',
+                      WebkitTapHighlightColor: 'transparent',
+                    }}
+                  >
+                    Partager une voix
+                  </button>
+                </>
+              ) : subFilter === 'reacted' ? (
+                'Touche une réaction sur une voix pour la retrouver ici.'
+              ) : (
+                'Aucune voix dans ce filtre pour le moment.'
+              )}
             </div>
           ) : filteredVoices.map((v) => {
             const my = reactionState[v.id] || {};
@@ -649,12 +687,7 @@ export default function Communaute() {
                           e.stopPropagation();
                           if (v.mine) return;
                           haptic(4);
-                          if (typeof window !== 'undefined' && window.confirm) {
-                            if (window.confirm(`Ajouter ${v.pseudo} à ton cercle ?`)) {
-                              addToCercle(v.pseudo);
-                              haptic([6, 30, 6]);
-                            }
-                          }
+                          setActionSheet({ type: 'add-cercle', pseudo: v.pseudo });
                         }}
                         onTouchStart={(e) => e.stopPropagation()}
                         onTouchEnd={(e) => e.stopPropagation()}
@@ -993,6 +1026,46 @@ export default function Communaute() {
         />
       )}
 
+      {actionSheet && actionSheet.type === 'add-cercle' && (
+        <ActionSheet
+          title={`Ajouter ${actionSheet.pseudo} à ton cercle ?`}
+          description="Ton cercle reste petit (7 max). Tu pourras lui envoyer une lumière."
+          actions={[
+            {
+              label: 'Ajouter',
+              icon: '✦',
+              onTap: () => {
+                addToCercle(actionSheet.pseudo);
+                haptic([6, 30, 6]);
+              },
+            },
+          ]}
+          onClose={() => setActionSheet(null)}
+        />
+      )}
+
+      {actionSheet && actionSheet.type === 'flag-post' && (
+        <ActionSheet
+          title="Signaler cette voix ?"
+          description="Un modérateur la relira. Cette action reste anonyme."
+          actions={[
+            {
+              label: 'Signaler',
+              role: 'destructive',
+              icon: '⚐',
+              onTap: () => {
+                const flagged = ls.get('flagged_posts', []);
+                if (!flagged.includes(actionSheet.postId)) {
+                  ls.set('flagged_posts', [...flagged, actionSheet.postId]);
+                }
+                haptic([6, 30, 6]);
+              },
+            },
+          ]}
+          onClose={() => setActionSheet(null)}
+        />
+      )}
+
       {/* Long-press context menu on voice cards */}
       {contextMenu && (() => {
         const v = contextMenu.post;
@@ -1019,17 +1092,7 @@ export default function Communaute() {
         items.push({
           label: 'Signaler cette voix',
           icon: '⚐',
-          onTap: () => {
-            const ok = typeof window !== 'undefined' && window.confirm
-              ? window.confirm('Signaler cette voix au modérateur ?')
-              : true;
-            if (ok) {
-              const flagged = ls.get('flagged_posts', []);
-              if (!flagged.includes(v.id)) {
-                ls.set('flagged_posts', [...flagged, v.id]);
-              }
-            }
-          },
+          onTap: () => setActionSheet({ type: 'flag-post', postId: v.id }),
         });
         if (v.mine) {
           items.push({

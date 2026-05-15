@@ -90,6 +90,24 @@ export default function Onboarding({ onComplete }) {
   const [answers, setAnswers] = useState({});
   const [completing, setCompleting] = useState(false);
 
+  // Track pending timers for cleanup on unmount (no orphan setState after unmount)
+  const timersRef = useRef([]);
+  const queueTimer = (cb, ms) => {
+    const id = setTimeout(() => {
+      timersRef.current = timersRef.current.filter((x) => x !== id);
+      cb();
+    }, ms);
+    timersRef.current.push(id);
+    return id;
+  };
+
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
+    };
+  }, []);
+
   const skipIntro = () => {
     if (completing) return;
     const ok = typeof window !== 'undefined'
@@ -138,7 +156,7 @@ export default function Onboarding({ onComplete }) {
       profile.progress.worldsExplored = ['foret'];
       setProfile(profile);
       setCompleting(true);
-      setTimeout(() => {
+      queueTimer(() => {
         haptic([8, 60, 8]);
         onComplete?.();
       }, 700);
@@ -147,7 +165,7 @@ export default function Onboarding({ onComplete }) {
 
     const next = stepIdx + 1;
     setTransitionToIdx(next);
-    setTimeout(() => {
+    queueTimer(() => {
       setStepIdx(next);
       setTransitionToIdx(null);
     }, CROSSFADE_MS);

@@ -88,7 +88,6 @@ export default function ProductDetail({
   const accent = capsule?.accent || 'var(--cava-warm)';
   const accentSoft = capsule?.accentSoft || 'rgba(159, 88, 76, 0.18)';
 
-  const pass = (typeof window !== 'undefined') ? null : null;
   // discount = computed by parent — receive via product if needed
   const discountPct = product?.discountPct || 0;
   const basePrice = product?.price || 0;
@@ -654,6 +653,7 @@ export default function ProductDetail({
               borderRadius: 'var(--radius-lg)',
               boxShadow: 'var(--shadow-deep)',
               animation: 'sheet-rise 420ms var(--ease-spring-soft) both',
+              cursor: 'default',
             }}
           />
           <div style={{

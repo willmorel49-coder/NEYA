@@ -82,7 +82,6 @@ export default function Cocon() {
   const [editingMantra, setEditingMantra] = useState(false);
   const [tempMantra, setTempMantra] = useState(profile.mantra || '');
   const [editingAnswer, setEditingAnswer] = useState(null); // field key or null
-  const [confirmReset, setConfirmReset] = useState(false);
   const [actionSheet, setActionSheet] = useState(null); // { type: 'reset' } | null
   const [carnetOpen, setCarnetOpen] = useState(false);
   const [moodOpen, setMoodOpen] = useState(false);
@@ -269,10 +268,21 @@ export default function Cocon() {
                 autoFocus
                 value={tempPseudo}
                 onChange={(e) => setTempPseudo(e.target.value)}
+                onBlur={() => {
+                  // Save on blur if value changed; otherwise just close edit mode.
+                  if ((tempPseudo || '').trim() !== (profile.pseudo || '')) savePseudo();
+                  else setEditingPseudo(false);
+                }}
                 placeholder="Ton prénom"
+                maxLength={30}
+                aria-label="Ton prénom"
                 style={inputStyle}
-                onKeyDown={(e) => { if (e.key === 'Enter') savePseudo(); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { e.preventDefault(); savePseudo(); }
+                  if (e.key === 'Escape') { setTempPseudo(profile.pseudo || ''); setEditingPseudo(false); }
+                }}
               />
+              <Button size="sm" variant="ghost" onClick={() => { setTempPseudo(profile.pseudo || ''); setEditingPseudo(false); }}>Annuler</Button>
               <Button size="sm" variant="primary" style={primaryDarkBtn} onClick={savePseudo}>OK</Button>
             </div>
           ) : (
@@ -292,11 +302,27 @@ export default function Cocon() {
                 onChange={(e) => setTempMantra(e.target.value)}
                 placeholder="Une phrase pour toi…"
                 rows={2}
+                maxLength={140}
+                aria-label="Mantra du moment"
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') { setTempMantra(profile.mantra || ''); setEditingMantra(false); }
+                }}
                 style={{ ...inputStyle, resize: 'none', lineHeight: 1.5, borderBottom: 'none', background: 'rgba(26, 26, 47, 0.04)', borderRadius: 8, padding: 10 }}
               />
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Button size="sm" variant="primary" style={primaryDarkBtn} onClick={saveMantra}>Garder</Button>
                 <Button size="sm" variant="ghost" onClick={() => { setTempMantra(profile.mantra || ''); setEditingMantra(false); }}>Annuler</Button>
+                <span
+                  style={{
+                    marginLeft: 'auto',
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 10,
+                    color: tempMantra.length >= 130 ? 'var(--crisis)' : 'var(--content-tertiary)',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {140 - tempMantra.length}
+                </span>
               </div>
             </div>
           ) : (
@@ -413,9 +439,11 @@ export default function Cocon() {
             const isPlaced = placed[item.key];
             return (
               <button
-                key={item.key + '-' + (isPlaced ? 'on' : 'off')}
+                key={item.key}
                 data-press
                 onClick={() => togglePlaced(item.key)}
+                aria-pressed={isPlaced}
+                aria-label={`${item.label} · ${isPlaced ? 'posé' : 'à poser'}`}
                 style={{
                   gridColumn: i === 4 ? '1 / -1' : 'auto',
                   appearance: 'none',
@@ -705,132 +733,6 @@ export default function Cocon() {
       {moodOpen && <MoodTracker onClose={() => setMoodOpen(false)} />}
       {carnetOpen && <Carnet onClose={() => setCarnetOpen(false)} />}
       {souvenirsOpen && <Souvenirs onClose={() => setSouvenirsOpen(false)} />}
-    </div>
-  );
-}
-
-function ResetConfirmSheet({ onCancel, onConfirm }) {
-  return (
-    <div
-      onClick={onCancel}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(26, 26, 47, 0.5)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        zIndex: 200,
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        animation: 'fadeIn 200ms var(--ease-out, ease-out)',
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: '100%',
-          maxWidth: 520,
-          background: 'var(--cream-light, #fffcf5)',
-          borderTopLeftRadius: 'var(--radius-xl, 24px)',
-          borderTopRightRadius: 'var(--radius-xl, 24px)',
-          padding: '14px 22px calc(env(safe-area-inset-bottom, 0px) + 28px)',
-          boxShadow: '0 -8px 40px rgba(26, 26, 47, 0.18)',
-          animation: 'slideUpSheet 320ms var(--ease-out-ios, cubic-bezier(0.22, 1, 0.36, 1))',
-        }}
-      >
-        {/* Drag handle */}
-        <div
-          style={{
-            width: 38,
-            height: 4,
-            borderRadius: 2,
-            background: 'rgba(26, 26, 47, 0.16)',
-            margin: '0 auto 18px',
-          }}
-        />
-        <h2
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            fontSize: 28,
-            lineHeight: 1.15,
-            color: 'var(--ink)',
-            margin: '4px 0 14px',
-            textAlign: 'center',
-          }}
-        >
-          Es-tu sûr·e ?
-        </h2>
-        <p
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 14,
-            lineHeight: 1.55,
-            color: 'var(--content-secondary, rgba(26, 26, 47, 0.7))',
-            textAlign: 'center',
-            margin: '0 0 24px',
-          }}
-        >
-          Toutes tes données NÉYA vont disparaître (pseudo, mantra, totem, mondes explorés, habitudes, panier ÇA VA?). Cette action est irréversible.
-        </p>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button
-            data-press
-            onClick={onCancel}
-            style={{
-              flex: 1,
-              appearance: 'none',
-              background: 'transparent',
-              border: '0.5px solid rgba(26, 26, 47, 0.18)',
-              borderRadius: 'var(--radius-md)',
-              padding: '16px 20px',
-              minHeight: 48,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 14,
-              fontWeight: 500,
-              color: 'var(--ink)',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            Annuler
-          </button>
-          <button
-            data-press
-            onClick={onConfirm}
-            style={{
-              flex: 1,
-              appearance: 'none',
-              background: TERRACOTTA,
-              border: 'none',
-              borderRadius: 'var(--radius-md)',
-              padding: '16px 20px',
-              minHeight: 48,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 14,
-              fontWeight: 600,
-              color: 'var(--cream, #fffcf5)',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              boxShadow: '0 4px 14px rgba(199, 103, 74, 0.28)',
-            }}
-          >
-            Tout effacer
-          </button>
-        </div>
-      </div>
-      <style>{`
-        @keyframes slideUpSheet {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-      `}</style>
     </div>
   );
 }

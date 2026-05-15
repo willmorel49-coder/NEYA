@@ -95,6 +95,9 @@ export function getProfile() {
 
 export function setProfile(p) {
   ls.set('profile', p);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('neya:profile-changed'));
+  }
   return p;
 }
 

@@ -5,7 +5,7 @@
    Wash dawn par défaut. Cards pearl translucides.
    ============================================================ */
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { WORLDS, WORLD_ORDER } from '../worlds';
 import { getProfile, greet, recordVisitToday, getMotifCTA, getEtatLine, getPaletteMode, haptic } from '../state';
 import Button from '../../components/Button';
@@ -55,6 +55,28 @@ const COCON_AMBIENT_POSITIONS = {
   portail: { glyph: '○', top: '26%',  left: '74%',  size: 16 },
 };
 
+// Spirit animal photos by totem (lives outside component — stable reference)
+const SPIRIT_PHOTO = {
+  lion:    '/img/spirit-lion.png',
+  ours:    '/img/spirit-ours.png',
+  aigle:   '/img/spirit-aigle.png',
+  daim:    '/img/spirit-daim.png',
+  baleine: '/img/spirit-baleine.png',
+  renard:  '/img/spirit-renard.png',
+};
+
+// Ambient mote drift positions (stable across renders)
+const MOTE_POSITIONS = [
+  { top: '12%', left: '18%', delay: 0    },
+  { top: '24%', left: '78%', delay: 1500 },
+  { top: '38%', left: '52%', delay: 800  },
+  { top: '46%', left: '14%', delay: 2200 },
+  { top: '58%', left: '66%', delay: 600  },
+  { top: '72%', left: '36%', delay: 1800 },
+  { top: '82%', left: '78%', delay: 1100 },
+  { top: '88%', left: '20%', delay: 400  },
+];
+
 export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitudes, onOpenEspaceVrai, onOpenBilan, onOpenBilanSemaine }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
   const [scrollY, setScrollY] = useState(0);
@@ -67,17 +89,66 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const prevExploredRef = useRef(profile.progress.worldsExplored || []);
   const prevMinutesRef = useRef(profile.progress.minutesTotales || 0);
   const mountedRef = useRef(true);
-  const motifCTA = getMotifCTA();
-  const etatLine = getEtatLine();
-  const paletteMode = getPaletteMode();
+  const celebrationTimeoutRef = useRef(null);
+  const motifCTA = useMemo(() => getMotifCTA(), [profile]);
+  const etatLine = useMemo(() => getEtatLine(), [profile]);
+  const paletteMode = useMemo(() => getPaletteMode(), [profile, nowHour]);
   // Derived — recomputed each render, no stale-state risk
   const isCompressed = scrollY > 60;
 
+  // Re-read profile from localStorage — used on mount, visibility change,
+  // tab switch back to Aventure, focus return. Wrapped in useCallback so
+  // listeners can be cleaned up properly.
+  const refreshProfile = useCallback(() => {
+    if (!mountedRef.current) return;
+    setProfile(recordVisitToday());
+  }, []);
+
   useEffect(() => {
     mountedRef.current = true;
-    setProfile(recordVisitToday());
-    return () => { mountedRef.current = false; };
-  }, []);
+    refreshProfile();
+    return () => {
+      mountedRef.current = false;
+      if (celebrationTimeoutRef.current) {
+        clearTimeout(celebrationTimeoutRef.current);
+        celebrationTimeoutRef.current = null;
+      }
+    };
+  }, [refreshProfile]);
+
+  // Refresh profile when the user comes back from a sub-screen / app background.
+  // Covers : retour de Meditation (minutesTotales / worldsExplored change),
+  // retour de Cocon (coconPlaced change, totem change), retour de Bilan,
+  // PWA wake from background, browser tab refocus.
+  useEffect(() => {
+    const onVisibility = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        refreshProfile();
+      }
+    };
+    const onFocus = () => refreshProfile();
+    const onTabSwitch = (e) => {
+      if (e?.detail === 'aventure') refreshProfile();
+    };
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', onVisibility);
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', onFocus);
+      window.addEventListener('neya:switch-tab', onTabSwitch);
+      window.addEventListener('neya:profile-changed', refreshProfile);
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', onVisibility);
+      }
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('focus', onFocus);
+        window.removeEventListener('neya:switch-tab', onTabSwitch);
+        window.removeEventListener('neya:profile-changed', refreshProfile);
+      }
+    };
+  }, [refreshProfile]);
 
   // Re-render every 60s so conditional cards (Bilan du soir) appear when the clock crosses 18h
   useEffect(() => {
@@ -123,10 +194,28 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
     return () => clearTimeout(t);
   }, [celebrating]);
 
+  // ESC key dismisses celebration modal
+  useEffect(() => {
+    if (!celebrating) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') dismissCelebration();
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', onKey);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('keydown', onKey);
+      }
+    };
+  }, [celebrating]);
+
   function dismissCelebration() {
     if (!mountedRef.current) return;
     setCelebrationLeaving(true);
-    setTimeout(() => {
+    if (celebrationTimeoutRef.current) clearTimeout(celebrationTimeoutRef.current);
+    celebrationTimeoutRef.current = setTimeout(() => {
+      celebrationTimeoutRef.current = null;
       if (!mountedRef.current) return;
       setCelebrating(null);
       setCelebrationLeaving(false);
@@ -146,28 +235,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const currentWorld = WORLDS[currentKey] || WORLDS.foret;
   const totemKey = profile.totem || 'lion';
   const totemHomeKey = TOTEM_HOME[totemKey] || 'foret';
-  const totemHome = WORLDS[totemHomeKey];
+  const totemHome = WORLDS[totemHomeKey] || WORLDS.foret;
   const totemGlyph = TOTEM_GLYPH[totemKey] || '◆';
-  const SPIRIT_PHOTO = {
-    lion:    '/img/spirit-lion.png',
-    ours:    '/img/spirit-ours.png',
-    aigle:   '/img/spirit-aigle.png',
-    daim:    '/img/spirit-daim.png',
-    baleine: '/img/spirit-baleine.png',
-    renard:  '/img/spirit-renard.png',
-  };
   const totemPhoto = SPIRIT_PHOTO[totemKey];
-
-  const MOTE_POSITIONS = [
-    { top: '12%', left: '18%', delay: 0    },
-    { top: '24%', left: '78%', delay: 1500 },
-    { top: '38%', left: '52%', delay: 800  },
-    { top: '46%', left: '14%', delay: 2200 },
-    { top: '58%', left: '66%', delay: 600  },
-    { top: '72%', left: '36%', delay: 1800 },
-    { top: '82%', left: '78%', delay: 1100 },
-    { top: '88%', left: '20%', delay: 400  },
-  ];
 
   return (
     <div

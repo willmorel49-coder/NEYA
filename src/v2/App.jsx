@@ -45,18 +45,22 @@ export default function V2App() {
     if (!onboarded) return;
     const profile = recordVisitToday();
     const day = profile.progress?.joursConnectes || 0;
-    if (checkMilestone(day) && !isMilestoneSeen(day)) {
-      setTimeout(() => {
-        // Guard : éviter l'overlap avec les overlays d'intro (Patronus / Tour)
-        const introActive = !ls.get('patronus_seen', false) || !ls.get('tour_seen', false);
-        if (introActive) {
-          // Defer behind intro flow
-          setTimeout(() => setMilestoneDay(day), 6000);
-        } else {
-          setMilestoneDay(day);
-        }
-      }, 1200);
-    }
+    if (!checkMilestone(day) || isMilestoneSeen(day)) return;
+    let inner = null;
+    const outer = setTimeout(() => {
+      // Guard : éviter l'overlap avec les overlays d'intro (Patronus / Tour)
+      const introActive = !ls.get('patronus_seen', false) || !ls.get('tour_seen', false);
+      if (introActive) {
+        // Defer behind intro flow
+        inner = setTimeout(() => setMilestoneDay(day), 6000);
+      } else {
+        setMilestoneDay(day);
+      }
+    }, 1200);
+    return () => {
+      clearTimeout(outer);
+      if (inner) clearTimeout(inner);
+    };
   }, [onboarded]);
   const [activeWorldKey, setActiveWorldKey] = useState(
     () => getProfile().progress.currentWorld || 'foret'
@@ -196,20 +200,37 @@ export default function V2App() {
     return () => window.removeEventListener('neya:open-crisis', handler);
   }, []);
 
+  // Track post-onboarding intro timers to clear on unmount
+  const introTimersRef = useRef([]);
+  const queueIntroTimer = (cb, ms) => {
+    const id = setTimeout(() => {
+      introTimersRef.current = introTimersRef.current.filter((x) => x !== id);
+      cb();
+    }, ms);
+    introTimersRef.current.push(id);
+  };
+
+  useEffect(() => {
+    return () => {
+      introTimersRef.current.forEach(clearTimeout);
+      introTimersRef.current = [];
+    };
+  }, []);
+
   const handleOnboardingComplete = () => {
     setOnboarded(true);
     // Première entrée → Patronus reveal d'abord, puis Tour
     if (!ls.get('patronus_seen', false)) {
-      setTimeout(() => setPatronusOpen(true), 400);
+      queueIntroTimer(() => setPatronusOpen(true), 400);
     } else if (!ls.get('tour_seen', false)) {
-      setTimeout(() => setTourOpen(true), 600);
+      queueIntroTimer(() => setTourOpen(true), 600);
     }
   };
 
   const handlePatronusClose = () => {
     setPatronusOpen(false);
     if (!ls.get('tour_seen', false)) {
-      setTimeout(() => setTourOpen(true), 400);
+      queueIntroTimer(() => setTourOpen(true), 400);
     }
   };
 

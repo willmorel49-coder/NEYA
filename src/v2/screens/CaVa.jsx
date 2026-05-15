@@ -193,22 +193,27 @@ export default function CaVa() {
             '0 0 calc(env(safe-area-inset-bottom, 0px) + 110px)',
         }}
       >
-        {/* Sticky compressed header */}
+        {/* Sticky brand header + segmented (single sticky wrapper so segmented never disappears) */}
         <div
           style={{
             position: 'sticky',
             top: 0,
             zIndex: 5,
-            paddingTop: 'calc(env(safe-area-inset-top, 0px) + ' + (compressed ? '12px' : '24px') + ')',
-            paddingLeft: 22,
-            paddingRight: 22,
-            paddingBottom: compressed ? 12 : 22,
             background: compressed ? 'rgba(244, 240, 232, 0.92)' : 'transparent',
             backdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
             WebkitBackdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
             borderBottom: compressed ? '0.5px solid rgba(26, 26, 47, 0.10)' : '0.5px solid transparent',
             transition:
-              'padding 240ms var(--ease-out-ios), background 240ms var(--ease-out-ios), border-color 240ms var(--ease-out-ios), backdrop-filter 240ms var(--ease-out-ios)',
+              'background 240ms var(--ease-out-ios), border-color 240ms var(--ease-out-ios), backdrop-filter 240ms var(--ease-out-ios)',
+          }}
+        >
+        <div
+          style={{
+            paddingTop: 'calc(env(safe-area-inset-top, 0px) + ' + (compressed ? '12px' : '24px') + ')',
+            paddingLeft: 22,
+            paddingRight: 22,
+            paddingBottom: compressed ? 8 : 14,
+            transition: 'padding 240ms var(--ease-out-ios)',
           }}
         >
           {/* Header row : brand + cart */}
@@ -309,15 +314,11 @@ export default function CaVa() {
 
         </div>
 
-        {/* Segmented control — passes (outside sticky header — always at stable size) */}
+        {/* Segmented control — passes (inside the same sticky wrapper as the brand header) */}
         <div
           style={{
-            padding: '12px 22px 14px',
-            background: compressed ? 'rgba(244, 240, 232, 0.92)' : 'transparent',
-            backdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
-            WebkitBackdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
-            transition:
-              'background 240ms var(--ease-out-ios), backdrop-filter 240ms var(--ease-out-ios)',
+            padding: compressed ? '4px 22px 12px' : '4px 22px 14px',
+            transition: 'padding 240ms var(--ease-out-ios)',
           }}
         >
           <div
@@ -382,6 +383,7 @@ export default function CaVa() {
               );
             })}
           </div>
+        </div>
         </div>
 
         {/* Inner padded body */}
