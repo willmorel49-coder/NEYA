@@ -9,6 +9,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { ls, haptic } from '../state';
 import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
+import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
 
 const STORAGE_KEY = 'carnet_entries';
 const MAX_ENTRIES = 30;
@@ -91,10 +92,17 @@ export default function Carnet({ onClose }) {
     setTimeout(() => onClose?.(), 320);
   };
 
-  // Swipe-to-dismiss (iOS HIG)
+  // Swipe-to-dismiss (iOS HIG) — vertical handle drag
   const { bindHandle, translateY, isDragging } = useSwipeToDismiss({
     onClose: handleClose,
   });
+
+  // Edge swipe-back (iOS HIG) — horizontal left-edge drag
+  const {
+    bindContainer: bindEdge,
+    translateX: edgeX,
+    isDragging: edgeDragging,
+  } = useEdgeSwipeBack({ onClose: handleClose });
 
   const handleSave = () => {
     const trimmed = (body || '').trim();
@@ -145,19 +153,24 @@ export default function Carnet({ onClose }) {
   const backdropOpacity = closing ? 0 : mounted ? 1 : 0;
 
   // Compose translateY : mount/closing transform + live drag offset
-  const composedTransform = isDragging || translateY !== 0
-    ? `translateY(${translateY}px)`
-    : transform;
-  const composedTransition = isDragging
+  const verticalTranslate =
+    isDragging || translateY !== 0
+      ? `translateY(${translateY}px)`
+      : transform;
+  const composedTransform = `translateX(${edgeX}px) ${verticalTranslate}`;
+  const composedTransition = edgeDragging
     ? 'none'
-    : closing
-      ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
-      : translateY === 0
-        ? 'transform 320ms var(--ease-spring-ios), opacity 420ms var(--ease-out-ios)'
-        : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)';
+    : isDragging
+      ? 'none'
+      : closing
+        ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
+        : translateY === 0
+          ? 'transform 320ms var(--ease-spring-ios), opacity 420ms var(--ease-out-ios)'
+          : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)';
 
   return (
     <div
+      {...bindEdge}
       className="wash-temple"
       style={{
         position: 'absolute',
@@ -172,6 +185,23 @@ export default function Carnet({ onClose }) {
         WebkitFontSmoothing: 'antialiased',
       }}
     >
+      {/* Edge swipe-back hint — discreet left hairline */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: 0,
+          width: 1,
+          height: 80,
+          transform: 'translateY(-50%)',
+          background: 'var(--ink-faint, rgba(26, 26, 47, 0.18))',
+          opacity: edgeDragging ? 0.5 : 0,
+          transition: 'opacity 180ms var(--ease-out-ios)',
+          pointerEvents: 'none',
+          zIndex: 5,
+        }}
+      />
       {/* Drag handle — grab zone iOS HIG */}
       <div
         {...bindHandle}

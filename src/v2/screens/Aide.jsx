@@ -19,6 +19,7 @@
 
 import { useState, useEffect } from 'react';
 import { haptic } from '../state';
+import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
 
 const URGENCE = [
   {
@@ -99,6 +100,13 @@ export default function Aide({ onClose }) {
     setTimeout(() => onClose?.(), 320);
   };
 
+  // Edge swipe-back (iOS HIG) — horizontal left-edge drag
+  const {
+    bindContainer: bindEdge,
+    translateX: edgeX,
+    isDragging: edgeDragging,
+  } = useEdgeSwipeBack({ onClose: handleClose });
+
   const callTel = (tel) => {
     haptic(6);
     try {
@@ -118,6 +126,7 @@ export default function Aide({ onClose }) {
 
   return (
     <div
+      {...bindEdge}
       className="wash-temple"
       style={{
         position: 'fixed',
@@ -126,11 +135,30 @@ export default function Aide({ onClose }) {
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
         color: 'var(--ink)',
-        transform: `translateY(${translateY})`,
-        transition: `transform ${transitionMs}ms var(--ease-out-ios)`,
+        transform: `translate(${edgeX}px, ${translateY})`,
+        transition: edgeDragging
+          ? 'none'
+          : `transform ${transitionMs}ms var(--ease-out-ios)`,
         willChange: 'transform',
       }}
     >
+      {/* Edge swipe-back hint — discreet left hairline */}
+      <div
+        aria-hidden
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: 0,
+          width: 1,
+          height: 80,
+          transform: 'translateY(-50%)',
+          background: 'var(--ink-faint, rgba(26, 26, 47, 0.18))',
+          opacity: edgeDragging ? 0.5 : 0,
+          transition: 'opacity 180ms var(--ease-out-ios)',
+          pointerEvents: 'none',
+          zIndex: 6,
+        }}
+      />
       {/* ════════════════════════════════════════════════════════
          TOP BAR
          ════════════════════════════════════════════════════════ */}

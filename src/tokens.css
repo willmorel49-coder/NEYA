@@ -604,3 +604,103 @@ em.neya-key {
     radial-gradient(circle at 25% 80%, var(--wash-rose) 0%, transparent 55%),
     var(--cream);
 }
+
+/* ════════════════════════════════════════════════════════════
+   SPINNER & SKELETON keyframes (used by pull-to-refresh + loading states)
+   ════════════════════════════════════════════════════════════ */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-base {
+  background: linear-gradient(
+    90deg,
+    rgba(26, 26, 47, 0.04) 0%,
+    rgba(26, 26, 47, 0.10) 50%,
+    rgba(26, 26, 47, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ACCESSIBILITY — Respect user preferences (Apple HIG)
+   ════════════════════════════════════════════════════════════ */
+
+/* Reduced motion : disable animations + transitions for users who
+   have requested it (vestibular sensitivity, motion sickness, etc.) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep opacity transitions for fade-in (essential for state visibility) */
+  .fade-in,
+  .fade-in-up,
+  [class*="stagger"] > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Skeleton becomes a static muted rectangle */
+  .skeleton-base {
+    animation: none !important;
+    background: rgba(26, 26, 47, 0.07) !important;
+  }
+}
+
+/* Dynamic Type respect : honor user's iOS text size preference */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Focus-visible : keyboard navigation only (Apple HIG) — show ring only on keyboard focus, not click */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--mist-blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Touch-action : disable double-tap zoom on interactive elements (Apple HIG) */
+button,
+[data-press],
+a {
+  touch-action: manipulation;
+}
+
+/* Smooth scroll fallback (Apple has this natively, this is for older Safari) */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Tap highlight removal universal */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Forced colors mode (Windows High Contrast support) */
+@media (forced-colors: active) {
+  button,
+  [data-press] {
+    forced-color-adjust: none;
+  }
+}
+

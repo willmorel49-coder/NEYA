@@ -8,6 +8,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { getSouvenirs, clearSouvenirs, haptic } from '../state';
 import { WORLDS } from '../worlds';
+import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
 
 const FILTERS = [
   { id: 'all',           label: 'Tout' },
@@ -62,6 +63,13 @@ export default function Souvenirs({ onClose }) {
     setTimeout(() => onClose?.(), 320);
   };
 
+  // Edge swipe-back (iOS HIG) — horizontal left-edge drag
+  const {
+    bindContainer: bindEdge,
+    translateX: edgeX,
+    isDragging: edgeDragging,
+  } = useEdgeSwipeBack({ onClose: doClose });
+
   const filteredList = useMemo(() => {
     if (filter === 'all') return souvenirs;
     return souvenirs.filter((s) => s.type === filter);
@@ -83,15 +91,22 @@ export default function Souvenirs({ onClose }) {
     setTimeout(() => doClose(), 200);
   };
 
-  const transform = closing
+  const verticalTransform = closing
     ? 'translateY(100%)'
     : mounted
       ? 'translateY(0)'
       : 'translateY(100%)';
   const opacity = closing ? 0 : mounted ? 1 : 0;
+  const composedTransform = `translateX(${edgeX}px) ${verticalTransform}`;
+  const composedTransition = edgeDragging
+    ? 'none'
+    : closing
+      ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
+      : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)';
 
   return (
     <div
+      {...bindEdge}
       className="wash-temple"
       style={{
         position: 'absolute',
@@ -101,13 +116,28 @@ export default function Souvenirs({ onClose }) {
         color: 'var(--ink)',
         overflow: 'hidden',
         opacity,
-        transform,
-        transition: closing
-          ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
-          : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)',
+        transform: composedTransform,
+        transition: composedTransition,
         WebkitFontSmoothing: 'antialiased',
       }}
     >
+      {/* Edge swipe-back hint — discreet left hairline */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: 0,
+          width: 1,
+          height: 80,
+          transform: 'translateY(-50%)',
+          background: 'var(--ink-faint, rgba(26, 26, 47, 0.18))',
+          opacity: edgeDragging ? 0.5 : 0,
+          transition: 'opacity 180ms var(--ease-out-ios)',
+          pointerEvents: 'none',
+          zIndex: 5,
+        }}
+      />
       {/* Top bar */}
       <div
         style={{

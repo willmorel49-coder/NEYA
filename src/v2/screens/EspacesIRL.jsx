@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { haptic } from '../state';
+import { useToast, TOAST_PRESETS } from '../../components/Toast';
 
 /* ============================================================
    HARDCODED LIST — V1 illustrative, à enrichir partenaires NÉYA
@@ -182,8 +183,8 @@ export default function EspacesIRL({ onClose }) {
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
   const [filter, setFilter] = useState('all');
-  const [toast, setToast] = useState(null); // { text } | null
   const [revealCount, setRevealCount] = useState(0);
+  const showToast = useToast();
 
   // Slide-up reveal
   useEffect(() => {
@@ -223,11 +224,6 @@ export default function EspacesIRL({ onClose }) {
     setFilter(key);
   };
 
-  const showToast = (text) => {
-    setToast({ text, id: Date.now() });
-    setTimeout(() => setToast(null), 2400);
-  };
-
   const handleGo = (espace) => {
     haptic([6, 30, 6]);
     if (espace.url) {
@@ -237,10 +233,8 @@ export default function EspacesIRL({ onClose }) {
     // Copy address
     try {
       navigator.clipboard?.writeText(espace.address);
-      showToast('Adresse copiée ✓');
-    } catch {
-      showToast('Adresse copiée ✓');
-    }
+    } catch {}
+    showToast({ ...TOAST_PRESETS.copied, message: 'Adresse copiée.' });
   };
 
   const filtered = useMemo(
@@ -480,34 +474,6 @@ export default function EspacesIRL({ onClose }) {
         </p>
       </div>
 
-      {/* Toast */}
-      {toast && (
-        <div
-          key={toast.id}
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 28px)',
-            transform: 'translateX(-50%)',
-            padding: '10px 18px',
-            borderRadius: 999,
-            background: 'var(--tilleul)',
-            color: 'var(--ink)',
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontSize: 14,
-            lineHeight: 1.2,
-            letterSpacing: '-0.01em',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            boxShadow: '0 12px 32px rgba(38, 32, 26, 0.18)',
-            zIndex: 12,
-            animation: 'fadeIn 220ms var(--ease-out-ios)',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {toast.text}
-        </div>
-      )}
     </div>
   );
 }

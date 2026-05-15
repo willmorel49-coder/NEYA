@@ -24,6 +24,7 @@ import ActionSheet from '../../components/ActionSheet';
 import Cercle from './Cercle';
 import Aide from './Aide';
 import EspacesIRL from './EspacesIRL';
+import usePullToRefresh from '../hooks/usePullToRefresh';
 
 const LEVEL_COLORS = {
   corps:  'var(--emerald)',
@@ -184,6 +185,14 @@ export default function Communaute() {
 
   const prompt = useMemo(() => getDailyPrompt(), []);
 
+  // Pull-to-refresh : simulate fresh content (no backend yet)
+  const handleRefresh = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    setOwnPosts((prev) => [...prev]); // trigger re-render
+    haptic([4, 60, 4]);
+  };
+  const { bindScroll, pullY, isPulling, isRefreshing, reachedThreshold } = usePullToRefresh({ onRefresh: handleRefresh });
+
   const toggleExpand = (id) => {
     haptic(3);
     setExpandedSet((prev) => {
@@ -308,6 +317,7 @@ export default function Communaute() {
         }}
       />
       <div
+        {...bindScroll}
         style={{
           height: '100%',
           overflowY: 'auto',
@@ -315,6 +325,35 @@ export default function Communaute() {
           padding: 'calc(env(safe-area-inset-top, 0px) + 22px) 22px calc(env(safe-area-inset-bottom, 0px) + 170px)',
         }}
       >
+        {/* Pull-to-refresh indicator + spinner keyframe injected once */}
+        <style>{`@keyframes neya-ptr-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+        <div
+          style={{
+            position: 'relative',
+            height: pullY,
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            overflow: 'hidden',
+            transition: isPulling ? 'none' : 'height 320ms var(--ease-spring-ios)',
+          }}
+        >
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              border: `1.5px solid ${reachedThreshold || isRefreshing ? 'var(--tilleul)' : 'var(--hairline-strong)'}`,
+              borderTopColor: isRefreshing ? 'transparent' : (reachedThreshold ? 'var(--tilleul)' : 'var(--hairline-strong)'),
+              animation: isRefreshing ? 'neya-ptr-spin 800ms linear infinite' : 'none',
+              transform: isRefreshing ? 'none' : `scale(${Math.min(1, pullY / 80)}) rotate(${pullY * 3}deg)`,
+              marginBottom: 8,
+              transition: isPulling ? 'none' : 'transform 240ms var(--ease-spring-ios)',
+              boxSizing: 'border-box',
+            }}
+          />
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
           <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
             ESPACE VRAI · CHAPITRE 06

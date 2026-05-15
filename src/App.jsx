@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import PreviewV2 from './v2/Preview';
 import V2App from './v2/App';
+import { ToastProvider } from './components/Toast';
 
 // ════════════════════════════════════════════════════════════
 // NÉYA — Router
@@ -1493,11 +1494,13 @@ export default function App() {
     ? new URLSearchParams(window.location.search)
     : new URLSearchParams();
 
-  if (params.get('preview') === 'v2') return <PreviewV2 />;
-  if (params.get('v') === '1')        return <AppV1 />;
+  let content;
+  if (params.get('preview') === 'v2')      content = <PreviewV2 />;
+  else if (params.get('v') === '1')        content = <AppV1 />;
+  else                                     content = <V2App />;
 
-  // Default = V2 (the real app now)
-  return <V2App />;
+  // ToastProvider wraps everything so useToast() works from any screen
+  return <ToastProvider>{content}</ToastProvider>;
 }
 
 function AppV1() {
