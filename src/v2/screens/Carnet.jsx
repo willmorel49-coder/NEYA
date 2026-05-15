@@ -236,6 +236,40 @@ export default function Carnet({ onClose }) {
         />
       </div>
 
+      {/* Back button — top-left, 44×44 hit zone (iOS HIG nav) */}
+      <button
+        type="button"
+        onClick={handleClose}
+        data-press
+        aria-label="Retour"
+        style={{
+          position: 'absolute',
+          top: 18,
+          left: 12,
+          appearance: 'none',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '12px 14px',
+          minWidth: 44,
+          minHeight: 44,
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 4,
+          fontFamily: '"Sora", system-ui, sans-serif',
+          fontSize: 11,
+          fontWeight: 500,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: 'var(--content-tertiary)',
+          zIndex: 3,
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
+        Retour
+      </button>
+
       {/* Close button — 44×44 tap target (Apple HIG) */}
       <button
         type="button"
@@ -278,8 +312,8 @@ export default function Carnet({ onClose }) {
           zIndex: 1,
         }}
       >
-        {/* Top bar */}
-        <div style={{ marginBottom: 18 }}>
+        {/* Top bar — centered caps + date */}
+        <div style={{ marginBottom: 18, textAlign: 'center' }}>
           <div
             style={{
               fontFamily: 'Inter, system-ui, sans-serif',

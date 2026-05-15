@@ -216,6 +216,7 @@ export default function Bilan({ onClose }) {
         style={overlayStyle({ mounted, closing, dragY: translateY, isDragging })}
       >
         <DragHandle bind={bindHandle} isDragging={isDragging} />
+        <BackButton onClick={doClose} absolute />
         <CloseButton onClick={doClose} />
         <div style={centerWrap}>
           <div
@@ -311,13 +312,14 @@ export default function Bilan({ onClose }) {
           top: 0,
           left: 0,
           right: 0,
-          padding: '18px 22px 14px',
+          padding: '6px 12px 14px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           zIndex: 3,
         }}
       >
+        <BackButton onClick={doClose} />
         <div
           style={{
             fontFamily: '"Sora", system-ui, sans-serif',
@@ -745,6 +747,43 @@ const centerWrap = {
   padding: '60px 28px',
   boxSizing: 'border-box',
 };
+
+function BackButton({ onClick, absolute = false }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      data-press
+      aria-label="Retour"
+      style={{
+        position: absolute ? 'absolute' : 'relative',
+        top: absolute ? 18 : 'auto',
+        left: absolute ? 12 : 'auto',
+        appearance: 'none',
+        background: 'transparent',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '12px 14px',
+        minWidth: 44,
+        minHeight: 44,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 4,
+        fontFamily: '"Sora", system-ui, sans-serif',
+        fontSize: 11,
+        fontWeight: 500,
+        letterSpacing: '0.18em',
+        textTransform: 'uppercase',
+        color: 'var(--content-tertiary)',
+        zIndex: 4,
+        WebkitTapHighlightColor: 'transparent',
+      }}
+    >
+      <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
+      Retour
+    </button>
+  );
+}
 
 function CloseButton({ onClick, inline = false }) {
   return (

@@ -2,7 +2,7 @@
    BottomNav — NÉYA V3 (LIGHT MODE, pearl glass)
    ============================================================
    4 tabs floating cream glass · backdrop-filter blur 20 ·
-   ink text · accent dot indicator.
+   ink text · sliding accent indicator + optional badges.
    ============================================================ */
 
 import { haptic } from '../v2/state';
@@ -14,7 +14,9 @@ const TABS = [
   { key: 'cava',       label: 'ça va ♡',    icon: null },  // wordmark D.A. lowercase + heart
 ];
 
-export default function BottomNav({ active, onChange, accent = 'var(--terracotta)' }) {
+export default function BottomNav({ active, onChange, accent = 'var(--terracotta)', badges = {} }) {
+  const activeIndex = Math.max(0, TABS.findIndex((t) => t.key === active));
+
   return (
     <div
       style={{
@@ -36,8 +38,29 @@ export default function BottomNav({ active, onChange, accent = 'var(--terracotta
         boxShadow: '0 8px 32px rgba(26, 26, 47, 0.12)',
       }}
     >
+      {/* Sliding active indicator — single sibling element.
+          Wrapper has padding: 0 12px, so usable button track = calc(100% - 24px),
+          starting at 12px from the left edge. */}
+      <span
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: 8,
+          left: `calc(12px + (100% - 24px) * ${(activeIndex + 0.5) / TABS.length})`,
+          width: 22,
+          height: 3,
+          borderRadius: 9999,
+          background: accent,
+          transform: 'translateX(-50%)',
+          transition: 'left 320ms var(--ease-spring-subtle), background 220ms var(--ease-out-ios)',
+          opacity: 0.9,
+          pointerEvents: 'none',
+        }}
+      />
+
       {TABS.map((t) => {
         const isActive = active === t.key;
+        const hasBadge = !!badges[t.key];
         return (
           <button
             key={t.key}
@@ -47,9 +70,10 @@ export default function BottomNav({ active, onChange, accent = 'var(--terracotta
               appearance: 'none',
               flex: 1,
               height: '100%',
+              minHeight: 60,
               background: 'transparent',
               border: 'none',
-              padding: 0,
+              padding: '8px 12px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -65,23 +89,27 @@ export default function BottomNav({ active, onChange, accent = 'var(--terracotta
             aria-label={t.label}
             aria-current={isActive ? 'page' : undefined}
           >
-            {isActive && (
-              <span
-                style={{
-                  position: 'absolute',
-                  top: 8,
-                  width: 3,
-                  height: 3,
-                  borderRadius: '50%',
-                  background: accent,
-                }}
-              />
-            )}
-            {t.icon && <span style={{ fontSize: 18, lineHeight: 1 }}>{t.icon}</span>}
-            {!t.icon && <span style={{ height: 18 }} />}
+            <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+              {t.icon && <span style={{ fontSize: 18, lineHeight: 1 }}>{t.icon}</span>}
+              {!t.icon && <span style={{ height: 18, display: 'inline-block' }} />}
+              {hasBadge && (
+                <span
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    top: -2,
+                    right: -8,
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    background: 'var(--tilleul)',
+                    boxShadow: '0 0 6px rgba(212, 224, 140, 0.6)',
+                  }}
+                />
+              )}
+            </span>
             <span
               style={{
-                fontSize: 9,
                 fontWeight: 500,
                 letterSpacing: t.key === 'cava' ? 0 : '0.18em',
                 textTransform: t.key === 'cava' ? 'none' : 'uppercase',

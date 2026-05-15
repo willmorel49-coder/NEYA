@@ -147,10 +147,38 @@ export default function Cercle({ onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 16px) 22px 14px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 4px) 12px 14px',
           zIndex: 4,
         }}
       >
+        <button
+          type="button"
+          data-press
+          onClick={doClose}
+          aria-label="Retour"
+          style={{
+            appearance: 'none',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '12px 14px',
+            minWidth: 44,
+            minHeight: 44,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--content-tertiary)',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
+          Retour
+        </button>
         <div
           className="neya-mark"
           style={{ color: 'var(--content-tertiary)' }}

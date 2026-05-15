@@ -18,6 +18,7 @@ import {
   markBoueeDone,
   isBoueeDoneToday,
   addSouvenir,
+  addToCercle,
 } from '../state';
 import Button from '../../components/Button';
 import ActionSheet from '../../components/ActionSheet';
@@ -624,17 +625,53 @@ export default function Communaute() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                     <span
                       style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 8,
                         fontFamily: 'var(--font-ui)',
                         fontSize: 13,
                         fontWeight: 500,
                         color: 'var(--ink)',
                       }}
                     >
-                      {v.pseudo}
+                      <button
+                        data-press={v.mine ? undefined : true}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (v.mine) return;
+                          haptic(4);
+                          if (typeof window !== 'undefined' && window.confirm) {
+                            if (window.confirm(`Ajouter ${v.pseudo} à ton cercle ?`)) {
+                              addToCercle(v.pseudo);
+                              haptic([6, 30, 6]);
+                            }
+                          }
+                        }}
+                        onTouchStart={(e) => e.stopPropagation()}
+                        onTouchEnd={(e) => e.stopPropagation()}
+                        onContextMenu={(e) => e.stopPropagation()}
+                        disabled={v.mine}
+                        aria-label={v.mine ? undefined : `Ajouter ${v.pseudo} à ton cercle`}
+                        style={{
+                          appearance: 'none',
+                          background: 'transparent',
+                          border: 'none',
+                          padding: '2px 4px',
+                          margin: '-2px -4px',
+                          fontFamily: 'inherit',
+                          fontSize: 'inherit',
+                          fontWeight: 'inherit',
+                          color: 'inherit',
+                          cursor: v.mine ? 'default' : 'pointer',
+                          WebkitTapHighlightColor: 'transparent',
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {v.pseudo}
+                      </button>
                       {v.mine && (
                         <span
                           style={{
-                            marginLeft: 8,
                             fontSize: 9,
                             color: wRenard.accent,
                             letterSpacing: '0.15em',

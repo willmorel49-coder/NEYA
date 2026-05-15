@@ -254,10 +254,40 @@ export default function EspacesIRL({ onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 16px) 22px 14px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 4px) 12px 14px',
+          gap: 8,
           zIndex: 4,
         }}
       >
+        <button
+          type="button"
+          data-press
+          onClick={doClose}
+          aria-label="Retour"
+          style={{
+            appearance: 'none',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '12px 14px',
+            minWidth: 44,
+            minHeight: 44,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--content-tertiary)',
+            WebkitTapHighlightColor: 'transparent',
+            flexShrink: 0,
+          }}
+        >
+          <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
+          Retour
+        </button>
         <div
           className="neya-mark"
           style={{
@@ -267,6 +297,9 @@ export default function EspacesIRL({ onClose }) {
             fontWeight: 500,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
+            textAlign: 'center',
+            flex: '1 1 auto',
+            minWidth: 0,
           }}
         >
           ESPACES IRL · ICI ET MAINTENANT
@@ -277,8 +310,8 @@ export default function EspacesIRL({ onClose }) {
           onClick={doClose}
           aria-label="Fermer"
           style={{
-            width: 32,
-            height: 32,
+            width: 44,
+            height: 44,
             borderRadius: '50%',
             border: '0.5px solid var(--hairline)',
             background: 'rgba(251, 246, 232, 0.6)',
@@ -292,6 +325,7 @@ export default function EspacesIRL({ onClose }) {
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
             WebkitTapHighlightColor: 'transparent',
+            flexShrink: 0,
           }}
         >
           ✕

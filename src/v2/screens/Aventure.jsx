@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { WORLDS, WORLD_ORDER } from '../worlds';
-import { getProfile, greet, recordVisitToday, getMotifCTA, getEtatLine, getPaletteMode } from '../state';
+import { getProfile, greet, recordVisitToday, getMotifCTA, getEtatLine, getPaletteMode, haptic } from '../state';
 import Button from '../../components/Button';
 
 // Animate a number from `from` to `to` over `duration` ms with ease-out cubic
@@ -299,52 +299,75 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               )}
               .
             </span>
-            {totemPhoto ? (
-              <span
-                style={{
-                  position: 'relative',
-                  display: 'inline-block',
-                  width: 28,
-                  height: 28,
-                  animation: 'totem-idle 4s var(--ease-in-out) infinite',
-                }}
-                aria-label={`Totem ${totemKey}`}
-              >
+            <button
+              data-press
+              onClick={() => {
+                haptic(4);
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('neya:switch-tab', { detail: 'cocon' }));
+                }
+              }}
+              aria-label="Ouvrir mon cocon"
+              style={{
+                appearance: 'none',
+                background: 'transparent',
+                border: 'none',
+                padding: 8,
+                margin: -8,
+                cursor: 'pointer',
+                WebkitTapHighlightColor: 'transparent',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {totemPhoto ? (
                 <span
                   style={{
-                    position: 'absolute',
-                    inset: -6,
-                    borderRadius: '50%',
-                    background: `radial-gradient(circle, ${totemHome.accent}55 0%, transparent 70%)`,
-                  }}
-                />
-                <img
-                  src={totemPhoto}
-                  alt={`Totem ${totemKey}`}
-                  style={{
                     position: 'relative',
+                    display: 'inline-block',
                     width: 28,
                     height: 28,
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                    border: '0.5px solid var(--hairline-strong)',
-                    boxShadow: 'var(--shadow-product)',
+                    animation: 'totem-idle 4s var(--ease-in-out) infinite',
                   }}
-                />
-              </span>
-            ) : (
-              <span
-                style={{
-                  fontSize: 20,
-                  color: totemHome.accent,
-                  animation: 'totem-idle 4s var(--ease-in-out) infinite',
-                  display: 'inline-block',
-                }}
-                aria-label={`Totem ${totemKey}`}
-              >
-                {totemGlyph}
-              </span>
-            )}
+                  aria-hidden="true"
+                >
+                  <span
+                    style={{
+                      position: 'absolute',
+                      inset: -6,
+                      borderRadius: '50%',
+                      background: `radial-gradient(circle, ${totemHome.accent}55 0%, transparent 70%)`,
+                    }}
+                  />
+                  <img
+                    src={totemPhoto}
+                    alt=""
+                    style={{
+                      position: 'relative',
+                      width: 28,
+                      height: 28,
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      border: '0.5px solid var(--hairline-strong)',
+                      boxShadow: 'var(--shadow-product)',
+                    }}
+                  />
+                </span>
+              ) : (
+                <span
+                  style={{
+                    fontSize: 20,
+                    color: totemHome.accent,
+                    animation: 'totem-idle 4s var(--ease-in-out) infinite',
+                    display: 'inline-block',
+                  }}
+                  aria-hidden="true"
+                >
+                  {totemGlyph}
+                </span>
+              )}
+            </button>
           </h1>
           {profile.mantra && (
             <div

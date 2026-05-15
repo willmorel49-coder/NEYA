@@ -170,11 +170,39 @@ export default function Aide({ onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '18px 22px 14px',
+          padding: '6px 12px 14px',
           background:
             'linear-gradient(to bottom, var(--cream) 70%, rgba(251, 246, 232, 0))',
         }}
       >
+        <button
+          type="button"
+          data-press
+          onClick={handleClose}
+          aria-label="Retour"
+          style={{
+            appearance: 'none',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '12px 14px',
+            minWidth: 44,
+            minHeight: 44,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--content-tertiary, var(--ink-soft))',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
+          Retour
+        </button>
         <span
           style={{
             fontFamily: 'var(--font-ui)',
@@ -201,8 +229,8 @@ export default function Aide({ onClose }) {
             lineHeight: 1,
             cursor: 'pointer',
             padding: 6,
-            width: 32,
-            height: 32,
+            width: 44,
+            height: 44,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

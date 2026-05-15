@@ -57,6 +57,21 @@ export default function V2App() {
   const longPressTimerRef = useRef(null);
   const longPressWarnRef = useRef(null);
 
+  // Horizontal swipe between tabs (iOS HIG paged-tab style)
+  const TAB_ORDER = ['aventure', 'cocon', 'communaute', 'cava'];
+  const swipeRef = useRef({ x: 0, y: 0, started: false });
+
+  const anyOverlayOpen =
+    meditationOpen ||
+    criseOpen ||
+    habitudesOpen ||
+    espaceVraiOpen ||
+    bilanOpen ||
+    bilanSemaineOpen ||
+    tourOpen ||
+    patronusOpen ||
+    milestoneDay !== null;
+
   const startLongPress = (e) => {
     // Bail if touch starts on a child that uses its own long-press
     // (e.g. Communaute post cards) — prevents conflicting gestures.
@@ -83,6 +98,35 @@ export default function V2App() {
       setCriseOpen(true);
       longPressTimerRef.current = null;
     }, 2000);
+
+    // Track swipe start (skip if any overlay open — let overlay handle gesture)
+    if (!anyOverlayOpen && e && e.touches && e.touches[0]) {
+      const t = e.touches[0];
+      swipeRef.current = { x: t.clientX, y: t.clientY, started: true };
+    } else {
+      swipeRef.current = { x: 0, y: 0, started: false };
+    }
+  };
+
+  const handleSwipeEnd = (e) => {
+    if (!swipeRef.current.started) return;
+    swipeRef.current.started = false;
+    if (anyOverlayOpen) return;
+    const t = e && e.changedTouches && e.changedTouches[0];
+    if (!t) return;
+    const dx = t.clientX - swipeRef.current.x;
+    const dy = t.clientY - swipeRef.current.y;
+    if (Math.abs(dx) < 80) return;
+    if (Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const currentIdx = TAB_ORDER.indexOf(activeTab);
+    if (currentIdx < 0) return;
+    if (dx < 0 && currentIdx < TAB_ORDER.length - 1) {
+      setActiveTab(TAB_ORDER[currentIdx + 1]);
+      haptic(4);
+    } else if (dx > 0 && currentIdx > 0) {
+      setActiveTab(TAB_ORDER[currentIdx - 1]);
+      haptic(4);
+    }
   };
 
   const cancelLongPress = () => {
@@ -99,6 +143,29 @@ export default function V2App() {
   useEffect(() => {
     ls.set('active_tab', activeTab);
   }, [activeTab]);
+
+  // Auto-close transient overlays when tab changes (intro overlays kept)
+  useEffect(() => {
+    setMeditationOpen(false);
+    setCriseOpen(false);
+    setHabitudesOpen(false);
+    setEspaceVraiOpen(false);
+    setBilanOpen(false);
+    setBilanSemaineOpen(false);
+  }, [activeTab]);
+
+  // Cross-tab deep-link event — other screens dispatch `neya:switch-tab`
+  useEffect(() => {
+    const handler = (e) => {
+      const target = e.detail;
+      if (TAB_ORDER.includes(target)) {
+        setActiveTab(target);
+        haptic(4);
+      }
+    };
+    window.addEventListener('neya:switch-tab', handler);
+    return () => window.removeEventListener('neya:switch-tab', handler);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -173,9 +240,9 @@ export default function V2App() {
     <div
       style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}
       onTouchStart={startLongPress}
-      onTouchEnd={cancelLongPress}
+      onTouchEnd={(e) => { cancelLongPress(); handleSwipeEnd(e); }}
       onTouchMove={cancelLongPress}
-      onTouchCancel={cancelLongPress}
+      onTouchCancel={(e) => { cancelLongPress(); swipeRef.current.started = false; }}
       onMouseDown={startLongPress}
       onMouseUp={cancelLongPress}
       onMouseLeave={cancelLongPress}

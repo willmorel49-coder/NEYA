@@ -140,6 +140,40 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
         }}
       />
 
+      {/* Back button — top-left, 44×44 hit zone (iOS HIG nav) */}
+      <button
+        type="button"
+        onClick={handleClose}
+        data-press
+        aria-label="Retour"
+        style={{
+          position: 'absolute',
+          top: 18,
+          left: 12,
+          appearance: 'none',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '12px 14px',
+          minWidth: 44,
+          minHeight: 44,
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 4,
+          fontFamily: '"Sora", system-ui, sans-serif',
+          fontSize: 11,
+          fontWeight: 500,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: 'var(--content-tertiary)',
+          zIndex: 2,
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
+        Retour
+      </button>
+
       {/* Close button — top right (44×44 tap target) */}
       <button
         type="button"
