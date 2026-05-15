@@ -82,6 +82,13 @@ export default function V2App() {
     };
   }, []);
 
+  // Global event for crisis open (e.g. depuis composer Communaute si keywords detectes)
+  useEffect(() => {
+    const handler = () => { haptic(6); setCriseOpen(true); };
+    window.addEventListener('neya:open-crisis', handler);
+    return () => window.removeEventListener('neya:open-crisis', handler);
+  }, []);
+
   const handleOnboardingComplete = () => {
     setOnboarded(true);
     // Première entrée → Patronus reveal d'abord, puis Tour

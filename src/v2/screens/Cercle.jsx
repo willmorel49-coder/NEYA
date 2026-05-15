@@ -1,0 +1,660 @@
+/* ============================================================
+   NÉYA V2 — Cercle (overlay : private circle of close voices)
+   ============================================================
+   Cercle privé de max 7 personnes pour leur envoyer une "lumière"
+   chaque jour — geste discret de présence. Anti-toxic : aucun
+   compteur public, aucun classement, pas de comparaison.
+   Localstorage uniquement (entièrement privé).
+   ============================================================ */
+
+import { useState, useEffect, useRef } from 'react';
+import {
+  haptic,
+  getCercle,
+  addToCercle,
+  removeFromCercle,
+  sendLumiere,
+  hasSentLumiereToday,
+  getLumieresTotal,
+} from '../state';
+
+const TILLEUL = 'var(--tilleul)';
+
+export default function Cercle({ onClose }) {
+  const [cercle, setCercle] = useState(() => getCercle());
+  const [mounted, setMounted] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [popIds, setPopIds] = useState(new Set());
+  const inputRef = useRef(null);
+
+  // Slide-up reveal
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  // Autofocus when composer opens
+  useEffect(() => {
+    if (composerOpen) {
+      const t = setTimeout(() => { try { inputRef.current?.focus(); } catch {} }, 80);
+      return () => clearTimeout(t);
+    }
+  }, [composerOpen]);
+
+  const doClose = () => {
+    if (closing) return;
+    haptic(3);
+    setClosing(true);
+    setTimeout(() => onClose?.(), 320);
+  };
+
+  const refresh = () => setCercle(getCercle());
+
+  const handleAdd = () => {
+    const v = (draft || '').trim();
+    if (!v) return;
+    if (cercle.length >= 7) return;
+    haptic(4);
+    addToCercle(v);
+    setDraft('');
+    setComposerOpen(false);
+    refresh();
+  };
+
+  const handleRemove = (pseudo) => {
+    if (typeof window !== 'undefined') {
+      const ok = window.confirm(`Retirer ${pseudo} de ton cercle ?`);
+      if (!ok) return;
+    }
+    haptic([4, 60, 4]);
+    removeFromCercle(pseudo);
+    refresh();
+  };
+
+  const handleSendLumiere = (pseudo) => {
+    if (hasSentLumiereToday(pseudo)) return;
+    haptic([6, 30, 6]);
+    sendLumiere(pseudo);
+    refresh();
+    // Trigger tilleul-pop animation on the counter
+    setPopIds((prev) => {
+      const next = new Set(prev);
+      next.add(pseudo);
+      return next;
+    });
+    setTimeout(() => {
+      setPopIds((prev) => {
+        const next = new Set(prev);
+        next.delete(pseudo);
+        return next;
+      });
+    }, 420);
+  };
+
+  const total = getLumieresTotal();
+  const atCap = cercle.length >= 7;
+  const isEmpty = cercle.length === 0;
+
+  return (
+    <div className="wash-temple" style={overlayStyle({ mounted, closing })}>
+      {/* Top bar */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 16px) 22px 14px',
+          zIndex: 4,
+        }}
+      >
+        <div
+          className="neya-mark"
+          style={{ color: 'var(--content-tertiary)' }}
+        >
+          MON CERCLE
+        </div>
+        <button
+          type="button"
+          data-press
+          onClick={doClose}
+          aria-label="Fermer"
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            border: '0.5px solid var(--hairline)',
+            background: 'rgba(251, 246, 232, 0.6)',
+            color: 'var(--ink)',
+            fontSize: 14,
+            lineHeight: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* Scrollable content */}
+      <div
+        style={{
+          height: '100%',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 66px) 22px calc(env(safe-area-inset-bottom, 0px) + 48px)',
+        }}
+      >
+        {/* Hero */}
+        <h1
+          style={{
+            margin: 0,
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 'clamp(26px, 7vw, 32px)',
+            lineHeight: 1.15,
+            color: 'var(--ink)',
+            letterSpacing: '-0.015em',
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            maxWidth: 320,
+          }}
+        >
+          «&nbsp;Les voix qui comptent.&nbsp;»
+        </h1>
+        <p
+          style={{
+            margin: '10px 0 28px',
+            fontFamily: 'var(--font-body)',
+            fontSize: 13,
+            lineHeight: 1.55,
+            color: 'var(--ink-soft)',
+            maxWidth: 340,
+          }}
+        >
+          Sept personnes maximum. Envoie-leur une lumière chaque jour si tu veux.
+        </p>
+
+        {/* Cercle list */}
+        {isEmpty ? (
+          <EmptyCard
+            onAdd={() => { haptic(4); setComposerOpen(true); }}
+            composerOpen={composerOpen}
+          />
+        ) : (
+          <div
+            key={cercle.length /* re-run stagger when count changes */}
+            className="stagger"
+            style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+          >
+            {cercle.map((m) => (
+              <MemberCard
+                key={m.pseudo}
+                member={m}
+                pop={popIds.has(m.pseudo)}
+                onSend={() => handleSendLumiere(m.pseudo)}
+                onRemove={() => handleRemove(m.pseudo)}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Add composer / button */}
+        {!atCap && !isEmpty && (
+          <div style={{ marginTop: 18 }}>
+            {!composerOpen ? (
+              <button
+                type="button"
+                data-press
+                onClick={() => { haptic(4); setComposerOpen(true); }}
+                style={{
+                  width: '100%',
+                  appearance: 'none',
+                  background: 'transparent',
+                  border: '0.5px dashed var(--hairline-strong)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: '14px 18px',
+                  color: 'var(--ink-soft)',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  WebkitTapHighlightColor: 'transparent',
+                  transition: 'background 200ms var(--ease-out)',
+                }}
+              >
+                Ajouter une voix au cercle +
+              </button>
+            ) : (
+              <ComposerInline
+                inputRef={inputRef}
+                draft={draft}
+                setDraft={setDraft}
+                onAdd={handleAdd}
+                onCancel={() => { setComposerOpen(false); setDraft(''); }}
+                prominent={false}
+              />
+            )}
+          </div>
+        )}
+
+        {atCap && (
+          <p
+            style={{
+              marginTop: 18,
+              textAlign: 'center',
+              fontFamily: 'var(--font-body)',
+              fontSize: 12,
+              fontStyle: 'italic',
+              color: 'var(--ink-whisper)',
+              lineHeight: 1.5,
+            }}
+          >
+            Sept est suffisant.
+          </p>
+        )}
+
+        {/* Footer whisper */}
+        <div
+          style={{
+            marginTop: 36,
+            textAlign: 'center',
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 13,
+            color: 'var(--ink-whisper)',
+            lineHeight: 1.5,
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            padding: '0 24px',
+          }}
+        >
+          {total > 0
+            ? `« Tu as partagé ${total} lumière${total > 1 ? 's' : ''}. »`
+            : '« Ton cercle commence ici. »'}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   MEMBER CARD
+   ============================================================ */
+
+function MemberCard({ member, pop, onSend, onRemove }) {
+  const sentToday = hasSentLumiereToday(member.pseudo);
+  const total = member.lumieresSent || 0;
+
+  return (
+    <div
+      style={{
+        position: 'relative',
+        background: 'var(--cream-light)',
+        border: '0.5px solid var(--hairline)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '16px 18px',
+        boxShadow: 'var(--shadow-soft)',
+      }}
+    >
+      {/* Remove ✕ */}
+      <button
+        type="button"
+        data-press
+        onClick={onRemove}
+        aria-label={`Retirer ${member.pseudo} du cercle`}
+        style={{
+          position: 'absolute',
+          top: 10,
+          right: 10,
+          width: 24,
+          height: 24,
+          borderRadius: '50%',
+          border: 'none',
+          background: 'transparent',
+          color: 'var(--ink-whisper)',
+          fontSize: 12,
+          lineHeight: 1,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        ✕
+      </button>
+
+      {/* Top row : pseudo + sent-today badge */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          gap: 8,
+          flexWrap: 'wrap',
+          paddingRight: 28,
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'var(--font-ui)',
+            fontSize: 14,
+            fontWeight: 500,
+            color: 'var(--ink)',
+            lineHeight: 1.2,
+          }}
+        >
+          {member.pseudo}
+        </span>
+        {sentToday && (
+          <span
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 9,
+              fontStyle: 'italic',
+              color: TILLEUL,
+              letterSpacing: '0.02em',
+              lineHeight: 1.2,
+            }}
+          >
+            · lumière envoyée aujourd’hui
+          </span>
+        )}
+      </div>
+
+      {/* Counter row */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          gap: 8,
+          marginTop: 10,
+          marginBottom: 14,
+        }}
+      >
+        <span
+          className={pop ? 'tilleul-pop' : undefined}
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 18,
+            fontWeight: 400,
+            color: 'var(--ink)',
+            lineHeight: 1,
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            fontVariantNumeric: 'tabular-nums',
+            display: 'inline-block',
+            transformOrigin: 'left center',
+          }}
+        >
+          {total}
+        </span>
+        <span
+          style={{
+            fontFamily: 'var(--font-ui)',
+            fontSize: 10,
+            fontWeight: 500,
+            letterSpacing: '0.222em',
+            textTransform: 'uppercase',
+            color: 'var(--ink-whisper)',
+            lineHeight: 1,
+          }}
+        >
+          lumières partagées
+        </span>
+      </div>
+
+      {/* CTA */}
+      {sentToday ? (
+        <div
+          style={{
+            width: '100%',
+            textAlign: 'center',
+            padding: '12px 14px',
+            borderRadius: 'var(--radius-pill)',
+            background: 'rgba(26, 26, 47, 0.04)',
+            color: 'var(--ink-soft)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 400,
+            fontStyle: 'italic',
+            lineHeight: 1.4,
+          }}
+        >
+          Reviens demain pour une autre lumière.
+        </div>
+      ) : (
+        <button
+          type="button"
+          data-press
+          onClick={onSend}
+          style={{
+            width: '100%',
+            appearance: 'none',
+            border: 'none',
+            borderRadius: 'var(--radius-pill)',
+            background: 'var(--ink)',
+            color: 'var(--cream)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 13,
+            fontWeight: 500,
+            padding: '13px 18px',
+            cursor: 'pointer',
+            letterSpacing: '0.01em',
+            WebkitTapHighlightColor: 'transparent',
+            boxShadow: '0 4px 14px rgba(26, 26, 47, 0.10)',
+            transition: 'background 200ms var(--ease-out)',
+          }}
+        >
+          Envoyer une lumière&nbsp;
+          <span style={{ color: TILLEUL }}>✦</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   EMPTY STATE CARD
+   ============================================================ */
+
+function EmptyCard({ onAdd, composerOpen }) {
+  return (
+    <div
+      style={{
+        background: 'var(--cream-light)',
+        border: '0.5px solid var(--hairline)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '24px 22px',
+        boxShadow: 'var(--shadow-soft)',
+        textAlign: 'center',
+      }}
+    >
+      <div
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontStyle: 'italic',
+          fontSize: 16,
+          fontWeight: 400,
+          color: 'var(--ink)',
+          lineHeight: 1.3,
+          fontVariationSettings: 'var(--fraunces-italic-soft)',
+          marginBottom: 8,
+        }}
+      >
+        «&nbsp;Ton cercle est vide.&nbsp;»
+      </div>
+      <div
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: 12,
+          color: 'var(--ink-soft)',
+          lineHeight: 1.5,
+          maxWidth: 280,
+          margin: '0 auto 18px',
+        }}
+      >
+        Ajoute jusqu’à 7 personnes que tu veux porter en toi.
+      </div>
+      {!composerOpen && (
+        <button
+          type="button"
+          data-press
+          onClick={onAdd}
+          style={{
+            appearance: 'none',
+            border: 'none',
+            borderRadius: 'var(--radius-pill)',
+            background: 'var(--ink)',
+            color: 'var(--cream)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 13,
+            fontWeight: 500,
+            padding: '14px 28px',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            boxShadow: '0 6px 18px rgba(26, 26, 47, 0.14)',
+          }}
+        >
+          Ajouter une voix +
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   INLINE COMPOSER
+   ============================================================ */
+
+function ComposerInline({ inputRef, draft, setDraft, onAdd, onCancel }) {
+  const canAdd = draft.trim().length > 0;
+
+  return (
+    <div
+      style={{
+        background: 'var(--cream-light)',
+        border: '0.5px solid var(--hairline)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '16px 18px',
+        boxShadow: 'var(--shadow-soft)',
+      }}
+    >
+      <input
+        ref={inputRef}
+        type="text"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        placeholder="Pseudo (ou nom)"
+        maxLength={30}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && canAdd) onAdd();
+          if (e.key === 'Escape') onCancel();
+        }}
+        style={{
+          width: '100%',
+          background: 'rgba(26, 26, 47, 0.04)',
+          border: 'none',
+          outline: 'none',
+          fontFamily: 'var(--font-body)',
+          fontSize: 15,
+          color: 'var(--ink)',
+          lineHeight: 1.4,
+          padding: '12px 14px',
+          borderRadius: 8,
+          boxSizing: 'border-box',
+        }}
+      />
+      <p
+        style={{
+          margin: '10px 0 14px',
+          fontFamily: 'var(--font-body)',
+          fontSize: 11,
+          color: 'var(--ink-whisper)',
+          lineHeight: 1.45,
+        }}
+      >
+        Tu peux mettre n’importe quel nom — c’est pour toi.
+      </p>
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button
+          type="button"
+          data-press
+          onClick={onAdd}
+          disabled={!canAdd}
+          style={{
+            flex: 1,
+            appearance: 'none',
+            border: 'none',
+            borderRadius: 'var(--radius-pill)',
+            background: canAdd ? 'var(--ink)' : 'rgba(26, 26, 47, 0.08)',
+            color: canAdd ? 'var(--cream)' : 'var(--ink-whisper)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 13,
+            fontWeight: 500,
+            padding: '12px 18px',
+            cursor: canAdd ? 'pointer' : 'default',
+            WebkitTapHighlightColor: 'transparent',
+            transition: 'background 200ms var(--ease-out)',
+          }}
+        >
+          Ajouter
+        </button>
+        <button
+          type="button"
+          data-press
+          onClick={onCancel}
+          style={{
+            appearance: 'none',
+            border: '0.5px solid var(--hairline)',
+            borderRadius: 'var(--radius-pill)',
+            background: 'transparent',
+            color: 'var(--ink-soft)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 13,
+            fontWeight: 500,
+            padding: '12px 22px',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          Annuler
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   OVERLAY STYLE — slide-up 420ms, slide-down 320ms
+   ============================================================ */
+
+function overlayStyle({ mounted, closing }) {
+  const transform = closing
+    ? 'translateY(100%)'
+    : mounted
+      ? 'translateY(0)'
+      : 'translateY(100%)';
+  const opacity = closing ? 0 : mounted ? 1 : 0;
+  const dur = closing ? '320ms' : '420ms';
+  return {
+    position: 'absolute',
+    inset: 0,
+    zIndex: 90,
+    color: 'var(--ink)',
+    overflow: 'hidden',
+    opacity,
+    transform,
+    transition: `transform ${dur} var(--ease-out-ios), opacity ${dur} var(--ease-out-ios)`,
+    WebkitFontSmoothing: 'antialiased',
+  };
+}

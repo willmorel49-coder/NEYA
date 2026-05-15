@@ -346,3 +346,89 @@ export function hasSeenBilanSemaineThisWeek() {
   const list = getBilanSemaineHistory();
   return list.some((b) => b.weekStart === weekStartKey());
 }
+
+/* ============================================================
+   COMMUNAUTÉ — Daily prompt (rotate par jour, 14 prompts cycle)
+   ============================================================ */
+
+const DAILY_PROMPTS = [
+  { id: 'p01', q: 'Ce qui pèse sur toi ce matin ?', tag: 'présence' },
+  { id: 'p02', q: 'Une chose pour laquelle tu es soulagé·e aujourd’hui ?', tag: 'gratitude' },
+  { id: 'p03', q: 'Le mot que personne ne t’a dit récemment ?', tag: 'manque' },
+  { id: 'p04', q: 'Ce qui t’a touché·e cette semaine ?', tag: 'tendresse' },
+  { id: 'p05', q: 'Quelque chose que tu portes seul·e ?', tag: 'fardeau' },
+  { id: 'p06', q: 'Ce qui t’a fait sourire malgré tout ?', tag: 'joie' },
+  { id: 'p07', q: 'Une peur que tu n’oses pas nommer ?', tag: 'peur' },
+  { id: 'p08', q: 'Tu te sens comment, vraiment, là ?', tag: 'présence' },
+  { id: 'p09', q: 'Ce que tu aimerais qu’on te dise ?', tag: 'manque' },
+  { id: 'p10', q: 'Un moment où tu as été doux·ce avec toi-même ?', tag: 'tendresse' },
+  { id: 'p11', q: 'Ce que tu as cessé d’attendre ?', tag: 'deuil' },
+  { id: 'p12', q: 'Une chose vraie qu’il y a dans ta journée ?', tag: 'présence' },
+  { id: 'p13', q: 'Ce qui t’aide à respirer quand c’est lourd ?', tag: 'ressource' },
+  { id: 'p14', q: 'Tu te sens entendu·e ces temps-ci ?', tag: 'écoute' },
+];
+
+export function getDailyPrompt() {
+  const day = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+  return DAILY_PROMPTS[day % DAILY_PROMPTS.length];
+}
+
+/* ============================================================
+   CERCLE — close circle of pseudos to send lumières to
+   ============================================================ */
+
+export function getCercle() {
+  return ls.get('cercle', []);
+}
+
+export function addToCercle(pseudo) {
+  const list = getCercle();
+  if (list.length >= 7) return list;  // cap à 7
+  if (!list.find((p) => p.pseudo === pseudo)) {
+    list.push({ pseudo, addedAt: Date.now(), lumieresSent: 0 });
+    ls.set('cercle', list);
+  }
+  return list;
+}
+
+export function removeFromCercle(pseudo) {
+  const list = getCercle().filter((p) => p.pseudo !== pseudo);
+  ls.set('cercle', list);
+  return list;
+}
+
+export function sendLumiere(pseudo) {
+  const list = getCercle();
+  const p = list.find((x) => x.pseudo === pseudo);
+  if (!p) return null;
+  const today = new Date().toISOString().split('T')[0];
+  p.lumieresSent = (p.lumieresSent || 0) + 1;
+  p.lastLumiere = today;
+  ls.set('cercle', list);
+  return p;
+}
+
+export function hasSentLumiereToday(pseudo) {
+  const p = getCercle().find((x) => x.pseudo === pseudo);
+  if (!p) return false;
+  return p.lastLumiere === new Date().toISOString().split('T')[0];
+}
+
+export function getLumieresTotal() {
+  return getCercle().reduce((s, p) => s + (p.lumieresSent || 0), 0);
+}
+
+/* ============================================================
+   COMMUNAUTÉ — Crisis keyword detection (soft prompt)
+   ============================================================ */
+
+const CRISIS_KEYWORDS = [
+  'suicide', 'me tuer', 'me supprimer', 'finir', 'plus envie de vivre',
+  'tout abandonner', 'disparaître', 'partir pour de bon',
+];
+
+export function detectCrisisKeywords(text) {
+  if (!text) return false;
+  const lower = text.toLowerCase();
+  return CRISIS_KEYWORDS.some((kw) => lower.includes(kw));
+}

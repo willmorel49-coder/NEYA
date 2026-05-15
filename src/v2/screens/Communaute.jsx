@@ -3,18 +3,35 @@
    ============================================================
    Wash renard (peach + rose) + ink text + cards pearl.
    3 réactions ❤️ 🤝 👀 toggle local. Composer 280 chars.
+   + Daily prompt header · Sub-tabs filter · Topic tags · Crisis soft prompt
    ============================================================ */
 
 import { useState, useEffect, useMemo } from 'react';
 import { WORLDS } from '../worlds';
-import { haptic, ls, getProfile } from '../state';
+import { haptic, ls, getProfile, getDailyPrompt, detectCrisisKeywords } from '../state';
 import Button from '../../components/Button';
+import Cercle from './Cercle';
 
 const REACTIONS = [
   { key: 'touche',    icon: '♡', label: 'Touché·e' },
   { key: 'comprends', icon: '◇', label: 'Je comprends' },
   { key: 'lis',       icon: '○', label: 'Je te lis' },
 ];
+
+const TAG_COLORS = {
+  'présence':  'var(--mist-blue)',
+  'gratitude': 'var(--emerald)',
+  'manque':    'var(--terracotta)',
+  'tendresse': 'var(--terracotta)',
+  'fardeau':   'var(--cava-purple)',
+  'joie':      'var(--tilleul)',
+  'peur':      'var(--cava-purple)',
+  'deuil':     'var(--cava-purple)',
+  'ressource': 'var(--emerald)',
+  'écoute':    'var(--mist-blue)',
+};
+
+const COMPOSER_TAGS = ['présence', 'gratitude', 'tendresse', 'fardeau', 'joie'];
 
 const SEEDED = [
   {
@@ -25,6 +42,7 @@ const SEEDED = [
     minutesAgo: 18,
     isShort: false,
     reactions: { touche: 14, comprends: 31, lis: 22 },
+    tag: 'fardeau',
   },
   {
     id: 'seed-2',
@@ -34,6 +52,7 @@ const SEEDED = [
     minutesAgo: 42,
     isShort: true,
     reactions: { touche: 8, comprends: 4, lis: 12 },
+    tag: 'gratitude',
   },
   {
     id: 'seed-3',
@@ -43,6 +62,7 @@ const SEEDED = [
     minutesAgo: 95,
     isShort: false,
     reactions: { touche: 47, comprends: 19, lis: 34 },
+    tag: 'tendresse',
   },
   {
     id: 'seed-4',
@@ -52,6 +72,7 @@ const SEEDED = [
     minutesAgo: 140,
     isShort: true,
     reactions: { touche: 28, comprends: 41, lis: 17 },
+    tag: 'manque',
   },
   {
     id: 'seed-5',
@@ -61,6 +82,7 @@ const SEEDED = [
     minutesAgo: 240,
     isShort: false,
     reactions: { touche: 22, comprends: 38, lis: 29 },
+    tag: 'présence',
   },
   {
     id: 'seed-6',
@@ -70,6 +92,7 @@ const SEEDED = [
     minutesAgo: 410,
     isShort: true,
     reactions: { touche: 156, comprends: 89, lis: 124 },
+    tag: 'écoute',
   },
 ];
 
@@ -105,6 +128,13 @@ export default function Communaute() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [draft, setDraft] = useState('');
   const [expandedSet, setExpandedSet] = useState(() => new Set());
+  const [subFilter, setSubFilter] = useState('all'); // 'all' | 'reacted' | 'mine'
+  const [composerPlaceholder, setComposerPlaceholder] = useState(null);
+  const [composerTag, setComposerTag] = useState('présence');
+  const [cercleOpen, setCercleOpen] = useState(false);
+  const [hideCrisisAlert, setHideCrisisAlert] = useState(false);
+
+  const prompt = useMemo(() => getDailyPrompt(), []);
 
   const toggleExpand = (id) => {
     haptic(3);
@@ -128,6 +158,18 @@ export default function Communaute() {
     return [...withMyTimes, ...SEEDED].slice(0, 24);
   }, [ownPosts]);
 
+  const filteredVoices = useMemo(() => {
+    if (subFilter === 'mine') return allVoices.filter((v) => v.mine === true);
+    if (subFilter === 'reacted') {
+      return allVoices.filter((v) => {
+        const r = reactionState[v.id];
+        if (!r) return false;
+        return Object.values(r).some(Boolean);
+      });
+    }
+    return allVoices;
+  }, [allVoices, subFilter, reactionState]);
+
   const totalVoices = allVoices.length;
   const ownCount = ownPosts.length;
 
@@ -149,6 +191,20 @@ export default function Communaute() {
     haptic(4);
   };
 
+  const openComposer = (placeholder = null, defaultTag = null) => {
+    haptic(6);
+    setComposerPlaceholder(placeholder);
+    if (defaultTag && TAG_COLORS[defaultTag]) setComposerTag(defaultTag);
+    setComposerOpen(true);
+  };
+
+  const closeComposer = () => {
+    setComposerOpen(false);
+    setDraft('');
+    setComposerPlaceholder(null);
+    setHideCrisisAlert(false);
+  };
+
   const submitPost = () => {
     const text = draft.trim();
     if (!text || text.length > 280) return;
@@ -160,14 +216,30 @@ export default function Communaute() {
       createdAt: Date.now(),
       isShort: text.length < 80,
       reactions: { touche: 0, comprends: 0, lis: 0 },
+      tag: composerTag,
     };
     const next = [newPost, ...ownPosts];
     setOwnPosts(next);
     saveOwnPosts(next);
     setDraft('');
     setComposerOpen(false);
+    setComposerPlaceholder(null);
+    setHideCrisisAlert(false);
     haptic([6, 30, 6]);
   };
+
+  const switchSubFilter = (key) => {
+    haptic(4);
+    setSubFilter(key);
+  };
+
+  const SUB_TABS = [
+    { key: 'all',     label: 'Toutes' },
+    { key: 'reacted', label: 'Touchées' },
+    { key: 'mine',    label: 'Mes voix' },
+  ];
+
+  const promptTagColor = TAG_COLORS[prompt.tag] || 'var(--terracotta)';
 
   return (
     <div
@@ -199,8 +271,34 @@ export default function Communaute() {
           padding: 'calc(env(safe-area-inset-top, 0px) + 22px) 22px calc(env(safe-area-inset-bottom, 0px) + 170px)',
         }}
       >
-        <div className="neya-mark" style={{ color: 'var(--content-tertiary)', marginBottom: 6 }}>
-          ESPACE VRAI · CHAPITRE 06
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+          <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
+            ESPACE VRAI · CHAPITRE 06
+          </div>
+          <button
+            data-press
+            onClick={() => { haptic(4); setCercleOpen(true); }}
+            style={{
+              appearance: 'none',
+              background: 'transparent',
+              border: 'none',
+              padding: '4px 8px',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 9,
+              fontWeight: 500,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'var(--tilleul)',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            <span style={{ fontSize: 11 }}>✦</span>
+            Mon cercle
+          </button>
         </div>
         <h1
           className="neya-h1"
@@ -220,7 +318,7 @@ export default function Communaute() {
           className="neya-body-sm"
           style={{
             color: 'var(--content-secondary)',
-            marginBottom: 24,
+            marginBottom: 20,
             maxWidth: 360,
           }}
         >
@@ -228,11 +326,152 @@ export default function Communaute() {
           ce qui est vrai.
         </p>
 
+        {/* Feature 1 — Daily Prompt header */}
+        <div
+          className="stagger"
+          style={{
+            background: 'var(--cream-light)',
+            border: '0.5px solid var(--terracotta)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '18px 20px',
+            marginBottom: 18,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 14,
+            boxShadow: '0 2px 14px rgba(26, 26, 47, 0.04)',
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontSize: 9,
+                fontWeight: 600,
+                letterSpacing: '0.20em',
+                textTransform: 'uppercase',
+                color: promptTagColor,
+                marginBottom: 8,
+              }}
+            >
+              INVITATION DU JOUR · {prompt.tag.toUpperCase()}
+            </div>
+            <p
+              style={{
+                margin: 0,
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontWeight: 400,
+                fontSize: 'clamp(20px, 5vw, 24px)',
+                lineHeight: 1.3,
+                color: 'var(--ink)',
+                fontVariationSettings: 'var(--fraunces-italic-soft)',
+                marginBottom: 8,
+              }}
+            >
+              {prompt.q}
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontFamily: 'var(--font-body)',
+                fontSize: 12,
+                color: 'var(--ink-soft)',
+                lineHeight: 1.45,
+              }}
+            >
+              Tu peux répondre ici, ou pas. Aucune obligation.
+            </p>
+          </div>
+          <button
+            data-press
+            onClick={() => openComposer(prompt.q, prompt.tag)}
+            style={{
+              appearance: 'none',
+              background: 'transparent',
+              border: '0.5px solid rgba(26, 26, 47, 0.16)',
+              borderRadius: 'var(--radius-pill, 999px)',
+              padding: '8px 12px',
+              cursor: 'pointer',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+              color: 'var(--ink)',
+              flexShrink: 0,
+              WebkitTapHighlightColor: 'transparent',
+              whiteSpace: 'nowrap',
+            }}
+            aria-label="Répondre à l'invitation du jour"
+          >
+            Répondre →
+          </button>
+        </div>
+
+        {/* Feature 2 — Sub-tabs */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            marginBottom: 18,
+            flexWrap: 'wrap',
+          }}
+        >
+          {SUB_TABS.map((tab) => {
+            const isActive = subFilter === tab.key;
+            return (
+              <button
+                key={tab.key}
+                data-press
+                onClick={() => switchSubFilter(tab.key)}
+                style={{
+                  appearance: 'none',
+                  background: isActive ? 'var(--ink)' : 'transparent',
+                  color: isActive ? 'var(--cream)' : 'var(--ink)',
+                  border: isActive ? 'none' : '0.5px solid rgba(26, 26, 47, 0.16)',
+                  borderRadius: 'var(--radius-pill, 999px)',
+                  padding: '7px 14px',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 11,
+                  fontWeight: 500,
+                  letterSpacing: '0.04em',
+                  WebkitTapHighlightColor: 'transparent',
+                  transition: 'background 200ms var(--ease-out), color 200ms var(--ease-out)',
+                }}
+                aria-pressed={isActive}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
         <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {allVoices.map((v) => {
+          {filteredVoices.length === 0 ? (
+            <div
+              style={{
+                background: 'rgba(255, 252, 245, 0.78)',
+                border: '0.5px solid rgba(26, 26, 47, 0.08)',
+                borderRadius: 'var(--radius-lg)',
+                padding: '20px 18px',
+                textAlign: 'center',
+                fontFamily: 'var(--font-body)',
+                fontSize: 13,
+                fontStyle: 'italic',
+                color: 'var(--content-tertiary)',
+              }}
+            >
+              {subFilter === 'mine'
+                ? 'Tu n’as pas encore partagé de voix. C’est quand tu veux.'
+                : 'Aucune voix dans ce filtre pour le moment.'}
+            </div>
+          ) : filteredVoices.map((v) => {
             const my = reactionState[v.id] || {};
             const isDissipated = v.minutesAgo > 1440;
             const hoursLeft = v.mine ? Math.max(0, 24 - Math.floor(v.minutesAgo / 60)) : null;
+            const tagColor = v.tag ? (TAG_COLORS[v.tag] || 'var(--content-tertiary)') : null;
             return (
               <div
                 key={v.id}
@@ -256,7 +495,7 @@ export default function Communaute() {
                     marginBottom: 10,
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                     <span
                       style={{
                         fontFamily: 'var(--font-ui)',
@@ -303,6 +542,21 @@ export default function Communaute() {
                         }}
                       >
                         {TOTEM_GLYPH[v.totem] || '◇'}
+                      </span>
+                    )}
+                    {v.tag && (
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-ui)',
+                          fontSize: 9,
+                          fontWeight: 500,
+                          letterSpacing: '0.18em',
+                          textTransform: 'uppercase',
+                          color: tagColor,
+                          lineHeight: 1,
+                        }}
+                      >
+                        · {v.tag}
                       </span>
                     )}
                   </div>
@@ -512,7 +766,7 @@ export default function Communaute() {
           <Button
             size="md"
             variant="primary"
-            onClick={() => { haptic(6); setComposerOpen(true); }}
+            onClick={() => openComposer()}
             style={{
               background: 'var(--ink)',
               color: 'var(--cream)',
@@ -529,18 +783,46 @@ export default function Communaute() {
           draft={draft}
           setDraft={setDraft}
           onSubmit={submitPost}
-          onClose={() => { setComposerOpen(false); setDraft(''); }}
+          onClose={closeComposer}
           pseudo={profile.pseudo || 'Toi'}
           totem={profile.totem || 'lion'}
+          placeholder={composerPlaceholder}
+          selectedTag={composerTag}
+          setSelectedTag={setComposerTag}
+          hideCrisisAlert={hideCrisisAlert}
+          setHideCrisisAlert={setHideCrisisAlert}
         />
       )}
+
+      {cercleOpen && <Cercle onClose={() => setCercleOpen(false)} />}
     </div>
   );
 }
 
-function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
+function Composer({
+  draft,
+  setDraft,
+  onSubmit,
+  onClose,
+  pseudo,
+  totem,
+  placeholder,
+  selectedTag,
+  setSelectedTag,
+  hideCrisisAlert,
+  setHideCrisisAlert,
+}) {
   const charsLeft = 280 - draft.length;
   const canSubmit = draft.trim().length > 0 && draft.length <= 280;
+  const showCrisis = !hideCrisisAlert && detectCrisisKeywords(draft);
+
+  const openCrisisSpace = () => {
+    haptic([6, 40, 6]);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('neya:open-crisis'));
+    }
+    // TODO (Will) : si App.jsx n'écoute pas encore 'neya:open-crisis', wire le listener côté App.
+  };
 
   return (
     <div
@@ -565,6 +847,9 @@ function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
           borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
           padding: '22px 22px calc(env(safe-area-inset-bottom, 0px) + 22px)',
           boxShadow: '0 -8px 32px rgba(26, 26, 47, 0.14)',
+          maxHeight: '92%',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
         }}
       >
         <div className="drag-handle" style={{ marginBottom: 18 }} />
@@ -600,11 +885,56 @@ function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
           </button>
         </div>
 
+        {/* Feature 3 — Tag picker chips above textarea */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 6,
+            marginBottom: 12,
+            flexWrap: 'wrap',
+          }}
+        >
+          {COMPOSER_TAGS.map((tag) => {
+            const isSelected = selectedTag === tag;
+            const color = TAG_COLORS[tag] || 'var(--content-tertiary)';
+            return (
+              <button
+                key={tag}
+                data-press
+                onClick={() => { haptic(3); setSelectedTag(tag); }}
+                style={{
+                  appearance: 'none',
+                  height: 22,
+                  padding: '0 10px',
+                  background: 'var(--cream-light)',
+                  border: `0.5px solid ${isSelected ? color : 'rgba(26, 26, 47, 0.14)'}`,
+                  borderRadius: 'var(--radius-pill, 999px)',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 9,
+                  fontWeight: 500,
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  color: isSelected ? color : 'var(--ink-soft)',
+                  WebkitTapHighlightColor: 'transparent',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  lineHeight: 1,
+                  transition: 'color 180ms var(--ease-out), border-color 180ms var(--ease-out)',
+                }}
+                aria-pressed={isSelected}
+              >
+                {tag}
+              </button>
+            );
+          })}
+        </div>
+
         <textarea
           autoFocus
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Dis ce qui est vrai pour toi maintenant…"
+          placeholder={placeholder || 'Dis ce qui est vrai pour toi maintenant…'}
           rows={5}
           maxLength={280}
           style={{
@@ -621,6 +951,90 @@ function Composer({ draft, setDraft, onSubmit, onClose, pseudo, totem }) {
             borderRadius: 8,
           }}
         />
+
+        {/* Feature 4 — Crisis soft prompt */}
+        {showCrisis && (
+          <div
+            style={{
+              marginTop: 12,
+              background: 'var(--cream-light)',
+              border: '0.5px solid var(--terracotta)',
+              borderRadius: 'var(--radius-lg)',
+              padding: '12px 14px',
+            }}
+          >
+            <p
+              style={{
+                margin: 0,
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontWeight: 400,
+                fontSize: 14,
+                lineHeight: 1.4,
+                color: 'var(--ink)',
+                fontVariationSettings: 'var(--fraunces-italic-soft)',
+                marginBottom: 4,
+              }}
+            >
+              « Tu n’es pas seul·e. »
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontFamily: 'var(--font-body)',
+                fontSize: 12,
+                color: 'var(--ink-soft)',
+                lineHeight: 1.5,
+                marginBottom: 10,
+              }}
+            >
+              Si tu veux parler à quelqu’un maintenant, l’espace SOS est là pour toi. Tu peux aussi simplement écrire ce qui se passe — on te lit.
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <button
+                data-press
+                onClick={openCrisisSpace}
+                style={{
+                  appearance: 'none',
+                  background: 'transparent',
+                  border: '0.5px solid rgba(26, 26, 47, 0.16)',
+                  borderRadius: 'var(--radius-pill, 999px)',
+                  padding: '6px 12px',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: 'var(--ink)',
+                  WebkitTapHighlightColor: 'transparent',
+                }}
+              >
+                Ouvrir le SOS
+              </button>
+              <button
+                data-press
+                onClick={() => { haptic(3); setHideCrisisAlert(true); }}
+                style={{
+                  appearance: 'none',
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '4px 6px',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 9,
+                  fontWeight: 500,
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  color: 'var(--content-tertiary)',
+                  WebkitTapHighlightColor: 'transparent',
+                }}
+              >
+                OK je l’ai vu
+              </button>
+            </div>
+          </div>
+        )}
 
         <div
           style={{
