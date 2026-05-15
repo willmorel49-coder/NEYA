@@ -11,6 +11,7 @@ import { getProfile, setProfile, patchProfile, haptic, ls } from '../state';
 import Button from '../../components/Button';
 import Carnet from './Carnet';
 import MoodTracker from './MoodTracker';
+import Souvenirs from './Souvenirs';
 
 const Q1_PILLS = [
   { value: 'pas-terrible',     label: 'Pas terrible' },
@@ -82,6 +83,7 @@ export default function Cocon() {
   const [confirmReset, setConfirmReset] = useState(false);
   const [carnetOpen, setCarnetOpen] = useState(false);
   const [moodOpen, setMoodOpen] = useState(false);
+  const [souvenirsOpen, setSouvenirsOpen] = useState(false);
 
   const placed = profile.coconPlaced || {};
   const totemKey = profile.totem || 'lion';
@@ -503,6 +505,29 @@ export default function Cocon() {
             <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 16, fontVariationSettings: 'var(--fraunces-italic-soft)', lineHeight: 1.2 }}>Mon carnet</div>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--content-secondary)', marginTop: 2 }}>Écrire ce qui traverse, pour toi seul·e.</div>
           </button>
+          <button
+            data-press
+            onClick={() => { haptic(4); setSouvenirsOpen(true); }}
+            style={{
+              gridColumn: '1 / -1',
+              appearance: 'none',
+              padding: '16px 14px',
+              background: 'rgba(255, 252, 245, 0.78)',
+              backdropFilter: 'blur(14px)',
+              WebkitBackdropFilter: 'blur(14px)',
+              border: '0.5px solid rgba(26, 26, 47, 0.10)',
+              borderRadius: 'var(--radius-md)',
+              color: 'var(--ink)',
+              textAlign: 'left',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              boxShadow: 'var(--shadow-soft)',
+            }}
+          >
+            <div style={{ fontSize: 22, color: totemWorld.accent, lineHeight: 1, marginBottom: 8 }}>◈</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 16, fontVariationSettings: 'var(--fraunces-italic-soft)', lineHeight: 1.2 }}>Mes souvenirs</div>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--content-secondary)', marginTop: 2 }}>Les traces de tes passages.</div>
+          </button>
         </div>
 
         {/* Mes réponses */}
@@ -643,6 +668,7 @@ export default function Cocon() {
 
       {moodOpen && <MoodTracker onClose={() => setMoodOpen(false)} />}
       {carnetOpen && <Carnet onClose={() => setCarnetOpen(false)} />}
+      {souvenirsOpen && <Souvenirs onClose={() => setSouvenirsOpen(false)} />}
     </div>
   );
 }

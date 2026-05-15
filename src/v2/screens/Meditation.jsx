@@ -13,6 +13,7 @@ import {
   getProfile,
   completeMeditation,
   getOnboardingTargetMinutes,
+  addSouvenir,
 } from '../state';
 import BreathingCircle from '../../components/BreathingCircle';
 
@@ -174,6 +175,20 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
     }
     if (minutes >= 1) {
       const { wasNew } = completeMeditation(worldKey, minutes);
+      addSouvenir({
+        type: 'meditation',
+        world: worldKey,
+        label: `${minutes} minute${minutes > 1 ? 's' : ''} à la ${world.name}`,
+        detail: wasNew ? 'Première fois ici.' : null,
+      });
+      if (wasNew) {
+        addSouvenir({
+          type: 'world-unlock',
+          world: worldKey,
+          label: `Découverte de ${world.name}`,
+          detail: world.totem,
+        });
+      }
       haptic([8, 60, 8]);
       setToast({ minutes, wasNew });
       setTimeout(() => { onClose?.(); }, 2200);

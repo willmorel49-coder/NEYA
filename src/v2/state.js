@@ -250,3 +250,99 @@ export function unmarkHabit(habitId) {
   ls.set(`habits_${todayKey()}`, state);
   return state;
 }
+
+/* ============================================================
+   SOUVENIRS — collected moments from rituals (V1 echo)
+   ============================================================
+   Schema : { id, ts, type, world, label, detail }
+   types : 'meditation' | 'espace-vrai' | 'bilan' | 'world-unlock'
+   ============================================================ */
+
+const SOUVENIRS_MAX = 60;
+
+export function addSouvenir({ type, world, label, detail }) {
+  const list = ls.get('souvenirs', []);
+  const entry = {
+    id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+    ts: Date.now(),
+    type,
+    world: world || null,
+    label,
+    detail: detail || null,
+  };
+  list.unshift(entry);
+  if (list.length > SOUVENIRS_MAX) list.length = SOUVENIRS_MAX;
+  ls.set('souvenirs', list);
+  return entry;
+}
+
+export function getSouvenirs() {
+  return ls.get('souvenirs', []);
+}
+
+export function clearSouvenirs() {
+  ls.set('souvenirs', []);
+}
+
+/* ============================================================
+   MILESTONES — discrete acknowledgments (anti-toxic, no flames)
+   ============================================================ */
+
+const MILESTONES = {
+  1:   { label: 'Premier pas',     phrase: 'Tu es là. C\'est le plus difficile.' },
+  3:   { label: 'Trois jours',     phrase: 'Trois jours d\'affilée. Une habitude commence.' },
+  7:   { label: 'Une semaine',     phrase: 'Sept jours. Tu reviens. C\'est ce qui compte.' },
+  14:  { label: 'Deux semaines',   phrase: 'Quatorze jours. Ce n\'est plus un hasard.' },
+  21:  { label: 'Trois semaines',  phrase: 'Vingt-et-un jours. Tu t\'es appris·e à te poser.' },
+  30:  { label: 'Un mois',         phrase: 'Trente jours. Tu t\'es offert·e un mois de présence.' },
+  60:  { label: 'Deux mois',       phrase: 'Soixante jours. Un voyage tranquille.' },
+  100: { label: 'Cent jours',      phrase: 'Cent jours. Tu connais ton chemin maintenant.' },
+};
+
+export function checkMilestone(joursConnectes) {
+  return MILESTONES[joursConnectes] || null;
+}
+
+export function markMilestoneSeen(day) {
+  const seen = ls.get('milestones_seen', []);
+  if (!seen.includes(day)) {
+    seen.push(day);
+    ls.set('milestones_seen', seen);
+  }
+}
+
+export function isMilestoneSeen(day) {
+  return ls.get('milestones_seen', []).includes(day);
+}
+
+/* ============================================================
+   BILAN HEBDO — weekly reflection (V1 echo)
+   ============================================================ */
+
+export function getBilanSemaineHistory() {
+  return ls.get('bilan_semaine_history', []);
+}
+
+export function saveBilanSemaine(answers) {
+  const list = getBilanSemaineHistory();
+  list.unshift({
+    weekStart: weekStartKey(),
+    ts: Date.now(),
+    answers,
+  });
+  if (list.length > 26) list.length = 26;
+  ls.set('bilan_semaine_history', list);
+}
+
+function weekStartKey() {
+  const d = new Date();
+  const day = d.getDay() || 7;
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - (day - 1));
+  return monday.toISOString().split('T')[0];
+}
+
+export function hasSeenBilanSemaineThisWeek() {
+  const list = getBilanSemaineHistory();
+  return list.some((b) => b.weekStart === weekStartKey());
+}

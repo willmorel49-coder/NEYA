@@ -7,7 +7,7 @@
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
-import { isOnboarded, getProfile, ls, haptic } from './state';
+import { isOnboarded, getProfile, ls, haptic, checkMilestone, isMilestoneSeen, markMilestoneSeen, recordVisitToday } from './state';
 import { WORLDS } from './worlds';
 import Splash from './screens/Splash';
 import Onboarding from './screens/Onboarding';
@@ -20,6 +20,9 @@ import Crise from './screens/Crise';
 import Habitudes from './screens/Habitudes';
 import EspaceVrai from './screens/EspaceVrai';
 import Bilan from './screens/Bilan';
+import BilanSemaine from './screens/BilanSemaine';
+import Patronus from './screens/Patronus';
+import MilestoneToast from './screens/MilestoneToast';
 import Tour from './screens/Tour';
 import BottomNav from '../components/BottomNav';
 
@@ -32,7 +35,20 @@ export default function V2App() {
   const [habitudesOpen, setHabitudesOpen] = useState(false);
   const [espaceVraiOpen, setEspaceVraiOpen] = useState(false);
   const [bilanOpen, setBilanOpen] = useState(false);
+  const [bilanSemaineOpen, setBilanSemaineOpen] = useState(false);
+  const [patronusOpen, setPatronusOpen] = useState(() => onboarded && !ls.get('patronus_seen', false));
+  const [milestoneDay, setMilestoneDay] = useState(null);
   const [tourOpen, setTourOpen] = useState(() => onboarded && !ls.get('tour_seen', false));
+
+  // Check milestone on app open (visit recorded → joursConnectes → check)
+  useEffect(() => {
+    if (!onboarded) return;
+    const profile = recordVisitToday();
+    const day = profile.progress?.joursConnectes || 0;
+    if (checkMilestone(day) && !isMilestoneSeen(day)) {
+      setTimeout(() => setMilestoneDay(day), 1200);
+    }
+  }, [onboarded]);
   const [activeWorldKey, setActiveWorldKey] = useState(
     () => getProfile().progress.currentWorld || 'foret'
   );
@@ -68,10 +84,24 @@ export default function V2App() {
 
   const handleOnboardingComplete = () => {
     setOnboarded(true);
-    // Première entrée → tour si pas encore vu
-    if (!ls.get('tour_seen', false)) {
+    // Première entrée → Patronus reveal d'abord, puis Tour
+    if (!ls.get('patronus_seen', false)) {
+      setTimeout(() => setPatronusOpen(true), 400);
+    } else if (!ls.get('tour_seen', false)) {
       setTimeout(() => setTourOpen(true), 600);
     }
+  };
+
+  const handlePatronusClose = () => {
+    setPatronusOpen(false);
+    if (!ls.get('tour_seen', false)) {
+      setTimeout(() => setTourOpen(true), 400);
+    }
+  };
+
+  const handleMilestoneClose = () => {
+    if (milestoneDay !== null) markMilestoneSeen(milestoneDay);
+    setMilestoneDay(null);
   };
 
   const handleOpenMeditation = () => setMeditationOpen(true);
@@ -130,6 +160,7 @@ export default function V2App() {
             onOpenHabitudes={() => setHabitudesOpen(true)}
             onOpenEspaceVrai={() => setEspaceVraiOpen(true)}
             onOpenBilan={() => setBilanOpen(true)}
+            onOpenBilanSemaine={() => setBilanSemaineOpen(true)}
           />
         )}
         {activeTab === 'cocon' && <Cocon />}
@@ -198,6 +229,12 @@ export default function V2App() {
       )}
 
       {bilanOpen && <Bilan onClose={() => setBilanOpen(false)} />}
+
+      {bilanSemaineOpen && <BilanSemaine onClose={() => setBilanSemaineOpen(false)} />}
+
+      {patronusOpen && <Patronus onClose={handlePatronusClose} />}
+
+      {milestoneDay !== null && <MilestoneToast day={milestoneDay} onClose={handleMilestoneClose} />}
 
       {tourOpen && <Tour onClose={() => setTourOpen(false)} />}
     </div>

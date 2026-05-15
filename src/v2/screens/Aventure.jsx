@@ -55,7 +55,7 @@ const COCON_AMBIENT_POSITIONS = {
   portail: { glyph: '○', top: '26%',  left: '74%',  size: 16 },
 };
 
-export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitudes, onOpenEspaceVrai, onOpenBilan }) {
+export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitudes, onOpenEspaceVrai, onOpenBilan, onOpenBilanSemaine }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
   const [scrollY, setScrollY] = useState(0);
   const [celebrating, setCelebrating] = useState(null); // { worldKey } | null
@@ -543,6 +543,77 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 }}
               >
                 Cinq questions courtes. Pour toi seul·e.
+              </div>
+            </button>
+          </div>
+        );
+      })()}
+
+      {/* Bilan semaine — conditional dimanche OR streak 7+ */}
+      {(() => {
+        const d = new Date();
+        const isSunday = d.getDay() === 0;
+        const streak = profile.progress?.joursConnectes || 0;
+        const showWeekly = isSunday || (streak > 0 && streak % 7 === 0);
+        if (!showWeekly) return null;
+        let seen = false;
+        try {
+          const list = JSON.parse(localStorage.getItem('neya_v2_bilan_semaine_history') || '[]');
+          const monday = new Date(d);
+          const day = d.getDay() || 7;
+          monday.setDate(d.getDate() - (day - 1));
+          const wk = monday.toISOString().split('T')[0];
+          seen = list.some((b) => b.weekStart === wk);
+        } catch {}
+        if (seen) return null;
+        return (
+          <div style={{ padding: '0 22px 20px' }}>
+            <button
+              data-press={true}
+              onClick={onOpenBilanSemaine}
+              style={{
+                appearance: 'none',
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
+                background: 'rgba(244, 212, 212, 0.42)',
+                backdropFilter: 'blur(14px)',
+                WebkitBackdropFilter: 'blur(14px)',
+                border: `0.5px solid ${WORLDS.montagne.accentRgb}, 0.35)`,
+                borderRadius: 'var(--radius-lg)',
+                padding: '16px 18px',
+                cursor: 'pointer',
+                WebkitTapHighlightColor: 'transparent',
+                boxShadow: 'var(--shadow-soft)',
+              }}
+            >
+              <div className="neya-mark" style={{ color: WORLDS.montagne.accent }}>
+                LA SEMAINE · BILAN
+              </div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontStyle: 'italic',
+                  fontSize: 18,
+                  fontWeight: 400,
+                  lineHeight: 1.15,
+                  color: 'var(--ink)',
+                  marginTop: 4,
+                  fontVariationSettings: 'var(--fraunces-italic-soft)',
+                }}
+              >
+                Tu veux laisser la semaine se déposer&nbsp;?
+              </div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 12,
+                  color: 'var(--content-secondary)',
+                  lineHeight: 1.5,
+                  marginTop: 2,
+                }}
+              >
+                Quatre questions. Pour ce qui s'est vraiment passé.
               </div>
             </button>
           </div>
