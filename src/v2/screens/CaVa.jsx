@@ -11,6 +11,9 @@
 import { useState, useEffect } from 'react';
 import { ls, haptic, getProfile } from '../state';
 import Button from '../../components/Button';
+import ProductDetail from './ProductDetail';
+import Manifeste from './Manifeste';
+import Lookbook from './Lookbook';
 
 const PASSES = [
   { key: 'libre',    label: 'Libre',     priceY: 'Gratuit',     discount: 0,  color: 'var(--cava-warm)' },
@@ -39,10 +42,11 @@ const CAPSULES = [
     accent: 'var(--cava-warm)',
     accentSoft: 'rgba(212, 152, 128, 0.18)',
     tagline: 'Pour ceux qui se relèvent.',
+    cover: '/cava/capsules/capsule-libre.png',
     products: [
-      { id: 'libre-hoodie',    name: 'Hoodie crème',   price: 89 },
-      { id: 'libre-tshirt',    name: 'T-shirt broderie', price: 39 },
-      { id: 'libre-cap',       name: 'Casquette',      price: 29 },
+      { id: 'libre-hoodie',    name: 'Hoodie crème',     price: 89, image: '/cava/products/libre-hoodie.jpg' },
+      { id: 'libre-tshirt',    name: 'T-shirt broderie', price: 39, image: '/cava/products/libre-tshirt.jpg' },
+      { id: 'libre-cap',       name: 'Casquette',        price: 29, image: '/cava/products/libre-cap.jpg' },
     ],
   },
   {
@@ -51,10 +55,11 @@ const CAPSULES = [
     accent: 'var(--cava-blue)',
     accentSoft: 'rgba(93, 123, 184, 0.18)',
     tagline: 'Pour ceux qui n’ont pas besoin de mentir.',
+    cover: '/cava/capsules/capsule-cava.png',
     products: [
-      { id: 'cava-sweat',      name: 'Sweat oversize', price: 95 },
-      { id: 'cava-tshirt',     name: 'T-shirt poche',  price: 39 },
-      { id: 'cava-pants',      name: 'Pantalon ample', price: 79 },
+      { id: 'cava-sweat',      name: 'Sweat oversize', price: 95, image: '/cava/products/cava-sweat.jpg' },
+      { id: 'cava-tshirt',     name: 'T-shirt poche',  price: 39, image: '/cava/products/cava-tshirt.jpg' },
+      { id: 'cava-pants',      name: 'Pantalon ample', price: 79, image: '/cava/products/cava-pants.jpg' },
     ],
   },
   {
@@ -63,10 +68,11 @@ const CAPSULES = [
     accent: 'var(--cava-purple)',
     accentSoft: 'rgba(61, 47, 107, 0.18)',
     tagline: 'Pour ceux qui osent la question.',
+    cover: '/cava/capsules/capsule-vraiment.png',
     products: [
-      { id: 'vr-hoodie',       name: 'Hoodie manifeste', price: 95 },
-      { id: 'vr-tshirt',       name: 'T-shirt phrase',  price: 42 },
-      { id: 'vr-tote',         name: 'Tote bag',        price: 24 },
+      { id: 'vr-hoodie',       name: 'Hoodie manifeste', price: 95, image: '/cava/products/vr-hoodie.jpg' },
+      { id: 'vr-tshirt',       name: 'T-shirt phrase',   price: 42, image: '/cava/products/vr-tshirt.jpg' },
+      { id: 'vr-tote',         name: 'Tote bag',         price: 24, image: '/cava/products/vr-tote.jpg' },
     ],
   },
 ];
@@ -97,6 +103,9 @@ export default function CaVa() {
   const [cartOpen, setCartOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [lastOrderTotal, setLastOrderTotal] = useState(0);
+  const [productDetail, setProductDetail] = useState(null); // { product, capsule }
+  const [manifesteOpen, setManifesteOpen] = useState(false);
+  const [lookbookOpen, setLookbookOpen] = useState(false);
 
   const currentPass = PASSES.find((p) => p.key === activePass) || PASSES[0];
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
@@ -312,10 +321,56 @@ export default function CaVa() {
         >
           Faire de la mode un langage qui libère la parole sur la santé mentale.
           <br />
-          <em style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic' }}>
+          <em style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontVariationSettings: 'var(--fraunces-italic-soft)' }}>
             Briser le masque du « ça va ».
           </em>
         </p>
+
+        {/* Quick links bar — Notre histoire + Lookbook */}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 28 }}>
+          <button
+            data-press
+            onClick={() => { haptic(4); setManifesteOpen(true); }}
+            style={{
+              appearance: 'none',
+              flex: 1,
+              padding: '12px 14px',
+              background: 'transparent',
+              border: '0.5px solid rgba(26, 26, 47, 0.18)',
+              borderRadius: 'var(--radius-pill)',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 11,
+              fontWeight: 500,
+              letterSpacing: '0.04em',
+              color: 'var(--cava-ink)',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            Notre histoire
+          </button>
+          <button
+            data-press
+            onClick={() => { haptic(4); setLookbookOpen(true); }}
+            style={{
+              appearance: 'none',
+              flex: 1,
+              padding: '12px 14px',
+              background: 'transparent',
+              border: '0.5px solid rgba(26, 26, 47, 0.18)',
+              borderRadius: 'var(--radius-pill)',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 11,
+              fontWeight: 500,
+              letterSpacing: '0.04em',
+              color: 'var(--cava-ink)',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            Lookbook
+          </button>
+        </div>
 
         {/* Pass dropdown */}
         {passOpen && (
@@ -426,6 +481,7 @@ export default function CaVa() {
             key={c.key}
             capsule={c}
             onAddToCart={addToCart}
+            onOpenDetail={(product) => setProductDetail({ product, capsule: c })}
             discountPercent={currentPass.discount}
             pseudo={pseudo}
             totem={totem}
@@ -470,11 +526,30 @@ export default function CaVa() {
           onClose={() => setConfirmOpen(false)}
         />
       )}
+
+      {/* Product detail sheet */}
+      {productDetail && (
+        <ProductDetail
+          product={productDetail.product}
+          capsule={productDetail.capsule}
+          image={productDetail.product.image}
+          pseudo={pseudo}
+          totem={totem}
+          onAddToCart={(p) => { addToCart(p); setProductDetail(null); }}
+          onClose={() => setProductDetail(null)}
+        />
+      )}
+
+      {/* Manifeste — Notre histoire */}
+      {manifesteOpen && <Manifeste onClose={() => setManifesteOpen(false)} />}
+
+      {/* Lookbook — gallery */}
+      {lookbookOpen && <Lookbook onClose={() => setLookbookOpen(false)} />}
     </div>
   );
 }
 
-function CapsuleSection({ capsule, onAddToCart, discountPercent, pseudo, totem }) {
+function CapsuleSection({ capsule, onAddToCart, onOpenDetail, discountPercent, pseudo, totem }) {
   return (
     <div style={{ marginBottom: 32 }}>
       {/* Capsule header */}
@@ -528,7 +603,7 @@ function CapsuleSection({ capsule, onAddToCart, discountPercent, pseudo, totem }
             key={p.id}
             product={p}
             capsule={capsule}
-            onAdd={() => onAddToCart(p)}
+            onAdd={() => onOpenDetail ? onOpenDetail(p) : onAddToCart(p)}
             discountPercent={discountPercent}
             pseudo={pseudo}
             totem={totem}
@@ -571,8 +646,23 @@ function ProductCard({ product, capsule, onAdd, discountPercent, pseudo, totem }
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          overflow: 'hidden',
         }}
       >
+        {product.image && (
+          <img
+            src={product.image}
+            alt={product.name}
+            loading="lazy"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        )}
         {/* Decorative atmospheric marks */}
         <div
           style={{
