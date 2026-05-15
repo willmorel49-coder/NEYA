@@ -58,6 +58,7 @@ const COCON_AMBIENT_POSITIONS = {
 export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitudes, onOpenEspaceVrai, onOpenBilan, onOpenBilanSemaine }) {
   const [profile, setProfile] = useState(() => recordVisitToday());
   const [scrollY, setScrollY] = useState(0);
+  const [isCompressed, setIsCompressed] = useState(false);
   const [celebrating, setCelebrating] = useState(null); // { worldKey } | null
   const [celebrationLeaving, setCelebrationLeaving] = useState(false);
   const [displayedMinutes, setDisplayedMinutes] = useState(
@@ -118,7 +119,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   }
 
   const onScroll = (e) => {
-    setScrollY(e.currentTarget.scrollTop);
+    const y = e.currentTarget.scrollTop;
+    setScrollY(y);
+    setIsCompressed(y > 60);
   };
 
   const explored = useMemo(
@@ -238,14 +241,37 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           />
         ))}
       </div>
-      {/* Header */}
+      {/* Scrollable ascent — onScroll drives parallax + sticky header + scroll-snap */}
+      <div
+        onScroll={onScroll}
+        style={{
+          position: 'relative',
+          flex: 1,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'y proximity',
+          scrollPaddingTop: 110,
+          zIndex: 1,
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 110px)',
+        }}
+      >
+      {/* Sticky compressed header */}
       <div
         style={{
-          padding:
-            'calc(env(safe-area-inset-top, 0px) + 22px) 22px var(--sp-4)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 5,
+          padding: isCompressed
+            ? '12px 22px'
+            : 'calc(env(safe-area-inset-top, 0px) + 22px) 22px 16px',
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'space-between',
+          background: isCompressed ? 'rgba(255, 252, 245, 0.92)' : 'transparent',
+          backdropFilter: isCompressed ? 'blur(14px) saturate(160%)' : 'none',
+          WebkitBackdropFilter: isCompressed ? 'blur(14px) saturate(160%)' : 'none',
+          borderBottom: isCompressed ? '0.5px solid rgba(26, 26, 47, 0.08)' : '0.5px solid transparent',
+          transition: 'padding 240ms var(--ease-out-ios), background 240ms var(--ease-out-ios), backdrop-filter 240ms var(--ease-out-ios), border-color 240ms var(--ease-out-ios)',
         }}
       >
         <div style={{ maxWidth: '70%' }}>
@@ -261,6 +287,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               alignItems: 'baseline',
               gap: 10,
               flexWrap: 'wrap',
+              fontSize: isCompressed ? 20 : 28,
+              transition: 'font-size 240ms var(--ease-out-ios)',
             }}
           >
             <span>
@@ -327,6 +355,10 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 marginTop: 6,
                 fontVariationSettings: 'var(--fraunces-italic-soft)',
                 lineHeight: 1.45,
+                opacity: isCompressed ? 0 : 1,
+                maxHeight: isCompressed ? 0 : 80,
+                overflow: 'hidden',
+                transition: 'opacity 240ms var(--ease-out-ios), max-height 240ms var(--ease-out-ios), margin-top 240ms var(--ease-out-ios)',
               }}
             >
               « {profile.mantra} »
@@ -337,6 +369,10 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 13,
               color: 'var(--content-secondary)', marginTop: 6, lineHeight: 1.45,
               fontVariationSettings: 'var(--fraunces-italic-soft)',
+              opacity: isCompressed ? 0 : 1,
+              maxHeight: isCompressed ? 0 : 80,
+              overflow: 'hidden',
+              transition: 'opacity 240ms var(--ease-out-ios), max-height 240ms var(--ease-out-ios), margin-top 240ms var(--ease-out-ios)',
             }}>{etatLine}</div>
           )}
         </div>
@@ -620,17 +656,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         );
       })()}
 
-      {/* Scrollable ascent — onScroll drives parallax */}
-      <div
-        onScroll={onScroll}
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          padding: '0 22px calc(env(safe-area-inset-bottom, 0px) + 110px)',
-        }}
-      >
-        <div style={{ position: 'relative', minHeight: '100%' }}>
+      {/* World ascent list */}
+      <div style={{ padding: '0 22px' }}>
+        <div style={{ position: 'relative' }}>
           {/* Ligne d'ascension */}
           <div
             style={{
@@ -663,6 +691,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                   gap: 14,
                   paddingTop: i === 0 ? 0 : 'var(--sp-4)',
                   paddingBottom: 'var(--sp-4)',
+                  scrollSnapAlign: 'start',
+                  scrollSnapStop: 'normal',
                 }}
               >
                 <div
@@ -709,6 +739,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               : whisperOfDay(profile.progress.joursConnectes)}
           </div>
         </div>
+      </div>
       </div>
 
       {celebrating && (() => {

@@ -8,6 +8,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { ls, haptic } from '../state';
+import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
 
 const STORAGE_KEY = 'carnet_entries';
 const MAX_ENTRIES = 30;
@@ -90,6 +91,11 @@ export default function Carnet({ onClose }) {
     setTimeout(() => onClose?.(), 320);
   };
 
+  // Swipe-to-dismiss (iOS HIG)
+  const { bindHandle, translateY, isDragging } = useSwipeToDismiss({
+    onClose: handleClose,
+  });
+
   const handleSave = () => {
     const trimmed = (body || '').trim();
     if (!trimmed) return;
@@ -138,6 +144,18 @@ export default function Carnet({ onClose }) {
       : 'translateY(100%)';
   const backdropOpacity = closing ? 0 : mounted ? 1 : 0;
 
+  // Compose translateY : mount/closing transform + live drag offset
+  const composedTransform = isDragging || translateY !== 0
+    ? `translateY(${translateY}px)`
+    : transform;
+  const composedTransition = isDragging
+    ? 'none'
+    : closing
+      ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
+      : translateY === 0
+        ? 'transform 320ms var(--ease-spring-ios), opacity 420ms var(--ease-out-ios)'
+        : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)';
+
   return (
     <div
       className="wash-temple"
@@ -149,13 +167,45 @@ export default function Carnet({ onClose }) {
         color: 'var(--ink)',
         overflow: 'hidden',
         opacity: backdropOpacity,
-        transform,
-        transition: closing
-          ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
-          : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)',
+        transform: composedTransform,
+        transition: composedTransition,
         WebkitFontSmoothing: 'antialiased',
       }}
     >
+      {/* Drag handle — grab zone iOS HIG */}
+      <div
+        {...bindHandle}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: 64,
+          height: 24,
+          paddingTop: 8,
+          cursor: 'grab',
+          touchAction: 'none',
+          WebkitTapHighlightColor: 'transparent',
+          zIndex: 4,
+        }}
+        aria-hidden
+      >
+        <div
+          style={{
+            width: isDragging ? 40 : 36,
+            height: isDragging ? 6 : 5,
+            borderRadius: 999,
+            background: isDragging
+              ? 'var(--ink-soft)'
+              : 'rgba(26, 26, 47, 0.18)',
+            transition: 'width 180ms var(--ease-out-ios), height 180ms var(--ease-out-ios), background 180ms var(--ease-out-ios)',
+          }}
+        />
+      </div>
+
       {/* Close button */}
       <button
         type="button"

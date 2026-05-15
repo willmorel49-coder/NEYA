@@ -9,6 +9,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ls, getProfile, haptic } from '../state';
 import { WORLDS } from '../worlds';
+import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
 
 const TOTEM_HOME = {
   lion: 'foret',
@@ -143,6 +144,11 @@ export default function Bilan({ onClose }) {
     setTimeout(() => onClose?.(), 420);
   };
 
+  // Swipe-to-dismiss (iOS HIG : drag-handle down)
+  const { bindHandle, translateY, isDragging } = useSwipeToDismiss({
+    onClose: doClose,
+  });
+
   const persistDraft = (nextAnswers, nextIdx) => {
     ls.set(draftKey, { qIdx: nextIdx, answers: nextAnswers });
   };
@@ -207,8 +213,9 @@ export default function Bilan({ onClose }) {
     return (
       <div
         className="wash-lac"
-        style={overlayStyle({ mounted, closing })}
+        style={overlayStyle({ mounted, closing, dragY: translateY, isDragging })}
       >
+        <DragHandle bind={bindHandle} isDragging={isDragging} />
         <CloseButton onClick={doClose} />
         <div style={centerWrap}>
           <div
@@ -279,7 +286,8 @@ export default function Bilan({ onClose }) {
   // Main flow
   // ============================================================
   return (
-    <div className="wash-lac" style={overlayStyle({ mounted, closing })}>
+    <div className="wash-lac" style={overlayStyle({ mounted, closing, dragY: translateY, isDragging })}>
+      <DragHandle bind={bindHandle} isDragging={isDragging} />
       {/* Halo accent */}
       <div
         aria-hidden
@@ -657,13 +665,21 @@ export default function Bilan({ onClose }) {
    Helpers
    ============================================================ */
 
-function overlayStyle({ mounted, closing }) {
-  const transform = closing
-    ? 'translateY(100%)'
-    : mounted
-      ? 'translateY(0)'
-      : 'translateY(100%)';
+function overlayStyle({ mounted, closing, dragY = 0, isDragging = false }) {
+  let transform;
+  if (closing) transform = 'translateY(100%)';
+  else if (!mounted) transform = 'translateY(100%)';
+  else if (isDragging || dragY !== 0) transform = `translateY(${dragY}px)`;
+  else transform = 'translateY(0)';
+
   const opacity = closing ? 0 : mounted ? 1 : 0;
+  const transition = isDragging
+    ? 'opacity 420ms var(--ease-out-ios)'
+    : closing
+      ? 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)'
+      : dragY === 0
+        ? 'transform 320ms var(--ease-spring-ios), opacity 420ms var(--ease-out-ios)'
+        : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)';
   return {
     position: 'absolute',
     inset: 0,
@@ -673,11 +689,47 @@ function overlayStyle({ mounted, closing }) {
     overflow: 'hidden',
     opacity,
     transform,
-    transition: closing
-      ? 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)'
-      : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)',
+    transition,
     WebkitFontSmoothing: 'antialiased',
   };
+}
+
+function DragHandle({ bind, isDragging }) {
+  return (
+    <div
+      {...bind}
+      aria-hidden
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 64,
+        height: 24,
+        paddingTop: 8,
+        cursor: 'grab',
+        touchAction: 'none',
+        WebkitTapHighlightColor: 'transparent',
+        zIndex: 5,
+      }}
+    >
+      <div
+        style={{
+          width: isDragging ? 40 : 36,
+          height: isDragging ? 6 : 5,
+          borderRadius: 999,
+          background: isDragging
+            ? 'var(--ink-soft)'
+            : 'rgba(26, 26, 47, 0.18)',
+          transition:
+            'width 180ms var(--ease-out-ios), height 180ms var(--ease-out-ios), background 180ms var(--ease-out-ios)',
+        }}
+      />
+    </div>
+  );
 }
 
 const centerWrap = {

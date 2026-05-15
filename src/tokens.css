@@ -149,6 +149,12 @@
   --ease-out-ios:    cubic-bezier(0.32, 0.72, 0, 1);
   --ease-in-ios:     cubic-bezier(0.32, 0, 0.72, 1);
 
+  /* Spring-like easings — subtle overshoot, no oscillation.
+     Used for tap feedback, sheet entry, success acknowledgments. */
+  --ease-spring-subtle: cubic-bezier(0.34, 1.20, 0.64, 1);   /* tiny overshoot — tap feedback */
+  --ease-spring-soft:   cubic-bezier(0.34, 1.40, 0.64, 1);   /* gentle overshoot — sheet entry */
+  --ease-spring-pop:    cubic-bezier(0.34, 1.56, 0.64, 1);   /* punchy overshoot — success ack */
+
 
   /* ════════════════════════════════════════════════════════════
      LEGACY ALIASES — back-compat avec App.legacy + atomes existants
@@ -339,9 +345,12 @@ button { font-family: inherit; cursor: pointer; }
    APPLE PRESS RESPONSE — scale(0.95) universel
    ════════════════════════════════════════════════════════════ */
 
+[data-press] {
+  transition: transform 280ms var(--ease-spring-subtle);
+}
 [data-press]:active {
   transform: scale(0.95);
-  transition: transform 120ms var(--ease-out-ios);
+  transition: transform 90ms var(--ease-out-ios);
 }
 
 
@@ -384,10 +393,12 @@ button { font-family: inherit; cursor: pointer; }
   0%, 100% { transform: translateY(0);    opacity: 0.4; }
   50%      { transform: translateY(-8px); opacity: 0.8; }
 }
+/* check-pop — completion check icon : pop, undershoot, settle. */
 @keyframes check-pop {
-  0%   { opacity: 0; transform: scale(0);   }
-  60%  { opacity: 1; transform: scale(1.2); }
-  100% { opacity: 1; transform: scale(1);   }
+  0%   { opacity: 0; transform: scale(0);    }
+  55%  { opacity: 1; transform: scale(1.22); }
+  80%  { opacity: 1; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1);    }
 }
 
 @keyframes stagger-fade-in {
@@ -395,10 +406,36 @@ button { font-family: inherit; cursor: pointer; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* tilleul-pop — celebration accent on a completion : pop, settle through
+   a gentle undershoot, return to rest. Apple-grade "alive" feel without bounce. */
 @keyframes tilleul-pop {
-  0%   { transform: scale(1);   filter: brightness(1); }
-  40%  { transform: scale(1.2); filter: brightness(1.15) drop-shadow(0 0 8px rgba(212, 224, 140, 0.7)); }
-  100% { transform: scale(1);   filter: brightness(1); }
+  0%   { transform: scale(1);    filter: brightness(1) drop-shadow(0 0 0 rgba(212, 224, 140, 0)); }
+  30%  { transform: scale(1.18); filter: brightness(1.15) drop-shadow(0 0 12px rgba(212, 224, 140, 0.75)); }
+  60%  { transform: scale(0.97); filter: brightness(1.05) drop-shadow(0 0 4px rgba(212, 224, 140, 0.35)); }
+  100% { transform: scale(1);    filter: brightness(1) drop-shadow(0 0 0 rgba(212, 224, 140, 0)); }
+}
+
+/* pearl-press — primary button on-press depth feedback : scale + slight
+   brightness dip. Apply via JS className toggle on click. */
+@keyframes pearl-press {
+  0%   { transform: scale(1);    filter: brightness(1);    }
+  50%  { transform: scale(0.95); filter: brightness(0.96); }
+  100% { transform: scale(1);    filter: brightness(1);    }
+}
+
+/* sheet-rise — bottom sheet entry : translateY past 0 then settle.
+   Use with ~480ms duration + var(--ease-spring-soft). */
+@keyframes sheet-rise {
+  0%   { transform: translateY(100%); opacity: 0; }
+  60%  { transform: translateY(-6px); opacity: 1; }
+  100% { transform: translateY(0);    opacity: 1; }
+}
+
+/* whisper-up — status messages / toasts : fade-in + soft rise past 0. */
+@keyframes whisper-up {
+  0%   { opacity: 0; transform: translateY(8px);  }
+  20%  { opacity: 1; transform: translateY(-1px); }
+  100% { opacity: 1; transform: translateY(0);    }
 }
 
 @keyframes ray-oscillate {
@@ -440,7 +477,7 @@ button { font-family: inherit; cursor: pointer; }
 .stagger > *:nth-child(10) { animation-delay: 720ms; }
 
 /* Tilleul check pop — appliqué momentanément lors d'une complétion */
-.tilleul-pop { animation: tilleul-pop 400ms var(--ease-out) both; }
+.tilleul-pop { animation: tilleul-pop 520ms var(--ease-spring-soft) both; }
 
 
 /* ════════════════════════════════════════════════════════════

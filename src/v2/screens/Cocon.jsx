@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { WORLDS } from '../worlds';
 import { getProfile, setProfile, patchProfile, haptic, ls } from '../state';
 import Button from '../../components/Button';
+import ActionSheet from '../../components/ActionSheet';
 import Carnet from './Carnet';
 import MoodTracker from './MoodTracker';
 import Souvenirs from './Souvenirs';
@@ -81,6 +82,7 @@ export default function Cocon() {
   const [tempMantra, setTempMantra] = useState(profile.mantra || '');
   const [editingAnswer, setEditingAnswer] = useState(null); // field key or null
   const [confirmReset, setConfirmReset] = useState(false);
+  const [actionSheet, setActionSheet] = useState(null); // { type: 'reset' } | null
   const [carnetOpen, setCarnetOpen] = useState(false);
   const [moodOpen, setMoodOpen] = useState(false);
   const [souvenirsOpen, setSouvenirsOpen] = useState(false);
@@ -641,7 +643,7 @@ export default function Cocon() {
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32, marginBottom: 8 }}>
           <button
             data-press
-            onClick={() => { haptic(4); setConfirmReset(true); }}
+            onClick={() => { haptic(4); setActionSheet({ type: 'reset' }); }}
             className="neya-mark"
             style={{
               appearance: 'none',
@@ -658,11 +660,20 @@ export default function Cocon() {
         </div>
       </div>
 
-      {/* Confirm reset overlay */}
-      {confirmReset && (
-        <ResetConfirmSheet
-          onCancel={() => setConfirmReset(false)}
-          onConfirm={doReset}
+      {/* Confirm reset overlay — replaced by ActionSheet (ResetConfirmSheet kept as dead code) */}
+      {actionSheet?.type === 'reset' && (
+        <ActionSheet
+          title="Es-tu sûr·e ?"
+          description="Toutes tes données NÉYA vont disparaître (pseudo, mantra, totem, mondes, habitudes, panier ÇA VA?). Cette action est irréversible."
+          actions={[
+            {
+              label: 'Tout effacer',
+              role: 'destructive',
+              icon: '⌫',
+              onTap: () => doReset(),
+            },
+          ]}
+          onClose={() => setActionSheet(null)}
         />
       )}
 

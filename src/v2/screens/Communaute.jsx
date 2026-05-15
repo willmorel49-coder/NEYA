@@ -20,6 +20,7 @@ import {
   addSouvenir,
 } from '../state';
 import Button from '../../components/Button';
+import ActionSheet from '../../components/ActionSheet';
 import Cercle from './Cercle';
 import Aide from './Aide';
 import EspacesIRL from './EspacesIRL';
@@ -179,6 +180,7 @@ export default function Communaute() {
   const [hideCrisisAlert, setHideCrisisAlert] = useState(false);
   const [aideOpen, setAideOpen] = useState(false);
   const [irlOpen, setIrlOpen] = useState(false);
+  const [actionSheet, setActionSheet] = useState(null); // { type: 'delete-post', postId } | null
 
   const prompt = useMemo(() => getDailyPrompt(), []);
 
@@ -221,11 +223,7 @@ export default function Communaute() {
 
   const deletePost = (id) => {
     haptic([4, 60, 4]);
-    if (typeof window !== 'undefined' && window.confirm('Effacer cette voix ?')) {
-      const remaining = ownPosts.filter((p) => p.id !== id);
-      setOwnPosts(remaining);
-      saveOwnPosts(remaining);
-    }
+    setActionSheet({ type: 'delete-post', postId: id });
   };
 
   const toggleReaction = (postId, rKey) => {
@@ -866,6 +864,27 @@ export default function Communaute() {
       {aideOpen && <Aide onClose={() => setAideOpen(false)} />}
 
       {irlOpen && <EspacesIRL onClose={() => setIrlOpen(false)} />}
+
+      {actionSheet && actionSheet.type === 'delete-post' && (
+        <ActionSheet
+          title="Effacer cette voix ?"
+          description="Tu ne pourras plus la retrouver. Tes réactions sur d'autres voix restent."
+          actions={[
+            {
+              label: 'Effacer',
+              role: 'destructive',
+              icon: '⌫',
+              onTap: () => {
+                const remaining = ownPosts.filter((p) => p.id !== actionSheet.postId);
+                setOwnPosts(remaining);
+                saveOwnPosts(remaining);
+                haptic([6, 30, 6]);
+              },
+            },
+          ]}
+          onClose={() => setActionSheet(null)}
+        />
+      )}
     </div>
   );
 }

@@ -9,6 +9,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { haptic } from '../state';
+import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
 
 const BRAND_QUOTES = [
   'Nous existons pour briser le masque du ça va.',
@@ -33,6 +34,11 @@ export default function ProductDetail({
   const [closing, setClosing] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const [qty, setQty] = useState(1);
+
+  // Swipe-to-dismiss (iOS HIG : drag handle down)
+  const { bindHandle, translateY, isDragging } = useSwipeToDismiss({
+    onClose: () => handleClose(),
+  });
 
   // Citation aléatoire fixée pour la durée du sheet
   const quote = useMemo(() => {
@@ -140,14 +146,42 @@ export default function ProductDetail({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          transform: `translateY(${translateY}px)`,
+          transition: isDragging
+            ? 'none'
+            : 'transform 320ms var(--ease-spring-ios)',
           animation: closing
             ? 'pdSlideDown 320ms var(--ease-out-ios, ease-out) forwards'
-            : 'pdSlideUp 420ms var(--ease-out-ios, ease-out) forwards',
+            : translateY === 0 && !isDragging
+              ? 'pdSlideUp 420ms var(--ease-out-ios, ease-out) forwards'
+              : 'none',
         }}
       >
-        {/* Drag handle */}
-        <div style={{ paddingTop: 8, paddingBottom: 4 }}>
-          <div className="drag-handle" />
+        {/* Drag handle — grab zone ~64x24 around the visible bar */}
+        <div
+          {...bindHandle}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 24,
+            paddingTop: 8,
+            cursor: 'grab',
+            touchAction: 'none',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          <div
+            style={{
+              width: isDragging ? 40 : 36,
+              height: isDragging ? 6 : 5,
+              borderRadius: 999,
+              background: isDragging
+                ? 'var(--ink-soft)'
+                : 'rgba(26, 26, 47, 0.18)',
+              transition: 'width 180ms var(--ease-out-ios), height 180ms var(--ease-out-ios), background 180ms var(--ease-out-ios)',
+            }}
+          />
         </div>
 
         {/* Top bar */}
