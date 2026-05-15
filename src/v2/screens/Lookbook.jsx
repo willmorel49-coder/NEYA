@@ -14,12 +14,12 @@ import { haptic } from '../state';
 /* ----- Photo & capsule data ------------------------------ */
 
 const PHOTOS = [
-  { id: 'libre-hoodie',    src: '/img/cava-libre-hoodie.png',    aspect: '3/4', name: 'Hoodie crème',     price: 89, capsule: 'Libre' },
-  { id: 'libre-tshirt',    src: '/img/cava-libre-tshirt.png',    aspect: '4/5', name: 'T-shirt broderie', price: 39, capsule: 'Libre' },
-  { id: 'cava-sweat',      src: '/img/cava-cava-sweat.png',      aspect: '1/1', name: 'Sweat oversize',   price: 95, capsule: 'Ça Va' },
-  { id: 'cava-tshirt',     src: '/img/cava-cava-tee.png',        aspect: '3/4', name: 'T-shirt poche',    price: 39, capsule: 'Ça Va' },
-  { id: 'vr-hoodie',       src: '/img/cava-cava-hoodie.png',     aspect: '4/5', name: 'Hoodie manifeste', price: 95, capsule: 'Vraiment ?' },
-  { id: 'vr-tshirt',       src: '/img/cava-vr-tshirt.png',       aspect: '1/1', name: 'T-shirt phrase',   price: 42, capsule: 'Vraiment ?' },
+  { id: 'libre-hoodie',    src: '/cava/products/libre-hoodie.jpg',    aspect: '3/4', name: 'Hoodie crème',     price: 89, capsule: 'Libre' },
+  { id: 'libre-tshirt',    src: '/cava/products/libre-tshirt.jpg',    aspect: '4/5', name: 'T-shirt broderie', price: 39, capsule: 'Libre' },
+  { id: 'cava-sweat',      src: '/cava/products/cava-sweat.jpg',      aspect: '1/1', name: 'Sweat oversize',   price: 95, capsule: 'Ça Va' },
+  { id: 'cava-tshirt',     src: '/cava/products/cava-tee.jpg',        aspect: '3/4', name: 'T-shirt poche',    price: 39, capsule: 'Ça Va' },
+  { id: 'vr-hoodie',       src: '/cava/products/cava-hoodie.jpg',     aspect: '4/5', name: 'Hoodie manifeste', price: 95, capsule: 'Vraiment ?' },
+  { id: 'vr-tshirt',       src: '/cava/products/vr-tshirt.jpg',       aspect: '1/1', name: 'T-shirt phrase',   price: 42, capsule: 'Vraiment ?' },
 ];
 
 const CAPSULES = [
@@ -27,26 +27,26 @@ const CAPSULES = [
     key: 'libre',
     name: 'Libre',
     accent: 'var(--cava-warm)',
-    cover: '/img/cava-capsule-libre.png',
+    cover: '/cava/capsules/capsule-libre.png',
     tagline: 'Pour ceux qui se relèvent.',
   },
   {
     key: 'cava',
     name: 'Ça Va',
     accent: 'var(--cava-blue)',
-    cover: '/img/cava-capsule-cava.png',
+    cover: '/cava/capsules/capsule-cava.png',
     tagline: 'Pour ceux qui n’ont pas besoin de mentir.',
   },
   {
     key: 'vraiment',
     name: 'Vraiment ?',
     accent: 'var(--cava-purple)',
-    cover: '/img/cava-capsule-vraiment.png',
+    cover: '/cava/capsules/capsule-vraiment.png',
     tagline: 'Pour ceux qui osent la question.',
   },
 ];
 
-const HERO_BG = '/img/cava-libre-hoodie.png';
+const HERO_BG = '/cava/products/libre-hoodie.jpg';
 
 /* ----- Component ----------------------------------------- */
 
