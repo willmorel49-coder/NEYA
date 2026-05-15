@@ -44,9 +44,9 @@ const CAPSULES = [
     tagline: 'Pour ceux qui se relèvent.',
     cover: '/cava/capsules/capsule-libre.png',
     products: [
-      { id: 'libre-hoodie',    name: 'Hoodie crème',     price: 89, image: '/cava/products/libre-hoodie.jpg' },
-      { id: 'libre-tshirt',    name: 'T-shirt broderie', price: 39, image: '/cava/products/libre-tshirt.jpg' },
-      { id: 'libre-cap',       name: 'Casquette',        price: 29, image: '/cava/products/libre-cap.jpg' },
+      { id: 'libre-hoodie', name: 'Hoodie Visage',         price: 89, image: '/cava/products/libre-hoodie.jpg', motif: 'Broderie main · visage cyan' },
+      { id: 'libre-pull',   name: 'Pull Mains de feu',     price: 95, image: '/cava/products/libre-pull.jpg',   motif: 'Mains brodées + soleil jaune' },
+      { id: 'libre-tshirt', name: 'T-shirt Cœur fissuré',  price: 49, image: '/cava/products/libre-tshirt.jpg', motif: 'Cœur brodé + gants colorés' },
     ],
   },
   {
@@ -57,9 +57,9 @@ const CAPSULES = [
     tagline: 'Pour ceux qui n’ont pas besoin de mentir.',
     cover: '/cava/capsules/capsule-cava.png',
     products: [
-      { id: 'cava-sweat',      name: 'Sweat oversize', price: 95, image: '/cava/products/cava-sweat.jpg' },
-      { id: 'cava-tshirt',     name: 'T-shirt poche',  price: 39, image: '/cava/products/cava-tshirt.jpg' },
-      { id: 'cava-pants',      name: 'Pantalon ample', price: 79, image: '/cava/products/cava-pants.jpg' },
+      { id: 'cava-hoodie', name: 'Hoodie Œil bleu',  price: 95, image: '/cava/products/cava-hoodie.jpg', motif: 'Œil bleu brodé · vert émeraude' },
+      { id: 'cava-sweat',  name: 'Sweat Patches',    price: 95, image: '/cava/products/cava-sweat.jpg',  motif: 'Yeux + soleil + fleurs cousus' },
+      { id: 'cava-tee',    name: 'Tee Soleil doré',  price: 45, image: '/cava/products/cava-tee.jpg',    motif: 'Soleil brodé doré · marine' },
     ],
   },
   {
@@ -70,9 +70,9 @@ const CAPSULES = [
     tagline: 'Pour ceux qui osent la question.',
     cover: '/cava/capsules/capsule-vraiment.png',
     products: [
-      { id: 'vr-hoodie',       name: 'Hoodie manifeste', price: 95, image: '/cava/products/vr-hoodie.jpg' },
-      { id: 'vr-tshirt',       name: 'T-shirt phrase',   price: 42, image: '/cava/products/vr-tshirt.jpg' },
-      { id: 'vr-tote',         name: 'Tote bag',         price: 24, image: '/cava/products/vr-tote.jpg' },
+      { id: 'vr-tshirt',   name: 'T-shirt CA VA',     price: 49, image: '/cava/products/vr-tshirt.jpg', motif: 'Cœur-visage cousu cyan · noir' },
+      { id: 'vr-pull',     name: 'Pull Lèvres cousues', price: 99, image: '/cava/products/vr-pull.jpg',   motif: 'Bouche brodée noir + or' },
+      { id: 'vr-tote',     name: 'Tote CA VA Or',     price: 39, image: '/cava/products/vr-tote.jpg',   motif: 'CA VA? or sur toile noire' },
     ],
   },
 ];
@@ -726,6 +726,20 @@ function ProductCard({ product, capsule, onAdd, discountPercent, pseudo, totem }
         >
           {product.name}
         </div>
+        {product.motif && (
+          <div
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: 10,
+              fontStyle: 'italic',
+              color: 'rgba(26, 26, 47, 0.55)',
+              marginTop: -2,
+              lineHeight: 1.35,
+            }}
+          >
+            {product.motif}
+          </div>
+        )}
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
           {isDiscounted && (
             <span
