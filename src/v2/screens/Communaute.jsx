@@ -8,9 +8,34 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { WORLDS } from '../worlds';
-import { haptic, ls, getProfile, getDailyPrompt, detectCrisisKeywords } from '../state';
+import {
+  haptic,
+  ls,
+  getProfile,
+  getDailyPrompt,
+  detectCrisisKeywords,
+  getBoueeDuJour,
+  markBoueeDone,
+  isBoueeDoneToday,
+  addSouvenir,
+} from '../state';
 import Button from '../../components/Button';
 import Cercle from './Cercle';
+import Aide from './Aide';
+import EspacesIRL from './EspacesIRL';
+
+const LEVEL_COLORS = {
+  corps:  'var(--emerald)',
+  lien:   'var(--terracotta)',
+  esprit: 'var(--mist-blue)',
+  monde:  'var(--ochre)',
+};
+const LEVEL_LABELS = {
+  corps:  'CORPS',
+  lien:   'LIEN',
+  esprit: 'ESPRIT',
+  monde:  'MONDE',
+};
 
 const REACTIONS = [
   { key: 'touche',    icon: '♡', label: 'Touché·e' },
@@ -32,6 +57,25 @@ const TAG_COLORS = {
 };
 
 const COMPOSER_TAGS = ['présence', 'gratitude', 'tendresse', 'fardeau', 'joie'];
+
+const quickLinkStyle = (accent) => ({
+  appearance: 'none',
+  flex: 1,
+  padding: '12px 14px',
+  background: 'rgba(255, 252, 245, 0.78)',
+  backdropFilter: 'blur(14px)',
+  WebkitBackdropFilter: 'blur(14px)',
+  border: `0.5px solid ${accent}`,
+  borderRadius: 'var(--radius-pill)',
+  fontFamily: 'var(--font-ui)',
+  fontSize: 11,
+  fontWeight: 500,
+  letterSpacing: '0.04em',
+  color: accent,
+  cursor: 'pointer',
+  WebkitTapHighlightColor: 'transparent',
+  boxShadow: '0 2px 8px rgba(26, 26, 47, 0.04)',
+});
 
 const SEEDED = [
   {
@@ -133,6 +177,8 @@ export default function Communaute() {
   const [composerTag, setComposerTag] = useState('présence');
   const [cercleOpen, setCercleOpen] = useState(false);
   const [hideCrisisAlert, setHideCrisisAlert] = useState(false);
+  const [aideOpen, setAideOpen] = useState(false);
+  const [irlOpen, setIrlOpen] = useState(false);
 
   const prompt = useMemo(() => getDailyPrompt(), []);
 
@@ -325,6 +371,27 @@ export default function Communaute() {
           Personne ne juge. Personne ne compte les likes. Tu peux dire ce que tu veux,
           ce qui est vrai.
         </p>
+
+        {/* Quick links — Aide & ressources + Espaces IRL */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          <button
+            data-press
+            onClick={() => { haptic(4); setAideOpen(true); }}
+            style={quickLinkStyle('var(--terracotta)')}
+          >
+            ♡ Aide & ressources
+          </button>
+          <button
+            data-press
+            onClick={() => { haptic(4); setIrlOpen(true); }}
+            style={quickLinkStyle('var(--ochre)')}
+          >
+            ↗ Espaces IRL
+          </button>
+        </div>
+
+        {/* Bouée du jour — micro-action concrète */}
+        <BoueeDuJour />
 
         {/* Feature 1 — Daily Prompt header */}
         <div
@@ -795,6 +862,249 @@ export default function Communaute() {
       )}
 
       {cercleOpen && <Cercle onClose={() => setCercleOpen(false)} />}
+
+      {aideOpen && <Aide onClose={() => setAideOpen(false)} />}
+
+      {irlOpen && <EspacesIRL onClose={() => setIrlOpen(false)} />}
+    </div>
+  );
+}
+
+function BoueeDuJour() {
+  const bouee = useMemo(() => getBoueeDuJour(), []);
+  const [done, setDone] = useState(() => isBoueeDoneToday(bouee.id));
+  const [dismissed, setDismissed] = useState(false);
+  const [pop, setPop] = useState(false);
+
+  const levelColor = LEVEL_COLORS[bouee.level] || 'var(--tilleul)';
+  const levelLabel = LEVEL_LABELS[bouee.level] || bouee.level.toUpperCase();
+
+  const onMarkDone = () => {
+    haptic([6, 30, 6]);
+    markBoueeDone(bouee.id);
+    addSouvenir({ type: 'bouee', label: bouee.action, detail: bouee.level });
+    setPop(true);
+    setTimeout(() => {
+      setDone(true);
+      setPop(false);
+    }, 400);
+  };
+
+  const onLater = () => {
+    haptic(3);
+    setDismissed(true);
+  };
+
+  if (dismissed && !done) return null;
+
+  if (done) {
+    return (
+      <div
+        className="stagger"
+        style={{
+          background: 'var(--cream-light)',
+          border: '0.5px solid var(--tilleul)',
+          borderRadius: 'var(--radius-lg)',
+          padding: '14px 20px',
+          marginBottom: 18,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          boxShadow: '0 2px 14px rgba(26, 26, 47, 0.04)',
+        }}
+      >
+        <span
+          style={{
+            fontSize: 18,
+            color: 'var(--tilleul)',
+            lineHeight: 1,
+          }}
+        >
+          ✓
+        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1 }}>
+          <div
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 9,
+              fontWeight: 600,
+              letterSpacing: '0.222em',
+              textTransform: 'uppercase',
+              color: 'var(--tilleul)',
+            }}
+          >
+            FAITE AUJOURD’HUI
+          </div>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              fontSize: 14,
+              lineHeight: 1.35,
+              color: 'var(--ink)',
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+            }}
+          >
+            « Tu es là. »
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="stagger"
+      style={{
+        background: 'var(--cream-light)',
+        border: '0.5px solid var(--tilleul)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '18px 20px',
+        marginBottom: 18,
+        boxShadow: '0 2px 14px rgba(26, 26, 47, 0.04)',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 12,
+        }}
+      >
+        <div
+          style={{
+            fontFamily: 'var(--font-ui)',
+            fontSize: 9,
+            fontWeight: 600,
+            letterSpacing: '0.222em',
+            textTransform: 'uppercase',
+            color: levelColor,
+          }}
+        >
+          BOUÉE DU JOUR · {levelLabel}
+        </div>
+        <span
+          style={{
+            fontSize: 11,
+            color: 'var(--tilleul)',
+            letterSpacing: '0.18em',
+          }}
+        >
+          ✦
+        </span>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 12,
+          marginBottom: 10,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 28,
+            lineHeight: 1,
+            color: levelColor,
+            flexShrink: 0,
+            display: 'inline-block',
+            transform: pop ? 'scale(1.4)' : 'scale(1)',
+            transition: 'transform 400ms var(--ease-out), color 400ms var(--ease-out)',
+          }}
+        >
+          {pop ? '✓' : bouee.icon}
+        </span>
+        <p
+          style={{
+            margin: 0,
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 'clamp(20px, 5vw, 24px)',
+            lineHeight: 1.3,
+            color: 'var(--ink)',
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            flex: 1,
+          }}
+        >
+          {bouee.action}
+        </p>
+      </div>
+
+      <p
+        style={{
+          margin: 0,
+          marginBottom: 14,
+          fontFamily: 'var(--font-body)',
+          fontSize: 12,
+          color: 'var(--ink-soft)',
+          lineHeight: 1.5,
+        }}
+      >
+        Une petite chose, juste pour aujourd’hui. Tu peux marquer faite quand c’est fait.
+      </p>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <button
+          data-press
+          onClick={onMarkDone}
+          style={{
+            appearance: 'none',
+            background: 'var(--ink)',
+            color: 'var(--cream)',
+            border: 'none',
+            borderRadius: 'var(--radius-pill, 999px)',
+            padding: '8px 14px',
+            cursor: 'pointer',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            WebkitTapHighlightColor: 'transparent',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
+          Marquer faite <span style={{ fontSize: 12 }}>✓</span>
+        </button>
+        <span
+          style={{
+            fontFamily: 'var(--font-ui)',
+            fontSize: 10,
+            color: 'var(--content-tertiary)',
+            letterSpacing: '0.04em',
+          }}
+        >
+          ou
+        </span>
+        <button
+          data-press
+          onClick={onLater}
+          style={{
+            appearance: 'none',
+            background: 'transparent',
+            color: 'var(--ink-soft)',
+            border: '0.5px solid rgba(26, 26, 47, 0.16)',
+            borderRadius: 'var(--radius-pill, 999px)',
+            padding: '8px 14px',
+            cursor: 'pointer',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          Plus tard
+        </button>
+      </div>
     </div>
   );
 }

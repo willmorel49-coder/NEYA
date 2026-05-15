@@ -432,3 +432,75 @@ export function detectCrisisKeywords(text) {
   const lower = text.toLowerCase();
   return CRISIS_KEYWORDS.some((kw) => lower.includes(kw));
 }
+
+/* ============================================================
+   BOUÉES DU JOUR — micro-actions concrètes anti-rumination
+   ============================================================
+   Inspired by peer-support models (warm-line, body-doubling,
+   AA, NAMI peer groups). Tiny wins. Non-toxic.
+   ============================================================ */
+
+const BOUEES = [
+  { id: 'b01', action: 'Bois trois verres d\'eau, tranquillement.',                level: 'corps',     icon: '◯' },
+  { id: 'b02', action: 'Ouvre la fenêtre cinq minutes. Respire.',                  level: 'corps',     icon: '◐' },
+  { id: 'b03', action: 'Envoie un message court à une personne aimée.',            level: 'lien',      icon: '♡' },
+  { id: 'b04', action: 'Marche dix minutes dehors, sans téléphone.',               level: 'corps',     icon: '↗' },
+  { id: 'b05', action: 'Mange quelque chose de simple. Lentement.',                level: 'corps',     icon: '◓' },
+  { id: 'b06', action: 'Écris trois lignes dans ton carnet.',                      level: 'esprit',    icon: '✎' },
+  { id: 'b07', action: 'Appelle quelqu\'un dont tu n\'as pas eu de nouvelles.',    level: 'lien',      icon: '☎' },
+  { id: 'b08', action: 'Range un seul tiroir, un seul.',                           level: 'esprit',    icon: '□' },
+  { id: 'b09', action: 'Prends une douche tiède, lentement.',                      level: 'corps',     icon: '◇' },
+  { id: 'b10', action: 'Écoute une chanson que tu n\'as plus écoutée depuis longtemps.', level: 'esprit', icon: '♪' },
+  { id: 'b11', action: 'Sors prendre un café (ou un thé) hors de chez toi.',       level: 'monde',     icon: '☕' },
+  { id: 'b12', action: 'Demande de l\'aide pour une petite chose aujourd\'hui.',   level: 'lien',      icon: '✦' },
+  { id: 'b13', action: 'Touche une plante, sens-la.',                              level: 'corps',     icon: '❦' },
+  { id: 'b14', action: 'Ne fais rien pendant cinq minutes. Vraiment rien.',        level: 'esprit',    icon: '·' },
+];
+
+export function getBoueeDuJour() {
+  const day = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+  return BOUEES[day % BOUEES.length];
+}
+
+export function markBoueeDone(id) {
+  const key = `bouee_${new Date().toISOString().split('T')[0]}`;
+  const list = ls.get(key, []);
+  if (!list.includes(id)) list.push(id);
+  ls.set(key, list);
+  // Aussi enregistrer comme souvenir
+  return list;
+}
+
+export function isBoueeDoneToday(id) {
+  const key = `bouee_${new Date().toISOString().split('T')[0]}`;
+  return ls.get(key, []).includes(id);
+}
+
+/* ============================================================
+   RITUELS PARTAGÉS CERCLE — shared symbolic gestures
+   ============================================================ */
+
+const RITUELS = [
+  { id: 'r01', label: 'Allumer une bougie ensemble',  hint: 'À 21h ce soir. Une seule pensée pour ton cercle.', icon: '✺', hour: 21 },
+  { id: 'r02', label: 'Marcher en pensée',             hint: 'Cinq minutes dehors. Pense à eux.',                icon: '↗', hour: null },
+  { id: 'r03', label: 'Partager une chanson',           hint: 'Une seule, sans explication.',                     icon: '♪', hour: null },
+  { id: 'r04', label: 'Envoyer un mot',                 hint: 'Trois lignes. Pour quelqu\'un de ton cercle.',     icon: '✎', hour: null },
+  { id: 'r05', label: 'Respirer en commun',             hint: 'À 12h pile. Cinq inspirations.',                   icon: '◯', hour: 12 },
+];
+
+export function getRituels() {
+  return RITUELS;
+}
+
+export function logRituel(rituelId) {
+  const key = `rituels_${new Date().toISOString().split('T')[0]}`;
+  const list = ls.get(key, []);
+  if (!list.includes(rituelId)) list.push(rituelId);
+  ls.set(key, list);
+  return list;
+}
+
+export function isRituelDoneToday(rituelId) {
+  const key = `rituels_${new Date().toISOString().split('T')[0]}`;
+  return ls.get(key, []).includes(rituelId);
+}

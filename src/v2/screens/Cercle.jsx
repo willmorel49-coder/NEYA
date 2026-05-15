@@ -16,6 +16,10 @@ import {
   sendLumiere,
   hasSentLumiereToday,
   getLumieresTotal,
+  getRituels,
+  logRituel,
+  isRituelDoneToday,
+  addSouvenir,
 } from '../state';
 
 const TILLEUL = 'var(--tilleul)';
@@ -27,7 +31,15 @@ export default function Cercle({ onClose }) {
   const [composerOpen, setComposerOpen] = useState(false);
   const [draft, setDraft] = useState('');
   const [popIds, setPopIds] = useState(new Set());
+  const [rituelPopIds, setRituelPopIds] = useState(new Set());
+  const [, setNowTick] = useState(0);
   const inputRef = useRef(null);
+
+  // Tick every minute to refresh "dans Xh / Xmin" time hints
+  useEffect(() => {
+    const id = setInterval(() => setNowTick((t) => t + 1), 60000);
+    return () => clearInterval(id);
+  }, []);
 
   // Slide-up reveal
   useEffect(() => {
@@ -93,6 +105,32 @@ export default function Cercle({ onClose }) {
     }, 420);
   };
 
+  const handleRituel = (rituel) => {
+    if (isRituelDoneToday(rituel.id)) return;
+    haptic([6, 30, 6]);
+    logRituel(rituel.id);
+    addSouvenir({
+      type: 'rituel',
+      label: rituel.label,
+      detail: rituel.hint,
+    });
+    setRituelPopIds((prev) => {
+      const next = new Set(prev);
+      next.add(rituel.id);
+      return next;
+    });
+    setTimeout(() => {
+      setRituelPopIds((prev) => {
+        const next = new Set(prev);
+        next.delete(rituel.id);
+        return next;
+      });
+    }, 420);
+    // Force re-render to update the disabled state
+    setNowTick((t) => t + 1);
+  };
+
+  const rituels = getRituels();
   const total = getLumieresTotal();
   const atCap = cercle.length >= 7;
   const isEmpty = cercle.length === 0;
@@ -208,6 +246,64 @@ export default function Cercle({ onClose }) {
             ))}
           </div>
         )}
+
+        {/* RITUELS DU CERCLE — shared symbolic gestures */}
+        <div style={{ marginTop: 36 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              marginBottom: 10,
+            }}
+          >
+            <span
+              style={{
+                display: 'inline-block',
+                width: 18,
+                height: 1,
+                background: TILLEUL,
+                opacity: 0.7,
+              }}
+            />
+            <span
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontSize: 10,
+                fontWeight: 500,
+                letterSpacing: '0.222em',
+                textTransform: 'uppercase',
+                color: TILLEUL,
+                lineHeight: 1,
+              }}
+            >
+              Rituels du cercle
+            </span>
+          </div>
+          <p
+            style={{
+              margin: '0 0 16px',
+              fontFamily: 'var(--font-body)',
+              fontSize: 13,
+              lineHeight: 1.55,
+              color: 'var(--ink-soft)',
+              maxWidth: 340,
+            }}
+          >
+            Des gestes communs avec celles et ceux de ton cercle. Tu n’es pas seul·e à le faire — même si tu ne les vois pas.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {rituels.map((r) => (
+              <RituelCard
+                key={r.id}
+                rituel={r}
+                done={isRituelDoneToday(r.id)}
+                pop={rituelPopIds.has(r.id)}
+                onDo={() => handleRituel(r)}
+              />
+            ))}
+          </div>
+        </div>
 
         {/* Add composer / button */}
         {!atCap && !isEmpty && (
@@ -629,6 +725,171 @@ function ComposerInline({ inputRef, draft, setDraft, onAdd, onCancel }) {
         >
           Annuler
         </button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   RITUEL CARD — shared symbolic gesture
+   ============================================================ */
+
+function timeUntil(targetHour) {
+  const now = new Date();
+  const target = new Date();
+  target.setHours(targetHour, 0, 0, 0);
+  if (target < now) target.setDate(target.getDate() + 1);
+  const diff = target - now;
+  const hours = Math.floor(diff / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  if (hours === 0) return `dans ${mins} min`;
+  if (hours < 24) return `dans ${hours}h`;
+  return 'demain';
+}
+
+function RituelCard({ rituel, done, pop, onDo }) {
+  const timeText = rituel.hour !== null ? timeUntil(rituel.hour) : null;
+
+  return (
+    <div
+      style={{
+        position: 'relative',
+        background: 'var(--cream-light)',
+        border: '0.5px solid var(--hairline)',
+        borderRadius: 'var(--radius-md)',
+        padding: '14px 16px',
+        boxShadow: 'var(--shadow-soft)',
+      }}
+    >
+      {/* Top row : icon + label */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+        }}
+      >
+        <span
+          className={pop || done ? 'tilleul-pop' : undefined}
+          style={{
+            fontSize: 22,
+            lineHeight: 1,
+            color: done ? TILLEUL : 'var(--ink)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 26,
+            transformOrigin: 'center',
+            transition: 'color 280ms var(--ease-out)',
+          }}
+          aria-hidden
+        >
+          {rituel.icon}
+        </span>
+        <span
+          style={{
+            flex: 1,
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 17,
+            fontWeight: 400,
+            color: 'var(--ink)',
+            lineHeight: 1.2,
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+          }}
+        >
+          {rituel.label}
+        </span>
+      </div>
+
+      {/* Hint */}
+      <div
+        style={{
+          marginTop: 6,
+          paddingLeft: 38,
+          fontFamily: 'var(--font-body)',
+          fontSize: 12,
+          color: 'var(--ink-soft)',
+          lineHeight: 1.5,
+        }}
+      >
+        {rituel.hint}
+      </div>
+
+      {/* Time hint */}
+      {timeText && (
+        <div
+          style={{
+            marginTop: 8,
+            paddingLeft: 38,
+            fontFamily: 'var(--font-ui)',
+            fontSize: 9,
+            fontWeight: 500,
+            letterSpacing: '0.222em',
+            textTransform: 'uppercase',
+            color: 'var(--content-tertiary)',
+            lineHeight: 1.2,
+          }}
+        >
+          À {rituel.hour}H · {timeText}
+        </div>
+      )}
+
+      {/* CTA row right-aligned */}
+      <div
+        style={{
+          marginTop: 12,
+          display: 'flex',
+          justifyContent: 'flex-end',
+        }}
+      >
+        {done ? (
+          <div
+            style={{
+              appearance: 'none',
+              border: '0.5px solid var(--hairline)',
+              borderRadius: 'var(--radius-pill)',
+              background: 'transparent',
+              color: 'var(--ink-soft)',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 9,
+              fontWeight: 500,
+              fontStyle: 'italic',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              padding: '7px 14px',
+              lineHeight: 1.2,
+            }}
+          >
+            Fait aujourd’hui · Tu es là.
+          </div>
+        ) : (
+          <button
+            type="button"
+            data-press
+            onClick={onDo}
+            style={{
+              appearance: 'none',
+              border: 'none',
+              borderRadius: 'var(--radius-pill)',
+              background: 'var(--ink)',
+              color: 'var(--cream)',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 9,
+              fontWeight: 600,
+              letterSpacing: '0.222em',
+              textTransform: 'uppercase',
+              padding: '8px 14px',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              lineHeight: 1.2,
+              boxShadow: '0 3px 10px rgba(26, 26, 47, 0.10)',
+              transition: 'background 200ms var(--ease-out)',
+            }}
+          >
+            J’y suis&nbsp;✓
+          </button>
+        )}
       </div>
     </div>
   );
