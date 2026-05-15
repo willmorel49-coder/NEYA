@@ -21,7 +21,7 @@ const PATRONUS_DATA = {
   lion: {
     label: 'Résilience',
     spirit: 'Lion blanc',
-    photo: '/spirit-resilience.avif',
+    photo: '/img/spirit-lion.png',
     accentRgb: 'rgba(194, 144, 81',
     accentHex: '#C29051',
     chemin: 'Ton chemin est celui de la traversée.',
@@ -34,7 +34,7 @@ const PATRONUS_DATA = {
   ours: {
     label: 'Lumière',
     spirit: 'Ours polaire',
-    photo: '/spirit-lumiere.avif',
+    photo: '/img/spirit-ours.png',
     accentRgb: 'rgba(115, 151, 188',
     accentHex: '#7397BC',
     chemin: "Ton chemin est celui de l'ancrage doux.",
@@ -47,7 +47,7 @@ const PATRONUS_DATA = {
   aigle: {
     label: 'Vision',
     spirit: 'Aigle céleste',
-    photo: null,
+    photo: '/img/spirit-aigle.png',
     glyph: '△',
     accentRgb: 'rgba(159, 88, 76',
     accentHex: '#9F584C',
@@ -61,7 +61,7 @@ const PATRONUS_DATA = {
   daim: {
     label: 'Présence',
     spirit: 'Daim lunaire',
-    photo: '/spirit-presence.avif',
+    photo: '/img/spirit-daim.png',
     accentRgb: 'rgba(123, 111, 168',
     accentHex: '#7B6FA8',
     chemin: "Ton chemin est celui de l'ici et maintenant.",
@@ -74,7 +74,7 @@ const PATRONUS_DATA = {
   baleine: {
     label: 'Sagesse',
     spirit: 'Baleine sage',
-    photo: '/spirit-sagesse.avif',
+    photo: '/img/spirit-baleine.png',
     accentRgb: 'rgba(52, 145, 127',
     accentHex: '#34917F',
     chemin: 'Ton chemin est celui de la profondeur.',
@@ -87,7 +87,7 @@ const PATRONUS_DATA = {
   renard: {
     label: 'Lien',
     spirit: "Renard de l'aube",
-    photo: null,
+    photo: '/img/spirit-renard.png',
     glyph: '▽',
     accentRgb: 'rgba(212, 152, 128',
     accentHex: '#D49880',

@@ -43,7 +43,7 @@ export default function Splash({ onContinue }) {
         inset: 0,
         zIndex: 9999,
         backgroundImage:
-          "url('/bg-splash.avif'), url('/bg-onboarding.avif')",
+          "url('/img/splash.png'), url('/bg-onboarding.avif')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

@@ -136,11 +136,12 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const totemHome = WORLDS[totemHomeKey];
   const totemGlyph = TOTEM_GLYPH[totemKey] || '◆';
   const SPIRIT_PHOTO = {
-    lion:    '/spirit-resilience.avif',
-    ours:    '/spirit-lumiere.avif',
-    daim:    '/spirit-presence.avif',
-    baleine: '/spirit-sagesse.avif',
-    // aigle and renard fall back to glyph
+    lion:    '/img/spirit-lion.png',
+    ours:    '/img/spirit-ours.png',
+    aigle:   '/img/spirit-aigle.png',
+    daim:    '/img/spirit-daim.png',
+    baleine: '/img/spirit-baleine.png',
+    renard:  '/img/spirit-renard.png',
   };
   const totemPhoto = SPIRIT_PHOTO[totemKey];
 

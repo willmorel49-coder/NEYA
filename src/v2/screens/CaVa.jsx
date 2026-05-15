@@ -42,11 +42,11 @@ const CAPSULES = [
     accent: 'var(--cava-warm)',
     accentSoft: 'rgba(212, 152, 128, 0.18)',
     tagline: 'Pour ceux qui se relèvent.',
-    cover: '/cava/capsules/capsule-libre.png',
+    cover: '/img/cava-capsule-libre.png',
     products: [
-      { id: 'libre-hoodie', name: 'Hoodie Visage',         price: 89, image: '/cava/products/libre-hoodie.jpg', motif: 'Broderie main · visage cyan' },
-      { id: 'libre-pull',   name: 'Pull Mains de feu',     price: 95, image: '/cava/products/libre-pull.jpg',   motif: 'Mains brodées + soleil jaune' },
-      { id: 'libre-tshirt', name: 'T-shirt Cœur fissuré',  price: 49, image: '/cava/products/libre-tshirt.jpg', motif: 'Cœur brodé + gants colorés' },
+      { id: 'libre-hoodie', name: 'Hoodie Visage',         price: 89, image: '/img/cava-libre-hoodie.png', motif: 'Broderie main · visage cyan' },
+      { id: 'libre-pull',   name: 'Pull Mains de feu',     price: 95, image: '/img/cava-libre-pull.png',   motif: 'Mains brodées + soleil jaune' },
+      { id: 'libre-tshirt', name: 'T-shirt Cœur fissuré',  price: 49, image: '/img/cava-libre-tshirt.png', motif: 'Cœur brodé + gants colorés' },
     ],
   },
   {
@@ -55,11 +55,11 @@ const CAPSULES = [
     accent: 'var(--cava-blue)',
     accentSoft: 'rgba(93, 123, 184, 0.18)',
     tagline: 'Pour ceux qui n’ont pas besoin de mentir.',
-    cover: '/cava/capsules/capsule-cava.png',
+    cover: '/img/cava-capsule-cava.png',
     products: [
-      { id: 'cava-hoodie', name: 'Hoodie Œil bleu',  price: 95, image: '/cava/products/cava-hoodie.jpg', motif: 'Œil bleu brodé · vert émeraude' },
-      { id: 'cava-sweat',  name: 'Sweat Patches',    price: 95, image: '/cava/products/cava-sweat.jpg',  motif: 'Yeux + soleil + fleurs cousus' },
-      { id: 'cava-tee',    name: 'Tee Soleil doré',  price: 45, image: '/cava/products/cava-tee.jpg',    motif: 'Soleil brodé doré · marine' },
+      { id: 'cava-hoodie', name: 'Hoodie Œil bleu',  price: 95, image: '/img/cava-cava-hoodie.png', motif: 'Œil bleu brodé · vert émeraude' },
+      { id: 'cava-sweat',  name: 'Sweat Patches',    price: 95, image: '/img/cava-cava-sweat.png',  motif: 'Yeux + soleil + fleurs cousus' },
+      { id: 'cava-tee',    name: 'Tee Soleil doré',  price: 45, image: '/img/cava-cava-tee.png',    motif: 'Soleil brodé doré · marine' },
     ],
   },
   {
@@ -68,11 +68,11 @@ const CAPSULES = [
     accent: 'var(--cava-purple)',
     accentSoft: 'rgba(61, 47, 107, 0.18)',
     tagline: 'Pour ceux qui osent la question.',
-    cover: '/cava/capsules/capsule-vraiment.png',
+    cover: '/img/cava-capsule-vraiment.png',
     products: [
-      { id: 'vr-tshirt',   name: 'T-shirt CA VA',     price: 49, image: '/cava/products/vr-tshirt.jpg', motif: 'Cœur-visage cousu cyan · noir' },
-      { id: 'vr-pull',     name: 'Pull Lèvres cousues', price: 99, image: '/cava/products/vr-pull.jpg',   motif: 'Bouche brodée noir + or' },
-      { id: 'vr-tote',     name: 'Tote CA VA Or',     price: 39, image: '/cava/products/vr-tote.jpg',   motif: 'CA VA? or sur toile noire' },
+      { id: 'vr-tshirt',   name: 'T-shirt CA VA',     price: 49, image: '/img/cava-vr-tshirt.png', motif: 'Cœur-visage cousu cyan · noir' },
+      { id: 'vr-pull',     name: 'Pull Lèvres cousues', price: 99, image: '/img/cava-vr-pull.png',   motif: 'Bouche brodée noir + or' },
+      { id: 'vr-tote',     name: 'Tote CA VA Or',     price: 39, image: '/img/cava-vr-tote.png',   motif: 'CA VA? or sur toile noire' },
     ],
   },
 ];

@@ -50,12 +50,12 @@ const QUESTIONS = [
 const TERRACOTTA = '#c7674a';
 
 const SPIRIT_PHOTO = {
-  lion:    '/spirit-resilience.avif',
-  ours:    '/spirit-lumiere.avif',
-  aigle:   null,
-  daim:    '/spirit-presence.avif',
-  baleine: '/spirit-sagesse.avif',
-  renard:  null,
+  lion:    '/img/spirit-lion.png',
+  ours:    '/img/spirit-ours.png',
+  aigle:   '/img/spirit-aigle.png',
+  daim:    '/img/spirit-daim.png',
+  baleine: '/img/spirit-baleine.png',
+  renard:  '/img/spirit-renard.png',
 };
 
 const TOTEMS = [
