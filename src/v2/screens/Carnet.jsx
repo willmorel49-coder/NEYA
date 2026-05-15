@@ -236,7 +236,7 @@ export default function Carnet({ onClose }) {
         />
       </div>
 
-      {/* Close button */}
+      {/* Close button — 44×44 tap target (Apple HIG) */}
       <button
         type="button"
         onClick={handleClose}
@@ -244,15 +244,15 @@ export default function Carnet({ onClose }) {
         aria-label="Fermer"
         style={{
           position: 'absolute',
-          top: 18,
-          right: 18,
-          width: 32,
-          height: 32,
+          top: 12,
+          right: 12,
+          width: 44,
+          height: 44,
           borderRadius: '50%',
           border: '1px solid var(--hairline)',
           background: 'rgba(251, 246, 232, 0.6)',
           color: 'var(--ink)',
-          fontSize: 14,
+          fontSize: 15,
           lineHeight: 1,
           display: 'flex',
           alignItems: 'center',
@@ -261,6 +261,7 @@ export default function Carnet({ onClose }) {
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           zIndex: 3,
+          WebkitTapHighlightColor: 'transparent',
         }}
       >
         ✕
@@ -422,7 +423,8 @@ export default function Carnet({ onClose }) {
                   fontWeight: 500,
                   fontSize: 13,
                   letterSpacing: '0.01em',
-                  padding: '10px 20px',
+                  padding: '14px 24px',
+                  minHeight: 48,
                   borderRadius: 999,
                   cursor: body.trim() ? 'pointer' : 'default',
                   transition: 'background 240ms var(--ease-out-ios), color 240ms var(--ease-out-ios)',

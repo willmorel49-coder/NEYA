@@ -77,6 +77,46 @@ export default function Splash({ onContinue }) {
         }}
       />
 
+      {/* Top-right explicit skip — 44×44 hit zone */}
+      <button
+        type="button"
+        data-press
+        onClick={(e) => {
+          e.stopPropagation();
+          handleTap();
+        }}
+        onTouchStart={(e) => e.stopPropagation()}
+        aria-label="Passer"
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
+          right: 18,
+          zIndex: 1,
+          appearance: 'none',
+          background: 'transparent',
+          border: 'none',
+          outline: 'none',
+          cursor: 'pointer',
+          padding: '12px 14px',
+          minWidth: 44,
+          minHeight: 44,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: "'Sora', system-ui, sans-serif",
+          fontWeight: 500,
+          fontSize: 11,
+          letterSpacing: '0.222em',
+          textTransform: 'uppercase',
+          color: 'rgba(251,246,232,0.5)',
+          opacity: mounted ? 1 : 0,
+          transition: 'opacity 1400ms var(--ease-narrative) 600ms',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        Passer ›
+      </button>
+
       {/* Center stack */}
       <div
         style={{
@@ -163,7 +203,7 @@ export default function Splash({ onContinue }) {
           textAlign: 'center',
           fontFamily: "'Sora', system-ui, sans-serif",
           fontWeight: 400,
-          fontSize: 9,
+          fontSize: 11,
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
           color: 'rgba(251,246,232,0.42)',

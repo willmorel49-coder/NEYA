@@ -203,6 +203,9 @@ export default function Communaute() {
     setContextMenu({ post, position: { x, y } });
   };
   const startLongPress = (post, e) => {
+    // Stop propagation so App.jsx global long-press timer never fires
+    // on top of our 500ms post long-press (Bug 1 — gesture conflict).
+    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
     longPressFiredRef.current = false;
     const touch = e.touches && e.touches[0];
     const x = touch ? touch.clientX : 0;
@@ -214,6 +217,7 @@ export default function Communaute() {
   };
   const handleRightClick = (post, e) => {
     e.preventDefault();
+    e.stopPropagation();
     openContextMenu(post, e.clientX, e.clientY);
   };
 
@@ -588,6 +592,7 @@ export default function Communaute() {
             return (
               <div
                 key={v.id}
+                data-no-crisis-press="true"
                 onTouchStart={(e) => startLongPress(v, e)}
                 onTouchEnd={clearLongPress}
                 onTouchMove={clearLongPress}
@@ -1267,8 +1272,9 @@ function Composer({
 
   return (
     <div
+      data-no-crisis-press="true"
       style={{
-        position: 'absolute',
+        position: 'fixed',
         inset: 0,
         zIndex: 100,
         background: 'rgba(26, 26, 47, 0.30)',
@@ -1288,7 +1294,7 @@ function Composer({
           borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
           padding: '22px 22px calc(env(safe-area-inset-bottom, 0px) + 22px)',
           boxShadow: '0 -8px 32px rgba(26, 26, 47, 0.14)',
-          maxHeight: '92%',
+          maxHeight: '90dvh',
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
         }}

@@ -189,8 +189,10 @@ export default function Crise({ onClose }) {
                 fontFamily: 'var(--font-ui)',
                 fontSize: 'var(--type-body-sm)',
                 cursor: 'pointer',
-                padding: '8px 14px',
+                padding: '14px 20px',
+                minHeight: 48,
                 letterSpacing: 0,
+                WebkitTapHighlightColor: 'transparent',
               }}
             >
               Plus tard
@@ -498,13 +500,15 @@ function ChoiceCard({ title, subtitle, onClick, accent }) {
         background: 'rgba(255, 252, 245, 0.78)',
         border: '0.5px solid rgba(26, 26, 47, 0.08)',
         borderRadius: 'var(--radius-lg)',
-        padding: '16px 18px',
+        padding: '18px 20px',
+        minHeight: 64,
         boxShadow: 'var(--shadow-soft)',
         cursor: 'pointer',
         transition: 'transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out)',
         WebkitTapHighlightColor: 'transparent',
         display: 'flex',
         flexDirection: 'column',
+        justifyContent: 'center',
         gap: 4,
       }}
       onMouseDown={(e) => {

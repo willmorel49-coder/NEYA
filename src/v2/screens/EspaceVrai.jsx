@@ -217,7 +217,7 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
         }
       `}</style>
 
-      {/* Close button — top-right */}
+      {/* Close button — top-right (44×44 tap target) */}
       <button
         type="button"
         aria-label="Fermer"
@@ -227,17 +227,17 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
         data-press={true}
         style={{
           position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
-          right: 16,
-          width: 32,
-          height: 32,
+          top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
+          right: 12,
+          width: 44,
+          height: 44,
           borderRadius: '50%',
           background: 'rgba(255, 252, 245, 0.78)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
           border: '0.5px solid rgba(26, 26, 47, 0.10)',
           color: 'var(--ink)',
-          fontSize: 14,
+          fontSize: 15,
           lineHeight: 1,
           cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',

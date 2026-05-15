@@ -167,7 +167,7 @@ export default function MoodTracker({ onClose }) {
         }}
       />
 
-      {/* Close button */}
+      {/* Close button — 44×44 tap target */}
       <button
         type="button"
         onClick={handleClose}
@@ -175,15 +175,15 @@ export default function MoodTracker({ onClose }) {
         aria-label="Fermer"
         style={{
           position: 'absolute',
-          top: 18,
-          right: 18,
-          width: 32,
-          height: 32,
+          top: 12,
+          right: 12,
+          width: 44,
+          height: 44,
           borderRadius: '50%',
           border: '1px solid var(--hairline)',
           background: 'rgba(251, 246, 232, 0.6)',
           color: 'var(--ink)',
-          fontSize: 14,
+          fontSize: 15,
           lineHeight: 1,
           display: 'flex',
           alignItems: 'center',
@@ -192,6 +192,7 @@ export default function MoodTracker({ onClose }) {
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           zIndex: 3,
+          WebkitTapHighlightColor: 'transparent',
         }}
       >
         ✕
@@ -367,19 +368,35 @@ export default function MoodTracker({ onClose }) {
                   aria-label={`Intensité ${v}`}
                   style={{
                     appearance: 'none',
-                    width: 14,
-                    height: 14,
+                    width: 44,
+                    height: 44,
                     padding: 0,
+                    margin: '-8px -2px',
                     borderRadius: '50%',
-                    background: active
-                      ? (selectedMood?.color || 'var(--ink-soft)')
-                      : 'transparent',
-                    border: `1px solid ${active ? (selectedMood?.color || 'var(--ink-soft)') : 'var(--hairline)'}`,
+                    background: 'transparent',
+                    border: 'none',
                     cursor: 'pointer',
                     WebkitTapHighlightColor: 'transparent',
-                    transition: 'background 200ms var(--ease-out-ios), border-color 200ms var(--ease-out-ios)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
-                />
+                >
+                  <span
+                    aria-hidden
+                    style={{
+                      display: 'inline-block',
+                      width: 14,
+                      height: 14,
+                      borderRadius: '50%',
+                      background: active
+                        ? (selectedMood?.color || 'var(--ink-soft)')
+                        : 'transparent',
+                      border: `1px solid ${active ? (selectedMood?.color || 'var(--ink-soft)') : 'var(--hairline)'}`,
+                      transition: 'background 200ms var(--ease-out-ios), border-color 200ms var(--ease-out-ios)',
+                    }}
+                  />
+                </button>
               );
             })}
           </div>

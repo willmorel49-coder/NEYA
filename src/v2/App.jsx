@@ -53,22 +53,46 @@ export default function V2App() {
     () => getProfile().progress.currentWorld || 'foret'
   );
 
-  // Long-press 1.5s → trigger crisis flow
+  // Long-press 2s → trigger crisis flow (with 1.2s warning haptic)
   const longPressTimerRef = useRef(null);
+  const longPressWarnRef = useRef(null);
 
-  const startLongPress = () => {
+  const startLongPress = (e) => {
+    // Bail if touch starts on a child that uses its own long-press
+    // (e.g. Communaute post cards) — prevents conflicting gestures.
+    if (e && e.target && typeof e.target.closest === 'function') {
+      if (e.target.closest('[data-no-crisis-press]')) return;
+      // Also bail if pressing interactive elements
+      if (e.target.closest('button, a, input, textarea, select')) return;
+    }
     if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+    if (longPressWarnRef.current) clearTimeout(longPressWarnRef.current);
+
+    // Warning haptic at 1200ms — user knows they're about to trigger
+    longPressWarnRef.current = setTimeout(() => {
+      haptic(4);
+      longPressWarnRef.current = null;
+    }, 1200);
+
     longPressTimerRef.current = setTimeout(() => {
+      if (longPressWarnRef.current) {
+        clearTimeout(longPressWarnRef.current);
+        longPressWarnRef.current = null;
+      }
       haptic([4, 80, 8, 80, 8]);
       setCriseOpen(true);
       longPressTimerRef.current = null;
-    }, 1500);
+    }, 2000);
   };
 
   const cancelLongPress = () => {
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
+    }
+    if (longPressWarnRef.current) {
+      clearTimeout(longPressWarnRef.current);
+      longPressWarnRef.current = null;
     }
   };
 
@@ -79,6 +103,7 @@ export default function V2App() {
   useEffect(() => {
     return () => {
       if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+      if (longPressWarnRef.current) clearTimeout(longPressWarnRef.current);
     };
   }, []);
 
@@ -141,6 +166,9 @@ export default function V2App() {
     return <Onboarding onComplete={handleOnboardingComplete} />;
   }
 
+  // SOS visible only when user is in main shell — hidden during intro overlays
+  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen;
+
   return (
     <div
       style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}
@@ -178,36 +206,39 @@ export default function V2App() {
       <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />
 
       {/* Permanent SOS button — reachable in 1 tap from every screen */}
-      <button
-        type="button"
-        onClick={openCrisis}
-        aria-label="Mode crise — accès rapide"
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 10px)',
-          right: 12,
-          width: 36,
-          height: 36,
-          borderRadius: '50%',
-          border: '0.5px solid rgba(159, 88, 76, 0.30)',
-          background: 'var(--cream)',
-          color: 'var(--crisis)',
-          fontFamily: 'var(--font-ui)',
-          fontSize: 'var(--type-mark)',
-          fontWeight: 600,
-          letterSpacing: '0.04em',
-          cursor: 'pointer',
-          boxShadow: 'var(--shadow-soft)',
-          zIndex: 40,
-          padding: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          WebkitTapHighlightColor: 'transparent',
-        }}
-      >
-        SOS
-      </button>
+      {showSosButton && (
+        <button
+          type="button"
+          onClick={openCrisis}
+          aria-label="Mode crise — accès rapide"
+          data-no-crisis-press="true"
+          style={{
+            position: 'fixed',
+            top: 'calc(env(safe-area-inset-top, 0px) + 10px)',
+            right: 12,
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            border: '0.5px solid rgba(159, 88, 76, 0.30)',
+            background: 'var(--cream)',
+            color: 'var(--crisis)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: '0.04em',
+            cursor: 'pointer',
+            boxShadow: 'var(--shadow-soft)',
+            zIndex: 40,
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          SOS
+        </button>
+      )}
 
       {meditationOpen && (
         <Meditation
@@ -226,7 +257,11 @@ export default function V2App() {
         />
       )}
 
-      {criseOpen && <Crise onClose={() => setCriseOpen(false)} />}
+      {criseOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
+          <Crise onClose={() => setCriseOpen(false)} />
+        </div>
+      )}
 
       {espaceVraiOpen && (
         <EspaceVrai

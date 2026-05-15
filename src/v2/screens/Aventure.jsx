@@ -399,7 +399,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
       <div style={{ padding: '0 22px 24px' }}>
         <Button
           variant="primary"
-          size="md"
+          size="lg"
           onClick={onOpenMeditation}
           style={{
             background: 'var(--ink)',
@@ -408,6 +408,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             justifyContent: 'space-between',
             paddingLeft: 22,
             paddingRight: 22,
+            paddingTop: 16,
+            paddingBottom: 16,
+            minHeight: 56,
           }}
         >
           <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
@@ -433,7 +436,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             WebkitBackdropFilter: 'blur(14px)',
             border: '0.5px solid rgba(26, 26, 47, 0.10)',
             borderRadius: 'var(--radius-lg)',
-            padding: '14px 16px',
+            padding: '18px 20px',
+            minHeight: 80,
             cursor: 'pointer',
             WebkitTapHighlightColor: 'transparent',
             boxShadow: 'var(--shadow-soft)',
@@ -486,7 +490,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             WebkitBackdropFilter: 'blur(14px)',
             border: '0.5px solid rgba(26, 26, 47, 0.10)',
             borderRadius: 'var(--radius-lg)',
-            padding: '16px 18px',
+            padding: '18px 20px',
+            minHeight: 80,
             cursor: 'pointer',
             WebkitTapHighlightColor: 'transparent',
             boxShadow: 'var(--shadow-soft)',
@@ -547,7 +552,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 WebkitBackdropFilter: 'blur(14px)',
                 border: `0.5px solid ${WORLDS.lac.accentRgb}, 0.30)`,
                 borderRadius: 'var(--radius-lg)',
-                padding: '16px 18px',
+                padding: '18px 20px',
+                minHeight: 80,
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
                 boxShadow: 'var(--shadow-soft)',
@@ -618,7 +624,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 WebkitBackdropFilter: 'blur(14px)',
                 border: `0.5px solid ${WORLDS.montagne.accentRgb}, 0.35)`,
                 borderRadius: 'var(--radius-lg)',
-                padding: '16px 18px',
+                padding: '18px 20px',
+                minHeight: 80,
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
                 boxShadow: 'var(--shadow-soft)',
@@ -838,7 +845,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                   color: 'var(--cream)',
                   border: 'none',
                   borderRadius: 'var(--radius-pill)',
-                  padding: '12px 28px',
+                  padding: '14px 32px',
+                  minHeight: 48,
                   fontFamily: 'var(--font-ui)',
                   fontSize: 14,
                   fontWeight: 500,
@@ -882,8 +890,8 @@ function WorldCard({ world, isCurrent, isLocked, isHome, onClick }) {
         outline: isHome ? `1px dashed ${world.accent}` : 'none',
         outlineOffset: isHome ? 3 : 0,
         borderRadius: 'var(--radius-lg)',
-        padding: '14px 16px',
-        minHeight: 70,
+        padding: '18px 18px',
+        minHeight: 88,
         textAlign: 'left',
         cursor: isLocked ? 'default' : 'pointer',
         opacity: isLocked ? 0.55 : 1,

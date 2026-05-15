@@ -167,6 +167,12 @@ export default function Patronus({ onClose }) {
     onClose?.();
   };
 
+  const handleSkip = () => {
+    haptic(4);
+    ls.set('patronus_seen', true);
+    onClose?.();
+  };
+
   const haloGradient = `radial-gradient(circle, ${archetype.accentRgb}, 0.45) 0%, transparent 70%)`;
 
   return (
@@ -195,6 +201,42 @@ export default function Patronus({ onClose }) {
           50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.04); }
         }
       `}</style>
+
+      {/* Top-right explicit skip — 44×44 hit zone */}
+      <button
+        type="button"
+        data-press
+        onClick={handleSkip}
+        aria-label="Passer"
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
+          right: 18,
+          zIndex: 3,
+          appearance: 'none',
+          background: 'transparent',
+          border: 'none',
+          outline: 'none',
+          cursor: 'pointer',
+          padding: '12px 14px',
+          minWidth: 44,
+          minHeight: 44,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: '"Sora", system-ui, sans-serif',
+          fontWeight: 500,
+          fontSize: 11,
+          letterSpacing: '0.222em',
+          textTransform: 'uppercase',
+          color: 'var(--content-tertiary)',
+          opacity: mounted ? 0.7 : 0,
+          transition: 'opacity 1400ms var(--ease-narrative) 600ms',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        Passer ›
+      </button>
 
       {/* Progressive cream vignette for cinematic focus */}
       <div

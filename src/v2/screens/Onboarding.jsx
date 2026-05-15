@@ -90,6 +90,34 @@ export default function Onboarding({ onComplete }) {
   const [answers, setAnswers] = useState({});
   const [completing, setCompleting] = useState(false);
 
+  const skipIntro = () => {
+    if (completing) return;
+    const ok = typeof window !== 'undefined'
+      ? window.confirm("Passer l'introduction et utiliser des réponses par défaut ?")
+      : true;
+    if (!ok) return;
+    haptic(4);
+    const defaults = {
+      q1_etat: 'je-sais-pas-trop',
+      q2_motif: 'curieux',
+      q3_minutes: 5,
+      q4_rythme: 'soir',
+    };
+    const merged = { ...defaults, ...answers };
+    const profile = getProfile();
+    profile.onboarding = {
+      ...merged,
+      completed: true,
+      completedAt: new Date().toISOString(),
+    };
+    profile.progress = profile.progress || {};
+    profile.progress.currentWorld = 'foret';
+    profile.progress.worldsExplored = ['foret'];
+    setProfile(profile);
+    setCompleting(true);
+    onComplete?.();
+  };
+
   const advance = (value) => {
     if (transitionToIdx !== null || completing) return;
     haptic(6);
@@ -153,6 +181,43 @@ export default function Onboarding({ onComplete }) {
           interactive={false}
         />
       )}
+
+      {/* Global skip — above all layers, 44×44 hit zone */}
+      <button
+        type="button"
+        data-press
+        onClick={skipIntro}
+        aria-label="Passer l'introduction"
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
+          right: 22,
+          zIndex: 10,
+          appearance: 'none',
+          background: 'transparent',
+          border: 'none',
+          outline: 'none',
+          cursor: 'pointer',
+          padding: '12px 14px',
+          minWidth: 44,
+          minHeight: 44,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: 'var(--font-ui, "Sora", system-ui, sans-serif)',
+          fontWeight: 500,
+          fontSize: 9,
+          letterSpacing: '0.222em',
+          textTransform: 'uppercase',
+          color: 'var(--content-tertiary)',
+          opacity: completing ? 0 : 0.85,
+          transition: 'opacity 400ms var(--ease-out)',
+          WebkitTapHighlightColor: 'transparent',
+          pointerEvents: completing ? 'none' : 'auto',
+        }}
+      >
+        Passer l'introduction ›
+      </button>
     </>
   );
 }

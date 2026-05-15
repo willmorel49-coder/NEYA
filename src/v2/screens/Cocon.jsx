@@ -313,7 +313,8 @@ export default function Cocon() {
                 onClick={() => pickTotem(t.key)}
                 style={{
                   appearance: 'none',
-                  padding: '14px 8px',
+                  padding: '16px 14px',
+                  minHeight: 64,
                   background: isActive ? `${w.accentRgb}, 0.18)` : 'rgba(255, 252, 245, 0.6)',
                   backdropFilter: 'blur(10px)',
                   WebkitBackdropFilter: 'blur(10px)',
@@ -408,7 +409,8 @@ export default function Cocon() {
                 style={{
                   gridColumn: i === 4 ? '1 / -1' : 'auto',
                   appearance: 'none',
-                  padding: '18px 14px',
+                  padding: '20px 16px',
+                  minHeight: 96,
                   background: isPlaced ? `${totemWorld.accentRgb}, 0.14)` : 'rgba(255, 252, 245, 0.6)',
                   backdropFilter: 'blur(10px)',
                   WebkitBackdropFilter: 'blur(10px)',
@@ -474,7 +476,8 @@ export default function Cocon() {
             onClick={() => { haptic(4); setMoodOpen(true); }}
             style={{
               appearance: 'none',
-              padding: '16px 14px',
+              padding: '20px 16px',
+              minHeight: 88,
               background: 'rgba(255, 252, 245, 0.78)',
               backdropFilter: 'blur(14px)',
               WebkitBackdropFilter: 'blur(14px)',
@@ -496,7 +499,8 @@ export default function Cocon() {
             onClick={() => { haptic(4); setCarnetOpen(true); }}
             style={{
               appearance: 'none',
-              padding: '16px 14px',
+              padding: '20px 16px',
+              minHeight: 88,
               background: 'rgba(255, 252, 245, 0.78)',
               backdropFilter: 'blur(14px)',
               WebkitBackdropFilter: 'blur(14px)',
@@ -519,7 +523,8 @@ export default function Cocon() {
             style={{
               gridColumn: '1 / -1',
               appearance: 'none',
-              padding: '16px 14px',
+              padding: '20px 16px',
+              minHeight: 88,
               background: 'rgba(255, 252, 245, 0.78)',
               backdropFilter: 'blur(14px)',
               WebkitBackdropFilter: 'blur(14px)',
@@ -560,11 +565,12 @@ export default function Cocon() {
                     width: '100%',
                     background: 'transparent',
                     border: 'none',
-                    padding: '14px 18px',
+                    padding: '18px 18px',
+                    minHeight: 56,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    gap: 12,
+                    gap: 14,
                     cursor: 'pointer',
                     WebkitTapHighlightColor: 'transparent',
                     textAlign: 'left',
@@ -618,7 +624,8 @@ export default function Cocon() {
                           style={{
                             appearance: 'none',
                             width: '100%',
-                            padding: '12px 14px',
+                            padding: '14px 16px',
+                            minHeight: 48,
                             background: isActive
                               ? `${totemWorld.accentRgb}, 0.14)`
                               : 'rgba(255, 252, 245, 0.7)',
@@ -657,7 +664,8 @@ export default function Cocon() {
               border: 'none',
               color: TERRACOTTA,
               cursor: 'pointer',
-              padding: '12px 18px',
+              padding: '14px 22px',
+              minHeight: 44,
               WebkitTapHighlightColor: 'transparent',
             }}
           >
@@ -767,7 +775,8 @@ function ResetConfirmSheet({ onCancel, onConfirm }) {
               background: 'transparent',
               border: '0.5px solid rgba(26, 26, 47, 0.18)',
               borderRadius: 'var(--radius-md)',
-              padding: '14px 18px',
+              padding: '16px 20px',
+              minHeight: 48,
               fontFamily: 'var(--font-ui)',
               fontSize: 14,
               fontWeight: 500,
@@ -787,7 +796,8 @@ function ResetConfirmSheet({ onCancel, onConfirm }) {
               background: TERRACOTTA,
               border: 'none',
               borderRadius: 'var(--radius-md)',
-              padding: '14px 18px',
+              padding: '16px 20px',
+              minHeight: 48,
               fontFamily: 'var(--font-ui)',
               fontSize: 14,
               fontWeight: 600,
@@ -884,7 +894,8 @@ function ValueButton({ onClick, children }) {
         width: '100%',
         background: 'transparent',
         border: 'none',
-        padding: '8px 0 0',
+        padding: '12px 0 4px',
+        minHeight: 44,
         textAlign: 'left',
         color: 'var(--ink)',
         fontFamily: 'var(--font-body)',
@@ -951,4 +962,9 @@ const inputStyle = {
 const primaryDarkBtn = {
   background: 'var(--ink)',
   color: 'var(--cream)',
+  minHeight: 44,
+  paddingTop: 10,
+  paddingBottom: 10,
+  paddingLeft: 18,
+  paddingRight: 18,
 };

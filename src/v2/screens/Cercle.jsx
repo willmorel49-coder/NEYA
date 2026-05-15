@@ -163,13 +163,13 @@ export default function Cercle({ onClose }) {
           onClick={doClose}
           aria-label="Fermer"
           style={{
-            width: 32,
-            height: 32,
+            width: 44,
+            height: 44,
             borderRadius: '50%',
             border: '0.5px solid var(--hairline)',
             background: 'rgba(251, 246, 232, 0.6)',
             color: 'var(--ink)',
-            fontSize: 14,
+            fontSize: 15,
             lineHeight: 1,
             display: 'flex',
             alignItems: 'center',
@@ -319,7 +319,8 @@ export default function Cercle({ onClose }) {
                   background: 'transparent',
                   border: '0.5px dashed var(--hairline-strong)',
                   borderRadius: 'var(--radius-lg)',
-                  padding: '14px 18px',
+                  padding: '16px 18px',
+                  minHeight: 52,
                   color: 'var(--ink-soft)',
                   fontFamily: 'var(--font-ui)',
                   fontSize: 13,
@@ -402,7 +403,7 @@ function MemberCard({ member, pop, onSend, onRemove }) {
         boxShadow: 'var(--shadow-soft)',
       }}
     >
-      {/* Remove ✕ */}
+      {/* Remove ✕ — 44×44 tap zone, visual icon stays small */}
       <button
         type="button"
         data-press
@@ -410,15 +411,15 @@ function MemberCard({ member, pop, onSend, onRemove }) {
         aria-label={`Retirer ${member.pseudo} du cercle`}
         style={{
           position: 'absolute',
-          top: 10,
-          right: 10,
-          width: 24,
-          height: 24,
+          top: 2,
+          right: 2,
+          width: 44,
+          height: 44,
           borderRadius: '50%',
           border: 'none',
           background: 'transparent',
           color: 'var(--ink-whisper)',
-          fontSize: 12,
+          fontSize: 14,
           lineHeight: 1,
           cursor: 'pointer',
           display: 'flex',
@@ -543,7 +544,8 @@ function MemberCard({ member, pop, onSend, onRemove }) {
             fontFamily: 'var(--font-ui)',
             fontSize: 13,
             fontWeight: 500,
-            padding: '13px 18px',
+            padding: '15px 18px',
+            minHeight: 50,
             cursor: 'pointer',
             letterSpacing: '0.01em',
             WebkitTapHighlightColor: 'transparent',
@@ -615,7 +617,8 @@ function EmptyCard({ onAdd, composerOpen }) {
             fontFamily: 'var(--font-ui)',
             fontSize: 13,
             fontWeight: 500,
-            padding: '14px 28px',
+            padding: '15px 28px',
+            minHeight: 50,
             cursor: 'pointer',
             WebkitTapHighlightColor: 'transparent',
             boxShadow: '0 6px 18px rgba(26, 26, 47, 0.14)',
@@ -697,7 +700,8 @@ function ComposerInline({ inputRef, draft, setDraft, onAdd, onCancel }) {
             fontFamily: 'var(--font-ui)',
             fontSize: 13,
             fontWeight: 500,
-            padding: '12px 18px',
+            padding: '14px 18px',
+            minHeight: 48,
             cursor: canAdd ? 'pointer' : 'default',
             WebkitTapHighlightColor: 'transparent',
             transition: 'background 200ms var(--ease-out)',
@@ -718,7 +722,8 @@ function ComposerInline({ inputRef, draft, setDraft, onAdd, onCancel }) {
             fontFamily: 'var(--font-ui)',
             fontSize: 13,
             fontWeight: 500,
-            padding: '12px 22px',
+            padding: '14px 22px',
+            minHeight: 48,
             cursor: 'pointer',
             WebkitTapHighlightColor: 'transparent',
           }}
@@ -875,11 +880,12 @@ function RituelCard({ rituel, done, pop, onDo }) {
               background: 'var(--ink)',
               color: 'var(--cream)',
               fontFamily: 'var(--font-ui)',
-              fontSize: 9,
+              fontSize: 10,
               fontWeight: 600,
               letterSpacing: '0.222em',
               textTransform: 'uppercase',
-              padding: '8px 14px',
+              padding: '14px 22px',
+              minHeight: 44,
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
               lineHeight: 1.2,

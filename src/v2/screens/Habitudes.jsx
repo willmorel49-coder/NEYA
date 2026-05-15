@@ -140,7 +140,7 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
         }}
       />
 
-      {/* Close button — top right */}
+      {/* Close button — top right (44×44 tap target) */}
       <button
         type="button"
         onClick={handleClose}
@@ -148,15 +148,15 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
         aria-label="Fermer"
         style={{
           position: 'absolute',
-          top: 18,
-          right: 18,
-          width: 32,
-          height: 32,
+          top: 12,
+          right: 12,
+          width: 44,
+          height: 44,
           borderRadius: '50%',
           border: '1px solid var(--hairline)',
           background: 'rgba(251, 246, 232, 0.6)',
           color: 'var(--ink)',
-          fontSize: 14,
+          fontSize: 15,
           lineHeight: 1,
           display: 'flex',
           alignItems: 'center',
@@ -165,6 +165,7 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           zIndex: 2,
+          WebkitTapHighlightColor: 'transparent',
         }}
       >
         ✕
@@ -295,18 +296,33 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
                 aria-label={`${h.title} — ${isDone ? 'complété' : 'à venir'}`}
                 style={{
                   appearance: 'none',
-                  width: 4,
-                  height: 4,
+                  width: 44,
+                  height: 44,
                   padding: 0,
                   borderRadius: '50%',
-                  background: isDone ? TILLEUL : 'transparent',
-                  border: isDone ? `1px solid ${TILLEUL}` : '1px solid var(--hairline)',
+                  background: 'transparent',
+                  border: 'none',
                   cursor: 'pointer',
                   WebkitTapHighlightColor: 'transparent',
-                  transition: 'background 240ms var(--ease-out-ios), border-color 240ms var(--ease-out-ios)',
-                  boxSizing: 'content-box',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxSizing: 'border-box',
                 }}
-              />
+              >
+                <span
+                  aria-hidden
+                  style={{
+                    display: 'inline-block',
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    background: isDone ? TILLEUL : 'transparent',
+                    border: isDone ? `1px solid ${TILLEUL}` : '1px solid var(--hairline)',
+                    transition: 'background 240ms var(--ease-out-ios), border-color 240ms var(--ease-out-ios)',
+                  }}
+                />
+              </button>
             );
           })}
         </div>
@@ -341,7 +357,8 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 14,
-                  padding: '14px 16px',
+                  padding: '16px 16px',
+                  minHeight: 64,
                   borderRadius: 18,
                   background: 'rgba(255, 252, 245, 0.55)',
                   border: '1px solid var(--hairline)',
