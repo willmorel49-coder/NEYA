@@ -6,13 +6,15 @@
    conforme spec V2 : "des rappels discrets sont permis".
    ============================================================ */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { haptic, checkMilestone } from '../state';
 
 export default function MilestoneToast({ day, onClose }) {
   const milestone = checkMilestone(day);
   const [mounted, setMounted] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const leaveTimerRef = useRef(null);
+  const dismissedRef = useRef(false);
 
   useEffect(() => {
     if (!milestone) return;
@@ -20,11 +22,12 @@ export default function MilestoneToast({ day, onClose }) {
     const m = setTimeout(() => setMounted(true), 30);
     // Gentle triple haptic — pas une explosion festive
     haptic([4, 60, 4, 60, 4]);
-    // Auto-dismiss après 6s si l'utilisateur ne fait rien
-    const auto = setTimeout(() => dismiss(), 6000);
+    // Auto-dismiss après 4.5s si l'utilisateur ne fait rien
+    const auto = setTimeout(() => dismiss(), 4500);
     return () => {
       clearTimeout(m);
       clearTimeout(auto);
+      if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -32,8 +35,10 @@ export default function MilestoneToast({ day, onClose }) {
   if (!milestone) return null;
 
   function dismiss() {
+    if (dismissedRef.current) return;
+    dismissedRef.current = true;
     setLeaving(true);
-    setTimeout(() => onClose?.(), 320);
+    leaveTimerRef.current = setTimeout(() => onClose?.(), 320);
   }
 
   function handleContinue() {
@@ -41,11 +46,19 @@ export default function MilestoneToast({ day, onClose }) {
     dismiss();
   }
 
+  function handleBackdrop(e) {
+    // Tap n'importe où sur le fond → ferme. Le tap sur la card est protégé par stopPropagation.
+    if (e.target === e.currentTarget) {
+      dismiss();
+    }
+  }
+
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-label={`Présence — ${milestone.label}`}
+      onClick={handleBackdrop}
       style={{
         position: 'fixed',
         inset: 0,
@@ -75,6 +88,7 @@ export default function MilestoneToast({ day, onClose }) {
       `}</style>
 
       <div
+        onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
           maxWidth: 320,

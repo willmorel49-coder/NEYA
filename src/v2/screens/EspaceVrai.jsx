@@ -61,6 +61,10 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
   const lastTextWindowRef = useRef(-1); // window index (par 30s)
   const longPressTimerRef = useRef(null);
   const exitInFlightRef = useRef(false);
+  const textFadeTimerRef = useRef(null);
+  const resumeHoldTimerRef = useRef(null);
+  const resumeFadeTimerRef = useRef(null);
+  const closeTimerRef = useRef(null);
 
   /* ============ Tick d'horloge ============ */
   useEffect(() => {
@@ -102,13 +106,22 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
         : (PATIENCE_TEXTS[totemKey] || PATIENCE_TEXTS.lion);
       const pick = pool[Math.floor(Math.random() * pool.length)];
       setCurrentText({ text: pick, fadeIn: Date.now() });
-      /* Fade out après 8s */
-      const t = setTimeout(() => {
+      /* Fade out après 8s — tracké dans ref pour survivre aux re-runs du useEffect */
+      if (textFadeTimerRef.current) clearTimeout(textFadeTimerRef.current);
+      textFadeTimerRef.current = setTimeout(() => {
+        textFadeTimerRef.current = null;
         setCurrentText((c) => (c && c.text === pick ? null : c));
       }, 8000);
-      return () => clearTimeout(t);
     }
   }, [elapsed, totemKey]);
+
+  /* Cleanup tous les timers au démontage */
+  useEffect(() => () => {
+    if (textFadeTimerRef.current) { clearTimeout(textFadeTimerRef.current); textFadeTimerRef.current = null; }
+    if (resumeHoldTimerRef.current) { clearTimeout(resumeHoldTimerRef.current); resumeHoldTimerRef.current = null; }
+    if (resumeFadeTimerRef.current) { clearTimeout(resumeFadeTimerRef.current); resumeFadeTimerRef.current = null; }
+    if (closeTimerRef.current) { clearTimeout(closeTimerRef.current); closeTimerRef.current = null; }
+  }, []);
 
   /* ============ Exit handlers ============ */
   const finalize = useCallback(() => {
@@ -126,16 +139,24 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
     const mins = Math.floor(elapsedRef.current / 60);
     setResume({ minutes: mins });
     /* fade in 600ms + hold 4000ms + fade out 600ms → finalize */
-    setTimeout(() => {
+    resumeHoldTimerRef.current = setTimeout(() => {
+      resumeHoldTimerRef.current = null;
       setExiting(true);
-      setTimeout(() => finalize(), 600);
+      resumeFadeTimerRef.current = setTimeout(() => {
+        resumeFadeTimerRef.current = null;
+        finalize();
+      }, 600);
     }, 600 + 4000);
   }, [resume, finalize]);
 
   const handleClose = useCallback(() => {
+    if (exitInFlightRef.current) return;
     /* fade-out 280ms then onClose */
     setExiting(true);
-    setTimeout(() => finalize(), 280);
+    closeTimerRef.current = setTimeout(() => {
+      closeTimerRef.current = null;
+      finalize();
+    }, 280);
   }, [finalize]);
 
   /* ============ Long-press anywhere ============ */
@@ -158,7 +179,10 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
   }, []);
 
   useEffect(() => () => {
-    if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
   }, []);
 
   /* ============ Format counter (cap displayed : 1:30 target durant phase 2) ============ */

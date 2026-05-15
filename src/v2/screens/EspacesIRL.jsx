@@ -196,16 +196,21 @@ export default function EspacesIRL({ onClose }) {
   useEffect(() => {
     if (!mounted) return;
     let i = 0;
+    let timer = null;
     const total = ESPACES.length;
     const tick = () => {
       i += 1;
       setRevealCount(i);
       if (i < total) {
         timer = setTimeout(tick, 55);
+      } else {
+        timer = null;
       }
     };
-    let timer = setTimeout(tick, 120);
-    return () => clearTimeout(timer);
+    timer = setTimeout(tick, 120);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [mounted]);
 
   const doClose = () => {

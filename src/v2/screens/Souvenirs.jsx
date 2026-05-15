@@ -5,7 +5,7 @@
    Pas de score, pas de classement — uniquement des passages.
    ============================================================ */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { getSouvenirs, clearSouvenirs, haptic } from '../state';
 import { WORLDS } from '../worlds';
 import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
@@ -49,18 +49,33 @@ export default function Souvenirs({ onClose }) {
   const [filter, setFilter] = useState('all');
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
+  const aliveRef = useRef(true);
+  const timeoutsRef = useRef([]);
 
-  // Slide-up reveal
+  const safeTimeout = (fn, ms) => {
+    const id = setTimeout(() => {
+      if (aliveRef.current) fn();
+    }, ms);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  // Slide-up reveal + unmount cleanup
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
+    return () => {
+      cancelAnimationFrame(id);
+      aliveRef.current = false;
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
   }, []);
 
   const doClose = () => {
     if (closing) return;
     haptic(3);
     setClosing(true);
-    setTimeout(() => onClose?.(), 320);
+    safeTimeout(() => onClose?.(), 320);
   };
 
   // Edge swipe-back (iOS HIG) — horizontal left-edge drag
@@ -88,7 +103,7 @@ export default function Souvenirs({ onClose }) {
     if (!ok) return;
     clearSouvenirs();
     setSouvenirs([]);
-    setTimeout(() => doClose(), 200);
+    safeTimeout(() => doClose(), 200);
   };
 
   const verticalTransform = closing
@@ -264,7 +279,7 @@ export default function Souvenirs({ onClose }) {
               marginRight: 'auto',
             }}
           >
-            Les traces de tes passages. Aucune note, aucune note de comparaison.
+            Les traces de tes passages. Aucune note, aucune comparaison.
           </p>
         </div>
 

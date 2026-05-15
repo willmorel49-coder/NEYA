@@ -5,38 +5,44 @@
    tap-to-skip. After this, the cream world reveals.
    ============================================================ */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ls, haptic } from '../state';
 
 export default function Splash({ onContinue }) {
   const [mounted, setMounted] = useState(false);
+  const continuedRef = useRef(false);
+
+  const fire = () => {
+    if (continuedRef.current) return;
+    continuedRef.current = true;
+    ls.set('splash_seen_at', Date.now());
+    haptic(8);
+    onContinue?.();
+  };
 
   useEffect(() => {
     // Trigger fade-ins shortly after mount
     const m = setTimeout(() => setMounted(true), 60);
     // Auto-dismiss after 2.5s
     const t = setTimeout(() => {
-      ls.set('splash_seen_at', Date.now());
-      haptic(8);
-      onContinue?.();
+      fire();
     }, 2500);
     return () => {
       clearTimeout(m);
       clearTimeout(t);
     };
-  }, [onContinue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTap = () => {
-    ls.set('splash_seen_at', Date.now());
-    haptic(8);
-    onContinue?.();
+    fire();
   };
 
   return (
     <div
       onClick={handleTap}
-      onTouchStart={handleTap}
       role="button"
+      tabIndex={0}
       aria-label="Entrer dans NÉYA"
       style={{
         position: 'fixed',
@@ -85,7 +91,6 @@ export default function Splash({ onContinue }) {
           e.stopPropagation();
           handleTap();
         }}
-        onTouchStart={(e) => e.stopPropagation()}
         aria-label="Passer"
         style={{
           position: 'absolute',

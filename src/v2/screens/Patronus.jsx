@@ -12,7 +12,7 @@
    single hairline accent.
    ============================================================ */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getProfile, haptic, ls } from '../state';
 
 /* ---------- Mapping totem → archetype data ---------- */
@@ -123,27 +123,26 @@ export default function Patronus({ onClose }) {
   const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState(0); // 0=entry · 1=chemin+forces · 2=CTA
   const [forceStep, setForceStep] = useState(0); // 0..3 (how many forces visible)
+  const closedRef = useRef(false);
 
-  /* Single-use guard : close immediately if already seen */
+  /* Mount sequencing + single-use guard */
   useEffect(() => {
+    // Already seen — close immediately, no animation
     if (ls.get('patronus_seen', false)) {
-      onClose?.();
+      if (!closedRef.current) {
+        closedRef.current = true;
+        onClose?.();
+      }
       return;
     }
+
     haptic([4, 60, 4]);
-  }, []); // eslint-disable-line
-
-  /* Mount fade + phase sequencing */
-  useEffect(() => {
-    if (ls.get('patronus_seen', false)) return;
-
     const rAF = requestAnimationFrame(() => setMounted(true));
     // Phase 2 — chemin + first force at 1800ms
     const t1 = setTimeout(() => {
       setPhase(1);
       setForceStep(1);
     }, 1800);
-    // Forces stagger every 800ms
     const t2 = setTimeout(() => setForceStep(2), 2600);
     const t3 = setTimeout(() => setForceStep(3), 3400);
     // Phase 3 — CTA at 5000ms
@@ -159,15 +158,19 @@ export default function Patronus({ onClose }) {
       clearTimeout(t3);
       clearTimeout(t4);
     };
-  }, []);
+  }, []); // eslint-disable-line
 
   const handleCtaTap = () => {
+    if (closedRef.current) return;
+    closedRef.current = true;
     haptic([8, 60, 8]);
     ls.set('patronus_seen', true);
     onClose?.();
   };
 
   const handleSkip = () => {
+    if (closedRef.current) return;
+    closedRef.current = true;
     haptic(4);
     ls.set('patronus_seen', true);
     onClose?.();
@@ -181,9 +184,9 @@ export default function Patronus({ onClose }) {
       role="dialog"
       aria-label={`Ton archétype — ${archetype.label}`}
       style={{
-        position: 'absolute',
+        position: 'fixed',
         inset: 0,
-        zIndex: 90,
+        zIndex: 900,
         overflow: 'hidden',
         color: 'var(--ink)',
         opacity: mounted ? 1 : 0,

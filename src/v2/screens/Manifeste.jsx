@@ -8,8 +8,9 @@
    Slide-up 420ms · slide-down 320ms.
    ============================================================ */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { haptic } from '../state';
+import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
 
 const TERRACOTTA = '#9F584C';
 const OCHRE      = '#C29051';
@@ -75,28 +76,52 @@ function HandHeart({ color = TERRACOTTA, size = 32 }) {
 export default function Manifeste({ onClose }) {
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
+  const aliveRef = useRef(true);
+  const timeoutsRef = useRef([]);
+
+  const safeTimeout = (fn, ms) => {
+    const id = setTimeout(() => {
+      if (aliveRef.current) fn();
+    }, ms);
+    timeoutsRef.current.push(id);
+    return id;
+  };
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
+    return () => {
+      cancelAnimationFrame(id);
+      aliveRef.current = false;
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
   }, []);
 
   const doClose = () => {
     if (closing) return;
     haptic(3);
     setClosing(true);
-    setTimeout(() => onClose?.(), 320);
+    safeTimeout(() => onClose?.(), 320);
   };
 
-  const transform = closing
+  // Edge swipe-back (iOS HIG)
+  const {
+    bindContainer: bindEdge,
+    translateX: edgeX,
+    isDragging: edgeDragging,
+  } = useEdgeSwipeBack({ onClose: doClose });
+
+  const verticalTransform = closing
     ? 'translateY(100%)'
     : mounted
       ? 'translateY(0)'
       : 'translateY(100%)';
+  const transform = `translateX(${edgeX}px) ${verticalTransform}`;
   const opacity = closing ? 0 : mounted ? 1 : 0;
 
   return (
     <div
+      {...bindEdge}
       style={{
         position: 'absolute',
         inset: 0,
@@ -107,9 +132,11 @@ export default function Manifeste({ onClose }) {
         overflowX: 'hidden',
         opacity,
         transform,
-        transition: closing
-          ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
-          : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)',
+        transition: edgeDragging
+          ? 'none'
+          : closing
+            ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
+            : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)',
         WebkitFontSmoothing: 'antialiased',
         fontFamily: 'var(--font-body)',
       }}

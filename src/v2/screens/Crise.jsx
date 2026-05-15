@@ -34,6 +34,15 @@ export default function Crise({ onClose }) {
     };
   }, []);
 
+  // Body scroll lock pendant ouverture (anti-fond bougeant)
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
   const handleClose = () => {
     if (!exitedRef.current) {
       recordCrisisExit();
@@ -50,7 +59,8 @@ export default function Crise({ onClose }) {
   const callPhoneLine = () => {
     haptic(6);
     try {
-      window.open('tel:3115');
+      // 3114 = numéro national prévention du suicide (FR, gratuit 24/7)
+      window.location.href = 'tel:3114';
     } catch {}
   };
 
@@ -68,6 +78,9 @@ export default function Crise({ onClose }) {
   return (
     <div
       className="wash-lac"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Espace de crise"
       style={{
         position: 'fixed',
         inset: 0,
@@ -78,6 +91,42 @@ export default function Crise({ onClose }) {
         flexDirection: 'column',
       }}
     >
+      {/* Discreet escape — always visible top-right (safe-area), except phase 4 already a CTA */}
+      {phase !== 4 && phase !== 1 && (
+        <button
+          type="button"
+          onClick={handleClose}
+          aria-label="Fermer l'espace de crise"
+          style={{
+            position: 'absolute',
+            top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
+            right: 14,
+            zIndex: 5,
+            appearance: 'none',
+            background: 'transparent',
+            border: 'none',
+            outline: 'none',
+            cursor: 'pointer',
+            padding: '12px 14px',
+            minWidth: 44,
+            minHeight: 44,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: 'var(--font-ui)',
+            fontWeight: 500,
+            fontSize: 11,
+            letterSpacing: '0.222em',
+            textTransform: 'uppercase',
+            color: 'var(--ink-whisper)',
+            opacity: 0.65,
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          Fermer
+        </button>
+      )}
+
       {/* ============================================================
          PHASE 1 — Reconnaissance
          ============================================================ */}
@@ -281,7 +330,7 @@ export default function Crise({ onClose }) {
           >
             <ChoiceCard
               title="Parler à quelqu'un maintenant"
-              subtitle="3115 · 24h/24, gratuit"
+              subtitle="3114 · 24h/24, gratuit, confidentiel"
               onClick={callPhoneLine}
               accent="var(--terracotta)"
             />

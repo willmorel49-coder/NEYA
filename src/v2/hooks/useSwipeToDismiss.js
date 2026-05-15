@@ -29,10 +29,19 @@ export default function useSwipeToDismiss({
   const lastY = useRef(0);
   const draggingRef = useRef(false);
   const springTimer = useRef(null);
+  const dismissTimer = useRef(null);
+  const mouseHandlersRef = useRef(null);
 
   useEffect(() => {
     return () => {
       if (springTimer.current) clearTimeout(springTimer.current);
+      if (dismissTimer.current) clearTimeout(dismissTimer.current);
+      if (mouseHandlersRef.current) {
+        const { move, up } = mouseHandlersRef.current;
+        window.removeEventListener('mousemove', move);
+        window.removeEventListener('mouseup', up);
+        mouseHandlersRef.current = null;
+      }
     };
   }, []);
 
@@ -88,9 +97,11 @@ export default function useSwipeToDismiss({
         // puis on appelle onClose (parent animera la sortie)
         onClose?.();
         // reset après un tick pour ne pas flasher
-        setTimeout(() => {
+        if (dismissTimer.current) clearTimeout(dismissTimer.current);
+        dismissTimer.current = setTimeout(() => {
           setTranslateY(0);
           setSpringBack(false);
+          dismissTimer.current = null;
         }, 320);
       } else {
         // spring-back vers 0
@@ -119,7 +130,9 @@ export default function useSwipeToDismiss({
         onEnd(ev);
         window.removeEventListener('mousemove', handleMove);
         window.removeEventListener('mouseup', handleUp);
+        mouseHandlersRef.current = null;
       };
+      mouseHandlersRef.current = { move: handleMove, up: handleUp };
       window.addEventListener('mousemove', handleMove);
       window.addEventListener('mouseup', handleUp);
     },

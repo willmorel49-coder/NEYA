@@ -70,13 +70,13 @@ export default function usePullToRefresh({ onRefresh, threshold = 80 } = {}) {
     const deltaY = y - startY.current;
     if (deltaY <= 0) {
       // user is dragging up while still active — let the scroll happen
-      if (pullY !== 0) setPullY(0);
-      if (isPulling) setIsPulling(false);
+      setPullY(0);
+      setIsPulling(false);
       return;
     }
     // rubber band : 60% drag-to-pull ratio, clamped at 120
     const next = Math.min(deltaY * 0.6, 120);
-    if (!isPulling) setIsPulling(true);
+    setIsPulling(true);
     setPullY(next);
 
     const nowReached = next >= threshold;
@@ -88,7 +88,7 @@ export default function usePullToRefresh({ onRefresh, threshold = 80 } = {}) {
       reachedRef.current = false;
       setReachedThreshold(false);
     }
-  }, [isRefreshing, isPulling, pullY, threshold]);
+  }, [isRefreshing, threshold]);
 
   const onTouchEnd = useCallback(async () => {
     if (!activeRef.current) return;

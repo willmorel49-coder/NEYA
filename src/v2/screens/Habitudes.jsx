@@ -5,7 +5,7 @@
    Respiration → ouvre BreathingCircle via onOpenMeditation.
    ============================================================ */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   getHabitsToday,
   markHabitDone,
@@ -58,6 +58,9 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
   const [popping, setPopping] = useState(null); // habitId being pop-animated
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
+  const popTimerRef = useRef(null);
+  const closeTimerRef = useRef(null);
+  const closingRef = useRef(false);
 
   // Progress count — subtle marker (no bars, no %, just the number as anchor)
   const doneCount = HABITS.reduce((acc, h) => acc + (habits[h.id] ? 1 : 0), 0);
@@ -69,13 +72,41 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
     return () => cancelAnimationFrame(id);
   }, []);
 
+  // Cleanup tous les timers au démontage
+  useEffect(() => () => {
+    if (popTimerRef.current) { clearTimeout(popTimerRef.current); popTimerRef.current = null; }
+    if (closeTimerRef.current) { clearTimeout(closeTimerRef.current); closeTimerRef.current = null; }
+  }, []);
+
+  // Re-sync habits si la fenêtre regagne le focus (cas du nouveau jour passé en background)
+  useEffect(() => {
+    const onFocus = () => {
+      try {
+        const fresh = getHabitsToday();
+        setHabits({ ...fresh });
+      } catch {}
+    };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
+  }, []);
+
   const handleClose = () => {
+    if (closingRef.current) return;
+    closingRef.current = true;
     haptic(3);
     setClosing(true);
-    setTimeout(() => onClose?.(), 320);
+    closeTimerRef.current = setTimeout(() => {
+      closeTimerRef.current = null;
+      onClose?.();
+    }, 320);
   };
 
   const toggle = (habit) => {
+    if (closingRef.current) return;
     // Cas spécial : respiration ouvre la méditation guidée
     if (habit.id === 'respiration' && typeof onOpenMeditation === 'function') {
       haptic(6);
@@ -92,7 +123,11 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
       setHabits({ ...next });
       setPopping(habit.id);
       haptic([4, 30, 4]);
-      setTimeout(() => setPopping(null), 450);
+      if (popTimerRef.current) clearTimeout(popTimerRef.current);
+      popTimerRef.current = setTimeout(() => {
+        popTimerRef.current = null;
+        setPopping(null);
+      }, 450);
     }
   };
 

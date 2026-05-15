@@ -21,6 +21,7 @@ import {
   isRituelDoneToday,
   addSouvenir,
 } from '../state';
+import ActionSheet from '../../components/ActionSheet';
 
 const TILLEUL = 'var(--tilleul)';
 
@@ -33,6 +34,7 @@ export default function Cercle({ onClose }) {
   const [popIds, setPopIds] = useState(new Set());
   const [rituelPopIds, setRituelPopIds] = useState(new Set());
   const [, setNowTick] = useState(0);
+  const [removeTarget, setRemoveTarget] = useState(null);
   const inputRef = useRef(null);
 
   // Tick every minute to refresh "dans Xh / Xmin" time hints
@@ -67,7 +69,20 @@ export default function Cercle({ onClose }) {
   const handleAdd = () => {
     const v = (draft || '').trim();
     if (!v) return;
-    if (cercle.length >= 7) return;
+    if (cercle.length >= 7) {
+      haptic(2);
+      return;
+    }
+    // Prevent silent duplicate (case-insensitive)
+    const exists = cercle.some(
+      (m) => (m.pseudo || '').toLowerCase() === v.toLowerCase()
+    );
+    if (exists) {
+      haptic(2);
+      setDraft('');
+      setComposerOpen(false);
+      return;
+    }
     haptic(4);
     addToCercle(v);
     setDraft('');
@@ -76,12 +91,16 @@ export default function Cercle({ onClose }) {
   };
 
   const handleRemove = (pseudo) => {
-    if (typeof window !== 'undefined') {
-      const ok = window.confirm(`Retirer ${pseudo} de ton cercle ?`);
-      if (!ok) return;
-    }
+    haptic(4);
+    setRemoveTarget(pseudo);
+  };
+
+  const confirmRemove = () => {
+    if (!removeTarget) return;
+    const pseudo = removeTarget;
     haptic([4, 60, 4]);
     removeFromCercle(pseudo);
+    setRemoveTarget(null);
     refresh();
   };
 
@@ -408,6 +427,22 @@ export default function Cercle({ onClose }) {
             : '« Ton cercle commence ici. »'}
         </div>
       </div>
+
+      {removeTarget && (
+        <ActionSheet
+          title={`Retirer ${removeTarget} ?`}
+          description="Cette voix quittera ton cercle. Tu pourras la rajouter plus tard."
+          actions={[
+            {
+              label: 'Retirer du cercle',
+              role: 'destructive',
+              onTap: confirmRemove,
+            },
+          ]}
+          cancelLabel="Annuler"
+          onClose={() => setRemoveTarget(null)}
+        />
+      )}
     </div>
   );
 }

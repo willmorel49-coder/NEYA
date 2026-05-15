@@ -82,20 +82,33 @@ export default function Tour({ onClose }) {
   const [slideIdx, setSlideIdx] = useState(0);
   const [visible, setVisible] = useState(true);          // current slide opacity flag
   const [transitioning, setTransitioning] = useState(false);
-  const mountedRef = useRef(false);
+  const [seen] = useState(() => ls.get('tour_seen', false));
+  const closedRef = useRef(false);
+  const transitionTimerRef = useRef(null);
+  const rafIdsRef = useRef([]);
+
+  // Cleanup pending timers / rAFs on unmount
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
+      rafIdsRef.current.forEach((id) => cancelAnimationFrame(id));
+      rafIdsRef.current = [];
+    };
+  }, []);
 
   // Persistence check on mount — skip render entirely if already seen
   useEffect(() => {
-    if (ls.get('tour_seen', false)) {
+    if (seen && !closedRef.current) {
+      closedRef.current = true;
       onClose?.();
-      return;
     }
-    mountedRef.current = true;
-  }, [onClose]);
+  }, [seen, onClose]);
 
-  if (ls.get('tour_seen', false)) return null;
+  if (seen) return null;
 
   const persistAndClose = () => {
+    if (closedRef.current) return;
+    closedRef.current = true;
     ls.set('tour_seen', true);
     onClose?.();
   };
@@ -118,15 +131,17 @@ export default function Tour({ onClose }) {
     // Staggered transition: fade out current, mount next, fade next in
     setTransitioning(true);
     setVisible(false);
-    setTimeout(() => {
+    transitionTimerRef.current = setTimeout(() => {
       setSlideIdx((i) => i + 1);
       // next mounts hidden, then fades in next frame
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
+      const r1 = requestAnimationFrame(() => {
+        const r2 = requestAnimationFrame(() => {
           setVisible(true);
           setTransitioning(false);
         });
+        rafIdsRef.current.push(r2);
       });
+      rafIdsRef.current.push(r1);
     }, TRANSITION_MS);
   };
 
@@ -137,14 +152,16 @@ export default function Tour({ onClose }) {
 
     setTransitioning(true);
     setVisible(false);
-    setTimeout(() => {
+    transitionTimerRef.current = setTimeout(() => {
       setSlideIdx((i) => Math.max(0, i - 1));
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
+      const r1 = requestAnimationFrame(() => {
+        const r2 = requestAnimationFrame(() => {
           setVisible(true);
           setTransitioning(false);
         });
+        rafIdsRef.current.push(r2);
       });
+      rafIdsRef.current.push(r1);
     }, TRANSITION_MS);
   };
 

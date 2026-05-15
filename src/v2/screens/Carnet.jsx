@@ -61,6 +61,16 @@ export default function Carnet({ onClose }) {
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
   const textareaRef = useRef(null);
+  const aliveRef = useRef(true);
+  const timeoutsRef = useRef([]);
+
+  const safeTimeout = (fn, ms) => {
+    const id = setTimeout(() => {
+      if (aliveRef.current) fn();
+    }, ms);
+    timeoutsRef.current.push(id);
+    return id;
+  };
 
   const today = todayKey();
 
@@ -73,10 +83,15 @@ export default function Carnet({ onClose }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Slide-up reveal
+  // Slide-up reveal + unmount cleanup
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
+    return () => {
+      cancelAnimationFrame(id);
+      aliveRef.current = false;
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
   }, []);
 
   const pastEntries = useMemo(() => {
@@ -89,7 +104,7 @@ export default function Carnet({ onClose }) {
   const handleClose = () => {
     haptic(3);
     setClosing(true);
-    setTimeout(() => onClose?.(), 320);
+    safeTimeout(() => onClose?.(), 320);
   };
 
   // Swipe-to-dismiss (iOS HIG) — vertical handle drag
@@ -133,13 +148,20 @@ export default function Carnet({ onClose }) {
       ];
     }
 
+    // Cap total entries — sort desc by id, keep MAX_ENTRIES most recent
+    if (next.length > MAX_ENTRIES) {
+      next = [...next]
+        .sort((a, b) => (b.id || 0) - (a.id || 0))
+        .slice(0, MAX_ENTRIES);
+    }
+
     ls.set(STORAGE_KEY, next);
     setEntries(next);
     setSaved(true);
     haptic([6, 30, 6]);
 
-    setTimeout(() => setSaved(false), 800);
-    setTimeout(() => onClose?.(), 700);
+    safeTimeout(() => setSaved(false), 800);
+    safeTimeout(() => onClose?.(), 700);
   };
 
   const charCount = body.length;

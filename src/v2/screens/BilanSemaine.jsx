@@ -64,14 +64,29 @@ export default function BilanSemaine({ onClose }) {
   const [closing, setClosing] = useState(false);
   const [fadingQ, setFadingQ] = useState(false);
   const textRef = useRef(null);
+  const aliveRef = useRef(true);
+  const timeoutsRef = useRef([]);
+
+  const safeTimeout = (fn, ms) => {
+    const id = setTimeout(() => {
+      if (aliveRef.current) fn();
+    }, ms);
+    timeoutsRef.current.push(id);
+    return id;
+  };
 
   const q = QUESTIONS[qIdx];
   const isLast = qIdx === QUESTIONS.length - 1;
 
-  // Slide-up reveal
+  // Slide-up reveal + unmount cleanup
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
+    return () => {
+      cancelAnimationFrame(id);
+      aliveRef.current = false;
+      timeoutsRef.current.forEach((t) => clearTimeout(t));
+      timeoutsRef.current = [];
+    };
   }, []);
 
   // Autofocus textarea when a text question appears
@@ -97,7 +112,7 @@ export default function BilanSemaine({ onClose }) {
     if (closing) return;
     haptic(3);
     setClosing(true);
-    setTimeout(() => onClose?.(), 420);
+    safeTimeout(() => onClose?.(), 420);
   };
 
   const commitAnswers = (finalAnswers) => {
@@ -112,12 +127,12 @@ export default function BilanSemaine({ onClose }) {
     if (isLast) {
       commitAnswers(nextAnswers);
       setFadingQ(true);
-      setTimeout(() => setReveal(true), 320);
+      safeTimeout(() => setReveal(true), 320);
       return;
     }
 
     setFadingQ(true);
-    setTimeout(() => {
+    safeTimeout(() => {
       const ni = qIdx + 1;
       setQIdx(ni);
       setCurrentText('');
@@ -140,7 +155,7 @@ export default function BilanSemaine({ onClose }) {
     haptic(2);
     commitAnswers(answers);
     setFadingQ(true);
-    setTimeout(() => setReveal(true), 280);
+    safeTimeout(() => setReveal(true), 280);
   };
 
   // ============================================================
@@ -436,7 +451,6 @@ export default function BilanSemaine({ onClose }) {
                 <textarea
                   ref={textRef}
                   rows={4}
-                  autoFocus
                   value={currentText}
                   onChange={(e) => setCurrentText(e.target.value.slice(0, 280))}
                   placeholder={q.placeholder}

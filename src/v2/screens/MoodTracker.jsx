@@ -6,7 +6,7 @@
    Privacy : tout reste local (neya_v2_mood_history).
    ============================================================ */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { ls, haptic } from '../state';
 
 const STORAGE_KEY = 'mood_history';
@@ -78,6 +78,9 @@ export default function MoodTracker({ onClose }) {
   const [showCheck, setShowCheck] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
+  const checkTimerRef = useRef(null);
+  const closeTimerRef = useRef(null);
+  const closingRef = useRef(false);
 
   // Pre-highlight today's latest entry
   useEffect(() => {
@@ -94,12 +97,23 @@ export default function MoodTracker({ onClose }) {
     return () => cancelAnimationFrame(id);
   }, []);
 
+  // Cleanup timers au démontage
+  useEffect(() => () => {
+    if (checkTimerRef.current) { clearTimeout(checkTimerRef.current); checkTimerRef.current = null; }
+    if (closeTimerRef.current) { clearTimeout(closeTimerRef.current); closeTimerRef.current = null; }
+  }, []);
+
   const days = useMemo(() => buildLast7Days(history), [history]);
 
   const handleClose = () => {
+    if (closingRef.current) return;
+    closingRef.current = true;
     haptic(3);
     setClosing(true);
-    setTimeout(() => onClose?.(), 320);
+    closeTimerRef.current = setTimeout(() => {
+      closeTimerRef.current = null;
+      onClose?.();
+    }, 320);
   };
 
   const persistEntry = (moodKey, intensityValue) => {
@@ -110,14 +124,20 @@ export default function MoodTracker({ onClose }) {
   };
 
   const handleMoodTap = (moodKey) => {
+    if (closingRef.current) return;
     haptic(4);
     setSelected(moodKey);
     persistEntry(moodKey, intensity);
     setShowCheck(true);
-    setTimeout(() => setShowCheck(false), 600);
+    if (checkTimerRef.current) clearTimeout(checkTimerRef.current);
+    checkTimerRef.current = setTimeout(() => {
+      checkTimerRef.current = null;
+      setShowCheck(false);
+    }, 600);
   };
 
   const handleIntensityTap = (value) => {
+    if (closingRef.current) return;
     haptic(2);
     setIntensity(value);
     if (selected) {

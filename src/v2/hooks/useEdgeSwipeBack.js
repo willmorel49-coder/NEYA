@@ -34,11 +34,13 @@ export default function useEdgeSwipeBack({
   const lastX = useRef(0);
   const draggingRef = useRef(false);
   const springTimer = useRef(null);
+  const dismissTimer = useRef(null);
   const mouseHandlersRef = useRef(null);
 
   useEffect(() => {
     return () => {
       if (springTimer.current) clearTimeout(springTimer.current);
+      if (dismissTimer.current) clearTimeout(dismissTimer.current);
       // cleanup any dangling mouse listeners
       if (mouseHandlersRef.current) {
         const { move, up } = mouseHandlersRef.current;
@@ -120,8 +122,10 @@ export default function useEdgeSwipeBack({
         haptic(4);
         onClose?.();
         // reset after a tick so we don't flash
-        setTimeout(() => {
+        if (dismissTimer.current) clearTimeout(dismissTimer.current);
+        dismissTimer.current = setTimeout(() => {
           setTranslateX(0);
+          dismissTimer.current = null;
         }, 320);
       } else {
         // spring back to 0

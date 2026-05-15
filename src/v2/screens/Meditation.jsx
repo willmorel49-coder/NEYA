@@ -109,6 +109,8 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
   const [audioOn, setAudioOn] = useState(false);
   const audioEngineRef = useRef(null);
   const audioPreset = AUDIO_PRESETS[worldKey] || AUDIO_PRESETS.foret;
+  const closingRef = useRef(false);
+  const closeTimerRef = useRef(null);
 
   const toggleAudio = () => {
     haptic(3);
@@ -127,20 +129,32 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
     });
   };
 
-  // Free audio resources on unmount
+  // Free audio resources + pending close timer on unmount
   useEffect(() => () => {
     if (audioEngineRef.current) {
       audioEngineRef.current.stop();
       audioEngineRef.current = null;
     }
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
   }, []);
 
   useEffect(() => { const t = setTimeout(() => setShow(true), 60); return () => clearTimeout(t); }, []);
 
+  // Drift-resistant tick : anchor sur performance.now() et calcule un delta réel
   useEffect(() => {
     if (paused) return;
-    const tick = setInterval(() => setElapsedMs((m) => m + 1000), 1000);
+    const start = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    const baseline = elapsedMs;
+    const tick = setInterval(() => {
+      const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+      const dt = now - start;
+      setElapsedMs(baseline + Math.floor(dt / 1000) * 1000);
+    }, 1000);
     return () => clearInterval(tick);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paused]);
 
   const minutes = Math.floor(elapsedMs / 60000);
@@ -169,6 +183,9 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
   useEffect(() => () => { if (popTimerRef.current) clearTimeout(popTimerRef.current); }, []);
 
   const handleClose = () => {
+    // Guard: empêche double-tap / re-entry → completeMeditation x2
+    if (closingRef.current) return;
+    closingRef.current = true;
     if (audioEngineRef.current) {
       audioEngineRef.current.stop();
       audioEngineRef.current = null;
@@ -191,7 +208,10 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
       }
       haptic([8, 60, 8]);
       setToast({ minutes, wasNew });
-      setTimeout(() => { onClose?.(); }, 2200);
+      closeTimerRef.current = setTimeout(() => {
+        closeTimerRef.current = null;
+        onClose?.();
+      }, 2200);
       return;
     }
     haptic(4);
