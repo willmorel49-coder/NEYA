@@ -284,42 +284,186 @@ export default function Souvenirs({ onClose }) {
         {/* List zone */}
         <div style={{ padding: '0 18px 8px' }}>
           {filteredList.length === 0 ? (
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '32px 18px 24px',
-              }}
-            >
+            souvenirs.length === 0 ? (
+              /* Primary empty state — no souvenirs at all */
               <div
                 style={{
-                  fontFamily: '"Fraunces", Georgia, serif',
-                  fontStyle: 'italic',
-                  fontWeight: 400,
-                  fontSize: 16,
-                  lineHeight: 1.45,
-                  color: 'var(--content-tertiary)',
-                  marginBottom: 10,
-                  maxWidth: 320,
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
+                  minHeight: '60vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  padding: '64px 24px',
                 }}
               >
-                Tes premières traces apparaîtront bientôt.
+                {/* Illustration zone — glyph + halo */}
+                <div
+                  aria-hidden
+                  style={{
+                    position: 'relative',
+                    width: 140,
+                    height: 140,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 28,
+                  }}
+                >
+                  {/* Halo radial */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '50%',
+                      background: `radial-gradient(circle at center, ${TERRACOTTA}33 0%, ${TERRACOTTA}14 38%, transparent 70%)`,
+                      filter: 'blur(2px)',
+                    }}
+                  />
+                  {/* Glyph */}
+                  <div
+                    style={{
+                      position: 'relative',
+                      fontFamily: '"Fraunces", Georgia, serif',
+                      fontSize: 88,
+                      lineHeight: 1,
+                      color: TERRACOTTA,
+                      animation: 'totem-idle 4s var(--ease-in-out, ease-in-out) infinite',
+                      textShadow: `0 2px 18px ${TERRACOTTA}55`,
+                    }}
+                  >
+                    ◈
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h2
+                  style={{
+                    fontFamily: '"Fraunces", Georgia, serif',
+                    fontStyle: 'italic',
+                    fontWeight: 400,
+                    fontSize: 24,
+                    lineHeight: 1.25,
+                    color: 'var(--ink)',
+                    margin: '0 0 12px',
+                    letterSpacing: '-0.005em',
+                  }}
+                >
+                  Tes souvenirs t'attendent.
+                </h2>
+
+                {/* Subtitle body */}
+                <p
+                  style={{
+                    fontFamily: 'Inter, system-ui, sans-serif',
+                    fontSize: 13,
+                    lineHeight: 1.55,
+                    color: 'var(--ink-soft, var(--content-soft, var(--content-tertiary)))',
+                    margin: '0 0 22px',
+                    maxWidth: 280,
+                  }}
+                >
+                  Chaque méditation, chaque rituel, chaque bilan laissera ici sa trace. Reviens dans quelques jours.
+                </p>
+
+                {/* Ghost CTA */}
+                <button
+                  type="button"
+                  data-press
+                  onClick={doClose}
+                  style={{
+                    appearance: 'none',
+                    border: 'none',
+                    background: 'transparent',
+                    padding: '8px 12px',
+                    cursor: 'pointer',
+                    WebkitTapHighlightColor: 'transparent',
+                    fontFamily: '"Sora", system-ui, sans-serif',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    letterSpacing: '0.222em',
+                    textTransform: 'uppercase',
+                    color: 'var(--ink)',
+                  }}
+                >
+                  Commencer maintenant ↗
+                </button>
               </div>
+            ) : (
+              /* Filtered empty state — souvenirs exist but filter returns 0 */
               <div
                 style={{
-                  fontFamily: 'Inter, system-ui, sans-serif',
-                  fontSize: 12,
-                  lineHeight: 1.55,
-                  color: 'var(--content-tertiary)',
-                  maxWidth: 300,
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
+                  minHeight: '60vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  padding: '48px 24px',
                 }}
               >
-                Médite, écris, pose ta journée — chaque ritual laisse un souvenir ici.
+                <div
+                  aria-hidden
+                  style={{
+                    position: 'relative',
+                    width: 96,
+                    height: 96,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 18,
+                  }}
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '50%',
+                      background: `radial-gradient(circle at center, ${TERRACOTTA}26 0%, ${TERRACOTTA}10 40%, transparent 72%)`,
+                      filter: 'blur(2px)',
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'relative',
+                      fontFamily: '"Fraunces", Georgia, serif',
+                      fontSize: 48,
+                      lineHeight: 1,
+                      color: TERRACOTTA,
+                      animation: 'totem-idle 4s var(--ease-in-out, ease-in-out) infinite',
+                      opacity: 0.85,
+                    }}
+                  >
+                    ◈
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontFamily: '"Fraunces", Georgia, serif',
+                    fontStyle: 'italic',
+                    fontWeight: 400,
+                    fontSize: 17,
+                    lineHeight: 1.4,
+                    color: 'var(--ink)',
+                    marginBottom: 8,
+                    maxWidth: 280,
+                  }}
+                >
+                  Rien encore dans «&nbsp;{(FILTERS.find((f) => f.id === filter) || {}).label || filter}&nbsp;».
+                </div>
+                <div
+                  style={{
+                    fontFamily: 'Inter, system-ui, sans-serif',
+                    fontSize: 12,
+                    lineHeight: 1.55,
+                    color: 'var(--content-tertiary)',
+                    maxWidth: 260,
+                  }}
+                >
+                  Essaie un autre filtre.
+                </div>
               </div>
-            </div>
+            )
           ) : (
             <div
               className="stagger"

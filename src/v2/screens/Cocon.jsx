@@ -10,6 +10,7 @@ import { WORLDS } from '../worlds';
 import { getProfile, setProfile, patchProfile, haptic, ls } from '../state';
 import Button from '../../components/Button';
 import ActionSheet from '../../components/ActionSheet';
+import StickyHeader from '../../components/StickyHeader';
 import Carnet from './Carnet';
 import MoodTracker from './MoodTracker';
 import Souvenirs from './Souvenirs';
@@ -86,6 +87,7 @@ export default function Cocon() {
   const [carnetOpen, setCarnetOpen] = useState(false);
   const [moodOpen, setMoodOpen] = useState(false);
   const [souvenirsOpen, setSouvenirsOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
 
   const placed = profile.coconPlaced || {};
   const totemKey = profile.totem || 'lion';
@@ -160,21 +162,38 @@ export default function Cocon() {
         }}
       />
       <div
+        onScroll={(e) => setScrollY(e.currentTarget.scrollTop)}
         style={{
           height: '100%',
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 22px) 22px calc(env(safe-area-inset-bottom, 0px) + 110px)',
         }}
       >
-        {/* Header */}
+        <StickyHeader
+          eyebrow={`MON COCON · ${currentTotem.label.toUpperCase()}`}
+          title={
+            profile.pseudo ? (
+              <>Bienvenue, <em className="neya-key">{profile.pseudo}.</em></>
+            ) : (
+              <>Pose-toi <em className="neya-key">ici.</em></>
+            )
+          }
+          scrollY={scrollY}
+          accent={totemWorld.accent}
+        />
+        <div
+          style={{
+            padding: `0 22px calc(env(safe-area-inset-bottom, 0px) + 110px)`,
+          }}
+        >
+        {/* Avatar spirit — below the sticky header zone, scrolls away naturally */}
         {SPIRIT_PHOTO[totemKey] && (
           <div
             style={{
               display: 'flex',
               justifyContent: 'center',
-              marginBottom: 18,
-              marginTop: 4,
+              marginTop: 12,
+              marginBottom: 28,
             }}
           >
             <div
@@ -228,19 +247,6 @@ export default function Cocon() {
             </div>
           </div>
         )}
-        <div className="neya-mark" style={{ color: 'var(--content-tertiary)', marginBottom: 6 }}>
-          MON COCON · {currentTotem.label.toUpperCase()}
-        </div>
-        <h1
-          className="neya-h1"
-          style={{ fontFamily: 'var(--font-display)', marginBottom: 28 }}
-        >
-          {profile.pseudo ? (
-            <>Bienvenue, <em className="neya-key">{profile.pseudo}.</em></>
-          ) : (
-            <>Pose-toi <em className="neya-key">ici.</em></>
-          )}
-        </h1>
 
         {/* Identité */}
         <SectionTitle accent={totemWorld.accent}>Identité</SectionTitle>
@@ -657,6 +663,7 @@ export default function Cocon() {
           >
             Réinitialiser mon NÉYA
           </button>
+        </div>
         </div>
       </div>
 

@@ -99,13 +99,15 @@ export default function CaVa() {
 
   const [cart, setCart] = useState(() => loadCart());
   const [activePass, setActivePass] = useState(() => loadActivePass());
-  const [passOpen, setPassOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [lastOrderTotal, setLastOrderTotal] = useState(0);
   const [productDetail, setProductDetail] = useState(null); // { product, capsule }
   const [manifesteOpen, setManifesteOpen] = useState(false);
   const [lookbookOpen, setLookbookOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const compressed = scrollY > 60;
+  const activeIndex = Math.max(0, PASSES.findIndex((p) => p.key === activePass));
 
   const currentPass = PASSES.find((p) => p.key === activePass) || PASSES[0];
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
@@ -119,8 +121,15 @@ export default function CaVa() {
     }
     setActivePass(key);
     saveActivePass(key);
-    setPassOpen(false);
     haptic(4);
+  };
+
+  const scrollToCapsule = (key) => {
+    haptic(4);
+    const el = document.getElementById(`cava-capsule-${key}`);
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const addToCart = (product) => {
@@ -174,149 +183,216 @@ export default function CaVa() {
     >
       {/* Scrollable content */}
       <div
+        onScroll={(e) => setScrollY(e.currentTarget.scrollTop)}
         style={{
           position: 'relative',
           height: '100%',
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
           padding:
-            'calc(env(safe-area-inset-top, 0px) + 24px) var(--sp-5) calc(env(safe-area-inset-bottom, 0px) + 110px)',
+            '0 0 calc(env(safe-area-inset-bottom, 0px) + 110px)',
         }}
       >
-        {/* Header row : brand + pass + cart */}
+        {/* Sticky compressed header */}
         <div
           style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            marginBottom: 12,
+            position: 'sticky',
+            top: 0,
+            zIndex: 5,
+            paddingTop: 'calc(env(safe-area-inset-top, 0px) + ' + (compressed ? '12px' : '24px') + ')',
+            paddingLeft: 22,
+            paddingRight: 22,
+            paddingBottom: compressed ? 12 : 22,
+            background: compressed ? 'rgba(244, 240, 232, 0.92)' : 'transparent',
+            backdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
+            WebkitBackdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
+            borderBottom: compressed ? '0.5px solid rgba(26, 26, 47, 0.10)' : '0.5px solid transparent',
+            transition:
+              'padding 240ms var(--ease-out-ios), background 240ms var(--ease-out-ios), border-color 240ms var(--ease-out-ios), backdrop-filter 240ms var(--ease-out-ios)',
           }}
         >
-          <div>
-            <div
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 9,
-                fontWeight: 500,
-                letterSpacing: '0.222em',
-                textTransform: 'uppercase',
-                color: 'rgba(26, 26, 47, 0.55)',
-                marginBottom: 8,
-              }}
-            >
-              CAPSULE · MARQUE SŒUR DE NÉYA
+          {/* Header row : brand + cart */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              gap: 12,
+            }}
+          >
+            <div style={{ minWidth: 0 }}>
+              <div
+                style={{
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 9,
+                  fontWeight: 500,
+                  letterSpacing: '0.222em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(26, 26, 47, 0.55)',
+                  marginBottom: compressed ? 0 : 8,
+                  opacity: compressed ? 0 : 1,
+                  maxHeight: compressed ? 0 : 14,
+                  overflow: 'hidden',
+                  transition:
+                    'opacity 240ms var(--ease-out-ios), max-height 240ms var(--ease-out-ios), margin-bottom 240ms var(--ease-out-ios)',
+                }}
+              >
+                CAPSULE · MARQUE SŒUR DE NÉYA
+              </div>
+              <h1
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontStyle: 'italic',
+                  fontSize: compressed ? 22 : 36,
+                  fontWeight: 400,
+                  lineHeight: 1.0,
+                  letterSpacing: '-0.018em',
+                  fontVariationSettings: 'var(--fraunces-opsz-large)',
+                  margin: 0,
+                  color: 'var(--cava-ink)',
+                  transition: 'font-size 240ms var(--ease-out-ios)',
+                }}
+              >
+                ÇA VA ?
+              </h1>
             </div>
-            <h1
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontStyle: 'italic',
-                fontSize: 36,
-                fontWeight: 400,
-                lineHeight: 1.0,
-                letterSpacing: '-0.018em',
-                fontVariationSettings: 'var(--fraunces-opsz-large)',
-                margin: 0,
-                color: 'var(--cava-ink)',
-              }}
-            >
-              ÇA VA ?
-            </h1>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+              {/* Cart */}
+              <button
+                data-press
+                onClick={() => { haptic(4); setCartOpen(true); }}
+                aria-label="Panier"
+                style={{
+                  appearance: 'none',
+                  background: 'transparent',
+                  border: '0.5px solid rgba(26, 26, 47, 0.18)',
+                  borderRadius: '50%',
+                  width: 36,
+                  height: 36,
+                  color: 'var(--cava-ink)',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  WebkitTapHighlightColor: 'transparent',
+                  fontSize: 14,
+                }}
+              >
+                ⌒
+                {cartCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: -4,
+                      right: -4,
+                      minWidth: 16,
+                      height: 16,
+                      background: 'var(--cava-purple)',
+                      color: 'var(--cava-bg)',
+                      borderRadius: '50%',
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: 9,
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '0 4px',
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {/* Pass selector */}
-            <button
-              data-press
-              onClick={() => { haptic(4); setPassOpen((o) => !o); }}
+          {/* Segmented control — passes */}
+          <div
+            style={{
+              marginTop: compressed ? 8 : 14,
+              position: 'relative',
+              display: 'flex',
+              background: 'rgba(26, 26, 47, 0.06)',
+              borderRadius: 'var(--radius-pill)',
+              padding: 3,
+              overflow: 'hidden',
+              transition: 'margin-top 240ms var(--ease-out-ios)',
+            }}
+          >
+            {/* Sliding indicator */}
+            <div
+              aria-hidden="true"
               style={{
-                appearance: 'none',
-                background: 'transparent',
-                border: `0.5px solid ${currentPass.color}`,
+                position: 'absolute',
+                top: 3,
+                bottom: 3,
+                left: 3,
+                width: 'calc((100% - 6px) / 3)',
+                background: 'var(--cream-light)',
                 borderRadius: 'var(--radius-pill)',
-                padding: '6px 14px',
-                fontFamily: 'var(--font-ui)',
-                fontSize: 11,
-                fontWeight: 500,
-                color: currentPass.color,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                WebkitTapHighlightColor: 'transparent',
-                whiteSpace: 'nowrap',
+                boxShadow: '0 1px 2px rgba(26, 26, 47, 0.06), 0 4px 12px rgba(26, 26, 47, 0.05)',
+                transform: `translateX(${activeIndex * 100}%)`,
+                transition: 'transform 320ms var(--ease-spring-subtle)',
               }}
-            >
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: '50%',
-                  background: currentPass.color,
-                }}
-              />
-              {currentPass.label}
-              <span style={{ fontSize: 9, opacity: 0.7 }}>▾</span>
-            </button>
-
-            {/* Cart */}
-            <button
-              data-press
-              onClick={() => { haptic(4); setCartOpen(true); }}
-              aria-label="Panier"
-              style={{
-                appearance: 'none',
-                background: 'transparent',
-                border: '0.5px solid rgba(26, 26, 47, 0.18)',
-                borderRadius: '50%',
-                width: 36,
-                height: 36,
-                color: 'var(--cava-ink)',
-                cursor: 'pointer',
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                WebkitTapHighlightColor: 'transparent',
-                fontSize: 14,
-              }}
-            >
-              ⌒
-              {cartCount > 0 && (
-                <span
+            />
+            {PASSES.map((p) => {
+              const isActive = p.key === activePass;
+              const unlocked = isPassUnlocked(p.key, joursConnectes);
+              return (
+                <button
+                  key={p.key}
+                  data-press={unlocked ? true : undefined}
+                  onClick={() => pickPass(p.key)}
+                  disabled={!unlocked}
                   style={{
-                    position: 'absolute',
-                    top: -4,
-                    right: -4,
-                    minWidth: 16,
-                    height: 16,
-                    background: 'var(--cava-purple)',
-                    color: 'var(--cava-bg)',
-                    borderRadius: '50%',
+                    appearance: 'none',
+                    background: 'transparent',
+                    border: 'none',
+                    flex: 1,
+                    padding: '8px 12px',
+                    position: 'relative',
+                    zIndex: 1,
                     fontFamily: 'var(--font-ui)',
-                    fontSize: 9,
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '0 4px',
+                    fontSize: 11,
+                    fontWeight: isActive ? 600 : 500,
+                    color: isActive
+                      ? p.color
+                      : 'rgba(26, 26, 47, 0.55)',
+                    opacity: unlocked ? 1 : 0.55,
+                    cursor: unlocked ? 'pointer' : 'not-allowed',
+                    WebkitTapHighlightColor: 'transparent',
+                    transition: 'color 240ms var(--ease-out-ios), font-weight 240ms var(--ease-out-ios)',
+                    whiteSpace: 'nowrap',
                   }}
                 >
-                  {cartCount}
-                </span>
-              )}
-            </button>
+                  {p.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Manifeste tagline */}
+        {/* Inner padded body */}
+        <div style={{ padding: '0 22px' }}>
+
+        {/* Manifeste tagline (fades + collapses when compressed) */}
         <p
           style={{
-            margin: '8px 0 32px',
+            margin: 0,
+            paddingTop: compressed ? 0 : 14,
+            paddingBottom: compressed ? 0 : 28,
             fontFamily: 'var(--font-body)',
             fontSize: 14,
             lineHeight: 1.55,
             color: 'rgba(26, 26, 47, 0.65)',
             maxWidth: 380,
+            opacity: compressed ? 0 : 1,
+            maxHeight: compressed ? 0 : 200,
+            overflow: 'hidden',
+            transition:
+              'opacity 240ms var(--ease-out-ios), max-height 240ms var(--ease-out-ios), padding 240ms var(--ease-out-ios)',
           }}
         >
           Faire de la mode un langage qui libère la parole sur la santé mentale.
@@ -325,6 +401,64 @@ export default function CaVa() {
             Briser le masque du « ça va ».
           </em>
         </p>
+
+        {/* Horizontal capsule covers strip — scroll-snap */}
+        <div
+          style={{
+            display: 'flex',
+            overflowX: 'auto',
+            gap: 10,
+            scrollSnapType: 'x mandatory',
+            WebkitOverflowScrolling: 'touch',
+            padding: '8px 22px 12px',
+            margin: '0 -22px 18px',
+            scrollPaddingLeft: 22,
+          }}
+        >
+          {CAPSULES.map((c) => (
+            <button
+              key={c.key}
+              data-press
+              onClick={() => scrollToCapsule(c.key)}
+              style={{
+                flex: '0 0 86%',
+                scrollSnapAlign: 'start',
+                aspectRatio: '16 / 9',
+                borderRadius: 'var(--radius-lg)',
+                overflow: 'hidden',
+                backgroundImage: `url(${c.cover})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundColor: c.accentSoft,
+                border: `0.5px solid ${c.accent}`,
+                position: 'relative',
+                cursor: 'pointer',
+                appearance: 'none',
+                padding: 0,
+                WebkitTapHighlightColor: 'transparent',
+              }}
+              aria-label={`Aller à la capsule ${c.name}`}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 12,
+                  left: 14,
+                  right: 14,
+                  color: 'var(--cava-ink)',
+                  fontFamily: 'var(--font-display)',
+                  fontStyle: 'italic',
+                  fontSize: 18,
+                  fontVariationSettings: 'var(--fraunces-italic-soft)',
+                  textShadow: '0 1px 4px rgba(255, 252, 245, 0.5)',
+                  textAlign: 'left',
+                }}
+              >
+                {c.name}
+              </div>
+            </button>
+          ))}
+        </div>
 
         {/* Quick links bar — Notre histoire + Lookbook */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 28 }}>
@@ -372,120 +506,18 @@ export default function CaVa() {
           </button>
         </div>
 
-        {/* Pass dropdown */}
-        {passOpen && (
-          <div
-            style={{
-              background: 'rgba(255, 252, 245, 0.78)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '0.5px solid rgba(26, 26, 47, 0.10)',
-              borderRadius: 'var(--radius-lg)',
-              padding: 12,
-              marginBottom: 24,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 6,
-            }}
-          >
-            {PASSES.map((p) => {
-              const isActive = p.key === activePass;
-              const unlocked = isPassUnlocked(p.key, joursConnectes);
-              const showGift = p.key === 'vraiment' && unlocked;
-              return (
-                <button
-                  key={p.key}
-                  data-press={unlocked ? true : undefined}
-                  onClick={() => pickPass(p.key)}
-                  disabled={!unlocked}
-                  style={{
-                    appearance: 'none',
-                    background: isActive ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                    border: showGift ? `0.5px solid ${p.color}` : 'none',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '12px 14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    cursor: unlocked ? 'pointer' : 'not-allowed',
-                    opacity: unlocked ? 1 : 0.55,
-                    WebkitTapHighlightColor: 'transparent',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span
-                      style={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: '50%',
-                        background: p.color,
-                      }}
-                    />
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                        <span
-                          style={{
-                            fontFamily: 'var(--font-ui)',
-                            fontSize: 14,
-                            fontWeight: 500,
-                            color: 'var(--cava-ink)',
-                          }}
-                        >
-                          {p.label}
-                        </span>
-                        {showGift && (
-                          <span
-                            style={{
-                              fontFamily: 'var(--font-display)',
-                              fontStyle: 'italic',
-                              fontSize: 11,
-                              color: p.color,
-                              fontVariationSettings: 'var(--fraunces-italic-soft)',
-                            }}
-                          >
-                            ♡ pour toi
-                          </span>
-                        )}
-                      </div>
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-body)',
-                          fontSize: 11,
-                          color: 'rgba(26, 26, 47, 0.55)',
-                        }}
-                      >
-                        {p.discount > 0 ? `${p.discount}% sur tout` : 'Aucune réduction'}
-                        {!unlocked && p.key === 'vraiment' && ` · ${joursConnectes}/${PASS_UNLOCK_THRESHOLD} j`}
-                      </span>
-                    </div>
-                  </div>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-ui)',
-                      fontSize: 11,
-                      color: showGift ? p.color : 'var(--cava-ink)',
-                      fontWeight: 500,
-                    }}
-                  >
-                    {passLabel(p, joursConnectes)}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
         {/* 3 capsules */}
         {CAPSULES.map((c) => (
-          <CapsuleSection
-            key={c.key}
-            capsule={c}
-            onAddToCart={addToCart}
-            onOpenDetail={(product) => setProductDetail({ product, capsule: c })}
-            discountPercent={currentPass.discount}
-            pseudo={pseudo}
-            totem={totem}
-          />
+          <div id={`cava-capsule-${c.key}`} key={c.key} style={{ scrollMarginTop: 80 }}>
+            <CapsuleSection
+              capsule={c}
+              onAddToCart={addToCart}
+              onOpenDetail={(product) => setProductDetail({ product, capsule: c })}
+              discountPercent={currentPass.discount}
+              pseudo={pseudo}
+              totem={totem}
+            />
+          </div>
         ))}
 
         {/* Footer manifesto */}
@@ -503,6 +535,7 @@ export default function CaVa() {
           }}
         >
           « Nous existons pour briser<br />le masque du <em>ça va.</em> »
+        </div>
         </div>
       </div>
 

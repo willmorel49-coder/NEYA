@@ -6,7 +6,7 @@
    + Daily prompt header · Sub-tabs filter · Topic tags · Crisis soft prompt
    ============================================================ */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { WORLDS } from '../worlds';
 import {
   haptic,
@@ -21,6 +21,8 @@ import {
 } from '../state';
 import Button from '../../components/Button';
 import ActionSheet from '../../components/ActionSheet';
+import SegmentedControl from '../../components/SegmentedControl';
+import ContextMenu from '../../components/ContextMenu';
 import Cercle from './Cercle';
 import Aide from './Aide';
 import EspacesIRL from './EspacesIRL';
@@ -182,8 +184,40 @@ export default function Communaute() {
   const [aideOpen, setAideOpen] = useState(false);
   const [irlOpen, setIrlOpen] = useState(false);
   const [actionSheet, setActionSheet] = useState(null); // { type: 'delete-post', postId } | null
+  const [contextMenu, setContextMenu] = useState(null); // { post, position } | null
+  const longPressTimerRef = useRef(null);
+  const longPressFiredRef = useRef(false);
 
   const prompt = useMemo(() => getDailyPrompt(), []);
+
+  // ── Long-press helpers (iOS standard 500ms) ─────────────
+  const clearLongPress = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+  const openContextMenu = (post, x, y) => {
+    haptic(6);
+    longPressFiredRef.current = true;
+    setContextMenu({ post, position: { x, y } });
+  };
+  const startLongPress = (post, e) => {
+    longPressFiredRef.current = false;
+    const touch = e.touches && e.touches[0];
+    const x = touch ? touch.clientX : 0;
+    const y = touch ? touch.clientY : 0;
+    clearLongPress();
+    longPressTimerRef.current = setTimeout(() => {
+      openContextMenu(post, x, y);
+    }, 500);
+  };
+  const handleRightClick = (post, e) => {
+    e.preventDefault();
+    openContextMenu(post, e.clientX, e.clientY);
+  };
+
+  useEffect(() => () => clearLongPress(), []);
 
   // Pull-to-refresh : simulate fresh content (no backend yet)
   const handleRefresh = async () => {
@@ -513,43 +547,18 @@ export default function Communaute() {
           </button>
         </div>
 
-        {/* Feature 2 — Sub-tabs */}
-        <div
-          style={{
-            display: 'flex',
-            gap: 8,
-            marginBottom: 18,
-            flexWrap: 'wrap',
-          }}
-        >
-          {SUB_TABS.map((tab) => {
-            const isActive = subFilter === tab.key;
-            return (
-              <button
-                key={tab.key}
-                data-press
-                onClick={() => switchSubFilter(tab.key)}
-                style={{
-                  appearance: 'none',
-                  background: isActive ? 'var(--ink)' : 'transparent',
-                  color: isActive ? 'var(--cream)' : 'var(--ink)',
-                  border: isActive ? 'none' : '0.5px solid rgba(26, 26, 47, 0.16)',
-                  borderRadius: 'var(--radius-pill, 999px)',
-                  padding: '7px 14px',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: '0.04em',
-                  WebkitTapHighlightColor: 'transparent',
-                  transition: 'background 200ms var(--ease-out), color 200ms var(--ease-out)',
-                }}
-                aria-pressed={isActive}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
+        {/* Feature 2 — Sub-tabs (Apple iOS Segmented Control) */}
+        <div style={{ marginBottom: 18 }}>
+          <SegmentedControl
+            segments={[
+              { value: 'all',     label: 'Toutes' },
+              { value: 'reacted', label: 'Touchées' },
+              { value: 'mine',    label: 'Mes voix' },
+            ]}
+            active={subFilter}
+            onChange={(v) => setSubFilter(v)}
+            accent={wRenard.accent}
+          />
         </div>
 
         <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -579,6 +588,11 @@ export default function Communaute() {
             return (
               <div
                 key={v.id}
+                onTouchStart={(e) => startLongPress(v, e)}
+                onTouchEnd={clearLongPress}
+                onTouchMove={clearLongPress}
+                onTouchCancel={clearLongPress}
+                onContextMenu={(e) => handleRightClick(v, e)}
                 style={{
                   background: 'rgba(255, 252, 245, 0.78)',
                   backdropFilter: 'blur(14px)',
@@ -589,6 +603,9 @@ export default function Communaute() {
                   boxShadow: '0 2px 14px rgba(26, 26, 47, 0.04)',
                   opacity: isDissipated ? 0.5 : 1,
                   transition: 'opacity 300ms var(--ease-out)',
+                  WebkitUserSelect: 'none',
+                  userSelect: 'none',
+                  WebkitTouchCallout: 'none',
                 }}
               >
                 <div
@@ -924,6 +941,62 @@ export default function Communaute() {
           onClose={() => setActionSheet(null)}
         />
       )}
+
+      {/* Long-press context menu on voice cards */}
+      {contextMenu && (() => {
+        const v = contextMenu.post;
+        const userReacted = !!(reactionState[v.id] && reactionState[v.id].touche);
+        const items = [];
+        items.push({
+          label: 'Copier le texte',
+          icon: '⎘',
+          onTap: () => {
+            try {
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(v.body);
+              }
+            } catch (_) { /* no-op */ }
+          },
+        });
+        if (!userReacted) {
+          items.push({
+            label: 'Réagir avec ♡',
+            icon: '♡',
+            onTap: () => toggleReaction(v.id, 'touche'),
+          });
+        }
+        items.push({
+          label: 'Signaler cette voix',
+          icon: '⚐',
+          onTap: () => {
+            const ok = typeof window !== 'undefined' && window.confirm
+              ? window.confirm('Signaler cette voix au modérateur ?')
+              : true;
+            if (ok) {
+              const flagged = ls.get('flagged_posts', []);
+              if (!flagged.includes(v.id)) {
+                ls.set('flagged_posts', [...flagged, v.id]);
+              }
+            }
+          },
+        });
+        if (v.mine) {
+          items.push({
+            label: 'Effacer ma voix',
+            role: 'destructive',
+            icon: '⌫',
+            onTap: () => setActionSheet({ type: 'delete-post', postId: v.id }),
+          });
+        }
+        return (
+          <ContextMenu
+            isOpen={true}
+            position={contextMenu.position}
+            items={items}
+            onClose={() => setContextMenu(null)}
+          />
+        );
+      })()}
     </div>
   );
 }

@@ -34,6 +34,7 @@ export default function ProductDetail({
   const [closing, setClosing] = useState(false);
   const [selectedSize, setSelectedSize] = useState(null);
   const [qty, setQty] = useState(1);
+  const [zoomed, setZoomed] = useState(false);
 
   // Swipe-to-dismiss (iOS HIG : drag handle down)
   const { bindHandle, translateY, isDragging } = useSwipeToDismiss({
@@ -230,26 +231,59 @@ export default function ProductDetail({
           paddingBottom: 120,
         }}>
           {/* Image zone — 4:5 full-width */}
-          <div style={{
-            position: 'relative',
-            width: '100%',
-            aspectRatio: '4 / 5',
-            background: image
-              ? 'var(--cream-dim)'
-              : `linear-gradient(135deg, ${accentSoft} 0%, var(--cava-bg) 100%)`,
-            overflow: 'hidden',
-          }}>
+          <div
+            data-press={image ? '' : undefined}
+            onClick={image ? () => { haptic(4); setZoomed(true); } : undefined}
+            style={{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '4 / 5',
+              background: image
+                ? 'var(--cream-dim)'
+                : `linear-gradient(135deg, ${accentSoft} 0%, var(--cava-bg) 100%)`,
+              overflow: 'hidden',
+              cursor: image ? 'pointer' : 'default',
+              WebkitTapHighlightColor: 'transparent',
+            }}>
             {image ? (
-              <img
-                src={image}
-                alt={product?.name || ''}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
+              <>
+                <img
+                  src={image}
+                  alt={product?.name || ''}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+                {/* Zoom hint */}
+                <div
+                  aria-hidden
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    right: 12,
+                    width: 32,
+                    height: 32,
+                    borderRadius: '50%',
+                    background: 'var(--cream-light, rgba(255, 252, 245, 0.85))',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--cava-ink)',
+                    fontSize: 14,
+                    lineHeight: 1,
+                    opacity: 0.7,
+                    boxShadow: '0 2px 8px rgba(26, 26, 47, 0.12)',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  ⤢
+                </div>
+              </>
             ) : (
               <>
                 {/* Caps top-left */}
@@ -589,6 +623,54 @@ export default function ProductDetail({
           </button>
         </div>
       </div>
+
+      {/* Zoom overlay — fullscreen tap-to-close */}
+      {zoomed && image && (
+        <div
+          onClick={() => { haptic(4); setZoomed(false); }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 2000,
+            background: 'rgba(26, 26, 47, 0.85)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+            animation: 'fade-in 240ms var(--ease-out-ios)',
+            cursor: 'pointer',
+          }}
+        >
+          <img
+            src={image}
+            alt={product?.name || ''}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '90vh',
+              objectFit: 'contain',
+              borderRadius: 'var(--radius-lg)',
+              boxShadow: 'var(--shadow-deep)',
+              animation: 'sheet-rise 420ms var(--ease-spring-soft) both',
+            }}
+          />
+          <div style={{
+            position: 'absolute',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 24px)',
+            left: 0, right: 0,
+            textAlign: 'center',
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 16,
+            color: 'rgba(255, 252, 245, 0.92)',
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            pointerEvents: 'none',
+          }}>
+            {product?.name}
+          </div>
+        </div>
+      )}
     </>
   );
 }
