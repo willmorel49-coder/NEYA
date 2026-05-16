@@ -17,9 +17,11 @@ import { WORLDS } from '../worlds';
 import { getProfile, patchProfile, haptic } from '../state';
 import { LECONS as LECONS_CONTENT } from '../data/lecons';
 import { TEMPS_GROUPS as TEMPS_GROUPS_DATA, RITUELS as RITUELS_DATA, getRituelsForTemps } from '../data/rituels-temps';
+import { MONDES as MONDES_DATA } from '../data/mondes';
 import CoconAmbiance from './CoconAmbiance';
 import LeconReader from './LeconReader';
 import RituelPlayer from './RituelPlayer';
+import MondeReader from './MondeReader';
 import AventureOnboarding from './AventureOnboarding';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
@@ -119,6 +121,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const [pilierSheet, setPilierSheet] = useState(null);
   const [openedLecon, setOpenedLecon] = useState(null);
   const [openedRituel, setOpenedRituel] = useState(null);
+  const [openedMonde, setOpenedMonde] = useState(null);
   const [onboardingOpen, setOnboardingOpen] = useState(() => {
     const p = getProfile();
     return !p.aventure?.onboardingSeen;
@@ -649,10 +652,17 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
 
       {pilierSheet === 'aventure' && (
         <AventureWorldsSheet
-          worlds={WORLDS_LIST}
+          mondes={MONDES_DATA}
+          mondesProgress={av.mondesProgress || {}}
           currentTotem={currentTotem.world}
-          onPick={(worldKey) => { setPilierSheet(null); onOpenWorld?.(worldKey); }}
+          onPickMonde={(monde) => { setPilierSheet(null); setOpenedMonde(monde); }}
           onClose={() => setPilierSheet(null)}
+        />
+      )}
+      {openedMonde && (
+        <MondeReader
+          monde={openedMonde}
+          onClose={() => { setOpenedMonde(null); setLocalProfile(getProfile()); setPilierSheet('aventure'); }}
         />
       )}
       {pilierSheet === 'connaissance' && (
@@ -968,85 +978,232 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
 
 /* ─── 3 sheets piliers ─── */
 
-function AventureWorldsSheet({ worlds, currentTotem, onPick, onClose }) {
+function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde, onClose }) {
+  const totalCompletes = mondes.filter((m) => m.available && (mondesProgress[m.key] || 0) >= m.etapes.length).length;
+  const totalDispo = mondes.filter((m) => m.available).length;
+
   return (
-    <SheetWrap title="L'Aventure" subtitle="Six mondes émotionnels à traverser." onClose={onClose} labelText="Mondes">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {worlds.map((w) => {
-          const isCurrent = w.key === currentTotem;
+    <SheetWrap
+      title="L'Aventure"
+      subtitle={`${totalCompletes} / ${totalDispo} mondes traversés · 6 mondes émotionnels`}
+      onClose={onClose}
+      labelText="Mondes"
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {mondes.map((m) => {
+          const isCurrent = m.key === currentTotem;
+          const progress = mondesProgress[m.key] || 0;
+          const completed = m.available && progress >= m.etapes.length;
+          const started = m.available && progress > 0 && !completed;
+          const totalEtapes = m.etapes.length;
+          const progressPct = totalEtapes > 0 ? Math.min(100, (progress / totalEtapes) * 100) : 0;
+
           return (
             <button
-              key={w.key}
+              key={m.key}
               type="button"
-              data-press
-              onClick={() => onPick?.(w.key)}
+              data-press={m.available ? true : undefined}
+              onClick={() => { if (m.available) onPickMonde?.(m); else haptic(2); }}
+              disabled={!m.available}
               style={{
                 appearance: 'none',
                 width: '100%',
-                padding: '16px 16px',
-                minHeight: 72,
-                background: isCurrent ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                border: isCurrent ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
-                borderRadius: 14,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 14,
+                padding: 0,
+                background: '#0e1018',
+                border: `0.5px solid ${completed ? m.accent : 'rgba(251, 246, 232, 0.10)'}`,
+                borderRadius: 16,
+                cursor: m.available ? 'pointer' : 'not-allowed',
+                position: 'relative',
+                overflow: 'hidden',
                 textAlign: 'left',
                 WebkitTapHighlightColor: 'transparent',
+                opacity: m.available ? 1 : 0.62,
+                minHeight: 110,
               }}
             >
-              <span
+              {/* Bg painterly atténué */}
+              <div
+                aria-hidden
                 style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: '50%',
-                  background: 'rgba(26, 26, 47, 0.06)',
-                  color: 'var(--ink-soft)',
-                  display: 'inline-flex',
+                  position: 'absolute',
+                  inset: 0,
+                  backgroundImage: `url(${m.image})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  opacity: m.available ? 0.45 : 0.22,
+                  filter: m.available ? 'none' : 'grayscale(0.3)',
+                }}
+              />
+              {/* Voile */}
+              <div
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(90deg, rgba(14, 16, 24, 0.92) 0%, rgba(14, 16, 24, 0.55) 100%)',
+                }}
+              />
+
+              {/* Content */}
+              <div
+                style={{
+                  position: 'relative',
+                  padding: '16px 18px',
+                  display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  fontVariantNumeric: 'tabular-nums',
-                  flexShrink: 0,
+                  gap: 14,
                 }}
               >
-                {String(w.order).padStart(2, '0')}
-              </span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontStyle: 'italic',
-                    fontVariationSettings: 'var(--fraunces-italic-soft)',
-                    fontSize: 15,
-                    color: 'var(--ink)',
-                    lineHeight: 1.25,
-                  }}
-                >
-                  {w.name}
-                </div>
-                <div
-                  style={{
-                    marginTop: 3,
-                    fontFamily: 'var(--font-body)',
-                    fontSize: 12,
-                    color: 'var(--content-secondary)',
-                  }}
-                >
-                  {w.totem} · {w.emotion}
-                </div>
-              </div>
-              {isCurrent && (
+                {/* Numéro / état */}
                 <span
-                  className="neya-mark"
-                  style={{ color: 'var(--content-tertiary)', flexShrink: 0, fontSize: 9 }}
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: '50%',
+                    border: `1.5px solid ${completed ? m.accent : m.available ? 'rgba(251, 246, 232, 0.48)' : 'rgba(251, 246, 232, 0.22)'}`,
+                    background: completed ? m.accent : 'transparent',
+                    color: completed ? '#FBF6E8' : m.available ? '#FBF6E8' : 'rgba(251, 246, 232, 0.56)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    fontVariantNumeric: 'tabular-nums',
+                    flexShrink: 0,
+                    transition: 'all 280ms ease-out',
+                  }}
                 >
-                  Actuel
+                  {completed ? '✓' : String(m.order).padStart(2, '0')}
                 </span>
-              )}
+
+                {/* Texte */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 2 }}>
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontStyle: 'italic',
+                        fontVariationSettings: 'var(--fraunces-italic-soft)',
+                        fontSize: 16,
+                        color: '#FBF6E8',
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {m.name}
+                    </div>
+                    {isCurrent && m.available && (
+                      <span
+                        className="neya-mark"
+                        style={{ color: m.accent, fontSize: 9, flexShrink: 0 }}
+                      >
+                        Ton totem
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      marginTop: 3,
+                      fontFamily: 'var(--font-body)',
+                      fontSize: 12.5,
+                      color: 'rgba(251, 246, 232, 0.72)',
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {m.totem} · {m.emotion}
+                  </div>
+
+                  {/* Progress bar si commencé/complété */}
+                  {m.available && progress > 0 && (
+                    <div
+                      style={{
+                        marginTop: 10,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                      }}
+                    >
+                      <div
+                        style={{
+                          flex: 1,
+                          height: 2,
+                          background: 'rgba(251, 246, 232, 0.16)',
+                          borderRadius: 2,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: `${progressPct}%`,
+                            height: '100%',
+                            background: m.accent,
+                            transition: 'width 600ms cubic-bezier(0.16, 1, 0.3, 1)',
+                          }}
+                        />
+                      </div>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-ui)',
+                          fontSize: 9,
+                          letterSpacing: '0.18em',
+                          textTransform: 'uppercase',
+                          fontWeight: 600,
+                          color: 'rgba(251, 246, 232, 0.72)',
+                          fontVariantNumeric: 'tabular-nums',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {progress}/{totalEtapes}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Pas commencé / bientôt */}
+                  {m.available && progress === 0 && (
+                    <div
+                      style={{
+                        marginTop: 8,
+                        fontFamily: 'var(--font-ui)',
+                        fontSize: 10,
+                        letterSpacing: '0.222em',
+                        textTransform: 'uppercase',
+                        fontWeight: 600,
+                        color: m.accent,
+                      }}
+                    >
+                      Commencer le voyage
+                    </div>
+                  )}
+                  {!m.available && (
+                    <div
+                      style={{
+                        marginTop: 8,
+                        fontFamily: 'var(--font-ui)',
+                        fontSize: 10,
+                        letterSpacing: '0.222em',
+                        textTransform: 'uppercase',
+                        fontWeight: 600,
+                        color: 'rgba(251, 246, 232, 0.55)',
+                      }}
+                    >
+                      Bientôt
+                    </div>
+                  )}
+                </div>
+
+                {m.available && (
+                  <span
+                    aria-hidden
+                    style={{
+                      color: 'rgba(251, 246, 232, 0.55)',
+                      fontSize: 16,
+                      flexShrink: 0,
+                    }}
+                  >
+                    ›
+                  </span>
+                )}
+              </div>
             </button>
           );
         })}
