@@ -1,17 +1,19 @@
 /* ============================================================
-   NÉYA V6 — ÇA VA? page condensée (catalogue style)
+   NÉYA V7 — ÇA VA? condensé + storytelling officiel
    ============================================================
-   Page COURTE et DENSE inspirée designmd.app / getdesign.md.
-   Plus d'actes, plus de scroll infini, plus de Ken Burns.
-   La grid photos EST la valeur principale.
+   Page courte (8 blocs), pas de scroll infini.
+   Le storytelling se RÉVÈLE par phrases-clés brèves placées
+   entre les blocs visuels — pas par des paragraphes longs.
    ============================================================
-   STRUCTURE (6 blocs verticaux, viewport compact) :
-     1. Top bar discrète       — ÇA VA? + lien externe
-     2. Hero 55vh              — photo iconique + tagline
-     3. Stats inline           — 4 chiffres en 1 ligne
-     4. Voix (3 cards)         — citations brand + photos
-     5. Galerie dense          — 120 photos grid uniforme
-     6. Footer                 — CTA cava-brand.com
+   STRUCTURE :
+     1. Top bar           — ÇA VA? + lien externe
+     2. Hero              — photo + punchline "phrase mensongère"
+     3. Pourquoi          — 3 lignes courtes manifeste
+     4. Photo + citation  — "Très peu sont prêts à entendre la vraie réponse."
+     5. Voix × 3 cards    — citations brand double-lecture
+     6. Photo + citation  — "Souffrir et rester beau."
+     7. Galerie 120       — grid dense uniforme 3-col
+     8. Final + CTA       — "Derrière chaque visage..."
    ============================================================ */
 
 import { useState, useCallback } from 'react';
@@ -20,8 +22,11 @@ import CaVaPhotoViewer from './CaVaPhotoViewer';
 
 const TOTAL = 120;
 const PHOTO = (n) => `/cava/brand/cava-${String(n).padStart(3, '0')}.jpg`;
+const EXTERNAL_URL = 'https://www.cava-brand.com';
 
 const HERO_PHOTO = 1;
+const BREATH_1 = 33;   // photo intermède 1
+const BREATH_2 = 88;   // photo intermède 2
 
 const VOIX = [
   { idx: 7,   quote: 'Je vais bien en version limitée.' },
@@ -29,20 +34,10 @@ const VOIX = [
   { idx: 105, quote: 'Le masque tombe quand personne regarde.' },
 ];
 
-const STATS = [
-  { value: '120',  label: 'regards' },
-  { value: '1€',   label: 'reversé' },
-  { value: '100%', label: 'slow' },
-  { value: '4',    label: 'continents' },
-];
-
 const CAPTION_MAP = VOIX.reduce((acc, v) => { acc[v.idx] = { place: '', quote: v.quote }; return acc; }, {});
-
-const EXTERNAL_URL = 'https://www.cava-brand.com';
 
 export default function CaVa() {
   const [viewer, setViewer] = useState(null);
-
   const openViewer = useCallback((idx) => { haptic(3); setViewer({ idx }); }, []);
   const closeViewer = useCallback(() => setViewer(null), []);
   const getPhotoSrc = useCallback((idx) => PHOTO(idx), []);
@@ -63,10 +58,12 @@ export default function CaVa() {
       >
         <TopBar />
         <Hero />
-        <Stats />
+        <Pourquoi />
+        <PhotoBreath idx={BREATH_1} quote="Tout le monde demande « ça va ? ». Très peu sont prêts à entendre la vraie réponse." onTap={() => openViewer(BREATH_1)} />
         <VoixRow onOpen={openViewer} />
+        <PhotoBreath idx={BREATH_2} quote="Tu peux souffrir et rester beau, humain, vivant. Important." onTap={() => openViewer(BREATH_2)} />
         <Gallery onOpen={openViewer} />
-        <Footer />
+        <Final />
       </div>
 
       {viewer && (
@@ -82,7 +79,7 @@ export default function CaVa() {
   );
 }
 
-/* ─── Top bar ─── */
+/* ─── 1. Top bar ─── */
 
 function TopBar() {
   return (
@@ -143,7 +140,7 @@ function TopBar() {
   );
 }
 
-/* ─── Hero ─── */
+/* ─── 2. Hero ─── */
 
 function Hero() {
   return (
@@ -151,9 +148,9 @@ function Hero() {
       style={{
         position: 'relative',
         width: '100%',
-        height: '55vh',
-        minHeight: 360,
-        maxHeight: 540,
+        height: '62vh',
+        minHeight: 400,
+        maxHeight: 600,
         overflow: 'hidden',
         background: '#0e0c08',
       }}
@@ -174,7 +171,7 @@ function Hero() {
           position: 'absolute',
           inset: 0,
           background:
-            'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.7) 100%)',
+            'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.20) 55%, rgba(0,0,0,0.78) 100%)',
           pointerEvents: 'none',
         }}
       />
@@ -183,7 +180,7 @@ function Hero() {
           position: 'absolute',
           left: 22,
           right: 22,
-          bottom: 28,
+          bottom: 32,
           color: '#FBF6E8',
         }}
       >
@@ -191,10 +188,10 @@ function Hero() {
           style={{
             margin: 0,
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(44px, 14vw, 72px)',
+            fontSize: 'clamp(48px, 15vw, 80px)',
             fontStyle: 'italic',
             fontWeight: 400,
-            lineHeight: 0.94,
+            lineHeight: 0.92,
             letterSpacing: '-0.028em',
             fontVariationSettings: 'var(--fraunces-opsz-large)',
             color: '#FBF6E8',
@@ -205,85 +202,136 @@ function Hero() {
         </h1>
         <p
           style={{
-            margin: '12px 0 0',
+            margin: '14px 0 0',
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
-            fontSize: 15,
+            fontSize: 16,
             lineHeight: 1.4,
             fontVariationSettings: 'var(--fraunces-italic-soft)',
             color: '#FBF6E8',
-            opacity: 0.92,
+            opacity: 0.94,
             maxWidth: 320,
-            textShadow: '0 1px 6px rgba(0,0,0,0.28)',
+            textShadow: '0 1px 8px rgba(0,0,0,0.32)',
           }}
         >
-          Mode émotionnelle. Santé mentale.<br />Briser le masque.
+          La phrase la plus mensongère du monde.
         </p>
       </div>
     </section>
   );
 }
 
-/* ─── Stats inline ─── */
+/* ─── 3. Pourquoi — 3 lignes brèves ─── */
 
-function Stats() {
+function Pourquoi() {
   return (
     <section
       style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 0,
-        borderBottom: '0.5px solid rgba(26, 26, 47, 0.08)',
+        padding: '64px 28px 56px',
         background: '#FFFCF5',
+        textAlign: 'center',
+        borderBottom: '0.5px solid rgba(26, 26, 47, 0.06)',
       }}
     >
-      {STATS.map((s, i) => (
-        <div
-          key={s.label}
-          style={{
-            padding: '20px 8px',
-            textAlign: 'center',
-            borderLeft: i === 0 ? 'none' : '0.5px solid rgba(26, 26, 47, 0.06)',
-          }}
-        >
-          <div
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontSize: 22,
-              fontWeight: 500,
-              lineHeight: 1,
-              color: 'var(--cava-ink, #1a1a2f)',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              fontVariantNumeric: 'tabular-nums',
-            }}
-          >
-            {s.value}
-          </div>
-          <div
-            style={{
-              marginTop: 6,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 9,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              color: 'rgba(26, 26, 47, 0.55)',
-            }}
-          >
-            {s.label}
-          </div>
-        </div>
-      ))}
+      <div
+        style={{
+          fontFamily: 'var(--font-ui)',
+          fontSize: 9,
+          letterSpacing: '0.32em',
+          textTransform: 'uppercase',
+          fontWeight: 600,
+          color: 'rgba(26, 26, 47, 0.45)',
+          marginBottom: 22,
+        }}
+      >
+        Pourquoi
+      </div>
+      <p
+        style={{
+          margin: '0 auto',
+          fontFamily: 'var(--font-display)',
+          fontStyle: 'italic',
+          fontSize: 'clamp(22px, 6vw, 28px)',
+          lineHeight: 1.32,
+          letterSpacing: '-0.014em',
+          fontVariationSettings: 'var(--fraunces-italic-soft)',
+          color: 'var(--cava-ink, #1a1a2f)',
+          maxWidth: 460,
+        }}
+      >
+        Pas née pour vendre.<br />
+        Née parce que trop de gens<br />souffrent en silence.
+      </p>
+      <p
+        style={{
+          margin: '28px auto 0',
+          fontFamily: 'var(--font-body)',
+          fontSize: 13.5,
+          lineHeight: 1.65,
+          color: 'rgba(26, 26, 47, 0.62)',
+          maxWidth: 360,
+        }}
+      >
+        La mode comme langage humain.
+        Le vêtement comme support de conversation, signal, présence.
+      </p>
     </section>
   );
 }
 
-/* ─── Voix (3 cards) ─── */
+/* ─── 4 & 6. Photo + citation (intermède narratif) ─── */
+
+function PhotoBreath({ idx, quote, onTap }) {
+  return (
+    <section style={{ background: '#FFFCF5' }}>
+      <button
+        data-press
+        onClick={onTap}
+        aria-label={quote}
+        style={{
+          appearance: 'none',
+          border: 'none',
+          padding: 0,
+          width: '100%',
+          aspectRatio: '4 / 5',
+          background: `#0e0c08 url(${PHOTO(idx)}) center / cover no-repeat`,
+          cursor: 'pointer',
+          WebkitTapHighlightColor: 'transparent',
+          display: 'block',
+        }}
+      />
+      <div
+        style={{
+          padding: '32px 28px 40px',
+          textAlign: 'center',
+        }}
+      >
+        <p
+          style={{
+            margin: 0,
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(19px, 5vw, 23px)',
+            lineHeight: 1.35,
+            letterSpacing: '-0.012em',
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            color: 'var(--cava-ink, #1a1a2f)',
+            maxWidth: 480,
+            marginInline: 'auto',
+          }}
+        >
+          « {quote} »
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 5. Voix (3 cards) ─── */
 
 function VoixRow({ onOpen }) {
   return (
-    <section style={{ padding: '28px 16px 12px', background: '#FFFCF5' }}>
+    <section style={{ padding: '20px 16px 12px', background: '#FFFCF5' }}>
       <div
         style={{
           display: 'flex',
@@ -303,19 +351,6 @@ function VoixRow({ onOpen }) {
           }}
         >
           Les voix
-        </span>
-        <span
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            fontWeight: 600,
-            color: 'rgba(26, 26, 47, 0.35)',
-            fontVariantNumeric: 'tabular-nums',
-          }}
-        >
-          03
         </span>
       </div>
       <div
@@ -357,7 +392,7 @@ function VoixRow({ onOpen }) {
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.7) 100%)',
+                background: 'linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.72) 100%)',
               }}
             />
             <p
@@ -386,7 +421,7 @@ function VoixRow({ onOpen }) {
   );
 }
 
-/* ─── Gallery (120 photos, grid dense uniforme) ─── */
+/* ─── 7. Gallery (120 photos, grid dense uniforme) ─── */
 
 function Gallery({ onOpen }) {
   return (
@@ -396,7 +431,7 @@ function Gallery({ onOpen }) {
           display: 'flex',
           alignItems: 'baseline',
           justifyContent: 'space-between',
-          padding: '8px 6px 14px',
+          padding: '14px 6px',
         }}
       >
         <span
@@ -438,6 +473,7 @@ function Gallery({ onOpen }) {
             data-press
             onClick={() => onOpen(n)}
             aria-label={`Photo ${n}`}
+            className="cava-tile"
             style={{
               appearance: 'none',
               border: 'none',
@@ -451,7 +487,6 @@ function Gallery({ onOpen }) {
               backgroundPosition: 'center',
               transition: 'opacity 180ms ease-out',
             }}
-            className="cava-tile"
           />
         ))}
       </div>
@@ -462,33 +497,60 @@ function Gallery({ onOpen }) {
   );
 }
 
-/* ─── Footer ─── */
+/* ─── 8. Final (message + CTA) ─── */
 
-function Footer() {
+function Final() {
   return (
     <section
       style={{
         background: 'var(--cava-ink, #1a1a2f)',
         color: '#FBF6E8',
-        padding: 'calc(env(safe-area-inset-bottom, 0px) + 48px) 22px calc(env(safe-area-inset-bottom, 0px) + 130px)',
+        padding: '72px 22px calc(env(safe-area-inset-bottom, 0px) + 130px)',
         textAlign: 'center',
       }}
     >
-      <p
+      <div
         style={{
-          margin: '0 0 22px',
-          fontFamily: 'var(--font-display)',
-          fontStyle: 'italic',
-          fontSize: 19,
-          lineHeight: 1.35,
-          fontVariationSettings: 'var(--fraunces-italic-soft)',
+          fontFamily: 'var(--font-ui)',
+          fontSize: 9,
+          letterSpacing: '0.32em',
+          textTransform: 'uppercase',
+          fontWeight: 600,
           color: '#FBF6E8',
-          opacity: 0.92,
-          maxWidth: 320,
-          marginInline: 'auto',
+          opacity: 0.5,
+          marginBottom: 22,
         }}
       >
-        Porte la question.
+        Message final
+      </div>
+      <p
+        style={{
+          margin: '0 auto 14px',
+          fontFamily: 'var(--font-display)',
+          fontStyle: 'italic',
+          fontSize: 'clamp(22px, 6vw, 28px)',
+          lineHeight: 1.3,
+          letterSpacing: '-0.014em',
+          fontVariationSettings: 'var(--fraunces-italic-soft)',
+          color: '#FBF6E8',
+          maxWidth: 420,
+        }}
+      >
+        Derrière chaque visage<br />
+        peut se cacher<br />
+        une bataille invisible.
+      </p>
+      <p
+        style={{
+          margin: '0 auto 40px',
+          fontFamily: 'var(--font-body)',
+          fontSize: 13.5,
+          lineHeight: 1.6,
+          color: 'rgba(251, 246, 232, 0.7)',
+          maxWidth: 360,
+        }}
+      >
+        Parfois, se sentir compris suffit à tout changer.
       </p>
       <a
         href={EXTERNAL_URL}
@@ -500,7 +562,7 @@ function Footer() {
           display: 'inline-flex',
           alignItems: 'center',
           gap: 10,
-          padding: '14px 26px',
+          padding: '14px 28px',
           minHeight: 44,
           background: '#FBF6E8',
           color: 'var(--cava-ink, #1a1a2f)',
@@ -514,7 +576,7 @@ function Footer() {
           WebkitTapHighlightColor: 'transparent',
         }}
       >
-        cava-brand.com <span style={{ opacity: 0.55 }}>↗</span>
+        Porter la question <span style={{ opacity: 0.55 }}>↗</span>
       </a>
     </section>
   );
