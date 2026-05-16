@@ -17,6 +17,8 @@ import Communaute from './screens/Communaute';
 import CaVa from './screens/CaVa';
 import Meditation from './screens/Meditation';
 import Crise from './screens/Crise';
+import Aide from './screens/Aide';
+import EspacesIRL from './screens/EspacesIRL';
 import Habitudes from './screens/Habitudes';
 import EspaceVrai from './screens/EspaceVrai';
 import Bilan from './screens/Bilan';
@@ -25,6 +27,7 @@ import Patronus from './screens/Patronus';
 import MilestoneToast from './screens/MilestoneToast';
 import Tour from './screens/Tour';
 import BottomNav from '../components/BottomNav';
+import ActionSheet from '../components/ActionSheet';
 
 export default function V2App() {
   const [splashDone, setSplashDone] = useState(false);
@@ -32,6 +35,9 @@ export default function V2App() {
   const [activeTab, setActiveTab] = useState(() => ls.get('active_tab', 'aventure'));
   const [meditationOpen, setMeditationOpen] = useState(false);
   const [criseOpen, setCriseOpen] = useState(false);
+  const [aideOpen, setAideOpen] = useState(false);
+  const [espacesIRLOpen, setEspacesIRLOpen] = useState(false);
+  const [sosMenuOpen, setSosMenuOpen] = useState(false);
   const [habitudesOpen, setHabitudesOpen] = useState(false);
   const [espaceVraiOpen, setEspaceVraiOpen] = useState(false);
   const [bilanOpen, setBilanOpen] = useState(false);
@@ -270,7 +276,7 @@ export default function V2App() {
   }
 
   // SOS visible only when user is in main shell — hidden during intro overlays
-  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen;
+  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen && !aideOpen && !espacesIRLOpen;
 
   return (
     <div
@@ -328,12 +334,12 @@ export default function V2App() {
 
       <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />
 
-      {/* Permanent SOS button — reachable in 1 tap from every screen */}
+      {/* Permanent SOS button — opens menu (crise / aide / espaces) */}
       {showSosButton && (
         <button
           type="button"
-          onClick={openCrisis}
-          aria-label="Mode crise — accès rapide"
+          onClick={() => { haptic(4); setSosMenuOpen(true); }}
+          aria-label="SOS — soutien et ressources"
           data-no-crisis-press="true"
           style={{
             position: 'fixed',
@@ -384,6 +390,35 @@ export default function V2App() {
         <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
           <Crise onClose={() => setCriseOpen(false)} />
         </div>
+      )}
+
+      {aideOpen && <Aide onClose={() => setAideOpen(false)} />}
+      {espacesIRLOpen && <EspacesIRL onClose={() => setEspacesIRLOpen(false)} />}
+
+      {sosMenuOpen && (
+        <ActionSheet
+          title="Soutien et ressources"
+          description="Trouve ce dont tu as besoin maintenant."
+          actions={[
+            {
+              label: 'Je suis en crise maintenant',
+              role: 'destructive',
+              icon: '✦',
+              onTap: () => { setSosMenuOpen(false); setCriseOpen(true); },
+            },
+            {
+              label: 'Trouver de l\'aide',
+              icon: '◇',
+              onTap: () => { setSosMenuOpen(false); setAideOpen(true); },
+            },
+            {
+              label: 'Espaces de soutien',
+              icon: '○',
+              onTap: () => { setSosMenuOpen(false); setEspacesIRLOpen(true); },
+            },
+          ]}
+          onClose={() => setSosMenuOpen(false)}
+        />
       )}
 
       {espaceVraiOpen && (
