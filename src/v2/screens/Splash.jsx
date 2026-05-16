@@ -1,25 +1,25 @@
 /* ============================================================
-   ÇA VA ? V2 — Splash (cinematic entry)
+   ÇA VA ? V4 — Splash (palette bleu/rose claire)
    ============================================================
-   The ONE dark moment in the V3 cream world. 2.5s autoplay,
-   tap-to-skip. After this, the cream world reveals.
+   Fond clair --bg + blobs decoratifs + Cormorant Garamond italic.
+   2.5s autoplay, tap-to-skip.
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
 import { ls, haptic } from '../state';
+import Blobs from '../../components/Blobs';
 
 export default function Splash({ onContinue }) {
   const [mounted, setMounted] = useState(false);
   const continuedRef = useRef(false);
 
-  // Whisper personnalisé selon délai retour
   const lastSeen = ls.get('splash_seen_at', 0);
   const elapsed = Date.now() - lastSeen;
   const ms4h = 4 * 3600 * 1000;
   const ms7j = 7 * 24 * 3600 * 1000;
   let subtitle;
-  if (!lastSeen || elapsed > ms7j) subtitle = 'Tu n\'es pas seul·e.';
-  else if (elapsed > ms4h) subtitle = 'T\'as pas besoin d\'aller bien pour commencer.';
+  if (!lastSeen || elapsed > ms7j) subtitle = "Tu n'es pas seul·e.";
+  else if (elapsed > ms4h) subtitle = "T'as pas besoin d'aller bien pour commencer.";
   else subtitle = 'Et toi, ça va vraiment ?';
 
   const fire = () => {
@@ -31,12 +31,8 @@ export default function Splash({ onContinue }) {
   };
 
   useEffect(() => {
-    // Trigger fade-ins shortly after mount
     const m = setTimeout(() => setMounted(true), 60);
-    // Auto-dismiss after 2.5s
-    const t = setTimeout(() => {
-      fire();
-    }, 2500);
+    const t = setTimeout(() => { fire(); }, 2500);
     return () => {
       clearTimeout(m);
       clearTimeout(t);
@@ -44,13 +40,9 @@ export default function Splash({ onContinue }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleTap = () => {
-    fire();
-  };
-
   return (
     <div
-      onClick={handleTap}
+      onClick={fire}
       role="dialog"
       aria-modal="true"
       aria-label="Entrer dans ÇA VA ?"
@@ -59,76 +51,58 @@ export default function Splash({ onContinue }) {
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        backgroundImage:
-          "url('/bg-splash.avif'), url('/bg-onboarding.avif')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundColor: '#050810',
+        background: 'var(--bg)',
         cursor: 'pointer',
         WebkitTapHighlightColor: 'transparent',
         overflow: 'hidden',
         userSelect: 'none',
       }}
     >
-      {/* Inline keyframes — splash is self-contained */}
       <style>{`
         @keyframes splashFadeUp {
           from { opacity: 0; transform: translateY(8px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes splashBreathe {
-          0%, 100% { opacity: 0.72; }
-          50%      { opacity: 0.95; }
+          0%, 100% { opacity: 0.78; }
+          50%      { opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [data-splash-anim] { animation: none !important; transition: none !important; opacity: 1 !important; }
         }
       `}</style>
 
-      {/* Cinematic vignette over photo */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(to top, rgba(5,8,16,0.85), rgba(5,8,16,0.45) 50%, rgba(5,8,16,0.75))',
-          pointerEvents: 'none',
-        }}
-      />
+      <Blobs variant="rose-blue" />
 
-      {/* Top-right explicit skip — 44×44 hit zone */}
+      {/* Top-right skip */}
       <button
         type="button"
-        data-press
-        onClick={(e) => {
-          e.stopPropagation();
-          handleTap();
-        }}
+        onClick={(e) => { e.stopPropagation(); fire(); }}
         aria-label="Passer"
         style={{
           position: 'absolute',
           top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
           right: 18,
-          zIndex: 1,
+          zIndex: 2,
           appearance: 'none',
-          background: 'transparent',
-          border: 'none',
-          outline: 'none',
+          background: 'rgba(255,255,255,0.75)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.85)',
+          padding: '8px 16px',
+          minHeight: 36,
+          borderRadius: 50,
           cursor: 'pointer',
-          padding: '12px 14px',
-          minWidth: 44,
-          minHeight: 44,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: "'Sora', system-ui, sans-serif",
+          fontFamily: "'Inter', system-ui, sans-serif",
           fontWeight: 500,
-          fontSize: 11,
-          letterSpacing: '0.222em',
-          textTransform: 'uppercase',
-          color: 'rgba(251,246,232,0.85)',
+          fontSize: 13,
+          color: 'var(--blue-700)',
           opacity: mounted ? 1 : 0,
-          transition: 'opacity 800ms var(--ease-narrative) 200ms',
+          transition: 'opacity 800ms cubic-bezier(0.22, 0.61, 0.36, 1) 200ms',
           WebkitTapHighlightColor: 'transparent',
+          boxShadow: '0 2px 12px rgba(10,36,56,0.08)',
         }}
+        data-splash-anim
       >
         Passer ›
       </button>
@@ -142,98 +116,62 @@ export default function Splash({ onContinue }) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 28,
+          gap: 24,
           padding: '0 24px',
           textAlign: 'center',
+          zIndex: 1,
         }}
       >
-        {/* Caps mark */}
         <div
+          data-splash-anim
           style={{
-            fontFamily: "'Sora', system-ui, sans-serif",
-            fontWeight: 400,
-            fontSize: 9,
-            letterSpacing: '0.222em',
+            fontFamily: "'Inter', system-ui, sans-serif",
+            fontWeight: 500,
+            fontSize: 10,
+            letterSpacing: '0.22em',
             textTransform: 'uppercase',
-            color: 'rgba(251,246,232,0.62)',
+            color: 'var(--blue-500)',
             opacity: mounted ? 1 : 0,
-            transition: 'opacity 1400ms var(--ease-narrative)',
+            transition: 'opacity 1400ms cubic-bezier(0.22, 0.61, 0.36, 1)',
           }}
         >
           MMXXVI · ÇA VA ?
         </div>
 
-        {/* Wordmark */}
         <div
+          data-splash-anim
           style={{
-            fontFamily: 'var(--font-display)',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
             fontWeight: 300,
             fontSize: 'clamp(64px, 18vw, 96px)',
-            letterSpacing: '-0.018em',
+            letterSpacing: '0.02em',
             color: 'var(--blue-900)',
             lineHeight: 1,
             opacity: mounted ? 1 : 0,
-            transition: 'opacity 1400ms var(--ease-narrative)',
+            transition: 'opacity 1400ms cubic-bezier(0.22, 0.61, 0.36, 1)',
           }}
         >
-          ÇA VA&nbsp;?
+          ÇA VA ?
         </div>
 
-        {/* Hairline */}
         <div
+          data-splash-anim
           style={{
-            width: 48,
-            height: 1,
-            background: 'rgba(251,246,232,0.42)',
-            opacity: mounted ? 1 : 0,
-            transition: 'opacity 1400ms var(--ease-narrative)',
-          }}
-        />
-
-        {/* Subtitle */}
-        <div
-          style={{
-            fontFamily: "'Fraunces', Georgia, serif",
-            fontWeight: 300,
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
-            fontSize: 'clamp(17px, 4.5vw, 21px)',
-            color: 'rgba(251,246,232,0.78)',
-            maxWidth: 320,
-            lineHeight: 1.4,
-            fontVariationSettings: "'opsz' 144, 'SOFT' 100",
+            fontWeight: 300,
+            fontSize: 'clamp(15px, 4.2vw, 18px)',
+            color: 'var(--text-secondary)',
             opacity: mounted ? 1 : 0,
-            transition: 'opacity 1400ms var(--ease-narrative)',
+            animation: mounted ? 'splashBreathe 4s ease-in-out infinite' : 'none',
+            transition: 'opacity 1600ms cubic-bezier(0.22, 0.61, 0.36, 1) 400ms',
+            maxWidth: 320,
+            lineHeight: 1.5,
           }}
         >
           {subtitle}
         </div>
-      </div>
-
-      {/* Bottom hint */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 'max(60px, calc(env(safe-area-inset-bottom, 0px) + 36px))',
-          textAlign: 'center',
-          fontFamily: "'Sora', system-ui, sans-serif",
-          fontWeight: 400,
-          fontSize: 11,
-          letterSpacing: '0.222em',
-          textTransform: 'uppercase',
-          color: 'rgba(251,246,232,0.82)',
-          opacity: mounted ? 1 : 0,
-          transition: 'opacity 1400ms var(--ease-narrative) 400ms',
-          animation: mounted
-            ? 'splashBreathe 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 1800ms'
-            : 'none',
-          pointerEvents: 'none',
-        }}
-      >
-        Touche pour entrer
       </div>
     </div>
   );
