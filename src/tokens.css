@@ -704,3 +704,110 @@ html {
   }
 }
 
+
+/* ════════════════════════════════════════════════════════════
+   SEMANTIC LAYER (shadcn-style, ajouté V8 fondations)
+   ════════════════════════════════════════════════════════════
+   Couche fine au-dessus des primitives ci-dessus. Permet aux
+   composants de ne plus dépendre des couleurs par monde — ils
+   consomment `--accent` qui re-alias automatiquement le monde
+   actif via `[data-world="…"]` sur <body> ou <main>.
+
+   Convention :
+     --background / --foreground   surfaces & texte primaire
+     --card / --card-foreground    surfaces pearl glass
+     --muted / --muted-foreground  textes secondaires
+     --border                       hairlines
+     --ring                         focus ring (suit l'accent)
+     --accent / --accent-foreground accent du monde courant
+     --destructive                  crisis/erreur (terracotta fixe)
+   ════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Surfaces sémantiques */
+  --background:            var(--cream);
+  --foreground:            var(--ink);
+  --card:                  var(--cream-light);
+  --card-foreground:       var(--ink);
+  --popover:               var(--cream-light);
+  --popover-foreground:    var(--ink);
+
+  /* États texte */
+  --muted:                 rgba(26, 26, 47, 0.04);
+  --muted-foreground:      var(--ink-soft);
+  --subtle:                var(--ink-whisper);
+
+  /* Hairlines & inputs */
+  --border:                var(--hairline);
+  --border-strong:         var(--hairline-strong);
+  --input:                 var(--hairline);
+
+  /* Accent par défaut (monde foret · terracotta).
+     Override par [data-world="…"] ci-dessous. */
+  --accent:                var(--terracotta);
+  --accent-foreground:     var(--cream);
+  --accent-rgb:            159, 88, 76;
+  --accent-soft:           rgba(159, 88, 76, 0.14);
+  --accent-glow:           rgba(159, 88, 76, 0.32);
+
+  /* Focus ring suit l'accent du monde courant */
+  --ring:                  var(--accent);
+  --ring-offset:           var(--cream);
+
+  /* États système */
+  --destructive:           var(--terracotta);
+  --destructive-foreground: var(--cream);
+  --success:               var(--emerald);
+  --warning:               var(--ochre);
+  --info:                  var(--mist-blue);
+}
+
+/* Binding accent → monde actif. Permet à TOUS les composants de
+   suivre l'accent en posant data-world sur un ancêtre commun
+   (body, main, ou un wrapper d'écran). */
+
+[data-world="foret"] {
+  --accent:        var(--ochre);
+  --accent-rgb:    194, 144, 81;
+  --accent-soft:   rgba(194, 144, 81, 0.14);
+  --accent-glow:   rgba(194, 144, 81, 0.32);
+}
+[data-world="temple"] {
+  --accent:        var(--mist-blue);
+  --accent-rgb:    115, 151, 188;
+  --accent-soft:   rgba(115, 151, 188, 0.14);
+  --accent-glow:   rgba(115, 151, 188, 0.32);
+}
+[data-world="oasis"] {
+  --accent:        var(--terracotta);
+  --accent-rgb:    159, 88, 76;
+  --accent-soft:   rgba(159, 88, 76, 0.14);
+  --accent-glow:   rgba(159, 88, 76, 0.32);
+}
+[data-world="lac"] {
+  --accent:        #7B6FA8;
+  --accent-rgb:    123, 111, 168;
+  --accent-soft:   rgba(123, 111, 168, 0.14);
+  --accent-glow:   rgba(123, 111, 168, 0.32);
+}
+[data-world="montagne"] {
+  --accent:        var(--emerald);
+  --accent-rgb:    52, 145, 127;
+  --accent-soft:   rgba(52, 145, 127, 0.14);
+  --accent-glow:   rgba(52, 145, 127, 0.32);
+}
+[data-world="communaute"] {
+  --accent:        var(--terracotta);
+  --accent-rgb:    159, 88, 76;
+  --accent-soft:   rgba(159, 88, 76, 0.14);
+  --accent-glow:   rgba(159, 88, 76, 0.32);
+}
+
+/* Focus ring : surcharge globale pour utiliser --accent du monde courant.
+   Remplace l'outline mist-blue fixe défini plus haut. */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+

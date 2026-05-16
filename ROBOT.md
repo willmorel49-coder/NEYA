@@ -89,6 +89,31 @@ Lis `tasks/lessons.md` + `tasks/todo.md`, dis ce qui est en cours.
 - Ne pas ajouter de features non demandées (scope discipline stricte)
 - Ne pas proposer de réécriture complète — toujours itérer sur `neya-final.jsx`
 
+### Anti-patterns explicites (NE PAS FAIRE)
+
+- ❌ **Coder un nouveau cap design sans 2-3 refs visuelles** (Pinterest/Dribbble/screenshots). Pattern de 3× rejet d'affilée si on devine. → Toujours demander les refs avant.
+- ❌ **Ajouter avant de purger** — Will : "on est partie trop loin". Si une zone est saturée, purger d'abord, ajouter après.
+- ❌ **Installer une lib UI** (shadcn, Radix, vaul, sonner, framer-motion…). NÉYA reste sans dépendance UI. Porter les patterns à la main.
+- ❌ **Refactoriser en multi-fichiers** sans accord explicite. Garder les écrans mono-fichier.
+- ❌ **Toucher aux images CaVa** : SEUL CaVa utilise `/cava/brand/*.jpg`. Le reste de l'app utilise `/img/world-*.png` et `/img/spirit-*.png`.
+- ❌ **Bypasser hooks pre-commit / signatures** avec `--no-verify` / `--no-gpg-sign`.
+- ❌ **Scroll infini sur ÇA VA?** — page condensée style catalogue (cf. memory `project_cava_brandbook`).
+- ❌ **Magicui Meteors/Sparkles/Globe/Border Beam**, **Aceternity Background Beams**, **IBM Carbon density**, **Material ripple** — clashent avec calme NÉYA.
+
+### Definition of Done (toute livraison)
+
+Une tâche n'est terminée QUE si tous les points cochent :
+
+1. ✅ **Build clean** — `cd /Users/williammorel/NÉYA && npm run build` finit sans erreur ni warning bloquant
+2. ✅ **Pas de `console.log`** laissé dans le code touché
+3. ✅ **DA respectée** — pearl glass cream/ink, Fraunces italic, hit zones ≥ 44×44, accents par monde
+4. ✅ **Pas de stuck-states** — conditional render plutôt qu'opacity tricks
+5. ✅ **Cleanup useEffect** — tous les timers/listeners/intervals/observers ont leur return cleanup
+6. ✅ **Mode autonome** — Will autorise déploiement direct prod (cf. `feedback_autonomous_mode`). Commit + `vercel --prod --yes` + `git push origin main` quand fini.
+7. ✅ **Vérif HTTP** — `curl -sI https://neya-kappa.vercel.app | head -1` doit retourner HTTP 200 après deploy
+8. ✅ **Commit Co-Authored-By Claude** — message via heredoc ou `git commit -F /tmp/msg.txt` pour éviter EOF
+9. ✅ **Récap concis à Will** — 1 message court avec lien clickable + résumé visible du changement
+
 ## 9. État actuel
 
 > Mettre à jour à chaque savepoint.
