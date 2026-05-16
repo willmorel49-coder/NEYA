@@ -87,6 +87,12 @@ export const defaultProfile = () => ({
   },
   habits: {},
   crisis: { lastEntryAt: null, lastExitAt: null },
+  cocon: {
+    image: null,         // 'foret' | 'temple' | 'oasis' | 'lac' | 'montagne' | 'communaute' | null (suit le totem)
+    ambiance: 'fireflies', // 'fireflies' | 'rain' | 'snow' | 'stars' | 'none'
+    music: null,         // nom du fichier sans extension, ou null
+    musicVolume: 0.45,
+  },
 });
 
 export function getProfile() {

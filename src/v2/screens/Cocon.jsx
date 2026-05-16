@@ -1,18 +1,16 @@
 /* ============================================================
-   NÉYA V5 — Cocon plein écran painterly (retour vision MVP)
+   NÉYA V5 — Cocon plein écran painterly personnalisable
    ============================================================
-   Sanctuaire personnel immersif. Pas de cards pearl glass.
-   Painterly du monde-totem en plein écran + texte blanc en
-   surimpression + 1 CTA "Me poser 2 minutes".
-
-   Inspiration : MVP NÉYA original (PDFs glissés).
+   Sanctuaire perso : image au choix, ambiance au choix,
+   musique au choix. Texte blanc en surimpression.
+   Vision inspirée du MVP NÉYA original.
    ============================================================ */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { WORLDS } from '../worlds';
-import { getProfile, setProfile, patchProfile, haptic } from '../state';
-import ActionSheet from '../../components/ActionSheet';
+import { getProfile, patchProfile, haptic } from '../state';
 import BreathingPause from './BreathingPause';
+import CoconAmbiance from './CoconAmbiance';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const TOTEMS = [
@@ -22,6 +20,37 @@ const TOTEMS = [
   { key: 'daim',    label: 'Daim lunaire',  world: 'lac' },
   { key: 'baleine', label: 'Baleine sage',  world: 'montagne' },
   { key: 'renard',  label: 'Renard',        world: 'communaute' },
+];
+
+const COCON_IMAGES = [
+  { key: 'foret',      label: 'Forêt de Clarté',   src: '/img/world-foret.png' },
+  { key: 'temple',     label: 'Temple intérieur',  src: '/img/world-temple.png' },
+  { key: 'oasis',      label: 'Oasis du Souffle',  src: '/img/world-oasis.png' },
+  { key: 'lac',        label: 'Lac des Émotions',  src: '/img/world-lac.png' },
+  { key: 'montagne',   label: 'Montagne de Vision', src: '/img/world-montagne.png' },
+  { key: 'communaute', label: 'Refuge partagé',    src: '/img/world-communaute.png' },
+];
+
+const AMBIANCES = [
+  { key: 'fireflies', label: 'Lucioles',  hint: 'Petites lumières flottantes' },
+  { key: 'rain',      label: 'Pluie',     hint: 'Pluie douce qui tombe' },
+  { key: 'snow',      label: 'Neige',     hint: 'Flocons qui descendent' },
+  { key: 'stars',     label: 'Étoiles',   hint: 'Scintillements doux' },
+  { key: 'none',      label: 'Silence',   hint: 'Aucune particule' },
+];
+
+const TRACKS = [
+  { key: 'silencieuse',                title: 'Silencieuse' },
+  { key: 'mon-cœur',                   title: 'Mon cœur' },
+  { key: 'souffle-court',              title: 'Souffle court' },
+  { key: 'À débordement',              title: 'À débordement' },
+  { key: 'entre-tension-et-douceur',   title: 'Entre tension et douceur' },
+  { key: 'ce-qui-reste 2',             title: 'Ce qui reste' },
+  { key: 'sur-ma-planète',             title: 'Sur ma planète' },
+  { key: 'Masque',                     title: 'Masque' },
+  { key: 'burn-out',                   title: 'Burn-out' },
+  { key: 'stress-post-traumatique',    title: 'Stress post-traumatique' },
+  { key: 'ça-va',                      title: 'Ça va' },
 ];
 
 /* ─── Helpers ─── */
@@ -41,65 +70,50 @@ function getGreeting(pseudo) {
   return 'Pose-toi ici.';
 }
 
-/* ─── Lucioles (points lumineux flottants) ─── */
-
-const FIREFLIES = [
-  { left: '18%', top: '38%', size: 4, delay: 0,    duration: 7.2 },
-  { left: '72%', top: '32%', size: 3, delay: 1.4,  duration: 8.4 },
-  { left: '34%', top: '64%', size: 5, delay: 0.6,  duration: 6.8 },
-  { left: '82%', top: '58%', size: 3, delay: 2.2,  duration: 9.0 },
-  { left: '22%', top: '76%', size: 4, delay: 1.8,  duration: 7.6 },
-  { left: '64%', top: '78%', size: 3, delay: 0.4,  duration: 8.2 },
-  { left: '48%', top: '24%', size: 4, delay: 3.0,  duration: 7.8 },
-];
-
-function Fireflies({ accent }) {
-  return (
-    <>
-      {FIREFLIES.map((f, i) => (
-        <span
-          key={i}
-          aria-hidden
-          style={{
-            position: 'absolute',
-            left: f.left,
-            top: f.top,
-            width: f.size,
-            height: f.size,
-            borderRadius: '50%',
-            background: '#FBF6E8',
-            boxShadow: `0 0 ${f.size * 3}px ${f.size}px ${accent}`,
-            opacity: 0,
-            animation: `cocon-firefly ${f.duration}s ease-in-out ${f.delay}s infinite`,
-            pointerEvents: 'none',
-          }}
-        />
-      ))}
-    </>
-  );
+function resolveImage(profile) {
+  const cocon = profile.cocon || {};
+  const explicit = COCON_IMAGES.find((i) => i.key === cocon.image);
+  if (explicit) return explicit;
+  // Fallback : suit le totem
+  const totemKey = profile.totem || 'lion';
+  const totem = TOTEMS.find((t) => t.key === totemKey) || TOTEMS[0];
+  return COCON_IMAGES.find((i) => i.key === totem.world) || COCON_IMAGES[0];
 }
 
-/* ─── Main ─── */
+function trackSrc(key) {
+  if (!key) return null;
+  return `/musique/${encodeURIComponent(key)}.mp3`;
+}
+
+/* ============================================================
+   Main
+   ============================================================ */
 
 export default function Cocon() {
   const [profile, setLocalProfile] = useState(() => getProfile());
   const [breathingOpen, setBreathingOpen] = useState(false);
   const [personalizeOpen, setPersonalizeOpen] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(false);
   const [, forceTick] = useState(0);
+  const audioRef = useRef(null);
 
+  const cocon = profile.cocon || { image: null, ambiance: 'fireflies', music: null, musicVolume: 0.45 };
   const totemKey = profile.totem || 'lion';
   const currentTotem = TOTEMS.find((t) => t.key === totemKey) || TOTEMS[0];
   const totemWorld = WORLDS[currentTotem.world] || WORLDS.foret;
   const accent = totemWorld.accent;
+  const accentRgb = totemWorld.accentRgb;
+  const currentImage = useMemo(() => resolveImage(profile), [profile]);
   const hourPhase = useMemo(() => getHourPhrase(), []);
+  const currentTrack = useMemo(() => TRACKS.find((t) => t.key === cocon.music) || null, [cocon.music]);
 
-  // Re-évalue l'heure toutes les minutes
+  // Re-évalue l'heure
   useEffect(() => {
     const id = setInterval(() => forceTick((n) => (n + 1) % 1000), 60_000);
     return () => clearInterval(id);
   }, []);
 
-  // Listen pour mises à jour profil (autres onglets/écrans)
+  // Refresh profil depuis localStorage
   useEffect(() => {
     const refresh = () => setLocalProfile(getProfile());
     window.addEventListener('neya:profile-changed', refresh);
@@ -110,9 +124,54 @@ export default function Cocon() {
     };
   }, []);
 
+  // Audio : appliquer volume + reset si track change
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    a.volume = typeof cocon.musicVolume === 'number' ? cocon.musicVolume : 0.45;
+  }, [cocon.musicVolume]);
+
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (!currentTrack) {
+      a.pause();
+      setMusicPlaying(false);
+      return;
+    }
+    // Si la track change, on stop l'ancienne (le src change via React)
+    a.pause();
+    setMusicPlaying(false);
+  }, [currentTrack?.key]);
+
+  // Auto-pause à l'unmount
+  useEffect(() => {
+    return () => {
+      const a = audioRef.current;
+      if (a) { try { a.pause(); } catch (_) {} }
+    };
+  }, []);
+
+  const togglePlay = () => {
+    const a = audioRef.current;
+    if (!a || !currentTrack) return;
+    haptic(3);
+    if (musicPlaying) {
+      a.pause();
+      setMusicPlaying(false);
+    } else {
+      a.play().then(() => setMusicPlaying(true)).catch(() => setMusicPlaying(false));
+    }
+  };
+
   const updateProfile = (patch) => {
     const next = patchProfile(patch);
     setLocalProfile(next);
+  };
+
+  const updateCocon = (coconPatch) => {
+    const nextCocon = { ...(profile.cocon || {}), ...coconPatch };
+    updateProfile({ cocon: nextCocon });
   };
 
   return (
@@ -131,7 +190,7 @@ export default function Cocon() {
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: `url(${totemWorld.bg})`,
+          backgroundImage: `url(${currentImage.src})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           animation: 'cocon-bg-ken-burns 28s ease-in-out infinite alternate',
@@ -139,7 +198,7 @@ export default function Cocon() {
         }}
       />
 
-      {/* Voile sombre subtil pour lisibilité texte blanc */}
+      {/* Voile sombre */}
       <div
         aria-hidden
         style={{
@@ -151,7 +210,7 @@ export default function Cocon() {
         }}
       />
 
-      {/* Voile horaire (teinte selon moment) */}
+      {/* Voile horaire */}
       <div
         aria-hidden
         style={{
@@ -163,10 +222,10 @@ export default function Cocon() {
         }}
       />
 
-      {/* Lucioles */}
-      <Fireflies accent={accent} />
+      {/* Ambiance dynamique */}
+      <CoconAmbiance type={cocon.ambiance || 'fireflies'} accent={accent} />
 
-      {/* Top bar — logo NÉYA centré + icône personnaliser */}
+      {/* Top bar — logo + icône perso */}
       <div
         style={{
           position: 'absolute',
@@ -179,10 +238,7 @@ export default function Cocon() {
           zIndex: 3,
         }}
       >
-        {/* Spacer pour centrer le logo */}
         <span style={{ width: 32, height: 32 }} />
-
-        {/* Logo NÉYA */}
         <div
           aria-hidden
           style={{
@@ -192,7 +248,6 @@ export default function Cocon() {
             gap: 4,
           }}
         >
-          {/* Mini lotus SVG */}
           <svg width="22" height="14" viewBox="0 0 44 28" fill="none" aria-hidden>
             <path d="M22 26 C 8 18, 4 8, 22 2 C 40 8, 36 18, 22 26 Z" stroke="#FBF6E8" strokeWidth="0.8" fill="none" opacity="0.92" />
             <path d="M22 26 C 12 22, 10 14, 22 8" stroke="#FBF6E8" strokeWidth="0.6" fill="none" opacity="0.7" />
@@ -211,13 +266,11 @@ export default function Cocon() {
             NÉYA
           </span>
         </div>
-
-        {/* Bouton personnaliser */}
         <button
           type="button"
           onClick={() => { haptic(2); setPersonalizeOpen(true); }}
           data-press
-          aria-label="Personnaliser"
+          aria-label="Personnaliser mon cocon"
           style={{
             appearance: 'none',
             width: 32,
@@ -241,11 +294,11 @@ export default function Cocon() {
         </button>
       </div>
 
-      {/* Texte centré — greeting + whisper */}
+      {/* Greeting + whisper */}
       <div
         style={{
           position: 'absolute',
-          top: '26%',
+          top: '24%',
           left: 22,
           right: 22,
           textAlign: 'center',
@@ -284,8 +337,8 @@ export default function Cocon() {
         </p>
       </div>
 
-      {/* Mantra en filigrane (centre-bas) si présent */}
-      {profile.mantra && (
+      {/* Mantra filigrane */}
+      {profile.mantra ? (
         <button
           type="button"
           onClick={() => { haptic(2); setPersonalizeOpen(true); }}
@@ -294,8 +347,7 @@ export default function Cocon() {
             position: 'absolute',
             left: 22,
             right: 22,
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 230px)',
-            margin: 0,
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 254px)',
             background: 'transparent',
             border: 'none',
             cursor: 'pointer',
@@ -303,6 +355,7 @@ export default function Cocon() {
             color: '#FBF6E8',
             WebkitTapHighlightColor: 'transparent',
             zIndex: 2,
+            padding: 0,
           }}
         >
           <span
@@ -323,9 +376,7 @@ export default function Cocon() {
             « {profile.mantra} »
           </span>
         </button>
-      )}
-
-      {!profile.mantra && (
+      ) : (
         <button
           type="button"
           onClick={() => { haptic(2); setPersonalizeOpen(true); }}
@@ -335,7 +386,7 @@ export default function Cocon() {
             position: 'absolute',
             left: '50%',
             transform: 'translateX(-50%)',
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 234px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 258px)',
             appearance: 'none',
             background: 'transparent',
             border: 'none',
@@ -356,7 +407,91 @@ export default function Cocon() {
         </button>
       )}
 
-      {/* CTA principal — Me poser 2 minutes */}
+      {/* Mini player musique (si track sélectionnée) */}
+      {currentTrack && (
+        <div
+          style={{
+            position: 'absolute',
+            left: 22,
+            right: 22,
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 198px)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            padding: '10px 14px',
+            minHeight: 44,
+            background: 'rgba(8, 10, 24, 0.42)',
+            border: '0.5px solid rgba(251, 246, 232, 0.16)',
+            borderRadius: 999,
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            zIndex: 3,
+          }}
+        >
+          <button
+            type="button"
+            onClick={togglePlay}
+            data-press
+            aria-label={musicPlaying ? 'Mettre en pause' : 'Lancer la musique'}
+            style={{
+              appearance: 'none',
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              background: accent,
+              color: '#FBF6E8',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              padding: 0,
+              fontSize: 12,
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            {musicPlaying ? '❚❚' : '▶'}
+          </button>
+          <span
+            style={{
+              flex: 1,
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              fontSize: 14,
+              color: '#FBF6E8',
+              opacity: 0.92,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {currentTrack.title}
+          </span>
+          <button
+            type="button"
+            onClick={() => { haptic(2); setPersonalizeOpen(true); }}
+            aria-label="Changer la musique"
+            style={{
+              appearance: 'none',
+              background: 'transparent',
+              border: 'none',
+              color: '#FBF6E8',
+              opacity: 0.55,
+              cursor: 'pointer',
+              padding: '8px 4px',
+              minHeight: 32,
+              fontSize: 12,
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            ⋯
+          </button>
+        </div>
+      )}
+
+      {/* CTA principal */}
       <button
         type="button"
         onClick={() => { haptic(6); setBreathingOpen(true); }}
@@ -365,7 +500,7 @@ export default function Cocon() {
           position: 'absolute',
           left: '50%',
           transform: 'translateX(-50%)',
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 150px)',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 138px)',
           appearance: 'none',
           padding: '16px 38px',
           minHeight: 52,
@@ -380,41 +515,55 @@ export default function Cocon() {
           textTransform: 'uppercase',
           cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',
-          boxShadow: `0 8px 28px ${totemWorld.accentRgb}, 0.42), 0 2px 6px rgba(0, 0, 0, 0.18)`,
+          boxShadow: `0 8px 28px ${accentRgb}, 0.42), 0 2px 6px rgba(0, 0, 0, 0.18)`,
           zIndex: 3,
         }}
       >
         Me poser 2 minutes
       </button>
 
-      {/* Sub-CTA texte — Changer de monde / personnaliser */}
+      {/* Bouton Personnaliser texte (sous CTA) */}
       <button
         type="button"
         onClick={() => { haptic(2); setPersonalizeOpen(true); }}
+        data-press
         style={{
           position: 'absolute',
           left: '50%',
           transform: 'translateX(-50%)',
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 100px)',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 90px)',
           appearance: 'none',
           background: 'transparent',
           border: 'none',
           cursor: 'pointer',
           color: '#FBF6E8',
-          opacity: 0.65,
+          opacity: 0.7,
           fontFamily: 'var(--font-ui)',
           fontSize: 10,
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
           fontWeight: 500,
-          padding: '8px 16px',
-          minHeight: 32,
+          padding: '10px 16px',
+          minHeight: 36,
           WebkitTapHighlightColor: 'transparent',
           zIndex: 3,
         }}
       >
-        {currentTotem.label}
+        Personnaliser mon cocon
       </button>
+
+      {/* Audio element (caché) */}
+      {currentTrack && (
+        <audio
+          ref={audioRef}
+          src={trackSrc(currentTrack.key)}
+          loop
+          preload="metadata"
+          onEnded={() => setMusicPlaying(false)}
+          onPause={() => setMusicPlaying(false)}
+          onPlay={() => setMusicPlaying(true)}
+        />
+      )}
 
       {/* Overlays */}
       {breathingOpen && (
@@ -423,11 +572,11 @@ export default function Cocon() {
           onClose={() => setBreathingOpen(false)}
         />
       )}
-
       {personalizeOpen && (
         <PersonalizeSheet
           profile={profile}
-          onSave={updateProfile}
+          onUpdate={updateProfile}
+          onUpdateCocon={updateCocon}
           onClose={() => setPersonalizeOpen(false)}
         />
       )}
@@ -448,21 +597,43 @@ export default function Cocon() {
           0%, 100% { opacity: 0.74; }
           50%      { opacity: 0.94; }
         }
+        @keyframes cocon-rain-fall {
+          0%   { transform: translateY(0); }
+          100% { transform: translateY(110vh); }
+        }
+        @keyframes cocon-snow-fall {
+          0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+          10%  { opacity: 0.75; }
+          90%  { opacity: 0.6; }
+          100% { transform: translate3d(var(--drift, 0), 110vh, 0); opacity: 0; }
+        }
+        @keyframes cocon-star-twinkle {
+          0%, 100% { opacity: 0.15; transform: scale(0.8); }
+          50%      { opacity: 0.95; transform: scale(1.3); }
+        }
       `}</style>
     </div>
   );
 }
 
-/* ─── PersonalizeSheet — édition prénom + mantra + totem ─── */
+/* ============================================================
+   PersonalizeSheet — 4 sections : image / ambiance / musique / identité
+   ============================================================ */
 
-function PersonalizeSheet({ profile, onSave, onClose }) {
+function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
+  const [tab, setTab] = useState('image'); // image | ambiance | musique | identite
   const [tempPseudo, setTempPseudo] = useState(profile.pseudo || '');
   const [tempMantra, setTempMantra] = useState(profile.mantra || '');
   const [closing, setClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [actionSheet, setActionSheet] = useState(null);
   const aliveRef = useRef(true);
   const timersRef = useRef([]);
+
+  const cocon = profile.cocon || {};
+  const currentImage = resolveImage(profile);
+  const currentAmbiance = cocon.ambiance || 'fireflies';
+  const currentMusic = cocon.music || null;
+  const currentTotem = profile.totem || 'lion';
 
   const safeTimeout = (fn, ms) => {
     const id = setTimeout(() => {
@@ -479,25 +650,24 @@ function PersonalizeSheet({ profile, onSave, onClose }) {
     safeTimeout(() => onClose?.(), 320);
   };
 
-  const handleSave = () => {
+  const handleSaveIdentite = () => {
     const patch = {};
     const pseudoTrim = (tempPseudo || '').trim();
     const mantraTrim = (tempMantra || '').trim();
     if (pseudoTrim !== (profile.pseudo || '')) patch.pseudo = pseudoTrim || null;
     if (mantraTrim !== (profile.mantra || '')) patch.mantra = mantraTrim || null;
     if (Object.keys(patch).length > 0) {
-      onSave(patch);
+      onUpdate(patch);
       haptic(6);
     } else {
       haptic(2);
     }
-    handleClose();
   };
 
   const { dialogProps, containerRef } = useStandardOverlay({
     open: !closing,
     onClose: handleClose,
-    labelText: 'Personnaliser',
+    labelText: 'Personnaliser mon cocon',
   });
 
   useEffect(() => {
@@ -510,13 +680,12 @@ function PersonalizeSheet({ profile, onSave, onClose }) {
     };
   }, []);
 
-  const pickTotem = (key) => {
-    onSave({ totem: key });
-    haptic(4);
-    setActionSheet(null);
-  };
-
-  const currentTotemLabel = (TOTEMS.find((t) => t.key === profile.totem) || TOTEMS[0]).label;
+  const TABS = [
+    { key: 'image',    label: 'Image' },
+    { key: 'ambiance', label: 'Ambiance' },
+    { key: 'musique',  label: 'Musique' },
+    { key: 'identite', label: 'Identité' },
+  ];
 
   return (
     <>
@@ -547,12 +716,13 @@ function PersonalizeSheet({ profile, onSave, onClose }) {
           color: 'var(--ink)',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
-          padding: '12px 22px calc(env(safe-area-inset-bottom, 0px) + 28px)',
+          padding: '12px 0 calc(env(safe-area-inset-bottom, 0px) + 24px)',
           transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
           boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.18)',
-          maxHeight: '78vh',
-          overflowY: 'auto',
+          maxHeight: '85vh',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {/* Drag handle */}
@@ -564,197 +734,571 @@ function PersonalizeSheet({ profile, onSave, onClose }) {
             borderRadius: 999,
             background: 'rgba(26, 26, 47, 0.18)',
             margin: '0 auto 18px',
+            flexShrink: 0,
           }}
         />
 
         {/* Title */}
         <div
-          className="neya-mark"
           style={{
-            color: 'var(--content-tertiary)',
+            padding: '0 22px',
             textAlign: 'center',
-            marginBottom: 22,
+            marginBottom: 18,
+            flexShrink: 0,
           }}
         >
-          Personnaliser
-        </div>
-
-        {/* Prénom */}
-        <div style={{ marginBottom: 22 }}>
-          <label
-            className="neya-mark"
-            style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}
-          >
-            Prénom
-          </label>
-          <input
-            type="text"
-            value={tempPseudo}
-            onChange={(e) => setTempPseudo(e.target.value)}
-            placeholder="Ton prénom"
-            maxLength={30}
-            aria-label="Ton prénom"
+          <div
             style={{
-              width: '100%',
-              padding: '14px 16px',
-              minHeight: 48,
-              background: 'rgba(26, 26, 47, 0.04)',
-              border: '0.5px solid rgba(26, 26, 47, 0.10)',
-              borderRadius: 12,
-              fontFamily: 'var(--font-body)',
-              fontSize: 15,
-              color: 'var(--ink)',
-              outline: 'none',
-              boxSizing: 'border-box',
-            }}
-          />
-        </div>
-
-        {/* Mantra */}
-        <div style={{ marginBottom: 22 }}>
-          <label
-            className="neya-mark"
-            style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}
-          >
-            Mantra du moment
-          </label>
-          <textarea
-            value={tempMantra}
-            onChange={(e) => setTempMantra(e.target.value)}
-            placeholder="Une phrase pour toi…"
-            rows={2}
-            maxLength={140}
-            aria-label="Mantra"
-            style={{
-              width: '100%',
-              padding: '14px 16px',
-              minHeight: 64,
-              background: 'rgba(26, 26, 47, 0.04)',
-              border: '0.5px solid rgba(26, 26, 47, 0.10)',
-              borderRadius: 12,
               fontFamily: 'var(--font-display)',
               fontStyle: 'italic',
               fontVariationSettings: 'var(--fraunces-italic-soft)',
-              fontSize: 16,
-              lineHeight: 1.4,
+              fontSize: 22,
               color: 'var(--ink)',
-              outline: 'none',
-              resize: 'none',
-              boxSizing: 'border-box',
-            }}
-          />
-          <div
-            style={{
-              marginTop: 4,
-              textAlign: 'right',
-              fontFamily: 'var(--font-ui)',
-              fontSize: 10,
-              fontVariantNumeric: 'tabular-nums',
-              color: tempMantra.length >= 130 ? 'var(--crisis)' : 'var(--content-tertiary)',
             }}
           >
-            {140 - tempMantra.length}
+            Mon cocon
           </div>
         </div>
 
-        {/* Totem (sélecteur via ActionSheet) */}
-        <div style={{ marginBottom: 28 }}>
-          <label
-            className="neya-mark"
-            style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}
-          >
-            Mon totem
-          </label>
-          <button
-            type="button"
-            data-press
-            onClick={() => { haptic(2); setActionSheet({ type: 'totem' }); }}
-            style={{
-              appearance: 'none',
-              width: '100%',
-              padding: '14px 16px',
-              minHeight: 48,
-              background: 'rgba(26, 26, 47, 0.04)',
-              border: '0.5px solid rgba(26, 26, 47, 0.10)',
-              borderRadius: 12,
-              fontFamily: 'var(--font-body)',
-              fontSize: 15,
-              color: 'var(--ink)',
-              textAlign: 'left',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span>{currentTotemLabel}</span>
-            <span style={{ color: 'var(--content-tertiary)', fontSize: 14 }}>›</span>
-          </button>
+        {/* Tabs */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 6,
+            padding: '0 22px 16px',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            flexShrink: 0,
+          }}
+        >
+          {TABS.map((t) => {
+            const active = t.key === tab;
+            return (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => { haptic(2); setTab(t.key); }}
+                data-press
+                style={{
+                  appearance: 'none',
+                  padding: '8px 14px',
+                  minHeight: 36,
+                  background: active ? 'var(--ink)' : 'transparent',
+                  color: active ? 'var(--cream)' : 'var(--content-secondary)',
+                  border: active ? 'none' : '0.5px solid rgba(26, 26, 47, 0.14)',
+                  borderRadius: 999,
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  letterSpacing: '0.04em',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  WebkitTapHighlightColor: 'transparent',
+                  flexShrink: 0,
+                }}
+              >
+                {t.label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Actions */}
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button
-            type="button"
-            data-press
-            onClick={handleClose}
-            style={{
-              appearance: 'none',
-              flex: 1,
-              padding: '14px 16px',
-              minHeight: 48,
-              background: 'transparent',
-              border: '0.5px solid rgba(26, 26, 47, 0.18)',
-              borderRadius: 999,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 500,
-              letterSpacing: '0.04em',
-              color: 'var(--ink)',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            Annuler
-          </button>
-          <button
-            type="button"
-            data-press
-            onClick={handleSave}
-            style={{
-              appearance: 'none',
-              flex: 1,
-              padding: '14px 16px',
-              minHeight: 48,
-              background: 'var(--ink)',
-              color: 'var(--cream)',
-              border: 'none',
-              borderRadius: 999,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.04em',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            Garder
-          </button>
+        {/* Tab content (scrollable) */}
+        <div
+          style={{
+            padding: '4px 22px 8px',
+            overflowY: 'auto',
+            flex: 1,
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          {tab === 'image' && (
+            <div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 13,
+                  color: 'var(--content-secondary)',
+                  marginBottom: 14,
+                }}
+              >
+                Le décor de ton sanctuaire.
+              </div>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: 10,
+                }}
+              >
+                {COCON_IMAGES.map((img) => {
+                  const active = currentImage.key === img.key;
+                  return (
+                    <button
+                      key={img.key}
+                      type="button"
+                      data-press
+                      onClick={() => { haptic(4); onUpdateCocon({ image: img.key }); }}
+                      style={{
+                        appearance: 'none',
+                        padding: 0,
+                        border: active ? '2px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
+                        borderRadius: 12,
+                        cursor: 'pointer',
+                        overflow: 'hidden',
+                        position: 'relative',
+                        aspectRatio: '4 / 5',
+                        background: `#0a0c14 url(${img.src}) center / cover no-repeat`,
+                        WebkitTapHighlightColor: 'transparent',
+                        boxShadow: active ? '0 4px 14px rgba(0,0,0,0.18)' : 'none',
+                      }}
+                      aria-pressed={active}
+                    >
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          padding: '24px 10px 10px',
+                          background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
+                          color: '#FBF6E8',
+                          fontFamily: 'var(--font-display)',
+                          fontStyle: 'italic',
+                          fontVariationSettings: 'var(--fraunces-italic-soft)',
+                          fontSize: 12,
+                          textShadow: '0 1px 4px rgba(0,0,0,0.5)',
+                        }}
+                      >
+                        {img.label}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {tab === 'ambiance' && (
+            <div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 13,
+                  color: 'var(--content-secondary)',
+                  marginBottom: 14,
+                }}
+              >
+                La petite vie qui danse sur ton cocon.
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {AMBIANCES.map((a) => {
+                  const active = a.key === currentAmbiance;
+                  return (
+                    <button
+                      key={a.key}
+                      type="button"
+                      data-press
+                      onClick={() => { haptic(2); onUpdateCocon({ ambiance: a.key }); }}
+                      style={{
+                        appearance: 'none',
+                        padding: '14px 16px',
+                        minHeight: 56,
+                        background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
+                        border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
+                        borderRadius: 14,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 14,
+                        textAlign: 'left',
+                        WebkitTapHighlightColor: 'transparent',
+                      }}
+                      aria-pressed={active}
+                    >
+                      <div style={{ minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontFamily: 'var(--font-ui)',
+                            fontSize: 14,
+                            fontWeight: 500,
+                            color: 'var(--ink)',
+                          }}
+                        >
+                          {a.label}
+                        </div>
+                        <div
+                          style={{
+                            fontFamily: 'var(--font-body)',
+                            fontSize: 11.5,
+                            color: 'var(--content-tertiary)',
+                            marginTop: 2,
+                          }}
+                        >
+                          {a.hint}
+                        </div>
+                      </div>
+                      <span
+                        style={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: '50%',
+                          border: active ? '5px solid var(--ink)' : '1px solid rgba(26, 26, 47, 0.20)',
+                          background: 'transparent',
+                          flexShrink: 0,
+                          transition: 'all 200ms ease-out',
+                        }}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {tab === 'musique' && (
+            <div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 13,
+                  color: 'var(--content-secondary)',
+                  marginBottom: 14,
+                }}
+              >
+                La musique qui accompagne ton retour à toi.
+              </div>
+
+              {/* Aucune musique */}
+              <button
+                type="button"
+                data-press
+                onClick={() => { haptic(2); onUpdateCocon({ music: null }); }}
+                style={{
+                  appearance: 'none',
+                  width: '100%',
+                  padding: '12px 16px',
+                  minHeight: 48,
+                  background: !currentMusic ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
+                  border: !currentMusic ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
+                  borderRadius: 12,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: 12,
+                  WebkitTapHighlightColor: 'transparent',
+                }}
+                aria-pressed={!currentMusic}
+              >
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink)' }}>
+                  Silence
+                </span>
+                <span
+                  style={{
+                    width: 14,
+                    height: 14,
+                    borderRadius: '50%',
+                    border: !currentMusic ? '4px solid var(--ink)' : '1px solid rgba(26, 26, 47, 0.20)',
+                    flexShrink: 0,
+                  }}
+                />
+              </button>
+
+              {/* Volume slider */}
+              <div
+                style={{
+                  padding: '12px 16px',
+                  background: 'rgba(26, 26, 47, 0.04)',
+                  borderRadius: 12,
+                  marginBottom: 16,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                }}
+              >
+                <span style={{ fontSize: 13 }} aria-hidden>🔉</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  value={Math.round((cocon.musicVolume || 0.45) * 100)}
+                  onChange={(e) => onUpdateCocon({ musicVolume: Number(e.target.value) / 100 })}
+                  aria-label="Volume"
+                  style={{
+                    flex: 1,
+                    accentColor: 'var(--ink)',
+                  }}
+                />
+                <span
+                  style={{
+                    minWidth: 30,
+                    textAlign: 'right',
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 11,
+                    fontVariantNumeric: 'tabular-nums',
+                    color: 'var(--content-tertiary)',
+                  }}
+                >
+                  {Math.round((cocon.musicVolume || 0.45) * 100)}
+                </span>
+              </div>
+
+              {/* Tracks */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {TRACKS.map((t) => {
+                  const active = t.key === currentMusic;
+                  return (
+                    <button
+                      key={t.key}
+                      type="button"
+                      data-press
+                      onClick={() => { haptic(2); onUpdateCocon({ music: t.key }); }}
+                      style={{
+                        appearance: 'none',
+                        padding: '12px 14px',
+                        minHeight: 44,
+                        background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
+                        border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.08)',
+                        borderRadius: 10,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        textAlign: 'left',
+                        WebkitTapHighlightColor: 'transparent',
+                      }}
+                      aria-pressed={active}
+                    >
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontStyle: 'italic',
+                          fontVariationSettings: 'var(--fraunces-italic-soft)',
+                          fontSize: 14,
+                          color: 'var(--ink)',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          marginRight: 8,
+                        }}
+                      >
+                        {t.title}
+                      </span>
+                      {active && (
+                        <span
+                          aria-hidden
+                          style={{
+                            fontFamily: 'var(--font-ui)',
+                            fontSize: 9,
+                            letterSpacing: '0.222em',
+                            textTransform: 'uppercase',
+                            fontWeight: 600,
+                            color: 'var(--content-tertiary)',
+                            flexShrink: 0,
+                          }}
+                        >
+                          en cours
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {tab === 'identite' && (
+            <div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 13,
+                  color: 'var(--content-secondary)',
+                  marginBottom: 18,
+                }}
+              >
+                Qui tu es dans cet espace.
+              </div>
+
+              {/* Prénom */}
+              <div style={{ marginBottom: 18 }}>
+                <label
+                  className="neya-mark"
+                  style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}
+                >
+                  Prénom
+                </label>
+                <input
+                  type="text"
+                  value={tempPseudo}
+                  onChange={(e) => setTempPseudo(e.target.value)}
+                  placeholder="Ton prénom"
+                  maxLength={30}
+                  aria-label="Ton prénom"
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    minHeight: 48,
+                    background: 'rgba(26, 26, 47, 0.04)',
+                    border: '0.5px solid rgba(26, 26, 47, 0.10)',
+                    borderRadius: 12,
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 15,
+                    color: 'var(--ink)',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              {/* Mantra */}
+              <div style={{ marginBottom: 18 }}>
+                <label
+                  className="neya-mark"
+                  style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}
+                >
+                  Mantra du moment
+                </label>
+                <textarea
+                  value={tempMantra}
+                  onChange={(e) => setTempMantra(e.target.value)}
+                  placeholder="Une phrase pour toi…"
+                  rows={2}
+                  maxLength={140}
+                  aria-label="Mantra"
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    minHeight: 64,
+                    background: 'rgba(26, 26, 47, 0.04)',
+                    border: '0.5px solid rgba(26, 26, 47, 0.10)',
+                    borderRadius: 12,
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontVariationSettings: 'var(--fraunces-italic-soft)',
+                    fontSize: 16,
+                    lineHeight: 1.4,
+                    color: 'var(--ink)',
+                    outline: 'none',
+                    resize: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <div
+                  style={{
+                    marginTop: 4,
+                    textAlign: 'right',
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 10,
+                    fontVariantNumeric: 'tabular-nums',
+                    color: tempMantra.length >= 130 ? 'var(--crisis)' : 'var(--content-tertiary)',
+                  }}
+                >
+                  {140 - tempMantra.length}
+                </div>
+              </div>
+
+              {/* Totem */}
+              <div style={{ marginBottom: 18 }}>
+                <label
+                  className="neya-mark"
+                  style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}
+                >
+                  Mon totem
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {TOTEMS.map((t) => {
+                    const active = t.key === currentTotem;
+                    return (
+                      <button
+                        key={t.key}
+                        type="button"
+                        data-press
+                        onClick={() => { haptic(2); onUpdate({ totem: t.key }); }}
+                        style={{
+                          appearance: 'none',
+                          padding: '12px 14px',
+                          minHeight: 48,
+                          background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
+                          border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
+                          borderRadius: 10,
+                          cursor: 'pointer',
+                          fontFamily: 'var(--font-ui)',
+                          fontSize: 13,
+                          fontWeight: active ? 600 : 500,
+                          color: 'var(--ink)',
+                          textAlign: 'left',
+                          WebkitTapHighlightColor: 'transparent',
+                        }}
+                        aria-pressed={active}
+                      >
+                        {t.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                data-press
+                onClick={handleSaveIdentite}
+                style={{
+                  appearance: 'none',
+                  width: '100%',
+                  padding: '14px 16px',
+                  minHeight: 48,
+                  background: 'var(--ink)',
+                  color: 'var(--cream)',
+                  border: 'none',
+                  borderRadius: 999,
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  letterSpacing: '0.04em',
+                  cursor: 'pointer',
+                  WebkitTapHighlightColor: 'transparent',
+                }}
+              >
+                Garder
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Footer close (sauf tab identite qui a son propre Garder) */}
+        {tab !== 'identite' && (
+          <div style={{ padding: '12px 22px 0', flexShrink: 0 }}>
+            <button
+              type="button"
+              data-press
+              onClick={handleClose}
+              style={{
+                appearance: 'none',
+                width: '100%',
+                padding: '12px 16px',
+                minHeight: 44,
+                background: 'transparent',
+                border: '0.5px solid rgba(26, 26, 47, 0.16)',
+                borderRadius: 999,
+                fontFamily: 'var(--font-ui)',
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: 'var(--ink)',
+                cursor: 'pointer',
+                WebkitTapHighlightColor: 'transparent',
+              }}
+            >
+              Fermer
+            </button>
+          </div>
+        )}
       </div>
-
-      {actionSheet?.type === 'totem' && (
-        <ActionSheet
-          title="Choisir un totem"
-          actions={TOTEMS.map((t) => ({
-            label: t.label,
-            onTap: () => pickTotem(t.key),
-          }))}
-          onClose={() => setActionSheet(null)}
-        />
-      )}
     </>
   );
 }
-
