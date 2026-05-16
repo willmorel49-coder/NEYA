@@ -1,0 +1,296 @@
+/* ============================================================
+   NÉYA — Pre-app onboarding flow (4 fullscreen swipe screens)
+   ============================================================ */
+
+.root {
+  position: fixed;
+  inset: 0;
+  background: #050810;
+  color: #fff;
+  z-index: 9999;
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.track {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: row;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+}
+.track::-webkit-scrollbar { display: none; }
+
+.screen {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+}
+
+.imageWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.image {
+  position: absolute;
+  inset: -2%;
+  width: 104%;
+  height: 104%;
+  object-fit: cover;
+  object-position: center;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.screen[data-active='true'] .image {
+  animation: kenBurns 12000ms ease-out forwards;
+}
+
+@keyframes kenBurns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.05); }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5, 8, 16, 0.92) 0%,
+    rgba(5, 8, 16, 0.75) 28%,
+    rgba(5, 8, 16, 0.35) 58%,
+    rgba(5, 8, 16, 0.10) 80%,
+    rgba(5, 8, 16, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.tapZone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  z-index: 3;
+  -webkit-tap-highlight-color: transparent;
+}
+.tapZone:focus-visible {
+  outline: 2px solid #D4E08C;
+  outline-offset: -6px;
+  border-radius: 8px;
+}
+.tapLeft  { left: 0; }
+.tapRight { right: 0; }
+
+.content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding:
+    24px
+    clamp(22px, 6vw, 48px)
+    calc(env(safe-area-inset-bottom, 0px) + 36px);
+  max-height: 78dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 2;
+  pointer-events: none;
+}
+.content > * { pointer-events: auto; }
+
+.content[data-animate='true'] > .title,
+.content[data-animate='true'] > .body,
+.content[data-animate='true'] > .subBody,
+.content[data-animate='true'] > .signature,
+.content[data-animate='true'] > .ctaWrap {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: textFadeIn 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.content[data-animate='true'] > .title    { animation-delay: 100ms; }
+.content[data-animate='true'] > .body     { animation-delay: 180ms; }
+.content[data-animate='true'] > .subBody  { animation-delay: 240ms; }
+.content[data-animate='true'] > .signature{ animation-delay: 300ms; }
+.content[data-animate='true'] > .ctaWrap  { animation-delay: 320ms; }
+
+@keyframes textFadeIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.title {
+  font-family: var(--font-ui, 'Sora', system-ui, sans-serif);
+  font-weight: 700;
+  font-size: clamp(36px, 9vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.body {
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  font-weight: 400;
+  font-size: clamp(17px, 4.4vw, 19px);
+  line-height: 1.5;
+  color: #fff;
+  opacity: 0.95;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.subBody {
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  font-weight: 400;
+  font-size: clamp(14px, 3.6vw, 15px);
+  line-height: 1.55;
+  color: #fff;
+  opacity: 0.72;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.signature {
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  font-style: italic;
+  font-size: clamp(13px, 3.4vw, 14px);
+  line-height: 1.5;
+  color: #fff;
+  opacity: 0.62;
+  margin: 6px 0 0;
+}
+
+.ctaWrap { margin-top: 6px; }
+
+.cta {
+  display: block;
+  width: 100%;
+  padding: 16px 24px;
+  min-height: 52px;
+  border: 0;
+  border-radius: 999px;
+  background: #FBF6E8;
+  color: #1A1A2F;
+  font-family: var(--font-ui, 'Sora', system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 32px rgba(212, 224, 140, 0.14);
+}
+.cta:hover     { transform: translateY(-1px); }
+.cta:active    { transform: translateY(0) scale(0.985); }
+.cta:focus-visible {
+  outline: 2px solid #D4E08C;
+  outline-offset: 3px;
+}
+
+.topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 18px)
+    clamp(22px, 6vw, 48px)
+    0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 4;
+  pointer-events: none;
+}
+.topBar > * { pointer-events: auto; }
+
+.skip {
+  margin-left: auto;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  opacity: 0.62;
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: opacity 160ms ease-out;
+}
+.skip:hover     { opacity: 0.9; }
+.skip:focus-visible {
+  outline: 2px solid #D4E08C;
+  outline-offset: 4px;
+  border-radius: 6px;
+  opacity: 1;
+}
+
+/* ---------- Progress dots (Apple-style elongating bar) ---------- */
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+}
+
+.dot {
+  height: 3px;
+  width: 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.32);
+  transition:
+    width 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+.dotActive {
+  width: 28px;
+  background: rgba(255, 255, 255, 0.95);
+}
+.dotDone {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .track { scroll-behavior: auto; }
+  .screen[data-active='true'] .image { animation: none; }
+  .content[data-animate='true'] > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .cta { transition: none; }
+  .dot { transition: none; }
+}
+
+/* ---------- Desktop refinements ---------- */
+
+@media (min-width: 768px) {
+  .content {
+    max-width: 640px;
+    padding-bottom: 56px;
+  }
+  .signature {
+    max-width: 420px;
+  }
+}

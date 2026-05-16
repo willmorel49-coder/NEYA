@@ -7,10 +7,10 @@
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
-import { isOnboarded, getProfile, ls, haptic, checkMilestone, isMilestoneSeen, markMilestoneSeen, recordVisitToday } from './state';
+import { isOnboarded, getProfile, patchProfile, ls, haptic, checkMilestone, isMilestoneSeen, markMilestoneSeen, recordVisitToday } from './state';
 import { WORLDS } from './worlds';
 import Splash from './screens/Splash';
-import Manifeste from './screens/Manifeste';
+import OnboardingFlow from '../components/onboarding/OnboardingFlow';
 import Onboarding from './screens/Onboarding';
 import Aventure from './screens/Aventure';
 import Cocon from './screens/Cocon';
@@ -301,9 +301,20 @@ export default function V2App() {
     return <Splash onContinue={() => setSplashDone(true)} />;
   }
 
-  // Premier launch : Manifeste ÇA VA ? (remplace Onboarding+Patronus+Tour)
-  if (!onboarded) {
-    return <Manifeste onClose={() => setOnboarded(true)} />;
+  // Premier launch : Onboarding visuel pré-app (4 écrans swipe + photos)
+  const hasSeenOnboarding = (() => {
+    try { return localStorage.getItem('neya_onboarded') === 'true'; } catch { return false; }
+  })();
+  if (!onboarded || !hasSeenOnboarding) {
+    return (
+      <OnboardingFlow
+        onComplete={() => {
+          try { localStorage.setItem('neya_onboarded', 'true'); } catch {}
+          patchProfile({ onboarding: { ...(getProfile().onboarding || {}), completed: true } });
+          setOnboarded(true);
+        }}
+      />
+    );
   }
 
   // SOS visible only when user is in main shell — hidden during intro overlays
