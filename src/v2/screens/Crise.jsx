@@ -32,12 +32,12 @@ const REFUGE_IMAGES = {
 };
 
 /* Musiques exercices (du dossier musiques-exercices) */
-const REFUGE_MUSIC = {
-  'sunrise-breath':         '/musiques-exercices/sunrise-breath.mp3',
-  'douce-nuit':             '/musiques-exercices/douce-nuit.mp3',
-  'guéris':                 '/musiques-exercices/gu%C3%A9ris.mp3',
-  'tethered-to-the-wreckage': '/musiques-exercices/tethered-to-the-wreckage.mp3',
-};
+/* Path construit via encodeURIComponent pour gérer correctement les caractères spéciaux (accents). */
+const REFUGE_MUSIC_KEYS = ['sunrise-breath', 'douce-nuit', 'guéris', 'tethered-to-the-wreckage'];
+const REFUGE_MUSIC = REFUGE_MUSIC_KEYS.reduce((acc, key) => {
+  acc[key] = `/musiques-exercices/${encodeURIComponent(key)}.mp3`;
+  return acc;
+}, {});
 
 /* Rythmes de respiration */
 const RHYTHMS = {
@@ -148,11 +148,17 @@ export default function Crise({ onClose }) {
   useEffect(() => {
     const raf = requestAnimationFrame(() => setMounted(true));
     haptic(4);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: true } }));
+    }
     return () => {
       cancelAnimationFrame(raf);
       aliveRef.current = false;
       if (phaseTimerRef.current) clearTimeout(phaseTimerRef.current);
       if (lineTimerRef.current) clearInterval(lineTimerRef.current);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: false } }));
+      }
     };
   }, []);
 
@@ -231,6 +237,38 @@ export default function Crise({ onClose }) {
           pointerEvents: 'none',
         }}
       />
+
+      {/* Bouton ✕ secours top-right — fermeture rapide discrète */}
+      <button
+        type="button"
+        onClick={handleClose}
+        data-press
+        aria-label="Quitter le refuge"
+        style={{
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
+          right: 12,
+          width: 44,
+          height: 44,
+          borderRadius: 22,
+          background: 'rgba(251, 246, 232, 0.10)',
+          border: '0.5px solid rgba(251, 246, 232, 0.25)',
+          color: '#FBF6E8',
+          fontSize: 18,
+          cursor: 'pointer',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 0,
+          appearance: 'none',
+          WebkitTapHighlightColor: 'transparent',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          zIndex: 4,
+        }}
+      >
+        ✕
+      </button>
 
       {/* Top — accès rapide 3114 + bouton musique */}
       <div
@@ -448,7 +486,7 @@ export default function Crise({ onClose }) {
       <div
         style={{
           position: 'absolute',
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 130px)',
+          bottom: 'max(170px, calc(env(safe-area-inset-bottom, 0px) + 130px))',
           left: 0,
           right: 0,
           textAlign: 'center',
@@ -481,7 +519,7 @@ export default function Crise({ onClose }) {
           position: 'absolute',
           left: '50%',
           transform: 'translateX(-50%)',
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 60px)',
+          bottom: 'max(96px, calc(env(safe-area-inset-bottom, 0px) + 60px))',
           appearance: 'none',
           padding: '14px 32px',
           minHeight: 48,

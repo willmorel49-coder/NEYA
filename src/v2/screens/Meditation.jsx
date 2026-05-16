@@ -142,6 +142,18 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
     }
   }, []);
 
+  // Signale au shell qu'un overlay plein écran est ouvert (masque BottomNav, lock scroll, etc.)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: true } }));
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: false } }));
+      }
+    };
+  }, []);
+
   useEffect(() => { const t = setTimeout(() => setShow(true), 60); return () => clearTimeout(t); }, []);
 
   // Drift-resistant tick : anchor sur performance.now() et calcule un delta réel
@@ -271,6 +283,37 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           transition: 'background 800ms var(--ease-out)',
         }}
       />
+
+      {/* Close TOP-LEFT — accessible, discret, pearl glass */}
+      <button
+        type="button"
+        onClick={handleClose}
+        aria-label="Fermer la méditation"
+        data-press
+        style={{
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          left: 14,
+          width: 44,
+          height: 44,
+          borderRadius: 22,
+          background: 'rgba(255, 252, 245, 0.82)',
+          border: '0.5px solid rgba(26, 26, 47, 0.10)',
+          color: 'var(--ink)',
+          fontSize: 18,
+          cursor: 'pointer',
+          WebkitTapHighlightColor: 'transparent',
+          zIndex: 3,
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 14px rgba(26, 26, 47, 0.08)',
+        }}
+      >
+        ✕
+      </button>
 
       {/* Top — chapter mark */}
       <div

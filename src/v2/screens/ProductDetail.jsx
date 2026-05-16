@@ -47,11 +47,19 @@ export default function ProductDetail({
     return BRAND_QUOTES[i];
   }, []);
 
-  // Lock scroll background pendant l'ouverture
+  // Lock scroll background pendant l'ouverture + dispatch fullscreen overlay
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: true } }));
+    }
+    return () => {
+      document.body.style.overflow = prev;
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: false } }));
+      }
+    };
   }, []);
 
   // ESC pour fermer
@@ -134,6 +142,7 @@ export default function ProductDetail({
       <div
         role="dialog"
         aria-modal="true"
+        aria-labelledby="product-detail-title"
         style={{
           position: 'fixed',
           left: 0, right: 0, bottom: 0,
@@ -206,8 +215,8 @@ export default function ProductDetail({
             onClick={handleClose}
             aria-label="Fermer"
             style={{
-              width: 32, height: 32,
-              borderRadius: '50%',
+              width: 44, height: 44,
+              borderRadius: 22,
               background: 'transparent',
               border: '0.5px solid var(--hairline-strong)',
               color: 'var(--cava-ink)',
@@ -331,7 +340,7 @@ export default function ProductDetail({
             </div>
 
             {/* Title */}
-            <h2 style={{
+            <h2 id="product-detail-title" style={{
               fontFamily: 'var(--font-display)',
               fontStyle: 'italic',
               fontVariationSettings: FRAUNCES_ITALIC,
@@ -478,8 +487,8 @@ export default function ProductDetail({
                 aria-label="Diminuer"
                 disabled={qty <= 1}
                 style={{
-                  width: 32, height: 32,
-                  borderRadius: '50%',
+                  width: 44, height: 44,
+                  borderRadius: 22,
                   background: 'var(--cream-light)',
                   border: '0.5px solid var(--hairline-strong)',
                   color: 'var(--cava-ink)',
@@ -509,8 +518,8 @@ export default function ProductDetail({
                 aria-label="Augmenter"
                 disabled={qty >= 9}
                 style={{
-                  width: 32, height: 32,
-                  borderRadius: '50%',
+                  width: 44, height: 44,
+                  borderRadius: 22,
                   background: 'var(--cream-light)',
                   border: '0.5px solid var(--hairline-strong)',
                   color: 'var(--cava-ink)',
@@ -591,8 +600,9 @@ export default function ProductDetail({
         {/* Sticky CTA bar */}
         <div style={{
           position: 'absolute',
-          left: 0, right: 0, bottom: 0,
-          padding: '14px 20px calc(14px + env(safe-area-inset-bottom)) 20px',
+          left: 0, right: 0,
+          bottom: 'max(96px, calc(env(safe-area-inset-bottom, 0px) + 14px))',
+          padding: '14px 20px 0 20px',
           background: 'linear-gradient(to top, var(--cava-bg) 75%, rgba(251,246,232,0))',
           pointerEvents: 'none',
         }}>

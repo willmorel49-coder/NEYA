@@ -36,26 +36,26 @@ const CAPSULES = [
     key: 'libre',
     name: 'Libre',
     accent: 'var(--cava-warm)',
-    cover: '/cava/capsules/capsule-libre.png',
+    cover: '/img/cava-capsule-libre.png',
     tagline: 'Pour ceux qui se relèvent.',
   },
   {
     key: 'cava',
     name: 'Ça Va',
     accent: 'var(--cava-blue)',
-    cover: '/cava/capsules/capsule-cava.png',
+    cover: '/img/cava-capsule-cava.png',
     tagline: 'Pour ceux qui n’ont pas besoin de mentir.',
   },
   {
     key: 'vraiment',
     name: 'Vraiment ?',
     accent: 'var(--cava-purple)',
-    cover: '/cava/capsules/capsule-vraiment.png',
+    cover: '/img/cava-capsule-vraiment.png',
     tagline: 'Pour ceux qui osent la question.',
   },
 ];
 
-const HERO_BG = '/cava/products/libre-hoodie.jpg';
+const HERO_BG = '/img/cava-libre-hoodie.png';
 
 /* ----- Component ----------------------------------------- */
 

@@ -70,7 +70,15 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
   // Slide-up reveal on mount
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: true } }));
+    }
+    return () => {
+      cancelAnimationFrame(id);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: false } }));
+      }
+    };
   }, []);
 
   // Cleanup tous les timers au démontage

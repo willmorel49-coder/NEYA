@@ -76,7 +76,15 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
         triggerResumeExit();
       }
     }, 1000);
-    return () => clearInterval(id);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: true } }));
+    }
+    return () => {
+      clearInterval(id);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: false } }));
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

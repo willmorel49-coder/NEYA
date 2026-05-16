@@ -126,6 +126,14 @@ export default function Patronus({ onClose }) {
   const [forceStep, setForceStep] = useState(0); // 0..3 (how many forces visible)
   const closedRef = useRef(false);
 
+  const alreadySeen = ls.get('patronus_seen', false);
+  useEffect(() => {
+    if (alreadySeen && !closedRef.current) {
+      closedRef.current = true;
+      onClose?.();
+    }
+  }, [alreadySeen, onClose]);
+
   /* Mount sequencing + single-use guard */
   useEffect(() => {
     // Already seen — close immediately, no animation
@@ -186,6 +194,8 @@ export default function Patronus({ onClose }) {
   });
 
   const haloGradient = `radial-gradient(circle, ${archetype.accentRgb}, 0.45) 0%, transparent 70%)`;
+
+  if (alreadySeen) return null;
 
   return (
     <div

@@ -72,11 +72,17 @@ export default function CriseSettings({ onClose }) {
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setMounted(true));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: true } }));
+    }
     return () => {
       cancelAnimationFrame(raf);
       aliveRef.current = false;
       timersRef.current.forEach((t) => clearTimeout(t));
       timersRef.current = [];
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: false } }));
+      }
     };
   }, []);
 
