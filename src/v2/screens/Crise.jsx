@@ -1,31 +1,55 @@
 /* ============================================================
-   NÉYA V2 — Crise (4-screen safety flow, LIGHT mode contemplatif)
+   NÉYA V3 — Crise (écran d'apaisement immersif)
    ============================================================
-   Phases :
-     1. Reconnaissance — Daim glyph + hero italic + "Respirer maintenant"
-     2. Respiration   — BreathingCircle 220, 60s session
-     3. Choix         — 3 cards (3115 · Écrire · Continuer respirer)
-     4. Sortie douce  — Adieu daim + "Retour à NÉYA"
-     'journal'        — Textarea protégé pour décharger
+   Un seul écran, pas de phases multiples. Conçu pour couper
+   une crise d'angoisse en quelques minutes.
 
-   Anti-toxique : pas de timer pressure phase 1, pas de streak, pas de
-   comparaison. Crisis data → minimum analytics (entry/exit timestamps).
+   Composants :
+     1. Painterly Oasis full-bleed (visuel apaisant)
+     2. Cercle de respiration inspire 4s / expire 6s
+        (expire long = activation système parasympathique)
+     3. Musique douce qui joue en boucle (Silencieuse)
+     4. Numéro 3114 accessible (Prévention suicide FR, 24/7)
+     5. Bouton "Je vais mieux" pour sortir
+
+   Pas de timer pressure. Pas de jugement. Pas de streak.
+   Sortie possible à tout moment, mais ESC clavier désactivé
+   (escapeCloses: false) — volontairement dans le flow.
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
-import { recordCrisisEntry, recordCrisisExit, ls, haptic } from '../state';
-import BreathingCircle from '../../components/BreathingCircle';
-import Button from '../../components/Button';
+import { recordCrisisEntry, recordCrisisExit, haptic } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
-const todayKey = () => new Date().toISOString().split('T')[0];
+const BG_IMAGE = '/img/world-oasis.png';
+const MUSIC_TRACK = '/musique/silencieuse.mp3';
+const PHONE_NUMBER = '3114'; // Numéro national prévention suicide FR (24/7, gratuit)
+
+const INSPIRE_MS = 4000;
+const EXPIRE_MS = 6000;
+
+const COMFORT_LINES = [
+  'Tu es là. Respire avec moi.',
+  'Inspire doucement par le nez.',
+  'Expire lentement par la bouche.',
+  'Ton corps sait revenir au calme.',
+  'Chaque souffle te ramène à toi.',
+  'Tu n\'as rien à faire d\'autre.',
+];
 
 export default function Crise({ onClose }) {
-  const [phase, setPhase] = useState(1);
-  const [journalText, setJournalText] = useState('');
+  const [phase, setPhase] = useState('inspire'); // 'inspire' | 'expire'
+  const [lineIdx, setLineIdx] = useState(0);
+  const [musicPlaying, setMusicPlaying] = useState(false);
+  const [exiting, setExiting] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const exitedRef = useRef(false);
+  const audioRef = useRef(null);
+  const phaseTimerRef = useRef(null);
+  const lineTimerRef = useRef(null);
+  const aliveRef = useRef(true);
 
-  // Mount/unmount safety timestamps
+  // Safety analytics
   useEffect(() => {
     recordCrisisEntry();
     return () => {
@@ -36,573 +60,399 @@ export default function Crise({ onClose }) {
   }, []);
 
   const handleClose = () => {
+    if (exiting) return;
     if (!exitedRef.current) {
       recordCrisisExit();
       exitedRef.current = true;
     }
-    onClose?.();
+    haptic(3);
+    setExiting(true);
+    // Stop musique
+    try { audioRef.current?.pause(); } catch (_) {}
+    setTimeout(() => {
+      if (aliveRef.current) onClose?.();
+    }, 380);
   };
 
-  // Comportement iOS standard (scroll lock body + focus trap + ARIA).
-  // escapeCloses: false — user volontairement dans le flow safety, pas de sortie accidentelle clavier.
   const { dialogProps, containerRef } = useStandardOverlay({
-    open: true,
+    open: !exiting,
     onClose: handleClose,
     labelText: 'Espace de soutien',
     escapeCloses: false,
   });
 
-  const goPhase = (p) => {
+  // Cycle respiration
+  useEffect(() => {
+    const cycle = () => {
+      if (!aliveRef.current) return;
+      setPhase((p) => {
+        const next = p === 'inspire' ? 'expire' : 'inspire';
+        if (next === 'inspire') haptic(2);
+        return next;
+      });
+    };
+    let nextDelay = phase === 'inspire' ? INSPIRE_MS : EXPIRE_MS;
+    phaseTimerRef.current = setTimeout(cycle, nextDelay);
+    return () => clearTimeout(phaseTimerRef.current);
+  }, [phase]);
+
+  // Rotation des phrases de réconfort toutes les 8s
+  useEffect(() => {
+    lineTimerRef.current = setInterval(() => {
+      if (!aliveRef.current) return;
+      setLineIdx((i) => (i + 1) % COMFORT_LINES.length);
+    }, 8000);
+    return () => clearInterval(lineTimerRef.current);
+  }, []);
+
+  // Mount + cleanup
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setMounted(true));
     haptic(4);
-    setPhase(p);
+    return () => {
+      cancelAnimationFrame(raf);
+      aliveRef.current = false;
+      if (phaseTimerRef.current) clearTimeout(phaseTimerRef.current);
+      if (lineTimerRef.current) clearInterval(lineTimerRef.current);
+    };
+  }, []);
+
+  // Tentative auto-play musique au mount (peut échouer sur iOS si user n'a pas interact)
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    a.volume = 0.32;
+    const tryPlay = async () => {
+      try {
+        await a.play();
+        if (aliveRef.current) setMusicPlaying(true);
+      } catch (_) {
+        // iOS bloque autoplay sans gesture user — l'utilisateur peut tap le bouton.
+        if (aliveRef.current) setMusicPlaying(false);
+      }
+    };
+    tryPlay();
+  }, []);
+
+  const toggleMusic = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    haptic(2);
+    if (musicPlaying) {
+      a.pause();
+      setMusicPlaying(false);
+    } else {
+      a.play().then(() => setMusicPlaying(true)).catch(() => setMusicPlaying(false));
+    }
   };
 
-  const callPhoneLine = () => {
+  const callHelpline = () => {
     haptic(6);
     try {
-      // 3114 = numéro national prévention du suicide (FR, gratuit 24/7)
-      window.location.href = 'tel:3114';
-    } catch {}
-  };
-
-  const saveJournal = () => {
-    if (journalText.trim()) {
-      try {
-        ls.set(`crisis_journal_${todayKey()}`, journalText.trim());
-      } catch {}
-    }
-    haptic(4);
-    setJournalText('');
-    setPhase(3);
+      window.location.href = `tel:${PHONE_NUMBER}`;
+    } catch (_) {}
   };
 
   return (
     <div
       ref={containerRef}
       {...dialogProps}
-      className="wash-lac"
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 200,
+        zIndex: 9999,
         overflow: 'hidden',
-        color: 'var(--ink)',
-        display: 'flex',
-        flexDirection: 'column',
+        background: '#0a0c14',
+        opacity: exiting ? 0 : mounted ? 1 : 0,
+        transition: 'opacity 380ms cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      {/* Discreet escape — always visible top-right (safe-area), except phase 4 already a CTA */}
-      {phase !== 4 && phase !== 1 && (
+      {/* Painterly bg apaisant */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url(${BG_IMAGE})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          animation: 'crise-bg-ken-burns 40s ease-in-out infinite alternate',
+          willChange: 'transform',
+        }}
+      />
+
+      {/* Voile sombre apaisant */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'linear-gradient(180deg, rgba(10, 12, 20, 0.45) 0%, rgba(10, 12, 20, 0.35) 50%, rgba(10, 12, 20, 0.65) 100%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Top — accès rapide 3114 + bouton musique */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 18px)',
+          left: 22,
+          right: 22,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          zIndex: 3,
+        }}
+      >
+        {/* Bouton musique on/off */}
         <button
           type="button"
-          onClick={handleClose}
-          aria-label="Fermer l'espace de crise"
+          onClick={toggleMusic}
+          data-press
+          aria-label={musicPlaying ? 'Mettre la musique en pause' : 'Lancer la musique'}
           style={{
-            position: 'absolute',
-            top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
-            right: 14,
-            zIndex: 5,
             appearance: 'none',
-            background: 'transparent',
-            border: 'none',
-            outline: 'none',
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            background: 'rgba(251, 246, 232, 0.10)',
+            border: '0.5px solid rgba(251, 246, 232, 0.22)',
+            color: '#FBF6E8',
             cursor: 'pointer',
-            padding: '12px 14px',
-            minWidth: 44,
-            minHeight: 44,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: 'var(--font-ui)',
-            fontWeight: 500,
-            fontSize: 11,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: 'var(--ink-whisper)',
-            opacity: 0.65,
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
             WebkitTapHighlightColor: 'transparent',
+            fontSize: 13,
+            padding: 0,
+            flexShrink: 0,
           }}
         >
-          Fermer
+          {musicPlaying ? '♪' : '♪̸'}
         </button>
-      )}
 
-      {/* ============================================================
-         PHASE 1 — Reconnaissance
-         ============================================================ */}
-      {phase === 1 && (
-        <div
+        {/* Bouton appeler 3114 */}
+        <button
+          type="button"
+          onClick={callHelpline}
+          data-press
+          aria-label="Appeler le 3114"
           style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
+            appearance: 'none',
+            padding: '10px 18px',
+            minHeight: 40,
+            background: 'rgba(251, 246, 232, 0.94)',
+            border: 'none',
+            borderRadius: 999,
+            color: 'var(--ink)',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            display: 'inline-flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '64px 28px 40px',
-            textAlign: 'center',
+            gap: 8,
+            WebkitTapHighlightColor: 'transparent',
+            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
           }}
         >
-          {/* Daim glyph in lavender halo */}
-          <div
-            style={{
-              marginTop: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 28,
-            }}
-          >
-            <div
-              style={{
-                width: 140,
-                height: 140,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background:
-                  'radial-gradient(circle, rgba(195, 190, 239, 0.45) 0%, rgba(195, 190, 239, 0.18) 50%, transparent 80%)',
-                border: '0.5px solid rgba(195, 190, 239, 0.55)',
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 64,
-                  color: 'var(--lavender-warm)',
-                  lineHeight: 1,
-                  fontStyle: 'italic',
-                }}
-              >
-                ✦
-              </span>
-            </div>
+          <span aria-hidden style={{ fontSize: 13 }}>☎</span>
+          Appeler le {PHONE_NUMBER}
+        </button>
+      </div>
 
-            <h1
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'var(--type-hero)',
-                fontStyle: 'italic',
-                fontWeight: 300,
-                lineHeight: 1.2,
-                margin: 0,
-                color: 'var(--ink)',
-                maxWidth: 320,
-              }}
-              dangerouslySetInnerHTML={{
-                __html: "« Tu n'es pas <em class='neya-key'>seul·e.</em> »",
-              }}
-            />
-
-            <p
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 'var(--type-body)',
-                color: 'var(--ink-soft)',
-                margin: 0,
-                lineHeight: 1.5,
-                maxWidth: 280,
-              }}
-            >
-              Respire avec moi. Une minute.
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 16,
-              marginTop: 'auto',
-              paddingTop: 48,
-            }}
-          >
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => goPhase(2)}
-              worldAccent="var(--lavender-lit)"
-              style={{ minWidth: 220 }}
-            >
-              Respirer maintenant
-            </Button>
-            <button
-              type="button"
-              onClick={handleClose}
-              style={{
-                appearance: 'none',
-                border: 'none',
-                background: 'transparent',
-                color: 'var(--ink-whisper)',
-                fontFamily: 'var(--font-ui)',
-                fontSize: 'var(--type-body-sm)',
-                cursor: 'pointer',
-                padding: '14px 20px',
-                minHeight: 48,
-                letterSpacing: 0,
-                WebkitTapHighlightColor: 'transparent',
-              }}
-            >
-              Plus tard
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================================
-         PHASE 2 — Respiration (60s session)
-         ============================================================ */}
-      {phase === 2 && (
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '64px 28px 40px',
-            textAlign: 'center',
-            gap: 48,
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'var(--type-h2)',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              lineHeight: 1.25,
-              margin: 0,
-              color: 'var(--ink)',
-              position: 'absolute',
-              top: 96,
-              left: 0,
-              right: 0,
-            }}
-          >
-            Tu es là. Une minute.
-          </h2>
-
-          <BreathingCircle
-            size={220}
-            durationMs={60000}
-            onComplete={() => goPhase(3)}
-          />
-        </div>
-      )}
-
-      {/* ============================================================
-         PHASE 3 — Choix (3 glass pearl cards)
-         ============================================================ */}
-      {phase === 3 && (
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '72px 24px 40px',
-            gap: 28,
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'var(--type-h2)',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              lineHeight: 1.25,
-              margin: 0,
-              color: 'var(--ink)',
-              textAlign: 'center',
-            }}
-          >
-            Et maintenant ?
-          </h2>
-
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 14,
-              marginTop: 8,
-            }}
-          >
-            <ChoiceCard
-              title="Parler à quelqu'un maintenant"
-              subtitle="3114 · 24h/24, gratuit, confidentiel"
-              onClick={callPhoneLine}
-              accent="var(--terracotta)"
-            />
-            <ChoiceCard
-              title="Écrire ce que je ressens"
-              subtitle="Carnet protégé, jamais partagé"
-              onClick={() => goPhase('journal')}
-              accent="var(--lavender-warm)"
-            />
-            <ChoiceCard
-              title="Continuer de respirer"
-              subtitle="Une minute de plus"
-              onClick={() => goPhase(2)}
-              accent="var(--lavender-lit)"
-            />
-          </div>
-
-          <div
-            style={{
-              marginTop: 'auto',
-              display: 'flex',
-              justifyContent: 'center',
-              paddingTop: 24,
-            }}
-          >
-            <Button
-              variant="ghost"
-              size="md"
-              onClick={() => goPhase(4)}
-            >
-              Continuer →
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================================
-         PHASE 'journal' — Textarea protégé
-         ============================================================ */}
-      {phase === 'journal' && (
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '72px 24px 32px',
-            gap: 18,
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'var(--type-h2)',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              lineHeight: 1.25,
-              margin: 0,
-              color: 'var(--ink)',
-              textAlign: 'center',
-            }}
-          >
-            Pose ce qui pèse.
-          </h2>
-          <p
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontSize: 'var(--type-body-sm)',
-              color: 'var(--ink-whisper)',
-              margin: 0,
-              textAlign: 'center',
-            }}
-          >
-            Personne ne le lira. C'est pour toi.
-          </p>
-
-          <textarea
-            value={journalText}
-            onChange={(e) => setJournalText(e.target.value)}
-            placeholder="Tout ce que tu veux..."
-            autoFocus
-            style={{
-              flex: 1,
-              minHeight: 180,
-              resize: 'none',
-              padding: 18,
-              border: '0.5px solid rgba(26, 26, 47, 0.12)',
-              borderRadius: 'var(--radius-lg)',
-              background: 'rgba(255, 252, 245, 0.85)',
-              fontFamily: 'var(--font-ui)',
-              fontSize: 'var(--type-body)',
-              color: 'var(--ink)',
-              lineHeight: 1.6,
-              outline: 'none',
-              boxShadow: 'var(--shadow-soft)',
-            }}
-          />
-
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: 12,
-              paddingTop: 8,
-            }}
-          >
-            <Button variant="ghost" size="md" onClick={() => setPhase(3)}>
-              Retour
-            </Button>
-            <Button variant="primary" size="md" onClick={saveJournal}>
-              Garder
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================================
-         PHASE 4 — Sortie douce
-         ============================================================ */}
-      {phase === 4 && (
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '64px 28px 40px',
-            textAlign: 'center',
-          }}
-        >
-          <div
-            style={{
-              marginTop: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 28,
-            }}
-          >
-            <div
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background:
-                  'radial-gradient(circle, rgba(195, 190, 239, 0.40) 0%, rgba(195, 190, 239, 0.15) 50%, transparent 80%)',
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 44,
-                  color: 'var(--lavender-warm)',
-                  lineHeight: 1,
-                  fontStyle: 'italic',
-                }}
-              >
-                ✦
-              </span>
-            </div>
-
-            <h2
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'var(--type-h2)',
-                fontStyle: 'italic',
-                fontWeight: 300,
-                lineHeight: 1.3,
-                margin: 0,
-                color: 'var(--ink)',
-                maxWidth: 320,
-              }}
-              dangerouslySetInnerHTML={{
-                __html:
-                  "« Tu peux revenir quand tu veux. <em class='neya-key'>Le daim veille.</em> »",
-              }}
-            />
-          </div>
-
-          <div
-            style={{
-              marginTop: 'auto',
-              paddingTop: 48,
-            }}
-          >
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleClose}
-              worldAccent="var(--lavender-lit)"
-              style={{ minWidth: 220 }}
-            >
-              Retour à NÉYA
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ============================================================
-   ChoiceCard — glass pearl card (phase 3)
-   ============================================================ */
-function ChoiceCard({ title, subtitle, onClick, accent }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        appearance: 'none',
-        textAlign: 'left',
-        background: 'rgba(255, 252, 245, 0.78)',
-        border: '0.5px solid rgba(26, 26, 47, 0.08)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '18px 20px',
-        minHeight: 64,
-        boxShadow: 'var(--shadow-soft)',
-        cursor: 'pointer',
-        transition: 'transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out)',
-        WebkitTapHighlightColor: 'transparent',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        gap: 4,
-      }}
-      onMouseDown={(e) => {
-        e.currentTarget.style.transform = 'scale(0.985)';
-      }}
-      onMouseUp={(e) => {
-        e.currentTarget.style.transform = 'scale(1)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'scale(1)';
-      }}
-    >
+      {/* Cercle de respiration central */}
       <div
         style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 14,
-          fontWeight: 500,
-          color: 'var(--ink)',
-          lineHeight: 1.3,
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 280,
+          height: 280,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {/* Halo 3 anneaux */}
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              border: `0.5px solid #FBF6E8`,
+              opacity: phase === 'inspire' ? 0.16 - i * 0.04 : 0.32 - i * 0.08,
+              transform: phase === 'inspire' ? `scale(${1 + i * 0.08})` : `scale(${0.6 + i * 0.06})`,
+              transition: phase === 'inspire'
+                ? `all ${INSPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
+                : `all ${EXPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+            }}
+          />
+        ))}
+        {/* Core orbe lumineuse */}
+        <div
+          style={{
+            width: phase === 'inspire' ? 220 : 110,
+            height: phase === 'inspire' ? 220 : 110,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(251, 246, 232, 0.82) 0%, rgba(251, 246, 232, 0.18) 60%, transparent 100%)',
+            opacity: phase === 'inspire' ? 0.85 : 0.55,
+            filter: 'blur(2px)',
+            transition: phase === 'inspire'
+              ? `width ${INSPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${INSPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${INSPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
+              : `width ${EXPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${EXPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${EXPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+          }}
+        />
+        {/* Phase label */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+          }}
+        >
+          <span
+            key={phase}
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontSize: 30,
+              letterSpacing: '-0.014em',
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              color: '#FBF6E8',
+              opacity: 0.96,
+              textShadow: '0 1px 12px rgba(0, 0, 0, 0.3)',
+              animation: 'crise-label-fade 800ms cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            {phase === 'inspire' ? 'Inspire' : 'Expire'}
+          </span>
+        </div>
+      </div>
+
+      {/* Phrases de réconfort en haut, sous la barre 3114 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 92px)',
+          left: 22,
+          right: 22,
+          textAlign: 'center',
+          zIndex: 2,
+        }}
+      >
+        <p
+          key={lineIdx}
+          style={{
+            margin: 0,
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 17,
+            lineHeight: 1.45,
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            color: '#FBF6E8',
+            opacity: 0.92,
+            textShadow: '0 1px 10px rgba(0, 0, 0, 0.42)',
+            animation: 'crise-line-fade 1400ms cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        >
+          {COMFORT_LINES[lineIdx]}
+        </p>
+      </div>
+
+      {/* Indicateur rythme (4s · 6s) */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 130px)',
+          left: 0,
+          right: 0,
+          textAlign: 'center',
+          zIndex: 2,
         }}
       >
         <span
           style={{
-            display: 'inline-block',
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            background: accent,
-            marginRight: 10,
-            verticalAlign: 'middle',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 9,
+            letterSpacing: '0.42em',
+            textTransform: 'uppercase',
+            color: '#FBF6E8',
+            opacity: 0.48,
+            fontWeight: 500,
           }}
-        />
-        {title}
+        >
+          Inspire 4s · Expire 6s
+        </span>
       </div>
-      <div
+
+      {/* Bouton "Je vais mieux" */}
+      <button
+        type="button"
+        onClick={handleClose}
+        data-press
+        aria-label="Je vais mieux, fermer"
         style={{
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 60px)',
+          appearance: 'none',
+          padding: '14px 32px',
+          minHeight: 48,
+          background: 'rgba(251, 246, 232, 0.12)',
+          color: '#FBF6E8',
+          border: '0.5px solid rgba(251, 246, 232, 0.36)',
+          borderRadius: 999,
           fontFamily: 'var(--font-ui)',
           fontSize: 12,
-          color: 'var(--ink-whisper)',
-          lineHeight: 1.4,
-          paddingLeft: 16,
+          fontWeight: 500,
+          letterSpacing: '0.222em',
+          textTransform: 'uppercase',
+          cursor: 'pointer',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          WebkitTapHighlightColor: 'transparent',
+          zIndex: 3,
         }}
       >
-        {subtitle}
-      </div>
-    </button>
+        Je vais mieux
+      </button>
+
+      {/* Audio */}
+      <audio ref={audioRef} src={MUSIC_TRACK} loop preload="auto" />
+
+      {/* Keyframes */}
+      <style>{`
+        @keyframes crise-bg-ken-burns {
+          0%   { transform: scale(1)    translate3d(0, 0, 0); }
+          100% { transform: scale(1.05) translate3d(0, -1%, 0); }
+        }
+        @keyframes crise-label-fade {
+          0%   { opacity: 0; transform: translateY(4px); }
+          100% { opacity: 0.96; transform: translateY(0); }
+        }
+        @keyframes crise-line-fade {
+          0%   { opacity: 0; transform: translateY(6px); }
+          12%  { opacity: 0.92; transform: translateY(0); }
+          88%  { opacity: 0.92; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-6px); }
+        }
+      `}</style>
+    </div>
   );
 }
