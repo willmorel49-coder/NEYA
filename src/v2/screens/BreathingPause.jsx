@@ -148,19 +148,19 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
         </span>
       </div>
 
-      {/* Breathing circle */}
+      {/* Breathing circle — animation accentuée */}
       <div
         style={{
           position: 'relative',
-          width: 240,
-          height: 240,
+          width: 300,
+          height: 300,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        {/* Halo rings (3 layers offset) */}
-        {[0, 1, 2].map((i) => (
+        {/* Halo rings — 4 layers, écart amplifié */}
+        {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
             aria-hidden
@@ -168,23 +168,40 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
               position: 'absolute',
               inset: 0,
               borderRadius: '50%',
-              border: `0.5px solid ${accent}`,
-              opacity: phase === 'inspire' ? 0.18 - i * 0.04 : 0.36 - i * 0.08,
-              transform: phase === 'inspire' ? `scale(${1 + i * 0.08})` : `scale(${0.7 + i * 0.06})`,
-              transition: `all ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+              border: `1px solid ${accent}`,
+              opacity: phase === 'inspire' ? 0.28 - i * 0.06 : 0.55 - i * 0.12,
+              transform: phase === 'inspire' ? `scale(${1.0 + i * 0.14})` : `scale(${0.32 + i * 0.10})`,
+              transition: `transform ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+              boxShadow: phase === 'inspire' ? `0 0 20px ${accent}25` : 'none',
             }}
           />
         ))}
-        {/* Core orb */}
+        {/* Core orb — écart amplifié 250 ↔ 60 */}
         <div
           style={{
-            width: phase === 'inspire' ? 200 : 100,
-            height: phase === 'inspire' ? 200 : 100,
+            width: phase === 'inspire' ? 250 : 60,
+            height: phase === 'inspire' ? 250 : 60,
             borderRadius: '50%',
-            background: `radial-gradient(circle, ${accent} 0%, transparent 70%)`,
-            opacity: phase === 'inspire' ? 0.78 : 0.45,
-            filter: 'blur(2px)',
-            transition: `width ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+            background: `radial-gradient(circle, ${accent} 0%, ${accent}88 35%, ${accent}33 65%, transparent 100%)`,
+            opacity: phase === 'inspire' ? 0.92 : 0.36,
+            filter: phase === 'inspire' ? 'blur(1px)' : 'blur(4px)',
+            boxShadow: phase === 'inspire'
+              ? `0 0 60px 16px ${accent}55, 0 0 120px 32px ${accent}28`
+              : `0 0 20px 6px ${accent}28`,
+            transition: `width ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), filter ${PHASE_DURATION_MS}ms ease-out, box-shadow ${PHASE_DURATION_MS}ms ease-out`,
+          }}
+        />
+        {/* Anneau central plus marqué */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            width: phase === 'inspire' ? 260 : 70,
+            height: phase === 'inspire' ? 260 : 70,
+            borderRadius: '50%',
+            border: `1.5px solid ${accent}`,
+            opacity: phase === 'inspire' ? 0.7 : 0.36,
+            transition: `width ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${PHASE_DURATION_MS}ms ease-out`,
           }}
         />
         {/* Phase label */}

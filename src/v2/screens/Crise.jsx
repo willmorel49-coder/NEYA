@@ -307,26 +307,28 @@ export default function Crise({ onClose }) {
         </button>
       </div>
 
-      {/* Cercle de respiration central */}
+      {/* Cercle de respiration central — animation accentuée */}
       <div
         style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 280,
-          height: 280,
+          width: 340,
+          height: 340,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        {/* Halo 3 anneaux — hold = état maintenu (taille inspire conservée) */}
-        {[0, 1, 2].map((i) => {
+        {/* Halo 4 anneaux concentriques très visibles */}
+        {[0, 1, 2, 3].map((i) => {
           const isInspireOrHold = phase === 'inspire' || phase === 'hold';
-          const scaleOpen = 1 + i * 0.08;
-          const scaleClose = 0.6 + i * 0.06;
-          const phaseDuration = phase === 'inspire' ? rhythm.inspire : phase === 'hold' ? 300 : rhythm.expire;
+          const scaleOpen = 1.0 + i * 0.14;     // beaucoup plus écarté (était 0.08)
+          const scaleClose = 0.32 + i * 0.10;   // beaucoup plus serré (était 0.6+0.06)
+          const phaseDuration = phase === 'inspire' ? rhythm.inspire : phase === 'hold' ? 320 : rhythm.expire;
+          const baseOpacity = isInspireOrHold ? 0.32 - i * 0.06 : 0.55 - i * 0.10;
+          const borderWidth = isInspireOrHold ? 1 : 1.5;
           return (
             <div
               key={i}
@@ -335,24 +337,51 @@ export default function Crise({ onClose }) {
                 position: 'absolute',
                 inset: 0,
                 borderRadius: '50%',
-                border: `0.5px solid #FBF6E8`,
-                opacity: isInspireOrHold ? 0.16 - i * 0.04 : 0.32 - i * 0.08,
+                border: `${borderWidth}px solid #FBF6E8`,
+                opacity: baseOpacity,
                 transform: isInspireOrHold ? `scale(${scaleOpen})` : `scale(${scaleClose})`,
-                transition: `all ${phaseDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+                transition: `transform ${phaseDuration}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${phaseDuration}ms cubic-bezier(0.4, 0, 0.2, 1), border-width ${phaseDuration}ms ease-out`,
+                boxShadow: isInspireOrHold ? '0 0 24px rgba(251, 246, 232, 0.10)' : 'none',
               }}
             />
           );
         })}
-        {/* Core orbe lumineuse */}
+
+        {/* Core orbe lumineuse — ÉCART AMPLIFIÉ (280 ↔ 70 au lieu de 220 ↔ 110) */}
         <div
           style={{
-            width: (phase === 'inspire' || phase === 'hold') ? 220 : 110,
-            height: (phase === 'inspire' || phase === 'hold') ? 220 : 110,
+            width:  phase === 'expire' ? 70  : 280,
+            height: phase === 'expire' ? 70  : 280,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(251, 246, 232, 0.82) 0%, rgba(251, 246, 232, 0.18) 60%, transparent 100%)',
-            opacity: phase === 'inspire' ? 0.85 : phase === 'hold' ? 0.92 : 0.55,
-            filter: 'blur(2px)',
-            transition: `width ${phase === 'inspire' ? rhythm.inspire : phase === 'hold' ? 300 : rhythm.expire}ms cubic-bezier(0.4, 0, 0.2, 1), height ${phase === 'inspire' ? rhythm.inspire : phase === 'hold' ? 300 : rhythm.expire}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${phase === 'inspire' ? rhythm.inspire : phase === 'hold' ? 300 : rhythm.expire}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+            background: 'radial-gradient(circle, rgba(251, 246, 232, 0.95) 0%, rgba(251, 246, 232, 0.55) 35%, rgba(251, 246, 232, 0.18) 65%, transparent 100%)',
+            opacity: phase === 'inspire' ? 0.96 : phase === 'hold' ? 1.0 : 0.42,
+            filter: phase === 'expire' ? 'blur(4px)' : 'blur(1px)',
+            boxShadow: (phase === 'inspire' || phase === 'hold')
+              ? '0 0 80px 20px rgba(251, 246, 232, 0.32), 0 0 160px 40px rgba(251, 246, 232, 0.18)'
+              : '0 0 30px 8px rgba(251, 246, 232, 0.18)',
+            transition: phase === 'inspire'
+              ? `width ${rhythm.inspire}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${rhythm.inspire}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${rhythm.inspire}ms cubic-bezier(0.4, 0, 0.2, 1), filter ${rhythm.inspire}ms ease-out, box-shadow ${rhythm.inspire}ms ease-out`
+              : phase === 'hold'
+              ? `all 320ms ease-out`
+              : `width ${rhythm.expire}ms cubic-bezier(0.4, 0, 0.4, 1), height ${rhythm.expire}ms cubic-bezier(0.4, 0, 0.4, 1), opacity ${rhythm.expire}ms cubic-bezier(0.4, 0, 0.2, 1), filter ${rhythm.expire}ms ease-out, box-shadow ${rhythm.expire}ms ease-out`,
+          }}
+        />
+
+        {/* Anneau central marqué — bordure plus nette qui suit la respiration */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            width:  phase === 'expire' ? 80  : 290,
+            height: phase === 'expire' ? 80  : 290,
+            borderRadius: '50%',
+            border: '1.5px solid rgba(251, 246, 232, 0.65)',
+            opacity: (phase === 'inspire' || phase === 'hold') ? 0.65 : 0.32,
+            transition: phase === 'inspire'
+              ? `width ${rhythm.inspire}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${rhythm.inspire}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${rhythm.inspire}ms ease-out`
+              : phase === 'hold'
+              ? `all 320ms ease-out`
+              : `width ${rhythm.expire}ms cubic-bezier(0.4, 0, 0.4, 1), height ${rhythm.expire}ms cubic-bezier(0.4, 0, 0.4, 1), opacity ${rhythm.expire}ms ease-out`,
           }}
         />
         {/* Phase label */}
