@@ -12,19 +12,26 @@ import { getProfile, setProfile, haptic } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
 /* ─── Catalogue NÉYA · 11 morceaux ─── */
+const COVER_BASE = '/musique/covers';
 const TRACKS = [
-  { key: 'ça-va',                     title: 'Ça va',                     tint: '#34917F', deep: '#1B4F45', symbol: '✦', mood: 'l\'aveu silencieux' },
-  { key: 'silencieuse',               title: 'Silencieuse',               tint: '#2A3548', deep: '#0F1422', symbol: '◐', mood: 'le vide qui parle' },
-  { key: 'mon-cœur',                  title: 'Mon cœur',                  tint: '#9F584C', deep: '#4A2620', symbol: '✧', mood: 'la tendresse exposée' },
-  { key: 'souffle-court',             title: 'Souffle court',             tint: '#7397BC', deep: '#314765', symbol: '◯', mood: 'l\'apnée' },
-  { key: 'À débordement',             title: 'À débordement',             tint: '#C29051', deep: '#5C3F1F', symbol: '◊', mood: 'le trop-plein' },
-  { key: 'entre-tension-et-douceur',  title: 'Entre tension et douceur',  tint: '#8B7BA5', deep: '#3D335A', symbol: '◑', mood: 'l\'entre-deux' },
-  { key: 'ce-qui-reste 2',            title: 'Ce qui reste',              tint: '#4A4A5F', deep: '#1F1F2E', symbol: '✧', mood: 'l\'après' },
-  { key: 'sur-ma-planète',            title: 'Sur ma planète',            tint: '#7B6FA8', deep: '#352D52', symbol: '✶', mood: 'l\'orbite intérieure' },
-  { key: 'Masque',                    title: 'Masque',                    tint: '#1A1A2F', deep: '#06060F', symbol: '◑', mood: 'ce que tu caches' },
-  { key: 'burn-out',                  title: 'Burn-out',                  tint: '#9F584C', deep: '#3A1F1A', symbol: '✺', mood: 'la cendre' },
-  { key: 'stress-post-traumatique',   title: 'Stress post-traumatique',   tint: '#3D3848', deep: '#15131C', symbol: '◔', mood: 'la mémoire qui revient' },
+  { key: 'ça-va',                     title: 'Ça va',                     cover: `${COVER_BASE}/ca-va.jpg`,                   tint: '#1F4F45', deep: '#0E2520', mood: 'l\'aveu silencieux' },
+  { key: 'silencieuse',               title: 'Silencieuse',               cover: `${COVER_BASE}/silencieuse.jpg`,             tint: '#2A3548', deep: '#0F1422', mood: 'le vide qui parle' },
+  { key: 'mon-cœur',                  title: 'Mon cœur',                  cover: `${COVER_BASE}/mon-coeur.jpg`,               tint: '#7C3A30', deep: '#3A1A14', mood: 'la tendresse exposée' },
+  { key: 'souffle-court',             title: 'Souffle court',             cover: `${COVER_BASE}/souffle-court.jpg`,           tint: '#5B7693', deep: '#26384B', mood: 'l\'apnée' },
+  { key: 'À débordement',             title: 'À débordement',             cover: `${COVER_BASE}/a-debordement.jpg`,           tint: '#7A5430', deep: '#3A2614', mood: 'le trop-plein' },
+  { key: 'entre-tension-et-douceur',  title: 'Entre tension et douceur',  cover: `${COVER_BASE}/entre-tension-et-douceur.jpg`, tint: '#5C4D7A', deep: '#2C2348', mood: 'l\'entre-deux' },
+  { key: 'ce-qui-reste 2',            title: 'Ce qui reste',              cover: `${COVER_BASE}/ce-qui-reste.jpg`,            tint: '#2C3340', deep: '#0F131C', mood: 'l\'après' },
+  { key: 'sur-ma-planète',            title: 'Sur ma planète',            cover: `${COVER_BASE}/sur-ma-planete.jpg`,          tint: '#6B5A92', deep: '#2F2452', mood: 'l\'orbite intérieure' },
+  { key: 'Masque',                    title: 'Masque',                    cover: `${COVER_BASE}/masque.jpg`,                  tint: '#1F2434', deep: '#06080F', mood: 'ce que tu caches' },
+  { key: 'burn-out',                  title: 'Burn-out',                  cover: `${COVER_BASE}/burn-out.jpg`,                tint: '#94553F', deep: '#3D1F14', mood: 'la cendre' },
+  { key: 'stress-post-traumatique',   title: 'Stress post-traumatique',   cover: `${COVER_BASE}/stress-post-traumatique.jpg`, tint: '#3D3848', deep: '#15131C', mood: 'la mémoire qui revient' },
 ];
+
+/* Helper export : permet à Cocon (mini-player) de retrouver la pochette d'une piste */
+export function getTrackCover(key) {
+  const t = TRACKS.find((x) => x.key === key);
+  return t ? t.cover : null;
+}
 
 const FEATURED_KEY = 'ça-va';
 
@@ -43,21 +50,20 @@ function formatTime(s) {
   return `${m}:${r.toString().padStart(2, '0')}`;
 }
 
-/* ─── Composant pochette générée ─── */
-function AlbumCover({ track, variant = 'grid', index = null }) {
+/* ─── Composant pochette (image réelle) ─── */
+function AlbumCover({ track, variant = 'grid' }) {
   if (!track) return null;
   const isPlayer = variant === 'player';
   const isHero = variant === 'hero';
+  const isMini = variant === 'mini';
 
-  const radius = isPlayer ? 18 : isHero ? 14 : 10;
-  const titleSize = isPlayer ? 30 : isHero ? 22 : 13;
-  const subSize = isPlayer ? 11 : isHero ? 10 : 9;
-  const symbolSize = isPlayer ? 360 : isHero ? 240 : 120;
-  const padding = isPlayer ? 22 : isHero ? 16 : 12;
+  const radius = isPlayer ? 18 : isHero ? 14 : isMini ? 6 : 10;
   const shadow = isPlayer
     ? '0 24px 60px rgba(0,0,0,0.42), 0 8px 20px rgba(0,0,0,0.28)'
     : isHero
     ? '0 10px 30px rgba(0,0,0,0.28)'
+    : isMini
+    ? '0 2px 6px rgba(0,0,0,0.32)'
     : '0 4px 14px rgba(0,0,0,0.22)';
 
   return (
@@ -68,102 +74,23 @@ function AlbumCover({ track, variant = 'grid', index = null }) {
         aspectRatio: '1 / 1',
         borderRadius: radius,
         overflow: 'hidden',
-        background: `
-          radial-gradient(at 75% 25%, ${track.tint}CC, transparent 65%),
-          radial-gradient(at 15% 85%, ${track.deep}AA, transparent 70%),
-          linear-gradient(155deg, ${track.tint} 0%, ${track.deep} 100%)
-        `,
         boxShadow: shadow,
+        background: track.deep || '#1A1A2F',
       }}
     >
-      {/* Painterly grain overlay */}
-      <div
-        aria-hidden
+      <img
+        src={track.cover}
+        alt={`Pochette · ${track.title}`}
+        loading="lazy"
+        draggable={false}
         style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'radial-gradient(circle at 30% 20%, rgba(251,246,232,0.14), transparent 55%)',
-          mixBlendMode: 'screen',
-          pointerEvents: 'none',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          display: 'block',
+          userSelect: 'none',
         }}
       />
-
-      {/* Grand symbole décoratif */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          right: '-8%',
-          top: '-12%',
-          fontSize: symbolSize,
-          lineHeight: 1,
-          color: 'rgba(251, 246, 232, 0.13)',
-          fontFamily: 'Georgia, "Times New Roman", serif',
-          userSelect: 'none',
-          fontWeight: 200,
-        }}
-      >
-        {track.symbol}
-      </div>
-
-      {/* Numéro album subtil */}
-      {index !== null && !isPlayer && (
-        <div
-          aria-hidden
-          style={{
-            position: 'absolute',
-            top: padding,
-            left: padding,
-            fontFamily: 'var(--font-ui)',
-            fontSize: subSize,
-            letterSpacing: '0.18em',
-            color: 'rgba(251, 246, 232, 0.55)',
-            fontWeight: 600,
-            fontVariantNumeric: 'tabular-nums',
-          }}
-        >
-          N°{String(index + 1).padStart(2, '0')}
-        </div>
-      )}
-
-      {/* Bloc titre + NÉYA */}
-      <div
-        style={{
-          position: 'absolute',
-          left: padding,
-          right: padding,
-          bottom: padding,
-          color: '#FBF6E8',
-        }}
-      >
-        <div
-          style={{
-            fontSize: titleSize,
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            lineHeight: 1.05,
-            textShadow: '0 1px 10px rgba(0,0,0,0.45)',
-            letterSpacing: '-0.005em',
-          }}
-        >
-          {track.title}
-        </div>
-        <div
-          style={{
-            fontSize: subSize,
-            letterSpacing: '0.24em',
-            textTransform: 'uppercase',
-            opacity: 0.88,
-            marginTop: isPlayer ? 8 : 4,
-            fontWeight: 600,
-            fontFamily: 'var(--font-ui)',
-          }}
-        >
-          NÉYA
-        </div>
-      </div>
     </div>
   );
 }
@@ -634,7 +561,7 @@ export default function Musique({ onClose }) {
             }}
           >
             <div style={{ width: 44, height: 44, flexShrink: 0 }}>
-              <AlbumCover track={currentTrack} variant="grid" />
+              <AlbumCover track={currentTrack} variant="mini" />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div

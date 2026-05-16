@@ -11,7 +11,7 @@ import { WORLDS } from '../worlds';
 import { getProfile, patchProfile, haptic } from '../state';
 import BreathingPause from './BreathingPause';
 import CoconAmbiance from './CoconAmbiance';
-import Musique from './Musique';
+import Musique, { getTrackCover } from './Musique';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const TOTEMS = [
@@ -440,6 +440,34 @@ export default function Cocon() {
             WebkitTapHighlightColor: 'transparent',
           }}
         >
+          {/* Vignette pochette */}
+          {getTrackCover(currentTrack.key) && (
+            <div
+              aria-hidden
+              style={{
+                width: 36,
+                height: 36,
+                flexShrink: 0,
+                borderRadius: 6,
+                overflow: 'hidden',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.32)',
+                background: '#1A1A2F',
+              }}
+            >
+              <img
+                src={getTrackCover(currentTrack.key)}
+                alt=""
+                draggable={false}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                  userSelect: 'none',
+                }}
+              />
+            </div>
+          )}
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); togglePlay(); }}
