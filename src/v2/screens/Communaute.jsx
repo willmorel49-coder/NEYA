@@ -106,7 +106,11 @@ function timeAgo(ts) {
 
 export default function Communaute() {
   const profile = getProfile();
-  const dailyPrompt = useMemo(() => getDailyPrompt(), []);
+  const DEFAULT_PROMPT = "Qu'est-ce qui t'a fait du bien aujourd'hui, même un petit truc ?";
+  const dailyPrompt = useMemo(() => {
+    const p = getDailyPrompt();
+    return { ...p, text: p?.q || p?.text || DEFAULT_PROMPT };
+  }, []);
   const [ownPosts, setOwnPosts] = useState(() => loadOwnPosts());
   const [reactions, setReactions] = useState(() => loadReactions());
   const [hiddenSeeds, setHiddenSeeds] = useState(() => loadHiddenSeeds());

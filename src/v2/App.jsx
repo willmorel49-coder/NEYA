@@ -352,7 +352,7 @@ export default function V2App() {
         <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />
       )}
 
-      {/* Permanent Menu button — opens main menu (histoire / refuge / etc.) */}
+      {/* Permanent Menu button — glassmorphism top-left */}
       {showMenuButton && (
         <button
           type="button"
@@ -361,17 +361,19 @@ export default function V2App() {
           data-no-crisis-press="true"
           style={{
             position: 'fixed',
-            top: 'calc(env(safe-area-inset-top, 0px) + 10px)',
-            left: 12,
+            top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+            left: 16,
             width: 44,
             height: 44,
             borderRadius: '50%',
-            border: '0.5px solid rgba(26, 26, 47, 0.18)',
-            background: 'var(--cream)',
-            color: 'var(--ink)',
+            border: '1px solid rgba(255,255,255,0.85)',
+            background: 'rgba(255,255,255,0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            color: 'var(--blue-700)',
             cursor: 'pointer',
-            boxShadow: 'var(--shadow-soft)',
-            zIndex: 40,
+            boxShadow: '0 4px 16px rgba(10,36,56,0.10)',
+            zIndex: 100,
             padding: 0,
             display: 'flex',
             alignItems: 'center',
@@ -385,7 +387,7 @@ export default function V2App() {
         </button>
       )}
 
-      {/* Permanent SOS button — opens menu (crise / aide / espaces) */}
+      {/* Permanent SOS button — rose plein top-right (CLAUDE.md v3) */}
       {showSosButton && (
         <button
           type="button"
@@ -394,22 +396,22 @@ export default function V2App() {
           data-no-crisis-press="true"
           style={{
             position: 'fixed',
-            top: 'calc(env(safe-area-inset-top, 0px) + 10px)',
-            right: 12,
-            width: 44,
+            top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+            right: 16,
+            minWidth: 44,
             height: 44,
-            borderRadius: '50%',
-            border: '0.5px solid rgba(159, 88, 76, 0.30)',
-            background: 'var(--cream)',
-            color: 'var(--crisis)',
+            padding: '0 18px',
+            borderRadius: 50,
+            border: 'none',
+            background: 'var(--rose-700)',
+            color: 'white',
             fontFamily: 'var(--font-ui)',
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: '0.04em',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.12em',
             cursor: 'pointer',
-            boxShadow: 'var(--shadow-soft)',
-            zIndex: 40,
-            padding: 0,
+            boxShadow: '0 4px 16px rgba(200,112,144,0.35)',
+            zIndex: 100,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

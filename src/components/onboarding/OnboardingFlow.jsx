@@ -97,6 +97,9 @@ export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
       aria-modal="true"
       aria-label="Bienvenue dans ÇA VA ?"
     >
+      <div className={styles.blobRose} aria-hidden="true" />
+      <div className={styles.blobBlue} aria-hidden="true" />
+
       <div className={styles.topBar}>
         <ProgressDots total={total} active={active} />
         <button

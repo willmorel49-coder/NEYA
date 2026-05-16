@@ -1,8 +1,8 @@
 /* ============================================================
-   BottomNav — ÇA VA ? V3 (LIGHT MODE, pearl glass)
+   BottomNav — ÇA VA ? V4 (Pivot bleu/rose glassmorphism)
    ============================================================
-   4 tabs floating cream glass · backdrop-filter blur 20 ·
-   ink text · sliding accent indicator + optional badges.
+   Pill flottante glass blur 20px · 4 tabs · indicateur actif
+   en haut, dégradé bleu→rose figé.
    ============================================================ */
 
 import { haptic } from '../v2/state';
@@ -10,54 +10,31 @@ import { haptic } from '../v2/state';
 const TABS = [
   { key: 'aventure',   label: 'Aventure',   icon: '↑' },
   { key: 'cocon',      label: 'Cocon',      icon: '◇' },
-  { key: 'communaute', label: 'Communauté', icon: '◯' },
-  { key: 'cava',       label: 'ça va ♡',    icon: null },  // wordmark D.A. lowercase + heart
+  { key: 'communaute', label: 'Communauté', icon: '○' },
+  { key: 'cava',       label: 'ÇA VA?',     icon: '♡' },
 ];
 
-export default function BottomNav({ active, onChange, accent = 'var(--terracotta)', badges = {} }) {
-  const activeIndex = Math.max(0, TABS.findIndex((t) => t.key === active));
-
+export default function BottomNav({ active, onChange, badges = {} }) {
   return (
     <div
       style={{
         position: 'absolute',
-        left: 16,
-        right: 16,
-        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)',
-        height: 60,
-        background: 'rgba(255, 252, 245, 0.85)',
+        left: 14,
+        right: 14,
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)',
+        background: 'rgba(255, 255, 255, 0.75)',
         backdropFilter: 'blur(20px) saturate(180%)',
         WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-        border: '0.5px solid rgba(26, 26, 47, 0.08)',
-        borderRadius: 'var(--radius-pill)',
+        border: '1px solid rgba(255, 255, 255, 0.9)',
+        borderRadius: 30,
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'space-around',
-        padding: '0 12px',
-        zIndex: 50,
-        boxShadow: '0 8px 32px rgba(26, 26, 47, 0.12)',
+        alignItems: 'stretch',
+        padding: '12px 8px 10px',
+        zIndex: 30,
+        boxShadow: '0 8px 32px rgba(10, 36, 56, 0.10)',
       }}
     >
-      {/* Sliding active indicator — single sibling element.
-          Wrapper has padding: 0 12px, so usable button track = calc(100% - 24px),
-          starting at 12px from the left edge. */}
-      <span
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          top: 8,
-          left: `calc(12px + (100% - 24px) * ${(activeIndex + 0.5) / TABS.length})`,
-          width: 22,
-          height: 3,
-          borderRadius: 9999,
-          background: accent,
-          transform: 'translateX(-50%)',
-          transition: 'left 320ms var(--ease-spring-subtle), background 220ms var(--ease-out-ios)',
-          opacity: 0.9,
-          pointerEvents: 'none',
-        }}
-      />
-
       {TABS.map((t) => {
         const isActive = active === t.key;
         const hasBadge = !!badges[t.key];
@@ -66,32 +43,53 @@ export default function BottomNav({ active, onChange, accent = 'var(--terracotta
             key={t.key}
             data-press
             onClick={() => { haptic(4); onChange?.(t.key); }}
+            aria-label={t.label}
+            aria-current={isActive ? 'page' : undefined}
             style={{
               appearance: 'none',
               flex: 1,
-              height: '100%',
-              minHeight: 60,
+              minHeight: 44,
               background: 'transparent',
               border: 'none',
-              padding: '8px 12px',
+              padding: '6px 4px 2px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 3,
+              gap: 4,
               cursor: 'pointer',
-              color: isActive ? accent : 'var(--content-tertiary)',
-              fontFamily: 'var(--font-ui)',
+              fontFamily: "'Inter', system-ui, sans-serif",
               WebkitTapHighlightColor: 'transparent',
-              transition: 'color 200ms var(--ease-out-ios)',
               position: 'relative',
+              transition: 'color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
             }}
-            aria-label={t.label}
-            aria-current={isActive ? 'page' : undefined}
           >
-            <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-              {t.icon && <span style={{ fontSize: 18, lineHeight: 1 }}>{t.icon}</span>}
-              {!t.icon && <span style={{ height: 18, display: 'inline-block' }} />}
+            {isActive && (
+              <span
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: 18,
+                  height: 2.5,
+                  background: 'linear-gradient(90deg, #1A5A7F, #C87090)',
+                  borderRadius: 2,
+                }}
+              />
+            )}
+            <span style={{ position: 'relative', display: 'inline-flex' }}>
+              <span
+                style={{
+                  fontSize: 17,
+                  lineHeight: 1,
+                  color: isActive ? '#1A5A7F' : '#C2D8E8',
+                  transition: 'color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+              >
+                {t.icon}
+              </span>
               {hasBadge && (
                 <span
                   aria-hidden="true"
@@ -102,24 +100,22 @@ export default function BottomNav({ active, onChange, accent = 'var(--terracotta
                     width: 6,
                     height: 6,
                     borderRadius: '50%',
-                    background: 'var(--tilleul)',
-                    boxShadow: '0 0 6px rgba(212, 224, 140, 0.6)',
+                    background: '#C87090',
+                    boxShadow: '0 0 6px rgba(200, 112, 144, 0.6)',
                   }}
                 />
               )}
             </span>
             <span
               style={{
+                fontSize: 8.5,
                 fontWeight: 500,
-                letterSpacing: t.key === 'cava' ? 0 : '0.18em',
-                textTransform: t.key === 'cava' ? 'none' : 'uppercase',
-                fontFamily: t.key === 'cava' ? 'var(--font-display)' : 'var(--font-ui)',
-                fontStyle: t.key === 'cava' ? 'italic' : 'normal',
-                fontSize: t.key === 'cava' ? 13 : 9,
-                fontVariationSettings: t.key === 'cava' ? 'var(--fraunces-italic-soft)' : 'normal',
-                lineHeight: 1,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: isActive ? '#1A5A7F' : '#C2D8E8',
+                transition: 'color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
                 whiteSpace: 'nowrap',
-                marginTop: t.key === 'cava' ? -6 : 0,
+                lineHeight: 1,
               }}
             >
               {t.label}
