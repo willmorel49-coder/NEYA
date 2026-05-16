@@ -18,10 +18,12 @@ import { getProfile, patchProfile, haptic } from '../state';
 import { LECONS as LECONS_CONTENT } from '../data/lecons';
 import { TEMPS_GROUPS as TEMPS_GROUPS_DATA, RITUELS as RITUELS_DATA, getRituelsForTemps } from '../data/rituels-temps';
 import { MONDES as MONDES_DATA } from '../data/mondes';
+import { AVENTURE_FORET } from '../data/aventure-foret';
 import CoconAmbiance from './CoconAmbiance';
 import LeconReader from './LeconReader';
 import RituelPlayer from './RituelPlayer';
 import MondeReader from './MondeReader';
+import AventurePlayer from './AventurePlayer';
 import AventureOnboarding from './AventureOnboarding';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
@@ -122,6 +124,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const [openedLecon, setOpenedLecon] = useState(null);
   const [openedRituel, setOpenedRituel] = useState(null);
   const [openedMonde, setOpenedMonde] = useState(null);
+  const [openedAventure, setOpenedAventure] = useState(null);
   const [onboardingOpen, setOnboardingOpen] = useState(() => {
     const p = getProfile();
     return !p.aventure?.onboardingSeen;
@@ -655,7 +658,15 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           mondes={MONDES_DATA}
           mondesProgress={av.mondesProgress || {}}
           currentTotem={currentTotem.world}
-          onPickMonde={(monde) => { setPilierSheet(null); setOpenedMonde(monde); }}
+          onPickMonde={(monde) => {
+            setPilierSheet(null);
+            // Si une aventure interactive existe pour ce monde, on lance AventurePlayer
+            if (monde.key === 'foret') {
+              setOpenedAventure(AVENTURE_FORET);
+            } else {
+              setOpenedMonde(monde);
+            }
+          }}
           onClose={() => setPilierSheet(null)}
         />
       )}
@@ -663,6 +674,12 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         <MondeReader
           monde={openedMonde}
           onClose={() => { setOpenedMonde(null); setLocalProfile(getProfile()); setPilierSheet('aventure'); }}
+        />
+      )}
+      {openedAventure && (
+        <AventurePlayer
+          aventure={openedAventure}
+          onClose={() => { setOpenedAventure(null); setLocalProfile(getProfile()); setPilierSheet('aventure'); }}
         />
       )}
       {pilierSheet === 'connaissance' && (
