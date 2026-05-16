@@ -19,6 +19,14 @@ import { LECONS as LECONS_CONTENT } from '../data/lecons';
 import { TEMPS_GROUPS as TEMPS_GROUPS_DATA, RITUELS as RITUELS_DATA, getRituelsForTemps } from '../data/rituels-temps';
 import { MONDES as MONDES_DATA } from '../data/mondes';
 import { AVENTURE_FORET } from '../data/aventure-foret';
+import { AVENTURE_TEMPLE } from '../data/aventure-temple';
+import { AVENTURE_OASIS } from '../data/aventure-oasis';
+
+const AVENTURES_BY_MONDE = {
+  foret: AVENTURE_FORET,
+  temple: AVENTURE_TEMPLE,
+  oasis: AVENTURE_OASIS,
+};
 import CoconAmbiance from './CoconAmbiance';
 import LeconReader from './LeconReader';
 import RituelPlayer from './RituelPlayer';
@@ -661,8 +669,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           onPickMonde={(monde) => {
             setPilierSheet(null);
             // Si une aventure interactive existe pour ce monde, on lance AventurePlayer
-            if (monde.key === 'foret') {
-              setOpenedAventure(AVENTURE_FORET);
+            const aventure = AVENTURES_BY_MONDE[monde.key];
+            if (aventure) {
+              setOpenedAventure(aventure);
             } else {
               setOpenedMonde(monde);
             }

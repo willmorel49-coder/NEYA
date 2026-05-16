@@ -347,7 +347,7 @@ function SceneShell({ children, transitioning }) {
       style={{
         position: 'absolute',
         top: 'calc(env(safe-area-inset-top, 0px) + 76px)',
-        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 110px)',
+        bottom: 'max(170px, calc(env(safe-area-inset-bottom, 0px) + 110px))',
         left: 22,
         right: 22,
         display: 'flex',
@@ -490,7 +490,7 @@ function NarrativeScene({ scene, aventure, transitioning, onNext }) {
           position: 'absolute',
           left: 22,
           right: 22,
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 32px)',
+          bottom: 'max(96px, calc(env(safe-area-inset-bottom, 0px) + 32px))',
           zIndex: 3,
         }}
       >
@@ -754,7 +754,7 @@ function ReflectionScene({ scene, aventure, initialText, onSave }) {
           position: 'absolute',
           left: 22,
           right: 22,
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 32px)',
+          bottom: 'max(96px, calc(env(safe-area-inset-bottom, 0px) + 32px))',
           zIndex: 3,
         }}
       >
@@ -822,7 +822,7 @@ function KeysRecapScene({ scene, aventure, keys, onNext }) {
           position: 'absolute',
           left: 22,
           right: 22,
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 32px)',
+          bottom: 'max(96px, calc(env(safe-area-inset-bottom, 0px) + 32px))',
           zIndex: 3,
         }}
       >
@@ -866,7 +866,7 @@ function FinalScene({ scene, aventure, keys, onFinish }) {
           position: 'absolute',
           left: 22,
           right: 22,
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 32px)',
+          bottom: 'max(96px, calc(env(safe-area-inset-bottom, 0px) + 32px))',
           zIndex: 3,
         }}
       >
