@@ -5,12 +5,16 @@ import OnboardingScreen from './OnboardingScreen';
 import ProgressDots from './ProgressDots';
 
 const STORAGE_KEY = 'neya_onboarded';
+const EXIT_MS = 750;
 
 export default function OnboardingFlow({ onComplete }) {
   const trackRef = useRef(null);
   const [active, setActive] = useState(0);
+  const [exiting, setExiting] = useState(false);
   const total = ONBOARDING_SCREENS.length;
   const scrollTimerRef = useRef(null);
+  const exitTimerRef = useRef(null);
+  const finishedRef = useRef(false);
 
   const scrollToIndex = useCallback((i) => {
     const el = trackRef.current;
@@ -23,8 +27,13 @@ export default function OnboardingFlow({ onComplete }) {
   const goPrev = useCallback(() => scrollToIndex(active - 1), [active, scrollToIndex]);
 
   const finish = useCallback(() => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
     try { localStorage.setItem(STORAGE_KEY, 'true'); } catch {}
-    onComplete?.();
+    setExiting(true);
+    exitTimerRef.current = setTimeout(() => {
+      onComplete?.();
+    }, EXIT_MS);
   }, [onComplete]);
 
   useEffect(() => {
@@ -47,6 +56,7 @@ export default function OnboardingFlow({ onComplete }) {
 
   useEffect(() => {
     const onKey = (e) => {
+      if (exiting) return;
       if (e.key === 'ArrowRight') {
         if (active === total - 1) finish();
         else goNext();
@@ -58,7 +68,7 @@ export default function OnboardingFlow({ onComplete }) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [active, total, goNext, goPrev, finish]);
+  }, [active, total, goNext, goPrev, finish, exiting]);
 
   useEffect(() => {
     const onResize = () => {
@@ -70,8 +80,20 @@ export default function OnboardingFlow({ onComplete }) {
     return () => window.removeEventListener('resize', onResize);
   }, [active]);
 
+  useEffect(() => {
+    return () => {
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+    };
+  }, []);
+
   return (
-    <div className={styles.root} role="dialog" aria-modal="true" aria-label="Bienvenue dans NÉYA">
+    <div
+      className={styles.root}
+      data-exiting={exiting ? 'true' : 'false'}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Bienvenue dans NÉYA"
+    >
       <div className={styles.topBar}>
         <ProgressDots total={total} active={active} />
         <button
@@ -89,7 +111,7 @@ export default function OnboardingFlow({ onComplete }) {
             key={screen.id}
             screen={screen}
             index={i}
-            isActive={i === active}
+            isActive={i === active && !exiting}
             isFirst={i === 0}
             isLast={i === total - 1}
             onPrev={goPrev}
@@ -98,6 +120,8 @@ export default function OnboardingFlow({ onComplete }) {
           />
         ))}
       </div>
+
+      <div className={styles.exitVeil} aria-hidden="true" />
     </div>
   );
 }

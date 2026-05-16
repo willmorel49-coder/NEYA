@@ -1,6 +1,22 @@
 import { useState, useEffect } from 'react';
 import styles from './onboarding.module.css';
 
+function RichText({ tokens, className }) {
+  if (typeof tokens === 'string') return <span className={className}>{tokens}</span>;
+  if (!Array.isArray(tokens)) return null;
+  return (
+    <span className={className}>
+      {tokens.map((t, i) =>
+        typeof t === 'string' ? (
+          <span key={i}>{t}</span>
+        ) : (
+          <em key={i} className={styles.em}>{t.em}</em>
+        )
+      )}
+    </span>
+  );
+}
+
 export default function OnboardingScreen({
   screen,
   index,
@@ -11,7 +27,6 @@ export default function OnboardingScreen({
   onStart,
   isFirst,
 }) {
-  // Re-trigger entrance animation each time the screen becomes active
   const [animKey, setAnimKey] = useState(0);
   useEffect(() => {
     if (isActive) setAnimKey((k) => k + 1);
@@ -24,11 +39,8 @@ export default function OnboardingScreen({
   };
   const handleRightTap = (e) => {
     e.preventDefault();
-    if (isLast) {
-      onStart?.();
-    } else {
-      onNext?.();
-    }
+    if (isLast) onStart?.();
+    else onNext?.();
   };
 
   return (
@@ -37,7 +49,7 @@ export default function OnboardingScreen({
       data-active={isActive ? 'true' : 'false'}
       aria-hidden={!isActive}
       aria-roledescription="slide"
-      aria-label={`${screen.title} — écran ${index + 1}`}
+      aria-label={`Écran ${index + 1}`}
     >
       <div className={styles.imageWrap}>
         <img
@@ -72,11 +84,22 @@ export default function OnboardingScreen({
         className={styles.content}
         data-animate={isActive ? 'true' : 'false'}
       >
-        <h1 className={styles.title}>{screen.title}</h1>
-        <p className={styles.body}>{screen.body}</p>
-        <p className={styles.subBody}>{screen.subBody}</p>
+        {screen.eyebrow && (
+          <div className={styles.eyebrow}>{screen.eyebrow}</div>
+        )}
+        <h1 className={styles.title}>
+          <RichText tokens={screen.title} />
+        </h1>
+        <p className={styles.body}>
+          <RichText tokens={screen.body} />
+        </p>
+        <p className={styles.subBody}>
+          <RichText tokens={screen.subBody} />
+        </p>
         {screen.signature && (
-          <p className={styles.signature}>{screen.signature}</p>
+          <p className={styles.signature}>
+            <RichText tokens={screen.signature} />
+          </p>
         )}
         {isLast && (
           <div className={styles.ctaWrap}>

@@ -253,16 +253,6 @@ export default function V2App() {
     };
   }, []);
 
-  const handleOnboardingComplete = () => {
-    setOnboarded(true);
-    // Première entrée → Patronus reveal d'abord, puis Tour
-    if (!ls.get('patronus_seen', false)) {
-      queueIntroTimer(() => setPatronusOpen(true), 400);
-    } else if (!ls.get('tour_seen', false)) {
-      queueIntroTimer(() => setTourOpen(true), 600);
-    }
-  };
-
   const handlePatronusClose = () => {
     setPatronusOpen(false);
     if (!ls.get('tour_seen', false)) {
@@ -297,11 +287,8 @@ export default function V2App() {
           ? WORLDS.communaute.accent
           : 'var(--cava-warm)';
 
-  if (!splashDone) {
-    return <Splash onContinue={() => setSplashDone(true)} />;
-  }
-
   // Premier launch : Onboarding visuel pré-app (4 écrans swipe + photos)
+  // → court-circuite Splash + Patronus + Tour pour une entrée directe dans l'app.
   const hasSeenOnboarding = (() => {
     try { return localStorage.getItem('neya_onboarded') === 'true'; } catch { return false; }
   })();
@@ -309,12 +296,21 @@ export default function V2App() {
     return (
       <OnboardingFlow
         onComplete={() => {
-          try { localStorage.setItem('neya_onboarded', 'true'); } catch {}
+          try {
+            localStorage.setItem('neya_onboarded', 'true');
+            ls.set('patronus_seen', true);
+            ls.set('tour_seen', true);
+          } catch {}
           patchProfile({ onboarding: { ...(getProfile().onboarding || {}), completed: true } });
+          setSplashDone(true);
           setOnboarded(true);
         }}
       />
     );
+  }
+
+  if (!splashDone) {
+    return <Splash onContinue={() => setSplashDone(true)} />;
   }
 
   // SOS visible only when user is in main shell — hidden during intro overlays
