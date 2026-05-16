@@ -16,8 +16,10 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { WORLDS } from '../worlds';
 import { getProfile, patchProfile, haptic } from '../state';
 import { LECONS as LECONS_CONTENT } from '../data/lecons';
+import { TEMPS_GROUPS as TEMPS_GROUPS_DATA, getRituelsForTemps } from '../data/rituels-temps';
 import CoconAmbiance from './CoconAmbiance';
 import LeconReader from './LeconReader';
+import RituelPlayer from './RituelPlayer';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
 /* ─── Données ─── */
@@ -72,12 +74,8 @@ const WORLDS_LIST = [
 /* 8 leçons (pilier Connaissance) — contenu complet dans data/lecons.js */
 const LECONS = LECONS_CONTENT;
 
-/* Les 3 temps du soi */
-const TEMPS_SOI = [
-  { key: 'passe',   label: 'Soi du passé',  hint: 'Ce que tu portes, ce que tu pardonnes',  glyph: '◀' },
-  { key: 'present', label: 'Soi présent',   hint: 'Ce que tu ressens là maintenant',        glyph: '●' },
-  { key: 'futur',   label: 'Soi du futur',  hint: 'Qui tu veux devenir, tes valeurs',       glyph: '▶' },
-];
+/* Les 3 temps du soi — depuis data */
+const TEMPS_SOI = TEMPS_GROUPS_DATA;
 
 /* ─── Helpers ─── */
 
@@ -119,6 +117,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const [personalizeOpen, setPersonalizeOpen] = useState(false);
   const [pilierSheet, setPilierSheet] = useState(null);
   const [openedLecon, setOpenedLecon] = useState(null);
+  const [openedRituel, setOpenedRituel] = useState(null);
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [, forceTick] = useState(0);
   const audioRef = useRef(null);
@@ -586,7 +585,18 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         />
       )}
       {pilierSheet === 'temps' && (
-        <TempsSoiSheet temps={TEMPS_SOI} onClose={() => setPilierSheet(null)} />
+        <TempsSoiSheet
+          temps={TEMPS_SOI}
+          rituelsFaits={av.rituelsFaits || {}}
+          onPickRituel={(rituel) => { setPilierSheet(null); setOpenedRituel(rituel); }}
+          onClose={() => setPilierSheet(null)}
+        />
+      )}
+      {openedRituel && (
+        <RituelPlayer
+          rituel={openedRituel}
+          onClose={() => { setOpenedRituel(null); setLocalProfile(getProfile()); setPilierSheet('temps'); }}
+        />
       )}
 
       <style>{`
@@ -1043,7 +1053,7 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
   );
 }
 
-function TempsSoiSheet({ temps, onClose }) {
+function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
   return (
     <SheetWrap
       title="Les 3 Temps du Soi"
@@ -1051,81 +1061,145 @@ function TempsSoiSheet({ temps, onClose }) {
       onClose={onClose}
       labelText="Trois temps"
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {temps.map((t) => (
-          <div
-            key={t.key}
-            style={{
-              padding: '18px 20px',
-              minHeight: 84,
-              background: 'rgba(26, 26, 47, 0.04)',
-              border: '0.5px solid rgba(26, 26, 47, 0.08)',
-              borderRadius: 16,
-              display: 'flex',
-              gap: 14,
-              alignItems: 'flex-start',
-            }}
-          >
-            <span
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: '50%',
-                background: 'var(--emerald)',
-                color: 'var(--cream)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 14,
-                flexShrink: 0,
-              }}
-            >
-              {t.glyph}
-            </span>
-            <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+        {temps.map((t) => {
+          const rituels = getRituelsForTemps(t.key);
+          return (
+            <div key={t.key}>
+              {/* Bloc temps */}
               <div
                 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontStyle: 'italic',
-                  fontVariationSettings: 'var(--fraunces-italic-soft)',
-                  fontSize: 16,
-                  color: 'var(--ink)',
-                  lineHeight: 1.25,
+                  display: 'flex',
+                  gap: 14,
+                  alignItems: 'flex-start',
+                  marginBottom: 14,
+                  padding: '14px 16px',
+                  background: 'rgba(26, 26, 47, 0.04)',
+                  borderRadius: 14,
+                  borderLeft: `3px solid ${t.accent}`,
                 }}
               >
-                {t.label}
+                <span
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    background: t.accent,
+                    color: 'var(--cream)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 14,
+                    flexShrink: 0,
+                  }}
+                >
+                  {t.glyph}
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontStyle: 'italic',
+                      fontVariationSettings: 'var(--fraunces-italic-soft)',
+                      fontSize: 17,
+                      color: 'var(--ink)',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {t.label}
+                  </div>
+                  <div
+                    style={{
+                      marginTop: 4,
+                      fontFamily: 'var(--font-body)',
+                      fontSize: 12.5,
+                      lineHeight: 1.5,
+                      color: 'var(--content-secondary)',
+                    }}
+                  >
+                    {t.intro}
+                  </div>
+                </div>
               </div>
-              <div
-                style={{
-                  marginTop: 4,
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 12.5,
-                  lineHeight: 1.5,
-                  color: 'var(--content-secondary)',
-                }}
-              >
-                {t.hint}
+
+              {/* Rituels du temps */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {rituels.map((r) => {
+                  const done = !!(rituelsFaits && rituelsFaits[r.key]);
+                  return (
+                    <button
+                      key={r.key}
+                      type="button"
+                      data-press
+                      onClick={() => { haptic(4); onPickRituel?.(r); }}
+                      style={{
+                        appearance: 'none',
+                        width: '100%',
+                        padding: '14px 16px',
+                        minHeight: 66,
+                        background: done ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
+                        border: `0.5px solid ${done ? t.accent : 'rgba(26, 26, 47, 0.10)'}`,
+                        borderRadius: 12,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        textAlign: 'left',
+                        WebkitTapHighlightColor: 'transparent',
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: '50%',
+                          background: done ? t.accent : 'rgba(26, 26, 47, 0.06)',
+                          color: done ? '#FBF6E8' : 'var(--ink-soft)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 11,
+                          fontWeight: 600,
+                          flexShrink: 0,
+                          transition: 'all 280ms ease-out',
+                        }}
+                      >
+                        {done ? '✓' : '·'}
+                      </span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontFamily: 'var(--font-display)',
+                            fontStyle: 'italic',
+                            fontVariationSettings: 'var(--fraunces-italic-soft)',
+                            fontSize: 15,
+                            color: 'var(--ink)',
+                            lineHeight: 1.25,
+                          }}
+                        >
+                          {r.title}
+                        </div>
+                        <div
+                          style={{
+                            marginTop: 3,
+                            fontFamily: 'var(--font-body)',
+                            fontSize: 11.5,
+                            color: 'var(--content-tertiary)',
+                          }}
+                        >
+                          {r.subtitle} · {r.duration} min
+                        </div>
+                      </div>
+                      <span aria-hidden style={{ color: 'var(--content-tertiary)', fontSize: 14, flexShrink: 0 }}>
+                        ›
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          </div>
-        ))}
-        <div
-          style={{
-            marginTop: 16,
-            padding: '14px 16px',
-            background: 'rgba(52, 145, 127, 0.08)',
-            borderLeft: '2px solid var(--emerald)',
-            borderRadius: 6,
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontSize: 13,
-            lineHeight: 1.5,
-            color: 'var(--ink)',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-          }}
-        >
-          Les rituels des 3 temps arrivent. Tu pourras y poser ce que tu portes, ce que tu vis et ce que tu vises.
-        </div>
+          );
+        })}
       </div>
     </SheetWrap>
   );
