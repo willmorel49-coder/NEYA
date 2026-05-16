@@ -17,16 +17,34 @@
    (escapeCloses: false) — volontairement dans le flow.
    ============================================================ */
 
-import { useState, useEffect, useRef } from 'react';
-import { recordCrisisEntry, recordCrisisExit, haptic } from '../state';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { recordCrisisEntry, recordCrisisExit, getProfile, haptic } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
-const BG_IMAGE = '/img/world-oasis.png';
-const MUSIC_TRACK = '/musique/silencieuse.mp3';
 const PHONE_NUMBER = '3114'; // Numéro national prévention suicide FR (24/7, gratuit)
 
-const INSPIRE_MS = 4000;
-const EXPIRE_MS = 6000;
+/* Images refuge (apaisantes) */
+const REFUGE_IMAGES = {
+  oasis:  '/img/world-oasis.png',
+  lac:    '/img/world-lac.png',
+  foret:  '/img/world-foret.png',
+  temple: '/img/world-temple.png',
+};
+
+/* Musiques exercices (du dossier musiques-exercices) */
+const REFUGE_MUSIC = {
+  'sunrise-breath':         '/musiques-exercices/sunrise-breath.mp3',
+  'douce-nuit':             '/musiques-exercices/douce-nuit.mp3',
+  'guéris':                 '/musiques-exercices/gu%C3%A9ris.mp3',
+  'tethered-to-the-wreckage': '/musiques-exercices/tethered-to-the-wreckage.mp3',
+};
+
+/* Rythmes de respiration */
+const RHYTHMS = {
+  '4-6':   { inspire: 4000, hold: 0,    expire: 6000, label: 'Apaisant', desc: 'Inspire 4s · Expire 6s' },
+  '5-5':   { inspire: 5000, hold: 0,    expire: 5000, label: 'Cohérence', desc: 'Inspire 5s · Expire 5s' },
+  '4-7-8': { inspire: 4000, hold: 7000, expire: 8000, label: 'Profond',  desc: 'Inspire 4s · Retiens 7s · Expire 8s' },
+};
 
 const COMFORT_LINES = [
   'Tu es là. Respire avec moi.',
@@ -38,7 +56,16 @@ const COMFORT_LINES = [
 ];
 
 export default function Crise({ onClose }) {
-  const [phase, setPhase] = useState('inspire'); // 'inspire' | 'expire'
+  const profile = useMemo(() => getProfile(), []);
+  const crise = profile.crise || {};
+  const imageKey = crise.image || 'oasis';
+  const musicKey = crise.music || 'sunrise-breath';
+  const rhythmKey = crise.rhythm || '4-6';
+  const rhythm = RHYTHMS[rhythmKey] || RHYTHMS['4-6'];
+  const bgImage = REFUGE_IMAGES[imageKey] || REFUGE_IMAGES.oasis;
+  const musicSrc = musicKey ? (REFUGE_MUSIC[musicKey] || REFUGE_MUSIC['sunrise-breath']) : null;
+
+  const [phase, setPhase] = useState('inspire'); // 'inspire' | 'hold' | 'expire'
   const [lineIdx, setLineIdx] = useState(0);
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [exiting, setExiting] = useState(false);
@@ -81,20 +108,32 @@ export default function Crise({ onClose }) {
     escapeCloses: false,
   });
 
-  // Cycle respiration
+  // Cycle respiration — support 2 ou 3 phases (inspire / hold / expire)
   useEffect(() => {
+    const hasHold = rhythm.hold > 0;
     const cycle = () => {
       if (!aliveRef.current) return;
       setPhase((p) => {
-        const next = p === 'inspire' ? 'expire' : 'inspire';
+        let next;
+        if (hasHold) {
+          if (p === 'inspire') next = 'hold';
+          else if (p === 'hold') next = 'expire';
+          else next = 'inspire';
+        } else {
+          next = p === 'inspire' ? 'expire' : 'inspire';
+        }
         if (next === 'inspire') haptic(2);
         return next;
       });
     };
-    let nextDelay = phase === 'inspire' ? INSPIRE_MS : EXPIRE_MS;
+    let nextDelay;
+    if (phase === 'inspire') nextDelay = rhythm.inspire;
+    else if (phase === 'hold') nextDelay = rhythm.hold;
+    else nextDelay = rhythm.expire;
     phaseTimerRef.current = setTimeout(cycle, nextDelay);
     return () => clearTimeout(phaseTimerRef.current);
-  }, [phase]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, rhythmKey]);
 
   // Rotation des phrases de réconfort toutes les 8s
   useEffect(() => {
@@ -120,7 +159,7 @@ export default function Crise({ onClose }) {
   // Tentative auto-play musique au mount (peut échouer sur iOS si user n'a pas interact)
   useEffect(() => {
     const a = audioRef.current;
-    if (!a) return;
+    if (!a || !musicSrc) return;
     a.volume = 0.32;
     const tryPlay = async () => {
       try {
@@ -132,7 +171,7 @@ export default function Crise({ onClose }) {
       }
     };
     tryPlay();
-  }, []);
+  }, [musicSrc]);
 
   const toggleMusic = () => {
     const a = audioRef.current;
@@ -173,7 +212,7 @@ export default function Crise({ onClose }) {
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: `url(${BG_IMAGE})`,
+          backgroundImage: `url(${bgImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           animation: 'crise-bg-ken-burns 40s ease-in-out infinite alternate',
@@ -282,36 +321,38 @@ export default function Crise({ onClose }) {
           justifyContent: 'center',
         }}
       >
-        {/* Halo 3 anneaux */}
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            aria-hidden
-            style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: '50%',
-              border: `0.5px solid #FBF6E8`,
-              opacity: phase === 'inspire' ? 0.16 - i * 0.04 : 0.32 - i * 0.08,
-              transform: phase === 'inspire' ? `scale(${1 + i * 0.08})` : `scale(${0.6 + i * 0.06})`,
-              transition: phase === 'inspire'
-                ? `all ${INSPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
-                : `all ${EXPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-            }}
-          />
-        ))}
+        {/* Halo 3 anneaux — hold = état maintenu (taille inspire conservée) */}
+        {[0, 1, 2].map((i) => {
+          const isInspireOrHold = phase === 'inspire' || phase === 'hold';
+          const scaleOpen = 1 + i * 0.08;
+          const scaleClose = 0.6 + i * 0.06;
+          const phaseDuration = phase === 'inspire' ? rhythm.inspire : phase === 'hold' ? 300 : rhythm.expire;
+          return (
+            <div
+              key={i}
+              aria-hidden
+              style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '50%',
+                border: `0.5px solid #FBF6E8`,
+                opacity: isInspireOrHold ? 0.16 - i * 0.04 : 0.32 - i * 0.08,
+                transform: isInspireOrHold ? `scale(${scaleOpen})` : `scale(${scaleClose})`,
+                transition: `all ${phaseDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+              }}
+            />
+          );
+        })}
         {/* Core orbe lumineuse */}
         <div
           style={{
-            width: phase === 'inspire' ? 220 : 110,
-            height: phase === 'inspire' ? 220 : 110,
+            width: (phase === 'inspire' || phase === 'hold') ? 220 : 110,
+            height: (phase === 'inspire' || phase === 'hold') ? 220 : 110,
             borderRadius: '50%',
             background: 'radial-gradient(circle, rgba(251, 246, 232, 0.82) 0%, rgba(251, 246, 232, 0.18) 60%, transparent 100%)',
-            opacity: phase === 'inspire' ? 0.85 : 0.55,
+            opacity: phase === 'inspire' ? 0.85 : phase === 'hold' ? 0.92 : 0.55,
             filter: 'blur(2px)',
-            transition: phase === 'inspire'
-              ? `width ${INSPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${INSPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${INSPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
-              : `width ${EXPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1), height ${EXPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${EXPIRE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+            transition: `width ${phase === 'inspire' ? rhythm.inspire : phase === 'hold' ? 300 : rhythm.expire}ms cubic-bezier(0.4, 0, 0.2, 1), height ${phase === 'inspire' ? rhythm.inspire : phase === 'hold' ? 300 : rhythm.expire}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${phase === 'inspire' ? rhythm.inspire : phase === 'hold' ? 300 : rhythm.expire}ms cubic-bezier(0.4, 0, 0.2, 1)`,
           }}
         />
         {/* Phase label */}
@@ -339,7 +380,7 @@ export default function Crise({ onClose }) {
               animation: 'crise-label-fade 800ms cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
-            {phase === 'inspire' ? 'Inspire' : 'Expire'}
+            {phase === 'inspire' ? 'Inspire' : phase === 'hold' ? 'Retiens' : 'Expire'}
           </span>
         </div>
       </div>
@@ -374,7 +415,7 @@ export default function Crise({ onClose }) {
         </p>
       </div>
 
-      {/* Indicateur rythme (4s · 6s) */}
+      {/* Indicateur rythme */}
       <div
         style={{
           position: 'absolute',
@@ -396,7 +437,7 @@ export default function Crise({ onClose }) {
             fontWeight: 500,
           }}
         >
-          Inspire 4s · Expire 6s
+          {rhythm.desc}
         </span>
       </div>
 
@@ -434,7 +475,7 @@ export default function Crise({ onClose }) {
       </button>
 
       {/* Audio */}
-      <audio ref={audioRef} src={MUSIC_TRACK} loop preload="auto" />
+      {musicSrc && <audio ref={audioRef} src={musicSrc} loop preload="auto" />}
 
       {/* Keyframes */}
       <style>{`

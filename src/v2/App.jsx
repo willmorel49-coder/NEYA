@@ -17,6 +17,7 @@ import Communaute from './screens/Communaute';
 import CaVa from './screens/CaVa';
 import Meditation from './screens/Meditation';
 import Crise from './screens/Crise';
+import CriseSettings from './screens/CriseSettings';
 import Aide from './screens/Aide';
 import EspacesIRL from './screens/EspacesIRL';
 import Habitudes from './screens/Habitudes';
@@ -38,6 +39,7 @@ export default function V2App() {
   const [aideOpen, setAideOpen] = useState(false);
   const [espacesIRLOpen, setEspacesIRLOpen] = useState(false);
   const [sosMenuOpen, setSosMenuOpen] = useState(false);
+  const [criseSettingsOpen, setCriseSettingsOpen] = useState(false);
   const [habitudesOpen, setHabitudesOpen] = useState(false);
   const [espaceVraiOpen, setEspaceVraiOpen] = useState(false);
   const [bilanOpen, setBilanOpen] = useState(false);
@@ -276,7 +278,7 @@ export default function V2App() {
   }
 
   // SOS visible only when user is in main shell — hidden during intro overlays
-  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen && !aideOpen && !espacesIRLOpen;
+  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen && !aideOpen && !espacesIRLOpen && !criseSettingsOpen;
 
   return (
     <div
@@ -394,6 +396,7 @@ export default function V2App() {
 
       {aideOpen && <Aide onClose={() => setAideOpen(false)} />}
       {espacesIRLOpen && <EspacesIRL onClose={() => setEspacesIRLOpen(false)} />}
+      {criseSettingsOpen && <CriseSettings onClose={() => setCriseSettingsOpen(false)} />}
 
       {sosMenuOpen && (
         <ActionSheet
@@ -415,6 +418,11 @@ export default function V2App() {
               label: 'Espaces de soutien',
               icon: '○',
               onTap: () => { setSosMenuOpen(false); setEspacesIRLOpen(true); },
+            },
+            {
+              label: 'Personnaliser mon refuge',
+              icon: '✧',
+              onTap: () => { setSosMenuOpen(false); setCriseSettingsOpen(true); },
             },
           ]}
           onClose={() => setSosMenuOpen(false)}

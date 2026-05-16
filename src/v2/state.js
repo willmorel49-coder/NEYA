@@ -93,6 +93,11 @@ export const defaultProfile = () => ({
     music: null,         // nom du fichier sans extension, ou null
     musicVolume: 0.45,
   },
+  crise: {
+    image: 'oasis',          // refuge : 'oasis' | 'lac' | 'foret' | 'temple'
+    music: 'sunrise-breath', // 'sunrise-breath' | 'douce-nuit' | 'guéris' | 'tethered-to-the-wreckage' | null
+    rhythm: '4-6',           // '4-6' (apaisant) | '5-5' (cohérence) | '4-7-8' (relaxation profonde)
+  },
 });
 
 export function getProfile() {
