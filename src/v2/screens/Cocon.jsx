@@ -182,7 +182,7 @@ export default function Cocon() {
         position: 'absolute',
         inset: 0,
         overflow: 'hidden',
-        background: '#0a0c14',
+        background: 'var(--bg)',
       }}
       data-world={currentTotem.world}
     >
@@ -261,7 +261,7 @@ export default function Cocon() {
               fontSize: 9,
               letterSpacing: '0.42em',
               fontWeight: 600,
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               opacity: 0.92,
               textShadow: '0 1px 6px rgba(0, 0, 0, 0.42)',
             }}
@@ -281,7 +281,7 @@ export default function Cocon() {
             background: 'rgba(251, 246, 232, 0.08)',
             border: '0.5px solid rgba(251, 246, 232, 0.22)',
             borderRadius: 22,
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             cursor: 'pointer',
             display: 'inline-flex',
             alignItems: 'center',
@@ -306,7 +306,7 @@ export default function Cocon() {
           right: 22,
           textAlign: 'center',
           zIndex: 2,
-          color: '#FBF6E8',
+          color: 'var(--blue-900)',
         }}
       >
         <h1
@@ -318,7 +318,7 @@ export default function Cocon() {
             lineHeight: 1.15,
             letterSpacing: '-0.018em',
             fontVariationSettings: '"opsz" 144, "SOFT" 50',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             textShadow: '0 2px 18px rgba(0, 0, 0, 0.38)',
           }}
         >
@@ -330,7 +330,7 @@ export default function Cocon() {
             fontFamily: 'var(--font-body)',
             fontSize: 15,
             lineHeight: 1.6,
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             opacity: 0.88,
             maxWidth: 280,
             textShadow: '0 1px 8px rgba(0, 0, 0, 0.32)',
@@ -355,7 +355,7 @@ export default function Cocon() {
             border: 'none',
             cursor: 'pointer',
             textAlign: 'center',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             WebkitTapHighlightColor: 'transparent',
             zIndex: 2,
             padding: 0,
@@ -368,7 +368,7 @@ export default function Cocon() {
               fontSize: 17,
               lineHeight: 1.45,
               fontVariationSettings: 'var(--fraunces-italic-soft)',
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               opacity: 0.94,
               textShadow: '0 1px 10px rgba(0, 0, 0, 0.5)',
               animation: 'cocon-mantra-breathe 8s ease-in-out infinite',
@@ -394,7 +394,7 @@ export default function Cocon() {
             background: 'transparent',
             border: 'none',
             cursor: 'pointer',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             opacity: 0.82,
             fontFamily: 'var(--font-ui)',
             fontSize: 10,
@@ -479,7 +479,7 @@ export default function Cocon() {
               height: 32,
               borderRadius: '50%',
               background: accent,
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               border: 'none',
               cursor: 'pointer',
               display: 'inline-flex',
@@ -500,7 +500,7 @@ export default function Cocon() {
                 fontStyle: 'italic',
                 fontVariationSettings: 'var(--fraunces-italic-soft)',
                 fontSize: 14,
-                color: '#FBF6E8',
+                color: 'var(--blue-900)',
                 opacity: 0.94,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -527,7 +527,7 @@ export default function Cocon() {
           <span
             aria-hidden
             style={{
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               opacity: 0.7,
               fontSize: 14,
               flexShrink: 0,
@@ -562,7 +562,7 @@ export default function Cocon() {
             borderRadius: 999,
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             cursor: 'pointer',
             fontFamily: 'var(--font-ui)',
             fontSize: 11,
@@ -592,7 +592,7 @@ export default function Cocon() {
           padding: '16px 38px',
           minHeight: 52,
           background: accent,
-          color: '#FBF6E8',
+          color: 'var(--blue-900)',
           border: 'none',
           borderRadius: 999,
           fontFamily: 'var(--font-ui)',
@@ -623,7 +623,7 @@ export default function Cocon() {
           background: 'transparent',
           border: 'none',
           cursor: 'pointer',
-          color: '#FBF6E8',
+          color: 'var(--blue-900)',
           opacity: 0.9,
           fontFamily: 'var(--font-ui)',
           fontSize: 10,
@@ -939,7 +939,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         overflow: 'hidden',
                         position: 'relative',
                         aspectRatio: '4 / 5',
-                        background: `#0a0c14 url(${img.src}) center / cover no-repeat`,
+                        background: `var(--bg) url(${img.src}) center / cover no-repeat`,
                         WebkitTapHighlightColor: 'transparent',
                         boxShadow: active ? '0 4px 14px rgba(0,0,0,0.18)' : 'none',
                       }}
@@ -953,7 +953,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           bottom: 0,
                           padding: '24px 10px 10px',
                           background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
-                          color: '#FBF6E8',
+                          color: 'var(--blue-900)',
                           fontFamily: 'var(--font-display)',
                           fontStyle: 'italic',
                           fontVariationSettings: 'var(--fraunces-italic-soft)',

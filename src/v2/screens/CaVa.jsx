@@ -49,7 +49,7 @@ export default function CaVa() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: '#FFFCF5',
+          background: 'rgba(255,255,255,0.65)',
           color: 'var(--cava-ink, #1a1a2f)',
           overflowY: 'auto',
           overflowX: 'hidden',
@@ -153,7 +153,7 @@ function Hero() {
         minHeight: 400,
         maxHeight: 600,
         overflow: 'hidden',
-        background: '#0e0c08',
+        background: 'var(--bg)',
       }}
     >
       <div
@@ -182,7 +182,7 @@ function Hero() {
           left: 22,
           right: 22,
           bottom: 32,
-          color: '#FBF6E8',
+          color: 'var(--blue-900)',
         }}
       >
         <h1
@@ -195,7 +195,7 @@ function Hero() {
             lineHeight: 0.92,
             letterSpacing: '-0.028em',
             fontVariationSettings: 'var(--fraunces-opsz-large)',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             textShadow: '0 2px 18px rgba(0,0,0,0.32)',
           }}
         >
@@ -209,7 +209,7 @@ function Hero() {
             fontSize: 16,
             lineHeight: 1.4,
             fontVariationSettings: 'var(--fraunces-italic-soft)',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             opacity: 0.94,
             maxWidth: 320,
             textShadow: '0 1px 8px rgba(0,0,0,0.32)',
@@ -229,7 +229,7 @@ function Pourquoi() {
     <section
       style={{
         padding: '64px 28px 56px',
-        background: '#FFFCF5',
+        background: 'rgba(255,255,255,0.65)',
         textAlign: 'center',
         borderBottom: '0.5px solid rgba(26, 26, 47, 0.06)',
       }}
@@ -284,7 +284,7 @@ function Pourquoi() {
 
 function PhotoBreath({ idx, quote, onTap }) {
   return (
-    <section style={{ background: '#FFFCF5' }}>
+    <section style={{ background: 'rgba(255,255,255,0.65)' }}>
       <button
         data-press
         onClick={onTap}
@@ -295,7 +295,7 @@ function PhotoBreath({ idx, quote, onTap }) {
           padding: 0,
           width: '100%',
           aspectRatio: '4 / 5',
-          background: `#0e0c08 url(${PHOTO(idx)}) center / cover no-repeat`,
+          background: `var(--bg) url(${PHOTO(idx)}) center / cover no-repeat`,
           cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',
           display: 'block',
@@ -332,7 +332,7 @@ function PhotoBreath({ idx, quote, onTap }) {
 
 function VoixRow({ onOpen }) {
   return (
-    <section style={{ padding: '20px 16px 12px', background: '#FFFCF5' }}>
+    <section style={{ padding: '20px 16px 12px', background: 'rgba(255,255,255,0.65)' }}>
       <div
         style={{
           display: 'flex',
@@ -371,7 +371,7 @@ function VoixRow({ onOpen }) {
               appearance: 'none',
               border: 'none',
               padding: 0,
-              background: '#0e0c08',
+              background: 'var(--bg)',
               borderRadius: 8,
               overflow: 'hidden',
               cursor: 'pointer',
@@ -408,7 +408,7 @@ function VoixRow({ onOpen }) {
                 fontSize: 10.5,
                 lineHeight: 1.25,
                 fontVariationSettings: 'var(--fraunces-italic-soft)',
-                color: '#FBF6E8',
+                color: 'var(--blue-900)',
                 textAlign: 'left',
                 textShadow: '0 1px 6px rgba(0,0,0,0.5)',
               }}
@@ -426,7 +426,7 @@ function VoixRow({ onOpen }) {
 
 function Gallery({ onOpen }) {
   return (
-    <section style={{ padding: '20px 16px 24px', background: '#FFFCF5' }}>
+    <section style={{ padding: '20px 16px 24px', background: 'rgba(255,255,255,0.65)' }}>
       <div
         style={{
           display: 'flex',
@@ -479,7 +479,7 @@ function Gallery({ onOpen }) {
               appearance: 'none',
               border: 'none',
               padding: 0,
-              background: '#0e0c08',
+              background: 'var(--bg)',
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
               aspectRatio: '1 / 1',
@@ -505,7 +505,7 @@ function Final() {
     <section
       style={{
         background: 'var(--cava-ink, #1a1a2f)',
-        color: '#FBF6E8',
+        color: 'var(--blue-900)',
         padding: '72px 22px calc(env(safe-area-inset-bottom, 0px) + 130px)',
         textAlign: 'center',
       }}
@@ -517,7 +517,7 @@ function Final() {
           letterSpacing: '0.32em',
           textTransform: 'uppercase',
           fontWeight: 600,
-          color: '#FBF6E8',
+          color: 'var(--blue-900)',
           opacity: 0.7,
           marginBottom: 22,
         }}
@@ -533,7 +533,7 @@ function Final() {
           lineHeight: 1.3,
           letterSpacing: '-0.014em',
           fontVariationSettings: 'var(--fraunces-italic-soft)',
-          color: '#FBF6E8',
+          color: 'var(--blue-900)',
           maxWidth: 420,
         }}
       >
@@ -565,7 +565,7 @@ function Final() {
           gap: 10,
           padding: '14px 28px',
           minHeight: 44,
-          background: '#FBF6E8',
+          background: 'var(--bg)',
           color: 'var(--cava-ink, #1a1a2f)',
           borderRadius: 999,
           fontFamily: 'var(--font-ui)',

@@ -301,7 +301,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        background: '#0a0c14',
+        background: 'var(--bg)',
       }}
       data-world={currentTotem.world}
     >
@@ -360,7 +360,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               <path d="M22 26 C 12 22, 10 14, 22 8" stroke="#FBF6E8" strokeWidth="0.6" fill="none" opacity="0.7" />
               <path d="M22 26 C 32 22, 34 14, 22 8" stroke="#FBF6E8" strokeWidth="0.6" fill="none" opacity="0.7" />
             </svg>
-            <span style={{ fontFamily: 'var(--font-ui)', fontSize: 9, letterSpacing: '0.42em', fontWeight: 500, color: '#FBF6E8', opacity: 0.78 }}>
+            <span style={{ fontFamily: 'var(--font-ui)', fontSize: 9, letterSpacing: '0.42em', fontWeight: 500, color: 'var(--blue-900)', opacity: 0.78 }}>
               ÇA VA ?
             </span>
           </div>
@@ -376,7 +376,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               background: 'rgba(251, 246, 232, 0.08)',
               border: '0.5px solid rgba(251, 246, 232, 0.22)',
               borderRadius: '50%',
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
@@ -398,11 +398,11 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             left: 22,
             right: 22,
             bottom: 32,
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             zIndex: 2,
           }}
         >
-          <div className="neya-mark" style={{ color: '#FBF6E8', opacity: 0.88, marginBottom: 12, fontSize: 9, textShadow: '0 1px 4px rgba(0,0,0,0.42)' }}>
+          <div className="neya-mark" style={{ color: 'var(--blue-900)', opacity: 0.88, marginBottom: 12, fontSize: 9, textShadow: '0 1px 4px rgba(0,0,0,0.42)' }}>
             MON AVENTURE
           </div>
           <h1
@@ -414,7 +414,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               lineHeight: 1.05,
               letterSpacing: '-0.022em',
               fontVariationSettings: '"opsz" 144, "SOFT" 50',
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               textShadow: '0 2px 18px rgba(0, 0, 0, 0.42)',
             }}
           >
@@ -428,7 +428,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               fontSize: 16,
               lineHeight: 1.4,
               fontVariationSettings: 'var(--fraunces-italic-soft)',
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               opacity: 0.96,
               maxWidth: 320,
               textShadow: '0 1px 8px rgba(0, 0, 0, 0.52)',
@@ -442,9 +442,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
       {/* Body ink */}
       <div
         style={{
-          background: 'linear-gradient(180deg, #0a0c14 0%, #0e1018 12%, #0e1018 100%)',
+          background: 'var(--bg)',
           padding: '8px 22px calc(env(safe-area-inset-bottom, 0px) + 130px)',
-          color: '#FBF6E8',
+          color: 'var(--blue-900)',
         }}
       >
         {/* QUÊTE DU JOUR */}
@@ -476,7 +476,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               fontSize: 22,
               lineHeight: 1.25,
               fontVariationSettings: 'var(--fraunces-italic-soft)',
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               marginBottom: 4,
             }}
           >
@@ -503,7 +503,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               padding: '14px 18px',
               minHeight: 48,
               background: accent,
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               border: 'none',
               borderRadius: 999,
               fontFamily: 'var(--font-ui)',
@@ -605,7 +605,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 height: 44,
                 borderRadius: '50%',
                 background: accent,
-                color: '#FBF6E8',
+                color: 'var(--blue-900)',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'inline-flex',
@@ -627,7 +627,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 fontStyle: 'italic',
                 fontVariationSettings: 'var(--fraunces-italic-soft)',
                 fontSize: 13,
-                color: '#FBF6E8',
+                color: 'var(--blue-900)',
                 opacity: 0.88,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -744,7 +744,7 @@ const subActionStyle = {
   background: 'rgba(251, 246, 232, 0.06)',
   border: '0.5px solid rgba(251, 246, 232, 0.12)',
   borderRadius: 14,
-  color: '#FBF6E8',
+  color: 'var(--blue-900)',
   fontFamily: 'var(--font-ui)',
   fontSize: 13,
   fontWeight: 500,
@@ -767,7 +767,7 @@ function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
         appearance: 'none',
         width: '100%',
         padding: 0,
-        background: '#0e1018',
+        background: 'var(--bg)',
         border: '0.5px solid rgba(251, 246, 232, 0.10)',
         borderRadius: 18,
         cursor: 'pointer',
@@ -833,7 +833,7 @@ function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
               fontStyle: 'italic',
               fontVariationSettings: 'var(--fraunces-italic-soft)',
               fontSize: 18,
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               lineHeight: 1.25,
             }}
           >
@@ -1035,7 +1035,7 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                 appearance: 'none',
                 width: '100%',
                 padding: 0,
-                background: '#0e1018',
+                background: 'var(--bg)',
                 border: `0.5px solid ${completed ? m.accent : 'rgba(251, 246, 232, 0.10)'}`,
                 borderRadius: 16,
                 cursor: m.available ? 'pointer' : 'not-allowed',
@@ -1112,7 +1112,7 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                         fontStyle: 'italic',
                         fontVariationSettings: 'var(--fraunces-italic-soft)',
                         fontSize: 16,
-                        color: '#FBF6E8',
+                        color: 'var(--blue-900)',
                         lineHeight: 1.2,
                       }}
                     >
@@ -1686,7 +1686,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                         overflow: 'hidden',
                         position: 'relative',
                         aspectRatio: '4 / 5',
-                        background: `#0a0c14 url(${img.src}) center / cover no-repeat`,
+                        background: `var(--bg) url(${img.src}) center / cover no-repeat`,
                         WebkitTapHighlightColor: 'transparent',
                       }}
                       aria-pressed={active}
@@ -1699,7 +1699,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                           bottom: 0,
                           padding: '24px 10px 10px',
                           background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
-                          color: '#FBF6E8',
+                          color: 'var(--blue-900)',
                           fontFamily: 'var(--font-display)',
                           fontStyle: 'italic',
                           fontVariationSettings: 'var(--fraunces-italic-soft)',

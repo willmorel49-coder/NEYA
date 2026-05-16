@@ -210,7 +210,7 @@ export default function Communaute() {
         overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        background: '#FFFCF5',
+        background: 'rgba(255,255,255,0.65)',
       }}
       data-world="communaute"
     >
@@ -222,7 +222,7 @@ export default function Communaute() {
           height: 'min(55vh, 460px)',
           minHeight: 380,
           overflow: 'hidden',
-          background: '#0a0c14',
+          background: 'var(--bg)',
         }}
       >
         <div
@@ -265,7 +265,7 @@ export default function Communaute() {
               width: f.size,
               height: f.size,
               borderRadius: '50%',
-              background: '#FBF6E8',
+              background: 'var(--bg)',
               boxShadow: `0 0 ${f.size * 4}px ${f.size}px var(--terracotta)`,
               opacity: 0,
               animation: `commu-firefly ${f.duration}s ease-in-out ${f.delay}s infinite`,
@@ -280,13 +280,13 @@ export default function Communaute() {
             left: 22,
             right: 22,
             bottom: 32,
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             zIndex: 2,
           }}
         >
           <div
             className="neya-mark"
-            style={{ color: '#FBF6E8', opacity: 0.95, marginBottom: 12, fontSize: 9, fontWeight: 600, textShadow: '0 1px 6px rgba(0, 0, 0, 0.5)' }}
+            style={{ color: 'var(--blue-900)', opacity: 0.95, marginBottom: 12, fontSize: 9, fontWeight: 600, textShadow: '0 1px 6px rgba(0, 0, 0, 0.5)' }}
           >
             COMMUNAUTÉ ÇA VA ?
           </div>
@@ -299,7 +299,7 @@ export default function Communaute() {
               lineHeight: 1.0,
               letterSpacing: '-0.022em',
               fontVariationSettings: '"opsz" 144, "SOFT" 50',
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               textShadow: '0 2px 18px rgba(0, 0, 0, 0.38)',
             }}
           >
@@ -313,7 +313,7 @@ export default function Communaute() {
               fontSize: 15,
               lineHeight: 1.45,
               fontVariationSettings: 'var(--fraunces-italic-soft)',
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               opacity: 0.88,
               maxWidth: 320,
               textShadow: '0 1px 8px rgba(0, 0, 0, 0.32)',
@@ -1166,7 +1166,7 @@ function AllVoicesOverlay({ posts, reactions, onReact, onMore, onCompose, onClos
         position: 'fixed',
         inset: 0,
         zIndex: 200,
-        background: '#FFFCF5',
+        background: 'rgba(255,255,255,0.65)',
         color: 'var(--ink)',
         transform: closing ? 'translateX(100%)' : mounted ? 'translateX(0)' : 'translateX(100%)',
         transition: 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
@@ -1321,7 +1321,7 @@ function TemoignageReader({ temoignage, onClose }) {
         position: 'fixed',
         inset: 0,
         zIndex: 200,
-        background: '#FFFCF5',
+        background: 'rgba(255,255,255,0.65)',
         color: 'var(--ink)',
         transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1)',
