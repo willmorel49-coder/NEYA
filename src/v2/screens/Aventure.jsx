@@ -15,7 +15,9 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { WORLDS } from '../worlds';
 import { getProfile, patchProfile, haptic } from '../state';
+import { LECONS as LECONS_CONTENT } from '../data/lecons';
 import CoconAmbiance from './CoconAmbiance';
+import LeconReader from './LeconReader';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
 /* ─── Données ─── */
@@ -67,17 +69,8 @@ const WORLDS_LIST = [
   { key: 'communaute', name: 'Refuge partagé',     totem: 'Renard',  emotion: 'Apprendre à recevoir',         order: 6 },
 ];
 
-/* 8 leçons (pilier Connaissance) */
-const LECONS = [
-  { key: 'anxiete',         title: 'L\'anxiété',          subtitle: 'Comment elle se cache' },
-  { key: 'depression',      title: 'La dépression',       subtitle: 'Au-delà du cliché' },
-  { key: 'burnout',         title: 'Le burn-out',         subtitle: 'Les signaux qu\'on ignore' },
-  { key: 'perfectionnisme', title: 'Le perfectionnisme',  subtitle: 'La peur déguisée' },
-  { key: 'estime',          title: 'L\'estime de soi',    subtitle: 'La racine' },
-  { key: 'sommeil',         title: 'Le sommeil',          subtitle: 'Le miroir du mental' },
-  { key: 'colere',          title: 'La colère',           subtitle: 'Ce qu\'elle essaie de dire' },
-  { key: 'attachement',     title: 'L\'attachement',      subtitle: 'Comment on apprend à aimer' },
-];
+/* 8 leçons (pilier Connaissance) — contenu complet dans data/lecons.js */
+const LECONS = LECONS_CONTENT;
 
 /* Les 3 temps du soi */
 const TEMPS_SOI = [
@@ -125,6 +118,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const [profile, setLocalProfile] = useState(() => getProfile());
   const [personalizeOpen, setPersonalizeOpen] = useState(false);
   const [pilierSheet, setPilierSheet] = useState(null);
+  const [openedLecon, setOpenedLecon] = useState(null);
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [, forceTick] = useState(0);
   const audioRef = useRef(null);
@@ -578,7 +572,18 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         />
       )}
       {pilierSheet === 'connaissance' && (
-        <ConnaissanceSheet lecons={LECONS} onClose={() => setPilierSheet(null)} />
+        <ConnaissanceSheet
+          lecons={LECONS}
+          leconsLues={av.leconsLues || []}
+          onPick={(lecon) => { setPilierSheet(null); setOpenedLecon(lecon); }}
+          onClose={() => setPilierSheet(null)}
+        />
+      )}
+      {openedLecon && (
+        <LeconReader
+          lecon={openedLecon}
+          onClose={() => { setOpenedLecon(null); setLocalProfile(getProfile()); setPilierSheet('connaissance'); }}
+        />
       )}
       {pilierSheet === 'temps' && (
         <TempsSoiSheet temps={TEMPS_SOI} onClose={() => setPilierSheet(null)} />
@@ -949,67 +954,90 @@ function AventureWorldsSheet({ worlds, currentTotem, onPick, onClose }) {
   );
 }
 
-function ConnaissanceSheet({ lecons, onClose }) {
+function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
+  const luesCount = (leconsLues || []).length;
   return (
     <SheetWrap
       title="La Connaissance"
-      subtitle="Apprendre ce que ton mental traverse."
+      subtitle={`${luesCount} / ${lecons.length} lues · 4-5 min par leçon`}
       onClose={onClose}
       labelText="Bibliothèque"
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {lecons.map((l) => (
-          <div
-            key={l.key}
-            style={{
-              padding: '16px 18px',
-              minHeight: 66,
-              background: 'rgba(26, 26, 47, 0.04)',
-              border: '0.5px solid rgba(26, 26, 47, 0.08)',
-              borderRadius: 14,
-            }}
-          >
-            <div
+        {lecons.map((l, i) => {
+          const lue = (leconsLues || []).includes(l.key);
+          return (
+            <button
+              key={l.key}
+              type="button"
+              data-press
+              onClick={() => { haptic(4); onPick?.(l); }}
               style={{
-                fontFamily: 'var(--font-display)',
-                fontStyle: 'italic',
-                fontVariationSettings: 'var(--fraunces-italic-soft)',
-                fontSize: 16,
-                color: 'var(--ink)',
-                lineHeight: 1.25,
+                appearance: 'none',
+                width: '100%',
+                padding: '16px 18px',
+                minHeight: 76,
+                background: lue ? 'rgba(26, 26, 47, 0.06)' : 'rgba(26, 26, 47, 0.03)',
+                border: `0.5px solid ${lue ? l.accent : 'rgba(26, 26, 47, 0.08)'}`,
+                borderRadius: 14,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 14,
+                textAlign: 'left',
+                WebkitTapHighlightColor: 'transparent',
               }}
             >
-              {l.title}
-            </div>
-            <div
-              style={{
-                marginTop: 4,
-                fontFamily: 'var(--font-body)',
-                fontSize: 12,
-                color: 'var(--content-tertiary)',
-              }}
-            >
-              {l.subtitle}
-            </div>
-          </div>
-        ))}
-        <div
-          style={{
-            marginTop: 16,
-            padding: '14px 16px',
-            background: 'rgba(159, 88, 76, 0.08)',
-            borderLeft: '2px solid var(--terracotta)',
-            borderRadius: 6,
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontSize: 13,
-            lineHeight: 1.5,
-            color: 'var(--ink)',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-          }}
-        >
-          Les contenus arrivent prochainement. Tu pourras lire, écouter et explorer chaque sujet en profondeur.
-        </div>
+              <span
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: '50%',
+                  background: lue ? l.accent : 'rgba(26, 26, 47, 0.06)',
+                  color: lue ? '#FBF6E8' : 'var(--ink-soft)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  fontVariantNumeric: 'tabular-nums',
+                  flexShrink: 0,
+                  transition: 'all 280ms ease-out',
+                }}
+              >
+                {lue ? '✓' : String(i + 1).padStart(2, '0')}
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontVariationSettings: 'var(--fraunces-italic-soft)',
+                    fontSize: 16,
+                    color: 'var(--ink)',
+                    lineHeight: 1.25,
+                  }}
+                >
+                  {l.title}
+                </div>
+                <div
+                  style={{
+                    marginTop: 4,
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 12,
+                    color: 'var(--content-tertiary)',
+                  }}
+                >
+                  {l.subtitle} · {l.duration} min
+                </div>
+              </div>
+              <span aria-hidden style={{ color: 'var(--content-tertiary)', fontSize: 14, flexShrink: 0 }}>
+                ›
+              </span>
+            </button>
+          );
+        })}
       </div>
     </SheetWrap>
   );
