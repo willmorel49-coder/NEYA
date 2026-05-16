@@ -124,7 +124,7 @@ function TopBar() {
           textTransform: 'uppercase',
           fontWeight: 600,
           color: 'var(--cava-ink, #1a1a2f)',
-          opacity: 0.7,
+          opacity: 0.88,
           textDecoration: 'none',
           padding: '8px 4px',
           minHeight: 32,
@@ -134,7 +134,7 @@ function TopBar() {
           WebkitTapHighlightColor: 'transparent',
         }}
       >
-        Boutique <span style={{ opacity: 0.55 }}>↗</span>
+        Boutique <span style={{ opacity: 0.78 }} aria-hidden>↗</span>
       </a>
     </div>
   );
@@ -240,7 +240,7 @@ function Pourquoi() {
           letterSpacing: '0.32em',
           textTransform: 'uppercase',
           fontWeight: 600,
-          color: 'rgba(26, 26, 47, 0.45)',
+          color: 'rgba(26, 26, 47, 0.72)',
           marginBottom: 22,
         }}
       >
@@ -268,7 +268,7 @@ function Pourquoi() {
           fontFamily: 'var(--font-body)',
           fontSize: 13.5,
           lineHeight: 1.65,
-          color: 'rgba(26, 26, 47, 0.62)',
+          color: 'rgba(26, 26, 47, 0.78)',
           maxWidth: 360,
         }}
       >
@@ -347,7 +347,7 @@ function VoixRow({ onOpen }) {
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
             fontWeight: 600,
-            color: 'rgba(26, 26, 47, 0.5)',
+            color: 'rgba(26, 26, 47, 0.72)',
           }}
         >
           Les voix
@@ -441,7 +441,7 @@ function Gallery({ onOpen }) {
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
             fontWeight: 600,
-            color: 'rgba(26, 26, 47, 0.5)',
+            color: 'rgba(26, 26, 47, 0.72)',
           }}
         >
           La collection
@@ -453,7 +453,7 @@ function Gallery({ onOpen }) {
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             fontWeight: 600,
-            color: 'rgba(26, 26, 47, 0.35)',
+            color: 'rgba(26, 26, 47, 0.62)',
             fontVariantNumeric: 'tabular-nums',
           }}
         >
@@ -517,7 +517,7 @@ function Final() {
           textTransform: 'uppercase',
           fontWeight: 600,
           color: '#FBF6E8',
-          opacity: 0.5,
+          opacity: 0.7,
           marginBottom: 22,
         }}
       >
@@ -546,7 +546,7 @@ function Final() {
           fontFamily: 'var(--font-body)',
           fontSize: 13.5,
           lineHeight: 1.6,
-          color: 'rgba(251, 246, 232, 0.7)',
+          color: 'rgba(251, 246, 232, 0.82)',
           maxWidth: 360,
         }}
       >

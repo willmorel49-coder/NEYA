@@ -411,9 +411,9 @@ export default function Cercle({ onClose }) {
               marginTop: 18,
               textAlign: 'center',
               fontFamily: 'var(--font-body)',
-              fontSize: 12,
+              fontSize: 13,
               fontStyle: 'italic',
-              color: 'var(--ink-whisper)',
+              color: 'var(--ink-soft)',
               lineHeight: 1.5,
             }}
           >
@@ -429,7 +429,7 @@ export default function Cercle({ onClose }) {
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
             fontSize: 13,
-            color: 'var(--ink-whisper)',
+            color: 'var(--ink-soft)',
             lineHeight: 1.5,
             fontVariationSettings: 'var(--fraunces-italic-soft)',
             padding: '0 24px',
@@ -494,7 +494,7 @@ function MemberCard({ member, pop, onSend, onRemove }) {
           borderRadius: '50%',
           border: 'none',
           background: 'transparent',
-          color: 'var(--ink-whisper)',
+          color: 'var(--ink-soft)',
           fontSize: 14,
           lineHeight: 1,
           cursor: 'pointer',
@@ -575,10 +575,10 @@ function MemberCard({ member, pop, onSend, onRemove }) {
           style={{
             fontFamily: 'var(--font-ui)',
             fontSize: 10,
-            fontWeight: 500,
+            fontWeight: 600,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            color: 'var(--ink-whisper)',
+            color: 'var(--ink-soft)',
             lineHeight: 1,
           }}
         >
@@ -753,8 +753,8 @@ function ComposerInline({ inputRef, draft, setDraft, onAdd, onCancel }) {
         style={{
           margin: '10px 0 14px',
           fontFamily: 'var(--font-body)',
-          fontSize: 11,
-          color: 'var(--ink-whisper)',
+          fontSize: 12,
+          color: 'var(--ink-soft)',
           lineHeight: 1.45,
         }}
       >

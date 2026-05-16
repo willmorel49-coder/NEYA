@@ -295,7 +295,7 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
               marginTop: 8,
               fontFamily: 'Inter, system-ui, sans-serif',
               fontSize: 12,
-              color: 'var(--content-tertiary)',
+              color: 'var(--content-secondary)',
               fontVariantNumeric: 'tabular-nums',
               textTransform: 'lowercase',
             }}
@@ -547,7 +547,7 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
             fontFamily: '"Fraunces", Georgia, serif',
             fontStyle: 'italic',
             fontSize: 13,
-            color: 'var(--content-tertiary)',
+            color: 'var(--content-secondary)',
             lineHeight: 1.5,
             padding: '0 12px',
           }}

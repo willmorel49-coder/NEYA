@@ -509,9 +509,9 @@ export default function Souvenirs({ onClose }) {
                 <div
                   style={{
                     fontFamily: 'Inter, system-ui, sans-serif',
-                    fontSize: 12,
+                    fontSize: 13,
                     lineHeight: 1.55,
-                    color: 'var(--content-tertiary)',
+                    color: 'var(--content-secondary)',
                     maxWidth: 260,
                   }}
                 >
@@ -631,9 +631,9 @@ export default function Souvenirs({ onClose }) {
               fontFamily: '"Fraunces", Georgia, serif',
               fontStyle: 'italic',
               fontWeight: 400,
-              fontSize: 12,
+              fontSize: 13,
               lineHeight: 1.55,
-              color: 'var(--content-tertiary)',
+              color: 'var(--content-secondary)',
               maxWidth: 300,
             }}
           >

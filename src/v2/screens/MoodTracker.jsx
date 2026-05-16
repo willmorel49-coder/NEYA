@@ -298,8 +298,8 @@ export default function MoodTracker({ onClose }) {
         <div
           style={{
             fontFamily: 'Inter, system-ui, sans-serif',
-            fontSize: 12,
-            color: 'var(--content-tertiary)',
+            fontSize: 13,
+            color: 'var(--content-secondary)',
             marginBottom: 14,
             lineHeight: 1.4,
           }}
@@ -564,8 +564,8 @@ export default function MoodTracker({ onClose }) {
             textAlign: 'center',
             fontFamily: '"Fraunces", Georgia, serif',
             fontStyle: 'italic',
-            fontSize: 12,
-            color: 'var(--content-tertiary)',
+            fontSize: 13,
+            color: 'var(--content-secondary)',
             lineHeight: 1.5,
             padding: '0 12px',
           }}

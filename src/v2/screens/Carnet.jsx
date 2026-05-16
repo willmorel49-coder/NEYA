@@ -363,7 +363,7 @@ export default function Carnet({ onClose }) {
             style={{
               fontFamily: 'Inter, system-ui, sans-serif',
               fontSize: 12,
-              color: 'var(--content-tertiary)',
+              color: 'var(--content-secondary)',
               fontVariantNumeric: 'tabular-nums',
               textTransform: 'lowercase',
             }}
@@ -523,8 +523,8 @@ export default function Carnet({ onClose }) {
             style={{
               fontFamily: '"Sora", system-ui, sans-serif',
               fontStyle: 'italic',
-              fontSize: 11,
-              color: 'var(--content-tertiary)',
+              fontSize: 12,
+              color: 'var(--content-secondary)',
               lineHeight: 1.5,
               padding: '8px 4px',
             }}
@@ -614,8 +614,8 @@ export default function Carnet({ onClose }) {
             textAlign: 'center',
             fontFamily: '"Fraunces", Georgia, serif',
             fontStyle: 'italic',
-            fontSize: 12,
-            color: 'var(--content-tertiary)',
+            fontSize: 13,
+            color: 'var(--content-secondary)',
             lineHeight: 1.5,
             padding: '0 12px',
           }}

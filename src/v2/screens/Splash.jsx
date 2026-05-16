@@ -67,8 +67,8 @@ export default function Splash({ onContinue }) {
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes splashBreathe {
-          0%, 100% { opacity: 0.42; }
-          50%      { opacity: 0.78; }
+          0%, 100% { opacity: 0.72; }
+          50%      { opacity: 0.95; }
         }
       `}</style>
 
@@ -113,7 +113,7 @@ export default function Splash({ onContinue }) {
           fontSize: 11,
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
-          color: 'rgba(251,246,232,0.5)',
+          color: 'rgba(251,246,232,0.85)',
           opacity: mounted ? 1 : 0,
           transition: 'opacity 1400ms var(--ease-narrative) 600ms',
           WebkitTapHighlightColor: 'transparent',
@@ -211,7 +211,7 @@ export default function Splash({ onContinue }) {
           fontSize: 11,
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
-          color: 'rgba(251,246,232,0.42)',
+          color: 'rgba(251,246,232,0.82)',
           opacity: mounted ? 1 : 0,
           transition: 'opacity 1400ms var(--ease-narrative) 400ms',
           animation: mounted

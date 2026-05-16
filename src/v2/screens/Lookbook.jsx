@@ -173,7 +173,7 @@ export default function Lookbook({ onClose }) {
               position: 'absolute',
               inset: 0,
               background:
-                'linear-gradient(180deg, rgba(244,240,232,0.55) 0%, rgba(244,240,232,0) 28%, rgba(244,240,232,0) 62%, rgba(244,240,232,0.78) 100%)',
+                'radial-gradient(ellipse at 50% 50%, rgba(26,26,47,0.45) 0%, rgba(26,26,47,0.18) 45%, rgba(26,26,47,0) 70%), linear-gradient(180deg, rgba(244,240,232,0.55) 0%, rgba(244,240,232,0) 28%, rgba(244,240,232,0) 62%, rgba(244,240,232,0.78) 100%)',
               pointerEvents: 'none',
             }}
           />
@@ -217,9 +217,10 @@ export default function Lookbook({ onClose }) {
                 marginTop: 18,
                 fontFamily: 'var(--font-body)',
                 fontSize: 13,
-                color: 'rgba(251, 246, 232, 0.84)',
+                fontWeight: 500,
+                color: '#FBF6E8',
                 letterSpacing: '0.04em',
-                textShadow: '0 1px 12px rgba(26,26,47,0.42)',
+                textShadow: '0 1px 16px rgba(26,26,47,0.78), 0 0 4px rgba(26,26,47,0.55)',
               }}
             >
               Capsule Libre · Printemps 2026
@@ -282,7 +283,7 @@ export default function Lookbook({ onClose }) {
               fontSize: 9,
               letterSpacing: 'var(--tracking-caps)',
               textTransform: 'uppercase',
-              color: 'var(--ink-whisper, #7A7A8C)',
+              color: 'var(--ink-soft, #4A4A5F)',
               fontWeight: 600,
             }}
           >
@@ -303,7 +304,7 @@ export default function Lookbook({ onClose }) {
               fontSize: 9,
               letterSpacing: 'var(--tracking-caps)',
               textTransform: 'uppercase',
-              color: 'var(--ink-whisper, #7A7A8C)',
+              color: 'var(--ink-soft, #4A4A5F)',
               textAlign: 'center',
               marginBottom: 26,
               fontWeight: 600,
@@ -443,7 +444,7 @@ function PhotoTile({ photo }) {
             fontSize: 9,
             letterSpacing: 'var(--tracking-caps)',
             textTransform: 'uppercase',
-            color: 'var(--ink-whisper, #7A7A8C)',
+            color: 'var(--ink-soft, #4A4A5F)',
             fontWeight: 600,
           }}
         >

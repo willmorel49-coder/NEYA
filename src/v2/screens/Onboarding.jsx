@@ -425,9 +425,9 @@ function StepLayer({ step, stepIdx, totalSteps, fadeState, onAdvance, interactiv
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontStyle: 'italic',
-                  fontSize: 13,
+                  fontSize: 14,
                   lineHeight: 1.5,
-                  color: 'var(--content-tertiary)',
+                  color: 'var(--content-secondary)',
                   fontVariationSettings: 'var(--fraunces-italic-soft)',
                   maxWidth: 320,
                 }}

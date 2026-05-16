@@ -227,7 +227,7 @@ export default function Crise({ onClose }) {
           position: 'absolute',
           inset: 0,
           background:
-            'linear-gradient(180deg, rgba(10, 12, 20, 0.45) 0%, rgba(10, 12, 20, 0.35) 50%, rgba(10, 12, 20, 0.65) 100%)',
+            'linear-gradient(180deg, rgba(10, 12, 20, 0.58) 0%, rgba(10, 12, 20, 0.42) 50%, rgba(10, 12, 20, 0.72) 100%)',
           pointerEvents: 'none',
         }}
       />
@@ -257,8 +257,8 @@ export default function Crise({ onClose }) {
             width: 40,
             height: 40,
             borderRadius: '50%',
-            background: 'rgba(251, 246, 232, 0.10)',
-            border: '0.5px solid rgba(251, 246, 232, 0.22)',
+            background: 'rgba(251, 246, 232, 0.16)',
+            border: '1px solid rgba(251, 246, 232, 0.48)',
             color: '#FBF6E8',
             cursor: 'pointer',
             display: 'inline-flex',
@@ -462,8 +462,9 @@ export default function Crise({ onClose }) {
             letterSpacing: '0.42em',
             textTransform: 'uppercase',
             color: '#FBF6E8',
-            opacity: 0.48,
-            fontWeight: 500,
+            opacity: 0.78,
+            fontWeight: 600,
+            textShadow: '0 1px 8px rgba(0, 0, 0, 0.55)',
           }}
         >
           {rhythm.desc}
@@ -484,13 +485,13 @@ export default function Crise({ onClose }) {
           appearance: 'none',
           padding: '14px 32px',
           minHeight: 48,
-          background: 'rgba(251, 246, 232, 0.12)',
+          background: 'rgba(251, 246, 232, 0.18)',
           color: '#FBF6E8',
-          border: '0.5px solid rgba(251, 246, 232, 0.36)',
+          border: '1px solid rgba(251, 246, 232, 0.58)',
           borderRadius: 999,
           fontFamily: 'var(--font-ui)',
           fontSize: 12,
-          fontWeight: 500,
+          fontWeight: 600,
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
           cursor: 'pointer',
@@ -498,6 +499,7 @@ export default function Crise({ onClose }) {
           WebkitBackdropFilter: 'blur(12px)',
           WebkitTapHighlightColor: 'transparent',
           zIndex: 3,
+          textShadow: '0 1px 8px rgba(0, 0, 0, 0.45)',
         }}
       >
         Je vais mieux

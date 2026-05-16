@@ -134,7 +134,7 @@ export default function AventureOnboarding({ onClose }) {
           position: 'absolute',
           inset: 0,
           background:
-            'linear-gradient(180deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.18) 35%, rgba(0,0,0,0.78) 100%)',
+            'linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.32) 35%, rgba(0,0,0,0.88) 100%)',
           pointerEvents: 'none',
         }}
       />
@@ -222,9 +222,9 @@ export default function AventureOnboarding({ onClose }) {
             fontSize: 15.5,
             lineHeight: 1.6,
             color: '#FBF6E8',
-            opacity: 0.92,
+            opacity: 0.98,
             maxWidth: 360,
-            textShadow: '0 1px 8px rgba(0,0,0,0.36)',
+            textShadow: '0 1px 8px rgba(0,0,0,0.52)',
             whiteSpace: 'pre-line',
             animation: 'onb-fade 800ms cubic-bezier(0.16, 1, 0.3, 1) 160ms backwards',
           }}

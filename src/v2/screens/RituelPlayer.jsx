@@ -128,7 +128,7 @@ export default function RituelPlayer({ rituel, onClose }) {
           style={{
             fontFamily: 'var(--font-ui)',
             fontSize: 9,
-            color: 'var(--content-tertiary)',
+            color: 'var(--ink-soft)',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             paddingRight: 14,
@@ -168,7 +168,7 @@ export default function RituelPlayer({ rituel, onClose }) {
             className="neya-mark"
             style={{
               marginTop: 10,
-              color: 'var(--content-tertiary)',
+              color: 'var(--ink-soft)',
               fontSize: 9,
             }}
           >
@@ -198,7 +198,7 @@ export default function RituelPlayer({ rituel, onClose }) {
             <div style={{ marginTop: 36 }}>
               <div
                 className="neya-mark"
-                style={{ color: 'var(--content-tertiary)', marginBottom: 14, fontSize: 9 }}
+                style={{ color: 'var(--ink-soft)', marginBottom: 14, fontSize: 9 }}
               >
                 Questions à te poser
               </div>
@@ -239,7 +239,7 @@ export default function RituelPlayer({ rituel, onClose }) {
           <div style={{ marginTop: 32 }}>
             <div
               className="neya-mark"
-              style={{ color: 'var(--content-tertiary)', marginBottom: 10, fontSize: 9 }}
+              style={{ color: 'var(--ink-soft)', marginBottom: 10, fontSize: 9 }}
             >
               Tes notes (optionnel · privées · pour toi seul·e)
             </div>
@@ -273,7 +273,7 @@ export default function RituelPlayer({ rituel, onClose }) {
                 fontFamily: 'var(--font-ui)',
                 fontSize: 10,
                 fontVariantNumeric: 'tabular-nums',
-                color: 'var(--content-tertiary)',
+                color: 'var(--ink-soft)',
               }}
             >
               {2000 - (note || '').length}

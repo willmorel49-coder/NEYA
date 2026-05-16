@@ -504,10 +504,10 @@ export default function Aide({ onClose }) {
         <p
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: 13,
+            fontSize: 14,
             fontStyle: 'italic',
-            fontWeight: 300,
-            color: 'var(--ink-whisper)',
+            fontWeight: 400,
+            color: 'var(--ink-soft)',
             lineHeight: 1.55,
             margin: 0,
             maxWidth: 320,
@@ -695,8 +695,8 @@ function LigneMini({ line, onCall }) {
           fontSize: 9,
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
-          color: 'var(--ink-whisper)',
-          fontWeight: 500,
+          color: 'var(--ink-soft)',
+          fontWeight: 600,
           marginTop: 2,
         }}
       >

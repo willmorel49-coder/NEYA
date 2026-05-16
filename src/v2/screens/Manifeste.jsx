@@ -166,7 +166,7 @@ export default function Manifeste({ onClose }) {
             fontWeight: 500,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            color: INK_WHISPER,
+            color: INK_SOFT,
           }}
         >
           ÇA VA ? · MANIFESTE
@@ -209,7 +209,7 @@ export default function Manifeste({ onClose }) {
             fontWeight: 500,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            color: INK_WHISPER,
+            color: INK_SOFT,
             marginBottom: 28,
           }}
         >
@@ -329,7 +329,7 @@ export default function Manifeste({ onClose }) {
             fontWeight: 500,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            color: INK_WHISPER,
+            color: INK_SOFT,
             marginBottom: 22,
           }}
         >
@@ -408,7 +408,7 @@ export default function Manifeste({ onClose }) {
             fontWeight: 500,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            color: OCHRE,
+            color: TERRACOTTA,
             marginBottom: 18,
           }}
         >
@@ -470,7 +470,7 @@ export default function Manifeste({ onClose }) {
             fontWeight: 500,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            color: INK_WHISPER,
+            color: INK_SOFT,
             marginBottom: 26,
           }}
         >
@@ -579,7 +579,7 @@ export default function Manifeste({ onClose }) {
             fontWeight: 500,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            color: INK_WHISPER,
+            color: INK_SOFT,
           }}
         >
           JIMI HENDRIX · CITATION TRANSMISE PAR ÇA VA?
@@ -618,7 +618,7 @@ export default function Manifeste({ onClose }) {
             fontSize: 9,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            color: INK_WHISPER,
+            color: INK_SOFT,
           }}
         >
           PARIS · BELLEVILLE · 2026

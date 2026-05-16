@@ -241,8 +241,8 @@ export default function Patronus({ onClose }) {
           fontSize: 11,
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
-          color: 'var(--content-tertiary)',
-          opacity: mounted ? 0.7 : 0,
+          color: 'var(--content-secondary)',
+          opacity: mounted ? 0.95 : 0,
           transition: 'opacity 1400ms var(--ease-narrative) 600ms',
           WebkitTapHighlightColor: 'transparent',
         }}
@@ -396,8 +396,8 @@ export default function Patronus({ onClose }) {
             fontFamily: 'Inter, system-ui, sans-serif',
             fontWeight: 400,
             fontSize: 14,
-            color: 'var(--content-soft, var(--content-tertiary))',
-            opacity: mounted ? 0.9 : 0,
+            color: 'var(--content-secondary)',
+            opacity: mounted ? 1 : 0,
             transition: 'opacity 1400ms var(--ease-narrative) 800ms',
           }}
         >

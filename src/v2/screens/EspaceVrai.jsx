@@ -455,8 +455,8 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
           style={{
             marginTop: 6,
             fontFamily: 'var(--font-ui)',
-            fontSize: 11,
-            color: 'var(--content-tertiary)',
+            fontSize: 12,
+            color: 'var(--content-secondary)',
             letterSpacing: '0.06em',
             fontVariantNumeric: 'tabular-nums',
           }}
@@ -467,9 +467,9 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
           style={{
             marginTop: 8,
             fontFamily: 'var(--font-body)',
-            fontSize: 10,
-            color: 'var(--content-tertiary)',
-            opacity: 0.7,
+            fontSize: 11,
+            color: 'var(--content-secondary)',
+            opacity: 0.95,
             letterSpacing: '0.04em',
           }}
         >

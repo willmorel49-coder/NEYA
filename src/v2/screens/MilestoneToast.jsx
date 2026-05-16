@@ -108,10 +108,10 @@ export default function MilestoneToast({ day, onClose }) {
           style={{
             fontFamily: 'var(--font-ui)',
             fontSize: 10,
-            fontWeight: 500,
+            fontWeight: 600,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: 'var(--content-tertiary, #7A7A8C)',
+            color: 'var(--content-secondary, #4A4A5F)',
             marginBottom: 18,
           }}
         >

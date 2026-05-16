@@ -22,7 +22,8 @@ const TOTEM_HOME = {
 };
 
 const TILLEUL = '#d4e08c';
-const TERRACOTTA = '#c29051';
+// Le vrai terracotta D.A. (#9F584C → 4.7:1 sur cream). #c29051 = ochre (FAIL 2.7:1).
+const TERRACOTTA = '#9F584C';
 
 const BILAN_QUESTIONS = [
   {
@@ -274,8 +275,8 @@ export default function Bilan({ onClose }) {
           <div
             style={{
               fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: 13,
-              color: 'var(--content-soft, var(--content-tertiary))',
+              fontSize: 14,
+              color: 'var(--content-secondary)',
               lineHeight: 1.5,
             }}
           >
@@ -609,8 +610,8 @@ export default function Bilan({ onClose }) {
             <div
               style={{
                 fontFamily: 'Inter, system-ui, sans-serif',
-                fontSize: 13,
-                color: 'var(--content-soft, var(--content-tertiary))',
+                fontSize: 14,
+                color: 'var(--content-secondary)',
                 lineHeight: 1.5,
                 maxWidth: 280,
               }}
@@ -680,10 +681,10 @@ export default function Bilan({ onClose }) {
               padding: '12px 18px',
               minHeight: 44,
               fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: 12,
-              color: 'var(--content-tertiary)',
+              fontSize: 13,
+              color: 'var(--content-secondary)',
               textDecoration: 'underline',
-              textDecorationColor: 'var(--hairline)',
+              textDecorationColor: 'var(--hairline-strong)',
               textUnderlineOffset: '3px',
             }}
           >

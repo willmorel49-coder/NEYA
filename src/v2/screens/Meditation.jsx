@@ -455,8 +455,8 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             transition: 'opacity 600ms var(--ease-out)',
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
-            fontSize: 16,
-            color: 'rgba(212, 224, 140, 0.85)',
+            fontSize: 18,
+            color: 'var(--emerald)',
             fontVariationSettings: 'var(--fraunces-italic-soft)',
             pointerEvents: 'none',
           }}
@@ -510,7 +510,7 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
               fontFamily: 'var(--font-ui)',
               fontSize: 11,
               fontWeight: 500,
-              color: 'var(--content-tertiary)',
+              color: 'var(--content-secondary)',
               marginTop: 2,
             }}
           >
@@ -566,11 +566,11 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           <div
             style={{
               fontFamily: 'var(--font-ui)',
-              fontSize: 9,
-              fontWeight: 500,
+              fontSize: 10,
+              fontWeight: 600,
               letterSpacing: '0.222em',
               textTransform: 'uppercase',
-              color: 'var(--tilleul)',
+              color: 'var(--emerald)',
             }}
           >
             +{toast.minutes} MIN

@@ -660,10 +660,10 @@ function EspaceCard({ espace, visible, onGo }) {
           style={{
             fontFamily: 'var(--font-ui)',
             fontSize: 11,
-            fontWeight: 500,
+            fontWeight: 600,
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: 'var(--content-tertiary)',
+            color: 'var(--ink-soft)',
             flex: '1 1 auto',
             minWidth: 0,
           }}
@@ -676,7 +676,7 @@ function EspaceCard({ espace, visible, onGo }) {
             fontSize: 11,
             fontWeight: 500,
             letterSpacing: '0.06em',
-            color: 'var(--content-tertiary)',
+            color: 'var(--ink-soft)',
             textAlign: 'right',
             flex: '0 1 auto',
             wordBreak: 'break-word',

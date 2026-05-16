@@ -128,7 +128,7 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
             letterSpacing: '0.32em',
             textTransform: 'uppercase',
             color: '#FBF6E8',
-            opacity: 0.6,
+            opacity: 0.82,
             fontWeight: 600,
           }}
         >
@@ -137,10 +137,11 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
         <span
           style={{
             fontFamily: 'var(--font-ui)',
-            fontSize: 9,
+            fontSize: 10,
             letterSpacing: '0.222em',
             color: '#FBF6E8',
-            opacity: 0.42,
+            opacity: 0.78,
+            fontWeight: 600,
             fontVariantNumeric: 'tabular-nums',
           }}
         >

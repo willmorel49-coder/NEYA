@@ -205,7 +205,7 @@ export default function Cocon() {
           position: 'absolute',
           inset: 0,
           background:
-            'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.08) 35%, rgba(0,0,0,0.42) 100%)',
+            'linear-gradient(180deg, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.28) 35%, rgba(0,0,0,0.55) 100%)',
           pointerEvents: 'none',
         }}
       />
@@ -258,9 +258,10 @@ export default function Cocon() {
               fontFamily: 'var(--font-ui)',
               fontSize: 9,
               letterSpacing: '0.42em',
-              fontWeight: 500,
+              fontWeight: 600,
               color: '#FBF6E8',
-              opacity: 0.78,
+              opacity: 0.92,
+              textShadow: '0 1px 6px rgba(0, 0, 0, 0.42)',
             }}
           >
             NÉYA
@@ -366,8 +367,8 @@ export default function Cocon() {
               lineHeight: 1.45,
               fontVariationSettings: 'var(--fraunces-italic-soft)',
               color: '#FBF6E8',
-              opacity: 0.82,
-              textShadow: '0 1px 8px rgba(0, 0, 0, 0.36)',
+              opacity: 0.94,
+              textShadow: '0 1px 10px rgba(0, 0, 0, 0.5)',
               animation: 'cocon-mantra-breathe 8s ease-in-out infinite',
               display: 'inline-block',
               maxWidth: '88%',
@@ -392,13 +393,14 @@ export default function Cocon() {
             border: 'none',
             cursor: 'pointer',
             color: '#FBF6E8',
-            opacity: 0.5,
+            opacity: 0.82,
             fontFamily: 'var(--font-ui)',
             fontSize: 10,
             letterSpacing: '0.222em',
             textTransform: 'uppercase',
-            fontWeight: 500,
+            fontWeight: 600,
             padding: '10px 18px',
+            textShadow: '0 1px 8px rgba(0, 0, 0, 0.5)',
             WebkitTapHighlightColor: 'transparent',
             zIndex: 2,
           }}
@@ -478,11 +480,11 @@ export default function Cocon() {
               background: 'transparent',
               border: 'none',
               color: '#FBF6E8',
-              opacity: 0.55,
+              opacity: 0.82,
               cursor: 'pointer',
               padding: '8px 4px',
               minHeight: 32,
-              fontSize: 12,
+              fontSize: 14,
               WebkitTapHighlightColor: 'transparent',
             }}
           >
@@ -537,14 +539,15 @@ export default function Cocon() {
           border: 'none',
           cursor: 'pointer',
           color: '#FBF6E8',
-          opacity: 0.7,
+          opacity: 0.9,
           fontFamily: 'var(--font-ui)',
           fontSize: 10,
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
-          fontWeight: 500,
+          fontWeight: 600,
           padding: '10px 16px',
           minHeight: 36,
+          textShadow: '0 1px 8px rgba(0, 0, 0, 0.5)',
           WebkitTapHighlightColor: 'transparent',
           zIndex: 3,
         }}
@@ -594,8 +597,8 @@ export default function Cocon() {
           85%      { opacity: 0.4;  transform: translateY(-22px) scale(0.9); }
         }
         @keyframes cocon-mantra-breathe {
-          0%, 100% { opacity: 0.74; }
-          50%      { opacity: 0.94; }
+          0%, 100% { opacity: 0.86; }
+          50%      { opacity: 1; }
         }
         @keyframes cocon-rain-fall {
           0%   { transform: translateY(0); }
@@ -931,8 +934,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         <div
                           style={{
                             fontFamily: 'var(--font-body)',
-                            fontSize: 11.5,
-                            color: 'var(--content-tertiary)',
+                            fontSize: 12,
+                            color: 'var(--content-secondary)',
                             marginTop: 2,
                           }}
                         >
@@ -1096,7 +1099,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                             letterSpacing: '0.222em',
                             textTransform: 'uppercase',
                             fontWeight: 600,
-                            color: 'var(--content-tertiary)',
+                            color: 'var(--content-secondary)',
                             flexShrink: 0,
                           }}
                         >

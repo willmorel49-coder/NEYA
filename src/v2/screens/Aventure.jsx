@@ -249,7 +249,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.12) 45%, rgba(10, 12, 20, 0.85) 100%)',
+              'linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.32) 45%, rgba(10, 12, 20, 0.92) 100%)',
             pointerEvents: 'none',
           }}
         />
@@ -317,7 +317,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             zIndex: 2,
           }}
         >
-          <div className="neya-mark" style={{ color: '#FBF6E8', opacity: 0.72, marginBottom: 12, fontSize: 9 }}>
+          <div className="neya-mark" style={{ color: '#FBF6E8', opacity: 0.88, marginBottom: 12, fontSize: 9, textShadow: '0 1px 4px rgba(0,0,0,0.42)' }}>
             MON AVENTURE
           </div>
           <h1
@@ -344,9 +344,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               lineHeight: 1.4,
               fontVariationSettings: 'var(--fraunces-italic-soft)',
               color: '#FBF6E8',
-              opacity: 0.92,
+              opacity: 0.96,
               maxWidth: 320,
-              textShadow: '0 1px 8px rgba(0, 0, 0, 0.32)',
+              textShadow: '0 1px 8px rgba(0, 0, 0, 0.52)',
             }}
           >
             {hourPhrase}
@@ -394,7 +394,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               fontFamily: 'var(--font-body)',
               fontSize: 13,
               lineHeight: 1.5,
-              color: 'rgba(251, 246, 232, 0.72)',
+              color: 'rgba(251, 246, 232, 0.82)',
               marginBottom: 16,
             }}
           >
@@ -427,7 +427,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         </section>
 
         {/* 3 PILIERS */}
-        <div className="neya-mark" style={{ color: 'rgba(251, 246, 232, 0.55)', marginTop: 32, marginBottom: 14 }}>
+        <div className="neya-mark" style={{ color: 'rgba(251, 246, 232, 0.72)', marginTop: 32, marginBottom: 14 }}>
           Tes piliers
         </div>
 
@@ -469,7 +469,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 style={subActionStyle}
               >
                 <span style={{ flex: 1, textAlign: 'left' }}>Bilan du soir</span>
-                <span style={{ color: 'rgba(251, 246, 232, 0.42)', fontSize: 14 }}>›</span>
+                <span style={{ color: 'rgba(251, 246, 232, 0.62)', fontSize: 14 }}>›</span>
               </button>
             )}
             {isSundayEvening && (
@@ -480,7 +480,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 style={subActionStyle}
               >
                 <span style={{ flex: 1, textAlign: 'left' }}>Bilan de la semaine</span>
-                <span style={{ color: 'rgba(251, 246, 232, 0.42)', fontSize: 14 }}>›</span>
+                <span style={{ color: 'rgba(251, 246, 232, 0.62)', fontSize: 14 }}>›</span>
               </button>
             )}
           </div>
@@ -678,7 +678,7 @@ function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
         style={{
           position: 'absolute',
           inset: 0,
-          background: `linear-gradient(90deg, rgba(14, 16, 24, 0.92) 0%, rgba(14, 16, 24, 0.60) 100%)`,
+          background: `linear-gradient(90deg, rgba(14, 16, 24, 0.95) 0%, rgba(14, 16, 24, 0.78) 100%)`,
         }}
       />
       <div
@@ -728,7 +728,7 @@ function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
               marginTop: 4,
               fontFamily: 'var(--font-body)',
               fontSize: 12,
-              color: 'rgba(251, 246, 232, 0.62)',
+              color: 'rgba(251, 246, 232, 0.82)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -737,7 +737,7 @@ function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
             {subtitle}
           </div>
         </div>
-        <span aria-hidden style={{ color: 'rgba(251, 246, 232, 0.42)', fontSize: 16, flexShrink: 0 }}>›</span>
+        <span aria-hidden style={{ color: 'rgba(251, 246, 232, 0.62)', fontSize: 16, flexShrink: 0 }}>›</span>
       </div>
     </button>
   );
@@ -953,7 +953,7 @@ function AventureWorldsSheet({ worlds, currentTotem, onPick, onClose }) {
                     marginTop: 3,
                     fontFamily: 'var(--font-body)',
                     fontSize: 12,
-                    color: 'var(--content-tertiary)',
+                    color: 'var(--content-secondary)',
                   }}
                 >
                   {w.totem} · {w.emotion}
@@ -1047,13 +1047,13 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
                     marginTop: 4,
                     fontFamily: 'var(--font-body)',
                     fontSize: 12,
-                    color: 'var(--content-tertiary)',
+                    color: 'var(--content-secondary)',
                   }}
                 >
                   {l.subtitle} · {l.duration} min
                 </div>
               </div>
-              <span aria-hidden style={{ color: 'var(--content-tertiary)', fontSize: 14, flexShrink: 0 }}>
+              <span aria-hidden style={{ color: 'var(--ink-soft)', fontSize: 14, flexShrink: 0 }}>
                 ›
               </span>
             </button>
@@ -1240,13 +1240,13 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                     marginTop: 3,
                     fontFamily: 'var(--font-body)',
                     fontSize: 12,
-                    color: 'var(--content-tertiary)',
+                    color: 'var(--content-secondary)',
                   }}
                 >
                   {r.subtitle} · {r.duration} min
                 </div>
               </div>
-              <span aria-hidden style={{ color: 'var(--content-tertiary)', fontSize: 14, flexShrink: 0 }}>
+              <span aria-hidden style={{ color: 'var(--ink-soft)', fontSize: 14, flexShrink: 0 }}>
                 ›
               </span>
             </button>
@@ -1486,7 +1486,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                     >
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontFamily: 'var(--font-ui)', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>{a.label}</div>
-                        <div style={{ fontFamily: 'var(--font-body)', fontSize: 11.5, color: 'var(--content-tertiary)', marginTop: 2 }}>{a.hint}</div>
+                        <div style={{ fontFamily: 'var(--font-body)', fontSize: 11.5, color: 'var(--content-secondary)', marginTop: 2 }}>{a.hint}</div>
                       </div>
                       <span
                         style={{
@@ -1578,7 +1578,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                         {t.title}
                       </span>
                       {active && (
-                        <span aria-hidden style={{ fontFamily: 'var(--font-ui)', fontSize: 9, letterSpacing: '0.222em', textTransform: 'uppercase', fontWeight: 600, color: 'var(--content-tertiary)' }}>en cours</span>
+                        <span aria-hidden style={{ fontFamily: 'var(--font-ui)', fontSize: 9, letterSpacing: '0.222em', textTransform: 'uppercase', fontWeight: 600, color: 'var(--ink-soft)' }}>en cours</span>
                       )}
                     </button>
                   );

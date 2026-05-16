@@ -132,7 +132,7 @@ export default function LeconReader({ lecon, onClose }) {
             gap: 6,
             fontFamily: 'var(--font-ui)',
             fontSize: 9,
-            color: 'var(--content-tertiary)',
+            color: 'var(--ink-soft)',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             paddingRight: 8,
@@ -175,7 +175,7 @@ export default function LeconReader({ lecon, onClose }) {
           <div
             className="neya-mark"
             style={{
-              color: lecon.accent,
+              color: 'var(--ink-soft)',
               marginBottom: 16,
               fontSize: 9,
             }}
@@ -209,7 +209,7 @@ export default function LeconReader({ lecon, onClose }) {
               letterSpacing: '0.222em',
               textTransform: 'uppercase',
               fontWeight: 600,
-              color: 'var(--content-tertiary)',
+              color: 'var(--ink-soft)',
             }}
           >
             {lecon.subtitle}
@@ -303,7 +303,7 @@ export default function LeconReader({ lecon, onClose }) {
                 letterSpacing: '0.222em',
                 textTransform: 'uppercase',
                 fontWeight: 600,
-                color: 'var(--content-tertiary)',
+                color: 'var(--ink-soft)',
               }}
             >
               NÉYA · La connaissance

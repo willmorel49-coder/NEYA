@@ -239,7 +239,7 @@ export default function Communaute() {
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.10) 45%, rgba(0,0,0,0.55) 100%)',
+              'linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.28) 45%, rgba(0,0,0,0.62) 100%)',
             pointerEvents: 'none',
           }}
         />
@@ -282,7 +282,7 @@ export default function Communaute() {
         >
           <div
             className="neya-mark"
-            style={{ color: '#FBF6E8', opacity: 0.78, marginBottom: 12, fontSize: 9 }}
+            style={{ color: '#FBF6E8', opacity: 0.95, marginBottom: 12, fontSize: 9, fontWeight: 600, textShadow: '0 1px 6px rgba(0, 0, 0, 0.5)' }}
           >
             COMMUNAUTÉ NÉYA
           </div>
@@ -466,7 +466,7 @@ export default function Communaute() {
               padding: '12px 16px',
               minHeight: 44,
               background: 'transparent',
-              color: 'var(--mist-blue)',
+              color: 'var(--ink)',
               border: '0.5px solid var(--mist-blue)',
               borderRadius: 999,
               fontFamily: 'var(--font-ui)',
@@ -567,8 +567,8 @@ export default function Communaute() {
                 style={{
                   marginTop: 2,
                   fontFamily: 'var(--font-body)',
-                  fontSize: 12,
-                  color: 'var(--content-tertiary)',
+                  fontSize: 12.5,
+                  color: 'var(--content-secondary)',
                 }}
               >
                 Jusqu'à 7 voix qui te reconnaissent.
@@ -581,7 +581,7 @@ export default function Communaute() {
         {/* ═══ 4. TÉMOIGNAGES ═══ */}
         <section style={{ marginTop: 40 }}>
           <SectionTitle accent="var(--ochre)">Témoignages</SectionTitle>
-          <div className="neya-body-sm" style={{ color: 'var(--content-tertiary)', marginBottom: 14 }}>
+          <div className="neya-body-sm" style={{ color: 'var(--content-secondary)', marginBottom: 14 }}>
             Des histoires vécues, écrites par d'autres.
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -604,7 +604,7 @@ export default function Communaute() {
             fontVariationSettings: 'var(--fraunces-italic-soft)',
             fontSize: 13,
             lineHeight: 1.5,
-            color: 'var(--content-tertiary)',
+            color: 'var(--content-secondary)',
             textAlign: 'center',
           }}
         >
@@ -713,8 +713,8 @@ export default function Communaute() {
 function SectionTitle({ children, accent, trailing }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-      <span style={{ width: 18, height: 1, background: accent, opacity: 0.8 }} />
-      <span className="neya-mark" style={{ color: accent }}>{children}</span>
+      <span style={{ width: 18, height: 2, background: accent, opacity: 1, borderRadius: 1 }} />
+      <span className="neya-mark" style={{ color: 'var(--ink-soft)', fontWeight: 600 }}>{children}</span>
       {trailing ? <span style={{ marginLeft: 'auto' }}>{trailing}</span> : null}
     </div>
   );
@@ -745,8 +745,8 @@ function VoicePost({ post, reactions, onReact, onMore }) {
         <span
           style={{
             fontFamily: 'var(--font-ui)',
-            fontSize: 10,
-            color: 'var(--content-tertiary)',
+            fontSize: 10.5,
+            color: 'var(--content-secondary)',
             fontVariantNumeric: 'tabular-nums',
           }}
         >
@@ -805,9 +805,9 @@ function VoicePost({ post, reactions, onReact, onMore }) {
             height: 36,
             background: 'transparent',
             border: 'none',
-            color: 'var(--content-tertiary)',
+            color: 'var(--content-secondary)',
             cursor: 'pointer',
-            fontSize: 14,
+            fontSize: 16,
             WebkitTapHighlightColor: 'transparent',
           }}
         >
@@ -864,9 +864,10 @@ function TemoignageCard({ temoignage, onOpen }) {
         <div
           className="neya-mark"
           style={{
-            color: 'var(--content-tertiary)',
+            color: 'var(--ink-soft)',
             marginBottom: 6,
             fontSize: 9,
+            fontWeight: 600,
           }}
         >
           {t.name} · {t.city}
@@ -886,11 +887,16 @@ function TemoignageCard({ temoignage, onOpen }) {
         <div
           className="neya-mark"
           style={{
-            color: t.accent,
+            color: 'var(--ink-soft)',
             marginTop: 10,
             fontSize: 9,
+            fontWeight: 600,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
           }}
         >
+          <span aria-hidden style={{ width: 8, height: 2, background: t.accent, borderRadius: 1 }} />
           Lire ›
         </div>
       </div>
@@ -1047,7 +1053,7 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
             textAlign: 'right',
             fontFamily: 'var(--font-ui)',
             fontSize: 10,
-            color: body.length >= 260 ? 'var(--crisis)' : 'var(--content-tertiary)',
+            color: body.length >= 260 ? 'var(--crisis)' : 'var(--content-secondary)',
             fontVariantNumeric: 'tabular-nums',
             marginBottom: 18,
           }}
@@ -1090,7 +1096,7 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
               padding: '14px 16px',
               minHeight: 48,
               background: body.trim() ? 'var(--terracotta)' : 'rgba(26, 26, 47, 0.10)',
-              color: body.trim() ? 'var(--cream)' : 'var(--content-tertiary)',
+              color: body.trim() ? 'var(--cream)' : 'var(--content-secondary)',
               border: 'none',
               borderRadius: 999,
               fontFamily: 'var(--font-ui)',
@@ -1389,9 +1395,10 @@ function TemoignageReader({ temoignage, onClose }) {
           className="neya-mark"
           style={{
             textAlign: 'center',
-            color: 'var(--content-tertiary)',
+            color: 'var(--ink-soft)',
             marginBottom: 12,
             fontSize: 9,
+            fontWeight: 600,
           }}
         >
           {t.name} · {t.city}
@@ -1442,7 +1449,7 @@ function TemoignageReader({ temoignage, onClose }) {
             fontStyle: 'italic',
             fontVariationSettings: 'var(--fraunces-italic-soft)',
             fontSize: 13,
-            color: 'var(--content-tertiary)',
+            color: 'var(--content-secondary)',
           }}
         >
           Une voix parmi d'autres. Tu n'es pas seul·e.

@@ -155,7 +155,7 @@ export default function CriseSettings({ onClose }) {
               marginTop: 6,
               fontFamily: 'var(--font-body)',
               fontSize: 12.5,
-              color: 'var(--content-tertiary)',
+              color: 'var(--content-secondary)',
               maxWidth: 340,
               marginInline: 'auto',
               lineHeight: 1.5,
@@ -321,7 +321,7 @@ export default function CriseSettings({ onClose }) {
                   <div style={{ fontFamily: 'var(--font-ui)', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>
                     Silence
                   </div>
-                  <div style={{ fontFamily: 'var(--font-body)', fontSize: 11.5, color: 'var(--content-tertiary)', marginTop: 2 }}>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--content-secondary)', marginTop: 2 }}>
                     Juste le souffle.
                   </div>
                 </div>
@@ -379,8 +379,8 @@ export default function CriseSettings({ onClose }) {
                           style={{
                             marginTop: 4,
                             fontFamily: 'var(--font-body)',
-                            fontSize: 11.5,
-                            color: 'var(--content-tertiary)',
+                            fontSize: 12,
+                            color: 'var(--content-secondary)',
                           }}
                         >
                           {t.hint}
@@ -463,8 +463,8 @@ export default function CriseSettings({ onClose }) {
                           style={{
                             marginTop: 6,
                             fontFamily: 'var(--font-body)',
-                            fontSize: 12,
-                            color: 'var(--content-tertiary)',
+                            fontSize: 12.5,
+                            color: 'var(--content-secondary)',
                             lineHeight: 1.45,
                           }}
                         >
