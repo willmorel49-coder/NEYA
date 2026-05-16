@@ -11,6 +11,7 @@ import { WORLDS } from '../worlds';
 import { getProfile, patchProfile, haptic } from '../state';
 import BreathingPause from './BreathingPause';
 import CoconAmbiance from './CoconAmbiance';
+import Musique from './Musique';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const TOTEMS = [
@@ -93,6 +94,7 @@ export default function Cocon() {
   const [profile, setLocalProfile] = useState(() => getProfile());
   const [breathingOpen, setBreathingOpen] = useState(false);
   const [personalizeOpen, setPersonalizeOpen] = useState(false);
+  const [musiqueOpen, setMusiqueOpen] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [, forceTick] = useState(0);
   const audioRef = useRef(null);
@@ -410,9 +412,12 @@ export default function Cocon() {
         </button>
       )}
 
-      {/* Mini player musique (si track sélectionnée) */}
+      {/* Mini player musique (si track sélectionnée) — tap = ouvre la page Musique */}
       {currentTrack && (
-        <div
+        <button
+          type="button"
+          onClick={() => { haptic(4); setMusiqueOpen(true); }}
+          aria-label="Ouvrir la musique"
           style={{
             position: 'absolute',
             left: 22,
@@ -429,11 +434,15 @@ export default function Cocon() {
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
             zIndex: 3,
+            cursor: 'pointer',
+            appearance: 'none',
+            textAlign: 'left',
+            WebkitTapHighlightColor: 'transparent',
           }}
         >
           <button
             type="button"
-            onClick={togglePlay}
+            onClick={(e) => { e.stopPropagation(); togglePlay(); }}
             data-press
             aria-label={musicPlaying ? 'Mettre en pause' : 'Lancer la musique'}
             style={{
@@ -456,42 +465,89 @@ export default function Cocon() {
           >
             {musicPlaying ? '❚❚' : '▶'}
           </button>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontVariationSettings: 'var(--fraunces-italic-soft)',
+                fontSize: 14,
+                color: '#FBF6E8',
+                opacity: 0.94,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                lineHeight: 1.15,
+              }}
+            >
+              {currentTrack.title}
+            </div>
+            <div
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontSize: 9,
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                color: 'rgba(251,246,232,0.62)',
+                fontWeight: 600,
+                marginTop: 2,
+              }}
+            >
+              NÉYA
+            </div>
+          </div>
           <span
+            aria-hidden
             style={{
-              flex: 1,
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              fontSize: 14,
               color: '#FBF6E8',
-              opacity: 0.92,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              opacity: 0.7,
+              fontSize: 14,
+              flexShrink: 0,
+              padding: '0 4px',
             }}
           >
-            {currentTrack.title}
+            ›
           </span>
-          <button
-            type="button"
-            onClick={() => { haptic(2); setPersonalizeOpen(true); }}
-            aria-label="Changer la musique"
-            style={{
-              appearance: 'none',
-              background: 'transparent',
-              border: 'none',
-              color: '#FBF6E8',
-              opacity: 0.82,
-              cursor: 'pointer',
-              padding: '8px 4px',
-              minHeight: 32,
-              fontSize: 14,
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            ⋯
-          </button>
-        </div>
+        </button>
+      )}
+
+      {/* Bouton "Musique" discret si aucune piste sélectionnée */}
+      {!currentTrack && (
+        <button
+          type="button"
+          onClick={() => { haptic(4); setMusiqueOpen(true); }}
+          data-press
+          aria-label="Ouvrir la musique de NÉYA"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 250px)',
+            appearance: 'none',
+            padding: '10px 18px',
+            minHeight: 40,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            background: 'rgba(8, 10, 24, 0.42)',
+            border: '0.5px solid rgba(251, 246, 232, 0.22)',
+            borderRadius: 999,
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            color: '#FBF6E8',
+            cursor: 'pointer',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            fontWeight: 600,
+            WebkitTapHighlightColor: 'transparent',
+            zIndex: 3,
+          }}
+        >
+          <span aria-hidden style={{ fontSize: 13, opacity: 0.85 }}>♫</span>
+          Musique
+        </button>
       )}
 
       {/* CTA principal */}
@@ -583,6 +639,9 @@ export default function Cocon() {
           onUpdateCocon={updateCocon}
           onClose={() => setPersonalizeOpen(false)}
         />
+      )}
+      {musiqueOpen && (
+        <Musique onClose={() => setMusiqueOpen(false)} />
       )}
 
       {/* Keyframes locales */}
