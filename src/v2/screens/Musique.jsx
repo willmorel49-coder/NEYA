@@ -12,7 +12,7 @@ import { getProfile, setProfile, haptic } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
 /* ─── Catalogue NÉYA · 11 morceaux ─── */
-const COVER_BASE = '/musique/covers';
+const COVER_BASE = '/musique/pochettes';
 const TRACKS = [
   { key: 'ça-va',                     title: 'Ça va',                     cover: `${COVER_BASE}/ca-va.jpg`,                   tint: '#1F4F45', deep: '#0E2520', mood: 'l\'aveu silencieux' },
   { key: 'silencieuse',               title: 'Silencieuse',               cover: `${COVER_BASE}/silencieuse.jpg`,             tint: '#2A3548', deep: '#0F1422', mood: 'le vide qui parle' },
@@ -52,6 +52,7 @@ function formatTime(s) {
 
 /* ─── Composant pochette (image réelle) ─── */
 function AlbumCover({ track, variant = 'grid' }) {
+  const [errored, setErrored] = useState(false);
   if (!track) return null;
   const isPlayer = variant === 'player';
   const isHero = variant === 'hero';
@@ -66,6 +67,12 @@ function AlbumCover({ track, variant = 'grid' }) {
     ? '0 2px 6px rgba(0,0,0,0.32)'
     : '0 4px 14px rgba(0,0,0,0.22)';
 
+  const fallbackBg = `
+    radial-gradient(at 75% 25%, ${track.tint}CC, transparent 65%),
+    radial-gradient(at 15% 85%, ${track.deep}AA, transparent 70%),
+    linear-gradient(155deg, ${track.tint} 0%, ${track.deep} 100%)
+  `;
+
   return (
     <div
       style={{
@@ -75,22 +82,44 @@ function AlbumCover({ track, variant = 'grid' }) {
         borderRadius: radius,
         overflow: 'hidden',
         boxShadow: shadow,
-        background: track.deep || '#1A1A2F',
+        background: errored ? fallbackBg : (track.deep || '#1A1A2F'),
       }}
     >
-      <img
-        src={track.cover}
-        alt={`Pochette · ${track.title}`}
-        loading="lazy"
-        draggable={false}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          display: 'block',
-          userSelect: 'none',
-        }}
-      />
+      {!errored && (
+        <img
+          src={track.cover}
+          alt={`Pochette · ${track.title}`}
+          loading="lazy"
+          draggable={false}
+          onError={() => setErrored(true)}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+            userSelect: 'none',
+          }}
+        />
+      )}
+      {errored && (
+        <div
+          style={{
+            position: 'absolute',
+            left: isMini ? 6 : 12,
+            right: isMini ? 6 : 12,
+            bottom: isMini ? 6 : 12,
+            color: '#FBF6E8',
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            fontSize: isPlayer ? 26 : isHero ? 20 : isMini ? 10 : 13,
+            lineHeight: 1.1,
+            textShadow: '0 1px 8px rgba(0,0,0,0.4)',
+          }}
+        >
+          {track.title}
+        </div>
+      )}
     </div>
   );
 }
