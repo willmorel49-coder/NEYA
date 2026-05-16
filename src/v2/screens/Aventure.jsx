@@ -20,6 +20,7 @@ import { TEMPS_GROUPS as TEMPS_GROUPS_DATA, getRituelsForTemps } from '../data/r
 import CoconAmbiance from './CoconAmbiance';
 import LeconReader from './LeconReader';
 import RituelPlayer from './RituelPlayer';
+import AventureOnboarding from './AventureOnboarding';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
 /* ─── Données ─── */
@@ -118,6 +119,10 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const [pilierSheet, setPilierSheet] = useState(null);
   const [openedLecon, setOpenedLecon] = useState(null);
   const [openedRituel, setOpenedRituel] = useState(null);
+  const [onboardingOpen, setOnboardingOpen] = useState(() => {
+    const p = getProfile();
+    return !p.aventure?.onboardingSeen;
+  });
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [, forceTick] = useState(0);
   const audioRef = useRef(null);
@@ -599,6 +604,12 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         />
       )}
 
+      {onboardingOpen && (
+        <AventureOnboarding
+          onClose={() => { setOnboardingOpen(false); setLocalProfile(getProfile()); }}
+        />
+      )}
+
       <style>{`
         @keyframes aventure-bg-ken-burns {
           0%   { transform: scale(1)    translate3d(0, 0, 0); }
@@ -1054,6 +1065,11 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
 }
 
 function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
+  const [activeTab, setActiveTab] = useState('passe');
+  const tempsCurrent = temps.find((t) => t.key === activeTab) || temps[0];
+  const rituels = getRituelsForTemps(activeTab);
+  const doneCount = rituels.filter((r) => rituelsFaits && rituelsFaits[r.key]).length;
+
   return (
     <SheetWrap
       title="Les 3 Temps du Soi"
@@ -1061,143 +1077,179 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
       onClose={onClose}
       labelText="Trois temps"
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+      {/* Onglets */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 6,
+          padding: '0 2px 16px',
+          flexShrink: 0,
+        }}
+      >
         {temps.map((t) => {
-          const rituels = getRituelsForTemps(t.key);
+          const active = t.key === activeTab;
           return (
-            <div key={t.key}>
-              {/* Bloc temps */}
-              <div
+            <button
+              key={t.key}
+              type="button"
+              data-press
+              onClick={() => { haptic(2); setActiveTab(t.key); }}
+              style={{
+                appearance: 'none',
+                flex: 1,
+                padding: '10px 8px',
+                minHeight: 44,
+                background: active ? t.accent : 'transparent',
+                color: active ? 'var(--cream)' : 'var(--content-secondary)',
+                border: active ? 'none' : `0.5px solid rgba(26, 26, 47, 0.14)`,
+                borderRadius: 999,
+                fontFamily: 'var(--font-ui)',
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: '0.04em',
+                cursor: 'pointer',
+                WebkitTapHighlightColor: 'transparent',
+                transition: 'all 280ms cubic-bezier(0.16, 1, 0.3, 1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+              }}
+            >
+              <span style={{ fontSize: 12 }}>{t.glyph}</span>
+              <span style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                {t.label.replace('Soi ', '').replace('Soi du ', '').replace('présent', 'Présent').replace('passé', 'Passé').replace('futur', 'Futur')}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* En-tête du temps actif */}
+      <div
+        style={{
+          padding: '16px 18px',
+          background: 'rgba(26, 26, 47, 0.04)',
+          borderLeft: `3px solid ${tempsCurrent.accent}`,
+          borderRadius: 14,
+          marginBottom: 18,
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            justifyContent: 'space-between',
+            marginBottom: 6,
+          }}
+        >
+          <div
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              fontSize: 18,
+              color: 'var(--ink)',
+            }}
+          >
+            {tempsCurrent.label}
+          </div>
+          <div
+            className="neya-mark"
+            style={{ color: tempsCurrent.accent, fontVariantNumeric: 'tabular-nums' }}
+          >
+            {doneCount}/{rituels.length}
+          </div>
+        </div>
+        <div
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: 13,
+            lineHeight: 1.5,
+            color: 'var(--content-secondary)',
+          }}
+        >
+          {tempsCurrent.intro}
+        </div>
+      </div>
+
+      {/* Rituels du temps actif */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {rituels.map((r) => {
+          const done = !!(rituelsFaits && rituelsFaits[r.key]);
+          return (
+            <button
+              key={r.key}
+              type="button"
+              data-press
+              onClick={() => { haptic(4); onPickRituel?.(r); }}
+              style={{
+                appearance: 'none',
+                width: '100%',
+                padding: '14px 16px',
+                minHeight: 70,
+                background: done ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
+                border: `0.5px solid ${done ? tempsCurrent.accent : 'rgba(26, 26, 47, 0.10)'}`,
+                borderRadius: 14,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                textAlign: 'left',
+                WebkitTapHighlightColor: 'transparent',
+                transition: 'all 280ms ease-out',
+              }}
+            >
+              <span
                 style={{
-                  display: 'flex',
-                  gap: 14,
-                  alignItems: 'flex-start',
-                  marginBottom: 14,
-                  padding: '14px 16px',
-                  background: 'rgba(26, 26, 47, 0.04)',
-                  borderRadius: 14,
-                  borderLeft: `3px solid ${t.accent}`,
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background: done ? tempsCurrent.accent : 'rgba(26, 26, 47, 0.06)',
+                  color: done ? '#FBF6E8' : 'var(--ink-soft)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  flexShrink: 0,
+                  transition: 'all 280ms ease-out',
                 }}
               >
-                <span
+                {done ? '✓' : '·'}
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
                   style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: '50%',
-                    background: t.accent,
-                    color: 'var(--cream)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 14,
-                    flexShrink: 0,
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontVariationSettings: 'var(--fraunces-italic-soft)',
+                    fontSize: 15.5,
+                    color: 'var(--ink)',
+                    lineHeight: 1.25,
                   }}
                 >
-                  {t.glyph}
-                </span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontStyle: 'italic',
-                      fontVariationSettings: 'var(--fraunces-italic-soft)',
-                      fontSize: 17,
-                      color: 'var(--ink)',
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {t.label}
-                  </div>
-                  <div
-                    style={{
-                      marginTop: 4,
-                      fontFamily: 'var(--font-body)',
-                      fontSize: 12.5,
-                      lineHeight: 1.5,
-                      color: 'var(--content-secondary)',
-                    }}
-                  >
-                    {t.intro}
-                  </div>
+                  {r.title}
+                </div>
+                <div
+                  style={{
+                    marginTop: 3,
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 12,
+                    color: 'var(--content-tertiary)',
+                  }}
+                >
+                  {r.subtitle} · {r.duration} min
                 </div>
               </div>
-
-              {/* Rituels du temps */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {rituels.map((r) => {
-                  const done = !!(rituelsFaits && rituelsFaits[r.key]);
-                  return (
-                    <button
-                      key={r.key}
-                      type="button"
-                      data-press
-                      onClick={() => { haptic(4); onPickRituel?.(r); }}
-                      style={{
-                        appearance: 'none',
-                        width: '100%',
-                        padding: '14px 16px',
-                        minHeight: 66,
-                        background: done ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                        border: `0.5px solid ${done ? t.accent : 'rgba(26, 26, 47, 0.10)'}`,
-                        borderRadius: 12,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 12,
-                        textAlign: 'left',
-                        WebkitTapHighlightColor: 'transparent',
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: '50%',
-                          background: done ? t.accent : 'rgba(26, 26, 47, 0.06)',
-                          color: done ? '#FBF6E8' : 'var(--ink-soft)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: 11,
-                          fontWeight: 600,
-                          flexShrink: 0,
-                          transition: 'all 280ms ease-out',
-                        }}
-                      >
-                        {done ? '✓' : '·'}
-                      </span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-display)',
-                            fontStyle: 'italic',
-                            fontVariationSettings: 'var(--fraunces-italic-soft)',
-                            fontSize: 15,
-                            color: 'var(--ink)',
-                            lineHeight: 1.25,
-                          }}
-                        >
-                          {r.title}
-                        </div>
-                        <div
-                          style={{
-                            marginTop: 3,
-                            fontFamily: 'var(--font-body)',
-                            fontSize: 11.5,
-                            color: 'var(--content-tertiary)',
-                          }}
-                        >
-                          {r.subtitle} · {r.duration} min
-                        </div>
-                      </div>
-                      <span aria-hidden style={{ color: 'var(--content-tertiary)', fontSize: 14, flexShrink: 0 }}>
-                        ›
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+              <span aria-hidden style={{ color: 'var(--content-tertiary)', fontSize: 14, flexShrink: 0 }}>
+                ›
+              </span>
+            </button>
           );
         })}
       </div>
