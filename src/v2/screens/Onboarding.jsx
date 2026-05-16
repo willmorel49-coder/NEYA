@@ -468,7 +468,7 @@ function StepLayer({ step, stepIdx, totalSteps, fadeState, onAdvance, interactiv
               worldAccent={world.accent}
               onClick={() => interactive && onAdvance(null)}
               style={{
-                background: 'var(--ink)',
+                background: 'var(--gradient-blue)',
                 color: 'var(--cream)',
                 alignSelf: 'flex-start',
               }}

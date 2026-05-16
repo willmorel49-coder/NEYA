@@ -323,8 +323,8 @@ export default function RituelPlayer({ rituel, onClose }) {
                 width: '100%',
                 padding: '16px 24px',
                 minHeight: 52,
-                background: 'var(--ink)',
-                color: 'var(--cream)',
+                background: 'var(--gradient-blue)',
+                color: 'white',
                 border: 'none',
                 borderRadius: 999,
                 fontFamily: 'var(--font-ui)',
@@ -334,6 +334,7 @@ export default function RituelPlayer({ rituel, onClose }) {
                 textTransform: 'uppercase',
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
+                boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
               }}
             >
               Terminer ce rituel

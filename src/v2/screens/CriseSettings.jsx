@@ -506,7 +506,7 @@ export default function CriseSettings({ onClose }) {
               width: '100%',
               padding: '14px 16px',
               minHeight: 48,
-              background: 'var(--ink)',
+              background: 'var(--gradient-blue)',
               color: 'var(--cream)',
               border: 'none',
               borderRadius: 999,

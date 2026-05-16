@@ -463,7 +463,7 @@ export default function Manifeste({ onClose }) {
               appearance: 'none',
               padding: '16px 42px',
               minHeight: 52,
-              background: 'var(--ink)',
+              background: 'var(--gradient-blue)',
               color: 'var(--cream)',
               border: 'none',
               borderRadius: 999,

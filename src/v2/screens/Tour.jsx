@@ -390,7 +390,7 @@ export default function Tour({ onClose }) {
             style={{
               appearance: 'none',
               border: 'none',
-              background: 'var(--ink)',
+              background: 'var(--gradient-blue)',
               color: 'var(--cream)',
               fontFamily: 'var(--font-body)',
               fontSize: 14,
