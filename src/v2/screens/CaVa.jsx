@@ -8,12 +8,27 @@
    Cart slide-in droite avec total + Passer commande.
    ============================================================ */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ls, haptic, getProfile } from '../state';
 import Button from '../../components/Button';
 import ProductDetail from './ProductDetail';
 import Manifeste from './Manifeste';
 import Lookbook from './Lookbook';
+
+const HERO_PHOTOS = [
+  { src: '/cava/brand/hero-01.jpg', place: 'Séoul', message: "It's ok not to be ok." },
+  { src: '/cava/brand/hero-02.jpg', place: 'Santorini', message: 'On ne peut pas toujours aller bien. Mais on peut toujours en parler.' },
+  { src: '/cava/brand/hero-03.jpg', place: 'Tokyo · Shibuya', message: 'Au milieu du bruit, poser la question.' },
+];
+
+const MOUVEMENT = [
+  { mark: '01', title: 'Destigmatiser', body: 'Sortir la santé mentale du silence. La rendre visible, portable, partageable.' },
+  { mark: '02', title: 'Soutenir',      body: '1€ reversé sur chaque pièce à des associations de santé mentale.' },
+  { mark: '03', title: 'Écouter',       body: 'Faire de la mode un langage qui libère la parole. Parlons-en.' },
+  { mark: '04', title: 'Prendre soin',  body: 'Slow fashion. Quantités limitées. Du sens à chaque pièce.' },
+];
+
+const EDITORIAL_PREVIEW = Array.from({ length: 8 }, (_, i) => `/cava/brand/editorial-${String(i + 1).padStart(2, '0')}.jpg`);
 
 const PASSES = [
   { key: 'libre',    label: 'Libre',     priceY: 'Gratuit',     discount: 0,  color: 'var(--cava-warm)' },
@@ -386,30 +401,11 @@ export default function CaVa() {
         </div>
         </div>
 
+        {/* === BRAND HERO — full-width photo rotation === */}
+        <BrandHero />
+
         {/* Inner padded body */}
         <div style={{ padding: '0 22px' }}>
-
-        {/* Manifeste tagline — conditional render to avoid stuck opacity transitions */}
-        {!compressed && (
-          <p
-            style={{
-              margin: 0,
-              paddingTop: 14,
-              paddingBottom: 28,
-              fontFamily: 'var(--font-body)',
-              fontSize: 14,
-              lineHeight: 1.55,
-              color: 'rgba(26, 26, 47, 0.65)',
-              maxWidth: 380,
-            }}
-          >
-            Faire de la mode un langage qui libère la parole sur la santé mentale.
-            <br />
-            <em style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontVariationSettings: 'var(--fraunces-italic-soft)' }}>
-              Briser le masque du « ça va ».
-            </em>
-          </p>
-        )}
 
         {/* Horizontal capsule covers strip — scroll-snap */}
         <div
@@ -516,6 +512,12 @@ export default function CaVa() {
             Lookbook
           </button>
         </div>
+
+        {/* === MOUVEMENT — 4 piliers === */}
+        <MouvementSection />
+
+        {/* === LOOKBOOK preview — grid 2-cols === */}
+        <LookbookPreview onOpenFull={() => { haptic(4); setLookbookOpen(true); }} />
 
         {/* 3 capsules */}
         {CAPSULES.map((c) => (
@@ -1281,3 +1283,281 @@ const qtyBtnStyle = {
   justifyContent: 'center',
   padding: 0,
 };
+
+/* ============================================================
+   BRAND HERO — full-width photo rotation + tagline overlay
+   ============================================================ */
+
+function BrandHero() {
+  const [idx, setIdx] = useState(0);
+  const timerRef = useRef(null);
+  useEffect(() => {
+    timerRef.current = setInterval(() => setIdx((i) => (i + 1) % HERO_PHOTOS.length), 6800);
+    return () => clearInterval(timerRef.current);
+  }, []);
+  const current = HERO_PHOTOS[idx];
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: 'min(72vh, 560px)',
+        minHeight: 420,
+        overflow: 'hidden',
+        marginBottom: 28,
+        background: '#0e0c08',
+      }}
+    >
+      {HERO_PHOTOS.map((p, i) => (
+        <div
+          key={p.src}
+          aria-hidden={i !== idx}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${p.src})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: i === idx ? 1 : 0,
+            transition: 'opacity 1400ms ease-in-out',
+          }}
+        />
+      ))}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0.65) 100%)',
+          pointerEvents: 'none',
+        }}
+      />
+      {/* Place tag top-left */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 22px)',
+          left: 22,
+          fontFamily: 'var(--font-ui)',
+          fontSize: 9,
+          letterSpacing: '0.222em',
+          textTransform: 'uppercase',
+          color: '#FBF6E8',
+          opacity: 0.75,
+          fontWeight: 600,
+          textShadow: '0 1px 6px rgba(0,0,0,0.4)',
+        }}
+      >
+        {current.place}
+      </div>
+      {/* Tagline overlay bottom */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 24,
+          left: 22,
+          right: 22,
+          color: '#FBF6E8',
+          zIndex: 2,
+        }}
+      >
+        <div
+          className="neya-mark"
+          style={{
+            color: '#FBF6E8',
+            opacity: 0.78,
+            marginBottom: 10,
+            fontSize: 9,
+            letterSpacing: '0.222em',
+            textTransform: 'uppercase',
+          }}
+        >
+          ÇA VA? · MENTAL HEALTH STREETWEAR
+        </div>
+        <div
+          key={current.src}
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 24,
+            lineHeight: 1.22,
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            color: '#FBF6E8',
+            letterSpacing: '-0.012em',
+            textShadow: '0 1px 12px rgba(0,0,0,0.35)',
+            animation: 'cava-hero-fade 1400ms ease-out',
+          }}
+        >
+          {current.message}
+        </div>
+        <div style={{ display: 'flex', gap: 6, marginTop: 18 }}>
+          {HERO_PHOTOS.map((_, i) => (
+            <span
+              key={i}
+              style={{
+                width: i === idx ? 22 : 4,
+                height: 4,
+                borderRadius: 2,
+                background: '#FBF6E8',
+                opacity: i === idx ? 0.95 : 0.42,
+                transition: 'all 420ms var(--ease-out-ios)',
+              }}
+            />
+          ))}
+        </div>
+      </div>
+      <style>{`
+        @keyframes cava-hero-fade {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+/* ============================================================
+   MOUVEMENT — 4 piliers (Destigmatiser / Soutenir / Écouter / Prendre soin)
+   ============================================================ */
+
+function MouvementSection() {
+  return (
+    <div style={{ marginBottom: 36 }}>
+      <BrandSectionTitle>Le mouvement</BrandSectionTitle>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {MOUVEMENT.map((m) => (
+          <div
+            key={m.mark}
+            style={{
+              display: 'flex',
+              gap: 16,
+              padding: '16px 18px',
+              background: 'rgba(255, 252, 245, 0.72)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '0.5px solid rgba(26, 26, 47, 0.08)',
+              borderRadius: 'var(--radius-lg)',
+              alignItems: 'flex-start',
+              boxShadow: '0 1px 8px rgba(26, 26, 47, 0.04)',
+            }}
+          >
+            <span
+              className="neya-mark"
+              style={{
+                color: 'rgba(26, 26, 47, 0.45)',
+                fontVariantNumeric: 'tabular-nums',
+                minWidth: 18,
+                paddingTop: 3,
+              }}
+            >
+              {m.mark}
+            </span>
+            <div style={{ minWidth: 0 }}>
+              <div
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 17,
+                  fontStyle: 'italic',
+                  fontVariationSettings: 'var(--fraunces-italic-soft)',
+                  lineHeight: 1.2,
+                  marginBottom: 4,
+                  color: 'var(--cava-ink)',
+                }}
+              >
+                {m.title}
+              </div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 12.5,
+                  lineHeight: 1.5,
+                  color: 'rgba(26, 26, 47, 0.65)',
+                }}
+              >
+                {m.body}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   LOOKBOOK preview — grid 2-cols
+   ============================================================ */
+
+function LookbookPreview({ onOpenFull }) {
+  return (
+    <div style={{ marginBottom: 36 }}>
+      <BrandSectionTitle
+        trailing={
+          <button
+            data-press
+            onClick={onOpenFull}
+            className="neya-mark"
+            style={{
+              appearance: 'none',
+              background: 'transparent',
+              border: 'none',
+              color: 'rgba(26, 26, 47, 0.55)',
+              cursor: 'pointer',
+              padding: '6px 4px',
+              minHeight: 32,
+              fontSize: 9,
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            Voir tout ›
+          </button>
+        }
+      >
+        Lookbook éditorial
+      </BrandSectionTitle>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 8,
+        }}
+      >
+        {EDITORIAL_PREVIEW.map((src, i) => (
+          <button
+            key={src}
+            data-press
+            onClick={onOpenFull}
+            aria-label={`Photo ${i + 1} du lookbook`}
+            style={{
+              appearance: 'none',
+              border: 'none',
+              padding: 0,
+              aspectRatio: i % 3 === 0 ? '3 / 4' : '4 / 5',
+              backgroundImage: `url(${src})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              borderRadius: 'var(--radius-md)',
+              cursor: 'pointer',
+              overflow: 'hidden',
+              WebkitTapHighlightColor: 'transparent',
+              background: '#0e0c08',
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BrandSectionTitle({ children, trailing }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+      <span style={{ width: 18, height: 1, background: 'rgba(26, 26, 47, 0.4)' }} />
+      <span className="neya-mark" style={{ color: 'rgba(26, 26, 47, 0.6)' }}>
+        {children}
+      </span>
+      {trailing ? <span style={{ marginLeft: 'auto' }}>{trailing}</span> : null}
+    </div>
+  );
+}

@@ -14,12 +14,21 @@ import { haptic } from '../state';
 /* ----- Photo & capsule data ------------------------------ */
 
 const PHOTOS = [
-  { id: 'libre-hoodie',    src: '/cava/products/libre-hoodie.jpg',    aspect: '3/4', name: 'Hoodie crème',     price: 89, capsule: 'Libre' },
-  { id: 'libre-tshirt',    src: '/cava/products/libre-tshirt.jpg',    aspect: '4/5', name: 'T-shirt broderie', price: 39, capsule: 'Libre' },
-  { id: 'cava-sweat',      src: '/cava/products/cava-sweat.jpg',      aspect: '1/1', name: 'Sweat oversize',   price: 95, capsule: 'Ça Va' },
-  { id: 'cava-tshirt',     src: '/cava/products/cava-tee.jpg',        aspect: '3/4', name: 'T-shirt poche',    price: 39, capsule: 'Ça Va' },
-  { id: 'vr-hoodie',       src: '/cava/products/cava-hoodie.jpg',     aspect: '4/5', name: 'Hoodie manifeste', price: 95, capsule: 'Vraiment ?' },
-  { id: 'vr-tshirt',       src: '/cava/products/vr-tshirt.jpg',       aspect: '1/1', name: 'T-shirt phrase',   price: 42, capsule: 'Vraiment ?' },
+  { id: 'ed-01', src: '/cava/brand/editorial-01.jpg', aspect: '3/4', caption: 'Dans un monde brutal, j\'ai choisi ma silence.', place: 'Mykonos' },
+  { id: 'ed-02', src: '/cava/brand/editorial-02.jpg', aspect: '4/5', caption: 'Prends soin de toi. Ça change tout.',           place: 'Patmos' },
+  { id: 'ed-03', src: '/cava/brand/editorial-03.jpg', aspect: '3/4', caption: 'No bad days. La question qui cache la réponse.', place: 'Cadillac Ranch' },
+  { id: 'ed-04', src: '/cava/brand/editorial-04.jpg', aspect: '3/4', caption: 'Mental health matters. Parlons-en.',             place: 'Manifeste' },
+  { id: 'ed-05', src: '/cava/brand/editorial-05.jpg', aspect: '4/5', caption: 'ÇA VA ? — sous les montgolfières.',              place: 'Cappadoce' },
+  { id: 'ed-06', src: '/cava/brand/editorial-06.jpg', aspect: '3/4', caption: 'Le chemin existe, même quand on ne le voit pas.', place: 'Maroc' },
+  { id: 'ed-07', src: '/cava/brand/editorial-07.jpg', aspect: '3/4', caption: 'Sourire jaune. Lieu abandonné.',                  place: 'Industriel' },
+  { id: 'ed-08', src: '/cava/brand/editorial-08.jpg', aspect: '4/5', caption: 'Rue de la santé mentale. Parlons plus, jugeons moins.', place: 'Paris' },
+  { id: 'ed-09', src: '/cava/brand/editorial-09.jpg', aspect: '3/4', caption: 'Et c\'est OK.',                                    place: 'Paris' },
+  { id: 'ed-10', src: '/cava/brand/editorial-10.jpg', aspect: '3/4', caption: 'On fait comme on peut. Et c\'est déjà bien.',    place: 'Tokyo' },
+  { id: 'ed-11', src: '/cava/brand/editorial-11.jpg', aspect: '4/5', caption: 'Épuisé·e par l\'avenir.',                         place: 'Marrakech' },
+  { id: 'ed-12', src: '/cava/brand/editorial-12.jpg', aspect: '3/4', caption: 'Ça va ?',                                         place: 'Lookbook' },
+  { id: 'ed-13', src: '/cava/brand/editorial-13.jpg', aspect: '4/5', caption: 'Ça va ?',                                         place: 'Lookbook' },
+  { id: 'ed-14', src: '/cava/brand/editorial-14.jpg', aspect: '3/4', caption: 'Ça va ?',                                         place: 'Lookbook' },
+  { id: 'ed-15', src: '/cava/brand/editorial-15.jpg', aspect: '4/5', caption: 'Ça va ?',                                         place: 'Lookbook' },
 ];
 
 const CAPSULES = [
@@ -404,7 +413,7 @@ function PhotoTile({ photo }) {
       {!error && (
         <img
           src={photo.src}
-          alt={photo.name}
+          alt={photo.caption || photo.place || 'ÇA VA?'}
           loading="lazy"
           onLoad={() => setLoaded(true)}
           onError={() => setError(true)}
@@ -419,7 +428,7 @@ function PhotoTile({ photo }) {
           }}
         />
       )}
-      {/* Fallback : caps name centered */}
+      {/* Fallback : place centered */}
       {error && (
         <div
           style={{
@@ -438,30 +447,57 @@ function PhotoTile({ photo }) {
             fontWeight: 600,
           }}
         >
-          {photo.name}
+          {photo.place}
         </div>
       )}
-      {/* Caption (hover desktop / always mobile) */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 8,
-          left: 8,
-          right: 8,
-          fontFamily: 'var(--font-ui)',
-          fontSize: 9,
-          letterSpacing: 'var(--tracking-caps)',
-          textTransform: 'uppercase',
-          color: error ? 'var(--ink-whisper)' : '#FBF6E8',
-          fontWeight: 600,
-          opacity: showCaption ? 1 : 0,
-          transition: 'opacity 220ms ease-out',
-          textShadow: error ? 'none' : '0 1px 6px rgba(26,26,47,0.55)',
-          pointerEvents: 'none',
-        }}
-      >
-        {photo.name} · {photo.price}€
-      </div>
+      {/* Caption : place tag top-left + italic quote bottom (always visible on mobile) */}
+      {!error && (
+        <>
+          <div
+            style={{
+              position: 'absolute',
+              top: 8,
+              left: 8,
+              padding: '3px 8px',
+              borderRadius: 4,
+              background: 'rgba(26,26,47,0.42)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 8.5,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: '#FBF6E8',
+              fontWeight: 600,
+              opacity: showCaption ? 1 : 0,
+              transition: 'opacity 240ms ease-out',
+              pointerEvents: 'none',
+            }}
+          >
+            {photo.place}
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 10,
+              left: 10,
+              right: 10,
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontSize: 11.5,
+              lineHeight: 1.3,
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              color: '#FBF6E8',
+              opacity: showCaption ? 0.95 : 0,
+              transition: 'opacity 240ms ease-out',
+              textShadow: '0 1px 8px rgba(26,26,47,0.7)',
+              pointerEvents: 'none',
+            }}
+          >
+            « {photo.caption} »
+          </div>
+        </>
+      )}
     </div>
   );
 }
