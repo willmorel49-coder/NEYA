@@ -1,5 +1,5 @@
 /* ============================================================
-   ActionSheet — NÉYA Design System v2 · Apple iOS HIG
+   ActionSheet — ÇA VA ? Design System v2 · Apple iOS HIG
    ============================================================
    iOS-style bottom action sheet : two stacked grouped cards
    (Actions + Cancel), 8px gap, slide-up animation 360ms,

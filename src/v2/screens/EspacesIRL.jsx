@@ -1,12 +1,12 @@
 /* ============================================================
-   NÉYA V2 — Espaces IRL (overlay : annuaire d'espaces réels)
+   ÇA VA ? V2 — Espaces IRL (overlay : annuaire d'espaces réels)
    ============================================================
    Le digital est un pont — le but est la vie réelle.
    Annuaire curé d'espaces où l'on peut venir seul·e, sans être
    jugé·e : cafés solidaires, marches, ateliers, groupes de
    parole, jardins partagés, pair-aidance, etc.
    Anti-isolation push. Anti-honte ("tu n'as pas à y aller").
-   Données illustratives V1 — à enrichir avec partenaires NÉYA.
+   Données illustratives V1 — à enrichir avec partenaires ÇA VA ?.
    ============================================================ */
 
 import { useState, useEffect, useMemo } from 'react';
@@ -15,7 +15,7 @@ import { useToast, TOAST_PRESETS } from '../../components/Toast';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
 /* ============================================================
-   HARDCODED LIST — V1 illustrative, à enrichir partenaires NÉYA
+   HARDCODED LIST — V1 illustrative, à enrichir partenaires ÇA VA ?
    ============================================================ */
 
 const ESPACES = [
@@ -522,7 +522,7 @@ export default function EspacesIRL({ onClose }) {
             opacity: 0.7,
           }}
         >
-          À enrichir avec partenaires NÉYA
+          À enrichir avec partenaires ÇA VA ?
         </p>
       </div>
 

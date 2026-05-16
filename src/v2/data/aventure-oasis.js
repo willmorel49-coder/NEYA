@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA — Aventure Oasis du Présent (parcours narratif interactif)
+   ÇA VA ? — Aventure Oasis du Présent (parcours narratif interactif)
    ============================================================
    Théme : habiter l'instant, sortir de l'esprit en boucle.
    Totem : Aigle céleste.

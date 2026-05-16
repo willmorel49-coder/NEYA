@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V3 — EspaceVrai (RITUEL signature, LIGHT MODE)
+   ÇA VA ? V3 — EspaceVrai (RITUEL signature, LIGHT MODE)
    ============================================================
    Espace de présence libre : 90s+ minimum, 5 min max.
    Pas de structure imposée — juste BE.

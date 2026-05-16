@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V3 — Méditation (LIGHT MODE, wash + halo accent)
+   ÇA VA ? V3 — Méditation (LIGHT MODE, wash + halo accent)
    ============================================================
    Wash pastel monde + BreathingCircle centré + ink controls.
    Complétion : marque le monde exploré + avance currentWorld

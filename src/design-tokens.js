@@ -1,4 +1,4 @@
-// NÉYA — Design tokens scalable system.
+// ÇA VA ? — Design tokens scalable system.
 // Importé progressivement dans App.jsx. Adoption non-destructive : les valeurs ici
 // reproduisent ce qui existe déjà, mais formalisé. Migrer un écran à la fois.
 

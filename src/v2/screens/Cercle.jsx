@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — Cercle (overlay : private circle of close voices)
+   ÇA VA ? V2 — Cercle (overlay : private circle of close voices)
    ============================================================
    Cercle privé de max 7 personnes pour leur envoyer une "lumière"
    chaque jour — geste discret de présence. Anti-toxic : aucun

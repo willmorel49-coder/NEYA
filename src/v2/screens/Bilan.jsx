@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — Bilan du soir (overlay contemplatif nocturne)
+   ÇA VA ? V2 — Bilan du soir (overlay contemplatif nocturne)
    ============================================================
    5 questions séquentielles, posées une à une.
    Pas d'analyse externe. Pas de comparaison. Pas de musique.

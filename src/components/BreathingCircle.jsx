@@ -1,5 +1,5 @@
 /* ============================================================
-   BreathingCircle — NÉYA Design System v2
+   BreathingCircle — ÇA VA ? Design System v2
    ============================================================
    Validates Do's :
    - 19s cycle (4s inhale, 7s hold, 8s exhale) ✓

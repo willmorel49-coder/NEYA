@@ -312,7 +312,7 @@ export default function LeconReader({ lecon, onClose }) {
                 color: 'var(--ink-soft)',
               }}
             >
-              NÉYA · La connaissance
+              ÇA VA ? · La connaissance
             </div>
           </div>
 

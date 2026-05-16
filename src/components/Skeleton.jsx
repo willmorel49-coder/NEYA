@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA — Skeleton.jsx
+   ÇA VA ? — Skeleton.jsx
    ------------------------------------------------------------
    Reusable loading placeholder (Apple HIG).
    Shimmer animation via background-position translation.

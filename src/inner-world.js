@@ -1,4 +1,4 @@
-// NÉYA — Inner World System
+// ÇA VA ? — Inner World System
 // Système d'attachement émotionnel : souvenirs, ambiance temporelle, vitalité.
 // Tout en localStorage — aucun backend.
 

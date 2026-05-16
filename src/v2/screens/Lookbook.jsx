@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — ÇA VA? Lookbook
+   ÇA VA ? V2 — ÇA VA? Lookbook
    ============================================================
    Editorial immersive gallery for the capsule shooting.
    Pinterest-style 2-col irregular grid + hand-written quote

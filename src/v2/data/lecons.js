@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA — Contenu des 8 leçons (bibliothèque pédagogique)
+   ÇA VA ? — Contenu des 8 leçons (bibliothèque pédagogique)
    ============================================================
    Chaque leçon : lead + 4 sections + note de fin.
    Ton : pas clinique, pas développement perso cliché.

@@ -1,4 +1,4 @@
-// NÉYA — Sound design system (Web Audio API, procédural)
+// ÇA VA ? — Sound design system (Web Audio API, procédural)
 //
 // Philosophie : zéro fichier audio. Tout est synthétisé à la volée.
 // Léger (0 KB de poids réseau), accessible, modulable.
@@ -154,7 +154,7 @@ function _noise({ duration = 0.6, peak = 0.04, filterFreqStart = 800, filterFreq
   src.stop(t + duration + 0.05)
 }
 
-// ─── Sons publics — NÉYA library ───────────────────────────────
+// ─── Sons publics — ÇA VA ? library ───────────────────────────────
 
 // Tap UI — soft sine ping at 880 Hz
 export function playTap() {

@@ -4,7 +4,7 @@ import V2App from './v2/App';
 import { ToastProvider } from './components/Toast';
 
 // ════════════════════════════════════════════════════════════
-// NÉYA — Router
+// ÇA VA ? — Router
 // Default     : V2 (Studio VØR painterly × Apple structural)
 // ?v=1        : V1 Apple-grade pilot (legacy)
 // ?preview=v2 : V2 design system components preview
@@ -277,7 +277,7 @@ function Splash({ onContinue }) {
             transition: 'opacity 1400ms var(--ease-out-ios)',
           }}
         >
-          <CapsLabel style={{ marginBottom: 32 }}>NÉYA · MMXXVI</CapsLabel>
+          <CapsLabel style={{ marginBottom: 32 }}>ÇA VA ? · MMXXVI</CapsLabel>
 
           <h1
             style={{
@@ -291,7 +291,7 @@ function Splash({ onContinue }) {
               lineHeight: 0.95,
             }}
           >
-            NÉYA
+            ÇA VA ?
           </h1>
 
           <Hairline width={48} style={{ margin: '32px 0 28px', background: 'var(--ink-faint)' }} />

@@ -1,7 +1,7 @@
 /* ============================================================
-   NÉYA V2 — Musique
+   ÇA VA ? V2 — Musique
    ============================================================
-   Page playlist style Apple Music — NÉYA comme interprète.
+   Page playlist style Apple Music — ÇA VA ? comme interprète.
    Hero featured + grille 2 colonnes de pochettes générées.
    Pochettes : gradient tonal + grand symbole + titre Fraunces.
    Mini-player flottant en bas. Modal Now Playing plein écran.
@@ -11,7 +11,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { getProfile, setProfile, haptic } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
-/* ─── Catalogue NÉYA · 11 morceaux ─── */
+/* ─── Catalogue ÇA VA ? · 11 morceaux ─── */
 const COVER_BASE = '/musique/pochettes';
 const TRACKS = [
   { key: 'ça-va',                     title: 'Ça va',                     cover: `${COVER_BASE}/ca-va.jpg`,                   tint: '#1F4F45', deep: '#0E2520', mood: 'l\'aveu silencieux' },
@@ -252,7 +252,7 @@ export default function Musique({ onClose }) {
   const { dialogProps, containerRef } = useStandardOverlay({
     open: !closing,
     onClose: handleClose,
-    labelText: 'Musique NÉYA',
+    labelText: 'Musique ÇA VA ?',
   });
 
   return (
@@ -409,7 +409,7 @@ export default function Musique({ onClose }) {
                     letterSpacing: '0.04em',
                   }}
                 >
-                  NÉYA · {featured.mood}
+                  ÇA VA ? · {featured.mood}
                 </div>
               </div>
             </button>
@@ -531,7 +531,7 @@ export default function Musique({ onClose }) {
                           whiteSpace: 'nowrap',
                         }}
                       >
-                        NÉYA
+                        ÇA VA ?
                       </div>
                     </div>
                   </button>
@@ -619,7 +619,7 @@ export default function Musique({ onClose }) {
                   fontWeight: 600,
                 }}
               >
-                NÉYA
+                ÇA VA ?
               </div>
             </div>
             <button
@@ -796,7 +796,7 @@ function NowPlaying({ track, playing, progress, duration, onTogglePlay, onNext, 
             letterSpacing: '0.04em',
           }}
         >
-          NÉYA · {track.mood}
+          ÇA VA ? · {track.mood}
         </div>
       </div>
 

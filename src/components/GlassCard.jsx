@@ -1,5 +1,5 @@
 /* ============================================================
-   GlassCard — NÉYA Design System v2
+   GlassCard — ÇA VA ? Design System v2
    ============================================================
    3 variants : default (solid) · glass (painterly overlay) · editorial
    Validates Do's :

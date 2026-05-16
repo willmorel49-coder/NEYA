@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — Splash (cinematic entry)
+   ÇA VA ? V2 — Splash (cinematic entry)
    ============================================================
    The ONE dark moment in the V3 cream world. 2.5s autoplay,
    tap-to-skip. After this, the cream world reveals.

@@ -95,7 +95,7 @@ export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
       data-exiting={exiting ? 'true' : 'false'}
       role="dialog"
       aria-modal="true"
-      aria-label="Bienvenue dans NÉYA"
+      aria-label="Bienvenue dans ÇA VA ?"
     >
       <div className={styles.topBar}>
         <ProgressDots total={total} active={active} />

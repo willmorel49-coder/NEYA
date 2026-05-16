@@ -1,8 +1,8 @@
 /* ============================================================
-   NÉYA — Rituels des 3 temps du soi
+   ÇA VA ? — Rituels des 3 temps du soi
    ============================================================
    12 rituels (4 par temps) : lecture guidée + notes optionnelles.
-   Ton NÉYA, jamais clinique, jamais injonctif.
+   Ton ÇA VA ?, jamais clinique, jamais injonctif.
    ============================================================ */
 
 export const TEMPS_GROUPS = [

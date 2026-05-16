@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — ÇA VA? · CaVaPhotoViewer
+   ÇA VA ? V2 — ÇA VA? · CaVaPhotoViewer
    ============================================================
    Photo viewer plein écran cinéma-grade pour la galerie ÇA VA?
    (120 photos éditoriales lifestyle/lookbook).

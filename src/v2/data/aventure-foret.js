@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA — Aventure Forêt de Clarté (parcours narratif interactif)
+   ÇA VA ? — Aventure Forêt de Clarté (parcours narratif interactif)
    ============================================================
    Graph de scènes. Chaque scène a un kind qui détermine son
    comportement dans le AventurePlayer :

@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ÇA VA?</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+:root {
+  --blue-deep:    #0A2438;
+  --blue-mid:     #1A5A7F;
+  --blue-soft:    #6F9DB5;
+  --blue-pale:    #C2D8E8;
+  --blue-ghost:   #E8F2F8;
+
+  --rose-deep:    #C87090;
+  --rose-mid:     #E8A0B8;
+  --rose-soft:    #F5C8D8;
+  --rose-pale:    #FDE8F0;
+
+  --white:        #FFFFFF;
+  --bg:           #EEF3F8;
+  --text-dark:    #0A2438;
+  --text-mid:     #4A6070;
+  --text-light:   #8AAABB;
+}
+
+body {
+  background: #D8E4EE;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40px 20px;
+  gap: 32px;
+  flex-wrap: wrap;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ══ PHONE ══ */
+.phone {
+  width: 375px;
+  height: 812px;
+  border-radius: 52px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 40px 100px rgba(10,36,56,0.18),
+    0 0 0 1px rgba(255,255,255,0.7);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+/* ══ SCREENS ══ */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  transition: opacity 0.35s ease;
+  overflow: hidden;
+}
+.screen.hidden { opacity:0; pointer-events:none; }
+
+/* ══ BLOBS ══ */
+.blobs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+}
+
+/* ══ TOPBAR ══ */
+.topbar {
+  position: relative; z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0;
+  flex-shrink: 0;
+}
+.brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--blue-deep);
+  letter-spacing: 0.04em;
+}
+.sos {
+  background: var(--rose-deep);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 9px 18px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(200,112,144,0.35);
+}
+
+/* ══ GLASS ══ */
+.glass {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.85);
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(10,36,56,0.07);
+}
+
+/* ══ HERO ══ */
+.hero {
+  position: relative; z-index: 5;
+  padding: 32px 24px 24px;
+  flex-shrink: 0;
+}
+.hero-tag {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue-soft);
+  margin-bottom: 10px;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--blue-deep);
+  line-height: 1.0;
+  margin-bottom: 10px;
+}
+.hero-sub {
+  font-size: 14px;
+  color: var(--text-mid);
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+/* ══ SEANCE CARD ══ */
+.seance {
+  position: relative; z-index: 5;
+  margin: 0 16px;
+  padding: 20px 22px;
+  flex-shrink: 0;
+}
+.card-tag {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--rose-deep);
+  margin-bottom: 6px;
+}
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--blue-deep);
+  margin-bottom: 3px;
+}
+.card-desc {
+  font-size: 12px;
+  color: var(--text-light);
+  font-weight: 300;
+  margin-bottom: 18px;
+}
+.btn-go {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--blue-mid), #2A8ABF);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(26,90,127,0.3);
+}
+
+/* Blob déco dans card */
+.card-blob {
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--rose-soft) 0%, transparent 70%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ══ SECTION LABEL ══ */
+.sec-lbl {
+  position: relative; z-index: 5;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue-pale);
+  padding: 18px 24px 10px;
+}
+
+/* ══ PILIERS ══ */
+.piliers {
+  position: relative; z-index: 5;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 90px;
+}
+.pilier {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.p-num {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  flex-shrink: 0;
+  color: white;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+}
+.p1 .p-num { background: linear-gradient(135deg, #1A5A7F, #4A8AAF); box-shadow: 0 4px 12px rgba(26,90,127,0.3); }
+.p2 .p-num { background: linear-gradient(135deg, #C87090, #E090B0); box-shadow: 0 4px 12px rgba(200,112,144,0.3); }
+.p3 .p-num { background: linear-gradient(135deg, #7F5A8A, #AF80BA); box-shadow: 0 4px 12px rgba(127,90,138,0.3); }
+
+/* Mini blob par pilier */
+.p1::after { content:''; position:absolute; right:-10px; top:50%; transform:translateY(-50%); width:80px; height:80px; border-radius:50%; background:radial-gradient(circle, rgba(74,138,175,0.15) 0%, transparent 70%); }
+.p2::after { content:''; position:absolute; right:-10px; top:50%; transform:translateY(-50%); width:80px; height:80px; border-radius:50%; background:radial-gradient(circle, rgba(232,144,176,0.15) 0%, transparent 70%); }
+.p3::after { content:''; position:absolute; right:-10px; top:50%; transform:translateY(-50%); width:80px; height:80px; border-radius:50%; background:radial-gradient(circle, rgba(175,128,186,0.15) 0%, transparent 70%); }
+
+.p-info { flex: 1; }
+.p-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 21px;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--blue-deep);
+  margin-bottom: 2px;
+}
+.p-desc { font-size: 11px; color: var(--text-light); font-weight: 300; }
+.p-arrow { color: var(--blue-pale); font-size: 20px; }
+
+.bilan {
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.bilan-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--text-mid);
+}
+
+/* ══ NAVBAR ══ */
+.navbar {
+  position: absolute;
+  bottom: 12px; left: 14px; right: 14px;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 30px;
+  padding: 12px 8px 10px;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0 8px 32px rgba(10,36,56,0.1);
+  z-index: 30;
+}
+.nav-item {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  flex: 1; cursor: pointer;
+  position: relative; padding-top: 5px;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 18px; height: 2.5px;
+  background: linear-gradient(90deg, var(--blue-mid), var(--rose-deep));
+  border-radius: 2px;
+}
+.nav-icon { font-size: 17px; color: var(--blue-pale); line-height: 1; }
+.nav-lbl { font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-pale); font-weight: 500; }
+.nav-item.active .nav-icon { color: var(--blue-mid); }
+.nav-item.active .nav-lbl { color: var(--blue-mid); }
+
+/* ══════════════════════════════════
+   ÉCRAN COMMUNAUTÉ
+══════════════════════════════════ */
+.comm-hero {
+  position: relative; z-index: 5;
+  margin: 16px 16px 0;
+  border-radius: 24px;
+  overflow: hidden;
+  height: 240px;
+  flex-shrink: 0;
+}
+.comm-hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #0A2438 0%, #1A3A58 60%, #2A3A58 100%);
+}
+.comm-blob1 {
+  position: absolute;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,112,144,0.5) 0%, transparent 70%);
+  top: -40px; right: -40px;
+  filter: blur(40px);
+}
+.comm-blob2 {
+  position: absolute;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(74,138,175,0.4) 0%, transparent 70%);
+  bottom: -30px; left: -30px;
+  filter: blur(40px);
+}
+.comm-text {
+  position: absolute;
+  bottom: 20px; left: 22px; right: 22px;
+}
+.comm-tag {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--rose-mid);
+  margin-bottom: 6px;
+}
+.comm-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px; font-style: italic; font-weight: 300;
+  color: white; line-height: 1.05;
+}
+
+/* Silhouettes communauté */
+.comm-silhouettes {
+  position: absolute;
+  top: 20px; left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  align-items: flex-end;
+}
+.sil {
+  opacity: 0.15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feed {
+  position: relative; z-index: 5;
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.voice {
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+}
+.v-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.v-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-style: italic; font-weight: 300;
+  color: var(--blue-deep);
+}
+.v-time { font-size: 10px; color: var(--text-light); font-weight: 300; }
+.v-text {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  margin-bottom: 12px;
+  font-weight: 300;
+}
+.v-reactions { display: flex; gap: 14px; }
+.reaction {
+  font-size: 11px;
+  color: var(--blue-pale);
+  cursor: pointer;
+  font-weight: 400;
+  transition: color 0.15s;
+}
+.reaction:hover { color: var(--rose-deep); }
+
+/* Accent rose sur certaines voix */
+.voice.accent-rose::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--rose-mid), var(--rose-soft));
+  border-radius: 0 2px 2px 0;
+}
+.voice.accent-blue::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--blue-mid), var(--blue-soft));
+  border-radius: 0 2px 2px 0;
+}
+
+/* ══════════════════════════════════
+   ÉCRAN COCON
+══════════════════════════════════ */
+.cocon-hero {
+  position: relative; z-index: 5;
+  margin: 16px 16px 0;
+  border-radius: 24px;
+  overflow: hidden;
+  height: 260px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #E8F0F8 0%, #F5E0EC 100%);
+}
+.cocon-blob1 {
+  position: absolute;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,160,184,0.5) 0%, transparent 70%);
+  top: -60px; right: -60px;
+  filter: blur(50px);
+}
+.cocon-blob2 {
+  position: absolute;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(111,157,181,0.45) 0%, transparent 70%);
+  bottom: -40px; left: -40px;
+  filter: blur(50px);
+}
+.cocon-circle {
+  position: absolute;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.6);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -55%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cocon-circle-inner {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+.cocon-text {
+  position: absolute;
+  bottom: 18px; left: 20px; right: 20px;
+}
+
+.cocon-actions {
+  position: relative; z-index: 5;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 90px;
+}
+.cocon-action {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+}
+.action-icon {
+  width: 46px; height: 46px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.action-info { flex: 1; }
+.action-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-style: italic; font-weight: 300;
+  color: var(--blue-deep);
+  margin-bottom: 1px;
+}
+.action-desc { font-size: 11px; color: var(--text-light); font-weight: 300; }
+.action-arrow { color: var(--blue-pale); font-size: 20px; }
+
+.btn-cocon {
+  position: relative; z-index: 5;
+  margin: 0 16px 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--rose-deep), #E080A8);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(200,112,144,0.35);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════
+   PALETTE DÉMO
+══════════════════════════════════ */
+.palette {
+  width: 260px;
+  align-self: flex-start;
+  margin-top: 60px;
+}
+.pal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 300;
+  color: #0A2438;
+  margin-bottom: 4px;
+}
+.pal-sub {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #8AAABB;
+  margin-bottom: 24px;
+}
+.pal-group { margin-bottom: 20px; }
+.pal-lbl {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: #8AAABB; margin-bottom: 8px;
+}
+.swatches { display: flex; gap: 8px; }
+.swatch {
+  flex: 1; height: 52px;
+  border-radius: 14px;
+  position: relative;
+}
+.swatch span {
+  position: absolute;
+  bottom: -16px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  color: #8AAABB;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.nav-gradient {
+  margin-top: 28px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #1A5A7F, #7F5A8A, #C87090);
+  margin-bottom: 8px;
+}
+.nav-gradient-lbl {
+  font-size: 10px;
+  color: #8AAABB;
+  font-weight: 300;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ PHONE ══════════════════ -->
+<div class="phone" id="phone">
+
+  <!-- ══ ÉCRAN 1 — AVENTURE ══ -->
+  <div class="screen" id="s1">
+
+    <!-- Blobs de fond -->
+    <div class="blobs">
+      <div class="blob" style="width:280px;height:280px;background:radial-gradient(circle,rgba(200,112,144,0.18),transparent 70%);top:-80px;right:-60px"></div>
+      <div class="blob" style="width:240px;height:240px;background:radial-gradient(circle,rgba(26,90,127,0.15),transparent 70%);bottom:200px;left:-80px"></div>
+      <div class="blob" style="width:180px;height:180px;background:radial-gradient(circle,rgba(127,90,138,0.12),transparent 70%);bottom:100px;right:-40px"></div>
+    </div>
+
+    <div class="topbar">
+      <div class="brand">ça va?</div>
+      <button class="sos">SOS</button>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-tag">Mon aventure</div>
+      <div class="hero-title">Aventure-<br>toi ici.</div>
+      <div class="hero-sub">La nuit veille. Prends ce moment.</div>
+    </div>
+
+    <!-- Séance card -->
+    <div class="glass seance" style="position:relative;overflow:hidden">
+      <div class="card-blob"></div>
+      <div class="card-tag">Ta séance · Rituel · Soi du futur</div>
+      <div class="card-title">Mes valeurs</div>
+      <div class="card-desc">Choisir ce qui te porte. · 8 min</div>
+      <button class="btn-go">Commencer</button>
+    </div>
+
+    <div class="sec-lbl">Tes piliers</div>
+
+    <div class="piliers">
+      <div class="glass pilier p1">
+        <div class="p-num">01</div>
+        <div class="p-info">
+          <div class="p-name">L'Aventure</div>
+          <div class="p-desc">Lion blanc · Sortir du brouillard</div>
+        </div>
+        <div class="p-arrow">›</div>
+      </div>
+      <div class="glass pilier p2">
+        <div class="p-num">02</div>
+        <div class="p-info">
+          <div class="p-name">La Connaissance</div>
+          <div class="p-desc">8 leçons · Comprendre</div>
+        </div>
+        <div class="p-arrow">›</div>
+      </div>
+      <div class="glass pilier p3">
+        <div class="p-num">03</div>
+        <div class="p-info">
+          <div class="p-name">Les 3 Temps du Soi</div>
+          <div class="p-desc">Passé · Présent · Futur</div>
+        </div>
+        <div class="p-arrow">›</div>
+      </div>
+      <div class="glass bilan">
+        <div class="bilan-name">Bilan du soir</div>
+        <div style="color:var(--blue-pale);font-size:20px">›</div>
+      </div>
+    </div>
+
+    <div class="navbar">
+      <div class="nav-item active" onclick="show(1)"><span class="nav-icon">↑</span><span class="nav-lbl">Aventure</span></div>
+      <div class="nav-item" onclick="show(2)"><span class="nav-icon">◇</span><span class="nav-lbl">Cocon</span></div>
+      <div class="nav-item" onclick="show(3)"><span class="nav-icon">○</span><span class="nav-lbl">Communauté</span></div>
+      <div class="nav-item" onclick="show(4)"><span class="nav-icon" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px">ça va</span><span class="nav-lbl">♡</span></div>
+    </div>
+  </div>
+
+  <!-- ══ ÉCRAN 2 — COCON ══ -->
+  <div class="screen hidden" id="s2">
+
+    <div class="blobs">
+      <div class="blob" style="width:260px;height:260px;background:radial-gradient(circle,rgba(232,160,184,0.25),transparent 70%);top:-60px;right:-60px"></div>
+      <div class="blob" style="width:200px;height:200px;background:radial-gradient(circle,rgba(111,157,181,0.2),transparent 70%);bottom:300px;left:-60px"></div>
+    </div>
+
+    <div class="topbar">
+      <div class="brand">ça va?</div>
+      <button class="sos">SOS</button>
+    </div>
+
+    <div class="cocon-hero">
+      <div class="cocon-blob1"></div>
+      <div class="cocon-blob2"></div>
+      <div class="cocon-circle">
+        <div class="cocon-circle-inner">🌙</div>
+      </div>
+      <div class="cocon-text">
+        <div style="font-size:9px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--rose-deep);margin-bottom:5px">Mon cocon</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-style:italic;font-weight:300;color:var(--blue-deep);line-height:1.1">Pose-toi ici.</div>
+        <div style="font-size:12px;color:var(--text-mid);font-weight:300;margin-top:3px">La nuit veille. Repose-toi.</div>
+      </div>
+    </div>
+
+    <button class="btn-cocon">Me poser 2 minutes</button>
+
+    <div class="cocon-actions">
+      <div class="glass cocon-action">
+        <div class="action-icon" style="background:linear-gradient(135deg,rgba(111,157,181,0.15),rgba(26,90,127,0.1))">🎵</div>
+        <div class="action-info">
+          <div class="action-title">Musique</div>
+          <div class="action-desc">Sons apaisants · Ambiances</div>
+        </div>
+        <div class="action-arrow">›</div>
+      </div>
+      <div class="glass cocon-action">
+        <div class="action-icon" style="background:linear-gradient(135deg,rgba(200,112,144,0.12),rgba(232,160,184,0.08))">✦</div>
+        <div class="action-info">
+          <div class="action-title">Poser un mantra</div>
+          <div class="action-desc">Une intention pour ce moment</div>
+        </div>
+        <div class="action-arrow">›</div>
+      </div>
+      <div class="glass cocon-action">
+        <div class="action-icon" style="background:linear-gradient(135deg,rgba(127,90,138,0.12),rgba(175,128,186,0.08))">◈</div>
+        <div class="action-info">
+          <div class="action-title">Personnaliser</div>
+          <div class="action-desc">Ton espace, tes couleurs</div>
+        </div>
+        <div class="action-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="navbar">
+      <div class="nav-item" onclick="show(1)"><span class="nav-icon">↑</span><span class="nav-lbl">Aventure</span></div>
+      <div class="nav-item active" onclick="show(2)"><span class="nav-icon">◇</span><span class="nav-lbl">Cocon</span></div>
+      <div class="nav-item" onclick="show(3)"><span class="nav-icon">○</span><span class="nav-lbl">Communauté</span></div>
+      <div class="nav-item" onclick="show(4)"><span class="nav-icon" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px">ça va</span><span class="nav-lbl">♡</span></div>
+    </div>
+  </div>
+
+  <!-- ══ ÉCRAN 3 — COMMUNAUTÉ ══ -->
+  <div class="screen hidden" id="s3">
+
+    <div class="blobs">
+      <div class="blob" style="width:240px;height:240px;background:radial-gradient(circle,rgba(200,112,144,0.15),transparent 70%);top:-50px;right:-50px"></div>
+      <div class="blob" style="width:200px;height:200px;background:radial-gradient(circle,rgba(26,90,127,0.12),transparent 70%);bottom:250px;left:-50px"></div>
+    </div>
+
+    <div class="topbar">
+      <div class="brand">ça va?</div>
+      <button class="sos">SOS</button>
+    </div>
+
+    <div class="comm-hero">
+      <div class="comm-hero-bg"></div>
+      <div class="comm-blob1"></div>
+      <div class="comm-blob2"></div>
+      <div class="comm-text">
+        <div class="comm-tag">Communauté ÇA VA?</div>
+        <div class="comm-title">Tu n'es pas<br>seul·e.</div>
+      </div>
+    </div>
+
+    <div style="font-size:9px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--blue-pale);padding:14px 24px 10px;position:relative;z-index:5">Les voix qui passent</div>
+
+    <div class="feed">
+      <div class="glass voice accent-rose">
+        <div class="v-header">
+          <div class="v-name">Élio</div>
+          <div class="v-time">il y a 1 j</div>
+        </div>
+        <div class="v-text">Le matin c'est le plus dur. Sortir du lit demande tout ce que je n'ai pas.</div>
+        <div class="v-reactions">
+          <span class="reaction">♡ je ressens</span>
+          <span class="reaction">◇ je t'entends</span>
+          <span class="reaction">○ je vois</span>
+        </div>
+      </div>
+
+      <div class="glass voice accent-blue">
+        <div class="v-header">
+          <div class="v-name">Sève</div>
+          <div class="v-time">il y a 2 j</div>
+        </div>
+        <div class="v-text">Je suis fatiguée depuis si longtemps que j'ai oublié à quoi ressemble la fatigue normale.</div>
+        <div class="v-reactions">
+          <span class="reaction">♡ je ressens</span>
+          <span class="reaction">◇ je t'entends</span>
+          <span class="reaction">○ je vois</span>
+        </div>
+      </div>
+
+      <div class="glass voice">
+        <div class="v-header">
+          <div class="v-name">Naïs</div>
+          <div class="v-time">il y a 3 j</div>
+        </div>
+        <div class="v-text">Aujourd'hui j'ai dit non. Pour la première fois depuis longtemps. Et ça m'a fait pleurer.</div>
+        <div class="v-reactions">
+          <span class="reaction">♡ je ressens</span>
+          <span class="reaction">◇ je t'entends</span>
+          <span class="reaction">○ je vois</span></div>
+      </div>
+    </div>
+
+    <div class="navbar">
+      <div class="nav-item" onclick="show(1)"><span class="nav-icon">↑</span><span class="nav-lbl">Aventure</span></div>
+      <div class="nav-item" onclick="show(2)"><span class="nav-icon">◇</span><span class="nav-lbl">Cocon</span></div>
+      <div class="nav-item active" onclick="show(3)"><span class="nav-icon">○</span><span class="nav-lbl">Communauté</span></div>
+      <div class="nav-item" onclick="show(4)"><span class="nav-icon" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px">ça va</span><span class="nav-lbl">♡</span></div>
+    </div>
+  </div>
+
+  <!-- ══ ÉCRAN 4 — ÇA VA? BOUTIQUE ══ -->
+  <div class="screen hidden" id="s4">
+
+    <div class="blobs">
+      <div class="blob" style="width:260px;height:260px;background:radial-gradient(circle,rgba(200,112,144,0.2),transparent 70%);top:-60px;left:-60px"></div>
+      <div class="blob" style="width:220px;height:220px;background:radial-gradient(circle,rgba(26,90,127,0.18),transparent 70%);bottom:300px;right:-60px"></div>
+    </div>
+
+    <!-- Hero boutique — dark avec blobs rose/bleu -->
+    <div style="position:relative;height:320px;overflow:hidden;flex-shrink:0;margin:16px 16px 0;border-radius:28px">
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0A2438 0%,#1A2A48 60%,#0A1828 100%)"></div>
+      <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(200,112,144,0.4),transparent 70%);top:-40px;right:-40px;filter:blur(50px)"></div>
+      <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(111,157,181,0.3),transparent 70%);bottom:-30px;left:-30px;filter:blur(50px)"></div>
+
+      <!-- Grand blob rose central -->
+      <div style="position:absolute;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(232,160,184,0.25),transparent 70%);top:50%;left:50%;transform:translate(-50%,-60%);filter:blur(30px)"></div>
+
+      <div style="position:absolute;top:0;left:0;right:0;padding:20px 22px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;font-weight:300;color:white">ça va?</div>
+        <button class="sos">SOS</button>
+      </div>
+
+      <div style="position:absolute;bottom:22px;left:22px;right:22px">
+        <div style="font-size:9px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--rose-mid);margin-bottom:8px">La marque</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:50px;font-style:italic;font-weight:300;color:white;line-height:0.95">ÇA VA?</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);font-weight:300;margin-top:8px">La phrase la plus mensongère du monde.</div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:16px 16px 90px;display:flex;flex-direction:column;gap:10px;position:relative;z-index:5">
+
+      <div style="font-size:9px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--blue-pale);padding:4px 0 8px">Collections</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="glass" style="border-radius:20px;overflow:hidden">
+          <div style="height:90px;background:linear-gradient(135deg,rgba(200,112,144,0.15),rgba(232,160,184,0.25));display:flex;align-items:center;justify-content:center">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--rose-deep);text-align:center">Chapitre I<br><span style="font-size:11px;color:var(--text-light)">La Question</span></div>
+          </div>
+          <div style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:10px;color:var(--rose-deep);letter-spacing:0.1em;text-transform:uppercase;font-weight:500">Voir</div>
+            <div style="font-size:14px;color:var(--rose-mid)">›</div>
+          </div>
+        </div>
+        <div class="glass" style="border-radius:20px;overflow:hidden">
+          <div style="height:90px;background:linear-gradient(135deg,rgba(26,90,127,0.12),rgba(111,157,181,0.2));display:flex;align-items:center;justify-content:center">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--blue-mid);text-align:center">Chapitre II<br><span style="font-size:11px;color:var(--text-light)">Le Silence</span></div>
+          </div>
+          <div style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:10px;color:var(--blue-mid);letter-spacing:0.1em;text-transform:uppercase;font-weight:500">Voir</div>
+            <div style="font-size:14px;color:var(--blue-soft)">›</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass" style="padding:22px;text-align:center;border-radius:20px;background:linear-gradient(135deg,rgba(10,36,56,0.06),rgba(200,112,144,0.06))">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;font-weight:300;color:var(--blue-deep);line-height:1.5;margin-bottom:16px">Derrière chaque visage peut se cacher une bataille invisible.</div>
+        <button style="background:linear-gradient(135deg,var(--blue-mid),var(--rose-deep));color:white;border:none;border-radius:50px;padding:13px 28px;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 24px rgba(26,90,127,0.2)">Porter la question ↗</button>
+      </div>
+
+    </div>
+
+    <div class="navbar">
+      <div class="nav-item" onclick="show(1)"><span class="nav-icon">↑</span><span class="nav-lbl">Aventure</span></div>
+      <div class="nav-item" onclick="show(2)"><span class="nav-icon">◇</span><span class="nav-lbl">Cocon</span></div>
+      <div class="nav-item" onclick="show(3)"><span class="nav-icon">○</span><span class="nav-lbl">Communauté</span></div>
+      <div class="nav-item active" onclick="show(4)"><span class="nav-icon" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--rose-deep)">ça va</span><span class="nav-lbl" style="color:var(--rose-deep)">♡</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ PALETTE PANEL ══ -->
+<div class="palette">
+  <div class="pal-title">Palette ÇA VA?</div>
+  <div class="pal-sub">Bleu Océan · Rose Doux</div>
+
+  <div class="pal-group">
+    <div class="pal-lbl">Bleus</div>
+    <div class="swatches" style="margin-bottom:20px">
+      <div style="position:relative">
+        <div class="swatch" style="background:#0A2438"></div>
+        <span style="position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:#8AAABB;white-space:nowrap">#0A2438</span>
+      </div>
+      <div style="position:relative">
+        <div class="swatch" style="background:#1A5A7F"></div>
+        <span style="position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:#8AAABB;white-space:nowrap">#1A5A7F</span>
+      </div>
+      <div style="position:relative">
+        <div class="swatch" style="background:#6F9DB5"></div>
+        <span style="position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:#8AAABB;white-space:nowrap">#6F9DB5</span>
+      </div>
+      <div style="position:relative">
+        <div class="swatch" style="background:#C2D8E8;border:1px solid rgba(0,0,0,0.06)"></div>
+        <span style="position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:#8AAABB;white-space:nowrap">#C2D8E8</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pal-group" style="margin-top:28px">
+    <div class="pal-lbl">Roses</div>
+    <div class="swatches" style="margin-bottom:20px">
+      <div style="position:relative">
+        <div class="swatch" style="background:#C87090"></div>
+        <span style="position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:#8AAABB;white-space:nowrap">#C87090</span>
+      </div>
+      <div style="position:relative">
+        <div class="swatch" style="background:#E8A0B8"></div>
+        <span style="position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:#8AAABB;white-space:nowrap">#E8A0B8</span>
+      </div>
+      <div style="position:relative">
+        <div class="swatch" style="background:#F5C8D8;border:1px solid rgba(0,0,0,0.06)"></div>
+        <span style="position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:#8AAABB;white-space:nowrap">#F5C8D8</span>
+      </div>
+      <div style="position:relative">
+        <div class="swatch" style="background:#FDE8F0;border:1px solid rgba(0,0,0,0.06)"></div>
+        <span style="position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:#8AAABB;white-space:nowrap">#FDE8F0</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:32px">
+    <div class="nav-gradient"></div>
+    <div class="nav-gradient-lbl">Dégradé signature — Bleu → Violet → Rose</div>
+  </div>
+
+  <div style="margin-top:24px;padding:16px;background:rgba(255,255,255,0.5);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.8);border-radius:16px">
+    <div style="font-size:11px;color:#4A6070;line-height:1.7;font-weight:300">
+      <strong style="color:#0A2438">Fond</strong> : #EEF3F8 gris-bleu clair<br>
+      <strong style="color:#0A2438">Glass</strong> : blanc 60% + blur 24px<br>
+      <strong style="color:#0A2438">Blobs</strong> : rose + bleu, floutés<br>
+      <strong style="color:#0A2438">Texte</strong> : #0A2438 profond<br>
+      <strong style="color:#0A2438">CTA bleu</strong> : boutons principaux<br>
+      <strong style="color:#0A2438">CTA rose</strong> : actions émotionnelles
+    </div>
+  </div>
+</div>
+
+<script>
+let cur = 1;
+function show(n) {
+  document.getElementById('s'+cur).classList.add('hidden');
+  document.getElementById('s'+n).classList.remove('hidden');
+  cur = n;
+}
+</script>
+</body>
+</html>

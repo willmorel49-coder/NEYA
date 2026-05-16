@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — MoodTracker (overlay humeur express, LIGHT MODE)
+   ÇA VA ? V2 — MoodTracker (overlay humeur express, LIGHT MODE)
    ============================================================
    One-tap mood input + 7-day strip visualization.
    Anti-toxique : pas de note, pas de moyenne, pas de classement.

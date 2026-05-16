@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — Tour (first-time 4-slide overlay)
+   ÇA VA ? V2 — Tour (first-time 4-slide overlay)
    ============================================================
    Affiché UNE SEULE FOIS après onboarding. Pose la carte des
    territoires : Aventure / Cocon / Communauté / Ça va? + SOS.
@@ -68,7 +68,7 @@ const SLIDES = [
     titleAfter: ' »',
     body: (
       <>
-        <strong>Ça va ?</strong> prolonge NÉYA sur la peau. Et quand ça
+        <strong>Ça va ?</strong> prolonge ÇA VA ? sur la peau. Et quand ça
         devient trop, le bouton <strong>SOS</strong> te ramène toujours à
         la respiration.
       </>

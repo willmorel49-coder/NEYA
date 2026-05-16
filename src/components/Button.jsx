@@ -1,5 +1,5 @@
 /* ============================================================
-   Button — NÉYA Design System v2
+   Button — ÇA VA ? Design System v2
    ============================================================
    Validates Do's:
    - Pill shape (radius-pill) ✓

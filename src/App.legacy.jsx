@@ -1236,7 +1236,7 @@ const SpiritAnimal = React.memo(function SpiritAnimal({ archetype, size = 120, s
 function NeyaLogo({ size = 'md', onTap, glowColor = 'rgba(255,255,255,0.32)' }) {
   const cfg = { sm: [22, 13], md: [30, 17], lg: [40, 22] }[size]
   const w = cfg[0], h = Math.round(cfg[0] * 0.92)
-  // Crisis Mode : long-press 600ms sur le logo NÉYA = ouverture SOS partout
+  // Crisis Mode : long-press 600ms sur le logo ÇA VA ? = ouverture SOS partout
   const pressTimer = useRef(null)
   const triggered = useRef(false)
   const handleDown = (e) => {
@@ -1266,7 +1266,7 @@ function NeyaLogo({ size = 'md', onTap, glowColor = 'rgba(255,255,255,0.32)' }) 
         {/* Base trait subtil */}
         <path d="M10 33 Q22 36 34 33" stroke="white" strokeWidth="1" strokeLinecap="round" fill="none" opacity="0.62"/>
       </svg>
-      <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: cfg[1], letterSpacing: '0.42em', color: '#EFE9DC', textShadow: '0 0 20px rgba(255,255,255,0.3)', animation: 'none' }}>NÉYA</span>
+      <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: cfg[1], letterSpacing: '0.42em', color: '#EFE9DC', textShadow: '0 0 20px rgba(255,255,255,0.3)', animation: 'none' }}>ÇA VA ?</span>
     </div>
   )
 }
@@ -2529,7 +2529,7 @@ function EspaceVraiModal({ archetypeKey, onClose }) {
   )
 }
 
-// ─── NÉYA GIRL ────────────────────────────────────────────────────────────────
+// ─── ÇA VA ? GIRL ────────────────────────────────────────────────────────────────
 
 function NeyaGirl({ size = 54, color = '#3b82f6' }) {
   return (
@@ -2979,7 +2979,7 @@ function MusiqueModal({ archetypeKey, onClose }) {
 
         {/* Header */}
         <div style={{ padding: '0 22px 14px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 6px' }}>Musique de NÉYA</p>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.82)`, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 6px' }}>Musique de ÇA VA ?</p>
           <h2 style={{ fontFamily: 'Sora, system-ui, sans-serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 21, color: 'rgba(239,233,220,0.94)', margin: '0 0 4px', letterSpacing: '-0.015em' }}>Onze textures émotionnelles</h2>
           <p style={{ fontFamily: 'Sora, sans-serif', fontStyle: 'italic', fontWeight: 300, fontSize: 12, color: 'rgba(239,233,220,0.58)', margin: 0, letterSpacing: '-0.005em' }}>Compositions par Will · à écouter doucement</p>
         </div>
@@ -3538,12 +3538,12 @@ function CoconScreen({ archetypeKey, onClose }) {
               onChange={(e) => setCoconNameLocal(e.target.value.slice(0, 40))}
               onBlur={() => { try { coconNameLocal.trim() ? localStorage.setItem('neya_cocon_name', coconNameLocal.trim()) : localStorage.removeItem('neya_cocon_name') } catch {} ; setEditingName(false) }}
               onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
-              placeholder="Mon Cocon Néya"
+              placeholder="Mon Cocon ÇA VA ?"
               style={{ background: 'transparent', border: 'none', borderBottom: `1px solid ${arch.color}88`, outline: 'none', textAlign: 'center', fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 18, color: '#EFE9DC', letterSpacing: '0.02em', maxWidth: 240, padding: '2px 0', caretColor: arch.color }}
             />
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
-              <p style={{ fontFamily: 'Sora, system-ui, sans-serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 'clamp(28px, 7.5vw, 32px)', margin: 0, letterSpacing: '-0.030em', lineHeight: 1.08, textAlign: 'center', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite', background: `linear-gradient(135deg, ${arch.color}, rgba(239,233,220,0.94) 55%, ${arch.color}bb)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{coconNameLocal || 'Mon Cocon Néya'}</p>
+              <p style={{ fontFamily: 'Sora, system-ui, sans-serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 144, "SOFT" 80, "WONK" 1', fontSize: 'clamp(28px, 7.5vw, 32px)', margin: 0, letterSpacing: '-0.030em', lineHeight: 1.08, textAlign: 'center', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite', background: `linear-gradient(135deg, ${arch.color}, rgba(239,233,220,0.94) 55%, ${arch.color}bb)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{coconNameLocal || 'Mon Cocon ÇA VA ?'}</p>
               <button onClick={() => setEditingName(true)} aria-label="Renommer ton cocon" style={{ background: 'none', border: 'none', cursor: 'pointer', color: `${arch.color}88`, fontSize: 13, padding: 6, lineHeight: 1, minWidth: 32, minHeight: 32, animation: 'phrasebreathe 18s cubic-bezier(0.45,0,0.55,1) infinite' }}>✎</button>
             </div>
           )}
@@ -3672,8 +3672,8 @@ function CoconScreen({ archetypeKey, onClose }) {
         </div>
         {showJardinFromCocon && <JardinModal archetypeKey={archetypeKey} onClose={() => setShowJardinFromCocon(false)} />}
 
-        {/* ── Musique de NÉYA (compositions de Will, écoute libre) ── */}
-        <div onClick={() => { haptic([6, 40, 6]); try { playOpen() } catch {}; setShowMusique(true) }} role="button" tabIndex={0} aria-label="Ouvrir la musique de NÉYA" style={{
+        {/* ── Musique de ÇA VA ? (compositions de Will, écoute libre) ── */}
+        <div onClick={() => { haptic([6, 40, 6]); try { playOpen() } catch {}; setShowMusique(true) }} role="button" tabIndex={0} aria-label="Ouvrir la musique de ÇA VA ?" style={{
           marginTop: 10,
           cursor: 'pointer',
           background: `linear-gradient(135deg, rgba(${arch.rgb},0.10) 0%, rgba(28,22,42,0.40) 50%, rgba(${arch.rgb},0.06) 100%)`,
@@ -3696,7 +3696,7 @@ function CoconScreen({ archetypeKey, onClose }) {
           </svg>
           <div style={{ flex: 1 }}>
             <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.78)`, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 4 }}>Sons composés · 11 morceaux</div>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.90)', letterSpacing: '-0.01em' }}>Musique de NÉYA</div>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.90)', letterSpacing: '-0.01em' }}>Musique de ÇA VA ?</div>
             <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(239,233,220,0.56)', marginTop: 3, fontStyle: 'italic' }}>Des textures émotionnelles à écouter</div>
           </div>
           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: `rgba(${arch.rgb},0.62)`, letterSpacing: '0.08em', flexShrink: 0 }}>→</div>
@@ -4085,7 +4085,7 @@ function NavIconCommunaute({ active, color }) {
 }
 
 function BottomNav({ tab, onChange, color, badges = {}, onOpenCocon }) {
-  // 4 onglets latéraux + 1 bouton central élargi (logo NÉYA → Cocon)
+  // 4 onglets latéraux + 1 bouton central élargi (logo ÇA VA ? → Cocon)
   // Le bouton central est le "menu hub" : sanctuaire personnel qui
   // regroupe les espaces contemplatifs (jardin, musique, carnet).
   const leftTabs = [
@@ -4115,7 +4115,7 @@ function BottomNav({ tab, onChange, color, badges = {}, onOpenCocon }) {
       {/* Onglets gauche */}
       {leftTabs.map(renderTab)}
 
-      {/* Bouton central — Logo NÉYA → Cocon (sanctuaire/menu hub) */}
+      {/* Bouton central — Logo ÇA VA ? → Cocon (sanctuaire/menu hub) */}
       <button onClick={() => { try { haptic([6, 40, 6]) } catch {}; if (onOpenCocon) onOpenCocon() }} aria-label="Ouvrir ton Cocon" style={{ flex: 1, padding: 0, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', minHeight: 58 }}>
         <div style={{ position: 'absolute', top: -28, left: '50%', transform: 'translateX(-50%)', width: 64, height: 64, borderRadius: '50%', background: `radial-gradient(circle, ${color}1c 0%, rgba(5,8,16,0.96) 70%)`, border: `1px solid rgba(239,233,220,0.18)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 18px 42px rgba(0,0,0,0.68), 0 0 28px ${color}33, inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(0,0,0,0.45)`, animation: 'animalbreathe 12s cubic-bezier(0.45,0,0.55,1) infinite', backdropFilter: 'blur(16px) saturate(140%)', WebkitBackdropFilter: 'blur(16px) saturate(140%)' }}>
           <svg width="30" height="28" viewBox="0 0 44 40" fill="none" style={{ filter: `drop-shadow(0 0 10px ${color}88)` }}>
@@ -4517,7 +4517,7 @@ function PersonalizationModal({ archetypeKey, onClose }) {
         {/* Nom du cocon */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
           <label style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.58)`, letterSpacing: '0.20em', textTransform: 'uppercase' }}>Nom de ton cocon</label>
-          <input value={coconName} onChange={e => setCoconName(e.target.value)} placeholder="Mon Cocon Néya" maxLength={40} style={inputStyle} />
+          <input value={coconName} onChange={e => setCoconName(e.target.value)} placeholder="Mon Cocon ÇA VA ?" maxLength={40} style={inputStyle} />
         </div>
 
         {/* Sons doux toggle */}
@@ -4984,7 +4984,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
       {showJardin && <JardinModal archetypeKey={archetypeKey} onClose={() => setShowJardin(false)} />}
       {showCarnet && <CarnetModal archetypeKey={archetypeKey} onClose={() => setShowCarnet(false)} />}
 
-      {/* Carte Cocon retirée — accès via bouton central BottomNav (logo NÉYA) */}
+      {/* Carte Cocon retirée — accès via bouton central BottomNav (logo ÇA VA ?) */}
       {/* Lien aux autres section retirée : Lettres + Cercle migrés dans l'onglet Communauté */}
       {showLetters && <LettresInconnusModal archetypeKey={archetypeKey} onClose={() => setShowLetters(false)} />}
 
@@ -5173,7 +5173,7 @@ function HomeScreen({ archetypeKey, routinesDone, quetesDone, onRestart, onOpenV
         {typeof navigator !== 'undefined' && navigator.share && (
           <button onClick={() => {
             haptic([8, 20, 8])
-            navigator.share({ title: 'Mon profil NÉYA', text: `"${arch.worldInsight}"\n\nJe suis ${arch.profil} — ${arch.animal} · Élément ${arch.element}.${streak >= 2 ? ` ${streak} jours d'affilée.` : ''} Découvre ton guide intérieur sur NÉYA.`, url: 'https://neya-kappa.vercel.app' }).catch(() => {})
+            navigator.share({ title: 'Mon profil ÇA VA ?', text: `"${arch.worldInsight}"\n\nJe suis ${arch.profil} — ${arch.animal} · Élément ${arch.element}.${streak >= 2 ? ` ${streak} jours d'affilée.` : ''} Découvre ton guide intérieur sur ÇA VA ?.`, url: 'https://neya-kappa.vercel.app' }).catch(() => {})
           }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 12, color: `${arch.color}77`, letterSpacing: '0.05em', padding: '10px 0', animation: 'phrasebreathe 26s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 18px ${arch.color}33` }}>
             Partager mon profil
           </button>
@@ -5505,7 +5505,7 @@ function BoutiqueScreen({ archetypeKey }) {
   const MUSTARD     = '#C29051'  // --cava-ochre (chaleur broderie)
   const EMERALD     = '#34917F'  // --cava-emerald (mode contemporaine)
   const SAGE        = '#9AAFA0'  // --cava-sage (sérénité textile)
-  const MIST        = '#7397BC'  // --cava-mist-blue (pont chromatique NÉYA)
+  const MIST        = '#7397BC'  // --cava-mist-blue (pont chromatique ÇA VA ?)
   const [vis, setVis] = useState(false)
   useEffect(() => { const t = setTimeout(() => setVis(true), 80); return () => clearTimeout(t) }, [])
 
@@ -7291,7 +7291,7 @@ function BilanSemaineCard({ archetypeKey, onClose }) {
   )
 }
 
-// ─── HERO SECTION — Inspiré directement des mockups MVP NÉYA ───────
+// ─── HERO SECTION — Inspiré directement des mockups MVP ÇA VA ? ───────
 // Silhouette femme cheveux bleus de dos contemplant un cosmos/sunset.
 // Greeting majestueux time-aware. C'est la signature visuelle de la
 // vision originale appliquée sur HomeScreen.
@@ -7412,7 +7412,7 @@ function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra,
 
       {/* Editorial vertical label — left side, rotated 90deg */}
       <div style={{ position: 'absolute', top: '50%', left: 18, transform: 'translateY(-50%) rotate(-90deg)', transformOrigin: 'left center', whiteSpace: 'nowrap', fontFamily: 'Inter, sans-serif', fontSize: 9, fontWeight: 500, letterSpacing: '0.42em', color: 'rgba(239,233,220,0.42)', zIndex: 4 }}>
-        NÉYA — MMXXVI · {arch.profil.toUpperCase()}
+        ÇA VA ? — MMXXVI · {arch.profil.toUpperCase()}
       </div>
 
       {/* Date editorial chip top-left */}
@@ -7448,14 +7448,14 @@ function NeyaHeroSection({ archetypeKey, prenom, jourComplète, dateStr, mantra,
   )
 }
 
-// ─── NÉYA — Personnage incarné en accueil ──────────────────────────
-// Carte premium en haut de HomeScreen qui personnifie NÉYA (femme aux
+// ─── ÇA VA ? — Personnage incarné en accueil ──────────────────────────
+// Carte premium en haut de HomeScreen qui personnifie ÇA VA ? (femme aux
 // cheveux bleus, signature des mockups originaux). Bulle d'accueil
-// time-aware et personnalisée au prénom. Geste : NÉYA est une présence,
+// time-aware et personnalisée au prénom. Geste : ÇA VA ? est une présence,
 // pas une fonctionnalité.
 
 function NeyaPortrait({ size = 64 }) {
-  // SVG silhouette femme cheveux bleus longs - signature visuelle NÉYA
+  // SVG silhouette femme cheveux bleus longs - signature visuelle ÇA VA ?
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" style={{ display: 'block' }}>
       <defs>
@@ -7532,7 +7532,7 @@ function NeyaPresenceCard({ archetypeKey, prenom }) {
 
   return (
     <>
-    <div onClick={() => { haptic([4, 30, 4]); setTapped(true); try { playOpen() } catch {}; setTimeout(() => { setTapped(false); setShowVisu(true) }, 280) }} role="button" tabIndex={0} aria-label="Ouvrir la visualisation guidée avec NÉYA" style={{
+    <div onClick={() => { haptic([4, 30, 4]); setTapped(true); try { playOpen() } catch {}; setTimeout(() => { setTapped(false); setShowVisu(true) }, 280) }} role="button" tabIndex={0} aria-label="Ouvrir la visualisation guidée avec ÇA VA ?" style={{
       position: 'relative',
       cursor: 'pointer',
       background: `linear-gradient(135deg, rgba(99,102,241,0.14) 0%, rgba(16,18,32,0.62) 50%, rgba(${arch.rgb},0.08) 100%)`,
@@ -7551,14 +7551,14 @@ function NeyaPresenceCard({ archetypeKey, prenom }) {
       {/* Halo étoilé background subtil */}
       <div style={{ position: 'absolute', top: -20, right: -20, width: 90, height: 90, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.22) 0%, transparent 70%)', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', pointerEvents: 'none' }} />
 
-      {/* Portrait NÉYA */}
+      {/* Portrait ÇA VA ? */}
       <div style={{ flexShrink: 0, width: 64, height: 64, position: 'relative', filter: tapped ? 'drop-shadow(0 0 18px rgba(99,102,241,0.62))' : 'drop-shadow(0 0 12px rgba(99,102,241,0.35))', transition: 'filter 0.4s ease', animation: 'animalbreathe 7s cubic-bezier(0.45,0,0.55,1) infinite' }}>
         <NeyaPortrait size={64} />
       </div>
 
       {/* Texte + bulle */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(180,190,255,0.86)', letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 4px', animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>NÉYA · {greeting}</p>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(180,190,255,0.86)', letterSpacing: '0.26em', textTransform: 'uppercase', margin: '0 0 4px', animation: 'signaturePulse 12s cubic-bezier(0.45,0,0.55,1) infinite' }}>ÇA VA ? · {greeting}</p>
         <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, fontStyle: 'italic', color: 'rgba(239,233,220,0.92)', margin: 0, lineHeight: 1.5, letterSpacing: '-0.005em', textShadow: '0 0 14px rgba(99,102,241,0.30)', animation: 'phrasebreathe 24s cubic-bezier(0.45,0,0.55,1) infinite' }}>
           « {bubble} »
         </p>
@@ -7849,7 +7849,7 @@ function SOSModal({ archetypeKey, onClose }) {
         <div style={{ textAlign: 'center', marginBottom: 22, position: 'relative' }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,200,170,0.92)', letterSpacing: '0.30em', textTransform: 'uppercase', margin: 0, animation: 'phrasebreathe 14s cubic-bezier(0.45,0,0.55,1) infinite' }}>Tu n'es pas seul·e</p>
           <h2 style={{ fontFamily: 'Sora, system-ui, sans-serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 26, color: 'rgba(239,233,220,0.96)', margin: '12px 0 8px', letterSpacing: '-0.02em', lineHeight: 1.25, textShadow: '0 0 24px rgba(255,180,140,0.35), 0 2px 12px rgba(0,0,0,0.5)' }}>Là, maintenant,<br />juste : reste.</h2>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(239,233,220,0.74)', margin: '10px auto 0', maxWidth: 360, lineHeight: 1.6, letterSpacing: '-0.005em' }}>Je suis là. NÉYA est là. Le monde est là. Tu n'as pas à expliquer. Pas à choisir. Pas à comprendre.</p>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontStyle: 'italic', fontSize: 14, color: 'rgba(239,233,220,0.74)', margin: '10px auto 0', maxWidth: 360, lineHeight: 1.6, letterSpacing: '-0.005em' }}>Je suis là. ÇA VA ? est là. Le monde est là. Tu n'as pas à expliquer. Pas à choisir. Pas à comprendre.</p>
         </div>
 
         {/* Ressources d'aide officielles */}
@@ -7905,7 +7905,7 @@ function SOSModal({ archetypeKey, onClose }) {
 
         {/* Disclaimer + fermeture */}
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.40)', textAlign: 'center', margin: '0 0 18px', lineHeight: 1.65, fontStyle: 'italic', letterSpacing: '0.02em' }}>
-          NÉYA est avec toi, pas à la place de. Ces voix-là savent t'écouter.
+          ÇA VA ? est avec toi, pas à la place de. Ces voix-là savent t'écouter.
         </p>
 
         <button data-press="true" onClick={handleClose} style={{
@@ -8378,10 +8378,10 @@ function InviteFriendModal({ archetypeKey, onClose }) {
   useEffect(() => { const t = setTimeout(() => setVis(true), 30); return () => clearTimeout(t) }, [])
 
   const messages = {
-    resilience: `Si tu cherches un refuge intérieur pour les jours intenses — NÉYA :\nneya-kappa.vercel.app\n\n"Et toi, ça va vraiment ?"`,
-    presence:   `Un espace doux que j'aime — NÉYA :\nneya-kappa.vercel.app\n\n"T'as pas besoin d'aller bien pour commencer."`,
-    sagesse:    `Un endroit où je passe pour me poser — NÉYA :\nneya-kappa.vercel.app\n\n"Tu n'es pas seul·e."`,
-    lumiere:    `Si ça te parle, un petit refuge poétique — NÉYA :\nneya-kappa.vercel.app\n\n"Et toi, ça va vraiment ?"`,
+    resilience: `Si tu cherches un refuge intérieur pour les jours intenses — ÇA VA ? :\nneya-kappa.vercel.app\n\n"Et toi, ça va vraiment ?"`,
+    presence:   `Un espace doux que j'aime — ÇA VA ? :\nneya-kappa.vercel.app\n\n"T'as pas besoin d'aller bien pour commencer."`,
+    sagesse:    `Un endroit où je passe pour me poser — ÇA VA ? :\nneya-kappa.vercel.app\n\n"Tu n'es pas seul·e."`,
+    lumiere:    `Si ça te parle, un petit refuge poétique — ÇA VA ? :\nneya-kappa.vercel.app\n\n"Et toi, ça va vraiment ?"`,
   }
   const text = messages[archetypeKey] || messages.presence
 
@@ -8389,7 +8389,7 @@ function InviteFriendModal({ archetypeKey, onClose }) {
     haptic([6, 40, 6])
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'NÉYA', text })
+        await navigator.share({ title: 'ÇA VA ?', text })
         try { addSouvenir('first_invite') } catch {}
         setShared(true)
       } else if (navigator.clipboard) {
@@ -8408,7 +8408,7 @@ function InviteFriendModal({ archetypeKey, onClose }) {
       <div style={{ position: 'relative', zIndex: 1, padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 28px calc(env(safe-area-inset-bottom, 0px) + 40px)', display: 'flex', flexDirection: 'column', gap: 28, minHeight: '100%', justifyContent: 'center', textAlign: 'center', maxWidth: 460, margin: '0 auto' }}>
         <div>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: arch.color, letterSpacing: '0.32em', textTransform: 'uppercase', margin: '0 0 14px', animation: 'signaturePulse 14s cubic-bezier(0.45,0,0.55,1) infinite', textShadow: `0 0 14px ${arch.color}66` }}>◈ Inviter</p>
-          <h2 style={{ fontFamily: 'Sora, system-ui, sans-serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 26, color: '#EFE9DC', margin: 0, lineHeight: 1.22, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>Offrir NÉYA<br />à un·e proche</h2>
+          <h2 style={{ fontFamily: 'Sora, system-ui, sans-serif', fontWeight: 400, fontStyle: 'italic', fontVariationSettings: '"opsz" 96, "SOFT" 50, "WONK" 1', fontSize: 26, color: '#EFE9DC', margin: 0, lineHeight: 1.22, letterSpacing: '-0.01em', textShadow: `0 0 22px ${arch.color}33` }}>Offrir ÇA VA ?<br />à un·e proche</h2>
         </div>
         <div style={{ background: `rgba(${arch.rgb},0.07)`, border: `1px solid rgba(${arch.rgb},0.32)`, borderRadius: 18, padding: '24px 22px', position: 'relative' }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.88)', margin: 0, lineHeight: 1.72, whiteSpace: 'pre-line', textAlign: 'left', fontStyle: 'italic' }}>{text}</p>
@@ -8558,7 +8558,7 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
           <button data-press="true" onClick={() => { haptic(6); setShowInvite(true) }} style={{ width: '100%', padding: '16px 18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 14, color: 'rgba(239,233,220,0.88)', fontFamily: 'inherit', cursor: 'pointer', minHeight: 60, display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left' }}>
             <span style={{ fontSize: 18, color: arch.color, lineHeight: 1 }}>◈</span>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.92)', letterSpacing: '-0.01em' }}>Inviter à NÉYA</div>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.92)', letterSpacing: '-0.01em' }}>Inviter à ÇA VA ?</div>
               <div style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: 'rgba(239,233,220,0.58)', marginTop: 3, fontStyle: 'italic' }}>Offrir un refuge à quelqu'un que tu aimes</div>
             </div>
             <span style={{ fontSize: 14, color: `rgba(${arch.rgb},0.62)` }}>↗</span>
@@ -8577,7 +8577,7 @@ function SettingsScreen({ archetypeKey, onClose, onRestart, onRetakeQuiz }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, color: `rgba(${arch.rgb},0.70)`, letterSpacing: '0.24em', textTransform: 'uppercase', margin: 0 }}>À propos</p>
           <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '18px 20px' }}>
-            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.86)', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>« NÉYA est un refuge.<br />Pas une app de méditation. Pas un journal.<br />Juste un espace pour ce que tu ressens vraiment. »</p>
+            <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 300, fontSize: 14, color: 'rgba(239,233,220,0.86)', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>« ÇA VA ? est un refuge.<br />Pas une app de méditation. Pas un journal.<br />Juste un espace pour ce que tu ressens vraiment. »</p>
             <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${arch.color}44, transparent)`, margin: '14px 0' }} />
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, color: 'rgba(239,233,220,0.52)', margin: 0, letterSpacing: '0.04em' }}>Version 1.0 · Une extension de la marque ÇA VA?</p>
           </div>
@@ -8810,12 +8810,12 @@ function ShareArchetype({ archetypeKey, onClose }) {
         ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill()
       }
 
-      // Logo NÉYA
+      // Logo ÇA VA ?
       ctx.fillStyle = 'rgba(239,233,220,0.92)'
       ctx.font = '300 64px Sora, system-ui, sans-serif'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.fillText('NÉYA', W/2, 168)
+      ctx.fillText('ÇA VA ?', W/2, 168)
 
       // Eyebrow
       ctx.fillStyle = arch.color
@@ -8908,7 +8908,7 @@ function ShareArchetype({ archetypeKey, onClose }) {
         if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             files: [file],
-            title: 'Mon archétype NÉYA',
+            title: 'Mon archétype ÇA VA ?',
             text: `${arch.animal} · ${arch.profil}`,
           })
         } else {
@@ -9384,7 +9384,7 @@ function MainApp({ archetypeKey, onRestart, savedAt }) {
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false } }
   static getDerivedStateFromError() { return { hasError: true } }
-  componentDidCatch(err) { console.error('[NÉYA]', err) }
+  componentDidCatch(err) { console.error('[ÇA VA ?]', err) }
   render() {
     if (!this.state.hasError) return this.props.children
     return (
@@ -9408,7 +9408,7 @@ function ConsentToast() {
   return (
     <div role="dialog" aria-label="Consentement analytics" style={{ position: 'fixed', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 88px)', left: 12, right: 12, zIndex: 9500, background: 'rgba(5,8,16,0.94)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 10, animation: 'fadeIn 0.5s ease', boxShadow: '0 8px 32px rgba(0,0,0,0.55)' }}>
       <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, fontSize: 12, color: 'rgba(239,233,220,0.82)', flex: 1, lineHeight: 1.5 }}>
-        Pour améliorer NÉYA — un suivi anonyme de ton usage ? Aucun contenu personnel.
+        Pour améliorer ÇA VA ? — un suivi anonyme de ton usage ? Aucun contenu personnel.
       </span>
       <button onClick={() => { setConsent('no'); setShow(false) }} aria-label="Refuser le suivi" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 100, padding: '8px 14px', color: 'rgba(239,233,220,0.62)', fontFamily: 'Inter, sans-serif', fontSize: 12, cursor: 'pointer', minHeight: 36 }}>Non</button>
       <button onClick={() => { setConsent('yes'); setShow(false) }} aria-label="Accepter le suivi anonyme" style={{ background: 'rgba(99,102,241,0.88)', border: 'none', borderRadius: 100, padding: '8px 18px', color: '#EFE9DC', fontFamily: 'Inter, sans-serif', fontSize: 12, fontWeight: 600, cursor: 'pointer', minHeight: 36, boxShadow: '0 4px 14px rgba(99,102,241,0.42)' }}>OK</button>
@@ -9438,7 +9438,7 @@ function InstallPromptButton({ visible }) {
   return (
     <div style={{ position: 'fixed', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 132px)', right: 14, zIndex: 750, display: 'flex', alignItems: 'center', gap: 6, animation: 'fadeIn 0.6s ease 1.5s both' }}>
       <button onClick={dismiss} aria-label="Masquer la proposition d'installation" style={{ background: 'rgba(5,8,16,0.78)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: '50%', width: 28, height: 28, color: 'rgba(239,233,220,0.55)', fontSize: 13, lineHeight: 1, cursor: 'pointer', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>✕</button>
-      <button onClick={install} aria-label="Installer NÉYA sur cet appareil" style={{ background: 'rgba(99,102,241,0.92)', border: 'none', borderRadius: 100, padding: '10px 18px', color: '#EFE9DC', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 6px 24px rgba(99,102,241,0.45)', animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite', minHeight: 40 }}>Installer</button>
+      <button onClick={install} aria-label="Installer ÇA VA ? sur cet appareil" style={{ background: 'rgba(99,102,241,0.92)', border: 'none', borderRadius: 100, padding: '10px 18px', color: '#EFE9DC', fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer', boxShadow: '0 6px 24px rgba(99,102,241,0.45)', animation: 'milestoneGlow 4s cubic-bezier(0.45,0,0.55,1) infinite', minHeight: 40 }}>Installer</button>
     </div>
   )
 }
@@ -9461,7 +9461,7 @@ export default function App() {
   const [showCrisisFab, setShowCrisisFab] = useState(() => shouldShowCrisisFab())
   // Profil immersif : déclenché par tap avatar Hero
   const [profilOpen, setProfilOpen] = useState(false)
-  // Cocon : déclenché par bouton central BottomNav (logo NÉYA)
+  // Cocon : déclenché par bouton central BottomNav (logo ÇA VA ?)
   const [coconOpen, setCoconOpen] = useState(false)
 
   useEffect(() => {
@@ -9575,7 +9575,7 @@ export default function App() {
       if (days >= 3) setWelcomeBackDays(days)
       markVisitNow()
     } catch {}
-    // Crisis Mode : écoute event global déclenché par long-press logo NÉYA
+    // Crisis Mode : écoute event global déclenché par long-press logo ÇA VA ?
     const crisisHandler = () => setCrisisOpen(true)
     window.addEventListener('neya:crisis', crisisHandler)
     // Profil immersif : écoute event tap avatar Hero
@@ -9636,7 +9636,7 @@ export default function App() {
         {/* Profil immersif — espace personnel caché (accès via tap silhouette Hero) */}
         {profilOpen && archetype && <ProfilScreen archetypeKey={archetype} onClose={() => setProfilOpen(false)} onRestart={handleRestart} />}
 
-        {/* Cocon — accessible via bouton central BottomNav (logo NÉYA) */}
+        {/* Cocon — accessible via bouton central BottomNav (logo ÇA VA ?) */}
         {coconOpen && archetype && <CoconScreen archetypeKey={archetype} onClose={() => setCoconOpen(false)} />}
 
         <div style={{ position: 'fixed', inset: 0, background: 'var(--surface-void)', zIndex: 9999, opacity: blackout ? 1 : 0, transition: blackout ? 'opacity 0.36s ease' : 'opacity 0.28s ease', pointerEvents: blackout ? 'all' : 'none' }} />

@@ -1,4 +1,4 @@
-// NÉYA — Community system (anonyme, asynchrone, non-toxique)
+// ÇA VA ? — Community system (anonyme, asynchrone, non-toxique)
 //
 // Architecture backend-ready : les fonctions exportées sont des stubs locaux
 // (localStorage + seed data) qui pourront être remplacés par des appels API

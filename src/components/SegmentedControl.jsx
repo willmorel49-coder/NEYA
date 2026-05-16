@@ -1,5 +1,5 @@
 /* ============================================================
-   SegmentedControl — NÉYA Design System v2 · Apple iOS HIG
+   SegmentedControl — ÇA VA ? Design System v2 · Apple iOS HIG
    ============================================================
    Apple iOS-13+ style segmented control : grouped horizontal
    strip with a single sliding indicator highlighting the

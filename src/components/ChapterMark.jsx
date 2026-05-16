@@ -1,5 +1,5 @@
 /* ============================================================
-   ChapterMark — NÉYA Design System v2
+   ChapterMark — ÇA VA ? Design System v2
    ============================================================
    Validates Do's :
    - Mark token : Sora 9px UPPERCASE +2px tracking, weight 500 ✓

@@ -1,0 +1,362 @@
+/*
+ * ÇA VA? — COMPOSANTS CSS
+ * Copier-coller dans le projet
+ * Version 3.0 — Palette bleu/rose définitive
+ */
+
+/* ══════════════════════════════════
+   FONTS
+══════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ══════════════════════════════════
+   VARIABLES
+══════════════════════════════════ */
+:root {
+  --bg:             #EEF3F8;
+  --bg-dark:        #0A2438;
+
+  --blue-900:       #0A2438;
+  --blue-700:       #1A5A7F;
+  --blue-500:       #6F9DB5;
+  --blue-300:       #C2D8E8;
+  --blue-100:       #E8F2F8;
+
+  --rose-700:       #C87090;
+  --rose-500:       #E8A0B8;
+  --rose-300:       #F5C8D8;
+  --rose-100:       #FDE8F0;
+
+  --violet:         #7F5A8A;
+
+  --gradient-main:  linear-gradient(135deg, #1A5A7F, #7F5A8A, #C87090);
+  --gradient-blue:  linear-gradient(135deg, #1A5A7F, #2A8ABF);
+  --gradient-rose:  linear-gradient(135deg, #C87090, #E080A8);
+
+  --text-primary:   #0A2438;
+  --text-secondary: #4A6070;
+  --text-muted:     #8AAABB;
+
+  --glass-bg:       rgba(255,255,255,0.65);
+  --glass-border:   rgba(255,255,255,0.85);
+}
+
+/* ══════════════════════════════════
+   RESET & BASE
+══════════════════════════════════ */
+* {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  color: var(--text-primary);
+}
+
+/* ══════════════════════════════════
+   GLASSMORPHISM
+══════════════════════════════════ */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(10,36,56,0.07);
+}
+
+.glass-dark {
+  background: rgba(10,36,56,0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+}
+
+/* ══════════════════════════════════
+   BLOBS
+══════════════════════════════════ */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+.blob-rose {
+  background: radial-gradient(circle, rgba(200,112,144,0.20) 0%, transparent 70%);
+}
+
+.blob-blue {
+  background: radial-gradient(circle, rgba(26,90,127,0.18) 0%, transparent 70%);
+}
+
+.blob-violet {
+  background: radial-gradient(circle, rgba(127,90,138,0.15) 0%, transparent 70%);
+}
+
+/* ══════════════════════════════════
+   TYPOGRAPHIE
+══════════════════════════════════ */
+.title-display {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--text-primary);
+  line-height: 1.05;
+}
+
+.title-xl  { font-size: 52px; }
+.title-lg  { font-size: 42px; }
+.title-md  { font-size: 32px; }
+.title-sm  { font-size: 24px; }
+
+.label-tag {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.label-tag-blue   { color: var(--blue-500); }
+.label-tag-rose   { color: var(--rose-700); }
+.label-tag-violet { color: var(--violet); }
+
+.body-text {
+  font-size: 13px;
+  line-height: 1.72;
+  color: var(--text-secondary);
+  font-weight: 300;
+}
+
+/* ══════════════════════════════════
+   BOUTONS
+══════════════════════════════════ */
+.btn {
+  border: none;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 15px 24px;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-blue {
+  background: var(--gradient-blue);
+  color: white;
+  box-shadow: 0 8px 24px rgba(26,90,127,0.30);
+}
+
+.btn-rose {
+  background: var(--gradient-rose);
+  color: white;
+  box-shadow: 0 8px 24px rgba(200,112,144,0.30);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--blue-300);
+  color: var(--blue-700);
+}
+
+/* INTERDIT : btn dark #0A2438 comme CTA positif */
+
+/* ══════════════════════════════════
+   NAVBAR
+══════════════════════════════════ */
+.navbar {
+  position: absolute;
+  bottom: 12px; left: 14px; right: 14px;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 30px;
+  padding: 12px 8px 10px;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0 8px 32px rgba(10,36,56,0.10);
+  z-index: 30;
+}
+
+.nav-item {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  flex: 1; cursor: pointer;
+  position: relative; padding-top: 5px;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 18px; height: 2.5px;
+  background: linear-gradient(90deg, #1A5A7F, #C87090);
+  border-radius: 2px;
+}
+
+.nav-icon { font-size: 17px; color: var(--blue-300); line-height: 1; }
+.nav-lbl  { font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-300); font-weight: 500; }
+.nav-item.active .nav-icon { color: var(--blue-700); }
+.nav-item.active .nav-lbl  { color: var(--blue-700); }
+
+/* ══════════════════════════════════
+   SOS BUTTON
+══════════════════════════════════ */
+.sos-btn {
+  background: var(--rose-700);
+  color: white;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 9px 18px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(200,112,144,0.35);
+}
+
+/* ══════════════════════════════════
+   IMAGES ILLUSTRATIVES
+══════════════════════════════════ */
+.illo-container {
+  margin: 0 16px;
+  border-radius: 24px;
+  overflow: hidden;
+  height: 220px;      /* MAX — jamais toute la hauteur d'écran */
+  position: relative;
+  flex-shrink: 0;
+}
+
+.illo-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 30%,
+    rgba(10,36,56,0.65) 100%
+  );
+}
+
+/* ══════════════════════════════════
+   PILIERS
+══════════════════════════════════ */
+.pilier-card {
+  padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+
+.pilier-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; border-radius: 0 2px 2px 0;
+}
+
+.pilier-01::before { background: var(--gradient-blue); }
+.pilier-02::before { background: var(--gradient-rose); }
+.pilier-03::before { background: linear-gradient(to bottom, var(--violet), #AF80BA); }
+
+.pilier-num {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 600; color: white;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; flex-shrink: 0;
+}
+
+.pilier-01 .pilier-num { background: var(--gradient-blue); box-shadow: 0 4px 12px rgba(26,90,127,0.30); }
+.pilier-02 .pilier-num { background: var(--gradient-rose); box-shadow: 0 4px 12px rgba(200,112,144,0.30); }
+.pilier-03 .pilier-num { background: linear-gradient(135deg,#7F5A8A,#AF80BA); box-shadow: 0 4px 12px rgba(127,90,138,0.30); }
+
+.pilier-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 21px; font-style: italic; font-weight: 300;
+  color: var(--text-primary); margin-bottom: 2px;
+}
+.pilier-desc { font-size: 11px; color: var(--text-muted); font-weight: 300; }
+.pilier-arrow { color: var(--blue-300); font-size: 20px; margin-left: auto; }
+
+/* ══════════════════════════════════
+   FEED VOIX
+══════════════════════════════════ */
+.voice-card { padding: 16px 18px; position: relative; overflow: hidden; }
+
+.voice-card.accent-rose::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--gradient-rose); border-radius:0 2px 2px 0; }
+.voice-card.accent-blue::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--gradient-blue); border-radius:0 2px 2px 0; }
+
+.voice-name { font-family:'Cormorant Garamond',serif; font-size:16px; font-style:italic; font-weight:300; color:var(--text-primary); }
+.voice-time { font-size:10px; color:var(--text-muted); font-weight:300; }
+.voice-text { font-size:13px; color:var(--text-secondary); line-height:1.72; font-weight:300; margin:8px 0 12px; }
+.reaction   { font-size:11px; color:var(--blue-300); cursor:pointer; font-weight:400; }
+
+/* ══════════════════════════════════
+   RITUELS
+══════════════════════════════════ */
+.rituel-progress {
+  height: 2px;
+  background: var(--blue-100);
+  position: relative;
+}
+.rituel-progress-bar {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: var(--gradient-blue);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.rituel-question {
+  border-radius: 16px;
+  padding: 16px 18px;
+  border-left: 3px solid var(--blue-300); /* couleur du pilier */
+}
+
+.rituel-citation {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-style: italic; font-weight: 300;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0 24px;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════
+   PERSONNAGE — HALO
+══════════════════════════════════ */
+.char-halo {
+  position: absolute; bottom: -10px; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 40px;
+  background: radial-gradient(ellipse, rgba(18,196,176,0.30) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: halo-pulse 4s ease-in-out infinite;
+}
+
+@keyframes halo-pulse {
+  0%,100% { opacity:0.5; transform:translateX(-50%) scale(1); }
+  50%      { opacity:1;   transform:translateX(-50%) scale(1.15); }
+}
+
+/* ══════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════ */
+@keyframes fade-in {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.fade-in { animation: fade-in 0.4s ease forwards; }
+.fade-in-delay-1 { animation-delay: 0.1s; opacity:0; }
+.fade-in-delay-2 { animation-delay: 0.2s; opacity:0; }
+.fade-in-delay-3 { animation-delay: 0.3s; opacity:0; }
+
+/* Safe areas iOS */
+.navbar-wrap { padding-bottom: env(safe-area-inset-bottom); }

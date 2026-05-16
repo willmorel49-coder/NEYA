@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA — Aventure Temple des Parts (parcours narratif interactif)
+   ÇA VA ? — Aventure Temple des Parts (parcours narratif interactif)
    ============================================================
    Théme : accepter ses contradictions, tenir ses parts ensemble.
    Totem : Ours polaire.

@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — App Root (Shell + 3 tabs)
+   ÇA VA ? V2 — App Root (Shell + 3 tabs)
    ============================================================
    Onboarding (premier launch) → Shell avec 3 tabs :
      Aventure (default) · Cocon · Communauté

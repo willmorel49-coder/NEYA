@@ -1,4 +1,4 @@
-// Italique léger sur 2-4 mots-clés par bloc — signature NÉYA (Fraunces italic SOFT).
+// Italique léger sur 2-4 mots-clés par bloc — signature ÇA VA ? (Fraunces italic SOFT).
 // Format de paragraphe : array de tokens. Token = string OU { em: string }.
 
 export const ONBOARDING_SCREENS = [
@@ -78,7 +78,7 @@ export const ONBOARDING_SCREENS = [
       '.',
     ],
     signature: [
-      'NÉYA — ',
+      'ÇA VA ? — ',
       { em: 'L’application faite pour ceux qui disent « ça va » quand ça ne va pas.' },
     ],
   },

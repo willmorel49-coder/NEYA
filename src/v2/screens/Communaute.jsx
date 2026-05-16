@@ -1,7 +1,7 @@
 /* ============================================================
-   NÉYA V4 — Communauté plein écran painterly
+   ÇA VA ? V4 — Communauté plein écran painterly
    ============================================================
-   Hero NÉYA + 4 sections :
+   Hero ÇA VA ? + 4 sections :
      1. Question du jour       (réponses + écho)
      2. Voix qui passent        (fil anonyme + réactions)
      3. Mon cercle proche       (7 max)
@@ -284,7 +284,7 @@ export default function Communaute() {
             className="neya-mark"
             style={{ color: '#FBF6E8', opacity: 0.95, marginBottom: 12, fontSize: 9, fontWeight: 600, textShadow: '0 1px 6px rgba(0, 0, 0, 0.5)' }}
           >
-            COMMUNAUTÉ NÉYA
+            COMMUNAUTÉ ÇA VA ?
           </div>
           <h1
             style={{

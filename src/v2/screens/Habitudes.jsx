@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — Habitudes (overlay rituels du jour, LIGHT MODE)
+   ÇA VA ? V2 — Habitudes (overlay rituels du jour, LIGHT MODE)
    ============================================================
    Cinq-six gestes simples. Tap → toggle done/undone.
    Respiration → ouvre BreathingCircle via onOpenMeditation.

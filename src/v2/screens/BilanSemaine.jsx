@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — Bilan de la semaine (overlay contemplatif hebdo)
+   ÇA VA ? V2 — Bilan de la semaine (overlay contemplatif hebdo)
    ============================================================
    4 questions plus profondes que le Bilan du soir.
    Posées une à une, sans analyse, sans comparaison.

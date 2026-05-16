@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA — Mondes émotionnels (parcours initiatique)
+   ÇA VA ? — Mondes émotionnels (parcours initiatique)
    ============================================================
    6 mondes, chacun = un voyage à étapes narratives.
    3 mondes complets en V1 (Forêt, Temple, Oasis).

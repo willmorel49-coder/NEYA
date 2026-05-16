@@ -62,7 +62,7 @@ export default function PreviewV2() {
               fontWeight: 'var(--weight-medium)',
             }}
           >
-            NÉYA · Design System v2 · Preview
+            ÇA VA ? · Design System v2 · Preview
           </div>
           <h1
             style={{

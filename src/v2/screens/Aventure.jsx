@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V5 — Aventure (hub gamifié painterly)
+   ÇA VA ? V5 — Aventure (hub gamifié painterly)
    ============================================================
    Salle de gym mentale + voyage initiatique.
    Structure : hub d'accueil avec 3 piliers visuels.
@@ -361,7 +361,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               <path d="M22 26 C 32 22, 34 14, 22 8" stroke="#FBF6E8" strokeWidth="0.6" fill="none" opacity="0.7" />
             </svg>
             <span style={{ fontFamily: 'var(--font-ui)', fontSize: 9, letterSpacing: '0.42em', fontWeight: 500, color: '#FBF6E8', opacity: 0.78 }}>
-              NÉYA
+              ÇA VA ?
             </span>
           </div>
           <button

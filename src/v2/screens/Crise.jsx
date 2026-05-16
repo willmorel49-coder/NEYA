@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V3 — Crise (écran d'apaisement immersif)
+   ÇA VA ? V3 — Crise (écran d'apaisement immersif)
    ============================================================
    Un seul écran, pas de phases multiples. Conçu pour couper
    une crise d'angoisse en quelques minutes.

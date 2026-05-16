@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — ÇA VA? · ProductDetail (slide-up sheet)
+   ÇA VA ? V2 — ÇA VA? · ProductDetail (slide-up sheet)
    ============================================================
    Inspection produit boutique. Light cream + palette ÇA VA?.
    Image 4:5 top 50%, info zone (tagline caps · titre Fraunces ·

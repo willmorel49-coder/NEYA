@@ -1,5 +1,5 @@
 /* ============================================================
-   HeroTitle — NÉYA Design System v2
+   HeroTitle — ÇA VA ? Design System v2
    ============================================================
    Validates Do's :
    - em-dash eyebrow ("— L'ÉVEIL") in content-accent-dawn or

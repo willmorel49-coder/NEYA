@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V3 — Patronus reveal (archétype celebration)
+   ÇA VA ? V3 — Patronus reveal (archétype celebration)
    ============================================================
    3-phase celebratory reveal triggered once after Onboarding.
    - Phase 1 (0 → 1.8s)  : spirit photo + archetype label

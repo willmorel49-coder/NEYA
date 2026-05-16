@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — useSwipeToDismiss
+   ÇA VA ? V2 — useSwipeToDismiss
    ============================================================
    Pure-JS hook iOS HIG : drag-down to dismiss sheet.
    - Threshold ~120px OR velocity > 0.5 px/ms → onClose()

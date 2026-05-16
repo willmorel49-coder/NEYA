@@ -1,4 +1,4 @@
-// NÉYA — Motion system (Apple/Linear/Arc-grade).
+// ÇA VA ? — Motion system (Apple/Linear/Arc-grade).
 // Centralise easings + durations + press feedback global via Web Animations API.
 
 export const easing = {

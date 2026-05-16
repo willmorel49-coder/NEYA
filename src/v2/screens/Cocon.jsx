@@ -1,9 +1,9 @@
 /* ============================================================
-   NÉYA V5 — Cocon plein écran painterly personnalisable
+   ÇA VA ? V5 — Cocon plein écran painterly personnalisable
    ============================================================
    Sanctuaire perso : image au choix, ambiance au choix,
    musique au choix. Texte blanc en surimpression.
-   Vision inspirée du MVP NÉYA original.
+   Vision inspirée du MVP ÇA VA ? original.
    ============================================================ */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
@@ -266,7 +266,7 @@ export default function Cocon() {
               textShadow: '0 1px 6px rgba(0, 0, 0, 0.42)',
             }}
           >
-            NÉYA
+            ÇA VA ?
           </span>
         </div>
         <button
@@ -521,7 +521,7 @@ export default function Cocon() {
                 marginTop: 2,
               }}
             >
-              NÉYA
+              ÇA VA ?
             </div>
           </div>
           <span
@@ -545,7 +545,7 @@ export default function Cocon() {
           type="button"
           onClick={() => { haptic(4); setMusiqueOpen(true); }}
           data-press
-          aria-label="Ouvrir la musique de NÉYA"
+          aria-label="Ouvrir la musique de ÇA VA ?"
           style={{
             position: 'absolute',
             left: '50%',

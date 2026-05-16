@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — MilestoneToast (discrete presence acknowledgment)
+   ÇA VA ? V2 — MilestoneToast (discrete presence acknowledgment)
    ============================================================
    Anti-toxic. No flame, no XP, no level, no progress bar.
    Just a short, soft moment that reconnaît la présence —

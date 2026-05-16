@@ -1,4 +1,4 @@
-// Analytics wrapper NÉYA — privacy-first, opt-in, EU only.
+// Analytics wrapper ÇA VA ? — privacy-first, opt-in, EU only.
 // Lazy-loading: posthog-js (190 kB) chargé UNIQUEMENT si consent='yes' + clé présente.
 //
 // Activation production:
@@ -96,7 +96,7 @@ export function track(event, props = {}) {
   }
 }
 
-// ─── Helpers spécifiques NÉYA ───────────────────
+// ─── Helpers spécifiques ÇA VA ? ───────────────────
 
 export function trackAppOpen(isFirstSession) {
   track('app_open', { is_first_session: !!isFirstSession })

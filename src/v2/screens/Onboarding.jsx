@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V3.2 — Onboarding (crossfade overlapping 2-layer)
+   ÇA VA ? V3.2 — Onboarding (crossfade overlapping 2-layer)
    ============================================================
    Refactor : pendant transition entre 2 questions, les DEUX
    couches sont rendues simultanément avec opacity opposée

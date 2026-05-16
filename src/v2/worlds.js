@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V3 — 6 mondes (light-mode, palette ÇA VA? unifiée)
+   ÇA VA ? V3 — 6 mondes (light-mode, palette ÇA VA? unifiée)
    ============================================================
    Plus de photos full-bleed — chaque monde a son wash pastel
    (radial gradients sur cream) + son accent ÇA VA?.

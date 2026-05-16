@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — Aide & Ressources
+   ÇA VA ? V2 — Aide & Ressources
    ============================================================
    Premise : users may be mentally suffering. Push toward real
    professional help (3114, SOS Amitié, 3919) without shaming

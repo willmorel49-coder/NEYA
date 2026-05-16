@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — Carnet (journal privé, LIGHT MODE)
+   ÇA VA ? V2 — Carnet (journal privé, LIGHT MODE)
    ============================================================
    Espace d'écriture privé. Une entrée par jour, mergeable.
    Aucune analyse, aucun envoi. localStorage uniquement.

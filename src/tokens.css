@@ -1,52 +1,100 @@
 /* ============================================================
-   NÉYA — V3 Light · Direction Artistique ÇA VA?
+   ÇA VA ? — V4 Pivot · Palette bleu/rose · Glassmorphism
    ============================================================
-   Pivot : light-mode first. Cream ivoire + palette ÇA VA? (D.A
-   officielle 2026) + pastel gradient washes par monde. Aligné
-   avec les inspirations Will (Sleepiest, Meditation Reminder,
-   Soft & Inviting, copies 3/4/5, Therapist Brand).
+   Pivot post-NÉYA : palette définitive bleu/rose + glassmorphism
+   partout + Cormorant Garamond italic + Inter. Voir CLAUDE.md
+   dans /NOUVELLE DA/ pour le détail complet.
 
-   La sœur NÉYA + ÇA VA? partagent la même palette = écosystème
-   visuel unifié. Plus de scission dark/cream.
+   Les anciens tokens (--cream, --ink, --terracotta, --tilleul…)
+   sont REMAPPÉS vers la nouvelle palette pour ne pas casser les
+   écrans en attendant leur refonte. Une fois tous les écrans
+   migrés vers les nouveaux tokens --bg, --blue-*, --rose-*, le
+   layer legacy peut être supprimé.
    ============================================================ */
 
 :root {
 
-  /* ── PALETTE BASE — ÇA VA? D.A. officielle ───────────────── */
-  --cream:          #FBF6E8;       /* base canvas (ivoire chaud) */
-  --cream-light:    #FFFCF5;       /* surface cards éclairées */
-  --cream-dim:      #F0EBDD;       /* surface alternative */
-  --ink:            #1A1A2F;       /* deep navy text (pas pur noir) */
-  --ink-soft:       #4A4A5F;       /* secondary text */
-  --ink-whisper:    #7A7A8C;       /* tertiary */
-  --ink-faint:      #B0B0BC;       /* very faint */
+  /* ════════════════════════════════════════════════════════════
+     NOUVELLE PALETTE — autoritative (D.A. ÇA VA? v3)
+     ════════════════════════════════════════════════════════════ */
+  --bg:             #EEF3F8;      /* fond principal — gris-bleu clair */
+  --bg-dark:        #0A2438;      /* sections dark (hero boutique) */
 
-  /* Accents — D.A. ÇA VA? unifié sur tout l'écosystème */
-  --terracotta:     #9F584C;       /* passion, vie, sang */
-  --ochre:          #C29051;       /* chaleur tissu, broderie */
-  --emerald:        #34917F;       /* racines, grounding */
-  --sage:           #9AAFA0;       /* sérénité, eucalyptus */
-  --mist-blue:      #7397BC;       /* pont chromatique NÉYA <-> CAVA */
-  --tilleul:        #D4E08C;       /* présence vitale (rare, précieux) */
+  --blue-900:       #0A2438;      /* texte principal, dark bg */
+  --blue-700:       #1A5A7F;      /* CTA primaire, accents forts */
+  --blue-500:       #6F9DB5;      /* accents moyens, tags */
+  --blue-300:       #C2D8E8;      /* bordures, icônes inactives */
+  --blue-100:       #E8F2F8;      /* fonds légers */
 
-  /* Soft pastel washes — pour les fonds dégradés par moment */
-  --wash-peach:     #FBE8D8;       /* dawn warmth */
-  --wash-rose:      #F4D4D4;       /* tendresse */
-  --wash-lavender:  #DDD4EC;       /* introspection */
-  --wash-azure:     #D6E3EE;       /* presence */
-  --wash-sage:      #DCE6DE;       /* grounding */
-  --wash-cream:     #F8F2E0;       /* default warm */
+  --rose-700:       #C87090;      /* CTA émotionnel, SOS, accents chauds */
+  --rose-500:       #E8A0B8;      /* accents doux */
+  --rose-300:       #F5C8D8;      /* blobs, fonds */
+  --rose-100:       #FDE8F0;      /* fonds très légers */
 
-  /* Hairlines & borders sur cream */
-  --hairline:       rgba(26, 26, 47, 0.08);
-  --hairline-strong: rgba(26, 26, 47, 0.15);
-  --hairline-faint: rgba(26, 26, 47, 0.04);
+  --violet:         #7F5A8A;      /* pilier 03, transition bleu↔rose */
+  --teal-hair:      #12C4B0;      /* signature personnage (cheveux teal) */
 
-  /* Semantic */
-  --success:        #34917F;       /* emerald */
-  --warning:        #C29051;       /* ochre */
-  --crisis:         #9F584C;       /* terracotta */
-  --info:           #7397BC;       /* mist-blue */
+  --gradient-main:  linear-gradient(135deg, #1A5A7F, #7F5A8A, #C87090);
+  --gradient-blue:  linear-gradient(135deg, #1A5A7F, #2A8ABF);
+  --gradient-rose:  linear-gradient(135deg, #C87090, #E080A8);
+  --gradient-violet:linear-gradient(135deg, #7F5A8A, #AF80BA);
+
+  --text-primary:   #0A2438;
+  --text-secondary: #4A6070;
+  --text-muted:     #8AAABB;
+
+  --glass-bg:       rgba(255, 255, 255, 0.65);
+  --glass-bg-strong:rgba(255, 255, 255, 0.78);
+  --glass-bg-dark:  rgba(10, 36, 56, 0.6);
+  --glass-border:   rgba(255, 255, 255, 0.85);
+  --glass-border-dark: rgba(255, 255, 255, 0.10);
+  --glass-shadow:   0 4px 24px rgba(10, 36, 56, 0.07);
+  --glass-shadow-deep: 0 8px 32px rgba(10, 36, 56, 0.10);
+  --glass-blur:     blur(24px);
+  --navbar-blur:    blur(20px);
+
+  /* Blob backgrounds */
+  --blob-rose-rgba: rgba(200, 112, 144, 0.20);
+  --blob-blue-rgba: rgba(26, 90, 127, 0.18);
+  --blob-violet-rgba: rgba(127, 90, 138, 0.15);
+
+
+  /* ════════════════════════════════════════════════════════════
+     LEGACY MAPPING — anciens tokens remappés vers nouveaux
+     (à supprimer une fois tous les écrans migrés)
+     ════════════════════════════════════════════════════════════ */
+  --cream:          #EEF3F8;       /* → bg principal */
+  --cream-light:    #FFFFFF;       /* → surface cards (sera glassmorphism) */
+  --cream-dim:      #E8F2F8;       /* → blue-100 */
+  --ink:            #0A2438;       /* → blue-900 / text-primary */
+  --ink-soft:       #4A6070;       /* → text-secondary */
+  --ink-whisper:    #8AAABB;       /* → text-muted */
+  --ink-faint:      #C2D8E8;       /* → blue-300 */
+
+  /* Anciens accents → remappés sur palette bleu/rose */
+  --terracotta:     #C87090;       /* → rose-700 (CTA émotionnel/SOS) */
+  --ochre:          #1A5A7F;       /* → blue-700 (CTA primaire) */
+  --emerald:        #1A5A7F;       /* → blue-700 */
+  --sage:           #6F9DB5;       /* → blue-500 */
+  --mist-blue:      #6F9DB5;       /* → blue-500 */
+  --tilleul:        #7F5A8A;       /* → violet (présence) */
+
+  /* Anciens washes → blobs / fonds glass */
+  --wash-peach:     #FDE8F0;       /* → rose-100 */
+  --wash-rose:      #FDE8F0;       /* → rose-100 */
+  --wash-lavender:  #F5C8D8;       /* → rose-300 */
+  --wash-azure:     #E8F2F8;       /* → blue-100 */
+  --wash-sage:      #C2D8E8;       /* → blue-300 */
+  --wash-cream:     #FFFFFF;
+
+  --hairline:        rgba(10, 36, 56, 0.08);
+  --hairline-strong: rgba(10, 36, 56, 0.15);
+  --hairline-faint:  rgba(10, 36, 56, 0.04);
+
+  --success:        #1A5A7F;
+  --warning:        #C87090;
+  --crisis:         #C87090;
+  --info:           #6F9DB5;
 
 
   /* ── SURFACES ───────────────────────────────────────────── */
@@ -64,9 +112,9 @@
   --content-accent-night:   var(--mist-blue);
 
 
-  /* ── TYPOGRAPHY ─────────────────────────────────────────── */
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-ui:      'Sora', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  /* ── TYPOGRAPHY (pivot V3 — Cormorant Garamond + Inter) ──── */
+  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-ui:      'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
   --font-mono:    ui-monospace, 'SF Mono', Menlo, monospace;
 

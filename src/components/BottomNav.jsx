@@ -1,5 +1,5 @@
 /* ============================================================
-   BottomNav — NÉYA V3 (LIGHT MODE, pearl glass)
+   BottomNav — ÇA VA ? V3 (LIGHT MODE, pearl glass)
    ============================================================
    4 tabs floating cream glass · backdrop-filter blur 20 ·
    ink text · sliding accent indicator + optional badges.

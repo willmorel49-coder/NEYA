@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V7 — ÇA VA? condensé + storytelling officiel
+   ÇA VA ? V7 — ÇA VA? condensé + storytelling officiel
    ============================================================
    Page courte (8 blocs), pas de scroll infini.
    Le storytelling se RÉVÈLE par phrases-clés brèves placées

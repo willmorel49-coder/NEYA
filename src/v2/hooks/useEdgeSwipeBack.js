@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V2 — useEdgeSwipeBack
+   ÇA VA ? V2 — useEdgeSwipeBack
    ============================================================
    Pure-JS hook iOS HIG : left-edge swipe-back to dismiss overlay.
    - Gesture only initiates if touch/click starts within `edgeWidth`

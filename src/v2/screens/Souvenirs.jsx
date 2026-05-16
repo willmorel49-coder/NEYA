@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V3 — Souvenirs (collection memory archive)
+   ÇA VA ? V3 — Souvenirs (collection memory archive)
    ============================================================
    Affiche les traces collectées des rituels passés.
    Pas de score, pas de classement — uniquement des passages.

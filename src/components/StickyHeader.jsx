@@ -1,5 +1,5 @@
 /* ============================================================
-   NÉYA V3 — StickyHeader (iOS HIG large title nav)
+   ÇA VA ? V3 — StickyHeader (iOS HIG large title nav)
    ============================================================
    Sticky compressed large title pattern :
    - At rest : large Fraunces italic title + optional eyebrow + subtitle
