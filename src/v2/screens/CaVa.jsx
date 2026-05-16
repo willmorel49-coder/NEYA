@@ -1,1325 +1,98 @@
 /* ============================================================
-   NÉYA V2 — ÇA VA? (boutique capsule clothing)
+   NÉYA V4.2 — ÇA VA? page-marque magazine storytelling
    ============================================================
-   Light cream palette (rupture totale avec NÉYA dark cosmic).
-   Header "ÇA VA?" Fraunces italic + tagline manifeste.
-   3 passes : Libre (warm) · Ça Va (blue) · Vraiment ? (purple).
-   3 capsules grid avec identité couleur + produits placeholder.
-   Cart slide-in droite avec total + Passer commande.
+   120 photos shootées sur 4 continents, séquencées en
+   narrative éditoriale type magazine. Scroll vertical immersif.
+   ============================================================
+   I.   HERO            — full-screen photo rotation + ÇA VA?
+   II.  MANIFESTE       — 4 piliers + raison d'être
+   III. LES VOIX        — citations italic + spreads photo
+   IV.  LA GALERIE      — 108 regards en grid asymétrique
+   V.   CTA EXTERNE     — cava-brand.com
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
-import { ls, haptic, getProfile } from '../state';
-import Button from '../../components/Button';
-import ProductDetail from './ProductDetail';
-import Manifeste from './Manifeste';
-import Lookbook from './Lookbook';
+import { haptic } from '../state';
 
-const HERO_PHOTOS = [
-  { src: '/cava/brand/hero-01.jpg', place: 'Séoul', message: "It's ok not to be ok." },
-  { src: '/cava/brand/hero-02.jpg', place: 'Santorini', message: 'On ne peut pas toujours aller bien. Mais on peut toujours en parler.' },
-  { src: '/cava/brand/hero-03.jpg', place: 'Tokyo · Shibuya', message: 'Au milieu du bruit, poser la question.' },
+const TOTAL = 120;
+const PHOTO = (n) => `/cava/brand/cava-${String(n).padStart(3, '0')}.jpg`;
+
+const HERO_PHOTOS = [1, 7, 60, 75];
+
+const STATEMENT_QUOTES = [
+  { idx: 7,   place: 'Santorini', quote: 'On ne peut pas toujours aller bien. Mais on peut toujours en parler.' },
+  { idx: 40,  place: 'Patmos',    quote: 'Le chemin existe, même quand on ne le voit pas.' },
+  { idx: 90,  place: 'Italie',    quote: 'Même si le bonheur vous oublie un peu, ne l\'oubliez jamais complètement.' },
+  { idx: 105, place: 'Marrakech', quote: 'Je garde la pêche en public, je craque en silence.' },
 ];
 
-const MOUVEMENT = [
+const PILIERS = [
   { mark: '01', title: 'Destigmatiser', body: 'Sortir la santé mentale du silence. La rendre visible, portable, partageable.' },
   { mark: '02', title: 'Soutenir',      body: '1€ reversé sur chaque pièce à des associations de santé mentale.' },
   { mark: '03', title: 'Écouter',       body: 'Faire de la mode un langage qui libère la parole. Parlons-en.' },
   { mark: '04', title: 'Prendre soin',  body: 'Slow fashion. Quantités limitées. Du sens à chaque pièce.' },
 ];
 
-const EDITORIAL_PREVIEW = Array.from({ length: 8 }, (_, i) => `/cava/brand/editorial-${String(i + 1).padStart(2, '0')}.jpg`);
-
-const PASSES = [
-  { key: 'libre',    label: 'Libre',     priceY: 'Gratuit',     discount: 0,  color: 'var(--cava-warm)' },
-  { key: 'cava',     label: 'Ça Va',     priceY: '9,90 €/an',   discount: 10, color: 'var(--cava-blue)' },
-  { key: 'vraiment', label: 'Vraiment ?', priceY: '24,90 €/an', discount: 25, color: 'var(--cava-purple)' },
-];
-
-// Agent E — Pass Vraiment? offert au 30e jour de présence sur NÉYA
-const PASS_UNLOCK_THRESHOLD = 30;
-function isPassUnlocked(passKey, joursConnectes) {
-  if (passKey === 'libre') return true;
-  if (passKey === 'cava') return true;     // payant, dispo a tout moment
-  if (passKey === 'vraiment') return joursConnectes >= PASS_UNLOCK_THRESHOLD;
-  return false;
-}
-function passLabel(pass, joursConnectes) {
-  if (pass.key !== 'vraiment') return pass.priceY;
-  if (joursConnectes >= PASS_UNLOCK_THRESHOLD) return 'Offert · ta présence';
-  return `${pass.priceY} (à 30 j)`;
-}
-
-const CAPSULES = [
-  {
-    key: 'libre',
-    name: 'Libre',
-    accent: 'var(--cava-warm)',
-    accentSoft: 'rgba(212, 152, 128, 0.18)',
-    tagline: 'Pour ceux qui se relèvent.',
-    cover: '/cava/capsules/capsule-libre.png',
-    products: [
-      { id: 'libre-hoodie', name: 'Hoodie Visage',         price: 89, image: '/cava/products/libre-hoodie.jpg', motif: 'Broderie main · visage cyan' },
-      { id: 'libre-pull',   name: 'Pull Mains de feu',     price: 95, image: '/cava/products/libre-pull.jpg',   motif: 'Mains brodées + soleil jaune' },
-      { id: 'libre-tshirt', name: 'T-shirt Cœur fissuré',  price: 49, image: '/cava/products/libre-tshirt.jpg', motif: 'Cœur brodé + gants colorés' },
-    ],
-  },
-  {
-    key: 'cava',
-    name: 'Ça Va',
-    accent: 'var(--cava-blue)',
-    accentSoft: 'rgba(93, 123, 184, 0.18)',
-    tagline: 'Pour ceux qui n’ont pas besoin de mentir.',
-    cover: '/cava/capsules/capsule-cava.png',
-    products: [
-      { id: 'cava-hoodie', name: 'Hoodie Œil bleu',  price: 95, image: '/cava/products/cava-hoodie.jpg', motif: 'Œil bleu brodé · vert émeraude' },
-      { id: 'cava-sweat',  name: 'Sweat Patches',    price: 95, image: '/cava/products/cava-sweat.jpg',  motif: 'Yeux + soleil + fleurs cousus' },
-      { id: 'cava-tee',    name: 'Tee Soleil doré',  price: 45, image: '/cava/products/cava-tee.jpg',    motif: 'Soleil brodé doré · marine' },
-    ],
-  },
-  {
-    key: 'vraiment',
-    name: 'Vraiment ?',
-    accent: 'var(--cava-purple)',
-    accentSoft: 'rgba(61, 47, 107, 0.18)',
-    tagline: 'Pour ceux qui osent la question.',
-    cover: '/cava/capsules/capsule-vraiment.png',
-    products: [
-      { id: 'vr-tshirt',   name: 'T-shirt CA VA',     price: 49, image: '/cava/products/vr-tshirt.jpg', motif: 'Cœur-visage cousu cyan · noir' },
-      { id: 'vr-pull',     name: 'Pull Lèvres cousues', price: 99, image: '/cava/products/vr-pull.jpg',   motif: 'Bouche brodée noir + or' },
-      { id: 'vr-tote',     name: 'Tote CA VA Or',     price: 39, image: '/cava/products/vr-tote.jpg',   motif: 'CA VA? or sur toile noire' },
-    ],
-  },
-];
-
-function loadCart() {
-  return ls.get('cava_cart', []);
-}
-function saveCart(items) {
-  ls.set('cava_cart', items);
-}
-function loadActivePass() {
-  return ls.get('cava_pass', 'libre');
-}
-function saveActivePass(key) {
-  ls.set('cava_pass', key);
-}
+const NARRATIVE_USED = new Set([...HERO_PHOTOS, ...STATEMENT_QUOTES.map((s) => s.idx)]);
+const GALLERY_INDICES = Array.from({ length: TOTAL }, (_, i) => i + 1).filter((n) => !NARRATIVE_USED.has(n));
 
 export default function CaVa() {
-  const profile = getProfile();
-  const joursConnectes = profile.progress?.joursConnectes || 0;
-  const pseudo = profile.pseudo;
-  const totem = profile.totem || 'lion';
-  const vraimentUnlocked = isPassUnlocked('vraiment', joursConnectes);
-
-  const [cart, setCart] = useState(() => loadCart());
-  const [activePass, setActivePass] = useState(() => loadActivePass());
-  const [cartOpen, setCartOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [lastOrderTotal, setLastOrderTotal] = useState(0);
-  const [productDetail, setProductDetail] = useState(null); // { product, capsule }
-  const [manifesteOpen, setManifesteOpen] = useState(false);
-  const [lookbookOpen, setLookbookOpen] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
-  const compressed = scrollY > 60;
-  const activeIndex = Math.max(0, PASSES.findIndex((p) => p.key === activePass));
-
-  const currentPass = PASSES.find((p) => p.key === activePass) || PASSES[0];
-  const cartCount = cart.reduce((s, i) => s + i.qty, 0);
-  const cartTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const discountedTotal = cartTotal * (1 - currentPass.discount / 100);
-
-  const pickPass = (key) => {
-    if (!isPassUnlocked(key, joursConnectes)) {
-      haptic([4, 30, 4]);
-      return;
-    }
-    setActivePass(key);
-    saveActivePass(key);
-    haptic(4);
-  };
-
-  const scrollToCapsule = (key) => {
-    haptic(4);
-    const el = document.getElementById(`cava-capsule-${key}`);
-    if (el && typeof el.scrollIntoView === 'function') {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  const addToCart = (product) => {
-    const existing = cart.find((i) => i.id === product.id);
-    const next = existing
-      ? cart.map((i) => (i.id === product.id ? { ...i, qty: i.qty + 1 } : i))
-      : [...cart, { ...product, qty: 1 }];
-    setCart(next);
-    saveCart(next);
-    haptic(6);
-  };
-
-  const updateQty = (id, delta) => {
-    const next = cart
-      .map((i) => (i.id === id ? { ...i, qty: i.qty + delta } : i))
-      .filter((i) => i.qty > 0);
-    setCart(next);
-    saveCart(next);
-    haptic(4);
-  };
-
-  const placeOrder = () => {
-    if (cart.length === 0) return;
-    haptic([8, 60, 8]);
-    const orders = ls.get('cava_orders', []);
-    orders.unshift({
-      id: `order-${Date.now()}`,
-      createdAt: Date.now(),
-      items: cart,
-      subtotal: cartTotal,
-      pass: currentPass.key,
-      discount: currentPass.discount,
-      total: discountedTotal,
-    });
-    ls.set('cava_orders', orders);
-    setLastOrderTotal(discountedTotal);
-    setCart([]);
-    saveCart([]);
-    setCartOpen(false);
-    setConfirmOpen(true);
-  };
-
   return (
     <div
       style={{
         position: 'absolute',
         inset: 0,
-        background: 'var(--cava-bg)',
+        background: '#F4F0E8',
         color: 'var(--cava-ink)',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
       }}
     >
-      {/* Scrollable content */}
-      <div
-        onScroll={(e) => setScrollY(e.currentTarget.scrollTop)}
-        style={{
-          position: 'relative',
-          height: '100%',
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          padding:
-            '0 0 calc(env(safe-area-inset-bottom, 0px) + 110px)',
-        }}
-      >
-        {/* Sticky brand header + segmented (single sticky wrapper so segmented never disappears) */}
-        <div
-          style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 5,
-            background: compressed ? 'rgba(244, 240, 232, 0.92)' : 'transparent',
-            backdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
-            WebkitBackdropFilter: compressed ? 'blur(18px) saturate(160%)' : 'none',
-            borderBottom: compressed ? '0.5px solid rgba(26, 26, 47, 0.10)' : '0.5px solid transparent',
-            transition:
-              'background 240ms var(--ease-out-ios), border-color 240ms var(--ease-out-ios), backdrop-filter 240ms var(--ease-out-ios)',
-          }}
-        >
-        <div
-          style={{
-            paddingTop: 'calc(env(safe-area-inset-top, 0px) + ' + (compressed ? '12px' : '24px') + ')',
-            paddingLeft: 22,
-            paddingRight: 22,
-            paddingBottom: compressed ? 8 : 14,
-            transition: 'padding 240ms var(--ease-out-ios)',
-          }}
-        >
-          {/* Header row : brand + cart */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              gap: 12,
-            }}
-          >
-            <div style={{ minWidth: 0 }}>
-              {!compressed && (
-                <div
-                  className="neya-mark"
-                  style={{
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 9,
-                    fontWeight: 500,
-                    letterSpacing: '0.222em',
-                    textTransform: 'uppercase',
-                    color: 'rgba(26, 26, 47, 0.55)',
-                    marginBottom: 8,
-                  }}
-                >
-                  CAPSULE · MARQUE SŒUR DE NÉYA
-                </div>
-              )}
-              <h1
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontStyle: 'italic',
-                  fontSize: compressed ? 22 : 36,
-                  fontWeight: 400,
-                  lineHeight: 1.0,
-                  letterSpacing: '-0.018em',
-                  fontVariationSettings: 'var(--fraunces-opsz-large)',
-                  margin: 0,
-                  color: 'var(--cava-ink)',
-                  transition: 'font-size 240ms var(--ease-out-ios)',
-                }}
-              >
-                ÇA VA ?
-              </h1>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-              {/* Cart */}
-              <button
-                data-press
-                onClick={() => { haptic(4); setCartOpen(true); }}
-                aria-label="Panier"
-                style={{
-                  appearance: 'none',
-                  background: 'transparent',
-                  border: '0.5px solid rgba(26, 26, 47, 0.18)',
-                  borderRadius: '50%',
-                  width: 44,
-                  height: 44,
-                  color: 'var(--cava-ink)',
-                  cursor: 'pointer',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  WebkitTapHighlightColor: 'transparent',
-                  fontSize: 16,
-                  padding: 0,
-                }}
-              >
-                ⌒
-                {cartCount > 0 && (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: -4,
-                      right: -4,
-                      minWidth: 16,
-                      height: 16,
-                      background: 'var(--cava-purple)',
-                      color: 'var(--cava-bg)',
-                      borderRadius: '50%',
-                      fontFamily: 'var(--font-ui)',
-                      fontSize: 9,
-                      fontWeight: 600,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '0 4px',
-                    }}
-                  >
-                    {cartCount}
-                  </span>
-                )}
-              </button>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Segmented control — passes (inside the same sticky wrapper as the brand header) */}
-        <div
-          style={{
-            padding: compressed ? '4px 22px 12px' : '4px 22px 14px',
-            transition: 'padding 240ms var(--ease-out-ios)',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              display: 'flex',
-              background: 'rgba(26, 26, 47, 0.06)',
-              borderRadius: 'var(--radius-pill)',
-              padding: 3,
-              overflow: 'hidden',
-            }}
-          >
-            {/* Sliding indicator */}
-            <div
-              aria-hidden="true"
-              style={{
-                position: 'absolute',
-                top: 3,
-                bottom: 3,
-                left: 3,
-                width: 'calc((100% - 6px) / 3)',
-                background: 'var(--cream-light)',
-                borderRadius: 'var(--radius-pill)',
-                boxShadow: '0 1px 2px rgba(26, 26, 47, 0.06), 0 4px 12px rgba(26, 26, 47, 0.05)',
-                transform: `translateX(${activeIndex * 100}%)`,
-                transition: 'transform 320ms var(--ease-spring-subtle)',
-              }}
-            />
-            {PASSES.map((p) => {
-              const isActive = p.key === activePass;
-              const unlocked = isPassUnlocked(p.key, joursConnectes);
-              return (
-                <button
-                  key={p.key}
-                  data-press={unlocked ? true : undefined}
-                  onClick={() => pickPass(p.key)}
-                  disabled={!unlocked}
-                  style={{
-                    appearance: 'none',
-                    background: 'transparent',
-                    border: 'none',
-                    flex: 1,
-                    padding: '12px 18px',
-                    minHeight: 44,
-                    position: 'relative',
-                    zIndex: 1,
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 12,
-                    fontWeight: isActive ? 600 : 500,
-                    color: isActive
-                      ? p.color
-                      : 'rgba(26, 26, 47, 0.55)',
-                    opacity: unlocked ? 1 : 0.55,
-                    cursor: unlocked ? 'pointer' : 'not-allowed',
-                    WebkitTapHighlightColor: 'transparent',
-                    transition: 'color 240ms var(--ease-out-ios), font-weight 240ms var(--ease-out-ios)',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {p.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        </div>
-
-        {/* === BRAND HERO — full-width photo rotation === */}
-        <BrandHero />
-
-        {/* Inner padded body */}
-        <div style={{ padding: '0 22px' }}>
-
-        {/* Horizontal capsule covers strip — scroll-snap */}
-        <div
-          style={{
-            display: 'flex',
-            overflowX: 'auto',
-            gap: 10,
-            scrollSnapType: 'x mandatory',
-            WebkitOverflowScrolling: 'touch',
-            padding: '8px 22px 12px',
-            margin: '0 -22px 18px',
-            scrollPaddingLeft: 22,
-          }}
-        >
-          {CAPSULES.map((c) => (
-            <button
-              key={c.key}
-              data-press
-              onClick={() => scrollToCapsule(c.key)}
-              style={{
-                flex: '0 0 86%',
-                scrollSnapAlign: 'start',
-                aspectRatio: '16 / 9',
-                borderRadius: 'var(--radius-lg)',
-                overflow: 'hidden',
-                backgroundImage: `url(${c.cover})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundColor: c.accentSoft,
-                border: `0.5px solid ${c.accent}`,
-                position: 'relative',
-                cursor: 'pointer',
-                appearance: 'none',
-                padding: 0,
-                WebkitTapHighlightColor: 'transparent',
-              }}
-              aria-label={`Aller à la capsule ${c.name}`}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: 12,
-                  left: 14,
-                  right: 14,
-                  color: 'var(--cava-ink)',
-                  fontFamily: 'var(--font-display)',
-                  fontStyle: 'italic',
-                  fontSize: 18,
-                  fontVariationSettings: 'var(--fraunces-italic-soft)',
-                  textShadow: '0 1px 4px rgba(255, 252, 245, 0.5)',
-                  textAlign: 'left',
-                }}
-              >
-                {c.name}
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Quick links bar — Notre histoire + Lookbook */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: 28 }}>
-          <button
-            data-press
-            onClick={() => { haptic(4); setManifesteOpen(true); }}
-            style={{
-              appearance: 'none',
-              flex: 1,
-              padding: '14px 18px',
-              minHeight: 44,
-              background: 'transparent',
-              border: '0.5px solid rgba(26, 26, 47, 0.18)',
-              borderRadius: 'var(--radius-pill)',
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 500,
-              letterSpacing: '0.04em',
-              color: 'var(--cava-ink)',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            Notre histoire
-          </button>
-          <button
-            data-press
-            onClick={() => { haptic(4); setLookbookOpen(true); }}
-            style={{
-              appearance: 'none',
-              flex: 1,
-              padding: '14px 18px',
-              minHeight: 44,
-              background: 'transparent',
-              border: '0.5px solid rgba(26, 26, 47, 0.18)',
-              borderRadius: 'var(--radius-pill)',
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 500,
-              letterSpacing: '0.04em',
-              color: 'var(--cava-ink)',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            Lookbook
-          </button>
-        </div>
-
-        {/* === MOUVEMENT — 4 piliers === */}
-        <MouvementSection />
-
-        {/* === LOOKBOOK preview — grid 2-cols === */}
-        <LookbookPreview onOpenFull={() => { haptic(4); setLookbookOpen(true); }} />
-
-        {/* 3 capsules */}
-        {CAPSULES.map((c) => (
-          <div id={`cava-capsule-${c.key}`} key={c.key} style={{ scrollMarginTop: 80 }}>
-            <CapsuleSection
-              capsule={c}
-              onAddToCart={addToCart}
-              onOpenDetail={(product) => setProductDetail({ product, capsule: c })}
-              discountPercent={currentPass.discount}
-              pseudo={pseudo}
-              totem={totem}
-            />
-          </div>
-        ))}
-
-        {/* Footer manifesto */}
-        <div
-          style={{
-            marginTop: 40,
-            padding: '24px 16px',
-            textAlign: 'center',
-            fontFamily: 'var(--font-display)',
-            fontSize: 18,
-            fontStyle: 'italic',
-            lineHeight: 1.45,
-            color: 'rgba(26, 26, 47, 0.75)',
-            fontVariationSettings: 'var(--fraunces-opsz-large)',
-          }}
-        >
-          « Nous existons pour briser<br />le masque du <em>ça va.</em> »
-        </div>
-        </div>
-      </div>
-
-      {/* Cart drawer slide-in right */}
-      {cartOpen && (
-        <CartDrawer
-          cart={cart}
-          updateQty={updateQty}
-          discountPercent={currentPass.discount}
-          currentPass={currentPass}
-          onClose={() => setCartOpen(false)}
-          onCheckout={placeOrder}
-        />
-      )}
-
-      {/* Checkout confirmation sheet */}
-      {confirmOpen && (
-        <CheckoutConfirm
-          orderTotal={lastOrderTotal}
-          pseudo={pseudo}
-          onClose={() => setConfirmOpen(false)}
-        />
-      )}
-
-      {/* Product detail sheet */}
-      {productDetail && (
-        <ProductDetail
-          product={productDetail.product}
-          capsule={productDetail.capsule}
-          image={productDetail.product?.image || null}
-          pseudo={pseudo}
-          totem={totem}
-          onAddToCart={(p) => { addToCart(p); setProductDetail(null); }}
-          onClose={() => setProductDetail(null)}
-        />
-      )}
-
-      {/* Manifeste — Notre histoire */}
-      {manifesteOpen && <Manifeste onClose={() => setManifesteOpen(false)} />}
-
-      {/* Lookbook — gallery */}
-      {lookbookOpen && <Lookbook onClose={() => setLookbookOpen(false)} />}
+      <Hero />
+      <ManifesteAct />
+      <VoixAct />
+      <GalerieAct />
+      <CtaExternal />
     </div>
   );
 }
 
-function CapsuleSection({ capsule, onAddToCart, onOpenDetail, discountPercent, pseudo, totem }) {
-  return (
-    <div style={{ marginBottom: 32 }}>
-      {/* Capsule header */}
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 14 }}>
-        <span
-          style={{
-            width: 24,
-            height: 1,
-            background: capsule.accent,
-            marginBottom: 6,
-          }}
-        />
-        <h2
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 22,
-            fontStyle: 'italic',
-            fontWeight: 400,
-            letterSpacing: '-0.014em',
-            margin: 0,
-            color: capsule.accent,
-            fontVariationSettings: 'var(--fraunces-opsz-large)',
-          }}
-        >
-          {capsule.name}
-        </h2>
-      </div>
-      <p
-        style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: 13,
-          color: 'rgba(26, 26, 47, 0.65)',
-          marginTop: 0,
-          marginBottom: 14,
-          fontStyle: 'italic',
-        }}
-      >
-        {capsule.tagline}
-      </p>
+/* ─────────── HERO ─────────── */
 
-      {/* Products grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 10,
-        }}
-      >
-        {capsule.products.map((p) => (
-          <ProductCard
-            key={p.id}
-            product={p}
-            capsule={capsule}
-            onAdd={() => onOpenDetail ? onOpenDetail(p) : onAddToCart(p)}
-            discountPercent={discountPercent}
-            pseudo={pseudo}
-            totem={totem}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-const TOTEM_LABEL = {
-  lion: 'lion', ours: 'ours', aigle: 'aigle',
-  daim: 'daim', baleine: 'baleine', renard: 'renard',
-};
-
-function ProductCard({ product, capsule, onAdd, discountPercent, pseudo, totem }) {
-  const finalPrice = product.price * (1 - discountPercent / 100);
-  const isDiscounted = discountPercent > 0;
-  const broderieText = pseudo
-    ? `Pour ${pseudo}${totem ? ` · le ${TOTEM_LABEL[totem] || totem}` : ''}`
-    : null;
-
-  return (
-    <div
-      style={{
-        background: 'var(--cream-light)',
-        border: '0.5px solid rgba(26, 26, 47, 0.08)',
-        borderRadius: 'var(--radius-md)',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {/* Visual placeholder — 4:5 ratio cream tile with capsule accent stripe */}
-      <div
-        style={{
-          aspectRatio: '4 / 5',
-          background: `linear-gradient(135deg, ${capsule.accentSoft} 0%, var(--cava-bg) 100%)`,
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-        }}
-      >
-        {product.image && (
-          <img
-            src={product.image}
-            alt={product.name}
-            loading="lazy"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-            }}
-          />
-        )}
-        {/* Decorative atmospheric marks */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 14,
-            left: 14,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 8,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: 'rgba(26, 26, 47, 0.40)',
-          }}
-        >
-          ÇA VA ? · {capsule.name}
-        </div>
-        <div
-          style={{
-            width: 56,
-            height: 1,
-            background: capsule.accent,
-            opacity: 0.6,
-          }}
-        />
-
-        {/* Broderie preview (Agent E) — Pour {pseudo} · le {totem} */}
-        {broderieText && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 14,
-              left: 14,
-              right: 14,
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontSize: 11,
-              lineHeight: 1.3,
-              color: capsule.accent,
-              opacity: 0.7,
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              letterSpacing: '-0.005em',
-              textAlign: 'left',
-            }}
-          >
-            {broderieText}
-          </div>
-        )}
-      </div>
-
-      {/* Meta */}
-      <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <div
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 16,
-            fontStyle: 'italic',
-            fontWeight: 400,
-            lineHeight: 1.2,
-            color: 'var(--cava-ink)',
-            fontVariationSettings: 'var(--fraunces-opsz-large)',
-          }}
-        >
-          {product.name}
-        </div>
-        {product.motif && (
-          <div
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 10,
-              fontStyle: 'italic',
-              color: 'rgba(26, 26, 47, 0.55)',
-              marginTop: -2,
-              lineHeight: 1.35,
-            }}
-          >
-            {product.motif}
-          </div>
-        )}
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          {isDiscounted && (
-            <span
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 12,
-                color: 'rgba(26, 26, 47, 0.42)',
-                textDecoration: 'line-through',
-              }}
-            >
-              {product.price} €
-            </span>
-          )}
-          <span
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontSize: 14,
-              fontWeight: 500,
-              color: 'var(--cava-ink)',
-            }}
-          >
-            {finalPrice.toFixed(0)} €
-          </span>
-        </div>
-        <button
-          data-press
-          onClick={onAdd}
-          style={{
-            appearance: 'none',
-            marginTop: 4,
-            background: 'var(--cava-ink)',
-            color: 'var(--cava-bg)',
-            border: 'none',
-            borderRadius: 'var(--radius-pill)',
-            padding: '12px 18px',
-            minHeight: 44,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 12,
-            fontWeight: 500,
-            letterSpacing: '0.03em',
-            cursor: 'pointer',
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
-          Ajouter
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function CartDrawer({ cart, updateQty, discountPercent, currentPass, onClose, onCheckout }) {
-  const subTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const finalTotal = subTotal * (1 - discountPercent / 100);
-  const savings = subTotal - finalTotal;
-
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        zIndex: 100,
-        background: 'rgba(26, 26, 47, 0.45)',
-      }}
-      onClick={onClose}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: 'min(420px, 92vw)',
-          background: 'var(--cava-bg)',
-          borderLeft: '0.5px solid rgba(26, 26, 47, 0.12)',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 24px) 22px calc(env(safe-area-inset-bottom, 0px) + 24px)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 16,
-        }}
-      >
-        {/* Top row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h3
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 22,
-              fontStyle: 'italic',
-              fontWeight: 400,
-              letterSpacing: '-0.014em',
-              margin: 0,
-              color: 'var(--cava-ink)',
-              fontVariationSettings: 'var(--fraunces-opsz-large)',
-            }}
-          >
-            Ton panier
-          </h3>
-          <button
-            data-press
-            onClick={onClose}
-            style={{
-              appearance: 'none',
-              background: 'rgba(26, 26, 47, 0.08)',
-              border: 'none',
-              borderRadius: '50%',
-              width: 44,
-              height: 44,
-              color: 'var(--cava-ink)',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              fontSize: 16,
-              padding: 0,
-            }}
-            aria-label="Fermer"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Items list */}
-        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {cart.length === 0 ? (
-            <div
-              style={{
-                textAlign: 'center',
-                padding: 32,
-                color: 'rgba(26, 26, 47, 0.55)',
-                fontStyle: 'italic',
-                fontFamily: 'var(--font-display)',
-                fontSize: 17,
-              }}
-            >
-              Ton panier est vide.
-            </div>
-          ) : (
-            cart.map((item) => (
-              <div
-                key={item.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  padding: 12,
-                  background: 'var(--cream-light)',
-                  border: '0.5px solid rgba(26, 26, 47, 0.08)',
-                  borderRadius: 'var(--radius-md)',
-                }}
-              >
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: 14,
-                      fontStyle: 'italic',
-                      fontVariationSettings: 'var(--fraunces-opsz-large)',
-                      color: 'var(--cava-ink)',
-                      marginBottom: 4,
-                    }}
-                  >
-                    {item.name}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-ui)',
-                      fontSize: 12,
-                      color: 'rgba(26, 26, 47, 0.65)',
-                    }}
-                  >
-                    {(item.price * (1 - discountPercent / 100)).toFixed(0)} € × {item.qty}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <button
-                    data-press
-                    onClick={() => updateQty(item.id, -1)}
-                    style={qtyBtnStyle}
-                  >
-                    −
-                  </button>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-ui)',
-                      fontSize: 13,
-                      fontWeight: 500,
-                      minWidth: 16,
-                      textAlign: 'center',
-                      fontVariantNumeric: 'tabular-nums',
-                    }}
-                  >
-                    {item.qty}
-                  </span>
-                  <button
-                    data-press
-                    onClick={() => updateQty(item.id, +1)}
-                    style={qtyBtnStyle}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Totals */}
-        {cart.length > 0 && (
-          <div
-            style={{
-              borderTop: '0.5px solid rgba(26, 26, 47, 0.10)',
-              paddingTop: 14,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 8,
-            }}
-          >
-            {discountPercent > 0 && (
-              <Row>
-                <span style={{ color: 'rgba(26, 26, 47, 0.55)', fontSize: 13 }}>
-                  Pass {currentPass.label} · −{discountPercent}%
-                </span>
-                <span
-                  style={{
-                    color: currentPass.color,
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 13,
-                    fontWeight: 500,
-                  }}
-                >
-                  −{savings.toFixed(0)} €
-                </span>
-              </Row>
-            )}
-            <Row>
-              <span
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 18,
-                  fontStyle: 'italic',
-                  color: 'var(--cava-ink)',
-                  fontVariationSettings: 'var(--fraunces-opsz-large)',
-                }}
-              >
-                Total
-              </span>
-              <span
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: 22,
-                  fontWeight: 600,
-                  color: 'var(--cava-ink)',
-                  fontVariantNumeric: 'tabular-nums',
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                {finalTotal.toFixed(0)} €
-              </span>
-            </Row>
-            <Button
-              size="lg"
-              variant="primary"
-              style={{
-                background: 'var(--cava-ink)',
-                color: 'var(--cava-bg)',
-                marginTop: 8,
-              }}
-              onClick={onCheckout}
-            >
-              Passer commande
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-const Row = ({ children }) => (
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-    {children}
-  </div>
-);
-
-function CheckoutConfirm({ orderTotal, pseudo, onClose }) {
-  const [leaving, setLeaving] = useState(false);
-
-  const handleClose = () => {
-    if (leaving) return;
-    haptic(4);
-    setLeaving(true);
-    setTimeout(() => onClose(), 300);
-  };
-
-  return (
-    <div
-      onClick={handleClose}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        zIndex: 110,
-        background: 'rgba(26, 26, 47, 0.45)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        animation: leaving
-          ? 'cavaFadeOut 300ms var(--ease-out-ios, ease-out) forwards'
-          : 'cavaFadeIn 280ms var(--ease-out-ios, ease-out) forwards',
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: '100%',
-          maxWidth: 520,
-          background: 'var(--cream-light)',
-          borderTopLeftRadius: 'var(--radius-lg)',
-          borderTopRightRadius: 'var(--radius-lg)',
-          padding: '24px 22px calc(env(safe-area-inset-bottom, 0px) + 22px)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 14,
-          boxShadow: '0 -12px 40px rgba(26, 26, 47, 0.18)',
-          animation: leaving
-            ? 'cavaSheetDown 320ms var(--ease-out-ios, ease-out) forwards'
-            : 'cavaSheetUp 420ms var(--ease-out-ios, ease-out) forwards',
-        }}
-      >
-        {/* Drag handle */}
-        <div
-          className="drag-handle"
-          style={{
-            width: 44,
-            height: 4,
-            borderRadius: 999,
-            background: 'rgba(26, 26, 47, 0.18)',
-            marginBottom: 6,
-          }}
-        />
-
-        {/* Tilleul check circle */}
-        <div
-          className="tilleul-pop"
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: '50%',
-            background: 'var(--tilleul, #c8d97a)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--cava-ink)',
-            fontFamily: 'var(--font-ui)',
-            fontSize: 18,
-            fontWeight: 600,
-            marginBottom: 2,
-          }}
-        >
-          ✓
-        </div>
-
-        {/* Caps mark */}
-        <div
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: 'var(--content-tertiary, rgba(26, 26, 47, 0.50))',
-            textAlign: 'center',
-          }}
-        >
-          COMMANDE NOTÉE · DEMO MVP
-        </div>
-
-        {/* Hero italic */}
-        <div
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontSize: 28,
-            fontWeight: 400,
-            lineHeight: 1.15,
-            letterSpacing: '-0.014em',
-            color: 'var(--cava-ink)',
-            fontVariationSettings: 'var(--fraunces-opsz-large)',
-            textAlign: 'center',
-            margin: '4px 0 0',
-          }}
-        >
-          « Merci{pseudo ? `, ${pseudo}` : ''}. »
-        </div>
-
-        {/* Explanatory body */}
-        <p
-          style={{
-            margin: 0,
-            fontFamily: 'var(--font-body)',
-            fontSize: 14,
-            lineHeight: 1.5,
-            color: 'var(--ink-soft, rgba(26, 26, 47, 0.65))',
-            textAlign: 'center',
-            maxWidth: 360,
-          }}
-        >
-          Ta commande est enregistrée localement. Le vrai checkout viendra bientôt —
-          on te préviendra par mail si tu nous as donné une adresse.
-        </p>
-
-        {/* Total */}
-        <div
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 22,
-            fontWeight: 500,
-            color: 'var(--cava-ink)',
-            fontVariantNumeric: 'tabular-nums',
-            letterSpacing: '-0.01em',
-            marginTop: 4,
-          }}
-        >
-          {Number(orderTotal || 0).toFixed(0)} €
-        </div>
-
-        {/* Fermer button */}
-        <button
-          data-press
-          onClick={handleClose}
-          style={{
-            appearance: 'none',
-            marginTop: 10,
-            width: '100%',
-            background: 'var(--cava-ink)',
-            color: 'var(--cava-bg)',
-            border: 'none',
-            borderRadius: 'var(--radius-pill)',
-            padding: '14px 24px',
-            fontFamily: 'var(--font-ui)',
-            fontSize: 14,
-            fontWeight: 500,
-            letterSpacing: '0.02em',
-            cursor: 'pointer',
-            WebkitTapHighlightColor: 'transparent',
-            transition: 'transform 120ms var(--ease-out-ios, ease-out)',
-          }}
-          onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.95)'; }}
-          onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-          onTouchStart={(e) => { e.currentTarget.style.transform = 'scale(0.95)'; }}
-          onTouchEnd={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-        >
-          Fermer
-        </button>
-      </div>
-
-      <style>{`
-        @keyframes cavaSheetUp {
-          from { transform: translateY(100%); }
-          to   { transform: translateY(0); }
-        }
-        @keyframes cavaSheetDown {
-          from { transform: translateY(0); }
-          to   { transform: translateY(100%); }
-        }
-        @keyframes cavaFadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-        @keyframes cavaFadeOut {
-          from { opacity: 1; }
-          to   { opacity: 0; }
-        }
-      `}</style>
-    </div>
-  );
-}
-
-const qtyBtnStyle = {
-  appearance: 'none',
-  background: 'rgba(26, 26, 47, 0.06)',
-  border: 'none',
-  borderRadius: '50%',
-  width: 36,
-  height: 36,
-  color: 'var(--cava-ink)',
-  fontSize: 16,
-  fontWeight: 500,
-  cursor: 'pointer',
-  WebkitTapHighlightColor: 'transparent',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 0,
-};
-
-/* ============================================================
-   BRAND HERO — full-width photo rotation + tagline overlay
-   ============================================================ */
-
-function BrandHero() {
+function Hero() {
   const [idx, setIdx] = useState(0);
   const timerRef = useRef(null);
   useEffect(() => {
-    timerRef.current = setInterval(() => setIdx((i) => (i + 1) % HERO_PHOTOS.length), 6800);
+    timerRef.current = setInterval(() => setIdx((i) => (i + 1) % HERO_PHOTOS.length), 5800);
     return () => clearInterval(timerRef.current);
   }, []);
-  const current = HERO_PHOTOS[idx];
+
   return (
-    <div
+    <section
       style={{
         position: 'relative',
         width: '100%',
-        height: 'min(72vh, 560px)',
-        minHeight: 420,
+        height: '100vh',
+        minHeight: 560,
         overflow: 'hidden',
-        marginBottom: 28,
         background: '#0e0c08',
       }}
     >
-      {HERO_PHOTOS.map((p, i) => (
+      {HERO_PHOTOS.map((n, i) => (
         <div
-          key={p.src}
+          key={n}
           aria-hidden={i !== idx}
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: `url(${p.src})`,
+            backgroundImage: `url(${PHOTO(n)})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             opacity: i === idx ? 1 : 0,
-            transition: 'opacity 1400ms ease-in-out',
+            transition: 'opacity 1800ms ease-in-out',
+            transform: i === idx ? 'scale(1.04)' : 'scale(1)',
+            transitionProperty: 'opacity, transform',
+            transitionDuration: '1800ms, 8000ms',
           }}
         />
       ))}
@@ -1328,116 +101,170 @@ function BrandHero() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0.65) 100%)',
+          background:
+            'linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.78) 100%)',
           pointerEvents: 'none',
         }}
       />
-      {/* Place tag top-left */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 22px)',
-          left: 22,
-          fontFamily: 'var(--font-ui)',
-          fontSize: 9,
-          letterSpacing: '0.222em',
-          textTransform: 'uppercase',
-          color: '#FBF6E8',
-          opacity: 0.75,
-          fontWeight: 600,
-          textShadow: '0 1px 6px rgba(0,0,0,0.4)',
-        }}
-      >
-        {current.place}
-      </div>
-      {/* Tagline overlay bottom */}
+      {/* Top eyebrow */}
       <div
         style={{
           position: 'absolute',
-          bottom: 24,
+          top: 'calc(env(safe-area-inset-top, 0px) + 28px)',
           left: 22,
           right: 22,
-          color: '#FBF6E8',
-          zIndex: 2,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <div
           className="neya-mark"
-          style={{
-            color: '#FBF6E8',
-            opacity: 0.78,
-            marginBottom: 10,
-            fontSize: 9,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-          }}
+          style={{ color: '#FBF6E8', opacity: 0.78, fontSize: 9, letterSpacing: '0.222em' }}
         >
-          ÇA VA? · MENTAL HEALTH STREETWEAR
+          MENTAL HEALTH STREETWEAR
         </div>
         <div
-          key={current.src}
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontSize: 24,
-            lineHeight: 1.22,
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            color: '#FBF6E8',
-            letterSpacing: '-0.012em',
-            textShadow: '0 1px 12px rgba(0,0,0,0.35)',
-            animation: 'cava-hero-fade 1400ms ease-out',
-          }}
+          className="neya-mark"
+          style={{ color: '#FBF6E8', opacity: 0.55, fontSize: 9, letterSpacing: '0.222em', fontVariantNumeric: 'tabular-nums' }}
         >
-          {current.message}
-        </div>
-        <div style={{ display: 'flex', gap: 6, marginTop: 18 }}>
-          {HERO_PHOTOS.map((_, i) => (
-            <span
-              key={i}
-              style={{
-                width: i === idx ? 22 : 4,
-                height: 4,
-                borderRadius: 2,
-                background: '#FBF6E8',
-                opacity: i === idx ? 0.95 : 0.42,
-                transition: 'all 420ms var(--ease-out-ios)',
-              }}
-            />
-          ))}
+          {String(idx + 1).padStart(2, '0')} / {String(HERO_PHOTOS.length).padStart(2, '0')}
         </div>
       </div>
+      {/* Bottom title + scroll cue */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 70px)',
+          left: 22,
+          right: 22,
+          color: '#FBF6E8',
+        }}
+      >
+        <h1
+          style={{
+            margin: 0,
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(64px, 22vw, 110px)',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            lineHeight: 0.88,
+            letterSpacing: '-0.032em',
+            fontVariationSettings: 'var(--fraunces-opsz-large)',
+            color: '#FBF6E8',
+            textShadow: '0 2px 22px rgba(0, 0, 0, 0.35)',
+          }}
+        >
+          ÇA VA?
+        </h1>
+        <p
+          style={{
+            margin: '18px 0 0',
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 19,
+            lineHeight: 1.32,
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            color: '#FBF6E8',
+            opacity: 0.92,
+            maxWidth: 320,
+            textShadow: '0 1px 8px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          Briser le masque.<br />Parler. Écouter. Exister.
+        </p>
+      </div>
+      {/* Scroll cue */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 22px)',
+          left: 0,
+          right: 0,
+          textAlign: 'center',
+          fontFamily: 'var(--font-ui)',
+          fontSize: 9,
+          letterSpacing: '0.32em',
+          textTransform: 'uppercase',
+          color: '#FBF6E8',
+          opacity: 0.55,
+          animation: 'cava-scroll-cue 2.4s ease-in-out infinite',
+        }}
+      >
+        Glisser
+      </div>
       <style>{`
-        @keyframes cava-hero-fade {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
+        @keyframes cava-scroll-cue {
+          0%, 100% { transform: translateY(0); opacity: 0.55; }
+          50%      { transform: translateY(6px); opacity: 0.85; }
         }
       `}</style>
-    </div>
+    </section>
   );
 }
 
-/* ============================================================
-   MOUVEMENT — 4 piliers (Destigmatiser / Soutenir / Écouter / Prendre soin)
-   ============================================================ */
+/* ─────────── ACTE I — LE MANIFESTE ─────────── */
 
-function MouvementSection() {
+function ManifesteAct() {
   return (
-    <div style={{ marginBottom: 36 }}>
-      <BrandSectionTitle>Le mouvement</BrandSectionTitle>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {MOUVEMENT.map((m) => (
+    <section style={{ background: '#F4F0E8', padding: '100px 22px 80px' }}>
+      <div
+        className="neya-mark"
+        style={{
+          color: 'rgba(26, 26, 47, 0.55)',
+          textAlign: 'center',
+          marginBottom: 28,
+          letterSpacing: '0.32em',
+        }}
+      >
+        ACTE I · LE MANIFESTE
+      </div>
+      <h2
+        style={{
+          margin: '0 auto 36px',
+          textAlign: 'center',
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(28px, 7vw, 38px)',
+          fontStyle: 'italic',
+          fontWeight: 400,
+          lineHeight: 1.18,
+          letterSpacing: '-0.018em',
+          fontVariationSettings: 'var(--fraunces-italic-soft)',
+          maxWidth: 520,
+          color: 'var(--cava-ink)',
+        }}
+      >
+        Nous existons pour briser<br />
+        le masque du <em style={{ fontWeight: 600 }}>« ça va ».</em>
+      </h2>
+      <p
+        style={{
+          margin: '0 auto 60px',
+          textAlign: 'center',
+          fontFamily: 'var(--font-body)',
+          fontSize: 15,
+          lineHeight: 1.7,
+          color: 'rgba(26, 26, 47, 0.72)',
+          maxWidth: 460,
+        }}
+      >
+        ÇA VA? est un mouvement habillé. Chaque pièce porte une question, une voix, un message.
+        Nous habillons la santé mentale d'une voix douce et radicale à la fois.
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 520, margin: '0 auto' }}>
+        {PILIERS.map((p) => (
           <div
-            key={m.mark}
+            key={p.mark}
             style={{
               display: 'flex',
-              gap: 16,
-              padding: '16px 18px',
+              gap: 20,
+              padding: '22px 24px',
               background: 'rgba(255, 252, 245, 0.72)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
               border: '0.5px solid rgba(26, 26, 47, 0.08)',
-              borderRadius: 'var(--radius-lg)',
+              borderRadius: 16,
               alignItems: 'flex-start',
               boxShadow: '0 1px 8px rgba(26, 26, 47, 0.04)',
             }}
@@ -1445,119 +272,367 @@ function MouvementSection() {
             <span
               className="neya-mark"
               style={{
-                color: 'rgba(26, 26, 47, 0.45)',
+                color: 'rgba(26, 26, 47, 0.42)',
                 fontVariantNumeric: 'tabular-nums',
                 minWidth: 18,
-                paddingTop: 3,
+                paddingTop: 4,
               }}
             >
-              {m.mark}
+              {p.mark}
             </span>
             <div style={{ minWidth: 0 }}>
               <div
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: 17,
+                  fontSize: 19,
                   fontStyle: 'italic',
                   fontVariationSettings: 'var(--fraunces-italic-soft)',
                   lineHeight: 1.2,
-                  marginBottom: 4,
+                  marginBottom: 6,
                   color: 'var(--cava-ink)',
                 }}
               >
-                {m.title}
+                {p.title}
               </div>
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 12.5,
-                  lineHeight: 1.5,
+                  fontSize: 13,
+                  lineHeight: 1.55,
                   color: 'rgba(26, 26, 47, 0.65)',
                 }}
               >
-                {m.body}
+                {p.body}
               </div>
             </div>
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
-/* ============================================================
-   LOOKBOOK preview — grid 2-cols
-   ============================================================ */
+/* ─────────── ACTE II — LES VOIX ─────────── */
 
-function LookbookPreview({ onOpenFull }) {
+function VoixAct() {
   return (
-    <div style={{ marginBottom: 36 }}>
-      <BrandSectionTitle
-        trailing={
-          <button
-            data-press
-            onClick={onOpenFull}
-            className="neya-mark"
+    <section style={{ background: '#F4F0E8' }}>
+      <div style={{ padding: '80px 22px 40px', textAlign: 'center' }}>
+        <div
+          className="neya-mark"
+          style={{
+            color: 'rgba(26, 26, 47, 0.55)',
+            marginBottom: 28,
+            letterSpacing: '0.32em',
+          }}
+        >
+          ACTE II · LES VOIX
+        </div>
+        <h2
+          style={{
+            margin: '0 auto',
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(26px, 6.5vw, 34px)',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            lineHeight: 1.22,
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            maxWidth: 480,
+            color: 'var(--cava-ink)',
+          }}
+        >
+          Chaque pièce porte une phrase.<br />
+          Chaque phrase porte une histoire.
+        </h2>
+      </div>
+
+      {STATEMENT_QUOTES.map((s, i) => (
+        <article key={s.idx} style={{ position: 'relative' }}>
+          {/* Full-bleed photo */}
+          <div
             style={{
-              appearance: 'none',
-              background: 'transparent',
-              border: 'none',
-              color: 'rgba(26, 26, 47, 0.55)',
-              cursor: 'pointer',
-              padding: '6px 4px',
-              minHeight: 32,
-              fontSize: 9,
-              WebkitTapHighlightColor: 'transparent',
+              width: '100%',
+              aspectRatio: '4 / 5',
+              backgroundImage: `url(${PHOTO(s.idx)})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundColor: '#0e0c08',
+              position: 'relative',
             }}
           >
-            Voir tout ›
-          </button>
+            <div
+              style={{
+                position: 'absolute',
+                top: 18,
+                left: 18,
+                padding: '5px 11px',
+                borderRadius: 4,
+                background: 'rgba(26, 26, 47, 0.45)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                fontFamily: 'var(--font-ui)',
+                fontSize: 8.5,
+                letterSpacing: '0.222em',
+                textTransform: 'uppercase',
+                color: '#FBF6E8',
+                fontWeight: 600,
+              }}
+            >
+              {s.place}
+            </div>
+          </div>
+          {/* Quote panel */}
+          <div
+            style={{
+              padding: '40px 22px 64px',
+              background: i % 2 === 0 ? '#F4F0E8' : '#FFFCF5',
+            }}
+          >
+            <div
+              className="neya-mark"
+              style={{
+                color: 'rgba(26, 26, 47, 0.4)',
+                marginBottom: 14,
+                fontVariantNumeric: 'tabular-nums',
+                letterSpacing: '0.222em',
+              }}
+            >
+              {String(i + 1).padStart(2, '0')} / {String(STATEMENT_QUOTES.length).padStart(2, '0')}
+            </div>
+            <p
+              style={{
+                margin: 0,
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontSize: 'clamp(22px, 5.5vw, 28px)',
+                lineHeight: 1.32,
+                letterSpacing: '-0.012em',
+                fontVariationSettings: 'var(--fraunces-italic-soft)',
+                maxWidth: 520,
+                color: 'var(--cava-ink)',
+              }}
+            >
+              « {s.quote} »
+            </p>
+          </div>
+        </article>
+      ))}
+    </section>
+  );
+}
+
+/* ─────────── ACTE III — LA GALERIE ─────────── */
+
+function GalerieAct() {
+  const [visible, setVisible] = useState(28);
+  const sentinelRef = useRef(null);
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisible((v) => Math.min(v + 24, GALLERY_INDICES.length));
         }
-      >
-        Lookbook éditorial
-      </BrandSectionTitle>
+      },
+      { rootMargin: '500px' }
+    );
+    obs.observe(sentinelRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <section style={{ background: '#F4F0E8' }}>
+      <div style={{ padding: '80px 22px 32px', textAlign: 'center' }}>
+        <div
+          className="neya-mark"
+          style={{
+            color: 'rgba(26, 26, 47, 0.55)',
+            marginBottom: 28,
+            letterSpacing: '0.32em',
+          }}
+        >
+          ACTE III · LA GALERIE
+        </div>
+        <h2
+          style={{
+            margin: '0 auto',
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(26px, 6.5vw, 34px)',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            lineHeight: 1.22,
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            maxWidth: 480,
+            color: 'var(--cava-ink)',
+          }}
+        >
+          Le monde porte la question.<br />De Tokyo à Mykonos.
+        </h2>
+        <p
+          style={{
+            margin: '16px auto 0',
+            fontFamily: 'var(--font-body)',
+            fontSize: 13,
+            color: 'rgba(26, 26, 47, 0.6)',
+            maxWidth: 380,
+            lineHeight: 1.55,
+          }}
+        >
+          {GALLERY_INDICES.length} regards portés sur la santé mentale,
+          shootés sur 4 continents.
+        </p>
+      </div>
+
       <div
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gap: 8,
+          gap: 4,
+          padding: '24px 4px',
         }}
       >
-        {EDITORIAL_PREVIEW.map((src, i) => (
-          <button
-            key={src}
-            data-press
-            onClick={onOpenFull}
-            aria-label={`Photo ${i + 1} du lookbook`}
-            style={{
-              appearance: 'none',
-              border: 'none',
-              padding: 0,
-              aspectRatio: i % 3 === 0 ? '3 / 4' : '4 / 5',
-              backgroundImage: `url(${src})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer',
-              overflow: 'hidden',
-              WebkitTapHighlightColor: 'transparent',
-              background: '#0e0c08',
-            }}
-          />
-        ))}
+        {GALLERY_INDICES.slice(0, visible).map((n, i) => {
+          const isSpread = i > 0 && i % 9 === 0;
+          const aspectRandom = i % 4 === 0 ? '3 / 4' : i % 4 === 1 ? '4 / 5' : i % 4 === 2 ? '1 / 1' : '5 / 7';
+          return (
+            <div
+              key={n}
+              style={{
+                gridColumn: isSpread ? '1 / -1' : 'auto',
+                aspectRatio: isSpread ? '16 / 10' : aspectRandom,
+                backgroundImage: `url(${PHOTO(n)})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundColor: '#0e0c08',
+                transition: 'opacity 320ms ease-out',
+              }}
+            />
+          );
+        })}
       </div>
-    </div>
+      <div ref={sentinelRef} style={{ height: 1 }} />
+      {visible < GALLERY_INDICES.length && (
+        <div
+          style={{
+            padding: '24px',
+            textAlign: 'center',
+            fontFamily: 'var(--font-ui)',
+            fontSize: 9,
+            letterSpacing: '0.32em',
+            textTransform: 'uppercase',
+            color: 'rgba(26, 26, 47, 0.4)',
+          }}
+        >
+          {visible} / {GALLERY_INDICES.length}
+        </div>
+      )}
+    </section>
   );
 }
 
-function BrandSectionTitle({ children, trailing }) {
+/* ─────────── CTA EXTERNE ─────────── */
+
+function CtaExternal() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-      <span style={{ width: 18, height: 1, background: 'rgba(26, 26, 47, 0.4)' }} />
-      <span className="neya-mark" style={{ color: 'rgba(26, 26, 47, 0.6)' }}>
-        {children}
-      </span>
-      {trailing ? <span style={{ marginLeft: 'auto' }}>{trailing}</span> : null}
-    </div>
+    <section
+      style={{
+        background: 'var(--cava-ink)',
+        padding: 'calc(80px + env(safe-area-inset-top, 0px)) 22px calc(140px + env(safe-area-inset-bottom, 0px))',
+        color: '#FBF6E8',
+      }}
+    >
+      <div
+        className="neya-mark"
+        style={{
+          color: '#FBF6E8',
+          opacity: 0.55,
+          marginBottom: 24,
+          textAlign: 'center',
+          letterSpacing: '0.32em',
+        }}
+      >
+        DÉCOUVRIR
+      </div>
+      <h2
+        style={{
+          margin: '0 auto 18px',
+          textAlign: 'center',
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(34px, 9vw, 46px)',
+          fontStyle: 'italic',
+          fontWeight: 400,
+          lineHeight: 1.12,
+          letterSpacing: '-0.022em',
+          fontVariationSettings: 'var(--fraunces-italic-soft)',
+          color: '#FBF6E8',
+          maxWidth: 480,
+        }}
+      >
+        Porte la question.
+      </h2>
+      <p
+        style={{
+          margin: '0 auto 40px',
+          textAlign: 'center',
+          fontFamily: 'var(--font-body)',
+          fontSize: 14.5,
+          lineHeight: 1.6,
+          color: 'rgba(251, 246, 232, 0.72)',
+          maxWidth: 400,
+        }}
+      >
+        La collection complète, les pièces, les histoires, le mouvement —
+        sur cava-brand.com.
+      </p>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <a
+          href="https://www.cava-brand.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => haptic(6)}
+          data-press
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 12,
+            padding: '18px 36px',
+            minHeight: 52,
+            background: '#FBF6E8',
+            color: 'var(--cava-ink)',
+            borderRadius: 999,
+            fontFamily: 'var(--font-ui)',
+            fontSize: 12,
+            fontWeight: 600,
+            letterSpacing: '0.222em',
+            textTransform: 'uppercase',
+            textDecoration: 'none',
+            WebkitTapHighlightColor: 'transparent',
+            cursor: 'pointer',
+            boxShadow: '0 12px 32px rgba(251, 246, 232, 0.18)',
+            transition: 'transform 200ms var(--ease-out-ios)',
+          }}
+        >
+          Découvrir la collection
+          <span style={{ fontSize: 14, opacity: 0.65 }}>↗</span>
+        </a>
+      </div>
+      <div
+        style={{
+          marginTop: 72,
+          paddingTop: 28,
+          borderTop: '0.5px solid rgba(251, 246, 232, 0.14)',
+          textAlign: 'center',
+          fontFamily: 'var(--font-display)',
+          fontStyle: 'italic',
+          fontSize: 17,
+          lineHeight: 1.4,
+          fontVariationSettings: 'var(--fraunces-italic-soft)',
+          color: 'rgba(251, 246, 232, 0.62)',
+        }}
+      >
+        « Briser le masque du ça va. »
+      </div>
+    </section>
   );
 }
