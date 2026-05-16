@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>NÉYA — Et toi, ça va vraiment ?</title>
-  <meta name="description" content="Un espace pour ce que tu ressens vraiment. Pas une appli de méditation. Pas un journal. Juste toi." />
-  <meta name="theme-color" content="#050810" />
+  <title>ÇA VA ? — L'app pour ceux qui disent « ça va » quand ça ne va pas</title>
+  <meta name="description" content="Un endroit calme. Un refuge. Pour respirer quelques minutes sans prétendre que tout va bien." />
+  <meta name="theme-color" content="#FBF6E8" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="NÉYA" />
-  <meta property="og:description" content="Et toi, ça va vraiment ?" />
+  <meta property="og:title" content="ÇA VA ?" />
+  <meta property="og:description" content="L'app pour ceux qui disent « ça va » quand ça ne va pas." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="/bg-onboarding.avif" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="NÉYA" />
-  <meta name="twitter:description" content="Et toi, ça va vraiment ?" />
+  <meta name="twitter:title" content="ÇA VA ?" />
+  <meta name="twitter:description" content="L'app pour ceux qui disent « ça va » quand ça ne va pas." />
   <meta name="twitter:image" content="/bg-onboarding.avif" />
 
   <!-- Preload critical assets -->
@@ -27,7 +27,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="NÉYA" />
+  <meta name="apple-mobile-web-app-title" content="ÇA VA ?" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
   <!-- Google Fonts -->
@@ -54,7 +54,7 @@
     // Une seule fois par session, reload automatique.
     (function () {
       try {
-        if (localStorage.getItem('neya_unstuck_v24')) return;
+        if (localStorage.getItem('cava_unstuck_v27_rebrand')) return;
         if (!('serviceWorker' in navigator)) return;
         navigator.serviceWorker.getRegistrations().then(function (regs) {
           var unregisterAll = (regs && regs.length)
@@ -67,7 +67,7 @@
                 })
               : Promise.resolve();
             purge.then(function () {
-              localStorage.setItem('neya_unstuck_v24', '1');
+              localStorage.setItem('cava_unstuck_v27_rebrand', '1');
               location.reload();
             });
           });

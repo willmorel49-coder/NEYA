@@ -53,7 +53,7 @@ export default function Splash({ onContinue }) {
       onClick={handleTap}
       role="dialog"
       aria-modal="true"
-      aria-label="Entrer dans NÉYA"
+      aria-label="Entrer dans ÇA VA ?"
       tabIndex={0}
       style={{
         position: 'fixed',
@@ -160,23 +160,25 @@ export default function Splash({ onContinue }) {
             transition: 'opacity 1400ms var(--ease-narrative)',
           }}
         >
-          MMXXVI · NÉYA
+          MMXXVI · ÇA VA ?
         </div>
 
         {/* Wordmark */}
         <div
           style={{
-            fontFamily: "'Sora', system-ui, sans-serif",
-            fontWeight: 200,
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            fontWeight: 300,
             fontSize: 'clamp(64px, 18vw, 96px)',
-            letterSpacing: '0.04em',
+            letterSpacing: '-0.018em',
             color: '#FBF6E8',
             lineHeight: 1,
             opacity: mounted ? 1 : 0,
             transition: 'opacity 1400ms var(--ease-narrative)',
           }}
         >
-          NÉYA
+          ÇA VA&nbsp;?
         </div>
 
         {/* Hairline */}

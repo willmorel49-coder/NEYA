@@ -10,6 +10,7 @@ import { useState, useEffect, useRef } from 'react';
 import { isOnboarded, getProfile, ls, haptic, checkMilestone, isMilestoneSeen, markMilestoneSeen, recordVisitToday } from './state';
 import { WORLDS } from './worlds';
 import Splash from './screens/Splash';
+import Manifeste from './screens/Manifeste';
 import Onboarding from './screens/Onboarding';
 import Aventure from './screens/Aventure';
 import Cocon from './screens/Cocon';
@@ -300,8 +301,9 @@ export default function V2App() {
     return <Splash onContinue={() => setSplashDone(true)} />;
   }
 
+  // Premier launch : Manifeste ÇA VA ? (remplace Onboarding+Patronus+Tour)
   if (!onboarded) {
-    return <Onboarding onComplete={handleOnboardingComplete} />;
+    return <Manifeste onClose={() => setOnboarded(true)} />;
   }
 
   // SOS visible only when user is in main shell — hidden during intro overlays

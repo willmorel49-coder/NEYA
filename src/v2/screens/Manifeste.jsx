@@ -1,661 +1,507 @@
 /* ============================================================
-   NÉYA V3 — Manifeste (Notre histoire · ÇA VA?)
+   ÇA VA ? — Manifeste d'entrée (V3)
    ============================================================
-   Editorial spread, scrollable top-to-bottom. Brand voice :
-   « Briser le masque du ça va. »
-   Light cream + ink + palette ÇA VA? stricte (terracotta /
-   ochre / emerald / sage / mist-blue / cream). Pas de tilleul.
-   Slide-up 420ms · slide-down 320ms.
+   Ecran cinematique avant-ouverture : scroll vertical lent qui
+   revele le manifeste de l'app en 4 sections.
+   Remplace l'onboarding + Patronus + Tour de l'ancienne V2.
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
-import { haptic } from '../state';
-import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
+import { patchProfile, ls, haptic } from '../state';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
-const TERRACOTTA = '#9F584C';
-const OCHRE      = '#C29051';
-const EMERALD    = '#34917F';
-const SAGE       = '#9AAFA0';
-const MIST_BLUE  = '#7397BC';
-const CREAM      = '#FBF6E8';
-const CREAM_DIM  = '#F0EBDD';
-const INK        = '#1A1A2F';
-const INK_SOFT   = '#4A4A5F';
-const INK_WHISPER = '#7A7A8C';
-
-const CAPSULES = [
+const SECTIONS = [
   {
-    name: 'Libre',
-    color: TERRACOTTA,
-    tagline: 'Pour ceux qui se relèvent.',
-    desc: 'Sweat et tee crème, broderie main rouge sang. Le vêtement qui dit la chaleur quand les mots manquent.',
+    eyebrow: '01 · ARRIVÉE',
+    title: 'Merci.',
+    paragraphs: [
+      'Merci d\'être ici.',
+      'Parce que parfois, continuer à avancer demande déjà une force immense.',
+      'Il y a des douleurs qui ne se voient pas.',
+      'Des tempêtes silencieuses que certaines personnes apprennent à cacher tellement longtemps qu\'elles deviennent invisibles aux yeux des autres.',
+      'Le monde continue normalement autour.',
+      'Les conversations continuent.',
+      'Les journées passent.',
+      'Et pendant ce temps-là, certains essaient juste de survivre à ce qu\'ils ressentent à l\'intérieur.',
+      'Il y a des nuits où l\'anxiété prend toute la place.',
+      'Des nuits où le cœur bat trop vite.',
+      'Où respirer devient difficile.',
+      'Où le cerveau fait croire que quelque chose de grave va arriver.',
+      'Et malgré ça, le lendemain, on remet un sourire.',
+      'On répond encore :',
+      { italic: '« oui ça va. »' },
+    ],
   },
   {
-    name: 'Ça Va',
-    color: MIST_BLUE,
-    tagline: 'Pour ceux qui hésitent à répondre.',
-    desc: 'Coton bio, point de chaînette bleu brume. Une question cousue à même la poitrine, comme une invitation.',
+    eyebrow: '02 · ORIGINE',
+    title: 'D\'où ça vient.',
+    paragraphs: [
+      'ÇA VA ? est née d\'un vrai mal-être.',
+      'De crises d\'angoisse vécues en silence.',
+      'De nuits passées à attendre que la panique redescende enfin.',
+      'De cette sensation d\'être enfermé dans sa propre tête sans réussir à l\'arrêter.',
+      'De la fatigue mentale qui épuise tellement qu\'on finit parfois par ne plus reconnaître la personne qu\'on était avant.',
+      'Mais le plus difficile n\'était pas toujours la douleur.',
+      { italic: 'Le plus difficile, c\'était de continuer à faire semblant que tout allait bien.' },
+      'De sourire automatiquement.',
+      'De répondre « ça va » alors qu\'au fond tout s\'effondrait doucement.',
+    ],
   },
   {
-    name: 'Vraiment ?',
-    color: EMERALD,
-    tagline: 'Pour ceux qui veulent enfin la vraie réponse.',
-    desc: 'Pièce d’atelier numérotée, broderie vert racine. Le mot qui ouvre la parole, brodé pour durer.',
+    eyebrow: '03 · POURQUOI',
+    title: 'Pourquoi ÇA VA ?',
+    paragraphs: [
+      'Parce qu\'un jour, cette question a commencé à faire mal.',
+      { italic: '« Ça va ? »' },
+      'Deux mots simples.',
+      'Deux mots que tout le monde prononce.',
+      'Mais pour certaines personnes, ces mots cachent des choses très lourdes.',
+      'La peur.',
+      'Le vide.',
+      'L\'anxiété.',
+      'La solitude mentale.',
+      'La sensation d\'être perdu à l\'intérieur de soi-même.',
+      'Alors cette application n\'a pas été créée pour rendre les gens plus performants.',
+      'Elle a été créée pour offrir un endroit calme.',
+      'Un refuge.',
+      'Un espace où l\'on peut respirer quelques minutes sans avoir besoin de prétendre que tout va bien.',
+    ],
+  },
+  {
+    eyebrow: '04 · CRÉATION',
+    title: 'Qui l\'a fait.',
+    paragraphs: [
+      'Cette application a été créée par quelqu\'un qui connaît réellement ces états-là.',
+      'Quelqu\'un qui sait ce que ça fait d\'avoir peur de son propre cerveau.',
+      'De penser trop.',
+      'De cacher ses crises.',
+      'De sourire mécaniquement pendant qu\'à l\'intérieur tout devient de plus en plus lourd.',
+      'Alors un jour, une idée est née :',
+      { italic: 'créer l\'endroit qu\'on aurait aimé trouver pendant ses pires nuits.' },
+      'Un endroit doux.',
+      'Humain.',
+      'Silencieux.',
+      'Un endroit qui ne juge pas.',
+      'Qui ne demande pas d\'aller bien.',
+      'Qui te laisse simplement exister, respirer, et te sentir un peu moins seul.',
+    ],
   },
 ];
 
-const VALUES = [
-  { icon: '♡', title: 'DOUCEUR',  color: TERRACOTTA, desc: 'Aucune urgence. Le textile prend son temps.' },
-  { icon: '✿', title: 'VÉRITÉ',   color: EMERALD,    desc: 'Pas de slogan creux. Chaque mot a été pensé.' },
-  { icon: '☉', title: 'SLOWNESS', color: OCHRE,      desc: 'Trois personnes, à la main. Cinq pièces par jour.' },
-];
-
-/* Petit cœur dessiné main, inline SVG */
-function HandHeart({ color = TERRACOTTA, size = 32 }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 32 28"
-      fill="none"
-      aria-hidden="true"
-      style={{ display: 'inline-block' }}
-    >
-      <path
-        d="M16 24.5C14.5 23 4.5 16.5 4.5 9.8c0-3.4 2.7-5.8 5.6-5.8 2.4 0 4.4 1.6 5.9 3.5 1.5-1.9 3.5-3.5 5.9-3.5 2.9 0 5.6 2.4 5.6 5.8 0 6.7-10 13.2-11.5 14.7z"
-        stroke={color}
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
-  );
-}
+const STORAGE_KEY = 'manifeste_seen';
 
 export default function Manifeste({ onClose }) {
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
-  const aliveRef = useRef(true);
-  const timeoutsRef = useRef([]);
+  const scrollRef = useRef(null);
 
-  const safeTimeout = (fn, ms) => {
-    const id = setTimeout(() => {
-      if (aliveRef.current) fn();
-    }, ms);
-    timeoutsRef.current.push(id);
-    return id;
+  const handleEnter = () => {
+    haptic(6);
+    ls.set(STORAGE_KEY, true);
+    // Marque les anciens flags pour ne pas declencher les anciens flows
+    ls.set('patronus_seen', true);
+    ls.set('tour_seen', true);
+    patchProfile({
+      onboarding: { completed: true, completedAt: new Date().toISOString() },
+    });
+    setClosing(true);
+    setTimeout(() => onClose?.(), 420);
   };
 
+  const handleSkip = () => {
+    haptic(2);
+    handleEnter();
+  };
+
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: handleSkip,
+    labelText: 'Manifeste ÇA VA ?',
+  });
+
   useEffect(() => {
-    const id = requestAnimationFrame(() => setMounted(true));
+    const raf = requestAnimationFrame(() => setMounted(true));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: true } }));
+    }
     return () => {
-      cancelAnimationFrame(id);
-      aliveRef.current = false;
-      timeoutsRef.current.forEach((t) => clearTimeout(t));
-      timeoutsRef.current = [];
+      cancelAnimationFrame(raf);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: false } }));
+      }
     };
   }, []);
 
-  const doClose = () => {
-    if (closing) return;
-    haptic(3);
-    setClosing(true);
-    safeTimeout(() => onClose?.(), 320);
-  };
-
-  // Edge swipe-back (iOS HIG)
-  const {
-    bindContainer: bindEdge,
-    translateX: edgeX,
-    isDragging: edgeDragging,
-  } = useEdgeSwipeBack({ onClose: doClose });
-
-  const verticalTransform = closing
-    ? 'translateY(100%)'
-    : mounted
-      ? 'translateY(0)'
-      : 'translateY(100%)';
-  const transform = `translateX(${edgeX}px) ${verticalTransform}`;
-  const opacity = closing ? 0 : mounted ? 1 : 0;
+  // Reveal-on-scroll via IntersectionObserver
+  useEffect(() => {
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+    const items = scroll.querySelectorAll('[data-reveal]');
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.setAttribute('data-revealed', 'true');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { root: scroll, threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    );
+    items.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
   return (
     <div
-      {...bindEdge}
+      ref={containerRef}
+      {...dialogProps}
       style={{
-        position: 'absolute',
+        position: 'fixed',
         inset: 0,
-        zIndex: 90,
-        background: CREAM,
-        color: INK,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        opacity,
-        transform,
-        transition: edgeDragging
-          ? 'none'
-          : closing
-            ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
-            : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)',
-        WebkitFontSmoothing: 'antialiased',
-        fontFamily: 'var(--font-body)',
+        zIndex: 100,
+        background: 'var(--cream)',
+        color: 'var(--ink)',
+        opacity: closing ? 0 : mounted ? 1 : 0,
+        transition: 'opacity 420ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
-      {/* ── Section 7 — Top bar sticky ─────────────────────── */}
+      {/* Voile haut */}
       <div
+        aria-hidden
         style={{
-          position: 'sticky',
+          position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
-          zIndex: 5,
-          padding: 'calc(env(safe-area-inset-top, 0px) + 12px) 22px 12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'rgba(251, 246, 232, 0.92)',
+          height: 'calc(env(safe-area-inset-top, 0px) + 80px)',
+          background: 'linear-gradient(to bottom, var(--cream) 0%, var(--cream) 60%, transparent 100%)',
+          zIndex: 3,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Bouton Passer */}
+      <button
+        type="button"
+        onClick={handleSkip}
+        data-press
+        aria-label="Passer le manifeste"
+        style={{
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
+          right: 18,
+          appearance: 'none',
+          padding: '8px 14px',
+          minHeight: 36,
+          background: 'rgba(26, 26, 47, 0.04)',
+          border: '0.5px solid rgba(26, 26, 47, 0.18)',
+          borderRadius: 999,
+          color: 'var(--ink-soft)',
+          fontFamily: 'var(--font-ui)',
+          fontSize: 11,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          fontWeight: 600,
+          cursor: 'pointer',
+          WebkitTapHighlightColor: 'transparent',
+          zIndex: 4,
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
-          borderBottom: '1px solid rgba(26, 26, 47, 0.06)',
         }}
       >
-        <button
-          type="button"
-          data-press
-          onClick={doClose}
-          aria-label="Retour"
+        Passer ›
+      </button>
+
+      {/* Scroll content */}
+      <div
+        ref={scrollRef}
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'smooth',
+        }}
+      >
+        {/* Hero — wordmark ÇA VA ? */}
+        <section
+          data-reveal
           style={{
-            appearance: 'none',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '12px 14px',
-            minWidth: 44,
-            minHeight: 44,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 4,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 11,
-            fontWeight: 500,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: INK_SOFT,
-            WebkitTapHighlightColor: 'transparent',
-            marginLeft: -14,
-          }}
-        >
-          <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
-          Retour
-        </button>
-        <div
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: INK_SOFT,
-          }}
-        >
-          ÇA VA ? · MANIFESTE
-        </div>
-        <button
-          type="button"
-          data-press
-          onClick={doClose}
-          aria-label="Fermer"
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: '50%',
-            border: '1px solid rgba(26, 26, 47, 0.10)',
-            background: 'transparent',
-            color: INK,
-            fontSize: 16,
-            lineHeight: 1,
+            position: 'relative',
+            minHeight: 'calc(100dvh - env(safe-area-inset-top, 0px))',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer',
-            WebkitTapHighlightColor: 'transparent',
-            transition: 'transform 120ms var(--ease-out-ios)',
+            padding: 'calc(env(safe-area-inset-top, 0px) + 60px) 24px 60px',
+            textAlign: 'center',
+            opacity: 0,
+            transform: 'translateY(16px)',
+            transition: 'opacity 1200ms cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1200ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           }}
         >
-          ✕
-        </button>
-      </div>
-
-      {/* ── Section 1 — Cover ──────────────────────────────── */}
-      <section
-        style={{
-          padding: '40px 24px 56px',
-          textAlign: 'left',
-          position: 'relative',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: INK_SOFT,
-            marginBottom: 28,
-          }}
-        >
-          ÇA VA ? · MANIFESTE
-        </div>
-
-        <h1
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 'clamp(40px, 12vw, 56px)',
-            lineHeight: 1.04,
-            letterSpacing: '-0.018em',
-            color: INK,
-            margin: 0,
-            fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1',
-          }}
-        >
-          « Briser le masque du{' '}
-          <em
-            className="neya-key"
+          <div
             style={{
-              fontStyle: 'italic',
-              fontWeight: 300,
-              color: TERRACOTTA,
-              fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 10,
+              letterSpacing: '0.42em',
+              fontWeight: 600,
+              color: 'var(--ink-soft)',
+              marginBottom: 32,
             }}
           >
-            ça va.
-          </em>
-           »
-        </h1>
+            MMXXVI
+          </div>
+          <h1
+            style={{
+              margin: 0,
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              fontSize: 'clamp(56px, 16vw, 92px)',
+              fontWeight: 300,
+              lineHeight: 1.0,
+              letterSpacing: '-0.02em',
+              color: 'var(--ink)',
+            }}
+          >
+            ÇA VA&nbsp;?
+          </h1>
+          <div
+            style={{
+              width: 40,
+              height: 1,
+              background: 'rgba(26, 26, 47, 0.32)',
+              margin: '32px auto 0',
+            }}
+          />
+          <p
+            style={{
+              marginTop: 28,
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              fontSize: 16,
+              lineHeight: 1.5,
+              color: 'var(--ink-soft)',
+              maxWidth: 320,
+            }}
+          >
+            L'application faite pour ceux qui disent « ça va »
+            <br />
+            quand ça ne va pas.
+          </p>
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              bottom: 'calc(env(safe-area-inset-bottom, 0px) + 28px)',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              fontFamily: 'var(--font-ui)',
+              fontSize: 9,
+              letterSpacing: '0.32em',
+              color: 'var(--ink-whisper)',
+              fontWeight: 600,
+              animation: 'manifeste-scroll-hint 2.4s ease-in-out infinite',
+            }}
+          >
+            ↓ FAIRE DÉFILER
+          </div>
+        </section>
 
-        <div style={{ marginTop: 22, display: 'flex', alignItems: 'center', gap: 10 }}>
-          <HandHeart color={TERRACOTTA} size={26} />
-          <div style={{ height: 1, width: 40, background: 'rgba(26, 26, 47, 0.15)' }} />
-        </div>
-
-        <p
-          style={{
-            marginTop: 22,
-            fontFamily: 'var(--font-body)',
-            fontSize: 14,
-            lineHeight: 1.6,
-            color: INK_SOFT,
-            maxWidth: 440,
-          }}
-        >
-          Nous existons pour faire de la mode un langage qui libère la parole
-          sur la santé mentale.
-        </p>
-      </section>
-
-      {/* ── Section 2 — Notre raison d'être ────────────────── */}
-      <section
-        style={{
-          margin: '0 16px 32px',
-          padding: '32px 24px 36px',
-          background: CREAM_DIM,
-          borderRadius: 22,
-          border: '1px solid rgba(26, 26, 47, 0.05)',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: TERRACOTTA,
-            marginBottom: 18,
-          }}
-        >
-          POURQUOI
-        </div>
-
-        <h2
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 26,
-            lineHeight: 1.18,
-            letterSpacing: '-0.014em',
-            color: INK,
-            margin: 0,
-            fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1',
-          }}
-        >
-          « Personne ne dit comment ça va vraiment. »
-        </h2>
-
-        <p
-          style={{
-            marginTop: 20,
-            fontFamily: 'var(--font-body)',
-            fontSize: 14,
-            lineHeight: 1.65,
-            color: INK_SOFT,
-          }}
-        >
-          Chaque jour, des millions de personnes répondent «&nbsp;ça va&nbsp;» sans
-          y croire. La mode, elle aussi, est devenue un masque. Nous proposons
-          l’inverse&nbsp;: un vêtement qui dit ce que tu n’oses pas
-          dire. Une broderie qui parle pour toi.
-        </p>
-      </section>
-
-      {/* ── Section 3 — Les capsules ───────────────────────── */}
-      <section style={{ padding: '0 24px 16px' }}>
-        <div
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: INK_SOFT,
-            marginBottom: 22,
-          }}
-        >
-          LES CAPSULES
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-          {CAPSULES.map((c) => (
-            <article key={c.name}>
-              <div
-                style={{
-                  width: 56,
-                  height: 2,
-                  background: c.color,
-                  marginBottom: 14,
-                  borderRadius: 1,
-                }}
-              />
-              <div
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: 9,
-                  fontWeight: 600,
-                  letterSpacing: '0.222em',
-                  textTransform: 'uppercase',
-                  color: c.color,
-                  marginBottom: 10,
-                }}
-              >
-                {c.name.toUpperCase()}
-              </div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontStyle: 'italic',
-                  fontWeight: 300,
-                  fontSize: 22,
-                  lineHeight: 1.22,
-                  letterSpacing: '-0.012em',
-                  color: INK,
-                  marginBottom: 10,
-                  fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1',
-                }}
-              >
-                {c.tagline}
-              </div>
-              <p
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 13,
-                  lineHeight: 1.6,
-                  color: INK_SOFT,
-                  margin: 0,
-                }}
-              >
-                {c.desc}
-              </p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Section 4 — L'atelier ──────────────────────────── */}
-      <section
-        style={{
-          padding: '56px 24px 56px',
-          marginTop: 32,
-          borderTop: '1px solid rgba(26, 26, 47, 0.06)',
-          borderBottom: '1px solid rgba(26, 26, 47, 0.06)',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: TERRACOTTA,
-            marginBottom: 18,
-          }}
-        >
-          L’ATELIER
-        </div>
-
-        <h2
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 26,
-            lineHeight: 1.2,
-            letterSpacing: '-0.014em',
-            color: INK,
-            margin: 0,
-            fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1',
-          }}
-        >
-          « Chaque broderie est faite à la main. »
-        </h2>
-
-        <p
-          style={{
-            marginTop: 20,
-            fontFamily: 'var(--font-body)',
-            fontSize: 14,
-            lineHeight: 1.65,
-            color: INK_SOFT,
-            maxWidth: 460,
-          }}
-        >
-          Notre atelier est à Paris, rue de Belleville. Trois personnes brodent
-          chaque commande. Aucune machine, aucune décoration&nbsp;; juste du
-          fil sur du coton bio.
-        </p>
-
-        <div
-          style={{
-            marginTop: 28,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 14,
-            opacity: 0.85,
-          }}
-        >
-          {[TERRACOTTA, OCHRE, EMERALD, SAGE, MIST_BLUE].map((col) => (
-            <HandHeart key={col} color={col} size={18} />
-          ))}
-        </div>
-      </section>
-
-      {/* ── Section 5 — Les valeurs ────────────────────────── */}
-      <section style={{ padding: '48px 24px 48px' }}>
-        <div
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: INK_SOFT,
-            marginBottom: 26,
-          }}
-        >
-          NOS VALEURS
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 26 }}>
-          {VALUES.map((v) => (
+        {/* Sections */}
+        {SECTIONS.map((section, sIdx) => (
+          <section
+            key={sIdx}
+            style={{
+              padding: '120px 28px 80px',
+              maxWidth: 620,
+              margin: '0 auto',
+            }}
+          >
             <div
-              key={v.title}
+              data-reveal
               style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 16,
+                fontFamily: 'var(--font-ui)',
+                fontSize: 10,
+                letterSpacing: '0.32em',
+                fontWeight: 600,
+                color: 'var(--ink-soft)',
+                marginBottom: 24,
+                opacity: 0,
+                transform: 'translateY(12px)',
+                transition: 'opacity 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               }}
             >
-              <div
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 28,
-                  lineHeight: 1,
-                  color: v.color,
-                  flex: '0 0 32px',
-                  textAlign: 'center',
-                }}
-              >
-                {v.icon}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div
-                  style={{
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 10,
-                    fontWeight: 600,
-                    letterSpacing: '0.222em',
-                    textTransform: 'uppercase',
-                    color: INK,
-                    marginBottom: 6,
-                  }}
-                >
-                  {v.title}
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: 12,
-                    lineHeight: 1.55,
-                    color: INK_SOFT,
-                  }}
-                >
-                  {v.desc}
-                </div>
-              </div>
+              {section.eyebrow}
             </div>
-          ))}
-        </div>
-      </section>
+            <h2
+              data-reveal
+              style={{
+                margin: 0,
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontVariationSettings: 'var(--fraunces-italic-soft)',
+                fontSize: 'clamp(38px, 9vw, 56px)',
+                fontWeight: 300,
+                lineHeight: 1.1,
+                letterSpacing: '-0.012em',
+                color: 'var(--ink)',
+                marginBottom: 40,
+                opacity: 0,
+                transform: 'translateY(16px)',
+                transition: 'opacity 1100ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 80ms, transform 1100ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 80ms',
+              }}
+            >
+              {section.title}
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {section.paragraphs.map((p, pIdx) => {
+                const isItalic = typeof p === 'object' && p.italic;
+                const text = isItalic ? p.italic : p;
+                return (
+                  <p
+                    key={pIdx}
+                    data-reveal
+                    style={{
+                      margin: 0,
+                      fontFamily: isItalic ? 'var(--font-display)' : 'var(--font-body)',
+                      fontStyle: isItalic ? 'italic' : 'normal',
+                      fontVariationSettings: isItalic ? 'var(--fraunces-italic-soft)' : undefined,
+                      fontSize: isItalic ? 19 : 17,
+                      lineHeight: isItalic ? 1.5 : 1.65,
+                      color: isItalic ? 'var(--ink)' : 'var(--ink-soft)',
+                      letterSpacing: isItalic ? '-0.005em' : '0',
+                      maxWidth: isItalic ? 480 : 560,
+                      opacity: 0,
+                      transform: 'translateY(10px)',
+                      transition: `opacity 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${Math.min(pIdx * 40, 320)}ms, transform 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${Math.min(pIdx * 40, 320)}ms`,
+                    }}
+                  >
+                    {text}
+                  </p>
+                );
+              })}
+            </div>
+          </section>
+        ))}
 
-      {/* ── Section 6 — La citation ────────────────────────── */}
-      <section
-        style={{
-          margin: '0 0 0',
-          padding: '64px 28px 80px',
-          background:
-            'radial-gradient(circle at 50% 20%, #FBE8D8 0%, transparent 60%), ' +
-            'radial-gradient(circle at 30% 80%, #F8F2E0 0%, transparent 65%), ' +
-            CREAM,
-          textAlign: 'left',
-        }}
-      >
-        <div
+        {/* Signature finale + CTA */}
+        <section
           style={{
+            padding: '60px 28px calc(env(safe-area-inset-bottom, 0px) + 80px)',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            gap: 10,
-            marginBottom: 26,
+            justifyContent: 'center',
+            textAlign: 'center',
           }}
         >
-          <HandHeart color={TERRACOTTA} size={20} />
-          <div style={{ height: 1, width: 32, background: 'rgba(26, 26, 47, 0.18)' }} />
-        </div>
+          <div
+            data-reveal
+            style={{
+              width: 1,
+              height: 60,
+              background: 'rgba(26, 26, 47, 0.18)',
+              marginBottom: 40,
+              opacity: 0,
+              transform: 'scaleY(0.4)',
+              transformOrigin: 'top',
+              transition: 'opacity 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1100ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            }}
+          />
+          <p
+            data-reveal
+            style={{
+              margin: 0,
+              marginBottom: 12,
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              fontSize: 24,
+              lineHeight: 1.3,
+              color: 'var(--ink)',
+              opacity: 0,
+              transform: 'translateY(12px)',
+              transition: 'opacity 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 200ms, transform 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 200ms',
+            }}
+          >
+            ÇA VA&nbsp;?
+          </p>
+          <p
+            data-reveal
+            style={{
+              margin: 0,
+              marginBottom: 44,
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              fontSize: 16,
+              lineHeight: 1.5,
+              color: 'var(--ink-soft)',
+              maxWidth: 360,
+              opacity: 0,
+              transform: 'translateY(12px)',
+              transition: 'opacity 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 280ms, transform 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 280ms',
+            }}
+          >
+            L'application faite pour ceux qui disent « ça va »
+            <br />
+            quand ça ne va pas.
+          </p>
+          <button
+            type="button"
+            data-press
+            onClick={handleEnter}
+            aria-label="Entrer dans ÇA VA ?"
+            style={{
+              appearance: 'none',
+              padding: '16px 42px',
+              minHeight: 52,
+              background: 'var(--ink)',
+              color: 'var(--cream)',
+              border: 'none',
+              borderRadius: 999,
+              fontFamily: 'var(--font-ui)',
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              boxShadow: '0 8px 24px rgba(26, 26, 47, 0.18)',
+            }}
+          >
+            Entrer
+          </button>
+        </section>
+      </div>
 
-        <blockquote
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 'clamp(22px, 6vw, 28px)',
-            lineHeight: 1.28,
-            letterSpacing: '-0.012em',
-            color: INK,
-            margin: 0,
-            maxWidth: 520,
-            fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1',
-          }}
-        >
-          « When the power of love overcomes the love of power, the world
-          will know peace. »
-        </blockquote>
-
-        <div
-          style={{
-            marginTop: 28,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: INK_SOFT,
-          }}
-        >
-          JIMI HENDRIX · CITATION TRANSMISE PAR ÇA VA?
-        </div>
-      </section>
-
-      {/* ── Footer minimal ─────────────────────────────────── */}
-      <footer
-        style={{
-          padding: '32px 24px calc(env(safe-area-inset-bottom, 0px) + 56px)',
-          textAlign: 'center',
-          borderTop: '1px solid rgba(26, 26, 47, 0.06)',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 24,
-            color: INK,
-            display: 'inline-flex',
-            alignItems: 'baseline',
-            gap: 6,
-            fontVariationSettings: '"opsz" 144, "SOFT" 100, "WONK" 1',
-          }}
-        >
-          ça va
-          <HandHeart color={TERRACOTTA} size={16} />
-          ?
-        </div>
-        <div
-          style={{
-            marginTop: 10,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: INK_SOFT,
-          }}
-        >
-          PARIS · BELLEVILLE · 2026
-        </div>
-      </footer>
+      <style>{`
+        [data-reveal][data-revealed="true"] {
+          opacity: 1 !important;
+          transform: translateY(0) scaleY(1) !important;
+        }
+        @keyframes manifeste-scroll-hint {
+          0%, 100% { opacity: 0.55; transform: translate(-50%, 0); }
+          50% { opacity: 0.85; transform: translate(-50%, 4px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [data-reveal] {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+          }
+          @keyframes manifeste-scroll-hint {
+            0%, 100% { opacity: 0.7; transform: translateX(-50%); }
+          }
+        }
+      `}</style>
     </div>
   );
 }
