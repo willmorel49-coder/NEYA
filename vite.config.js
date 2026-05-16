@@ -32,6 +32,16 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
+            // Pochettes Musique : NetworkFirst pour eviter cache stale
+            urlPattern: /\/musique\/pochettes\/.*\.jpg$/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'neya-pochettes-v2',
+              networkTimeoutSeconds: 4,
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            },
+          },
+          {
             urlPattern: /\.(?:avif|webp|png|jpg|svg)$/i,
             handler: 'CacheFirst',
             options: {
