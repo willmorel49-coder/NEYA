@@ -1,15 +1,14 @@
 /* ============================================================
-   ÇA VA ? V5 — Aventure (hub gamifié painterly)
+   ÇA VA ? V3 — Aventure (palette bleu/rose · glassmorphism)
    ============================================================
-   Salle de gym mentale + voyage initiatique.
-   Structure : hub d'accueil avec 3 piliers visuels.
+   Hub d'accueil avec 3 piliers visuels :
 
-     🌍 L'AVENTURE     — 6 mondes émotionnels, quêtes
-     📚 LA CONNAISSANCE — bibliothèque santé mentale
-     🪞 LES 3 TEMPS DU SOI — passé / présent / futur
+     01 · L'AVENTURE      (bleu)   — 6 mondes émotionnels
+     02 · LA CONNAISSANCE (rose)   — bibliothèque
+     03 · LES 3 TEMPS DU SOI (violet) — passé / présent / futur
 
-   + Séance du jour (CTA principal)
-   + Personnalisable (image / ambiance / musique) comme Cocon
+   + Séance du jour (CTA bleu)
+   + Bilan du soir contextuel (glass card sans numéro)
    ============================================================ */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
@@ -75,7 +74,7 @@ const TRACKS = [
   { key: 'Masque',                   title: 'Masque' },
 ];
 
-/* 6 mondes pour le pilier Aventure */
+/* 6 mondes pour le pilier Aventure (sheet) */
 const WORLDS_LIST = [
   { key: 'foret',      name: 'Forêt de Clarté',    totem: 'Lion',    emotion: 'Sortir du brouillard',         order: 1 },
   { key: 'temple',     name: 'Temple des Parts',   totem: 'Ours',    emotion: 'Accepter ses contradictions',  order: 2 },
@@ -85,11 +84,17 @@ const WORLDS_LIST = [
   { key: 'communaute', name: 'Refuge partagé',     totem: 'Renard',  emotion: 'Apprendre à recevoir',         order: 6 },
 ];
 
-/* 8 leçons (pilier Connaissance) — contenu complet dans data/lecons.js */
+/* 8 leçons (pilier Connaissance) */
 const LECONS = LECONS_CONTENT;
-
-/* Les 3 temps du soi — depuis data */
+/* Les 3 temps du soi */
 const TEMPS_SOI = TEMPS_GROUPS_DATA;
+
+/* ─── Palette piliers V3 ─── */
+const PILIERS = {
+  aventure:     { accent: '#1A5A7F', gradient: 'linear-gradient(135deg, #1A5A7F, #4A8AAF)' },
+  connaissance: { accent: '#C87090', gradient: 'linear-gradient(135deg, #C87090, #E090B0)' },
+  temps:        { accent: '#7F5A8A', gradient: 'linear-gradient(135deg, #7F5A8A, #AF80BA)' },
+};
 
 /* ─── Helpers ─── */
 
@@ -145,9 +150,6 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const av = profile.aventure || { image: null, ambiance: 'fireflies', music: null, musicVolume: 0.4 };
   const totemKey = profile.totem || 'lion';
   const currentTotem = TOTEMS.find((t) => t.key === totemKey) || TOTEMS[0];
-  const totemWorld = WORLDS[currentTotem.world] || WORLDS.foret;
-  const accent = totemWorld.accent;
-  const accentRgb = totemWorld.accentRgb;
   const currentImage = useMemo(() => resolveImage(profile), [profile]);
   const currentTrack = useMemo(() => TRACKS.find((t) => t.key === av.music) || null, [av.music]);
   const hourPhrase = useMemo(() => getHourPhrase(), []);
@@ -208,22 +210,19 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
     updateProfile({ aventure: nextAv });
   };
 
-  // Quête du jour : alterne entre rituels / leçons / méditation / espace
-  // Priorise ce qui n'a pas encore été fait/lu.
+  // Quête du jour : alterne entre rituels / leçons / méditation / espace.
   const questOfDay = useMemo(() => {
     const day = new Date().getDate();
     const leconsLues = av.leconsLues || [];
     const rituelsFaits = av.rituelsFaits || {};
 
-    // Construire un pool d'options prioritaires (non encore expérimentées)
     const pool = [];
 
-    // 1. Rituels non faits, groupés par temps pour varier
     const rituelsPasse  = RITUELS_DATA.filter((r) => r.temps === 'passe'   && !rituelsFaits[r.key]);
     const rituelsPresent = RITUELS_DATA.filter((r) => r.temps === 'present' && !rituelsFaits[r.key]);
     const rituelsFutur  = RITUELS_DATA.filter((r) => r.temps === 'futur'   && !rituelsFaits[r.key]);
 
-    const addRituel = (r, accent) => pool.push({
+    const addRituel = (r) => pool.push({
       type: 'rituel',
       eyebrow: 'Rituel · ' + (r.temps === 'passe' ? 'Soi du passé' : r.temps === 'present' ? 'Soi présent' : 'Soi du futur'),
       title: r.title,
@@ -236,7 +235,6 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
     if (rituelsPresent[0]) addRituel(rituelsPresent[0]);
     if (rituelsFutur[0])   addRituel(rituelsFutur[0]);
 
-    // 2. Leçons non lues
     const leconsRestantes = LECONS_CONTENT.filter((l) => !leconsLues.includes(l.key));
     if (leconsRestantes[0]) {
       pool.push({
@@ -249,7 +247,6 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
       });
     }
 
-    // 3. Méditation guidée (toujours disponible)
     pool.push({
       type: 'meditation',
       eyebrow: 'Pratique',
@@ -259,7 +256,6 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
       onAction: onOpenMeditation,
     });
 
-    // 4. Espace de présence (toujours disponible)
     pool.push({
       type: 'espace-vrai',
       eyebrow: 'Pratique',
@@ -269,7 +265,6 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
       onAction: onOpenEspaceVrai,
     });
 
-    // 5. Habitudes du jour (toujours disponible)
     pool.push({
       type: 'habitudes',
       eyebrow: 'Quotidien',
@@ -279,7 +274,6 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
       onAction: onOpenHabitudes,
     });
 
-    // Sélection : alterne sur date pour varier d'un jour à l'autre
     return pool[day % pool.length];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -307,190 +301,196 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
       data-world={currentTotem.world}
     >
       <Blobs variant="rose-blue" />
-      {/* HERO painterly */}
+
+      {/* TOPBAR */}
       <div
         style={{
           position: 'relative',
-          width: '100%',
-          height: '52vh',
-          minHeight: 360,
-          maxHeight: 520,
-          overflow: 'hidden',
+          zIndex: 3,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 22px 6px',
         }}
       >
-        <div
-          aria-hidden
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `url(${currentImage.src})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            animation: 'aventure-bg-ken-burns 32s ease-in-out infinite alternate',
-            willChange: 'transform',
-          }}
-        />
-        <div
-          aria-hidden
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background:
-              'linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.32) 45%, rgba(10, 12, 20, 0.92) 100%)',
-            pointerEvents: 'none',
-          }}
-        />
-        <CoconAmbiance type={av.ambiance || 'fireflies'} accent={accent} />
-
-        {/* Top bar */}
+        <span style={{ width: 44, height: 44, flexShrink: 0 }} aria-hidden />
         <div
           style={{
-            position: 'absolute',
-            top: 'calc(env(safe-area-inset-top, 0px) + 22px)',
-            left: 22,
-            right: 22,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            zIndex: 3,
-          }}
-        >
-          <span style={{ width: 44, height: 44 }} />
-          <div aria-hidden style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-            <svg width="22" height="14" viewBox="0 0 44 28" fill="none" aria-hidden>
-              <path d="M22 26 C 8 18, 4 8, 22 2 C 40 8, 36 18, 22 26 Z" stroke="#FBF6E8" strokeWidth="0.8" fill="none" opacity="0.92" />
-              <path d="M22 26 C 12 22, 10 14, 22 8" stroke="#FBF6E8" strokeWidth="0.6" fill="none" opacity="0.7" />
-              <path d="M22 26 C 32 22, 34 14, 22 8" stroke="#FBF6E8" strokeWidth="0.6" fill="none" opacity="0.7" />
-            </svg>
-            <span style={{ fontFamily: 'var(--font-ui)', fontSize: 9, letterSpacing: '0.42em', fontWeight: 500, color: 'var(--blue-900)', opacity: 0.78 }}>
-              ÇA VA ?
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => { haptic(2); setPersonalizeOpen(true); }}
-            data-press
-            aria-label="Personnaliser mon aventure"
-            style={{
-              appearance: 'none',
-              width: 44,
-              height: 44,
-              background: 'rgba(255, 255, 255, 0.65)',
-              border: '0.5px solid rgba(26, 90, 127, 0.30)',
-              borderRadius: '50%',
-              color: 'var(--blue-900)',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              WebkitTapHighlightColor: 'transparent',
-              fontSize: 16,
-              padding: 0,
-            }}
-          >
-            ⋯
-          </button>
-        </div>
-
-        <div
-          style={{
-            position: 'absolute',
-            left: 22,
-            right: 22,
-            bottom: 32,
+            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 22,
             color: 'var(--blue-900)',
-            zIndex: 2,
+            letterSpacing: '0.01em',
+            lineHeight: 1,
           }}
         >
-          <div className="neya-mark" style={{ color: 'var(--blue-900)', opacity: 0.88, marginBottom: 12, fontSize: 9, textShadow: '0 1px 4px rgba(0,0,0,0.42)' }}>
-            MON AVENTURE
-          </div>
-          <h1
-            style={{
-              margin: 0,
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(32px, 9vw, 44px)',
-              fontWeight: 300,
-              lineHeight: 1.05,
-              letterSpacing: '-0.022em',
-              fontVariationSettings: '"opsz" 144, "SOFT" 50',
-              color: 'var(--blue-900)',
-              textShadow: '0 2px 18px rgba(0, 0, 0, 0.42)',
-            }}
-          >
-            {getGreeting(profile.pseudo)}
-          </h1>
-          <p
-            style={{
-              margin: '14px 0 0',
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontSize: 16,
-              lineHeight: 1.4,
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              color: 'var(--blue-900)',
-              opacity: 0.96,
-              maxWidth: 320,
-              textShadow: '0 1px 8px rgba(0, 0, 0, 0.52)',
-            }}
-          >
-            {hourPhrase}
-          </p>
+          ÇA VA ?
         </div>
+        <button
+          type="button"
+          onClick={() => { haptic(2); setPersonalizeOpen(true); }}
+          data-press
+          aria-label="Personnaliser mon aventure"
+          style={{
+            appearance: 'none',
+            width: 44,
+            height: 44,
+            background: 'rgba(255, 255, 255, 0.65)',
+            border: '1px solid rgba(255, 255, 255, 0.85)',
+            borderRadius: '50%',
+            color: 'var(--blue-900)',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            WebkitTapHighlightColor: 'transparent',
+            fontSize: 18,
+            padding: 0,
+            boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+            flexShrink: 0,
+          }}
+        >
+          ⋯
+        </button>
       </div>
 
-      {/* Body ink */}
+      {/* ILLUSTRATION CARD 343×220 */}
       <div
         style={{
-          background: 'var(--bg)',
-          padding: '8px 22px calc(env(safe-area-inset-bottom, 0px) + 130px)',
-          color: 'var(--blue-900)',
+          position: 'relative',
+          margin: '12px 16px 0',
+          borderRadius: 24,
+          overflow: 'hidden',
+          height: 220,
+          flexShrink: 0,
+          boxShadow: '0 8px 32px rgba(10, 36, 56, 0.12)',
+          zIndex: 1,
         }}
       >
-        {/* QUÊTE DU JOUR */}
+        <img
+          src={currentImage.src}
+          alt=""
+          width={343}
+          height={220}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to bottom, transparent 30%, rgba(10, 36, 56, 0.65) 100%)',
+          }}
+        />
+        <CoconAmbiance type={av.ambiance || 'fireflies'} accent="#C2D8E8" />
+      </div>
+
+      {/* BODY */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          padding: '24px 16px calc(env(safe-area-inset-bottom, 0px) + 130px)',
+        }}
+      >
+        {/* HERO TEXT */}
+        <div
+          style={{
+            fontFamily: '"Inter", sans-serif',
+            fontSize: 10,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            color: 'var(--blue-500)',
+            marginBottom: 12,
+          }}
+        >
+          Mon aventure
+        </div>
+        <h1
+          style={{
+            margin: 0,
+            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 'clamp(42px, 12vw, 52px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.01em',
+            color: 'var(--blue-900)',
+          }}
+        >
+          {getGreeting(profile.pseudo)}
+        </h1>
+        <p
+          style={{
+            margin: '12px 0 0',
+            fontFamily: '"Inter", sans-serif',
+            fontSize: 14,
+            fontWeight: 300,
+            lineHeight: 1.5,
+            color: 'var(--text-secondary)',
+            maxWidth: 320,
+          }}
+        >
+          {hourPhrase}
+        </p>
+
+        {/* GLASS CARD — SÉANCE DU JOUR */}
         <section
           style={{
-            marginTop: 24,
+            marginTop: 28,
             padding: '20px 22px',
-            background: `linear-gradient(135deg, ${accentRgb}, 0.18), rgba(251, 246, 232, 0.04))`,
-            border: `0.5px solid ${accent}`,
-            borderRadius: 20,
-            boxShadow: `0 8px 32px ${accentRgb}, 0.20)`,
+            background: 'rgba(255, 255, 255, 0.65)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            border: '1px solid rgba(255, 255, 255, 0.85)',
+            borderRadius: 24,
+            boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
           }}
         >
           <div
-            className="neya-mark"
             style={{
-              color: accent,
-              marginBottom: 6,
-              fontSize: 9,
-              opacity: 0.92,
+              fontFamily: '"Inter", sans-serif',
+              fontSize: 10,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              color: 'var(--blue-500)',
+              marginBottom: 8,
             }}
           >
-            Ta séance du jour · {questOfDay.eyebrow || ''}
+            Séance du jour · {questOfDay.eyebrow || ''}
           </div>
           <div
             style={{
-              fontFamily: 'var(--font-display)',
+              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
               fontStyle: 'italic',
-              fontSize: 22,
-              lineHeight: 1.25,
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              fontWeight: 300,
+              fontSize: 24,
+              lineHeight: 1.2,
               color: 'var(--blue-900)',
-              marginBottom: 4,
+              marginBottom: 6,
             }}
           >
             {questOfDay.title}
           </div>
           <div
             style={{
-              fontFamily: 'var(--font-body)',
+              fontFamily: '"Inter", sans-serif',
               fontSize: 13,
+              fontWeight: 300,
               lineHeight: 1.5,
-              color: 'rgba(10, 36, 56, 0.82)',
-              marginBottom: 16,
+              color: 'var(--text-secondary)',
+              marginBottom: 18,
             }}
           >
             {questOfDay.desc}
@@ -502,18 +502,19 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             style={{
               appearance: 'none',
               width: '100%',
-              padding: '14px 18px',
-              minHeight: 48,
-              background: accent,
-              color: 'var(--blue-900)',
+              padding: '15px 24px',
+              minHeight: 50,
+              background: 'linear-gradient(135deg, #1A5A7F, #2A8ABF)',
+              color: '#FFFFFF',
               border: 'none',
-              borderRadius: 999,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
+              borderRadius: 50,
+              fontFamily: '"Inter", sans-serif',
+              fontSize: 11,
               fontWeight: 600,
-              letterSpacing: '0.18em',
+              letterSpacing: '0.16em',
               textTransform: 'uppercase',
               cursor: 'pointer',
+              boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
               WebkitTapHighlightColor: 'transparent',
             }}
           >
@@ -521,62 +522,63 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           </button>
         </section>
 
-        {/* 3 PILIERS */}
-        <div className="neya-mark" style={{ color: 'rgba(10, 36, 56, 0.72)', marginTop: 32, marginBottom: 14 }}>
+        {/* SECTION LABEL */}
+        <div
+          style={{
+            fontFamily: '"Inter", sans-serif',
+            fontSize: 9,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            fontWeight: 500,
+            color: 'var(--rose-700)',
+            marginTop: 36,
+            marginBottom: 14,
+          }}
+        >
           Tes piliers
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {/* 3 PILIERS */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <PilierCard
-            label="L'Aventure"
-            subtitle={`${currentTotem.label} · ${(WORLDS_LIST.find((w) => w.key === currentTotem.world) || WORLDS_LIST[0]).emotion}`}
             mark="01"
-            accent={accent}
-            bgImage="/img/world-foret.png"
+            label="L'Aventure"
+            desc="Traverse six mondes émotionnels"
+            pilier={PILIERS.aventure}
             onClick={() => { haptic(4); setPilierSheet('aventure'); }}
           />
           <PilierCard
-            label="La Connaissance"
-            subtitle={`${LECONS.length} leçons · comprendre`}
             mark="02"
-            accent="var(--mist-blue)"
-            bgImage="/img/world-temple.png"
+            label="La Connaissance"
+            desc="Comprendre ce qui se passe en toi"
+            pilier={PILIERS.connaissance}
             onClick={() => { haptic(4); setPilierSheet('connaissance'); }}
           />
           <PilierCard
-            label="Les 3 Temps du Soi"
-            subtitle="Passé · Présent · Futur"
             mark="03"
-            accent="var(--emerald)"
-            bgImage="/img/world-lac.png"
+            label="Les 3 Temps du Soi"
+            desc="Passé · Présent · Futur"
+            pilier={PILIERS.temps}
             onClick={() => { haptic(4); setPilierSheet('temps'); }}
           />
         </div>
 
-        {/* Bilans contextuels */}
+        {/* BILAN — glass card sans numéro (BUG-06) */}
         {(isEvening || isSundayEvening) && (
-          <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
             {isEvening && !isSundayEvening && (
-              <button
-                type="button"
-                data-press
+              <BilanCard
+                glyph="☾"
+                label="Bilan du soir"
                 onClick={() => { haptic(4); onOpenBilan?.(); }}
-                style={subActionStyle}
-              >
-                <span style={{ flex: 1, textAlign: 'left' }}>Bilan du soir</span>
-                <span style={{ color: 'rgba(10, 36, 56, 0.62)', fontSize: 14 }}>›</span>
-              </button>
+              />
             )}
             {isSundayEvening && (
-              <button
-                type="button"
-                data-press
+              <BilanCard
+                glyph="☾"
+                label="Bilan de la semaine"
                 onClick={() => { haptic(4); onOpenBilanSemaine?.(); }}
-                style={subActionStyle}
-              >
-                <span style={{ flex: 1, textAlign: 'left' }}>Bilan de la semaine</span>
-                <span style={{ color: 'rgba(10, 36, 56, 0.62)', fontSize: 14 }}>›</span>
-              </button>
+              />
             )}
           </div>
         )}
@@ -585,15 +587,18 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         {currentTrack && (
           <div
             style={{
-              marginTop: 28,
+              marginTop: 24,
               display: 'flex',
               alignItems: 'center',
               gap: 12,
-              padding: '8px 8px 8px 8px',
+              padding: 8,
               minHeight: 56,
-              background: 'rgba(255, 255, 255, 0.55)',
-              border: '0.5px solid rgba(255, 255, 255, 0.75)',
+              background: 'rgba(255, 255, 255, 0.65)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid rgba(255, 255, 255, 0.85)',
               borderRadius: 999,
+              boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
             }}
           >
             <button
@@ -606,8 +611,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 width: 44,
                 height: 44,
                 borderRadius: '50%',
-                background: accent,
-                color: 'var(--blue-900)',
+                background: 'linear-gradient(135deg, #1A5A7F, #2A8ABF)',
+                color: '#FFFFFF',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'inline-flex',
@@ -616,6 +621,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 flexShrink: 0,
                 padding: 0,
                 fontSize: 13,
+                boxShadow: '0 4px 12px rgba(26, 90, 127, 0.30)',
                 WebkitTapHighlightColor: 'transparent',
               }}
             >
@@ -625,12 +631,11 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               style={{
                 flex: 1,
                 paddingRight: 14,
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'Cormorant Garamond, var(--font-display), serif',
                 fontStyle: 'italic',
-                fontVariationSettings: 'var(--fraunces-italic-soft)',
-                fontSize: 13,
+                fontWeight: 300,
+                fontSize: 14,
                 color: 'var(--blue-900)',
-                opacity: 0.88,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -670,7 +675,6 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           currentTotem={currentTotem.world}
           onPickMonde={(monde) => {
             setPilierSheet(null);
-            // Si une aventure interactive existe pour ce monde, on lance AventurePlayer
             const aventure = AVENTURES_BY_MONDE[monde.key];
             if (aventure) {
               setOpenedAventure(aventure);
@@ -727,39 +731,13 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           onClose={() => { setOnboardingOpen(false); setLocalProfile(getProfile()); }}
         />
       )}
-
-      <style>{`
-        @keyframes aventure-bg-ken-burns {
-          0%   { transform: scale(1)    translate3d(0, 0, 0); }
-          100% { transform: scale(1.08) translate3d(0, -1.5%, 0); }
-        }
-      `}</style>
     </div>
   );
 }
 
-const subActionStyle = {
-  appearance: 'none',
-  width: '100%',
-  padding: '14px 18px',
-  minHeight: 48,
-  background: 'rgba(255, 255, 255, 0.55)',
-  border: '0.5px solid rgba(255, 255, 255, 0.75)',
-  borderRadius: 14,
-  color: 'var(--blue-900)',
-  fontFamily: 'var(--font-ui)',
-  fontSize: 13,
-  fontWeight: 500,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 12,
-  WebkitTapHighlightColor: 'transparent',
-};
+/* ─── PilierCard glass + barre accent gauche ─── */
 
-/* ─── PilierCard ─── */
-
-function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
+function PilierCard({ mark, label, desc, pilier, onClick }) {
   return (
     <button
       type="button"
@@ -768,100 +746,156 @@ function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
       style={{
         appearance: 'none',
         width: '100%',
-        padding: 0,
-        background: 'var(--bg)',
-        border: '0.5px solid rgba(255, 255, 255, 0.70)',
-        borderRadius: 18,
+        padding: '18px 20px 18px 22px',
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        borderRadius: 24,
         cursor: 'pointer',
         position: 'relative',
         overflow: 'hidden',
         textAlign: 'left',
         WebkitTapHighlightColor: 'transparent',
-        minHeight: 96,
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
       }}
     >
-      <div
+      {/* Barre accent gauche 3px */}
+      <span
         aria-hidden
         style={{
           position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${bgImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.32,
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 3,
+          background: pilier.gradient,
+          borderRadius: '0 2px 2px 0',
         }}
       />
-      <div
-        aria-hidden
+
+      {/* Numéro pilier 44×44 */}
+      <span
         style={{
-          position: 'absolute',
-          inset: 0,
-          background: `linear-gradient(90deg, rgba(14, 16, 24, 0.95) 0%, rgba(14, 16, 24, 0.78) 100%)`,
-        }}
-      />
-      <div
-        style={{
-          position: 'relative',
-          padding: '18px 20px',
-          display: 'flex',
+          width: 44,
+          height: 44,
+          borderRadius: 14,
+          background: pilier.gradient,
+          color: '#FFFFFF',
+          display: 'inline-flex',
           alignItems: 'center',
-          gap: 14,
+          justifyContent: 'center',
+          fontFamily: '"Inter", sans-serif',
+          fontSize: 12,
+          fontWeight: 600,
+          letterSpacing: '0.04em',
+          fontVariantNumeric: 'tabular-nums',
+          flexShrink: 0,
+          boxShadow: `0 4px 12px ${pilier.accent}33`,
         }}
       >
+        {mark}
+      </span>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{
-            width: 38,
-            height: 38,
-            borderRadius: '50%',
-            border: `1px solid ${accent}`,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: accent,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: '0.04em',
-            fontVariantNumeric: 'tabular-nums',
-            flexShrink: 0,
+            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 21,
+            color: 'var(--blue-900)',
+            lineHeight: 1.2,
           }}
         >
-          {mark}
+          {label}
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              fontSize: 18,
-              color: 'var(--blue-900)',
-              lineHeight: 1.25,
-            }}
-          >
-            {label}
-          </div>
-          <div
-            style={{
-              marginTop: 4,
-              fontFamily: 'var(--font-body)',
-              fontSize: 12,
-              color: 'rgba(10, 36, 56, 0.82)',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {subtitle}
-          </div>
+        <div
+          style={{
+            marginTop: 4,
+            fontFamily: '"Inter", sans-serif',
+            fontSize: 11,
+            fontWeight: 300,
+            lineHeight: 1.4,
+            color: 'var(--text-secondary)',
+          }}
+        >
+          {desc}
         </div>
-        <span aria-hidden style={{ color: 'rgba(10, 36, 56, 0.62)', fontSize: 16, flexShrink: 0 }}>›</span>
       </div>
+
+      <span aria-hidden style={{ color: pilier.accent, fontSize: 18, flexShrink: 0, opacity: 0.7 }}>›</span>
     </button>
   );
 }
 
-/* ─── SheetWrap commun ─── */
+/* ─── BilanCard — glass sans numéro (BUG-06) ─── */
+
+function BilanCard({ glyph, label, onClick }) {
+  return (
+    <button
+      type="button"
+      data-press
+      onClick={onClick}
+      style={{
+        appearance: 'none',
+        width: '100%',
+        padding: '18px 20px',
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        borderRadius: 24,
+        cursor: 'pointer',
+        textAlign: 'left',
+        WebkitTapHighlightColor: 'transparent',
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+        opacity: 0.92,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
+      }}
+    >
+      <span
+        aria-hidden
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: 14,
+          background: 'rgba(127, 90, 138, 0.10)',
+          color: 'var(--violet)',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 20,
+          flexShrink: 0,
+        }}
+      >
+        {glyph}
+      </span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div
+          style={{
+            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 19,
+            color: 'var(--blue-900)',
+            lineHeight: 1.2,
+          }}
+        >
+          {label}
+        </div>
+      </div>
+      <span aria-hidden style={{ color: 'var(--blue-500)', fontSize: 18, flexShrink: 0 }}>›</span>
+    </button>
+  );
+}
+
+/* ─── SheetWrap commun (palette V3) ─── */
 
 function SheetWrap({ title, subtitle, labelText, onClose, children }) {
   const [closing, setClosing] = useState(false);
@@ -907,7 +941,7 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
           position: 'fixed',
           inset: 0,
           zIndex: 150,
-          background: 'rgba(8, 10, 24, 0.62)',
+          background: 'rgba(10, 36, 56, 0.55)',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           opacity: closing ? 0 : mounted ? 1 : 0,
@@ -923,28 +957,30 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
           right: 0,
           bottom: 0,
           zIndex: 151,
-          background: 'var(--cream)',
-          color: 'var(--ink)',
+          background: 'rgba(238, 243, 248, 0.96)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          color: 'var(--blue-900)',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           padding: '12px 0 calc(env(safe-area-inset-bottom, 0px) + 24px)',
           transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
-          boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.18)',
+          boxShadow: '0 -8px 32px rgba(10, 36, 56, 0.18)',
           maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
         }}
       >
-        <div aria-hidden style={{ width: 36, height: 5, borderRadius: 999, background: 'rgba(26, 26, 47, 0.18)', margin: '0 auto 14px', flexShrink: 0 }} />
+        <div aria-hidden style={{ width: 36, height: 5, borderRadius: 999, background: 'rgba(10, 36, 56, 0.18)', margin: '0 auto 14px', flexShrink: 0 }} />
         <div style={{ padding: '0 22px', textAlign: 'center', marginBottom: 18, flexShrink: 0 }}>
           <div
             style={{
-              fontFamily: 'var(--font-display)',
+              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
               fontStyle: 'italic',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              fontSize: 22,
-              color: 'var(--ink)',
+              fontWeight: 300,
+              fontSize: 24,
+              color: 'var(--blue-900)',
             }}
           >
             {title}
@@ -953,10 +989,11 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
             <div
               style={{
                 marginTop: 8,
-                fontFamily: 'var(--font-body)',
+                fontFamily: '"Inter", sans-serif',
                 fontSize: 13,
+                fontWeight: 300,
                 lineHeight: 1.5,
-                color: 'var(--content-tertiary)',
+                color: 'var(--text-secondary)',
               }}
             >
               {subtitle}
@@ -981,17 +1018,17 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
             style={{
               appearance: 'none',
               width: '100%',
-              padding: '12px 16px',
+              padding: '13px 24px',
               minHeight: 44,
               background: 'transparent',
-              border: '0.5px solid rgba(26, 26, 47, 0.16)',
-              borderRadius: 999,
-              fontFamily: 'var(--font-ui)',
+              border: '1.5px solid var(--blue-300)',
+              borderRadius: 50,
+              fontFamily: '"Inter", sans-serif',
               fontSize: 11,
               fontWeight: 600,
-              letterSpacing: '0.18em',
+              letterSpacing: '0.16em',
               textTransform: 'uppercase',
-              color: 'var(--ink)',
+              color: 'var(--blue-700)',
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
             }}
@@ -1004,11 +1041,12 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
   );
 }
 
-/* ─── 3 sheets piliers ─── */
+/* ─── Pilier 01 · Mondes ─── */
 
 function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde, onClose }) {
   const totalCompletes = mondes.filter((m) => m.available && (mondesProgress[m.key] || 0) >= m.etapes.length).length;
   const totalDispo = mondes.filter((m) => m.available).length;
+  const accent = PILIERS.aventure.accent;
 
   return (
     <SheetWrap
@@ -1022,7 +1060,6 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
           const isCurrent = m.key === currentTotem;
           const progress = mondesProgress[m.key] || 0;
           const completed = m.available && progress >= m.etapes.length;
-          const started = m.available && progress > 0 && !completed;
           const totalEtapes = m.etapes.length;
           const progressPct = totalEtapes > 0 ? Math.min(100, (progress / totalEtapes) * 100) : 0;
 
@@ -1036,202 +1073,159 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
               style={{
                 appearance: 'none',
                 width: '100%',
-                padding: 0,
-                background: 'var(--bg)',
-                border: `0.5px solid ${completed ? m.accent : 'rgba(255, 255, 255, 0.70)'}`,
-                borderRadius: 16,
+                padding: '16px 18px',
+                background: 'rgba(255, 255, 255, 0.65)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                border: `1px solid ${completed ? accent : 'rgba(255, 255, 255, 0.85)'}`,
+                borderRadius: 18,
                 cursor: m.available ? 'pointer' : 'not-allowed',
-                position: 'relative',
-                overflow: 'hidden',
                 textAlign: 'left',
                 WebkitTapHighlightColor: 'transparent',
-                opacity: m.available ? 1 : 0.62,
-                minHeight: 110,
+                opacity: m.available ? 1 : 0.58,
+                boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 14,
+                minHeight: 88,
               }}
             >
-              {/* Bg painterly atténué */}
-              <div
-                aria-hidden
+              <span
                 style={{
-                  position: 'absolute',
-                  inset: 0,
-                  backgroundImage: `url(${m.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  opacity: m.available ? 0.45 : 0.22,
-                  filter: m.available ? 'none' : 'grayscale(0.3)',
-                }}
-              />
-              {/* Voile */}
-              <div
-                aria-hidden
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(90deg, rgba(14, 16, 24, 0.92) 0%, rgba(14, 16, 24, 0.55) 100%)',
-                }}
-              />
-
-              {/* Content */}
-              <div
-                style={{
-                  position: 'relative',
-                  padding: '16px 18px',
-                  display: 'flex',
+                  width: 42,
+                  height: 42,
+                  borderRadius: '50%',
+                  border: `1.5px solid ${completed ? accent : m.available ? 'var(--blue-300)' : 'rgba(138, 170, 187, 0.40)'}`,
+                  background: completed ? accent : 'transparent',
+                  color: completed ? '#FFFFFF' : m.available ? 'var(--blue-700)' : 'var(--text-muted)',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: 14,
+                  justifyContent: 'center',
+                  fontFamily: '"Inter", sans-serif',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  fontVariantNumeric: 'tabular-nums',
+                  flexShrink: 0,
+                  transition: 'all 280ms ease-out',
                 }}
               >
-                {/* Numéro / état */}
-                <span
-                  style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: '50%',
-                    border: `1.5px solid ${completed ? m.accent : m.available ? 'rgba(251, 246, 232, 0.48)' : 'rgba(26, 90, 127, 0.30)'}`,
-                    background: completed ? m.accent : 'transparent',
-                    color: completed ? '#FBF6E8' : m.available ? '#FBF6E8' : 'rgba(251, 246, 232, 0.56)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 12,
-                    fontWeight: 600,
-                    fontVariantNumeric: 'tabular-nums',
-                    flexShrink: 0,
-                    transition: 'all 280ms ease-out',
-                  }}
-                >
-                  {completed ? '✓' : String(m.order).padStart(2, '0')}
-                </span>
+                {completed ? '✓' : String(m.order).padStart(2, '0')}
+              </span>
 
-                {/* Texte */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 2 }}>
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-display)',
-                        fontStyle: 'italic',
-                        fontVariationSettings: 'var(--fraunces-italic-soft)',
-                        fontSize: 16,
-                        color: 'var(--blue-900)',
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {m.name}
-                    </div>
-                    {isCurrent && m.available && (
-                      <span
-                        className="neya-mark"
-                        style={{ color: m.accent, fontSize: 9, flexShrink: 0 }}
-                      >
-                        Ton totem
-                      </span>
-                    )}
-                  </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 2 }}>
                   <div
                     style={{
-                      marginTop: 3,
-                      fontFamily: 'var(--font-body)',
-                      fontSize: 12.5,
-                      color: 'rgba(10, 36, 56, 0.72)',
-                      lineHeight: 1.4,
+                      fontFamily: 'Cormorant Garamond, var(--font-display), serif',
+                      fontStyle: 'italic',
+                      fontWeight: 300,
+                      fontSize: 17,
+                      color: 'var(--blue-900)',
+                      lineHeight: 1.2,
                     }}
                   >
-                    {m.totem} · {m.emotion}
+                    {m.name}
                   </div>
+                  {isCurrent && m.available && (
+                    <span
+                      style={{
+                        fontFamily: '"Inter", sans-serif',
+                        fontSize: 9,
+                        letterSpacing: '0.22em',
+                        textTransform: 'uppercase',
+                        fontWeight: 500,
+                        color: accent,
+                        flexShrink: 0,
+                      }}
+                    >
+                      Ton totem
+                    </span>
+                  )}
+                </div>
+                <div
+                  style={{
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: 12,
+                    fontWeight: 300,
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {m.totem} · {m.emotion}
+                </div>
 
-                  {/* Progress bar si commencé/complété */}
-                  {m.available && progress > 0 && (
+                {m.available && progress > 0 && (
+                  <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div
                       style={{
-                        marginTop: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
+                        flex: 1,
+                        height: 2,
+                        background: 'var(--blue-100)',
+                        borderRadius: 2,
+                        overflow: 'hidden',
                       }}
                     >
                       <div
                         style={{
-                          flex: 1,
-                          height: 2,
-                          background: 'rgba(251, 246, 232, 0.16)',
-                          borderRadius: 2,
-                          overflow: 'hidden',
+                          width: `${progressPct}%`,
+                          height: '100%',
+                          background: accent,
+                          transition: 'width 600ms cubic-bezier(0.16, 1, 0.3, 1)',
                         }}
-                      >
-                        <div
-                          style={{
-                            width: `${progressPct}%`,
-                            height: '100%',
-                            background: m.accent,
-                            transition: 'width 600ms cubic-bezier(0.16, 1, 0.3, 1)',
-                          }}
-                        />
-                      </div>
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-ui)',
-                          fontSize: 9,
-                          letterSpacing: '0.18em',
-                          textTransform: 'uppercase',
-                          fontWeight: 600,
-                          color: 'rgba(10, 36, 56, 0.72)',
-                          fontVariantNumeric: 'tabular-nums',
-                          flexShrink: 0,
-                        }}
-                      >
-                        {progress}/{totalEtapes}
-                      </span>
+                      />
                     </div>
-                  )}
-
-                  {/* Pas commencé / bientôt */}
-                  {m.available && progress === 0 && (
-                    <div
+                    <span
                       style={{
-                        marginTop: 8,
-                        fontFamily: 'var(--font-ui)',
-                        fontSize: 10,
-                        letterSpacing: '0.222em',
+                        fontFamily: '"Inter", sans-serif',
+                        fontSize: 9,
+                        letterSpacing: '0.18em',
                         textTransform: 'uppercase',
                         fontWeight: 600,
-                        color: m.accent,
+                        color: 'var(--text-secondary)',
+                        fontVariantNumeric: 'tabular-nums',
+                        flexShrink: 0,
                       }}
                     >
-                      Commencer le voyage
-                    </div>
-                  )}
-                  {!m.available && (
-                    <div
-                      style={{
-                        marginTop: 8,
-                        fontFamily: 'var(--font-ui)',
-                        fontSize: 10,
-                        letterSpacing: '0.222em',
-                        textTransform: 'uppercase',
-                        fontWeight: 600,
-                        color: 'rgba(251, 246, 232, 0.55)',
-                      }}
-                    >
-                      Bientôt
-                    </div>
-                  )}
-                </div>
+                      {progress}/{totalEtapes}
+                    </span>
+                  </div>
+                )}
 
-                {m.available && (
-                  <span
-                    aria-hidden
+                {m.available && progress === 0 && (
+                  <div
                     style={{
-                      color: 'rgba(251, 246, 232, 0.55)',
-                      fontSize: 16,
-                      flexShrink: 0,
+                      marginTop: 8,
+                      fontFamily: '"Inter", sans-serif',
+                      fontSize: 10,
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                      color: accent,
                     }}
                   >
-                    ›
-                  </span>
+                    Commencer le voyage
+                  </div>
+                )}
+                {!m.available && (
+                  <div
+                    style={{
+                      marginTop: 8,
+                      fontFamily: '"Inter", sans-serif',
+                      fontSize: 10,
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                      color: 'var(--text-muted)',
+                    }}
+                  >
+                    Bientôt
+                  </div>
                 )}
               </div>
+
+              {m.available && (
+                <span aria-hidden style={{ color: 'var(--blue-500)', fontSize: 16, flexShrink: 0 }}>›</span>
+              )}
             </button>
           );
         })}
@@ -1240,8 +1234,11 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
   );
 }
 
+/* ─── Pilier 02 · Connaissance ─── */
+
 function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
   const luesCount = (leconsLues || []).length;
+  const accent = PILIERS.connaissance.accent;
   return (
     <SheetWrap
       title="La Connaissance"
@@ -1263,15 +1260,18 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
                 width: '100%',
                 padding: '16px 18px',
                 minHeight: 76,
-                background: lue ? 'rgba(26, 26, 47, 0.06)' : 'rgba(26, 26, 47, 0.03)',
-                border: `0.5px solid ${lue ? l.accent : 'rgba(26, 26, 47, 0.08)'}`,
-                borderRadius: 14,
+                background: 'rgba(255, 255, 255, 0.65)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                border: `1px solid ${lue ? accent : 'rgba(255, 255, 255, 0.85)'}`,
+                borderRadius: 16,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 14,
                 textAlign: 'left',
                 WebkitTapHighlightColor: 'transparent',
+                boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
               }}
             >
               <span
@@ -1279,12 +1279,12 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
                   width: 38,
                   height: 38,
                   borderRadius: '50%',
-                  background: lue ? l.accent : 'rgba(26, 26, 47, 0.06)',
-                  color: lue ? '#FBF6E8' : 'var(--ink-soft)',
+                  background: lue ? accent : 'var(--rose-100)',
+                  color: lue ? '#FFFFFF' : 'var(--rose-700)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontFamily: 'var(--font-ui)',
+                  fontFamily: '"Inter", sans-serif',
                   fontSize: 12,
                   fontWeight: 600,
                   fontVariantNumeric: 'tabular-nums',
@@ -1297,11 +1297,11 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div
                   style={{
-                    fontFamily: 'var(--font-display)',
+                    fontFamily: 'Cormorant Garamond, var(--font-display), serif',
                     fontStyle: 'italic',
-                    fontVariationSettings: 'var(--fraunces-italic-soft)',
-                    fontSize: 16,
-                    color: 'var(--ink)',
+                    fontWeight: 300,
+                    fontSize: 17,
+                    color: 'var(--blue-900)',
                     lineHeight: 1.25,
                   }}
                 >
@@ -1310,17 +1310,16 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
                 <div
                   style={{
                     marginTop: 4,
-                    fontFamily: 'var(--font-body)',
+                    fontFamily: '"Inter", sans-serif',
                     fontSize: 12,
-                    color: 'var(--content-secondary)',
+                    fontWeight: 300,
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   {l.subtitle} · {l.duration} min
                 </div>
               </div>
-              <span aria-hidden style={{ color: 'var(--ink-soft)', fontSize: 14, flexShrink: 0 }}>
-                ›
-              </span>
+              <span aria-hidden style={{ color: 'var(--blue-500)', fontSize: 14, flexShrink: 0 }}>›</span>
             </button>
           );
         })}
@@ -1329,11 +1328,14 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
   );
 }
 
+/* ─── Pilier 03 · 3 Temps du Soi ─── */
+
 function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
   const [activeTab, setActiveTab] = useState('passe');
   const tempsCurrent = temps.find((t) => t.key === activeTab) || temps[0];
   const rituels = getRituelsForTemps(activeTab);
   const doneCount = rituels.filter((r) => rituelsFaits && rituelsFaits[r.key]).length;
+  const accent = PILIERS.temps.accent;
 
   return (
     <SheetWrap
@@ -1343,14 +1345,7 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
       labelText="Trois temps"
     >
       {/* Onglets */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 6,
-          padding: '0 2px 16px',
-          flexShrink: 0,
-        }}
-      >
+      <div style={{ display: 'flex', gap: 6, padding: '0 2px 16px', flexShrink: 0 }}>
         {temps.map((t) => {
           const active = t.key === activeTab;
           return (
@@ -1364,11 +1359,11 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                 flex: 1,
                 padding: '10px 8px',
                 minHeight: 44,
-                background: active ? t.accent : 'transparent',
-                color: active ? 'var(--cream)' : 'var(--content-secondary)',
-                border: active ? 'none' : `0.5px solid rgba(26, 26, 47, 0.14)`,
-                borderRadius: 999,
-                fontFamily: 'var(--font-ui)',
+                background: active ? PILIERS.temps.gradient : 'transparent',
+                color: active ? '#FFFFFF' : 'var(--text-secondary)',
+                border: active ? 'none' : '1.5px solid var(--blue-300)',
+                borderRadius: 50,
+                fontFamily: '"Inter", sans-serif',
                 fontSize: 11,
                 fontWeight: 600,
                 letterSpacing: '0.04em',
@@ -1379,14 +1374,11 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 6,
+                boxShadow: active ? '0 4px 12px rgba(127, 90, 138, 0.30)' : 'none',
               }}
             >
               <span style={{ fontSize: 12 }}>{t.glyph}</span>
-              <span style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {t.label.replace('Soi ', '').replace('Soi du ', '').replace('présent', 'Présent').replace('passé', 'Passé').replace('futur', 'Futur')}
               </span>
             </button>
@@ -1394,55 +1386,60 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
         })}
       </div>
 
-      {/* En-tête du temps actif */}
+      {/* En-tête */}
       <div
         style={{
           padding: '16px 18px',
-          background: 'rgba(26, 26, 47, 0.04)',
-          borderLeft: `3px solid ${tempsCurrent.accent}`,
-          borderRadius: 14,
+          background: 'rgba(255, 255, 255, 0.65)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255, 255, 255, 0.85)',
+          borderLeft: `3px solid ${accent}`,
+          borderRadius: 16,
           marginBottom: 18,
+          boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'baseline',
-            justifyContent: 'space-between',
-            marginBottom: 6,
-          }}
-        >
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
           <div
             style={{
-              fontFamily: 'var(--font-display)',
+              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
               fontStyle: 'italic',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              fontSize: 18,
-              color: 'var(--ink)',
+              fontWeight: 300,
+              fontSize: 19,
+              color: 'var(--blue-900)',
             }}
           >
             {tempsCurrent.label}
           </div>
           <div
-            className="neya-mark"
-            style={{ color: tempsCurrent.accent, fontVariantNumeric: 'tabular-nums' }}
+            style={{
+              fontFamily: '"Inter", sans-serif',
+              fontSize: 10,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              color: accent,
+              fontVariantNumeric: 'tabular-nums',
+            }}
           >
             {doneCount}/{rituels.length}
           </div>
         </div>
         <div
           style={{
-            fontFamily: 'var(--font-body)',
+            fontFamily: '"Inter", sans-serif',
             fontSize: 13,
+            fontWeight: 300,
             lineHeight: 1.5,
-            color: 'var(--content-secondary)',
+            color: 'var(--text-secondary)',
           }}
         >
           {tempsCurrent.intro}
         </div>
       </div>
 
-      {/* Rituels du temps actif */}
+      {/* Rituels */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {rituels.map((r) => {
           const done = !!(rituelsFaits && rituelsFaits[r.key]);
@@ -1457,8 +1454,10 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                 width: '100%',
                 padding: '14px 16px',
                 minHeight: 70,
-                background: done ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                border: `0.5px solid ${done ? tempsCurrent.accent : 'rgba(26, 26, 47, 0.10)'}`,
+                background: 'rgba(255, 255, 255, 0.65)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                border: `1px solid ${done ? accent : 'rgba(255, 255, 255, 0.85)'}`,
                 borderRadius: 14,
                 cursor: 'pointer',
                 display: 'flex',
@@ -1467,6 +1466,7 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                 textAlign: 'left',
                 WebkitTapHighlightColor: 'transparent',
                 transition: 'all 280ms ease-out',
+                boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
               }}
             >
               <span
@@ -1474,8 +1474,8 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                   width: 32,
                   height: 32,
                   borderRadius: '50%',
-                  background: done ? tempsCurrent.accent : 'rgba(26, 26, 47, 0.06)',
-                  color: done ? '#FBF6E8' : 'var(--ink-soft)',
+                  background: done ? accent : 'rgba(127, 90, 138, 0.10)',
+                  color: done ? '#FFFFFF' : accent,
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1490,11 +1490,11 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div
                   style={{
-                    fontFamily: 'var(--font-display)',
+                    fontFamily: 'Cormorant Garamond, var(--font-display), serif',
                     fontStyle: 'italic',
-                    fontVariationSettings: 'var(--fraunces-italic-soft)',
-                    fontSize: 15.5,
-                    color: 'var(--ink)',
+                    fontWeight: 300,
+                    fontSize: 16,
+                    color: 'var(--blue-900)',
                     lineHeight: 1.25,
                   }}
                 >
@@ -1503,17 +1503,16 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                 <div
                   style={{
                     marginTop: 3,
-                    fontFamily: 'var(--font-body)',
+                    fontFamily: '"Inter", sans-serif',
                     fontSize: 12,
-                    color: 'var(--content-secondary)',
+                    fontWeight: 300,
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   {r.subtitle} · {r.duration} min
                 </div>
               </div>
-              <span aria-hidden style={{ color: 'var(--ink-soft)', fontSize: 14, flexShrink: 0 }}>
-                ›
-              </span>
+              <span aria-hidden style={{ color: 'var(--blue-500)', fontSize: 14, flexShrink: 0 }}>›</span>
             </button>
           );
         })}
@@ -1522,7 +1521,7 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
   );
 }
 
-/* ─── PersonalizeSheet 4 tabs ─── */
+/* ─── PersonalizeSheet 4 tabs (palette V3) ─── */
 
 function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose }) {
   const [tab, setTab] = useState('image');
@@ -1586,6 +1585,8 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
     { key: 'identite', label: 'Identité' },
   ];
 
+  const tabBg = 'linear-gradient(135deg, #1A5A7F, #2A8ABF)';
+
   return (
     <>
       <div
@@ -1595,7 +1596,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
           position: 'fixed',
           inset: 0,
           zIndex: 150,
-          background: 'rgba(8, 10, 24, 0.62)',
+          background: 'rgba(10, 36, 56, 0.55)',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           opacity: closing ? 0 : mounted ? 1 : 0,
@@ -1611,22 +1612,32 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
           right: 0,
           bottom: 0,
           zIndex: 151,
-          background: 'var(--cream)',
-          color: 'var(--ink)',
+          background: 'rgba(238, 243, 248, 0.96)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          color: 'var(--blue-900)',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           padding: '12px 0 calc(env(safe-area-inset-bottom, 0px) + 24px)',
           transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
-          boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.18)',
+          boxShadow: '0 -8px 32px rgba(10, 36, 56, 0.18)',
           maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
         }}
       >
-        <div aria-hidden style={{ width: 36, height: 5, borderRadius: 999, background: 'rgba(26, 26, 47, 0.18)', margin: '0 auto 18px', flexShrink: 0 }} />
+        <div aria-hidden style={{ width: 36, height: 5, borderRadius: 999, background: 'rgba(10, 36, 56, 0.18)', margin: '0 auto 18px', flexShrink: 0 }} />
         <div style={{ padding: '0 22px', textAlign: 'center', marginBottom: 18, flexShrink: 0 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontVariationSettings: 'var(--fraunces-italic-soft)', fontSize: 22, color: 'var(--ink)' }}>
+          <div
+            style={{
+              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 24,
+              color: 'var(--blue-900)',
+            }}
+          >
             Mon aventure
           </div>
         </div>
@@ -1644,11 +1655,11 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                   appearance: 'none',
                   padding: '8px 14px',
                   minHeight: 36,
-                  background: active ? 'var(--ink)' : 'transparent',
-                  color: active ? 'var(--cream)' : 'var(--content-secondary)',
-                  border: active ? 'none' : '0.5px solid rgba(26, 26, 47, 0.14)',
-                  borderRadius: 999,
-                  fontFamily: 'var(--font-ui)',
+                  background: active ? tabBg : 'transparent',
+                  color: active ? '#FFFFFF' : 'var(--text-secondary)',
+                  border: active ? 'none' : '1.5px solid var(--blue-300)',
+                  borderRadius: 50,
+                  fontFamily: '"Inter", sans-serif',
                   fontSize: 11,
                   fontWeight: 600,
                   letterSpacing: '0.04em',
@@ -1656,6 +1667,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                   whiteSpace: 'nowrap',
                   WebkitTapHighlightColor: 'transparent',
                   flexShrink: 0,
+                  boxShadow: active ? '0 4px 12px rgba(26, 90, 127, 0.25)' : 'none',
                 }}
               >
                 {t.label}
@@ -1667,7 +1679,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
         <div style={{ padding: '4px 22px 8px', overflowY: 'auto', flex: 1, WebkitOverflowScrolling: 'touch' }}>
           {tab === 'image' && (
             <div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--content-secondary)', marginBottom: 14 }}>
+              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 13, fontWeight: 300, color: 'var(--text-secondary)', marginBottom: 14 }}>
                 Le décor de ton aventure.
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -1682,14 +1694,15 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                       style={{
                         appearance: 'none',
                         padding: 0,
-                        border: active ? '2px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
-                        borderRadius: 12,
+                        border: active ? '2px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                        borderRadius: 14,
                         cursor: 'pointer',
                         overflow: 'hidden',
                         position: 'relative',
                         aspectRatio: '4 / 5',
                         background: `var(--bg) url(${img.src}) center / cover no-repeat`,
                         WebkitTapHighlightColor: 'transparent',
+                        boxShadow: active ? '0 4px 12px rgba(26, 90, 127, 0.30)' : '0 2px 8px rgba(10, 36, 56, 0.05)',
                       }}
                       aria-pressed={active}
                     >
@@ -1700,13 +1713,12 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                           right: 0,
                           bottom: 0,
                           padding: '24px 10px 10px',
-                          background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
-                          color: 'var(--blue-900)',
-                          fontFamily: 'var(--font-display)',
+                          background: 'linear-gradient(0deg, rgba(10, 36, 56, 0.75) 0%, transparent 100%)',
+                          color: '#FFFFFF',
+                          fontFamily: 'Cormorant Garamond, var(--font-display), serif',
                           fontStyle: 'italic',
-                          fontVariationSettings: 'var(--fraunces-italic-soft)',
-                          fontSize: 12,
-                          textShadow: '0 1px 4px rgba(0,0,0,0.5)',
+                          fontWeight: 300,
+                          fontSize: 13,
                         }}
                       >
                         {img.label}
@@ -1720,7 +1732,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
 
           {tab === 'ambiance' && (
             <div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--content-secondary)', marginBottom: 14 }}>
+              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 13, fontWeight: 300, color: 'var(--text-secondary)', marginBottom: 14 }}>
                 La petite vie qui danse dans le décor.
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -1736,8 +1748,10 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                         appearance: 'none',
                         padding: '14px 16px',
                         minHeight: 56,
-                        background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                        border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
+                        background: 'rgba(255, 255, 255, 0.65)',
+                        backdropFilter: 'blur(24px)',
+                        WebkitBackdropFilter: 'blur(24px)',
+                        border: active ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
                         borderRadius: 14,
                         cursor: 'pointer',
                         display: 'flex',
@@ -1746,19 +1760,20 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                         gap: 14,
                         textAlign: 'left',
                         WebkitTapHighlightColor: 'transparent',
+                        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
                       }}
                       aria-pressed={active}
                     >
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontFamily: 'var(--font-ui)', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>{a.label}</div>
-                        <div style={{ fontFamily: 'var(--font-body)', fontSize: 11.5, color: 'var(--content-secondary)', marginTop: 2 }}>{a.hint}</div>
+                        <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 14, fontWeight: 500, color: 'var(--blue-900)' }}>{a.label}</div>
+                        <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 11.5, fontWeight: 300, color: 'var(--text-secondary)', marginTop: 2 }}>{a.hint}</div>
                       </div>
                       <span
                         style={{
                           width: 18,
                           height: 18,
                           borderRadius: '50%',
-                          border: active ? '5px solid var(--ink)' : '1px solid rgba(26, 26, 47, 0.20)',
+                          border: active ? '5px solid var(--blue-700)' : '1px solid var(--blue-300)',
                           flexShrink: 0,
                         }}
                       />
@@ -1771,7 +1786,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
 
           {tab === 'musique' && (
             <div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--content-secondary)', marginBottom: 14 }}>
+              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 13, fontWeight: 300, color: 'var(--text-secondary)', marginBottom: 14 }}>
                 La musique qui t'accompagne dans ton voyage.
               </div>
               <button
@@ -1783,8 +1798,10 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                   width: '100%',
                   padding: '12px 16px',
                   minHeight: 48,
-                  background: !currentMusic ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                  border: !currentMusic ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
+                  background: 'rgba(255, 255, 255, 0.65)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
+                  border: !currentMusic ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
                   borderRadius: 12,
                   cursor: 'pointer',
                   display: 'flex',
@@ -1794,11 +1811,24 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                   WebkitTapHighlightColor: 'transparent',
                 }}
               >
-                <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink)' }}>Silence</span>
-                <span style={{ width: 14, height: 14, borderRadius: '50%', border: !currentMusic ? '4px solid var(--ink)' : '1px solid rgba(26, 26, 47, 0.20)', flexShrink: 0 }} />
+                <span style={{ fontFamily: '"Inter", sans-serif', fontSize: 14, color: 'var(--blue-900)' }}>Silence</span>
+                <span style={{ width: 14, height: 14, borderRadius: '50%', border: !currentMusic ? '4px solid var(--blue-700)' : '1px solid var(--blue-300)', flexShrink: 0 }} />
               </button>
 
-              <div style={{ padding: '12px 16px', background: 'rgba(26, 26, 47, 0.04)', borderRadius: 12, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div
+                style={{
+                  padding: '12px 16px',
+                  background: 'rgba(255, 255, 255, 0.65)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
+                  border: '1px solid rgba(255, 255, 255, 0.85)',
+                  borderRadius: 12,
+                  marginBottom: 16,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                }}
+              >
                 <span style={{ fontSize: 13 }} aria-hidden>🔉</span>
                 <input
                   type="range"
@@ -1808,9 +1838,9 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                   value={Math.round((av.musicVolume || 0.4) * 100)}
                   onChange={(e) => onUpdateAventure({ musicVolume: Number(e.target.value) / 100 })}
                   aria-label="Volume"
-                  style={{ flex: 1, accentColor: 'var(--ink)' }}
+                  style={{ flex: 1, accentColor: 'var(--blue-700)' }}
                 />
-                <span style={{ minWidth: 30, textAlign: 'right', fontFamily: 'var(--font-ui)', fontSize: 11, fontVariantNumeric: 'tabular-nums', color: 'var(--content-tertiary)' }}>
+                <span style={{ minWidth: 30, textAlign: 'right', fontFamily: '"Inter", sans-serif', fontSize: 11, fontVariantNumeric: 'tabular-nums', color: 'var(--text-muted)' }}>
                   {Math.round((av.musicVolume || 0.4) * 100)}
                 </span>
               </div>
@@ -1828,9 +1858,11 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                         appearance: 'none',
                         padding: '12px 14px',
                         minHeight: 44,
-                        background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                        border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.08)',
-                        borderRadius: 10,
+                        background: 'rgba(255, 255, 255, 0.65)',
+                        backdropFilter: 'blur(24px)',
+                        WebkitBackdropFilter: 'blur(24px)',
+                        border: active ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                        borderRadius: 12,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -1839,11 +1871,31 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                         WebkitTapHighlightColor: 'transparent',
                       }}
                     >
-                      <span style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontVariationSettings: 'var(--fraunces-italic-soft)', fontSize: 14, color: 'var(--ink)' }}>
+                      <span
+                        style={{
+                          fontFamily: 'Cormorant Garamond, var(--font-display), serif',
+                          fontStyle: 'italic',
+                          fontWeight: 300,
+                          fontSize: 15,
+                          color: 'var(--blue-900)',
+                        }}
+                      >
                         {t.title}
                       </span>
                       {active && (
-                        <span aria-hidden style={{ fontFamily: 'var(--font-ui)', fontSize: 9, letterSpacing: '0.222em', textTransform: 'uppercase', fontWeight: 600, color: 'var(--ink-soft)' }}>en cours</span>
+                        <span
+                          aria-hidden
+                          style={{
+                            fontFamily: '"Inter", sans-serif',
+                            fontSize: 9,
+                            letterSpacing: '0.22em',
+                            textTransform: 'uppercase',
+                            fontWeight: 600,
+                            color: 'var(--blue-500)',
+                          }}
+                        >
+                          en cours
+                        </span>
                       )}
                     </button>
                   );
@@ -1854,12 +1906,23 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
 
           {tab === 'identite' && (
             <div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--content-secondary)', marginBottom: 18 }}>
+              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 13, fontWeight: 300, color: 'var(--text-secondary)', marginBottom: 18 }}>
                 Qui tu es dans cette aventure.
               </div>
 
               <div style={{ marginBottom: 18 }}>
-                <label className="neya-mark" style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: 8,
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: 9,
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    fontWeight: 500,
+                    color: 'var(--text-muted)',
+                  }}
+                >
                   Prénom
                 </label>
                 <input
@@ -1873,12 +1936,15 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                     width: '100%',
                     padding: '14px 16px',
                     minHeight: 48,
-                    background: 'rgba(26, 26, 47, 0.04)',
-                    border: '0.5px solid rgba(26, 26, 47, 0.10)',
+                    background: 'rgba(255, 255, 255, 0.65)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    border: '1px solid rgba(255, 255, 255, 0.85)',
                     borderRadius: 12,
-                    fontFamily: 'var(--font-body)',
+                    fontFamily: '"Inter", sans-serif',
                     fontSize: 15,
-                    color: 'var(--ink)',
+                    fontWeight: 300,
+                    color: 'var(--blue-900)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -1886,7 +1952,18 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
               </div>
 
               <div style={{ marginBottom: 18 }}>
-                <label className="neya-mark" style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: 8,
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: 9,
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    fontWeight: 500,
+                    color: 'var(--text-muted)',
+                  }}
+                >
                   Mon totem
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
@@ -1902,14 +1979,16 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                           appearance: 'none',
                           padding: '12px 14px',
                           minHeight: 48,
-                          background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                          border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
-                          borderRadius: 10,
+                          background: 'rgba(255, 255, 255, 0.65)',
+                          backdropFilter: 'blur(24px)',
+                          WebkitBackdropFilter: 'blur(24px)',
+                          border: active ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                          borderRadius: 12,
                           cursor: 'pointer',
-                          fontFamily: 'var(--font-ui)',
+                          fontFamily: '"Inter", sans-serif',
                           fontSize: 13,
-                          fontWeight: active ? 600 : 500,
-                          color: 'var(--ink)',
+                          fontWeight: active ? 600 : 400,
+                          color: 'var(--blue-900)',
                           textAlign: 'left',
                           WebkitTapHighlightColor: 'transparent',
                         }}
@@ -1928,17 +2007,19 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                 style={{
                   appearance: 'none',
                   width: '100%',
-                  padding: '14px 16px',
-                  minHeight: 48,
-                  background: 'var(--gradient-blue)',
-                  color: 'var(--cream)',
+                  padding: '15px 24px',
+                  minHeight: 50,
+                  background: 'linear-gradient(135deg, #1A5A7F, #2A8ABF)',
+                  color: '#FFFFFF',
                   border: 'none',
-                  borderRadius: 999,
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: 12,
+                  borderRadius: 50,
+                  fontFamily: '"Inter", sans-serif',
+                  fontSize: 11,
                   fontWeight: 600,
-                  letterSpacing: '0.04em',
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
                   cursor: 'pointer',
+                  boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
                   WebkitTapHighlightColor: 'transparent',
                 }}
               >
@@ -1957,17 +2038,17 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
               style={{
                 appearance: 'none',
                 width: '100%',
-                padding: '12px 16px',
+                padding: '13px 24px',
                 minHeight: 44,
                 background: 'transparent',
-                border: '0.5px solid rgba(26, 26, 47, 0.16)',
-                borderRadius: 999,
-                fontFamily: 'var(--font-ui)',
+                border: '1.5px solid var(--blue-300)',
+                borderRadius: 50,
+                fontFamily: '"Inter", sans-serif',
                 fontSize: 11,
                 fontWeight: 600,
-                letterSpacing: '0.18em',
+                letterSpacing: '0.16em',
                 textTransform: 'uppercase',
-                color: 'var(--ink)',
+                color: 'var(--blue-700)',
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
               }}

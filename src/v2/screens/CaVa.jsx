@@ -1,19 +1,19 @@
 /* ============================================================
-   ÇA VA ? V7 — ÇA VA? condensé + storytelling officiel
+   ÇA VA ? V8 — Boutique éditoriale (refonte DA Mai 2026)
    ============================================================
-   Page courte (8 blocs), pas de scroll infini.
-   Le storytelling se RÉVÈLE par phrases-clés brèves placées
-   entre les blocs visuels — pas par des paragraphes longs.
+   Structure (CLAUDE.md §9 TAB 4) :
+     1. Topbar glass clair
+     2. Hero dark plein largeur (SEUL endroit autorisé)
+     3. Manifeste fond clair (3 lignes Cormorant)
+     4. QuoteBlock — citation glass card barre accent gradient
+     5. Collections grid 2 col — 6 cards glass
+     6. QuoteBlock — citation 2
+     7. VoixRow — grid 3 col photos cava-brand
+     8. Final dark + CTA "VOIR LA COLLECTION" gradient rose
    ============================================================
-   STRUCTURE :
-     1. Top bar           — ÇA VA? + lien externe
-     2. Hero              — photo + punchline "phrase mensongère"
-     3. Pourquoi          — 3 lignes courtes manifeste
-     4. Photo + citation  — "Très peu sont prêts à entendre la vraie réponse."
-     5. Voix × 3 cards    — citations brand double-lecture
-     6. Photo + citation  — "Souffrir et rester beau."
-     7. Galerie 120       — grid dense uniforme 3-col
-     8. Final + CTA       — "Derrière chaque visage..."
+   Palette : bleu/rose/violet · Fonts : Cormorant + Inter
+   Photos brand : HERO=1, BREATH=22/33, VOIX=[7,75,105],
+                  COLL=[12,48,67,84,96,118]
    ============================================================ */
 
 import { useState, useCallback } from 'react';
@@ -26,8 +26,8 @@ const PHOTO = (n) => `/cava/brand/cava-${String(n).padStart(3, '0')}.jpg`;
 const EXTERNAL_URL = 'https://www.cava-brand.com';
 
 const HERO_PHOTO = 1;
-const BREATH_1 = 33;   // photo intermède 1
-const BREATH_2 = 88;   // photo intermède 2
+const BREATH_1 = 22;
+const BREATH_2 = 33;
 
 const VOIX = [
   { idx: 7,   quote: 'Je vais bien en version limitée.' },
@@ -35,7 +35,19 @@ const VOIX = [
   { idx: 105, quote: 'Le masque tombe quand personne regarde.' },
 ];
 
-const CAPTION_MAP = VOIX.reduce((acc, v) => { acc[v.idx] = { place: '', quote: v.quote }; return acc; }, {});
+const COLLECTIONS = [
+  { idx: 12,  title: 'Brume',     price: '79 €',  tag: 'Bleu',    tagColor: '#1A5A7F' },
+  { idx: 48,  title: 'Murmure',   price: '89 €',  tag: 'Rose',    tagColor: '#C87090' },
+  { idx: 67,  title: 'Silence',   price: '94 €',  tag: 'Violet',  tagColor: '#7F5A8A' },
+  { idx: 84,  title: 'Lueur',     price: '79 €',  tag: 'Rose',    tagColor: '#C87090' },
+  { idx: 96,  title: 'Marée',     price: '105 €', tag: 'Bleu',    tagColor: '#1A5A7F' },
+  { idx: 118, title: 'Aube',      price: '89 €',  tag: 'Violet',  tagColor: '#7F5A8A' },
+];
+
+const CAPTION_MAP = VOIX.reduce((acc, v) => {
+  acc[v.idx] = { place: '', quote: v.quote };
+  return acc;
+}, {});
 
 export default function CaVa() {
   const [viewer, setViewer] = useState(null);
@@ -60,11 +72,11 @@ export default function CaVa() {
         <Blobs variant="rose-blue" />
         <TopBar />
         <Hero />
-        <Pourquoi />
-        <PhotoBreath idx={BREATH_1} quote="Tout le monde demande « ça va ? ». Très peu sont prêts à entendre la vraie réponse." onTap={() => openViewer(BREATH_1)} />
+        <Manifeste />
+        <QuoteBlock quote="Tout le monde demande « ça va ? ». Très peu sont prêts à entendre la vraie réponse." />
+        <Collections onOpen={openViewer} />
+        <QuoteBlock quote="Tu peux souffrir et rester beau, humain, vivant." />
         <VoixRow onOpen={openViewer} />
-        <PhotoBreath idx={BREATH_2} quote="Tu peux souffrir et rester beau, humain, vivant. Important." onTap={() => openViewer(BREATH_2)} />
-        <Gallery onOpen={openViewer} />
         <Final />
       </div>
 
@@ -81,7 +93,7 @@ export default function CaVa() {
   );
 }
 
-/* ─── 1. Top bar ─── */
+/* ─── 1. Top bar (glass clair) ─── */
 
 function TopBar() {
   return (
@@ -94,21 +106,20 @@ function TopBar() {
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 22px 14px',
-        background: 'rgba(255, 252, 245, 0.92)',
-        backdropFilter: 'blur(14px) saturate(160%)',
-        WebkitBackdropFilter: 'blur(14px) saturate(160%)',
-        borderBottom: '0.5px solid rgba(26, 26, 47, 0.08)',
+        background: 'rgba(255, 255, 255, 0.78)',
+        backdropFilter: 'blur(20px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+        borderBottom: '0.5px solid rgba(10, 36, 56, 0.08)',
       }}
     >
       <span
         style={{
-          fontFamily: 'var(--font-display)',
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
-          fontSize: 17,
-          fontWeight: 500,
+          fontWeight: 400,
+          fontSize: 20,
           letterSpacing: '-0.01em',
-          fontVariationSettings: 'var(--fraunces-italic-soft)',
-          color: 'var(--cava-ink, #1a1a2f)',
+          color: 'var(--blue-900)',
         }}
       >
         ÇA VA?
@@ -120,13 +131,13 @@ function TopBar() {
         onClick={() => haptic(4)}
         data-press
         style={{
-          fontFamily: 'var(--font-ui)',
+          fontFamily: "'Inter', sans-serif",
           fontSize: 10,
+          fontWeight: 600,
           letterSpacing: '0.18em',
           textTransform: 'uppercase',
-          fontWeight: 600,
-          color: 'var(--cava-ink, #1a1a2f)',
-          opacity: 0.88,
+          color: 'var(--blue-900)',
+          opacity: 0.85,
           textDecoration: 'none',
           padding: '12px 14px',
           minHeight: 44,
@@ -137,13 +148,13 @@ function TopBar() {
           WebkitTapHighlightColor: 'transparent',
         }}
       >
-        Boutique <span style={{ opacity: 0.78 }} aria-hidden>↗</span>
+        Boutique <span style={{ opacity: 0.6 }} aria-hidden>↗</span>
       </a>
     </div>
   );
 }
 
-/* ─── 2. Hero ─── */
+/* ─── 2. Hero dark (SEUL bloc dark plein largeur autorisé) ─── */
 
 function Hero() {
   return (
@@ -151,70 +162,92 @@ function Hero() {
       style={{
         position: 'relative',
         width: '100%',
-        height: '62vh',
-        minHeight: 400,
-        maxHeight: 600,
+        height: 'clamp(480px, 70vh, 560px)',
         overflow: 'hidden',
-        background: 'var(--bg)',
+        background: 'linear-gradient(135deg, #0A2438, #1A5A7F)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
+      {/* 3 blobs glow internes */}
       <div
         aria-hidden
         style={{
           position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${PHOTO(HERO_PHOTO)})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.20) 55%, rgba(0,0,0,0.78) 100%)',
+          top: -60,
+          right: -60,
+          width: 320,
+          height: 320,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(200,112,144,0.55) 0%, transparent 70%)',
+          filter: 'blur(80px)',
           pointerEvents: 'none',
         }}
       />
       <div
+        aria-hidden
         style={{
           position: 'absolute',
-          left: 22,
-          right: 22,
-          bottom: 32,
-          color: 'var(--blue-900)',
+          bottom: -80,
+          left: -70,
+          width: 300,
+          height: 300,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(42,138,191,0.55) 0%, transparent 70%)',
+          filter: 'blur(70px)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 340,
+          height: 340,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(127,90,138,0.40) 0%, transparent 70%)',
+          filter: 'blur(90px)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
+          textAlign: 'center',
+          padding: '0 22px',
+          color: '#FFFFFF',
         }}
       >
         <h1
           style={{
             margin: 0,
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(48px, 15vw, 80px)',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
-            fontWeight: 400,
-            lineHeight: 0.92,
-            letterSpacing: '-0.028em',
-            fontVariationSettings: 'var(--fraunces-opsz-large)',
-            color: 'var(--blue-900)',
-            textShadow: '0 2px 18px rgba(0,0,0,0.32)',
+            fontWeight: 300,
+            fontSize: 'clamp(72px, 18vw, 96px)',
+            lineHeight: 0.95,
+            letterSpacing: '-0.02em',
+            color: '#FFFFFF',
           }}
         >
           ÇA VA?
         </h1>
         <p
           style={{
-            margin: '14px 0 0',
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontSize: 16,
-            lineHeight: 1.4,
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            color: 'var(--blue-900)',
-            opacity: 0.94,
-            maxWidth: 320,
-            textShadow: '0 1px 8px rgba(0,0,0,0.32)',
+            margin: '24px auto 0',
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 300,
+            fontSize: 'clamp(14px, 4vw, 17px)',
+            lineHeight: 1.5,
+            letterSpacing: '0.01em',
+            color: 'rgba(255,255,255,0.92)',
+            maxWidth: 340,
           }}
         >
           La phrase la plus mensongère du monde.
@@ -224,103 +257,87 @@ function Hero() {
   );
 }
 
-/* ─── 3. Pourquoi — 3 lignes brèves ─── */
+/* ─── 3. Manifeste (3 lignes Cormorant italic centré) ─── */
 
-function Pourquoi() {
+function Manifeste() {
   return (
     <section
       style={{
-        padding: '64px 28px 56px',
-        background: 'rgba(255,255,255,0.65)',
+        position: 'relative',
+        zIndex: 1,
+        padding: '72px 28px 64px',
+        background: 'var(--bg)',
         textAlign: 'center',
-        borderBottom: '0.5px solid rgba(26, 26, 47, 0.06)',
       }}
     >
-      <div
-        style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 9,
-          letterSpacing: '0.32em',
-          textTransform: 'uppercase',
-          fontWeight: 600,
-          color: 'rgba(26, 26, 47, 0.72)',
-          marginBottom: 22,
-        }}
-      >
-        Pourquoi
-      </div>
       <p
         style={{
           margin: '0 auto',
-          fontFamily: 'var(--font-display)',
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
-          fontSize: 'clamp(22px, 6vw, 28px)',
-          lineHeight: 1.32,
-          letterSpacing: '-0.014em',
-          fontVariationSettings: 'var(--fraunces-italic-soft)',
-          color: 'var(--cava-ink, #1a1a2f)',
-          maxWidth: 460,
+          fontWeight: 300,
+          fontSize: 'clamp(18px, 5vw, 22px)',
+          lineHeight: 1.6,
+          letterSpacing: '0.005em',
+          color: 'var(--blue-900)',
+          maxWidth: 480,
         }}
       >
         Pas née pour vendre.<br />
-        Née parce que trop de gens<br />souffrent en silence.
-      </p>
-      <p
-        style={{
-          margin: '28px auto 0',
-          fontFamily: 'var(--font-body)',
-          fontSize: 13.5,
-          lineHeight: 1.65,
-          color: 'rgba(26, 26, 47, 0.78)',
-          maxWidth: 360,
-        }}
-      >
-        La mode comme langage humain.
-        Le vêtement comme support de conversation, signal, présence.
+        Née parce que trop de gens souffrent en silence.<br />
+        Le vêtement comme support de présence.
       </p>
     </section>
   );
 }
 
-/* ─── 4 & 6. Photo + citation (intermède narratif) ─── */
+/* ─── 4 & 6. QuoteBlock (glass card barre accent gradient bleu→rose) ─── */
 
-function PhotoBreath({ idx, quote, onTap }) {
+function QuoteBlock({ quote }) {
   return (
-    <section style={{ background: 'rgba(255,255,255,0.65)' }}>
-      <button
-        data-press
-        onClick={onTap}
-        aria-label={quote}
-        style={{
-          appearance: 'none',
-          border: 'none',
-          padding: 0,
-          width: '100%',
-          aspectRatio: '4 / 5',
-          background: `var(--bg) url(${PHOTO(idx)}) center / cover no-repeat`,
-          cursor: 'pointer',
-          WebkitTapHighlightColor: 'transparent',
-          display: 'block',
-        }}
-      />
+    <section
+      style={{
+        position: 'relative',
+        zIndex: 1,
+        padding: '8px 16px 32px',
+      }}
+    >
       <div
         style={{
-          padding: '32px 28px 40px',
-          textAlign: 'center',
+          position: 'relative',
+          background: 'rgba(255, 255, 255, 0.65)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255, 255, 255, 0.85)',
+          borderRadius: 24,
+          boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+          padding: '28px 24px 28px 28px',
+          overflow: 'hidden',
         }}
       >
+        {/* Barre accent gauche : gradient bleu→rose */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 16,
+            bottom: 16,
+            width: 3,
+            background: 'linear-gradient(180deg, #1A5A7F 0%, #C87090 100%)',
+            borderRadius: '0 2px 2px 0',
+          }}
+        />
         <p
           style={{
             margin: 0,
-            fontFamily: 'var(--font-display)',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
-            fontSize: 'clamp(19px, 5vw, 23px)',
-            lineHeight: 1.35,
-            letterSpacing: '-0.012em',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            color: 'var(--cava-ink, #1a1a2f)',
-            maxWidth: 480,
-            marginInline: 'auto',
+            fontWeight: 300,
+            fontSize: 'clamp(16px, 4.5vw, 18px)',
+            lineHeight: 1.55,
+            letterSpacing: '0.003em',
+            color: 'var(--blue-900)',
           }}
         >
           « {quote} »
@@ -330,27 +347,165 @@ function PhotoBreath({ idx, quote, onTap }) {
   );
 }
 
-/* ─── 5. Voix (3 cards) ─── */
+/* ─── 5. Collections grid 2 col — 6 cards glass ─── */
 
-function VoixRow({ onOpen }) {
+function Collections({ onOpen }) {
   return (
-    <section style={{ padding: '20px 16px 12px', background: 'rgba(255,255,255,0.65)' }}>
+    <section
+      style={{
+        position: 'relative',
+        zIndex: 1,
+        padding: '24px 16px 16px',
+      }}
+    >
+      <div
+        style={{
+          padding: '0 6px 16px',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'var(--blue-700)',
+          }}
+        >
+          La collection
+        </span>
+      </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 16,
+        }}
+      >
+        {COLLECTIONS.map((c) => (
+          <CollectionCard key={c.idx} item={c} onOpen={onOpen} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CollectionCard({ item, onOpen }) {
+  return (
+    <button
+      data-press
+      onClick={() => onOpen(item.idx)}
+      aria-label={`${item.title} — ${item.price}`}
+      style={{
+        appearance: 'none',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        padding: 12,
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderRadius: 24,
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+        cursor: 'pointer',
+        WebkitTapHighlightColor: 'transparent',
+        textAlign: 'left',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '4 / 5',
+          borderRadius: 16,
+          overflow: 'hidden',
+          backgroundColor: 'rgba(10,36,56,0.04)',
+          backgroundImage: `url(${PHOTO(item.idx)})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <span
+          style={{
+            position: 'absolute',
+            top: 10,
+            left: 10,
+            padding: '5px 10px',
+            background: 'rgba(255, 255, 255, 0.88)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            borderRadius: 999,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 9,
+            fontWeight: 600,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: item.tagColor,
+          }}
+        >
+          {item.tag}
+        </span>
+      </div>
       <div
         style={{
           display: 'flex',
           alignItems: 'baseline',
           justifyContent: 'space-between',
-          padding: '0 6px 14px',
+          gap: 8,
+          padding: '0 2px 4px',
         }}
       >
         <span
           style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 18,
+            lineHeight: 1.1,
+            color: 'var(--blue-900)',
+          }}
+        >
+          {item.title}
+        </span>
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 14,
+            fontWeight: 500,
+            letterSpacing: '0.01em',
+            color: 'var(--blue-700)',
+            fontVariantNumeric: 'tabular-nums',
+          }}
+        >
+          {item.price}
+        </span>
+      </div>
+    </button>
+  );
+}
+
+/* ─── 7. VoixRow (3 col 1/1 photos cava-brand) ─── */
+
+function VoixRow({ onOpen }) {
+  return (
+    <section
+      style={{
+        position: 'relative',
+        zIndex: 1,
+        padding: '16px 16px 32px',
+      }}
+    >
+      <div style={{ padding: '0 6px 16px' }}>
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 10,
             fontWeight: 600,
-            color: 'rgba(26, 26, 47, 0.72)',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'var(--blue-700)',
           }}
         >
           Les voix
@@ -360,7 +515,7 @@ function VoixRow({ onOpen }) {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 8,
+          gap: 10,
         }}
       >
         {VOIX.map((v) => (
@@ -371,15 +526,18 @@ function VoixRow({ onOpen }) {
             aria-label={v.quote}
             style={{
               appearance: 'none',
-              border: 'none',
+              border: '1px solid rgba(255, 255, 255, 0.85)',
               padding: 0,
-              background: 'var(--bg)',
-              borderRadius: 8,
+              background: 'rgba(255, 255, 255, 0.65)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              borderRadius: 16,
               overflow: 'hidden',
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
               position: 'relative',
-              aspectRatio: '3 / 4',
+              aspectRatio: '1 / 1',
+              boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
             }}
           >
             <div
@@ -392,10 +550,11 @@ function VoixRow({ onOpen }) {
               }}
             />
             <div
+              aria-hidden
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.72) 100%)',
+                background: 'linear-gradient(180deg, rgba(10,36,56,0) 45%, rgba(10,36,56,0.78) 100%)',
               }}
             />
             <p
@@ -405,14 +564,14 @@ function VoixRow({ onOpen }) {
                 left: 8,
                 right: 8,
                 margin: 0,
-                fontFamily: 'var(--font-display)',
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontStyle: 'italic',
-                fontSize: 10.5,
+                fontWeight: 400,
+                fontSize: 11,
                 lineHeight: 1.25,
-                fontVariationSettings: 'var(--fraunces-italic-soft)',
-                color: 'var(--blue-900)',
+                color: '#FFFFFF',
                 textAlign: 'left',
-                textShadow: '0 1px 6px rgba(0,0,0,0.5)',
+                textShadow: '0 1px 6px rgba(0,0,0,0.45)',
               }}
             >
               « {v.quote} »
@@ -424,118 +583,61 @@ function VoixRow({ onOpen }) {
   );
 }
 
-/* ─── 7. Gallery (120 photos, grid dense uniforme) ─── */
-
-function Gallery({ onOpen }) {
-  return (
-    <section style={{ padding: '20px 16px 24px', background: 'rgba(255,255,255,0.65)' }}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'baseline',
-          justifyContent: 'space-between',
-          padding: '14px 6px',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            fontWeight: 600,
-            color: 'rgba(26, 26, 47, 0.72)',
-          }}
-        >
-          La collection
-        </span>
-        <span
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            fontWeight: 600,
-            color: 'rgba(26, 26, 47, 0.62)',
-            fontVariantNumeric: 'tabular-nums',
-          }}
-        >
-          {TOTAL} pièces
-        </span>
-      </div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 3,
-        }}
-      >
-        {Array.from({ length: TOTAL }, (_, i) => i + 1).map((n) => (
-          <button
-            key={n}
-            data-press
-            onClick={() => onOpen(n)}
-            aria-label={`Photo ${n}`}
-            className="cava-tile"
-            style={{
-              appearance: 'none',
-              border: 'none',
-              padding: 0,
-              background: 'var(--bg)',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              aspectRatio: '1 / 1',
-              backgroundImage: `url(${PHOTO(n)})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              transition: 'opacity 180ms ease-out',
-            }}
-          />
-        ))}
-      </div>
-      <style>{`
-        .cava-tile:active { opacity: 0.7; }
-      `}</style>
-    </section>
-  );
-}
-
-/* ─── 8. Final (message + CTA) ─── */
+/* ─── 8. Final bloc dark gradient + CTA "VOIR LA COLLECTION" gradient rose ─── */
 
 function Final() {
   return (
     <section
       style={{
-        background: 'var(--cava-ink, #1a1a2f)',
-        color: 'var(--blue-900)',
-        padding: '72px 22px calc(env(safe-area-inset-bottom, 0px) + 130px)',
+        position: 'relative',
+        background: 'linear-gradient(135deg, #0A2438, #1A5A7F)',
+        color: '#FFFFFF',
+        padding: '80px 22px calc(env(safe-area-inset-bottom, 0px) + 140px)',
         textAlign: 'center',
+        overflow: 'hidden',
       }}
     >
       <div
+        aria-hidden
         style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 9,
-          letterSpacing: '0.32em',
-          textTransform: 'uppercase',
-          fontWeight: 600,
-          color: 'var(--blue-900)',
-          opacity: 0.7,
-          marginBottom: 22,
+          position: 'absolute',
+          top: -50,
+          right: -60,
+          width: 240,
+          height: 240,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(200,112,144,0.40) 0%, transparent 70%)',
+          filter: 'blur(70px)',
+          pointerEvents: 'none',
         }}
-      >
-        Message final
-      </div>
+      />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          bottom: 40,
+          left: -60,
+          width: 220,
+          height: 220,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(127,90,138,0.42) 0%, transparent 70%)',
+          filter: 'blur(70px)',
+          pointerEvents: 'none',
+        }}
+      />
+
       <p
         style={{
-          margin: '0 auto 14px',
-          fontFamily: 'var(--font-display)',
+          position: 'relative',
+          zIndex: 2,
+          margin: '0 auto 18px',
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
-          fontSize: 'clamp(22px, 6vw, 28px)',
+          fontWeight: 300,
+          fontSize: 'clamp(24px, 6.5vw, 30px)',
           lineHeight: 1.3,
-          letterSpacing: '-0.014em',
-          fontVariationSettings: 'var(--fraunces-italic-soft)',
-          color: 'var(--blue-900)',
+          letterSpacing: '-0.012em',
+          color: '#FFFFFF',
           maxWidth: 420,
         }}
       >
@@ -545,11 +647,14 @@ function Final() {
       </p>
       <p
         style={{
-          margin: '0 auto 40px',
-          fontFamily: 'var(--font-body)',
-          fontSize: 13.5,
+          position: 'relative',
+          zIndex: 2,
+          margin: '0 auto 44px',
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 300,
+          fontSize: 14,
           lineHeight: 1.6,
-          color: 'rgba(10, 36, 56, 0.82)',
+          color: 'rgba(255,255,255,0.78)',
           maxWidth: 360,
         }}
       >
@@ -562,24 +667,27 @@ function Final() {
         onClick={() => haptic(6)}
         data-press
         style={{
+          position: 'relative',
+          zIndex: 2,
           display: 'inline-flex',
           alignItems: 'center',
           gap: 10,
-          padding: '14px 28px',
+          padding: '15px 28px',
           minHeight: 44,
-          background: 'var(--bg)',
-          color: 'var(--cava-ink, #1a1a2f)',
+          background: 'linear-gradient(135deg, #C87090, #E080A8)',
+          color: '#FFFFFF',
           borderRadius: 999,
-          fontFamily: 'var(--font-ui)',
+          fontFamily: "'Inter', sans-serif",
           fontSize: 11,
           fontWeight: 600,
           letterSpacing: '0.18em',
           textTransform: 'uppercase',
           textDecoration: 'none',
+          boxShadow: '0 8px 24px rgba(200,112,144,0.35)',
           WebkitTapHighlightColor: 'transparent',
         }}
       >
-        Porter la question <span style={{ opacity: 0.55 }}>↗</span>
+        Voir la collection <span style={{ opacity: 0.85 }}>↗</span>
       </a>
     </section>
   );

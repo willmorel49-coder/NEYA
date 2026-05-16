@@ -1,9 +1,10 @@
 /* ============================================================
-   ÇA VA ? V5 — Cocon plein écran painterly personnalisable
+   ÇA VA ? V6 — Cocon · refonte palette bleu/rose + glassmorphism
    ============================================================
-   Sanctuaire perso : image au choix, ambiance au choix,
-   musique au choix. Texte blanc en surimpression.
-   Vision inspirée du MVP ÇA VA ? original.
+   Sanctuaire éditorial : conteneur image délimité, halo teal sous
+   personnage, hero text serif italic, CTA rose pleine largeur,
+   3 actions glass (Musique / Mantra / Personnaliser).
+   Vision Will / CLAUDE.md sections 4-9.
    ============================================================ */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
@@ -25,12 +26,12 @@ const TOTEMS = [
 ];
 
 const COCON_IMAGES = [
-  { key: 'foret',      label: 'Forêt de Clarté',   src: '/img/world-foret.png' },
-  { key: 'temple',     label: 'Temple intérieur',  src: '/img/world-temple.png' },
-  { key: 'oasis',      label: 'Oasis du Souffle',  src: '/img/world-oasis.png' },
-  { key: 'lac',        label: 'Lac des Émotions',  src: '/img/world-lac.png' },
+  { key: 'foret',      label: 'Forêt de Clarté',    src: '/img/world-foret.png' },
+  { key: 'temple',     label: 'Temple intérieur',   src: '/img/world-temple.png' },
+  { key: 'oasis',      label: 'Oasis du Souffle',   src: '/img/world-oasis.png' },
+  { key: 'lac',        label: 'Lac des Émotions',   src: '/img/world-lac.png' },
   { key: 'montagne',   label: 'Montagne de Vision', src: '/img/world-montagne.png' },
-  { key: 'communaute', label: 'Refuge partagé',    src: '/img/world-communaute.png' },
+  { key: 'communaute', label: 'Refuge partagé',     src: '/img/world-communaute.png' },
 ];
 
 const AMBIANCES = [
@@ -59,12 +60,12 @@ const TRACKS = [
 
 function getHourPhrase() {
   const h = new Date().getHours();
-  if (h >= 5 && h < 8)   return { whisper: 'L\'aube est douce. Pose-toi.',                tint: 'rgba(245, 212, 156, 0.18)' };
-  if (h >= 8 && h < 12)  return { whisper: 'Le jour est là. Respire.',                    tint: 'rgba(255, 252, 245, 0.10)' };
-  if (h >= 12 && h < 17) return { whisper: 'Chaque souffle te recentre.',                 tint: 'rgba(255, 252, 245, 0.10)' };
-  if (h >= 17 && h < 20) return { whisper: 'Le jour s\'apaise. Reviens à toi.',           tint: 'rgba(199, 103, 74, 0.22)' };
-  if (h >= 20 && h < 23) return { whisper: 'La nuit veille. Repose-toi.',                 tint: 'rgba(30, 30, 60, 0.32)' };
-  return                       { whisper: 'Chaque respiration te rapproche de toi-même.', tint: 'rgba(20, 24, 56, 0.42)' };
+  if (h >= 5 && h < 8)   return 'L\'aube est douce. Pose-toi.';
+  if (h >= 8 && h < 12)  return 'Le jour est là. Respire.';
+  if (h >= 12 && h < 17) return 'Chaque souffle te recentre.';
+  if (h >= 17 && h < 20) return 'Le jour s\'apaise. Reviens à toi.';
+  if (h >= 20 && h < 23) return 'La nuit veille. Repose-toi.';
+  return 'Chaque respiration te rapproche de toi-même.';
 }
 
 function getGreeting(pseudo) {
@@ -76,7 +77,6 @@ function resolveImage(profile) {
   const cocon = profile.cocon || {};
   const explicit = COCON_IMAGES.find((i) => i.key === cocon.image);
   if (explicit) return explicit;
-  // Fallback : suit le totem
   const totemKey = profile.totem || 'lion';
   const totem = TOTEMS.find((t) => t.key === totemKey) || TOTEMS[0];
   return COCON_IMAGES.find((i) => i.key === totem.world) || COCON_IMAGES[0];
@@ -105,9 +105,8 @@ export default function Cocon() {
   const currentTotem = TOTEMS.find((t) => t.key === totemKey) || TOTEMS[0];
   const totemWorld = WORLDS[currentTotem.world] || WORLDS.foret;
   const accent = totemWorld.accent;
-  const accentRgb = totemWorld.accentRgb;
   const currentImage = useMemo(() => resolveImage(profile), [profile]);
-  const hourPhase = useMemo(() => getHourPhrase(), []);
+  const hourWhisper = useMemo(() => getHourPhrase(), []);
   const currentTrack = useMemo(() => TRACKS.find((t) => t.key === cocon.music) || null, [cocon.music]);
 
   // Re-évalue l'heure
@@ -127,22 +126,17 @@ export default function Cocon() {
     };
   }, []);
 
-  // Audio : appliquer volume + reset si track change
+  // Audio : appliquer volume
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
     a.volume = typeof cocon.musicVolume === 'number' ? cocon.musicVolume : 0.45;
   }, [cocon.musicVolume]);
 
+  // Track change → stop
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
-    if (!currentTrack) {
-      a.pause();
-      setMusicPlaying(false);
-      return;
-    }
-    // Si la track change, on stop l'ancienne (le src change via React)
     a.pause();
     setMusicPlaying(false);
   }, [currentTrack?.key]);
@@ -182,96 +176,39 @@ export default function Cocon() {
       style={{
         position: 'absolute',
         inset: 0,
-        overflow: 'hidden',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        WebkitOverflowScrolling: 'touch',
         background: 'var(--bg)',
       }}
       data-world={currentTotem.world}
     >
       <Blobs variant="rose-violet" />
-      {/* Painterly bg plein écran (atténué pour laisser respirer la palette V3) */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${currentImage.src})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          animation: 'cocon-bg-ken-burns 28s ease-in-out infinite alternate',
-          willChange: 'transform',
-          opacity: 0.18,
-        }}
-      />
 
-      {/* Voile sombre */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'linear-gradient(180deg, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.28) 35%, rgba(0,0,0,0.55) 100%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Voile horaire */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: hourPhase.tint,
-          mixBlendMode: 'multiply',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Ambiance dynamique */}
-      <CoconAmbiance type={cocon.ambiance || 'fireflies'} accent={accent} />
-
-      {/* Top bar — logo + icône perso */}
+      {/* Top bar — brand ÇA VA? + bouton ⋯ */}
       <div
         style={{
-          position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 22px)',
-          left: 22,
-          right: 22,
+          position: 'relative',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 22px 8px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           zIndex: 3,
         }}
       >
-        <span style={{ width: 32, height: 32 }} />
-        <div
-          aria-hidden
+        <span style={{ width: 44, height: 44 }} />
+        <span
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 22,
+            color: 'var(--blue-900)',
+            letterSpacing: '-0.01em',
           }}
         >
-          <svg width="22" height="14" viewBox="0 0 44 28" fill="none" aria-hidden>
-            <path d="M22 26 C 8 18, 4 8, 22 2 C 40 8, 36 18, 22 26 Z" stroke="#FBF6E8" strokeWidth="0.8" fill="none" opacity="0.92" />
-            <path d="M22 26 C 12 22, 10 14, 22 8" stroke="#FBF6E8" strokeWidth="0.6" fill="none" opacity="0.7" />
-            <path d="M22 26 C 32 22, 34 14, 22 8" stroke="#FBF6E8" strokeWidth="0.6" fill="none" opacity="0.7" />
-          </svg>
-          <span
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontSize: 9,
-              letterSpacing: '0.42em',
-              fontWeight: 600,
-              color: 'var(--blue-900)',
-              opacity: 0.92,
-              textShadow: '0 1px 6px rgba(0, 0, 0, 0.42)',
-            }}
-          >
-            ÇA VA ?
-          </span>
-        </div>
+          ÇA VA ?
+        </span>
         <button
           type="button"
           onClick={() => { haptic(2); setPersonalizeOpen(true); }}
@@ -283,7 +220,7 @@ export default function Cocon() {
             height: 44,
             background: 'rgba(255, 255, 255, 0.65)',
             border: '0.5px solid rgba(26, 90, 127, 0.30)',
-            borderRadius: 22,
+            borderRadius: '50%',
             color: 'var(--blue-900)',
             cursor: 'pointer',
             display: 'inline-flex',
@@ -292,358 +229,224 @@ export default function Cocon() {
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
             WebkitTapHighlightColor: 'transparent',
-            fontSize: 14,
+            fontSize: 18,
             padding: 0,
+            boxShadow: '0 4px 14px rgba(10, 36, 56, 0.06)',
           }}
         >
           ⋯
         </button>
       </div>
 
-      {/* Greeting + whisper */}
+      {/* Conteneur image illustrative — 343×220 max, jamais plein écran */}
       <div
         style={{
-          position: 'absolute',
-          top: '24%',
-          left: 22,
-          right: 22,
-          textAlign: 'center',
+          position: 'relative',
+          margin: '8px 16px 0',
+          height: 220,
+          borderRadius: 24,
+          overflow: 'hidden',
+          flexShrink: 0,
+          boxShadow: '0 8px 28px rgba(10, 36, 56, 0.10)',
           zIndex: 2,
-          color: 'var(--blue-900)',
         }}
       >
+        <img
+          src={currentImage.src}
+          alt=""
+          draggable={false}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '78%',
+            objectFit: 'cover',
+            objectPosition: 'center 30%',
+            userSelect: 'none',
+            display: 'block',
+          }}
+        />
+        {/* Overlay gradient sombre pour lisibilité */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(to bottom, transparent 30%, rgba(10, 36, 56, 0.65) 100%)',
+            pointerEvents: 'none',
+          }}
+        />
+        {/* Halo teal sous personnage */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            bottom: -10,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 80,
+            height: 40,
+            background: 'radial-gradient(ellipse, rgba(18, 196, 176, 0.30) 0%, transparent 70%)',
+            borderRadius: '50%',
+            animation: 'cocon-halo-pulse 4s ease-in-out infinite',
+            pointerEvents: 'none',
+          }}
+        />
+        {/* Ambiance dynamique cantonnée dans la carte */}
+        <CoconAmbiance type={cocon.ambiance || 'fireflies'} accent={accent} />
+      </div>
+
+      {/* Hero text */}
+      <div
+        style={{
+          position: 'relative',
+          margin: '28px 22px 0',
+          textAlign: 'center',
+          zIndex: 2,
+        }}
+      >
+        <div
+          style={{
+            fontFamily: 'var(--font-ui)',
+            fontSize: 9,
+            fontWeight: 500,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'var(--rose-700)',
+            marginBottom: 12,
+          }}
+        >
+          Ton cocon
+        </div>
         <h1
           style={{
             margin: 0,
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(32px, 8vw, 42px)',
+            fontStyle: 'italic',
             fontWeight: 300,
-            lineHeight: 1.15,
+            fontSize: 42,
+            lineHeight: 1.1,
             letterSpacing: '-0.018em',
-            fontVariationSettings: '"opsz" 144, "SOFT" 50',
             color: 'var(--blue-900)',
-            textShadow: '0 2px 18px rgba(0, 0, 0, 0.38)',
           }}
         >
           {getGreeting(profile.pseudo)}
         </h1>
         <p
           style={{
-            margin: '18px auto 0',
+            margin: '14px auto 0',
             fontFamily: 'var(--font-body)',
-            fontSize: 15,
-            lineHeight: 1.6,
-            color: 'var(--blue-900)',
-            opacity: 0.88,
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 13,
+            lineHeight: 1.55,
+            color: 'var(--text-secondary)',
             maxWidth: 280,
-            textShadow: '0 1px 8px rgba(0, 0, 0, 0.32)',
           }}
         >
-          {hourPhase.whisper}
+          {hourWhisper}
         </p>
-      </div>
 
-      {/* Mantra filigrane */}
-      {profile.mantra ? (
-        <button
-          type="button"
-          onClick={() => { haptic(2); setPersonalizeOpen(true); }}
-          aria-label="Modifier ton mantra"
-          style={{
-            position: 'absolute',
-            left: 22,
-            right: 22,
-            bottom: 'max(374px, calc(env(safe-area-inset-bottom, 0px) + 310px))',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            textAlign: 'center',
-            color: 'var(--blue-900)',
-            WebkitTapHighlightColor: 'transparent',
-            zIndex: 2,
-            padding: 0,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontSize: 17,
-              lineHeight: 1.45,
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              color: 'var(--blue-900)',
-              opacity: 0.94,
-              textShadow: '0 1px 10px rgba(0, 0, 0, 0.5)',
-              animation: 'cocon-mantra-breathe 8s ease-in-out infinite',
-              display: 'inline-block',
-              maxWidth: '88%',
-            }}
-          >
-            « {profile.mantra} »
-          </span>
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={() => { haptic(2); setPersonalizeOpen(true); }}
-          data-press
-          aria-label="Poser un mantra"
-          style={{
-            position: 'absolute',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            bottom: 'max(378px, calc(env(safe-area-inset-bottom, 0px) + 314px))',
-            appearance: 'none',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'var(--blue-900)',
-            opacity: 0.82,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 10,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            fontWeight: 600,
-            padding: '10px 18px',
-            minHeight: 44,
-            textShadow: '0 1px 8px rgba(0, 0, 0, 0.5)',
-            WebkitTapHighlightColor: 'transparent',
-            zIndex: 2,
-          }}
-        >
-          + Poser un mantra
-        </button>
-      )}
-
-      {/* Mini player musique (si track sélectionnée) — tap = ouvre la page Musique */}
-      {currentTrack && (
-        <button
-          type="button"
-          onClick={() => { haptic(4); setMusiqueOpen(true); }}
-          aria-label="Ouvrir la musique"
-          style={{
-            position: 'absolute',
-            left: 22,
-            right: 22,
-            bottom: 'max(314px, calc(env(safe-area-inset-bottom, 0px) + 250px))',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '10px 14px',
-            minHeight: 44,
-            background: 'rgba(8, 10, 24, 0.42)',
-            border: '0.5px solid rgba(251, 246, 232, 0.16)',
-            borderRadius: 999,
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            zIndex: 3,
-            cursor: 'pointer',
-            appearance: 'none',
-            textAlign: 'left',
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
-          {/* Vignette pochette */}
-          {getTrackCover(currentTrack.key) && (
-            <div
-              aria-hidden
-              style={{
-                width: 36,
-                height: 36,
-                flexShrink: 0,
-                borderRadius: 6,
-                overflow: 'hidden',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.32)',
-                background: '#1A1A2F',
-              }}
-            >
-              <img
-                src={getTrackCover(currentTrack.key)}
-                alt=""
-                draggable={false}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                  userSelect: 'none',
-                }}
-              />
-            </div>
-          )}
+        {/* Mantra optionnel */}
+        {profile.mantra && (
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); togglePlay(); }}
-            data-press
-            aria-label={musicPlaying ? 'Mettre en pause' : 'Lancer la musique'}
+            onClick={() => { haptic(2); setPersonalizeOpen(true); }}
+            aria-label="Modifier ton mantra"
             style={{
-              appearance: 'none',
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              background: accent,
-              color: 'var(--blue-900)',
+              marginTop: 16,
+              background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
               padding: 0,
-              fontSize: 12,
               WebkitTapHighlightColor: 'transparent',
             }}
           >
-            {musicPlaying ? '❚❚' : '▶'}
-          </button>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div
+            <span
               style={{
                 fontFamily: 'var(--font-display)',
                 fontStyle: 'italic',
-                fontVariationSettings: 'var(--fraunces-italic-soft)',
-                fontSize: 14,
-                color: 'var(--blue-900)',
-                opacity: 0.94,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                lineHeight: 1.15,
+                fontWeight: 300,
+                fontSize: 17,
+                lineHeight: 1.45,
+                color: 'var(--violet)',
+                animation: 'cocon-mantra-breathe 8s ease-in-out infinite',
+                display: 'inline-block',
+                maxWidth: 280,
               }}
             >
-              {currentTrack.title}
-            </div>
-            <div
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 9,
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                color: 'rgba(251,246,232,0.62)',
-                fontWeight: 600,
-                marginTop: 2,
-              }}
-            >
-              ÇA VA ?
-            </div>
-          </div>
-          <span
-            aria-hidden
-            style={{
-              color: 'var(--blue-900)',
-              opacity: 0.7,
-              fontSize: 14,
-              flexShrink: 0,
-              padding: '0 4px',
-            }}
-          >
-            ›
-          </span>
-        </button>
-      )}
+              « {profile.mantra} »
+            </span>
+          </button>
+        )}
+      </div>
 
-      {/* Bouton "Musique" discret si aucune piste sélectionnée */}
-      {!currentTrack && (
+      {/* CTA rose principal — pleine largeur */}
+      <div style={{ position: 'relative', margin: '26px 16px 0', zIndex: 2 }}>
         <button
           type="button"
-          onClick={() => { haptic(4); setMusiqueOpen(true); }}
+          onClick={() => { haptic(6); setBreathingOpen(true); }}
           data-press
-          aria-label="Ouvrir la musique de ÇA VA ?"
           style={{
-            position: 'absolute',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            bottom: 'max(314px, calc(env(safe-area-inset-bottom, 0px) + 250px))',
             appearance: 'none',
-            padding: '10px 18px',
-            minHeight: 40,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            background: 'rgba(8, 10, 24, 0.42)',
-            border: '0.5px solid rgba(26, 90, 127, 0.30)',
-            borderRadius: 999,
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            color: 'var(--blue-900)',
-            cursor: 'pointer',
+            width: '100%',
+            height: 50,
+            background: 'var(--gradient-rose)',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: 50,
             fontFamily: 'var(--font-ui)',
             fontSize: 11,
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
             fontWeight: 600,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
             WebkitTapHighlightColor: 'transparent',
-            zIndex: 3,
+            boxShadow: '0 8px 24px rgba(200, 112, 144, 0.30)',
           }}
         >
-          <span aria-hidden style={{ fontSize: 13, opacity: 0.85 }}>♫</span>
-          Musique
+          Me poser 2 minutes
         </button>
-      )}
+      </div>
 
-      {/* CTA principal */}
-      <button
-        type="button"
-        onClick={() => { haptic(6); setBreathingOpen(true); }}
-        data-press
+      {/* Liste 3 ActionCards glass : Musique · Mantra · Personnaliser */}
+      <div
         style={{
-          position: 'absolute',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          bottom: 'max(202px, calc(env(safe-area-inset-bottom, 0px) + 138px))',
-          appearance: 'none',
-          padding: '16px 38px',
-          minHeight: 52,
-          background: accent,
-          color: 'var(--blue-900)',
-          border: 'none',
-          borderRadius: 999,
-          fontFamily: 'var(--font-ui)',
-          fontSize: 13,
-          fontWeight: 600,
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          cursor: 'pointer',
-          WebkitTapHighlightColor: 'transparent',
-          boxShadow: `0 8px 28px ${accentRgb}, 0.42), 0 2px 6px rgba(0, 0, 0, 0.18)`,
-          zIndex: 3,
+          position: 'relative',
+          margin: '20px 16px 0',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 130px)',
+          zIndex: 2,
         }}
       >
-        Me poser 2 minutes
-      </button>
+        <ActionCard
+          onClick={() => { haptic(4); setMusiqueOpen(true); }}
+          icon={<IconMusic />}
+          label={currentTrack ? currentTrack.title : 'Musique'}
+          subtitle={currentTrack ? (musicPlaying ? 'En lecture…' : 'Touche pour ouvrir') : 'Choisis ta piste'}
+          cover={currentTrack ? getTrackCover(currentTrack.key) : null}
+          onPlayToggle={currentTrack ? togglePlay : null}
+          isPlaying={musicPlaying}
+        />
+        <ActionCard
+          onClick={() => { haptic(2); setPersonalizeOpen(true); }}
+          icon={<IconMantra />}
+          label={profile.mantra ? 'Modifier ton mantra' : 'Poser un mantra'}
+          subtitle={profile.mantra ? 'Une phrase pour toi' : 'Quelques mots qui te recentrent'}
+        />
+        <ActionCard
+          onClick={() => { haptic(2); setPersonalizeOpen(true); }}
+          icon={<IconSettings />}
+          label="Personnaliser"
+          subtitle="Image, ambiance, identité"
+        />
+      </div>
 
-      {/* Bouton Personnaliser texte (au-dessus du CTA, hors zone BottomNav) */}
-      <button
-        type="button"
-        onClick={() => { haptic(2); setPersonalizeOpen(true); }}
-        data-press
-        style={{
-          position: 'absolute',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          bottom: 'max(264px, calc(env(safe-area-inset-bottom, 0px) + 200px))',
-          appearance: 'none',
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          color: 'var(--blue-900)',
-          opacity: 0.9,
-          fontFamily: 'var(--font-ui)',
-          fontSize: 10,
-          letterSpacing: '0.222em',
-          textTransform: 'uppercase',
-          fontWeight: 600,
-          padding: '12px 18px',
-          minHeight: 44,
-          textShadow: '0 1px 8px rgba(0, 0, 0, 0.5)',
-          WebkitTapHighlightColor: 'transparent',
-          zIndex: 3,
-        }}
-      >
-        Personnaliser mon cocon
-      </button>
-
-      {/* Audio element (caché) */}
+      {/* Audio element */}
       {currentTrack && (
         <audio
           ref={audioRef}
@@ -677,36 +480,191 @@ export default function Cocon() {
 
       {/* Keyframes locales */}
       <style>{`
-        @keyframes cocon-bg-ken-burns {
-          0%   { transform: scale(1)    translate3d(0, 0, 0); }
-          100% { transform: scale(1.08) translate3d(0, -1.5%, 0); }
-        }
-        @keyframes cocon-firefly {
-          0%, 100% { opacity: 0; transform: translateY(0) scale(0.6); }
-          15%      { opacity: 0.45; transform: translateY(-6px) scale(1); }
-          50%      { opacity: 0.9;  transform: translateY(-14px) scale(1.1); }
-          85%      { opacity: 0.4;  transform: translateY(-22px) scale(0.9); }
+        @keyframes cocon-halo-pulse {
+          0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+          50%      { opacity: 1;   transform: translateX(-50%) scale(1.15); }
         }
         @keyframes cocon-mantra-breathe {
           0%, 100% { opacity: 0.86; }
           50%      { opacity: 1; }
         }
-        @keyframes cocon-rain-fall {
-          0%   { transform: translateY(0); }
-          100% { transform: translateY(110vh); }
-        }
-        @keyframes cocon-snow-fall {
-          0%   { transform: translate3d(0, 0, 0); opacity: 0; }
-          10%  { opacity: 0.75; }
-          90%  { opacity: 0.6; }
-          100% { transform: translate3d(var(--drift, 0), 110vh, 0); opacity: 0; }
-        }
-        @keyframes cocon-star-twinkle {
-          0%, 100% { opacity: 0.15; transform: scale(0.8); }
-          50%      { opacity: 0.95; transform: scale(1.3); }
-        }
       `}</style>
     </div>
+  );
+}
+
+/* ============================================================
+   ActionCard — pill glass blur 24 + icône bleue + label serif italic
+   ============================================================ */
+
+function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPlaying }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      data-press
+      style={{
+        appearance: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        width: '100%',
+        padding: '14px 16px',
+        minHeight: 64,
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        borderRadius: 20,
+        cursor: 'pointer',
+        textAlign: 'left',
+        WebkitTapHighlightColor: 'transparent',
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+      }}
+    >
+      {/* Icône / cover */}
+      {cover ? (
+        <div
+          aria-hidden
+          style={{
+            width: 40,
+            height: 40,
+            flexShrink: 0,
+            borderRadius: 10,
+            overflow: 'hidden',
+            boxShadow: '0 2px 6px rgba(10, 36, 56, 0.18)',
+            background: 'var(--blue-100)',
+          }}
+        >
+          <img
+            src={cover}
+            alt=""
+            draggable={false}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', userSelect: 'none' }}
+          />
+        </div>
+      ) : (
+        <div
+          aria-hidden
+          style={{
+            width: 40,
+            height: 40,
+            flexShrink: 0,
+            borderRadius: 10,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(26, 90, 127, 0.08)',
+            color: 'var(--blue-700)',
+          }}
+        >
+          {icon}
+        </div>
+      )}
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 14,
+            color: 'var(--blue-900)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            lineHeight: 1.2,
+          }}
+        >
+          {label}
+        </div>
+        <div
+          style={{
+            marginTop: 2,
+            fontFamily: 'var(--font-body)',
+            fontSize: 11,
+            fontWeight: 300,
+            color: 'var(--text-secondary)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {subtitle}
+        </div>
+      </div>
+
+      {onPlayToggle && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onPlayToggle(); }}
+          data-press
+          aria-label={isPlaying ? 'Mettre en pause' : 'Lancer'}
+          style={{
+            appearance: 'none',
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            background: 'var(--gradient-blue)',
+            color: '#FFFFFF',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            padding: 0,
+            fontSize: 11,
+            WebkitTapHighlightColor: 'transparent',
+            boxShadow: '0 4px 12px rgba(26, 90, 127, 0.30)',
+          }}
+        >
+          {isPlaying ? '❚❚' : '▶'}
+        </button>
+      )}
+
+      <span
+        aria-hidden
+        style={{
+          color: 'var(--blue-500)',
+          fontSize: 18,
+          flexShrink: 0,
+          padding: '0 2px',
+        }}
+      >
+        ›
+      </span>
+    </button>
+  );
+}
+
+/* ─── Icônes SVG inline (24px, blue-700) ─── */
+
+function IconMusic() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M9 18V5l12-2v13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="6" cy="18" r="3" stroke="currentColor" strokeWidth="1.4" />
+      <circle cx="18" cy="16" r="3" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
+  );
+}
+
+function IconMantra() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M7 8h10M7 12h10M7 16h6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
+  );
+}
+
+function IconSettings() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.03-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9c.21.51.74.86 1.55 1.03H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1.03Z" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
   );
 }
 
@@ -715,7 +673,7 @@ export default function Cocon() {
    ============================================================ */
 
 function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
-  const [tab, setTab] = useState('image'); // image | ambiance | musique | identite
+  const [tab, setTab] = useState('image');
   const [tempPseudo, setTempPseudo] = useState(profile.pseudo || '');
   const [tempMantra, setTempMantra] = useState(profile.mantra || '');
   const [closing, setClosing] = useState(false);
@@ -790,7 +748,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
           position: 'fixed',
           inset: 0,
           zIndex: 150,
-          background: 'rgba(8, 10, 24, 0.62)',
+          background: 'rgba(10, 36, 56, 0.55)',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           opacity: closing ? 0 : mounted ? 1 : 0,
@@ -806,14 +764,14 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
           right: 0,
           bottom: 0,
           zIndex: 151,
-          background: 'var(--cream)',
-          color: 'var(--ink)',
+          background: 'var(--bg)',
+          color: 'var(--blue-900)',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           padding: '12px 0 calc(env(safe-area-inset-bottom, 0px) + 24px)',
           transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
-          boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.18)',
+          boxShadow: '0 -8px 32px rgba(10, 36, 56, 0.18)',
           maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
@@ -826,28 +784,21 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
             width: 36,
             height: 5,
             borderRadius: 999,
-            background: 'rgba(26, 26, 47, 0.18)',
+            background: 'rgba(10, 36, 56, 0.18)',
             margin: '0 auto 18px',
             flexShrink: 0,
           }}
         />
 
         {/* Title */}
-        <div
-          style={{
-            padding: '0 22px',
-            textAlign: 'center',
-            marginBottom: 18,
-            flexShrink: 0,
-          }}
-        >
+        <div style={{ padding: '0 22px', textAlign: 'center', marginBottom: 18, flexShrink: 0 }}>
           <div
             style={{
               fontFamily: 'var(--font-display)',
               fontStyle: 'italic',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              fontSize: 22,
-              color: 'var(--ink)',
+              fontWeight: 300,
+              fontSize: 24,
+              color: 'var(--blue-900)',
             }}
           >
             Mon cocon
@@ -877,9 +828,9 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   appearance: 'none',
                   padding: '8px 14px',
                   minHeight: 36,
-                  background: active ? 'var(--ink)' : 'transparent',
-                  color: active ? 'var(--cream)' : 'var(--content-secondary)',
-                  border: active ? 'none' : '0.5px solid rgba(26, 26, 47, 0.14)',
+                  background: active ? 'var(--blue-700)' : 'transparent',
+                  color: active ? '#FFFFFF' : 'var(--text-secondary)',
+                  border: active ? 'none' : '1px solid var(--blue-300)',
                   borderRadius: 999,
                   fontFamily: 'var(--font-ui)',
                   fontSize: 11,
@@ -897,7 +848,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
           })}
         </div>
 
-        {/* Tab content (scrollable) */}
+        {/* Tab content */}
         <div
           style={{
             padding: '4px 22px 8px',
@@ -912,19 +863,14 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 style={{
                   fontFamily: 'var(--font-body)',
                   fontSize: 13,
-                  color: 'var(--content-secondary)',
+                  fontWeight: 300,
+                  color: 'var(--text-secondary)',
                   marginBottom: 14,
                 }}
               >
                 Le décor de ton sanctuaire.
               </div>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 10,
-                }}
-              >
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {COCON_IMAGES.map((img) => {
                   const active = currentImage.key === img.key;
                   return (
@@ -936,15 +882,15 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                       style={{
                         appearance: 'none',
                         padding: 0,
-                        border: active ? '2px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
-                        borderRadius: 12,
+                        border: active ? '2px solid var(--blue-700)' : '1px solid var(--blue-300)',
+                        borderRadius: 14,
                         cursor: 'pointer',
                         overflow: 'hidden',
                         position: 'relative',
                         aspectRatio: '4 / 5',
                         background: `var(--bg) url(${img.src}) center / cover no-repeat`,
                         WebkitTapHighlightColor: 'transparent',
-                        boxShadow: active ? '0 4px 14px rgba(0,0,0,0.18)' : 'none',
+                        boxShadow: active ? '0 4px 14px rgba(10, 36, 56, 0.18)' : 'none',
                       }}
                       aria-pressed={active}
                     >
@@ -955,13 +901,12 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           right: 0,
                           bottom: 0,
                           padding: '24px 10px 10px',
-                          background: 'linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
-                          color: 'var(--blue-900)',
+                          background: 'linear-gradient(0deg, rgba(10, 36, 56, 0.75) 0%, transparent 100%)',
+                          color: '#FFFFFF',
                           fontFamily: 'var(--font-display)',
                           fontStyle: 'italic',
-                          fontVariationSettings: 'var(--fraunces-italic-soft)',
-                          fontSize: 12,
-                          textShadow: '0 1px 4px rgba(0,0,0,0.5)',
+                          fontWeight: 300,
+                          fontSize: 13,
                         }}
                       >
                         {img.label}
@@ -979,7 +924,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 style={{
                   fontFamily: 'var(--font-body)',
                   fontSize: 13,
-                  color: 'var(--content-secondary)',
+                  fontWeight: 300,
+                  color: 'var(--text-secondary)',
                   marginBottom: 14,
                 }}
               >
@@ -998,8 +944,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         appearance: 'none',
                         padding: '14px 16px',
                         minHeight: 56,
-                        background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                        border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
+                        background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.55)',
+                        border: active ? '1px solid var(--blue-700)' : '1px solid var(--blue-300)',
                         borderRadius: 14,
                         cursor: 'pointer',
                         display: 'flex',
@@ -1008,6 +954,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         gap: 14,
                         textAlign: 'left',
                         WebkitTapHighlightColor: 'transparent',
+                        backdropFilter: 'blur(12px)',
+                        WebkitBackdropFilter: 'blur(12px)',
                       }}
                       aria-pressed={active}
                     >
@@ -1017,7 +965,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                             fontFamily: 'var(--font-ui)',
                             fontSize: 14,
                             fontWeight: 500,
-                            color: 'var(--ink)',
+                            color: 'var(--blue-900)',
                           }}
                         >
                           {a.label}
@@ -1026,7 +974,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           style={{
                             fontFamily: 'var(--font-body)',
                             fontSize: 12,
-                            color: 'var(--content-secondary)',
+                            fontWeight: 300,
+                            color: 'var(--text-secondary)',
                             marginTop: 2,
                           }}
                         >
@@ -1038,7 +987,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           width: 18,
                           height: 18,
                           borderRadius: '50%',
-                          border: active ? '5px solid var(--ink)' : '1px solid rgba(26, 26, 47, 0.20)',
+                          border: active ? '5px solid var(--blue-700)' : '1px solid var(--blue-300)',
                           background: 'transparent',
                           flexShrink: 0,
                           transition: 'all 200ms ease-out',
@@ -1057,7 +1006,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 style={{
                   fontFamily: 'var(--font-body)',
                   fontSize: 13,
-                  color: 'var(--content-secondary)',
+                  fontWeight: 300,
+                  color: 'var(--text-secondary)',
                   marginBottom: 14,
                 }}
               >
@@ -1074,8 +1024,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   width: '100%',
                   padding: '12px 16px',
                   minHeight: 48,
-                  background: !currentMusic ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                  border: !currentMusic ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
+                  background: !currentMusic ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.55)',
+                  border: !currentMusic ? '1px solid var(--blue-700)' : '1px solid var(--blue-300)',
                   borderRadius: 12,
                   cursor: 'pointer',
                   display: 'flex',
@@ -1086,7 +1036,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 }}
                 aria-pressed={!currentMusic}
               >
-                <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink)' }}>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--blue-900)' }}>
                   Silence
                 </span>
                 <span
@@ -1094,7 +1044,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     width: 14,
                     height: 14,
                     borderRadius: '50%',
-                    border: !currentMusic ? '4px solid var(--ink)' : '1px solid rgba(26, 26, 47, 0.20)',
+                    border: !currentMusic ? '4px solid var(--blue-700)' : '1px solid var(--blue-300)',
                     flexShrink: 0,
                   }}
                 />
@@ -1104,7 +1054,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               <div
                 style={{
                   padding: '12px 16px',
-                  background: 'rgba(26, 26, 47, 0.04)',
+                  background: 'rgba(26, 90, 127, 0.05)',
                   borderRadius: 12,
                   marginBottom: 16,
                   display: 'flex',
@@ -1123,7 +1073,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   aria-label="Volume"
                   style={{
                     flex: 1,
-                    accentColor: 'var(--ink)',
+                    accentColor: 'var(--blue-700)',
                   }}
                 />
                 <span
@@ -1133,7 +1083,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     fontFamily: 'var(--font-ui)',
                     fontSize: 11,
                     fontVariantNumeric: 'tabular-nums',
-                    color: 'var(--content-tertiary)',
+                    color: 'var(--text-muted)',
                   }}
                 >
                   {Math.round((cocon.musicVolume || 0.45) * 100)}
@@ -1154,8 +1104,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         appearance: 'none',
                         padding: '12px 14px',
                         minHeight: 44,
-                        background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                        border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.08)',
+                        background: active ? 'rgba(26, 90, 127, 0.08)' : 'transparent',
+                        border: active ? '1px solid var(--blue-700)' : '1px solid var(--blue-300)',
                         borderRadius: 10,
                         cursor: 'pointer',
                         display: 'flex',
@@ -1170,9 +1120,9 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         style={{
                           fontFamily: 'var(--font-display)',
                           fontStyle: 'italic',
-                          fontVariationSettings: 'var(--fraunces-italic-soft)',
+                          fontWeight: 300,
                           fontSize: 14,
-                          color: 'var(--ink)',
+                          color: 'var(--blue-900)',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
@@ -1187,10 +1137,10 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           style={{
                             fontFamily: 'var(--font-ui)',
                             fontSize: 9,
-                            letterSpacing: '0.222em',
+                            letterSpacing: '0.22em',
                             textTransform: 'uppercase',
                             fontWeight: 600,
-                            color: 'var(--content-secondary)',
+                            color: 'var(--blue-700)',
                             flexShrink: 0,
                           }}
                         >
@@ -1210,7 +1160,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 style={{
                   fontFamily: 'var(--font-body)',
                   fontSize: 13,
-                  color: 'var(--content-secondary)',
+                  fontWeight: 300,
+                  color: 'var(--text-secondary)',
                   marginBottom: 18,
                 }}
               >
@@ -1220,8 +1171,16 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               {/* Prénom */}
               <div style={{ marginBottom: 18 }}>
                 <label
-                  className="neya-mark"
-                  style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}
+                  style={{
+                    display: 'block',
+                    marginBottom: 8,
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 10,
+                    fontWeight: 500,
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-muted)',
+                  }}
                 >
                   Prénom
                 </label>
@@ -1236,12 +1195,12 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     width: '100%',
                     padding: '14px 16px',
                     minHeight: 48,
-                    background: 'rgba(26, 26, 47, 0.04)',
-                    border: '0.5px solid rgba(26, 26, 47, 0.10)',
+                    background: 'rgba(255, 255, 255, 0.65)',
+                    border: '1px solid var(--blue-300)',
                     borderRadius: 12,
                     fontFamily: 'var(--font-body)',
                     fontSize: 15,
-                    color: 'var(--ink)',
+                    color: 'var(--blue-900)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -1251,8 +1210,16 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               {/* Mantra */}
               <div style={{ marginBottom: 18 }}>
                 <label
-                  className="neya-mark"
-                  style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}
+                  style={{
+                    display: 'block',
+                    marginBottom: 8,
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 10,
+                    fontWeight: 500,
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-muted)',
+                  }}
                 >
                   Mantra du moment
                 </label>
@@ -1267,15 +1234,15 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     width: '100%',
                     padding: '14px 16px',
                     minHeight: 64,
-                    background: 'rgba(26, 26, 47, 0.04)',
-                    border: '0.5px solid rgba(26, 26, 47, 0.10)',
+                    background: 'rgba(255, 255, 255, 0.65)',
+                    border: '1px solid var(--blue-300)',
                     borderRadius: 12,
                     fontFamily: 'var(--font-display)',
                     fontStyle: 'italic',
-                    fontVariationSettings: 'var(--fraunces-italic-soft)',
+                    fontWeight: 300,
                     fontSize: 16,
                     lineHeight: 1.4,
-                    color: 'var(--ink)',
+                    color: 'var(--blue-900)',
                     outline: 'none',
                     resize: 'none',
                     boxSizing: 'border-box',
@@ -1288,7 +1255,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     fontFamily: 'var(--font-ui)',
                     fontSize: 10,
                     fontVariantNumeric: 'tabular-nums',
-                    color: tempMantra.length >= 130 ? 'var(--crisis)' : 'var(--content-tertiary)',
+                    color: tempMantra.length >= 130 ? 'var(--rose-700)' : 'var(--text-muted)',
                   }}
                 >
                   {140 - tempMantra.length}
@@ -1298,8 +1265,16 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               {/* Totem */}
               <div style={{ marginBottom: 18 }}>
                 <label
-                  className="neya-mark"
-                  style={{ color: 'var(--content-tertiary)', display: 'block', marginBottom: 8 }}
+                  style={{
+                    display: 'block',
+                    marginBottom: 8,
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 10,
+                    fontWeight: 500,
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-muted)',
+                  }}
                 >
                   Mon totem
                 </label>
@@ -1316,14 +1291,14 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           appearance: 'none',
                           padding: '12px 14px',
                           minHeight: 48,
-                          background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                          border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
+                          background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.55)',
+                          border: active ? '1px solid var(--blue-700)' : '1px solid var(--blue-300)',
                           borderRadius: 10,
                           cursor: 'pointer',
                           fontFamily: 'var(--font-ui)',
                           fontSize: 13,
                           fontWeight: active ? 600 : 500,
-                          color: 'var(--ink)',
+                          color: 'var(--blue-900)',
                           textAlign: 'left',
                           WebkitTapHighlightColor: 'transparent',
                         }}
@@ -1344,17 +1319,19 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   appearance: 'none',
                   width: '100%',
                   padding: '14px 16px',
-                  minHeight: 48,
+                  minHeight: 50,
                   background: 'var(--gradient-blue)',
-                  color: 'var(--cream)',
+                  color: '#FFFFFF',
                   border: 'none',
                   borderRadius: 999,
                   fontFamily: 'var(--font-ui)',
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: 600,
-                  letterSpacing: '0.04em',
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
                   cursor: 'pointer',
                   WebkitTapHighlightColor: 'transparent',
+                  boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
                 }}
               >
                 Garder
@@ -1363,7 +1340,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
           )}
         </div>
 
-        {/* Footer close (sauf tab identite qui a son propre Garder) */}
+        {/* Footer close */}
         {tab !== 'identite' && (
           <div style={{ padding: '12px 22px 0', flexShrink: 0 }}>
             <button
@@ -1373,17 +1350,17 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               style={{
                 appearance: 'none',
                 width: '100%',
-                padding: '12px 16px',
+                padding: '13px 24px',
                 minHeight: 44,
                 background: 'transparent',
-                border: '0.5px solid rgba(26, 26, 47, 0.16)',
-                borderRadius: 999,
+                border: '1.5px solid var(--blue-300)',
+                borderRadius: 50,
                 fontFamily: 'var(--font-ui)',
                 fontSize: 11,
                 fontWeight: 600,
-                letterSpacing: '0.18em',
+                letterSpacing: '0.16em',
                 textTransform: 'uppercase',
-                color: 'var(--ink)',
+                color: 'var(--blue-700)',
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
               }}

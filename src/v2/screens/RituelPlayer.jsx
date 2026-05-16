@@ -1,14 +1,27 @@
 /* ============================================================
-   RituelPlayer — lecture guidée d'un rituel
+   RituelPlayer — lecture guidée d'un rituel (ÇA VA? V3 DA)
    ============================================================
-   Format simple : intro · guide narratif · prompts d'écriture ·
-   notes optionnelles · closing.
-   Sauvegarde dans profile.aventure.rituelsFaits.
+   Refonte selon /NOUVELLE DA/CLAUDE.md section 10
+   Glassmorphism · Blobs rose-blue · Cormorant + Inter
+   Bug-01 fixé : aucun backslash-apostrophe (template strings)
+   Bug-02 fixé : CTA bleu gradient (jamais dark #0A2438)
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
 import { haptic, ls, getProfile, patchProfile } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import Blobs from '../../components/Blobs';
+
+/* ─── Couleurs par pilier (temps) ─── */
+const PILIER_COLOR = {
+  passe: { accent: '#1A5A7F', soft: '#6F9DB5' },     // bleu
+  present: { accent: '#C87090', soft: '#E8A0B8' },   // rose
+  futur: { accent: '#7F5A8A', soft: '#AF80BA' },     // violet
+};
+
+function getPilierColor(rituel) {
+  return PILIER_COLOR[rituel?.temps] || PILIER_COLOR.passe;
+}
 
 function loadNote(key) {
   const notes = ls.get('rituels_notes', {}) || {};
@@ -27,6 +40,10 @@ export default function RituelPlayer({ rituel, onClose }) {
   const [note, setNote] = useState(() => loadNote(rituel.key));
   const aliveRef = useRef(true);
   const timersRef = useRef([]);
+  const scrollRef = useRef(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  const pilier = getPilierColor(rituel);
 
   const safeTimeout = (fn, ms) => {
     const id = setTimeout(() => { if (aliveRef.current) fn(); }, ms);
@@ -50,7 +67,6 @@ export default function RituelPlayer({ rituel, onClose }) {
       saveNote(rituel.key, note);
       haptic([6, 30, 6]);
     } else {
-      // Sauvegarde silencieuse de la note même si on quitte sans terminer
       if ((note || '').length > 0) saveNote(rituel.key, note);
       haptic(3);
     }
@@ -81,6 +97,21 @@ export default function RituelPlayer({ rituel, onClose }) {
     };
   }, []);
 
+  const handleScroll = (e) => {
+    const el = e.currentTarget;
+    const max = el.scrollHeight - el.clientHeight;
+    if (max <= 0) {
+      setScrollProgress(0);
+      return;
+    }
+    const ratio = Math.max(0, Math.min(1, el.scrollTop / max));
+    setScrollProgress(ratio);
+  };
+
+  /* Sous-titre label — couleur pilier */
+  const subtitleColor = pilier.accent;
+  const pilierGradient = `linear-gradient(135deg, ${pilier.accent}, ${pilier.soft})`;
+
   return (
     <div
       ref={containerRef}
@@ -89,21 +120,50 @@ export default function RituelPlayer({ rituel, onClose }) {
         position: 'fixed',
         inset: 0,
         zIndex: 200,
-        background: '#FFFCF5',
-        color: 'var(--ink)',
+        background: 'var(--bg)',
+        color: 'var(--text-primary)',
         transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1)',
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
+      {/* Blobs décoratifs */}
+      <Blobs variant="rose-blue" />
+
+      {/* Barre de progression — top 2px couleur pilier */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: 'env(safe-area-inset-top, 0px)',
+          left: 0,
+          right: 0,
+          height: 2,
+          background: 'rgba(10, 36, 56, 0.06)',
+          zIndex: 3,
+        }}
+      >
+        <div
+          style={{
+            height: '100%',
+            width: `${Math.round(scrollProgress * 100)}%`,
+            background: pilierGradient,
+            transition: 'width 120ms linear',
+          }}
+        />
+      </div>
+
       {/* Top bar */}
       <div
         style={{
+          position: 'relative',
+          zIndex: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 12px) 14px 12px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 16px 10px',
           flexShrink: 0,
         }}
       >
@@ -116,82 +176,92 @@ export default function RituelPlayer({ rituel, onClose }) {
             appearance: 'none',
             background: 'transparent',
             border: 'none',
-            color: 'var(--ink)',
+            color: 'var(--text-primary)',
             cursor: 'pointer',
-            padding: '10px 14px',
+            padding: '10px 14px 10px 4px',
             minHeight: 44,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 11,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 12,
             fontWeight: 500,
             letterSpacing: '0.04em',
             WebkitTapHighlightColor: 'transparent',
           }}
         >
-          ‹ Retour
+          {'‹ Retour'}
         </button>
         <div
           aria-hidden
           style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            color: 'var(--ink-soft)',
-            letterSpacing: '0.18em',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
+            fontWeight: 500,
+            color: 'var(--text-muted)',
+            letterSpacing: '0.20em',
             textTransform: 'uppercase',
-            paddingRight: 14,
+            paddingRight: 8,
           }}
         >
-          {rituel.duration} min
+          {`${rituel.duration} MIN`}
         </div>
       </div>
 
-      {/* Content */}
+      {/* Content scrollable */}
       <div
+        ref={scrollRef}
+        onScroll={handleScroll}
         style={{
+          position: 'relative',
+          zIndex: 1,
           flex: 1,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: '20px 24px calc(env(safe-area-inset-bottom, 0px) + 100px)',
+          padding: '12px 20px calc(env(safe-area-inset-bottom, 0px) + 100px)',
         }}
       >
         <article style={{ maxWidth: 620, marginInline: 'auto' }}>
-          {/* Title */}
+          {/* Titre Cormorant italique */}
           <h1
             style={{
               margin: 0,
-              fontFamily: 'var(--font-display)',
+              fontFamily: "'Cormorant Garamond', serif",
               fontStyle: 'italic',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              fontWeight: 400,
-              fontSize: 'clamp(28px, 7vw, 36px)',
-              lineHeight: 1.12,
-              letterSpacing: '-0.018em',
-              color: 'var(--ink)',
+              fontWeight: 300,
+              fontSize: 'clamp(32px, 8vw, 42px)',
+              lineHeight: 1.1,
+              letterSpacing: '-0.01em',
+              color: 'var(--blue-900)',
             }}
           >
             {rituel.title}
           </h1>
+
+          {/* Sous-titre label uppercase couleur pilier */}
           <div
-            className="neya-mark"
             style={{
-              marginTop: 10,
-              color: 'var(--ink-soft)',
+              marginTop: 14,
+              fontFamily: "'Inter', sans-serif",
               fontSize: 9,
+              fontWeight: 500,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              color: subtitleColor,
             }}
           >
             {rituel.subtitle}
           </div>
 
-          {/* Guide narratif */}
-          <div style={{ marginTop: 32 }}>
+          {/* Corps texte — Inter 300 / 14 / 1.75 */}
+          <div style={{ marginTop: 28 }}>
             {rituel.guide.map((para, i) => (
               <p
                 key={i}
                 style={{
-                  margin: '0 0 16px',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 16,
-                  lineHeight: 1.7,
-                  color: 'var(--ink)',
+                  margin: '0 0 18px',
+                  fontFamily: "'Inter', sans-serif",
+                  fontWeight: 300,
+                  fontSize: 14,
+                  lineHeight: 1.75,
+                  color: 'var(--text-secondary)',
                 }}
               >
                 {para}
@@ -199,14 +269,21 @@ export default function RituelPlayer({ rituel, onClose }) {
             ))}
           </div>
 
-          {/* Prompts */}
+          {/* Questions — glass cards border-left 3px pilier */}
           {rituel.prompts && rituel.prompts.length > 0 && (
-            <div style={{ marginTop: 36 }}>
+            <div style={{ marginTop: 32 }}>
               <div
-                className="neya-mark"
-                style={{ color: 'var(--ink-soft)', marginBottom: 14, fontSize: 9 }}
+                style={{
+                  marginBottom: 14,
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 9,
+                  fontWeight: 500,
+                  letterSpacing: '0.22em',
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
               >
-                Questions à te poser
+                {'Questions à te poser'}
               </div>
               <ul
                 style={{
@@ -215,23 +292,30 @@ export default function RituelPlayer({ rituel, onClose }) {
                   listStyle: 'none',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 10,
+                  gap: 12,
+                  maxWidth: 343,
+                  marginInline: 'auto',
                 }}
               >
                 {rituel.prompts.map((p, i) => (
                   <li
                     key={i}
                     style={{
-                      padding: '14px 18px',
-                      background: 'rgba(26, 26, 47, 0.04)',
-                      borderLeft: '2px solid var(--ink)',
-                      borderRadius: 6,
-                      fontFamily: 'var(--font-display)',
+                      position: 'relative',
+                      padding: '16px 18px 16px 22px',
+                      background: 'rgba(255, 255, 255, 0.65)',
+                      backdropFilter: 'blur(24px)',
+                      WebkitBackdropFilter: 'blur(24px)',
+                      border: '1px solid rgba(255, 255, 255, 0.85)',
+                      borderLeft: `3px solid ${pilier.accent}`,
+                      borderRadius: 18,
+                      boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+                      fontFamily: "'Cormorant Garamond', serif",
                       fontStyle: 'italic',
-                      fontVariationSettings: 'var(--fraunces-italic-soft)',
-                      fontSize: 16,
-                      lineHeight: 1.5,
-                      color: 'var(--ink)',
+                      fontWeight: 400,
+                      fontSize: 18,
+                      lineHeight: 1.45,
+                      color: 'var(--blue-900)',
                     }}
                   >
                     {p}
@@ -241,32 +325,44 @@ export default function RituelPlayer({ rituel, onClose }) {
             </div>
           )}
 
-          {/* Note textarea */}
-          <div style={{ marginTop: 32 }}>
+          {/* Note textarea — glass + border-left 3px pilier */}
+          <div style={{ marginTop: 32, maxWidth: 343, marginInline: 'auto' }}>
             <div
-              className="neya-mark"
-              style={{ color: 'var(--ink-soft)', marginBottom: 10, fontSize: 9 }}
+              style={{
+                marginBottom: 10,
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 9,
+                fontWeight: 500,
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                color: 'var(--text-muted)',
+              }}
             >
-              Tes notes (optionnel · privées · pour toi seul·e)
+              {'Tes notes · privées · pour toi seul·e'}
             </div>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Écris ce qui vient. Ce qui te traverse. Rien n\'est obligatoire."
+              placeholder={"Écris ce qui vient. Ce qui te traverse. Rien n'est obligatoire."}
               rows={8}
               maxLength={2000}
               aria-label="Tes notes"
               style={{
                 width: '100%',
-                padding: '16px 18px',
+                padding: '16px 18px 16px 22px',
                 minHeight: 180,
-                background: 'rgba(26, 26, 47, 0.04)',
-                border: '0.5px solid rgba(26, 26, 47, 0.10)',
-                borderRadius: 14,
-                fontFamily: 'var(--font-body)',
-                fontSize: 15,
-                lineHeight: 1.6,
-                color: 'var(--ink)',
+                background: 'rgba(255, 255, 255, 0.65)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                border: '1px solid rgba(255, 255, 255, 0.85)',
+                borderLeft: `3px solid ${pilier.accent}`,
+                borderRadius: 18,
+                boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 300,
+                fontSize: 14,
+                lineHeight: 1.75,
+                color: 'var(--text-primary)',
                 outline: 'none',
                 resize: 'none',
                 boxSizing: 'border-box',
@@ -276,44 +372,44 @@ export default function RituelPlayer({ rituel, onClose }) {
               style={{
                 marginTop: 6,
                 textAlign: 'right',
-                fontFamily: 'var(--font-ui)',
+                fontFamily: "'Inter', sans-serif",
                 fontSize: 10,
                 fontVariantNumeric: 'tabular-nums',
-                color: 'var(--ink-soft)',
+                color: 'var(--text-muted)',
               }}
             >
               {2000 - (note || '').length}
             </div>
           </div>
 
-          {/* Closing */}
+          {/* Citation finale — Cormorant italic centrée « » */}
           <div
             style={{
               marginTop: 48,
               paddingTop: 32,
-              borderTop: '0.5px solid rgba(26, 26, 47, 0.10)',
+              borderTop: '1px solid rgba(10, 36, 56, 0.08)',
               textAlign: 'center',
             }}
           >
             <p
               style={{
                 margin: 0,
-                fontFamily: 'var(--font-display)',
+                fontFamily: "'Cormorant Garamond', serif",
                 fontStyle: 'italic',
-                fontVariationSettings: 'var(--fraunces-italic-soft)',
-                fontSize: 'clamp(17px, 4.5vw, 20px)',
-                lineHeight: 1.42,
-                color: 'var(--ink)',
+                fontWeight: 300,
+                fontSize: 'clamp(19px, 5vw, 22px)',
+                lineHeight: 1.45,
+                color: 'var(--blue-900)',
                 maxWidth: 480,
                 marginInline: 'auto',
               }}
             >
-              « {rituel.closing} »
+              {`« ${rituel.closing} »`}
             </p>
           </div>
 
-          {/* CTA terminer */}
-          <div style={{ marginTop: 36, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {/* CTA — Terminer (bleu gradient) + Reprendre (ghost) */}
+          <div style={{ marginTop: 36, display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 343, marginInline: 'auto' }}>
             <button
               type="button"
               data-press
@@ -321,23 +417,23 @@ export default function RituelPlayer({ rituel, onClose }) {
               style={{
                 appearance: 'none',
                 width: '100%',
-                padding: '16px 24px',
-                minHeight: 52,
-                background: 'var(--gradient-blue)',
+                padding: '15px 24px',
+                minHeight: 50,
+                background: 'linear-gradient(135deg, #1A5A7F, #2A8ABF)',
                 color: 'white',
                 border: 'none',
-                borderRadius: 999,
-                fontFamily: 'var(--font-ui)',
-                fontSize: 12,
+                borderRadius: 50,
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 11,
                 fontWeight: 600,
-                letterSpacing: '0.18em',
+                letterSpacing: '0.16em',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
-                boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
+                boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30), 0 2px 12px rgba(200, 112, 144, 0.18)',
               }}
             >
-              Terminer ce rituel
+              {'Terminer ce rituel'}
             </button>
             <button
               type="button"
@@ -349,17 +445,17 @@ export default function RituelPlayer({ rituel, onClose }) {
                 padding: '12px 24px',
                 minHeight: 44,
                 background: 'transparent',
-                color: 'var(--content-secondary)',
+                color: 'var(--text-secondary)',
                 border: 'none',
-                fontFamily: 'var(--font-ui)',
+                fontFamily: "'Inter', sans-serif",
                 fontSize: 11,
-                fontWeight: 500,
+                fontWeight: 400,
                 letterSpacing: '0.04em',
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
               }}
             >
-              Reprendre plus tard
+              {'Reprendre plus tard'}
             </button>
           </div>
         </article>
