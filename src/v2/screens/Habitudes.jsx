@@ -14,6 +14,7 @@ import {
   haptic,
 } from '../state';
 import { WORLDS } from '../worlds';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 // Mapping totem → monde d'origine (pour wash + accent)
 const TOTEM_HOME = {
@@ -142,8 +143,17 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
 
   const backdropOpacity = closing ? 0 : mounted ? 1 : 0;
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: handleClose,
+    labelText: 'Mes habitudes du jour',
+  });
+
   return (
     <div
+      ref={containerRef}
+      {...dialogProps}
       className={washClass}
       style={{
         position: 'absolute',

@@ -25,6 +25,7 @@
 
 import { useState, useEffect } from 'react';
 import { haptic } from '../v2/state';
+import useStandardOverlay from '../v2/hooks/useStandardOverlay';
 
 const EASE_OUT_IOS = 'cubic-bezier(0.32, 0.72, 0, 1)';
 const EASE_IN_IOS  = 'cubic-bezier(0.32, 0, 0.72, 1)';
@@ -73,6 +74,13 @@ export default function ActionSheet({
     haptic(4);
     triggerClose();
   };
+
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: triggerClose,
+    labelText: title || 'Confirmer une action',
+  });
 
   // ── STYLES ──────────────────────────────────────────────
   const backdrop = {
@@ -207,11 +215,13 @@ export default function ActionSheet({
       role="presentation"
     >
       <div
+        ref={containerRef}
+        {...dialogProps}
         style={sheetWrap}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Group 1 — Header + actions */}
-        <div style={groupActionsStyle} role="dialog" aria-modal="true">
+        <div style={groupActionsStyle}>
           {hasHeader && (
             <>
               {title && <div style={headerStyle}>{title}</div>}

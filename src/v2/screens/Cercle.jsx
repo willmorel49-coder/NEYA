@@ -22,6 +22,7 @@ import {
   addSouvenir,
 } from '../state';
 import ActionSheet from '../../components/ActionSheet';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const TILLEUL = 'var(--tilleul)';
 
@@ -63,6 +64,13 @@ export default function Cercle({ onClose }) {
     setClosing(true);
     setTimeout(() => onClose?.(), 320);
   };
+
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: doClose,
+    labelText: 'Mon cercle',
+  });
 
   const refresh = () => setCercle(getCercle());
 
@@ -155,7 +163,12 @@ export default function Cercle({ onClose }) {
   const isEmpty = cercle.length === 0;
 
   return (
-    <div className="wash-temple" style={overlayStyle({ mounted, closing })}>
+    <div
+      ref={containerRef}
+      {...dialogProps}
+      className="wash-temple"
+      style={overlayStyle({ mounted, closing })}
+    >
       {/* Top bar */}
       <div
         style={{

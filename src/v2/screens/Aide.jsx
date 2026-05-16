@@ -20,6 +20,7 @@
 import { useState, useEffect } from 'react';
 import { haptic } from '../state';
 import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const URGENCE = [
   {
@@ -100,6 +101,13 @@ export default function Aide({ onClose }) {
     setTimeout(() => onClose?.(), 320);
   };
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: handleClose,
+    labelText: 'Aide & support',
+  });
+
   // Edge swipe-back (iOS HIG) — horizontal left-edge drag
   const {
     bindContainer: bindEdge,
@@ -126,6 +134,8 @@ export default function Aide({ onClose }) {
 
   return (
     <div
+      ref={containerRef}
+      {...dialogProps}
       {...bindEdge}
       className="wash-temple"
       style={{

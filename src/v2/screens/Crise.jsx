@@ -16,6 +16,7 @@ import { useState, useEffect, useRef } from 'react';
 import { recordCrisisEntry, recordCrisisExit, ls, haptic } from '../state';
 import BreathingCircle from '../../components/BreathingCircle';
 import Button from '../../components/Button';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const todayKey = () => new Date().toISOString().split('T')[0];
 
@@ -34,15 +35,6 @@ export default function Crise({ onClose }) {
     };
   }, []);
 
-  // Body scroll lock pendant ouverture (anti-fond bougeant)
-  useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, []);
-
   const handleClose = () => {
     if (!exitedRef.current) {
       recordCrisisExit();
@@ -50,6 +42,15 @@ export default function Crise({ onClose }) {
     }
     onClose?.();
   };
+
+  // Comportement iOS standard (scroll lock body + focus trap + ARIA).
+  // escapeCloses: false — user volontairement dans le flow safety, pas de sortie accidentelle clavier.
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: true,
+    onClose: handleClose,
+    labelText: 'Espace de soutien',
+    escapeCloses: false,
+  });
 
   const goPhase = (p) => {
     haptic(4);
@@ -77,10 +78,9 @@ export default function Crise({ onClose }) {
 
   return (
     <div
+      ref={containerRef}
+      {...dialogProps}
       className="wash-lac"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Espace de crise"
       style={{
         position: 'fixed',
         inset: 0,

@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ls, haptic } from '../state';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const TRANSITION_MS = 320;
 
@@ -118,6 +119,14 @@ export default function Tour({ onClose }) {
     persistAndClose();
   };
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA).
+  // transitionTimerRef + rafIdsRef cleanup déjà gérés via useEffect existant.
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !seen,
+    onClose: skip,
+    labelText: 'Visite guidée',
+  });
+
   const advance = () => {
     if (transitioning) return;
     haptic(6);
@@ -169,8 +178,8 @@ export default function Tour({ onClose }) {
 
   return (
     <div
-      role="dialog"
-      aria-label="Visite guidée NÉYA"
+      ref={containerRef}
+      {...dialogProps}
       style={{
         position: 'fixed',
         inset: 0,

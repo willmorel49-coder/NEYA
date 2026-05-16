@@ -13,6 +13,7 @@ import {
   saveBilanSemaine,
   hasSeenBilanSemaineThisWeek,
 } from '../state';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const TILLEUL = '#d4e08c';
 const TERRACOTTA = '#c29051';
@@ -115,6 +116,13 @@ export default function BilanSemaine({ onClose }) {
     safeTimeout(() => onClose?.(), 420);
   };
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: doClose,
+    labelText: 'Bilan de la semaine',
+  });
+
   const commitAnswers = (finalAnswers) => {
     try { saveBilanSemaine(finalAnswers); } catch {}
   };
@@ -163,7 +171,12 @@ export default function BilanSemaine({ onClose }) {
   // ============================================================
   if (alreadyDone && !reveal) {
     return (
-      <div className="wash-montagne" style={overlayStyle({ mounted, closing })}>
+      <div
+        ref={containerRef}
+        {...dialogProps}
+        className="wash-montagne"
+        style={overlayStyle({ mounted, closing })}
+      >
         <BackButton onClick={doClose} absolute />
         <CloseButton onClick={doClose} />
         <div style={centerWrap}>
@@ -237,7 +250,12 @@ export default function BilanSemaine({ onClose }) {
   // Main flow
   // ============================================================
   return (
-    <div className="wash-montagne" style={overlayStyle({ mounted, closing })}>
+    <div
+      ref={containerRef}
+      {...dialogProps}
+      className="wash-montagne"
+      style={overlayStyle({ mounted, closing })}
+    >
       {/* Halo terracotta — recul, perspective */}
       <div
         aria-hidden

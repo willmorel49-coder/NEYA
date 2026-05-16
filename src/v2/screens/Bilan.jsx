@@ -10,6 +10,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ls, getProfile, haptic } from '../state';
 import { WORLDS } from '../worlds';
 import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const TOTEM_HOME = {
   lion: 'foret',
@@ -164,6 +165,13 @@ export default function Bilan({ onClose }) {
     onClose: doClose,
   });
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: doClose,
+    labelText: 'Bilan du jour',
+  });
+
   const persistDraft = (nextAnswers, nextIdx) => {
     ls.set(draftKey, { qIdx: nextIdx, answers: nextAnswers });
   };
@@ -227,6 +235,8 @@ export default function Bilan({ onClose }) {
   if (alreadyDone && !reveal) {
     return (
       <div
+        ref={containerRef}
+        {...dialogProps}
         className="wash-lac"
         style={overlayStyle({ mounted, closing, dragY: translateY, isDragging })}
       >
@@ -303,7 +313,12 @@ export default function Bilan({ onClose }) {
   // Main flow
   // ============================================================
   return (
-    <div className="wash-lac" style={overlayStyle({ mounted, closing, dragY: translateY, isDragging })}>
+    <div
+      ref={containerRef}
+      {...dialogProps}
+      className="wash-lac"
+      style={overlayStyle({ mounted, closing, dragY: translateY, isDragging })}
+    >
       <DragHandle bind={bindHandle} isDragging={isDragging} />
       {/* Halo accent */}
       <div

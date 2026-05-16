@@ -9,6 +9,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { getSouvenirs, clearSouvenirs, haptic } from '../state';
 import { WORLDS } from '../worlds';
 import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const FILTERS = [
   { id: 'all',           label: 'Tout' },
@@ -85,6 +86,13 @@ export default function Souvenirs({ onClose }) {
     isDragging: edgeDragging,
   } = useEdgeSwipeBack({ onClose: doClose });
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: doClose,
+    labelText: 'Mes souvenirs',
+  });
+
   const filteredList = useMemo(() => {
     if (filter === 'all') return souvenirs;
     return souvenirs.filter((s) => s.type === filter);
@@ -121,6 +129,8 @@ export default function Souvenirs({ onClose }) {
 
   return (
     <div
+      ref={containerRef}
+      {...dialogProps}
       {...bindEdge}
       className="wash-temple"
       style={{

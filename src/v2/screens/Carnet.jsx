@@ -10,6 +10,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { ls, haptic } from '../state';
 import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
 import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const STORAGE_KEY = 'carnet_entries';
 const MAX_ENTRIES = 30;
@@ -107,6 +108,13 @@ export default function Carnet({ onClose }) {
     safeTimeout(() => onClose?.(), 320);
   };
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef, titleId } = useStandardOverlay({
+    open: !closing,
+    onClose: handleClose,
+    labelText: 'Mon carnet',
+  });
+
   // Swipe-to-dismiss (iOS HIG) — vertical handle drag
   const { bindHandle, translateY, isDragging } = useSwipeToDismiss({
     onClose: handleClose,
@@ -192,6 +200,8 @@ export default function Carnet({ onClose }) {
 
   return (
     <div
+      ref={containerRef}
+      {...dialogProps}
       {...bindEdge}
       className="wash-temple"
       style={{

@@ -10,6 +10,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { WORLDS } from '../worlds';
 import { getProfile, haptic, ls, addMinutes } from '../state';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 /* Totem → home world (pour récupérer l'accent selon archétype) */
 const TOTEM_HOME = {
@@ -193,8 +194,17 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
     return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
   };
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !exiting,
+    onClose: handleClose,
+    labelText: 'Espace de présence',
+  });
+
   return (
     <div
+      ref={containerRef}
+      {...dialogProps}
       className={wash}
       style={{
         position: 'fixed',

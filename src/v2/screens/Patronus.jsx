@@ -14,6 +14,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { getProfile, haptic, ls } from '../state';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 /* ---------- Mapping totem → archetype data ---------- */
 
@@ -176,13 +177,21 @@ export default function Patronus({ onClose }) {
     onClose?.();
   };
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA).
+  // closedRef garde anti double-fire conservé via handleSkip lui-même.
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closedRef.current,
+    onClose: handleSkip,
+    labelText: 'Ton animal-esprit',
+  });
+
   const haloGradient = `radial-gradient(circle, ${archetype.accentRgb}, 0.45) 0%, transparent 70%)`;
 
   return (
     <div
+      ref={containerRef}
+      {...dialogProps}
       className={washClass}
-      role="dialog"
-      aria-label={`Ton archétype — ${archetype.label}`}
       style={{
         position: 'fixed',
         inset: 0,

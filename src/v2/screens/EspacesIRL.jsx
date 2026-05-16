@@ -12,6 +12,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { haptic } from '../state';
 import { useToast, TOAST_PRESETS } from '../../components/Toast';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 /* ============================================================
    HARDCODED LIST — V1 illustrative, à enrichir partenaires NÉYA
@@ -220,6 +221,13 @@ export default function EspacesIRL({ onClose }) {
     setTimeout(() => onClose?.(), 320);
   };
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: doClose,
+    labelText: 'Espaces de soutien',
+  });
+
   const switchFilter = (key, enabled) => {
     if (!enabled) {
       haptic(2);
@@ -248,7 +256,12 @@ export default function EspacesIRL({ onClose }) {
   );
 
   return (
-    <div className="wash-renard" style={overlayStyle({ mounted, closing })}>
+    <div
+      ref={containerRef}
+      {...dialogProps}
+      className="wash-renard"
+      style={overlayStyle({ mounted, closing })}
+    >
       {/* Top bar */}
       <div
         style={{

@@ -8,6 +8,7 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { ls, haptic } from '../state';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const STORAGE_KEY = 'mood_history';
 const MAX_ENTRIES = 100;
@@ -116,6 +117,13 @@ export default function MoodTracker({ onClose }) {
     }, 320);
   };
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !closing,
+    onClose: handleClose,
+    labelText: 'Mon humeur',
+  });
+
   const persistEntry = (moodKey, intensityValue) => {
     const entry = { ts: Date.now(), mood: moodKey, intensity: intensityValue };
     const next = [...history, entry].slice(-MAX_ENTRIES);
@@ -156,6 +164,8 @@ export default function MoodTracker({ onClose }) {
 
   return (
     <div
+      ref={containerRef}
+      {...dialogProps}
       className="wash-renard"
       style={{
         position: 'absolute',

@@ -16,6 +16,7 @@ import {
   addSouvenir,
 } from '../state';
 import BreathingCircle from '../../components/BreathingCircle';
+import useStandardOverlay from '../hooks/useStandardOverlay';
 
 const TOTEM_HOME = {
   lion: 'foret', ours: 'temple', aigle: 'oasis',
@@ -220,8 +221,17 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
 
   const objectifLabel = target === 999 ? 'Objectif libre' : `Objectif ${target} min`;
 
+  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const { dialogProps, containerRef } = useStandardOverlay({
+    open: !toast,
+    onClose: handleClose,
+    labelText: 'Méditation guidée',
+  });
+
   return (
     <div
+      ref={containerRef}
+      {...dialogProps}
       className={world.wash}
       style={{
         position: 'absolute',
