@@ -16,7 +16,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { WORLDS } from '../worlds';
 import { getProfile, patchProfile, haptic } from '../state';
 import { LECONS as LECONS_CONTENT } from '../data/lecons';
-import { TEMPS_GROUPS as TEMPS_GROUPS_DATA, getRituelsForTemps } from '../data/rituels-temps';
+import { TEMPS_GROUPS as TEMPS_GROUPS_DATA, RITUELS as RITUELS_DATA, getRituelsForTemps } from '../data/rituels-temps';
 import CoconAmbiance from './CoconAmbiance';
 import LeconReader from './LeconReader';
 import RituelPlayer from './RituelPlayer';
@@ -193,16 +193,87 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
     updateProfile({ aventure: nextAv });
   };
 
-  // Quête du jour : alterne sur cycle de 3 selon date
+  // Quête du jour : alterne entre rituels / leçons / méditation / espace
+  // Priorise ce qui n'a pas encore été fait/lu.
   const questOfDay = useMemo(() => {
     const day = new Date().getDate();
-    const options = [
-      { title: 'Méditation guidée', desc: 'Une pause de 5 minutes', cta: 'Commencer', onAction: onOpenMeditation },
-      { title: 'Mes habitudes du jour', desc: 'Les rituels qui te portent', cta: 'Y aller', onAction: onOpenHabitudes },
-      { title: 'Espace de présence', desc: 'Te poser et te ressentir', cta: 'Entrer', onAction: onOpenEspaceVrai },
-    ];
-    return options[day % options.length];
-  }, [onOpenMeditation, onOpenHabitudes, onOpenEspaceVrai]);
+    const leconsLues = av.leconsLues || [];
+    const rituelsFaits = av.rituelsFaits || {};
+
+    // Construire un pool d'options prioritaires (non encore expérimentées)
+    const pool = [];
+
+    // 1. Rituels non faits, groupés par temps pour varier
+    const rituelsPasse  = RITUELS_DATA.filter((r) => r.temps === 'passe'   && !rituelsFaits[r.key]);
+    const rituelsPresent = RITUELS_DATA.filter((r) => r.temps === 'present' && !rituelsFaits[r.key]);
+    const rituelsFutur  = RITUELS_DATA.filter((r) => r.temps === 'futur'   && !rituelsFaits[r.key]);
+
+    const addRituel = (r, accent) => pool.push({
+      type: 'rituel',
+      eyebrow: 'Rituel · ' + (r.temps === 'passe' ? 'Soi du passé' : r.temps === 'present' ? 'Soi présent' : 'Soi du futur'),
+      title: r.title,
+      desc: r.subtitle + ' · ' + r.duration + ' min',
+      cta: 'Commencer',
+      onAction: () => setOpenedRituel(r),
+    });
+
+    if (rituelsPasse[0])   addRituel(rituelsPasse[0]);
+    if (rituelsPresent[0]) addRituel(rituelsPresent[0]);
+    if (rituelsFutur[0])   addRituel(rituelsFutur[0]);
+
+    // 2. Leçons non lues
+    const leconsRestantes = LECONS_CONTENT.filter((l) => !leconsLues.includes(l.key));
+    if (leconsRestantes[0]) {
+      pool.push({
+        type: 'lecon',
+        eyebrow: 'Leçon',
+        title: leconsRestantes[0].title,
+        desc: leconsRestantes[0].subtitle + ' · ' + leconsRestantes[0].duration + ' min',
+        cta: 'Lire',
+        onAction: () => setOpenedLecon(leconsRestantes[0]),
+      });
+    }
+
+    // 3. Méditation guidée (toujours disponible)
+    pool.push({
+      type: 'meditation',
+      eyebrow: 'Pratique',
+      title: 'Méditation guidée',
+      desc: 'Une pause de 5 minutes',
+      cta: 'Commencer',
+      onAction: onOpenMeditation,
+    });
+
+    // 4. Espace de présence (toujours disponible)
+    pool.push({
+      type: 'espace-vrai',
+      eyebrow: 'Pratique',
+      title: 'Espace de présence',
+      desc: 'Te poser et te ressentir',
+      cta: 'Entrer',
+      onAction: onOpenEspaceVrai,
+    });
+
+    // 5. Habitudes du jour (toujours disponible)
+    pool.push({
+      type: 'habitudes',
+      eyebrow: 'Quotidien',
+      title: 'Mes habitudes du jour',
+      desc: 'Les rituels qui te portent',
+      cta: 'Y aller',
+      onAction: onOpenHabitudes,
+    });
+
+    // Sélection : alterne sur date pour varier d'un jour à l'autre
+    return pool[day % pool.length];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    onOpenMeditation,
+    onOpenHabitudes,
+    onOpenEspaceVrai,
+    av.leconsLues,
+    av.rituelsFaits,
+  ]);
 
   const now = new Date();
   const isEvening = now.getHours() >= 18;
@@ -373,8 +444,16 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             boxShadow: `0 8px 32px ${accentRgb}, 0.20)`,
           }}
         >
-          <div className="neya-mark" style={{ color: accent, marginBottom: 8, fontSize: 9 }}>
-            Ta séance du jour
+          <div
+            className="neya-mark"
+            style={{
+              color: accent,
+              marginBottom: 6,
+              fontSize: 9,
+              opacity: 0.92,
+            }}
+          >
+            Ta séance du jour · {questOfDay.eyebrow || ''}
           </div>
           <div
             style={{
