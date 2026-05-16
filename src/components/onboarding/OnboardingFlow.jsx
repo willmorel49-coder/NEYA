@@ -7,7 +7,7 @@ import ProgressDots from './ProgressDots';
 const STORAGE_KEY = 'neya_onboarded';
 const EXIT_MS = 750;
 
-export default function OnboardingFlow({ onComplete }) {
+export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
   const trackRef = useRef(null);
   const [active, setActive] = useState(0);
   const [exiting, setExiting] = useState(false);
@@ -15,6 +15,7 @@ export default function OnboardingFlow({ onComplete }) {
   const scrollTimerRef = useRef(null);
   const exitTimerRef = useRef(null);
   const finishedRef = useRef(false);
+  const isReview = mode === 'review';
 
   const scrollToIndex = useCallback((i) => {
     const el = trackRef.current;
@@ -29,12 +30,14 @@ export default function OnboardingFlow({ onComplete }) {
   const finish = useCallback(() => {
     if (finishedRef.current) return;
     finishedRef.current = true;
-    try { localStorage.setItem(STORAGE_KEY, 'true'); } catch {}
+    if (!isReview) {
+      try { localStorage.setItem(STORAGE_KEY, 'true'); } catch {}
+    }
     setExiting(true);
     exitTimerRef.current = setTimeout(() => {
       onComplete?.();
     }, EXIT_MS);
-  }, [onComplete]);
+  }, [onComplete, isReview]);
 
   useEffect(() => {
     const el = trackRef.current;
@@ -100,8 +103,9 @@ export default function OnboardingFlow({ onComplete }) {
           type="button"
           className={styles.skip}
           onClick={finish}
+          aria-label={isReview ? 'Fermer' : 'Passer'}
         >
-          Passer
+          {isReview ? 'Fermer' : 'Passer'}
         </button>
       </div>
 
@@ -117,6 +121,7 @@ export default function OnboardingFlow({ onComplete }) {
             onPrev={goPrev}
             onNext={goNext}
             onStart={finish}
+            ctaLabel={isReview ? 'Retour à l’app' : 'Commencer'}
           />
         ))}
       </div>

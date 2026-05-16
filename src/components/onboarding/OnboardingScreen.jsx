@@ -26,6 +26,7 @@ export default function OnboardingScreen({
   onNext,
   onStart,
   isFirst,
+  ctaLabel = 'Commencer',
 }) {
   const [animKey, setAnimKey] = useState(0);
   useEffect(() => {
@@ -109,7 +110,7 @@ export default function OnboardingScreen({
               onClick={onStart}
               tabIndex={isActive ? 0 : -1}
             >
-              Commencer
+              {ctaLabel}
             </button>
           </div>
         )}

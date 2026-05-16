@@ -25,9 +25,7 @@ import Habitudes from './screens/Habitudes';
 import EspaceVrai from './screens/EspaceVrai';
 import Bilan from './screens/Bilan';
 import BilanSemaine from './screens/BilanSemaine';
-import Patronus from './screens/Patronus';
 import MilestoneToast from './screens/MilestoneToast';
-import Tour from './screens/Tour';
 import BottomNav from '../components/BottomNav';
 import ActionSheet from '../components/ActionSheet';
 
@@ -45,25 +43,13 @@ export default function V2App() {
   const [espaceVraiOpen, setEspaceVraiOpen] = useState(false);
   const [bilanOpen, setBilanOpen] = useState(false);
   const [bilanSemaineOpen, setBilanSemaineOpen] = useState(false);
-  const [patronusOpen, setPatronusOpen] = useState(false);
   const [milestoneDay, setMilestoneDay] = useState(null);
-  const [tourOpen, setTourOpen] = useState(false);
   const [fullscreenOverlayOpen, setFullscreenOverlayOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [onboardingReviewOpen, setOnboardingReviewOpen] = useState(false);
 
-  // Init Patronus / Tour de manière fiable après stabilisation du state `onboarded`.
-  // Evite la race condition de l'init useState qui lit `onboarded` avant qu'il soit stable.
-  // Logique : Patronus en premier ; Tour ne démarre ici QUE si Patronus déjà vu
-  // (sinon handlePatronusClose s'occupe d'ouvrir Tour après fermeture Patronus).
-  useEffect(() => {
-    if (!onboarded) return;
-    const patronusSeen = ls.get('patronus_seen', false);
-    const tourSeen = ls.get('tour_seen', false);
-    if (!patronusSeen) {
-      setPatronusOpen(true);
-    } else if (!tourSeen) {
-      setTourOpen(true);
-    }
-  }, [onboarded]);
+  // Patronus + Tour supprimés du flow post-onboarding (v30) :
+  // l'onboarding visuel pré-app suffit, on entre direct dans l'app.
 
   // Écoute les overlays fullscreen (AventurePlayer, etc.) pour cacher
   // BottomNav + SOS — évite que la barre cache les CTA en bas (Safari).
@@ -117,8 +103,6 @@ export default function V2App() {
     espaceVraiOpen ||
     bilanOpen ||
     bilanSemaineOpen ||
-    tourOpen ||
-    patronusOpen ||
     milestoneDay !== null;
 
   const startLongPress = (e) => {
@@ -253,13 +237,6 @@ export default function V2App() {
     };
   }, []);
 
-  const handlePatronusClose = () => {
-    setPatronusOpen(false);
-    if (!ls.get('tour_seen', false)) {
-      queueIntroTimer(() => setTourOpen(true), 400);
-    }
-  };
-
   const handleMilestoneClose = () => {
     if (milestoneDay !== null) markMilestoneSeen(milestoneDay);
     setMilestoneDay(null);
@@ -313,8 +290,9 @@ export default function V2App() {
     return <Splash onContinue={() => setSplashDone(true)} />;
   }
 
-  // SOS visible only when user is in main shell — hidden during intro overlays
-  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen && !aideOpen && !espacesIRLOpen && !criseSettingsOpen && !habitudesOpen && !espaceVraiOpen && !bilanOpen && !bilanSemaineOpen && !fullscreenOverlayOpen;
+  // SOS / Menu visible only when user is in main shell — hidden during intro overlays
+  const showSosButton = onboarded && splashDone && !criseOpen && !aideOpen && !espacesIRLOpen && !criseSettingsOpen && !habitudesOpen && !espaceVraiOpen && !bilanOpen && !bilanSemaineOpen && !fullscreenOverlayOpen && !onboardingReviewOpen;
+  const showMenuButton = showSosButton;
 
   return (
     <div
@@ -372,6 +350,39 @@ export default function V2App() {
 
       {!fullscreenOverlayOpen && (
         <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />
+      )}
+
+      {/* Permanent Menu button — opens main menu (histoire / refuge / etc.) */}
+      {showMenuButton && (
+        <button
+          type="button"
+          onClick={() => { haptic(4); setMenuOpen(true); }}
+          aria-label="Menu"
+          data-no-crisis-press="true"
+          style={{
+            position: 'fixed',
+            top: 'calc(env(safe-area-inset-top, 0px) + 10px)',
+            left: 12,
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            border: '0.5px solid rgba(26, 26, 47, 0.18)',
+            background: 'var(--cream)',
+            color: 'var(--ink)',
+            cursor: 'pointer',
+            boxShadow: 'var(--shadow-soft)',
+            zIndex: 40,
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true">
+            <path d="M1 1h16M1 7h16M1 13h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
       )}
 
       {/* Permanent SOS button — opens menu (crise / aide / espaces) */}
@@ -436,6 +447,43 @@ export default function V2App() {
       {espacesIRLOpen && <EspacesIRL onClose={() => setEspacesIRLOpen(false)} />}
       {criseSettingsOpen && <CriseSettings onClose={() => setCriseSettingsOpen(false)} />}
 
+      {menuOpen && (
+        <ActionSheet
+          title="Menu"
+          description="Retrouver les essentiels."
+          actions={[
+            {
+              label: 'Histoire de ÇA VA ?',
+              icon: '✦',
+              onTap: () => { setMenuOpen(false); setOnboardingReviewOpen(true); },
+            },
+            {
+              label: 'Personnaliser mon refuge',
+              icon: '✧',
+              onTap: () => { setMenuOpen(false); setCriseSettingsOpen(true); },
+            },
+            {
+              label: 'Trouver de l\'aide',
+              icon: '◇',
+              onTap: () => { setMenuOpen(false); setAideOpen(true); },
+            },
+            {
+              label: 'Espaces de soutien',
+              icon: '○',
+              onTap: () => { setMenuOpen(false); setEspacesIRLOpen(true); },
+            },
+          ]}
+          onClose={() => setMenuOpen(false)}
+        />
+      )}
+
+      {onboardingReviewOpen && (
+        <OnboardingFlow
+          mode="review"
+          onComplete={() => setOnboardingReviewOpen(false)}
+        />
+      )}
+
       {sosMenuOpen && (
         <ActionSheet
           title="Soutien et ressources"
@@ -478,11 +526,7 @@ export default function V2App() {
 
       {bilanSemaineOpen && <BilanSemaine onClose={() => setBilanSemaineOpen(false)} />}
 
-      {patronusOpen && <Patronus onClose={handlePatronusClose} />}
-
       {milestoneDay !== null && <MilestoneToast day={milestoneDay} onClose={handleMilestoneClose} />}
-
-      {tourOpen && <Tour onClose={() => setTourOpen(false)} />}
     </div>
   );
 }
