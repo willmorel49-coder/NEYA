@@ -23,7 +23,7 @@ const PATRONUS_DATA = {
     label: 'Résilience',
     spirit: 'Lion blanc',
     photo: '/img/spirit-lion.png',
-    accentRgb: 'rgba(194, 144, 81',
+    accentRgb: '194, 144, 81',
     accentHex: '#C29051',
     chemin: 'Ton chemin est celui de la traversée.',
     forces: [
@@ -36,7 +36,7 @@ const PATRONUS_DATA = {
     label: 'Lumière',
     spirit: 'Ours polaire',
     photo: '/img/spirit-ours.png',
-    accentRgb: 'rgba(115, 151, 188',
+    accentRgb: '115, 151, 188',
     accentHex: '#7397BC',
     chemin: "Ton chemin est celui de l'ancrage doux.",
     forces: [
@@ -50,7 +50,7 @@ const PATRONUS_DATA = {
     spirit: 'Aigle céleste',
     photo: '/img/spirit-aigle.png',
     glyph: '△',
-    accentRgb: 'rgba(159, 88, 76',
+    accentRgb: '159, 88, 76',
     accentHex: '#9F584C',
     chemin: 'Ton chemin est celui de la perspective.',
     forces: [
@@ -63,7 +63,7 @@ const PATRONUS_DATA = {
     label: 'Présence',
     spirit: 'Daim lunaire',
     photo: '/img/spirit-daim.png',
-    accentRgb: 'rgba(123, 111, 168',
+    accentRgb: '123, 111, 168',
     accentHex: '#7B6FA8',
     chemin: "Ton chemin est celui de l'ici et maintenant.",
     forces: [
@@ -76,7 +76,7 @@ const PATRONUS_DATA = {
     label: 'Sagesse',
     spirit: 'Baleine sage',
     photo: '/img/spirit-baleine.png',
-    accentRgb: 'rgba(52, 145, 127',
+    accentRgb: '52, 145, 127',
     accentHex: '#34917F',
     chemin: 'Ton chemin est celui de la profondeur.',
     forces: [
@@ -90,7 +90,7 @@ const PATRONUS_DATA = {
     spirit: "Renard de l'aube",
     photo: '/img/spirit-renard.png',
     glyph: '▽',
-    accentRgb: 'rgba(212, 152, 128',
+    accentRgb: '212, 152, 128',
     accentHex: '#D49880',
     chemin: "Ton chemin est celui de l'écho partagé.",
     forces: [
@@ -100,6 +100,9 @@ const PATRONUS_DATA = {
     ],
   },
 };
+
+/* Helper : transforme '194, 144, 81' + alpha en chaîne rgba() valide. */
+const toRgba = (rgb, alpha) => `rgba(${rgb}, ${alpha})`;
 
 /* totem → wash class (light pastel background per archetype world) */
 const TOTEM_WASH = {
@@ -169,31 +172,30 @@ export default function Patronus({ onClose }) {
     };
   }, []); // eslint-disable-line
 
-  const handleCtaTap = () => {
+  // Factorise la logique de fermeture (état + persistance + callback).
+  const persistAndClose = (hapticPattern) => {
     if (closedRef.current) return;
     closedRef.current = true;
-    haptic([8, 60, 8]);
+    haptic(hapticPattern);
     ls.set('patronus_seen', true);
     onClose?.();
   };
 
-  const handleSkip = () => {
-    if (closedRef.current) return;
-    closedRef.current = true;
-    haptic(4);
-    ls.set('patronus_seen', true);
-    onClose?.();
-  };
+  const handleCtaTap = () => persistAndClose([8, 60, 8]);
+  const handleSkip = () => persistAndClose(4);
 
   // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA).
-  // closedRef garde anti double-fire conservé via handleSkip lui-même.
+  // closedRef garde anti double-fire conservé via persistAndClose lui-même.
+  // aria-labelledby pointe sur l'élément contenant le nom de l'archétype
+  // (ex. "Lion blanc") plutôt qu'un libellé générique.
+  const archLabelId = 'patronus-archetype-label';
   const { dialogProps, containerRef } = useStandardOverlay({
     open: !closedRef.current,
     onClose: handleSkip,
-    labelText: 'Ton animal-esprit',
+    labelledBy: archLabelId,
   });
 
-  const haloGradient = `radial-gradient(circle, ${archetype.accentRgb}, 0.45) 0%, transparent 70%)`;
+  const haloGradient = `radial-gradient(circle, ${toRgba(archetype.accentRgb, 0.45)} 0%, transparent 70%)`;
 
   if (alreadySeen) return null;
 
@@ -314,7 +316,9 @@ export default function Patronus({ onClose }) {
               background: haloGradient,
               opacity: mounted ? 0.9 : 0,
               transition: 'opacity 1800ms var(--ease-narrative)',
-              animation: mounted ? 'patronusHalo 6s ease-in-out infinite 1800ms' : 'none',
+              animation: mounted
+                ? 'patronusHalo 6s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 1800ms'
+                : 'none',
               pointerEvents: 'none',
             }}
           />
@@ -381,7 +385,8 @@ export default function Patronus({ onClose }) {
         </div>
 
         {/* ---------- Archetype label (Fraunces) ---------- */}
-        <div
+        <h1
+          id={archLabelId}
           style={{
             fontFamily: '"Fraunces", Georgia, serif',
             fontStyle: 'italic',
@@ -390,7 +395,7 @@ export default function Patronus({ onClose }) {
             lineHeight: 1.05,
             color: 'var(--ink)',
             fontVariationSettings: "'opsz' 144, 'SOFT' 100",
-            marginBottom: 8,
+            margin: '0 0 8px 0',
             opacity: mounted ? 1 : 0,
             transform: mounted ? 'translateY(0)' : 'translateY(6px)',
             transition:
@@ -398,7 +403,7 @@ export default function Patronus({ onClose }) {
           }}
         >
           {archetype.label}
-        </div>
+        </h1>
 
         {/* ---------- Spirit (small line) ---------- */}
         <div

@@ -9,7 +9,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { WORLDS } from '../worlds';
-import { haptic, getProfile, setProfile } from '../state';
+import { haptic, getProfile, setProfile, ls, calculateTotemFromOnboarding } from '../state';
 import Button from '../../components/Button';
 import HeroTitle from '../../components/HeroTitle';
 
@@ -87,7 +87,8 @@ const CROSSFADE_MS = 900;
 export default function Onboarding({ onComplete }) {
   const [stepIdx, setStepIdx] = useState(0);
   const [transitionToIdx, setTransitionToIdx] = useState(null);  // null = pas en transition
-  const [answers, setAnswers] = useState({});
+  // Hydrate depuis localStorage : reprend l'onboarding si quitté en cours
+  const [answers, setAnswers] = useState(() => ls.get('onboarding_draft', {}));
   const [completing, setCompleting] = useState(false);
 
   // Track pending timers for cleanup on unmount (no orphan setState after unmount)
@@ -128,12 +129,26 @@ export default function Onboarding({ onComplete }) {
       completed: true,
       completedAt: new Date().toISOString(),
     };
+    profile.totem = calculateTotemFromOnboarding(merged);
     profile.progress = profile.progress || {};
     profile.progress.currentWorld = 'foret';
     profile.progress.worldsExplored = ['foret'];
     setProfile(profile);
+    ls.del('onboarding_draft');
     setCompleting(true);
     onComplete?.();
+  };
+
+  const goBack = () => {
+    if (transitionToIdx !== null || completing) return;
+    if (stepIdx === 0) return;
+    haptic(4);
+    const prev = stepIdx - 1;
+    setTransitionToIdx(prev);
+    queueTimer(() => {
+      setStepIdx(prev);
+      setTransitionToIdx(null);
+    }, CROSSFADE_MS);
   };
 
   const advance = (value) => {
@@ -143,6 +158,8 @@ export default function Onboarding({ onComplete }) {
     const step = STEPS[stepIdx];
     const nextAnswers = step.field ? { ...answers, [step.field]: value } : answers;
     setAnswers(nextAnswers);
+    // Persiste le draft à chaque advance (reprise si quit au milieu)
+    ls.set('onboarding_draft', nextAnswers);
 
     if (stepIdx === STEPS.length - 1) {
       // Save + complete
@@ -152,9 +169,11 @@ export default function Onboarding({ onComplete }) {
         completed: true,
         completedAt: new Date().toISOString(),
       };
+      profile.totem = calculateTotemFromOnboarding(nextAnswers);
       profile.progress.currentWorld = 'foret';
       profile.progress.worldsExplored = ['foret'];
       setProfile(profile);
+      ls.del('onboarding_draft');
       setCompleting(true);
       queueTimer(() => {
         haptic([8, 60, 8]);
@@ -198,6 +217,41 @@ export default function Onboarding({ onComplete }) {
           onAdvance={advance}
           interactive={false}
         />
+      )}
+
+      {/* Back button — apparait à partir de la step 2 (stepIdx >= 1) */}
+      {stepIdx > 0 && !completing && (
+        <button
+          type="button"
+          data-press
+          onClick={goBack}
+          aria-label="Revenir à l'étape précédente"
+          style={{
+            position: 'fixed',
+            top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
+            left: 22,
+            width: 44,
+            height: 44,
+            borderRadius: 22,
+            background: 'rgba(251, 246, 232, 0.10)',
+            border: '0.5px solid rgba(251, 246, 232, 0.22)',
+            color: '#FBF6E8',
+            fontSize: 18,
+            zIndex: 10,
+            appearance: 'none',
+            outline: 'none',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            WebkitTapHighlightColor: 'transparent',
+            transition: 'opacity 400ms var(--ease-out)',
+            opacity: transitionToIdx !== null ? 0.4 : 1,
+            pointerEvents: transitionToIdx !== null ? 'none' : 'auto',
+          }}
+        >
+          ‹
+        </button>
       )}
 
       {/* Global skip — above all layers, 44×44 hit zone */}
@@ -373,7 +427,7 @@ function StepLayer({ step, stepIdx, totalSteps, fadeState, onAdvance, interactiv
           left: 0,
           right: 0,
           bottom: 0,
-          padding: '22px 22px calc(env(safe-area-inset-bottom, 0px) + 32px)',
+          padding: '22px 22px max(48px, calc(env(safe-area-inset-bottom, 0px) + 32px))',
           display: 'flex',
           flexDirection: 'column',
           gap: 28,
@@ -399,6 +453,7 @@ function StepLayer({ step, stepIdx, totalSteps, fadeState, onAdvance, interactiv
                 key={String(p.value)}
                 accent={world.accent}
                 accentRgb={world.accentRgb}
+                selected={false}
                 onClick={() => interactive && onAdvance(p.value)}
               >
                 {p.label}
@@ -421,25 +476,45 @@ function StepLayer({ step, stepIdx, totalSteps, fadeState, onAdvance, interactiv
               {step.cta}
             </Button>
             {step.manifeste && (
-              <div
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontStyle: 'italic',
-                  fontSize: 14,
-                  lineHeight: 1.5,
-                  color: 'var(--content-secondary)',
-                  fontVariationSettings: 'var(--fraunces-italic-soft)',
-                  maxWidth: 320,
-                }}
-              >
-                — {step.manifeste}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 320 }}>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontSize: 14,
+                    lineHeight: 1.5,
+                    color: 'var(--content-secondary)',
+                    fontVariationSettings: 'var(--fraunces-italic-soft)',
+                  }}
+                >
+                  — {step.manifeste}
+                </div>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontVariationSettings: 'var(--fraunces-italic-soft)',
+                    fontSize: 14,
+                    color: 'var(--cream)',
+                    opacity: 0.78,
+                    lineHeight: 1.5,
+                    textAlign: 'center',
+                  }}
+                >
+                  Un espace pour ce que tu ressens vraiment.
+                </div>
               </div>
             )}
           </div>
         )}
 
         {/* Progression dots */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 4 }}>
+        <div
+          role="status"
+          aria-live="polite"
+          aria-label={`Étape ${stepIdx + 1} sur ${totalSteps}`}
+          style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 4 }}
+        >
           {Array.from({ length: totalSteps }).map((_, i) => (
             <span
               key={i}
@@ -458,11 +533,12 @@ function StepLayer({ step, stepIdx, totalSteps, fadeState, onAdvance, interactiv
   );
 }
 
-function PillChoice({ children, accent, accentRgb, onClick }) {
+function PillChoice({ children, accent, accentRgb, onClick, selected = false }) {
   return (
     <button
       data-press
       onClick={onClick}
+      aria-pressed={selected}
       style={{
         appearance: 'none',
         background: 'rgba(255, 252, 245, 0.62)',

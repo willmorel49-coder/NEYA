@@ -660,6 +660,13 @@ em.neya-key {
     animation: none !important;
     background: rgba(26, 26, 47, 0.07) !important;
   }
+
+  /* Animations avant-ouverture (Splash / Patronus) neutralisées
+     — les keyframes inline des composants sont court-circuités */
+  @keyframes splashBreathe { 0%, 100% { opacity: 0.95; } }
+  @keyframes splashFadeUp { from, to { opacity: 1; transform: none; } }
+  @keyframes patronusHalo { 0%, 100% { opacity: 0.65; transform: scale(1); } }
+  @keyframes patronusRise { from, to { opacity: 1; transform: none; } }
 }
 
 /* Dynamic Type respect : honor user's iOS text size preference */

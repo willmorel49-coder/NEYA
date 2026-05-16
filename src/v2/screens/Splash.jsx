@@ -12,6 +12,16 @@ export default function Splash({ onContinue }) {
   const [mounted, setMounted] = useState(false);
   const continuedRef = useRef(false);
 
+  // Whisper personnalisé selon délai retour
+  const lastSeen = ls.get('splash_seen_at', 0);
+  const elapsed = Date.now() - lastSeen;
+  const ms4h = 4 * 3600 * 1000;
+  const ms7j = 7 * 24 * 3600 * 1000;
+  let subtitle;
+  if (!lastSeen || elapsed > ms7j) subtitle = 'Tu n\'es pas seul·e.';
+  else if (elapsed > ms4h) subtitle = 'T\'as pas besoin d\'aller bien pour commencer.';
+  else subtitle = 'Et toi, ça va vraiment ?';
+
   const fire = () => {
     if (continuedRef.current) return;
     continuedRef.current = true;
@@ -41,15 +51,16 @@ export default function Splash({ onContinue }) {
   return (
     <div
       onClick={handleTap}
-      role="button"
-      tabIndex={0}
+      role="dialog"
+      aria-modal="true"
       aria-label="Entrer dans NÉYA"
+      tabIndex={0}
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
         backgroundImage:
-          "url('/img/splash.png'), url('/bg-onboarding.avif')",
+          "url('/bg-splash.avif'), url('/bg-onboarding.avif')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -115,7 +126,7 @@ export default function Splash({ onContinue }) {
           textTransform: 'uppercase',
           color: 'rgba(251,246,232,0.85)',
           opacity: mounted ? 1 : 0,
-          transition: 'opacity 1400ms var(--ease-narrative) 600ms',
+          transition: 'opacity 800ms var(--ease-narrative) 200ms',
           WebkitTapHighlightColor: 'transparent',
         }}
       >
@@ -194,7 +205,7 @@ export default function Splash({ onContinue }) {
             transition: 'opacity 1400ms var(--ease-narrative)',
           }}
         >
-          Et toi, ça va vraiment ?
+          {subtitle}
         </div>
       </div>
 
@@ -204,7 +215,7 @@ export default function Splash({ onContinue }) {
           position: 'absolute',
           left: 0,
           right: 0,
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 36px)',
+          bottom: 'max(60px, calc(env(safe-area-inset-bottom, 0px) + 36px))',
           textAlign: 'center',
           fontFamily: "'Sora', system-ui, sans-serif",
           fontWeight: 400,
@@ -215,7 +226,7 @@ export default function Splash({ onContinue }) {
           opacity: mounted ? 1 : 0,
           transition: 'opacity 1400ms var(--ease-narrative) 400ms',
           animation: mounted
-            ? 'splashBreathe 4s ease-in-out infinite 1800ms'
+            ? 'splashBreathe 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 1800ms'
             : 'none',
           pointerEvents: 'none',
         }}

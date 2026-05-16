@@ -15,9 +15,9 @@ const TRANSITION_MS = 320;
 
 const SLIDES = [
   {
-    mark: '01 / 04 · BIENVENUE',
-    titleBefore: '« Le voyage ',
-    titleEm: 'commence ici.',
+    mark: '01 / 04 · L\'ARRIVÉE',
+    titleBefore: '« Entre dans ',
+    titleEm: 'la forêt.',
     titleAfter: ' »',
     body: (
       <>
@@ -68,9 +68,9 @@ const SLIDES = [
     titleAfter: ' »',
     body: (
       <>
-        <strong>Ça va ?</strong> est la marque de vêtements qui prolonge
-        NÉYA. Et en haut à droite, le bouton <strong>SOS</strong> te
-        ramène toujours à la respiration en cas de tempête.
+        <strong>Ça va ?</strong> prolonge NÉYA sur la peau. Et quand ça
+        devient trop, le bouton <strong>SOS</strong> te ramène toujours à
+        la respiration.
       </>
     ),
     glyph: '♡',
@@ -184,7 +184,7 @@ export default function Tour({ onClose }) {
         position: 'fixed',
         inset: 0,
         zIndex: 950,
-        background: 'rgba(5, 8, 16, 0.55)',
+        background: 'rgba(5, 8, 16, 0.72)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         display: 'flex',
@@ -201,7 +201,7 @@ export default function Tour({ onClose }) {
         aria-label="Passer la visite"
         style={{
           position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
+          top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
           right: 12,
           background: 'transparent',
           border: '0.5px solid rgba(251, 246, 232, 0.32)',
@@ -309,25 +309,36 @@ export default function Tour({ onClose }) {
 
         {/* Pagination dots */}
         <div
+          role="tablist"
+          aria-label="Slides"
           style={{
             display: 'flex',
             gap: 6,
             marginBottom: 18,
           }}
-          aria-hidden="true"
         >
           {SLIDES.map((_, i) => (
-            <span
+            <button
               key={i}
+              role="tab"
+              type="button"
+              data-press
+              onClick={() => i !== slideIdx && setSlideIdx(i)}
+              aria-selected={i === slideIdx}
+              aria-label={`Slide ${i + 1} sur ${SLIDES.length}`}
               style={{
-                width: i === slideIdx ? 18 : 6,
-                height: 6,
-                borderRadius: 3,
+                width: i === slideIdx ? 24 : 8,
+                height: 8,
+                borderRadius: 999,
+                border: 'none',
                 background:
                   i === slideIdx
-                    ? 'var(--ink)'
-                    : 'rgba(26, 26, 47, 0.18)',
+                    ? 'rgba(251,246,232,0.92)'
+                    : 'rgba(251,246,232,0.32)',
+                cursor: 'pointer',
+                padding: 0,
                 transition: `width ${TRANSITION_MS}ms var(--ease-out-ios), background ${TRANSITION_MS}ms var(--ease-out-ios)`,
+                WebkitTapHighlightColor: 'transparent',
               }}
             />
           ))}

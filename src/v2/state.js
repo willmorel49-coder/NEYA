@@ -215,6 +215,26 @@ export function getMotifCTA() {
   return MOTIF_CTA[m] || 'Continuer la montée →';
 }
 
+// calculateTotemFromOnboarding : map q1_etat × q2_motif → totem
+// Valeurs valides : 'lion' | 'ours' | 'aigle' | 'daim' | 'baleine' | 'renard'
+export function calculateTotemFromOnboarding(answers) {
+  const etat = answers?.q1_etat;
+  const motif = answers?.q2_motif;
+
+  // Lion = résilience (q1=pas-terrible, traverse une période difficile)
+  if (etat === 'pas-terrible') return 'lion';
+  // Baleine = sagesse profonde (émotions)
+  if (motif === 'emotions') return 'baleine';
+  // Ours = lumière / apaisement (stress)
+  if (motif === 'stress') return 'ours';
+  // Aigle = vision (curieux·se)
+  if (motif === 'curieux') return 'aigle';
+  // Daim = présence (sommeil)
+  if (motif === 'sommeil') return 'daim';
+  // Renard = lien (fallback / par défaut)
+  return 'renard';
+}
+
 // q1_etat : micro-line italic sous le greeting Aventure (varie selon ton du jour)
 const ETAT_LINE = {
   'pas-terrible':     'Tu peux juste être là. C’est suffisant.',

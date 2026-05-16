@@ -44,10 +44,25 @@ export default function V2App() {
   const [espaceVraiOpen, setEspaceVraiOpen] = useState(false);
   const [bilanOpen, setBilanOpen] = useState(false);
   const [bilanSemaineOpen, setBilanSemaineOpen] = useState(false);
-  const [patronusOpen, setPatronusOpen] = useState(() => onboarded && !ls.get('patronus_seen', false));
+  const [patronusOpen, setPatronusOpen] = useState(false);
   const [milestoneDay, setMilestoneDay] = useState(null);
-  const [tourOpen, setTourOpen] = useState(() => onboarded && !ls.get('tour_seen', false));
+  const [tourOpen, setTourOpen] = useState(false);
   const [fullscreenOverlayOpen, setFullscreenOverlayOpen] = useState(false);
+
+  // Init Patronus / Tour de manière fiable après stabilisation du state `onboarded`.
+  // Evite la race condition de l'init useState qui lit `onboarded` avant qu'il soit stable.
+  // Logique : Patronus en premier ; Tour ne démarre ici QUE si Patronus déjà vu
+  // (sinon handlePatronusClose s'occupe d'ouvrir Tour après fermeture Patronus).
+  useEffect(() => {
+    if (!onboarded) return;
+    const patronusSeen = ls.get('patronus_seen', false);
+    const tourSeen = ls.get('tour_seen', false);
+    if (!patronusSeen) {
+      setPatronusOpen(true);
+    } else if (!tourSeen) {
+      setTourOpen(true);
+    }
+  }, [onboarded]);
 
   // Écoute les overlays fullscreen (AventurePlayer, etc.) pour cacher
   // BottomNav + SOS — évite que la barre cache les CTA en bas (Safari).
@@ -290,7 +305,7 @@ export default function V2App() {
   }
 
   // SOS visible only when user is in main shell — hidden during intro overlays
-  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen && !aideOpen && !espacesIRLOpen && !criseSettingsOpen && !fullscreenOverlayOpen;
+  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen && !aideOpen && !espacesIRLOpen && !criseSettingsOpen && !habitudesOpen && !espaceVraiOpen && !bilanOpen && !bilanSemaineOpen && !fullscreenOverlayOpen;
 
   return (
     <div
