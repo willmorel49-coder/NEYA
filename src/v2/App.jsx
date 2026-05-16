@@ -47,6 +47,18 @@ export default function V2App() {
   const [patronusOpen, setPatronusOpen] = useState(() => onboarded && !ls.get('patronus_seen', false));
   const [milestoneDay, setMilestoneDay] = useState(null);
   const [tourOpen, setTourOpen] = useState(() => onboarded && !ls.get('tour_seen', false));
+  const [fullscreenOverlayOpen, setFullscreenOverlayOpen] = useState(false);
+
+  // Écoute les overlays fullscreen (AventurePlayer, etc.) pour cacher
+  // BottomNav + SOS — évite que la barre cache les CTA en bas (Safari).
+  useEffect(() => {
+    const onOverlay = (e) => {
+      const open = !!(e && e.detail && e.detail.open);
+      setFullscreenOverlayOpen(open);
+    };
+    window.addEventListener('neya:fullscreen-overlay', onOverlay);
+    return () => window.removeEventListener('neya:fullscreen-overlay', onOverlay);
+  }, []);
 
   // Check milestone on app open (visit recorded → joursConnectes → check)
   useEffect(() => {
@@ -278,7 +290,7 @@ export default function V2App() {
   }
 
   // SOS visible only when user is in main shell — hidden during intro overlays
-  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen && !aideOpen && !espacesIRLOpen && !criseSettingsOpen;
+  const showSosButton = onboarded && splashDone && !tourOpen && !patronusOpen && !criseOpen && !aideOpen && !espacesIRLOpen && !criseSettingsOpen && !fullscreenOverlayOpen;
 
   return (
     <div
@@ -334,7 +346,9 @@ export default function V2App() {
         })}
       </div>
 
-      <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />
+      {!fullscreenOverlayOpen && (
+        <BottomNav active={activeTab} onChange={setActiveTab} accent={navAccent} />
+      )}
 
       {/* Permanent SOS button — opens menu (crise / aide / espaces) */}
       {showSosButton && (
