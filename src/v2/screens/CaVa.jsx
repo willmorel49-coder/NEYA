@@ -549,7 +549,7 @@ function Final() {
           fontFamily: 'var(--font-body)',
           fontSize: 13.5,
           lineHeight: 1.6,
-          color: 'rgba(251, 246, 232, 0.82)',
+          color: 'rgba(10, 36, 56, 0.82)',
           maxWidth: 360,
         }}
       >

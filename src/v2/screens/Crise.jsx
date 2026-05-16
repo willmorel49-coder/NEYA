@@ -207,7 +207,7 @@ export default function Crise({ onClose }) {
         inset: 0,
         zIndex: 9999,
         overflow: 'hidden',
-        background: '#0a0c14',
+        background: 'var(--bg)',
         opacity: exiting ? 0 : mounted ? 1 : 0,
         transition: 'opacity 380ms cubic-bezier(0.16, 1, 0.3, 1)',
       }}
@@ -251,9 +251,9 @@ export default function Crise({ onClose }) {
           width: 44,
           height: 44,
           borderRadius: 22,
-          background: 'rgba(251, 246, 232, 0.10)',
-          border: '0.5px solid rgba(251, 246, 232, 0.25)',
-          color: '#FBF6E8',
+          background: 'rgba(255, 255, 255, 0.70)',
+          border: '0.5px solid rgba(26, 90, 127, 0.30)',
+          color: 'var(--blue-900)',
           fontSize: 18,
           cursor: 'pointer',
           display: 'inline-flex',
@@ -297,7 +297,7 @@ export default function Crise({ onClose }) {
             borderRadius: '50%',
             background: 'rgba(251, 246, 232, 0.16)',
             border: '1px solid rgba(251, 246, 232, 0.48)',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             cursor: 'pointer',
             display: 'inline-flex',
             alignItems: 'center',
@@ -379,7 +379,7 @@ export default function Crise({ onClose }) {
                 opacity: baseOpacity,
                 transform: isInspireOrHold ? `scale(${scaleOpen})` : `scale(${scaleClose})`,
                 transition: `transform ${phaseDuration}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${phaseDuration}ms cubic-bezier(0.4, 0, 0.2, 1), border-width ${phaseDuration}ms ease-out`,
-                boxShadow: isInspireOrHold ? '0 0 24px rgba(251, 246, 232, 0.10)' : 'none',
+                boxShadow: isInspireOrHold ? '0 0 24px rgba(255, 255, 255, 0.70)' : 'none',
               }}
             />
           );
@@ -391,12 +391,12 @@ export default function Crise({ onClose }) {
             width:  phase === 'expire' ? 70  : 280,
             height: phase === 'expire' ? 70  : 280,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(251, 246, 232, 0.95) 0%, rgba(251, 246, 232, 0.55) 35%, rgba(251, 246, 232, 0.18) 65%, transparent 100%)',
+            background: 'radial-gradient(circle, rgba(251, 246, 232, 0.95) 0%, rgba(251, 246, 232, 0.55) 35%, rgba(255, 255, 255, 0.80) 65%, transparent 100%)',
             opacity: phase === 'inspire' ? 0.96 : phase === 'hold' ? 1.0 : 0.42,
             filter: phase === 'expire' ? 'blur(4px)' : 'blur(1px)',
             boxShadow: (phase === 'inspire' || phase === 'hold')
-              ? '0 0 80px 20px rgba(251, 246, 232, 0.32), 0 0 160px 40px rgba(251, 246, 232, 0.18)'
-              : '0 0 30px 8px rgba(251, 246, 232, 0.18)',
+              ? '0 0 80px 20px rgba(251, 246, 232, 0.32), 0 0 160px 40px rgba(255, 255, 255, 0.80)'
+              : '0 0 30px 8px rgba(255, 255, 255, 0.80)',
             transition: phase === 'inspire'
               ? `width ${rhythm.inspire}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${rhythm.inspire}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${rhythm.inspire}ms cubic-bezier(0.4, 0, 0.2, 1), filter ${rhythm.inspire}ms ease-out, box-shadow ${rhythm.inspire}ms ease-out`
               : phase === 'hold'
@@ -441,7 +441,7 @@ export default function Crise({ onClose }) {
               fontSize: 30,
               letterSpacing: '-0.014em',
               fontVariationSettings: 'var(--fraunces-italic-soft)',
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               opacity: 0.96,
               textShadow: '0 1px 12px rgba(0, 0, 0, 0.3)',
               animation: 'crise-label-fade 800ms cubic-bezier(0.16, 1, 0.3, 1)',
@@ -472,7 +472,7 @@ export default function Crise({ onClose }) {
             fontSize: 17,
             lineHeight: 1.45,
             fontVariationSettings: 'var(--fraunces-italic-soft)',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             opacity: 0.92,
             textShadow: '0 1px 10px rgba(0, 0, 0, 0.42)',
             animation: 'crise-line-fade 1400ms cubic-bezier(0.16, 1, 0.3, 1)',
@@ -499,7 +499,7 @@ export default function Crise({ onClose }) {
             fontSize: 9,
             letterSpacing: '0.42em',
             textTransform: 'uppercase',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             opacity: 0.78,
             fontWeight: 600,
             textShadow: '0 1px 8px rgba(0, 0, 0, 0.55)',
@@ -523,8 +523,8 @@ export default function Crise({ onClose }) {
           appearance: 'none',
           padding: '14px 32px',
           minHeight: 48,
-          background: 'rgba(251, 246, 232, 0.18)',
-          color: '#FBF6E8',
+          background: 'rgba(255, 255, 255, 0.80)',
+          color: 'var(--blue-900)',
           border: '1px solid rgba(251, 246, 232, 0.58)',
           borderRadius: 999,
           fontFamily: 'var(--font-ui)',

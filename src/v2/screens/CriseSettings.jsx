@@ -258,7 +258,7 @@ export default function CriseSettings({ onClose }) {
                           bottom: 0,
                           padding: '28px 12px 12px',
                           background: 'linear-gradient(0deg, rgba(0,0,0,0.78) 0%, transparent 100%)',
-                          color: '#FBF6E8',
+                          color: 'var(--blue-900)',
                           textAlign: 'left',
                         }}
                       >

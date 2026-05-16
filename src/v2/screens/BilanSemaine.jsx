@@ -591,7 +591,7 @@ export default function BilanSemaine({ onClose }) {
             gap: 10,
             zIndex: 2,
             background:
-              'linear-gradient(to top, rgba(251, 246, 232, 0.88), rgba(251, 246, 232, 0))',
+              'linear-gradient(to top, rgba(255, 255, 255, 0.92), rgba(251, 246, 232, 0))',
           }}
         >
           {q?.type === 'text' && (
@@ -742,7 +742,7 @@ function CloseButton({ onClick, inline = false }) {
         height: 44,
         borderRadius: '50%',
         border: '1px solid var(--hairline)',
-        background: 'rgba(251, 246, 232, 0.6)',
+        background: 'rgba(255, 255, 255, 0.78)',
         color: 'var(--ink)',
         fontSize: 15,
         lineHeight: 1,

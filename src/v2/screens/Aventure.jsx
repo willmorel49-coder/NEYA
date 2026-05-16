@@ -375,8 +375,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               appearance: 'none',
               width: 44,
               height: 44,
-              background: 'rgba(251, 246, 232, 0.08)',
-              border: '0.5px solid rgba(251, 246, 232, 0.22)',
+              background: 'rgba(255, 255, 255, 0.65)',
+              border: '0.5px solid rgba(26, 90, 127, 0.30)',
               borderRadius: '50%',
               color: 'var(--blue-900)',
               cursor: 'pointer',
@@ -489,7 +489,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               fontFamily: 'var(--font-body)',
               fontSize: 13,
               lineHeight: 1.5,
-              color: 'rgba(251, 246, 232, 0.82)',
+              color: 'rgba(10, 36, 56, 0.82)',
               marginBottom: 16,
             }}
           >
@@ -522,7 +522,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         </section>
 
         {/* 3 PILIERS */}
-        <div className="neya-mark" style={{ color: 'rgba(251, 246, 232, 0.72)', marginTop: 32, marginBottom: 14 }}>
+        <div className="neya-mark" style={{ color: 'rgba(10, 36, 56, 0.72)', marginTop: 32, marginBottom: 14 }}>
           Tes piliers
         </div>
 
@@ -564,7 +564,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 style={subActionStyle}
               >
                 <span style={{ flex: 1, textAlign: 'left' }}>Bilan du soir</span>
-                <span style={{ color: 'rgba(251, 246, 232, 0.62)', fontSize: 14 }}>›</span>
+                <span style={{ color: 'rgba(10, 36, 56, 0.62)', fontSize: 14 }}>›</span>
               </button>
             )}
             {isSundayEvening && (
@@ -575,7 +575,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 style={subActionStyle}
               >
                 <span style={{ flex: 1, textAlign: 'left' }}>Bilan de la semaine</span>
-                <span style={{ color: 'rgba(251, 246, 232, 0.62)', fontSize: 14 }}>›</span>
+                <span style={{ color: 'rgba(10, 36, 56, 0.62)', fontSize: 14 }}>›</span>
               </button>
             )}
           </div>
@@ -591,8 +591,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               gap: 12,
               padding: '8px 8px 8px 8px',
               minHeight: 56,
-              background: 'rgba(251, 246, 232, 0.06)',
-              border: '0.5px solid rgba(251, 246, 232, 0.12)',
+              background: 'rgba(255, 255, 255, 0.55)',
+              border: '0.5px solid rgba(255, 255, 255, 0.75)',
               borderRadius: 999,
             }}
           >
@@ -743,8 +743,8 @@ const subActionStyle = {
   width: '100%',
   padding: '14px 18px',
   minHeight: 48,
-  background: 'rgba(251, 246, 232, 0.06)',
-  border: '0.5px solid rgba(251, 246, 232, 0.12)',
+  background: 'rgba(255, 255, 255, 0.55)',
+  border: '0.5px solid rgba(255, 255, 255, 0.75)',
   borderRadius: 14,
   color: 'var(--blue-900)',
   fontFamily: 'var(--font-ui)',
@@ -770,7 +770,7 @@ function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
         width: '100%',
         padding: 0,
         background: 'var(--bg)',
-        border: '0.5px solid rgba(251, 246, 232, 0.10)',
+        border: '0.5px solid rgba(255, 255, 255, 0.70)',
         borderRadius: 18,
         cursor: 'pointer',
         position: 'relative',
@@ -846,7 +846,7 @@ function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
               marginTop: 4,
               fontFamily: 'var(--font-body)',
               fontSize: 12,
-              color: 'rgba(251, 246, 232, 0.82)',
+              color: 'rgba(10, 36, 56, 0.82)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -855,7 +855,7 @@ function PilierCard({ label, subtitle, mark, accent, bgImage, onClick }) {
             {subtitle}
           </div>
         </div>
-        <span aria-hidden style={{ color: 'rgba(251, 246, 232, 0.62)', fontSize: 16, flexShrink: 0 }}>›</span>
+        <span aria-hidden style={{ color: 'rgba(10, 36, 56, 0.62)', fontSize: 16, flexShrink: 0 }}>›</span>
       </div>
     </button>
   );
@@ -1038,7 +1038,7 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                 width: '100%',
                 padding: 0,
                 background: 'var(--bg)',
-                border: `0.5px solid ${completed ? m.accent : 'rgba(251, 246, 232, 0.10)'}`,
+                border: `0.5px solid ${completed ? m.accent : 'rgba(255, 255, 255, 0.70)'}`,
                 borderRadius: 16,
                 cursor: m.available ? 'pointer' : 'not-allowed',
                 position: 'relative',
@@ -1088,7 +1088,7 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                     width: 42,
                     height: 42,
                     borderRadius: '50%',
-                    border: `1.5px solid ${completed ? m.accent : m.available ? 'rgba(251, 246, 232, 0.48)' : 'rgba(251, 246, 232, 0.22)'}`,
+                    border: `1.5px solid ${completed ? m.accent : m.available ? 'rgba(251, 246, 232, 0.48)' : 'rgba(26, 90, 127, 0.30)'}`,
                     background: completed ? m.accent : 'transparent',
                     color: completed ? '#FBF6E8' : m.available ? '#FBF6E8' : 'rgba(251, 246, 232, 0.56)',
                     display: 'inline-flex',
@@ -1134,7 +1134,7 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                       marginTop: 3,
                       fontFamily: 'var(--font-body)',
                       fontSize: 12.5,
-                      color: 'rgba(251, 246, 232, 0.72)',
+                      color: 'rgba(10, 36, 56, 0.72)',
                       lineHeight: 1.4,
                     }}
                   >
@@ -1176,7 +1176,7 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                           letterSpacing: '0.18em',
                           textTransform: 'uppercase',
                           fontWeight: 600,
-                          color: 'rgba(251, 246, 232, 0.72)',
+                          color: 'rgba(10, 36, 56, 0.72)',
                           fontVariantNumeric: 'tabular-nums',
                           flexShrink: 0,
                         }}

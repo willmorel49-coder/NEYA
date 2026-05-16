@@ -172,7 +172,7 @@ export default function Splash({ onContinue }) {
             fontWeight: 300,
             fontSize: 'clamp(64px, 18vw, 96px)',
             letterSpacing: '-0.018em',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             lineHeight: 1,
             opacity: mounted ? 1 : 0,
             transition: 'opacity 1400ms var(--ease-narrative)',

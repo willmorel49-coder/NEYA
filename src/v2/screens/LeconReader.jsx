@@ -327,7 +327,7 @@ export default function LeconReader({ lecon, onClose }) {
                 padding: '14px 32px',
                 minHeight: 48,
                 background: lecon.accent,
-                color: '#FBF6E8',
+                color: 'var(--blue-900)',
                 border: 'none',
                 borderRadius: 999,
                 fontFamily: 'var(--font-ui)',

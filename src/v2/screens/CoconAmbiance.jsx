@@ -160,7 +160,7 @@ export default function CoconAmbiance({ type = 'fireflies', accent = '#FBF6E8' }
               height: s.size,
               borderRadius: '50%',
               background: '#FBF6E8',
-              boxShadow: `0 0 ${s.size * 6}px ${s.size * 2}px rgba(251, 246, 232, 0.6)`,
+              boxShadow: `0 0 ${s.size * 6}px ${s.size * 2}px rgba(255, 255, 255, 0.78)`,
               opacity: 0,
               animation: `cocon-star-twinkle ${s.duration}s ease-in-out ${s.delay}s infinite`,
               pointerEvents: 'none',

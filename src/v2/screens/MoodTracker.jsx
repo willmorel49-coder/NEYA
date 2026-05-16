@@ -245,7 +245,7 @@ export default function MoodTracker({ onClose }) {
           height: 44,
           borderRadius: '50%',
           border: '1px solid var(--hairline)',
-          background: 'rgba(251, 246, 232, 0.6)',
+          background: 'rgba(255, 255, 255, 0.78)',
           color: 'var(--ink)',
           fontSize: 15,
           lineHeight: 1,

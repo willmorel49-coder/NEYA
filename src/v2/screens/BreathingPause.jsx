@@ -111,7 +111,7 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#FBF6E8',
+        color: 'var(--blue-900)',
         padding: '22px',
       }}
     >
@@ -133,7 +133,7 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
             fontSize: 9,
             letterSpacing: '0.32em',
             textTransform: 'uppercase',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             opacity: 0.82,
             fontWeight: 600,
           }}
@@ -145,7 +145,7 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
             fontFamily: 'var(--font-ui)',
             fontSize: 10,
             letterSpacing: '0.222em',
-            color: '#FBF6E8',
+            color: 'var(--blue-900)',
             opacity: 0.78,
             fontWeight: 600,
             fontVariantNumeric: 'tabular-nums',
@@ -230,7 +230,7 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
               fontSize: 28,
               letterSpacing: '-0.014em',
               fontVariationSettings: 'var(--fraunces-italic-soft)',
-              color: '#FBF6E8',
+              color: 'var(--blue-900)',
               opacity: 0.96,
               animation: 'breath-label-fade 700ms cubic-bezier(0.16, 1, 0.3, 1)',
             }}
