@@ -98,6 +98,12 @@ export const defaultProfile = () => ({
     music: 'sunrise-breath', // 'sunrise-breath' | 'douce-nuit' | 'guéris' | 'tethered-to-the-wreckage' | null
     rhythm: '4-6',           // '4-6' (apaisant) | '5-5' (cohérence) | '4-7-8' (relaxation profonde)
   },
+  aventure: {
+    image: null,             // 'foret'|'temple'|'oasis'|'lac'|'montagne'|'communaute'|null (suit le totem)
+    ambiance: 'fireflies',   // 'fireflies'|'rain'|'snow'|'stars'|'none'
+    music: null,             // ÇA VA? tracks ou null
+    musicVolume: 0.4,
+  },
 });
 
 export function getProfile() {
