@@ -149,7 +149,7 @@ export default function Manifeste({ onClose }) {
           left: 0,
           right: 0,
           zIndex: 5,
-          padding: '16px 22px 12px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 12px) 22px 12px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -159,6 +159,35 @@ export default function Manifeste({ onClose }) {
           borderBottom: '1px solid rgba(26, 26, 47, 0.06)',
         }}
       >
+        <button
+          type="button"
+          data-press
+          onClick={doClose}
+          aria-label="Retour"
+          style={{
+            appearance: 'none',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '12px 14px',
+            minWidth: 44,
+            minHeight: 44,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            fontFamily: 'var(--font-ui)',
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: INK_SOFT,
+            WebkitTapHighlightColor: 'transparent',
+            marginLeft: -14,
+          }}
+        >
+          <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
+          Retour
+        </button>
         <div
           style={{
             fontFamily: 'var(--font-ui)',
@@ -172,12 +201,13 @@ export default function Manifeste({ onClose }) {
           ÇA VA ? · MANIFESTE
         </div>
         <button
+          type="button"
           data-press
           onClick={doClose}
           aria-label="Fermer"
           style={{
-            width: 36,
-            height: 36,
+            width: 44,
+            height: 44,
             borderRadius: '50%',
             border: '1px solid rgba(26, 26, 47, 0.10)',
             background: 'transparent',
@@ -187,6 +217,8 @@ export default function Manifeste({ onClose }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
             transition: 'transform 120ms var(--ease-out-ios)',
           }}
         >
@@ -589,7 +621,7 @@ export default function Manifeste({ onClose }) {
       {/* ── Footer minimal ─────────────────────────────────── */}
       <footer
         style={{
-          padding: '32px 24px 56px',
+          padding: '32px 24px calc(env(safe-area-inset-bottom, 0px) + 56px)',
           textAlign: 'center',
           borderTop: '1px solid rgba(26, 26, 47, 0.06)',
         }}

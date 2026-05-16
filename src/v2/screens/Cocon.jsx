@@ -348,7 +348,7 @@ export default function Cocon() {
             position: 'absolute',
             left: 22,
             right: 22,
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 254px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 310px)',
             background: 'transparent',
             border: 'none',
             cursor: 'pointer',
@@ -387,7 +387,7 @@ export default function Cocon() {
             position: 'absolute',
             left: '50%',
             transform: 'translateX(-50%)',
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 258px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 314px)',
             appearance: 'none',
             background: 'transparent',
             border: 'none',
@@ -400,6 +400,7 @@ export default function Cocon() {
             textTransform: 'uppercase',
             fontWeight: 600,
             padding: '10px 18px',
+            minHeight: 44,
             textShadow: '0 1px 8px rgba(0, 0, 0, 0.5)',
             WebkitTapHighlightColor: 'transparent',
             zIndex: 2,
@@ -416,7 +417,7 @@ export default function Cocon() {
             position: 'absolute',
             left: 22,
             right: 22,
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 198px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 250px)',
             display: 'flex',
             alignItems: 'center',
             gap: 12,
@@ -524,7 +525,7 @@ export default function Cocon() {
         Me poser 2 minutes
       </button>
 
-      {/* Bouton Personnaliser texte (sous CTA) */}
+      {/* Bouton Personnaliser texte (au-dessus du CTA, hors zone BottomNav) */}
       <button
         type="button"
         onClick={() => { haptic(2); setPersonalizeOpen(true); }}
@@ -533,7 +534,7 @@ export default function Cocon() {
           position: 'absolute',
           left: '50%',
           transform: 'translateX(-50%)',
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 90px)',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 200px)',
           appearance: 'none',
           background: 'transparent',
           border: 'none',
@@ -545,8 +546,8 @@ export default function Cocon() {
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
           fontWeight: 600,
-          padding: '10px 16px',
-          minHeight: 36,
+          padding: '12px 18px',
+          minHeight: 44,
           textShadow: '0 1px 8px rgba(0, 0, 0, 0.5)',
           WebkitTapHighlightColor: 'transparent',
           zIndex: 3,

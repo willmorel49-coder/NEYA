@@ -105,7 +105,7 @@ export default function Lookbook({ onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '14px 18px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 12px) 14px 12px',
           background: 'rgba(244, 240, 232, 0.92)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
@@ -120,28 +120,35 @@ export default function Lookbook({ onClose }) {
             textTransform: 'uppercase',
             color: 'var(--cava-ink)',
             fontWeight: 600,
+            paddingLeft: 6,
           }}
         >
           ÇA VA ?<span style={{ opacity: 0.4, margin: '0 6px' }}>·</span>LOOKBOOK
         </div>
         <button
+          type="button"
           onClick={handleClose}
-          aria-label="Fermer"
+          aria-label="Fermer le lookbook"
+          data-press
           style={{
-            border: 'none',
-            background: 'transparent',
+            appearance: 'none',
+            border: '0.5px solid rgba(26, 26, 47, 0.10)',
+            background: 'rgba(255, 252, 245, 0.6)',
             color: 'var(--cava-ink)',
-            fontSize: 20,
+            fontSize: 16,
             cursor: 'pointer',
-            padding: 4,
+            width: 44,
+            height: 44,
+            minWidth: 44,
+            minHeight: 44,
+            borderRadius: '50%',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             lineHeight: 1,
-            transition: 'transform 120ms ease-out',
+            WebkitTapHighlightColor: 'transparent',
+            flexShrink: 0,
           }}
-          onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
-          onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          onTouchStart={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
-          onTouchEnd={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
           ✕
         </button>
@@ -328,7 +335,7 @@ export default function Lookbook({ onClose }) {
         {/* ===== Section 5 — Manifest closer ===== */}
         <section
           style={{
-            padding: '80px 24px 96px',
+            padding: '80px 24px calc(env(safe-area-inset-bottom, 0px) + 64px)',
             background: 'var(--cream-light, #FFFCF5)',
             textAlign: 'center',
           }}
@@ -347,27 +354,27 @@ export default function Lookbook({ onClose }) {
             « Briser le masque du <em style={{ fontWeight: 400 }}>ça va</em>. »
           </p>
           <button
+            type="button"
             onClick={handleClose}
+            data-press
+            aria-label="Fermer le lookbook"
             style={{
               marginTop: 36,
+              appearance: 'none',
               border: '1px solid rgba(26,26,47,0.32)',
               background: 'transparent',
               color: 'var(--cava-ink)',
               padding: '14px 32px',
+              minHeight: 48,
               borderRadius: 999,
               fontFamily: 'var(--font-ui)',
-              fontSize: 9,
+              fontSize: 10,
               letterSpacing: 'var(--tracking-caps)',
               textTransform: 'uppercase',
               fontWeight: 600,
               cursor: 'pointer',
-              transition: 'transform 120ms ease-out, background 180ms ease-out',
+              WebkitTapHighlightColor: 'transparent',
             }}
-            onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
-            onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-            onTouchStart={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
-            onTouchEnd={(e) => (e.currentTarget.style.transform = 'scale(1)')}
           >
             Fermer
           </button>

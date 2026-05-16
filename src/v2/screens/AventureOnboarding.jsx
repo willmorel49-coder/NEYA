@@ -239,7 +239,7 @@ export default function AventureOnboarding({ onClose }) {
           position: 'absolute',
           left: 22,
           right: 22,
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 36px)',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 44px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -248,7 +248,7 @@ export default function AventureOnboarding({ onClose }) {
         }}
       >
         {/* Dots */}
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 4 }}>
           {SLIDES.map((s, i) => (
             <button
               key={s.key}
@@ -257,17 +257,31 @@ export default function AventureOnboarding({ onClose }) {
               aria-label={`Slide ${i + 1}`}
               style={{
                 appearance: 'none',
-                width: i === idx ? 28 : 8,
-                height: 8,
-                borderRadius: 999,
-                background: i === idx ? slide.accent : 'rgba(251, 246, 232, 0.32)',
+                width: 'auto',
+                height: 44,
+                minWidth: 44,
+                padding: '0 6px',
+                background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                transition: 'all 360ms cubic-bezier(0.16, 1, 0.3, 1)',
-                padding: 0,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 WebkitTapHighlightColor: 'transparent',
               }}
-            />
+            >
+              <span
+                aria-hidden
+                style={{
+                  display: 'block',
+                  width: i === idx ? 28 : 8,
+                  height: 8,
+                  borderRadius: 999,
+                  background: i === idx ? slide.accent : 'rgba(251, 246, 232, 0.32)',
+                  transition: 'all 360ms cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+              />
+            </button>
           ))}
         </div>
 

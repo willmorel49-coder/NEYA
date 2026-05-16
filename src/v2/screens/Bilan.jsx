@@ -343,7 +343,7 @@ export default function Bilan({ onClose }) {
           top: 0,
           left: 0,
           right: 0,
-          padding: '6px 12px 14px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 4px) 12px 14px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -371,7 +371,7 @@ export default function Bilan({ onClose }) {
         <div
           style={{
             position: 'absolute',
-            top: 52,
+            top: 'calc(env(safe-area-inset-top, 0px) + 56px)',
             left: 0,
             right: 0,
             display: 'flex',
@@ -411,7 +411,7 @@ export default function Bilan({ onClose }) {
         style={{
           position: 'absolute',
           inset: 0,
-          padding: '100px 24px 140px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 104px) 24px calc(env(safe-area-inset-bottom, 0px) + 140px)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -630,7 +630,7 @@ export default function Bilan({ onClose }) {
             bottom: 0,
             left: 0,
             right: 0,
-            padding: '20px 24px 28px',
+            padding: '20px 24px calc(env(safe-area-inset-bottom, 0px) + 28px)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -788,7 +788,7 @@ function BackButton({ onClick, absolute = false }) {
       aria-label="Retour"
       style={{
         position: absolute ? 'absolute' : 'relative',
-        top: absolute ? 18 : 'auto',
+        top: absolute ? 'calc(env(safe-area-inset-top, 0px) + 12px)' : 'auto',
         left: absolute ? 12 : 'auto',
         appearance: 'none',
         background: 'transparent',
@@ -825,7 +825,7 @@ function CloseButton({ onClick, inline = false }) {
       aria-label="Fermer"
       style={{
         position: inline ? 'relative' : 'absolute',
-        top: inline ? 'auto' : 12,
+        top: inline ? 'auto' : 'calc(env(safe-area-inset-top, 0px) + 8px)',
         right: inline ? 'auto' : 12,
         width: 44,
         height: 44,

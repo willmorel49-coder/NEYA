@@ -180,7 +180,7 @@ export default function Aide({ onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '6px 12px 14px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 4px) 12px 14px',
           background:
             'linear-gradient(to bottom, var(--cream) 70%, rgba(251, 246, 232, 0))',
         }}

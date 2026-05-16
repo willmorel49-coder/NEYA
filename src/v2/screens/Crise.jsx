@@ -254,8 +254,8 @@ export default function Crise({ onClose }) {
           aria-label={musicPlaying ? 'Mettre la musique en pause' : 'Lancer la musique'}
           style={{
             appearance: 'none',
-            width: 40,
-            height: 40,
+            width: 44,
+            height: 44,
             borderRadius: '50%',
             background: 'rgba(251, 246, 232, 0.16)',
             border: '1px solid rgba(251, 246, 232, 0.48)',
@@ -267,7 +267,7 @@ export default function Crise({ onClose }) {
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
             WebkitTapHighlightColor: 'transparent',
-            fontSize: 13,
+            fontSize: 14,
             padding: 0,
             flexShrink: 0,
           }}
@@ -283,8 +283,8 @@ export default function Crise({ onClose }) {
           aria-label="Appeler le 3114"
           style={{
             appearance: 'none',
-            padding: '10px 18px',
-            minHeight: 40,
+            padding: '12px 18px',
+            minHeight: 44,
             background: 'rgba(251, 246, 232, 0.94)',
             border: 'none',
             borderRadius: 999,

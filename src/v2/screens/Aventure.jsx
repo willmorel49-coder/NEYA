@@ -268,7 +268,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             zIndex: 3,
           }}
         >
-          <span style={{ width: 32, height: 32 }} />
+          <span style={{ width: 44, height: 44 }} />
           <div aria-hidden style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
             <svg width="22" height="14" viewBox="0 0 44 28" fill="none" aria-hidden>
               <path d="M22 26 C 8 18, 4 8, 22 2 C 40 8, 36 18, 22 26 Z" stroke="#FBF6E8" strokeWidth="0.8" fill="none" opacity="0.92" />
@@ -286,8 +286,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             aria-label="Personnaliser mon aventure"
             style={{
               appearance: 'none',
-              width: 32,
-              height: 32,
+              width: 44,
+              height: 44,
               background: 'rgba(251, 246, 232, 0.08)',
               border: '0.5px solid rgba(251, 246, 232, 0.22)',
               borderRadius: '50%',
@@ -299,7 +299,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               backdropFilter: 'blur(8px)',
               WebkitBackdropFilter: 'blur(8px)',
               WebkitTapHighlightColor: 'transparent',
-              fontSize: 14,
+              fontSize: 16,
               padding: 0,
             }}
           >
@@ -494,8 +494,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               display: 'flex',
               alignItems: 'center',
               gap: 12,
-              padding: '10px 14px',
-              minHeight: 44,
+              padding: '8px 8px 8px 8px',
+              minHeight: 56,
               background: 'rgba(251, 246, 232, 0.06)',
               border: '0.5px solid rgba(251, 246, 232, 0.12)',
               borderRadius: 999,
@@ -508,8 +508,8 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               aria-label={musicPlaying ? 'Pause' : 'Lancer'}
               style={{
                 appearance: 'none',
-                width: 32,
-                height: 32,
+                width: 44,
+                height: 44,
                 borderRadius: '50%',
                 background: accent,
                 color: '#FBF6E8',
@@ -520,7 +520,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
                 justifyContent: 'center',
                 flexShrink: 0,
                 padding: 0,
-                fontSize: 11,
+                fontSize: 13,
                 WebkitTapHighlightColor: 'transparent',
               }}
             >
@@ -529,6 +529,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             <span
               style={{
                 flex: 1,
+                paddingRight: 14,
                 fontFamily: 'var(--font-display)',
                 fontStyle: 'italic',
                 fontVariationSettings: 'var(--fraunces-italic-soft)',

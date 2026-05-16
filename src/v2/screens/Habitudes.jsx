@@ -193,7 +193,7 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
         aria-label="Retour"
         style={{
           position: 'absolute',
-          top: 18,
+          top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
           left: 12,
           appearance: 'none',
           background: 'transparent',
@@ -227,7 +227,7 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
         aria-label="Fermer"
         style={{
           position: 'absolute',
-          top: 12,
+          top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
           right: 12,
           width: 44,
           height: 44,
@@ -256,7 +256,7 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
           position: 'relative',
           height: '100%',
           overflowY: 'auto',
-          padding: '64px 22px 40px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 80px) 22px calc(env(safe-area-inset-bottom, 0px) + 40px)',
           boxSizing: 'border-box',
           zIndex: 1,
         }}

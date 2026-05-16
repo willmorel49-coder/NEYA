@@ -198,13 +198,17 @@ export default function Tour({ onClose }) {
         type="button"
         data-press
         onClick={skip}
+        aria-label="Passer la visite"
         style={{
           position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 18px)',
-          right: 18,
+          top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
+          right: 12,
           background: 'transparent',
           border: 'none',
-          padding: '6px 10px',
+          padding: '12px 14px',
+          minWidth: 44,
+          minHeight: 44,
+          cursor: 'pointer',
           color: 'var(--cream)',
           opacity: 0.62,
           fontFamily: 'var(--font-ui)',
@@ -212,6 +216,7 @@ export default function Tour({ onClose }) {
           fontWeight: 500,
           letterSpacing: '0.222em',
           textTransform: 'uppercase',
+          WebkitTapHighlightColor: 'transparent',
         }}
       >
         Passer
@@ -352,7 +357,9 @@ export default function Tour({ onClose }) {
                 fontWeight: 500,
                 letterSpacing: 'var(--tracking-caps)',
                 textTransform: 'uppercase',
-                padding: '6px 8px',
+                padding: '12px 14px',
+                minHeight: 44,
+                minWidth: 44,
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
               }}
