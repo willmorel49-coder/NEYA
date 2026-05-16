@@ -10,6 +10,8 @@ import { WORLDS } from '../worlds';
 import { getProfile, setProfile, patchProfile, haptic, ls } from '../state';
 import Button from '../../components/Button';
 import ActionSheet from '../../components/ActionSheet';
+import BlurFade from '../../components/BlurFade';
+import useNumberTicker from '../hooks/useNumberTicker';
 import Carnet from './Carnet';
 import MoodTracker from './MoodTracker';
 import Souvenirs from './Souvenirs';
@@ -541,7 +543,7 @@ export default function Cocon() {
 
           {/* ═══ TON CHEMIN ═══ */}
           <SectionTitle accent={accent} style={{ marginTop: 36 }}>Ton chemin</SectionTitle>
-          <div
+          <BlurFade
             style={{
               background: 'rgba(255, 252, 245, 0.74)',
               backdropFilter: 'blur(14px)',
@@ -570,7 +572,7 @@ export default function Cocon() {
               <MiniStat label="minutes" value={profile.progress?.minutesTotales || 0} accent={accent} />
               <MiniStat label="mondes" value={profile.progress?.worldsExplored?.length || 1} accent={accent} />
             </div>
-          </div>
+          </BlurFade>
 
           {/* ═══ RÉGLAGES (accordion) ═══ */}
           <button
@@ -1190,6 +1192,7 @@ function ValueButton({ onClick, children }) {
 }
 
 function MiniStat({ label, value, accent }) {
+  const animated = useNumberTicker({ target: Number(value) || 0, duration: 1100 });
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <span
@@ -1203,7 +1206,7 @@ function MiniStat({ label, value, accent }) {
           lineHeight: 1,
         }}
       >
-        {value}
+        {animated}
       </span>
       <span className="neya-mark" style={{ color: 'var(--content-tertiary)', fontSize: 9 }}>{label}</span>
     </div>
