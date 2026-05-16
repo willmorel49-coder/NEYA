@@ -13,6 +13,7 @@ import BreathingPause from './BreathingPause';
 import CoconAmbiance from './CoconAmbiance';
 import Musique, { getTrackCover } from './Musique';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import Blobs from '../../components/Blobs';
 
 const TOTEMS = [
   { key: 'lion',    label: 'Lion blanc',    world: 'foret' },
@@ -186,7 +187,8 @@ export default function Cocon() {
       }}
       data-world={currentTotem.world}
     >
-      {/* Painterly bg plein écran */}
+      <Blobs variant="rose-violet" />
+      {/* Painterly bg plein écran (atténué pour laisser respirer la palette V3) */}
       <div
         aria-hidden
         style={{
@@ -197,6 +199,7 @@ export default function Cocon() {
           backgroundPosition: 'center',
           animation: 'cocon-bg-ken-burns 28s ease-in-out infinite alternate',
           willChange: 'transform',
+          opacity: 0.18,
         }}
       />
 

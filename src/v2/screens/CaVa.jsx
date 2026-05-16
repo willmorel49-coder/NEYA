@@ -19,6 +19,7 @@
 import { useState, useCallback } from 'react';
 import { haptic } from '../state';
 import CaVaPhotoViewer from './CaVaPhotoViewer';
+import Blobs from '../../components/Blobs';
 
 const TOTAL = 120;
 const PHOTO = (n) => `/cava/brand/cava-${String(n).padStart(3, '0')}.jpg`;
@@ -49,13 +50,14 @@ export default function CaVa() {
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'rgba(255,255,255,0.65)',
-          color: 'var(--cava-ink, #1a1a2f)',
+          background: 'var(--bg)',
+          color: 'var(--blue-900)',
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
         }}
       >
+        <Blobs variant="rose-blue" />
         <TopBar />
         <Hero />
         <Pourquoi />

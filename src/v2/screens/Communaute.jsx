@@ -22,6 +22,7 @@ import {
 import ActionSheet from '../../components/ActionSheet';
 import Cercle from './Cercle';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import Blobs from '../../components/Blobs';
 
 /* ─── Données ─── */
 
@@ -210,10 +211,11 @@ export default function Communaute() {
         overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        background: 'rgba(255,255,255,0.65)',
+        background: 'var(--bg)',
       }}
       data-world="communaute"
     >
+      <Blobs variant="blue-rose" />
       {/* HERO painterly */}
       <section
         style={{

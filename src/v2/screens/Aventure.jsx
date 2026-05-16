@@ -28,6 +28,7 @@ const AVENTURES_BY_MONDE = {
   oasis: AVENTURE_OASIS,
 };
 import CoconAmbiance from './CoconAmbiance';
+import Blobs from '../../components/Blobs';
 import LeconReader from './LeconReader';
 import RituelPlayer from './RituelPlayer';
 import MondeReader from './MondeReader';
@@ -305,6 +306,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
       }}
       data-world={currentTotem.world}
     >
+      <Blobs variant="rose-blue" />
       {/* HERO painterly */}
       <div
         style={{
