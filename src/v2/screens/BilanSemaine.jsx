@@ -1,114 +1,116 @@
 /* ============================================================
-   ÇA VA ? V2 — Bilan de la semaine (overlay contemplatif hebdo)
+   ÇA VA ? — Bilan de la semaine (DA V3 · bleu / rose / glass)
    ============================================================
-   4 questions plus profondes que le Bilan du soir.
-   Posées une à une, sans analyse, sans comparaison.
-   Weekly-lock : un seul bilan par semaine (lundi → dimanche).
-   Persist via saveBilanSemaine() (state.js).
+   Refonte selon /NOUVELLE DA/CLAUDE.md
+   · Bg var(--bg) + <Blobs variant="blue-rose" />
+   · Topbar back + titre Cormorant italic
+   · 7 cards journées (glass, radius 16)
+   · Stat numbers Inter 600/24px var(--blue-700)
+   · Graphique bars gradient var(--gradient-main)
+   · CTA "Terminer la semaine" gradient bleu full-width 50px radius
    ============================================================ */
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   haptic,
+  getProfile,
   saveBilanSemaine,
   hasSeenBilanSemaineThisWeek,
 } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import Blobs from '../../components/Blobs';
 
-const TILLEUL = '#d4e08c';
-// Le vrai terracotta D.A. (#9F584C → 4.7:1 sur cream). #c29051 = ochre (FAIL 2.7:1).
-const TERRACOTTA = '#9F584C';
+/* ─── Helpers semaine ──────────────────────────────────────── */
 
-const QUESTIONS = [
-  {
-    id: 'highlight',
-    eyebrow: "L'INSTANT",
-    title: 'Un moment de la semaine qui t’a touché·e ?',
-    type: 'text',
-    placeholder: 'Une scène, un visage, une lumière…',
-  },
-  {
-    id: 'difficulty',
-    eyebrow: 'CE QUI A PESÉ',
-    title: 'Qu’est-ce qui a été difficile ?',
-    type: 'text',
-    placeholder: 'Sans masque. Pour toi.',
-  },
-  {
-    id: 'learning',
-    eyebrow: 'CE QUE TU AS APPRIS',
-    title: 'Une chose que tu portes différemment maintenant ?',
-    type: 'text',
-    placeholder: 'Petite ou grande, peu importe.',
-  },
-  {
-    id: 'next',
-    eyebrow: 'LA SEMAINE QUI VIENT',
-    title: 'Que veux-tu offrir à la semaine prochaine ?',
-    type: 'choice',
-    choices: [
-      { value: 'douceur',   label: 'De la douceur',   glyph: '✿' },
-      { value: 'courage',   label: 'Du courage',      glyph: '✦' },
-      { value: 'patience',  label: 'De la patience',  glyph: '◯' },
-      { value: 'curiosite', label: 'De la curiosité', glyph: '△' },
-    ],
-  },
-];
+const DAY_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const DAY_FULL = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+
+function startOfWeek(d = new Date()) {
+  const date = new Date(d);
+  const day = date.getDay() || 7;
+  date.setDate(date.getDate() - (day - 1));
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function isoDate(d) {
+  return d.toISOString().split('T')[0];
+}
+
+/* Compte par jour de la semaine courante : rituels faits + présence (lastVisit). */
+function buildWeekData(profile) {
+  const start = startOfWeek();
+  const av = profile?.aventure || {};
+  const rituelsFaits = av.rituelsFaits || {};
+
+  // Carte ISO date -> nb rituels faits ce jour
+  const ritualsByDay = {};
+  Object.values(rituelsFaits).forEach((r) => {
+    if (!r || !r.lastDoneAt) return;
+    const k = isoDate(new Date(r.lastDoneAt));
+    ritualsByDay[k] = (ritualsByDay[k] || 0) + 1;
+  });
+
+  const lastVisitISO = profile?.progress?.lastVisit;
+
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    const key = isoDate(d);
+    const today = isoDate(new Date());
+    const rituels = ritualsByDay[key] || 0;
+    const visited = lastVisitISO === key || rituels > 0;
+    const isToday = key === today;
+    const isPast = d.getTime() < new Date(today).getTime();
+    days.push({
+      index: i,
+      label: DAY_LABELS[i],
+      full: DAY_FULL[i],
+      rituels,
+      visited,
+      isToday,
+      isPast,
+      key,
+    });
+  }
+  return days;
+}
+
+/* ─── Composant principal ──────────────────────────────────── */
 
 export default function BilanSemaine({ onClose }) {
+  const profile = getProfile();
   const alreadyDone = hasSeenBilanSemaineThisWeek();
 
-  const [qIdx, setQIdx] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [currentText, setCurrentText] = useState('');
-  const [reveal, setReveal] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
-  const [fadingQ, setFadingQ] = useState(false);
-  const textRef = useRef(null);
   const aliveRef = useRef(true);
-  const timeoutsRef = useRef([]);
+  const timersRef = useRef([]);
+
+  const weekData = buildWeekData(profile);
+
+  const totalRituels = weekData.reduce((s, d) => s + d.rituels, 0);
+  const joursPresents = weekData.filter((d) => d.visited).length;
+  const maxRituels = Math.max(1, ...weekData.map((d) => d.rituels));
 
   const safeTimeout = (fn, ms) => {
     const id = setTimeout(() => {
       if (aliveRef.current) fn();
     }, ms);
-    timeoutsRef.current.push(id);
+    timersRef.current.push(id);
     return id;
   };
 
-  const q = QUESTIONS[qIdx];
-  const isLast = qIdx === QUESTIONS.length - 1;
-
-  // Slide-up reveal + unmount cleanup
   useEffect(() => {
-    const id = requestAnimationFrame(() => setMounted(true));
+    const raf = requestAnimationFrame(() => setMounted(true));
     return () => {
-      cancelAnimationFrame(id);
+      cancelAnimationFrame(raf);
       aliveRef.current = false;
-      timeoutsRef.current.forEach((t) => clearTimeout(t));
-      timeoutsRef.current = [];
+      timersRef.current.forEach((t) => clearTimeout(t));
+      timersRef.current = [];
     };
   }, []);
-
-  // Autofocus textarea when a text question appears
-  useEffect(() => {
-    if (!alreadyDone && !reveal && q?.type === 'text') {
-      const existing = answers[q.id];
-      setCurrentText(typeof existing === 'string' ? existing : '');
-      const t = setTimeout(() => {
-        try { textRef.current?.focus(); } catch {}
-      }, 480);
-      return () => clearTimeout(t);
-    }
-  }, [qIdx, reveal, alreadyDone]); // eslint-disable-line
-
-  // Auto-close after reveal
-  useEffect(() => {
-    if (!reveal) return;
-    const t = setTimeout(() => doClose(), 4000);
-    return () => clearTimeout(t);
-  }, [reveal]); // eslint-disable-line
 
   const doClose = () => {
     if (closing) return;
@@ -117,646 +119,496 @@ export default function BilanSemaine({ onClose }) {
     safeTimeout(() => onClose?.(), 420);
   };
 
-  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  const handleFinishWeek = () => {
+    haptic([4, 30, 4]);
+    try {
+      saveBilanSemaine({
+        totalRituels,
+        joursPresents,
+        weekStart: weekData[0]?.key,
+        days: weekData.map((d) => ({ key: d.key, rituels: d.rituels, visited: d.visited })),
+      });
+    } catch {
+      // silencieux : pas de blocage UX
+    }
+    safeTimeout(() => doClose(), 240);
+  };
+
   const { dialogProps, containerRef } = useStandardOverlay({
     open: !closing,
     onClose: doClose,
     labelText: 'Bilan de la semaine',
   });
 
-  const commitAnswers = (finalAnswers) => {
-    try { saveBilanSemaine(finalAnswers); } catch {}
-  };
-
-  const advanceFrom = (value) => {
-    const nextAnswers = { ...answers, [q.id]: value };
-    setAnswers(nextAnswers);
-    haptic([4, 30, 4]);
-
-    if (isLast) {
-      commitAnswers(nextAnswers);
-      setFadingQ(true);
-      safeTimeout(() => setReveal(true), 320);
-      return;
-    }
-
-    setFadingQ(true);
-    safeTimeout(() => {
-      const ni = qIdx + 1;
-      setQIdx(ni);
-      setCurrentText('');
-      setFadingQ(false);
-    }, 220);
-  };
-
-  const handleChoice = (val) => {
-    if (q.type !== 'choice') return;
-    advanceFrom(val);
-  };
-
-  const handleNextText = () => {
-    if (q.type !== 'text') return;
-    const val = (currentText || '').trim();
-    advanceFrom(val);
-  };
-
-  const handleSkipWeek = () => {
-    haptic(2);
-    commitAnswers(answers);
-    setFadingQ(true);
-    safeTimeout(() => setReveal(true), 280);
-  };
-
-  // ============================================================
-  // Weekly lock screen
-  // ============================================================
-  if (alreadyDone && !reveal) {
-    return (
-      <div
-        ref={containerRef}
-        {...dialogProps}
-        className="wash-montagne"
-        style={overlayStyle({ mounted, closing })}
-      >
-        <BackButton onClick={doClose} absolute />
-        <CloseButton onClick={doClose} />
-        <div style={centerWrap}>
-          <div
-            style={{
-              fontFamily: '"Sora", system-ui, sans-serif',
-              fontSize: 9,
-              fontWeight: 500,
-              letterSpacing: '0.222em',
-              textTransform: 'uppercase',
-              color: TERRACOTTA,
-              marginBottom: 14,
-            }}
-          >
-            BILAN DE LA SEMAINE
-          </div>
-          <div
-            style={{
-              fontFamily: '"Fraunces", Georgia, serif',
-              fontStyle: 'italic',
-              fontWeight: 400,
-              fontSize: 24,
-              lineHeight: 1.3,
-              color: 'var(--ink)',
-              maxWidth: 320,
-              margin: '0 auto 14px',
-            }}
-          >
-            «&nbsp;Tu as déjà posé ta semaine.&nbsp;»
-          </div>
-          <div
-            style={{
-              fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: 14,
-              color: 'var(--content-secondary)',
-              lineHeight: 1.5,
-            }}
-          >
-            À dimanche prochain.
-          </div>
-          <button
-            type="button"
-            data-press
-            onClick={doClose}
-            style={{
-              marginTop: 32,
-              appearance: 'none',
-              border: 'none',
-              background: 'transparent',
-              color: 'var(--content-secondary)',
-              padding: '14px 22px',
-              minHeight: 44,
-              fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: 14,
-              fontWeight: 400,
-              cursor: 'pointer',
-              textDecoration: 'underline',
-              textDecorationColor: 'var(--hairline-strong)',
-              textUnderlineOffset: '3px',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            Fermer
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ============================================================
-  // Main flow
-  // ============================================================
   return (
     <div
       ref={containerRef}
       {...dialogProps}
-      className="wash-montagne"
-      style={overlayStyle({ mounted, closing })}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 200,
+        background: 'var(--bg)',
+        color: 'var(--text-primary)',
+        transform: closing
+          ? 'translateY(100%)'
+          : mounted
+            ? 'translateY(0)'
+            : 'translateY(100%)',
+        opacity: closing ? 0 : mounted ? 1 : 0,
+        transition:
+          'transform 420ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        WebkitFontSmoothing: 'antialiased',
+      }}
     >
-      {/* Halo terracotta — recul, perspective */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: '-30%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '140%',
-          height: '65%',
-          background:
-            'radial-gradient(ellipse at center, rgba(194, 144, 81, 0.10) 0%, transparent 65%)',
-          pointerEvents: 'none',
-        }}
-      />
+      {/* Décor */}
+      <Blobs variant="blue-rose" />
 
-      {/* Top bar */}
+      {/* Topbar */}
       <div
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          padding: 'calc(env(safe-area-inset-top, 0px) + 4px) 12px 14px',
+          position: 'relative',
+          zIndex: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          zIndex: 3,
+          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 16px 10px',
+          flexShrink: 0,
         }}
       >
-        <BackButton onClick={doClose} />
-        <div
+        <button
+          type="button"
+          data-press
+          onClick={doClose}
+          aria-label="Retour"
           style={{
-            fontFamily: '"Sora", system-ui, sans-serif',
-            fontSize: 9,
+            appearance: 'none',
+            background: 'transparent',
+            border: 'none',
+            color: 'var(--blue-700)',
+            cursor: 'pointer',
+            padding: '10px 14px 10px 4px',
+            minHeight: 44,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 12,
             fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: 'var(--content-tertiary)',
+            letterSpacing: '0.04em',
+            WebkitTapHighlightColor: 'transparent',
           }}
         >
-          BILAN DE LA SEMAINE
+          {'‹ Retour'}
+        </button>
+        <div
+          aria-hidden
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 10,
+            fontWeight: 500,
+            color: 'var(--text-muted)',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            paddingRight: 12,
+          }}
+        >
+          {'Semaine'}
         </div>
-        <CloseButton onClick={doClose} inline />
       </div>
 
-      {/* Progression dots */}
-      {!reveal && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 'calc(env(safe-area-inset-top, 0px) + 56px)',
-            left: 0,
-            right: 0,
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 6,
-            zIndex: 2,
-          }}
-        >
-          {QUESTIONS.map((_, i) => {
-            const isCurrent = i === qIdx;
-            const isPast = i < qIdx;
-            return (
-              <span
-                key={i}
-                aria-hidden
-                style={{
-                  display: 'inline-block',
-                  height: 3,
-                  width: isCurrent ? 20 : 8,
-                  borderRadius: 999,
-                  background: isPast
-                    ? TILLEUL
-                    : isCurrent
-                      ? 'var(--ink)'
-                      : 'transparent',
-                  border: isPast || isCurrent ? 'none' : '1px solid var(--hairline)',
-                  transition:
-                    'width 320ms var(--ease-out-ios), background 320ms var(--ease-out-ios)',
-                }}
-              />
-            );
-          })}
-        </div>
-      )}
-
-      {/* Main zone */}
+      {/* Scrollable content */}
       <div
         style={{
-          position: 'absolute',
-          inset: 0,
-          padding: 'calc(env(safe-area-inset-top, 0px) + 104px) 24px calc(env(safe-area-inset-bottom, 0px) + 150px)',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
-          boxSizing: 'border-box',
+          position: 'relative',
           zIndex: 1,
+          flex: 1,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: '8px 20px calc(env(safe-area-inset-bottom, 0px) + 120px)',
         }}
       >
-        {!reveal && q && (
-          <div
+        <div style={{ maxWidth: 480, marginInline: 'auto' }}>
+          {/* Titre Cormorant italic 28–32 var(--blue-900) */}
+          <h1
             style={{
-              opacity: fadingQ ? 0 : 1,
-              transform: fadingQ ? 'translateY(6px)' : 'translateY(0)',
-              transition:
-                'opacity 220ms var(--ease-out-ios), transform 220ms var(--ease-out-ios)',
-              width: '100%',
-              maxWidth: 440,
+              margin: 0,
+              fontFamily: "'Cormorant Garamond', serif",
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 'clamp(28px, 7vw, 32px)',
+              lineHeight: 1.15,
+              letterSpacing: '-0.01em',
+              color: 'var(--blue-900)',
             }}
           >
-            {/* Eyebrow */}
+            {'Bilan de la semaine'}
+          </h1>
+
+          <div
+            style={{
+              marginTop: 8,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 300,
+              fontSize: 13,
+              lineHeight: 1.55,
+              color: 'var(--text-secondary)',
+              maxWidth: 360,
+            }}
+          >
+            {alreadyDone
+              ? 'Tu as déjà posé ta semaine. Voici ce qu’elle dit.'
+              : 'Voici ce que ta semaine raconte. Sans note. Sans jugement.'}
+          </div>
+
+          {/* Stats — deux cards glass */}
+          <div
+            style={{
+              marginTop: 22,
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 12,
+            }}
+          >
+            <StatCard label="Jours présent·e" value={joursPresents} />
+            <StatCard label="Rituels faits" value={totalRituels} />
+          </div>
+
+          {/* Graphique bars gradient var(--gradient-main) */}
+          <section
+            aria-label="Graphique de la semaine"
+            style={{
+              marginTop: 22,
+              padding: '20px 18px 16px',
+              borderRadius: 24,
+              background: 'var(--glass-bg, rgba(255,255,255,0.65))',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid var(--glass-border, rgba(255,255,255,0.85))',
+              boxShadow: 'var(--glass-shadow, 0 4px 24px rgba(10,36,56,0.07))',
+            }}
+          >
             <div
               style={{
-                fontFamily: '"Sora", system-ui, sans-serif',
+                fontFamily: "'Inter', sans-serif",
                 fontSize: 9,
                 fontWeight: 500,
-                letterSpacing: '0.222em',
+                letterSpacing: '0.22em',
                 textTransform: 'uppercase',
-                color: TERRACOTTA,
-                marginBottom: 16,
+                color: 'var(--blue-700)',
+                marginBottom: 14,
               }}
             >
-              {q.eyebrow}
+              {'Rythme de la semaine'}
             </div>
 
-            {/* Title */}
-            <h1
+            <div
               style={{
-                fontFamily: '"Fraunces", Georgia, serif',
-                fontStyle: 'italic',
-                fontWeight: 400,
-                fontSize: 'clamp(24px, 6vw, 30px)',
-                lineHeight: 1.22,
-                color: 'var(--ink)',
-                margin: '0 0 30px',
-                letterSpacing: '-0.005em',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(7, 1fr)',
+                alignItems: 'end',
+                gap: 8,
+                height: 96,
               }}
             >
-              {q.title}
-            </h1>
-
-            {/* Choice grid (2x2) or text */}
-            {q.type === 'choice' ? (
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  gap: 10,
-                  marginTop: 8,
-                }}
-              >
-                {q.choices.map((c) => (
-                  <button
-                    key={c.value}
-                    type="button"
-                    data-press
-                    onClick={() => handleChoice(c.value)}
+              {weekData.map((d) => {
+                const ratio = d.rituels > 0 ? d.rituels / maxRituels : 0;
+                const height = Math.max(d.rituels > 0 ? 14 : 4, ratio * 84);
+                return (
+                  <div
+                    key={d.key}
                     style={{
-                      appearance: 'none',
-                      cursor: 'pointer',
-                      WebkitTapHighlightColor: 'transparent',
-                      padding: '18px 14px',
-                      borderRadius: 18,
-                      border: '1px solid var(--hairline)',
-                      background: 'rgba(255, 252, 245, 0.55)',
-                      backdropFilter: 'blur(10px)',
-                      WebkitBackdropFilter: 'blur(10px)',
-                      boxShadow: '0 1px 2px rgba(26, 26, 47, 0.04)',
-                      color: 'var(--ink)',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 8,
-                      minHeight: 72,
-                      transition:
-                        'transform 200ms var(--ease-out-ios), background 200ms var(--ease-out-ios)',
+                      gap: 6,
+                      height: '100%',
+                      justifyContent: 'flex-end',
                     }}
                   >
-                    {c.glyph && (
-                      <span
-                        aria-hidden
-                        style={{
-                          fontFamily: '"Sora", system-ui, sans-serif',
-                          fontSize: 22,
-                          lineHeight: 1,
-                          color: TERRACOTTA,
-                        }}
-                      >
-                        {c.glyph}
-                      </span>
-                    )}
-                    <span
+                    <div
+                      aria-label={`${d.full} : ${d.rituels} rituel${d.rituels > 1 ? 's' : ''}`}
                       style={{
-                        fontFamily: '"Sora", system-ui, sans-serif',
-                        fontSize: 14,
-                        fontWeight: 500,
-                        letterSpacing: '0.005em',
+                        width: '100%',
+                        maxWidth: 22,
+                        height,
+                        borderRadius: 8,
+                        background:
+                          d.rituels > 0
+                            ? 'var(--gradient-main, linear-gradient(135deg,#1A5A7F,#7F5A8A,#C87090))'
+                            : 'rgba(26,90,127,0.10)',
+                        transition: 'height 360ms cubic-bezier(0.16, 1, 0.3, 1)',
+                      }}
+                    />
+                    <div
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: 10,
+                        fontWeight: d.isToday ? 600 : 400,
+                        color: d.isToday
+                          ? 'var(--blue-700)'
+                          : 'var(--text-muted)',
+                        letterSpacing: '0.06em',
                       }}
                     >
-                      {c.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div style={{ position: 'relative', width: '100%' }}>
-                <textarea
-                  ref={textRef}
-                  rows={4}
-                  value={currentText}
-                  onChange={(e) => setCurrentText(e.target.value.slice(0, 280))}
-                  placeholder={q.placeholder}
-                  style={{
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    padding: '16px 18px',
-                    borderRadius: 16,
-                    border: '1px solid var(--hairline)',
-                    background: 'rgba(255, 252, 245, 0.62)',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)',
-                    fontFamily: 'Inter, system-ui, sans-serif',
-                    fontSize: 14,
-                    lineHeight: 1.55,
-                    color: 'var(--ink)',
-                    resize: 'none',
-                    outline: 'none',
-                    textAlign: 'left',
-                    boxShadow: '0 1px 2px rgba(26, 26, 47, 0.04)',
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: 8,
-                    right: 12,
-                    fontFamily: 'Inter, system-ui, sans-serif',
-                    fontSize: 10,
-                    color: 'var(--content-tertiary)',
-                    fontVariantNumeric: 'tabular-nums',
-                    pointerEvents: 'none',
-                  }}
-                >
-                  {(currentText || '').length}/280
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+                      {d.label}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
 
-        {/* Final reveal */}
-        {reveal && (
-          <div
-            style={{
-              opacity: 1,
-              animation: 'fadeIn 600ms var(--ease-out-ios) both',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 18,
-              maxWidth: 340,
-            }}
+          {/* 7 cards journées glass radius 16 */}
+          <section
+            aria-label="Détail des journées"
+            style={{ marginTop: 22 }}
           >
             <div
-              className="tilleul-pop"
               style={{
-                fontFamily: '"Fraunces", Georgia, serif',
-                fontStyle: 'italic',
-                fontSize: 56,
-                lineHeight: 1,
-                color: TILLEUL,
-              }}
-            >
-              ✓
-            </div>
-            <div
-              style={{
-                fontFamily: '"Fraunces", Georgia, serif',
-                fontStyle: 'italic',
-                fontWeight: 400,
-                fontSize: 26,
-                lineHeight: 1.25,
-                color: 'var(--ink)',
-                margin: 0,
-              }}
-            >
-              «&nbsp;Tu peux laisser la semaine se déposer.&nbsp;»
-            </div>
-            <div
-              style={{
-                fontFamily: 'Inter, system-ui, sans-serif',
-                fontSize: 14,
-                color: 'var(--content-secondary)',
-                lineHeight: 1.55,
-              }}
-            >
-              Ta semaine est posée. Le prochain dimanche, on recommencera.
-            </div>
-            <div
-              style={{
-                marginTop: 8,
-                fontFamily: '"Sora", system-ui, sans-serif',
+                fontFamily: "'Inter', sans-serif",
                 fontSize: 9,
                 fontWeight: 500,
-                letterSpacing: '0.222em',
+                letterSpacing: '0.22em',
                 textTransform: 'uppercase',
-                color: TERRACOTTA,
+                color: 'var(--blue-700)',
+                marginBottom: 12,
               }}
             >
-              BONNE SEMAINE
+              {'Tes 7 journées'}
             </div>
-          </div>
-        )}
-      </div>
 
-      {/* Bottom actions */}
-      {!reveal && (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            padding: '20px 24px calc(env(safe-area-inset-bottom, 0px) + 30px)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 10,
-            zIndex: 2,
-            background:
-              'linear-gradient(to top, rgba(255, 255, 255, 0.92), rgba(251, 246, 232, 0))',
-          }}
-        >
-          {q?.type === 'text' && (
-            <button
-              type="button"
-              data-press
-              onClick={handleNextText}
-              disabled={fadingQ}
+            <ul
               style={{
-                appearance: 'none',
-                cursor: 'pointer',
-                WebkitTapHighlightColor: 'transparent',
-                width: '100%',
-                maxWidth: 360,
-                padding: '14px 22px',
-                borderRadius: 999,
-                border: 'none',
-                background: 'var(--ink, #1a1a2f)',
-                color: 'var(--cream, #FBF6E8)',
-                fontFamily: '"Sora", system-ui, sans-serif',
-                fontSize: 14,
-                fontWeight: 500,
-                letterSpacing: '0.01em',
-                transition:
-                  'transform 200ms var(--ease-out-ios), opacity 200ms var(--ease-out-ios)',
-                opacity: fadingQ ? 0.6 : 1,
+                margin: 0,
+                padding: 0,
+                listStyle: 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 10,
               }}
             >
-              {isLast ? 'Garder ma semaine' : 'Suivant →'}
-            </button>
-          )}
+              {weekData.map((d) => (
+                <li
+                  key={d.key}
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: 16,
+                    background: 'var(--glass-bg, rgba(255,255,255,0.65))',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    border: d.isToday
+                      ? '1px solid var(--blue-300)'
+                      : '1px solid var(--glass-border, rgba(255,255,255,0.85))',
+                    boxShadow: 'var(--glass-shadow, 0 4px 24px rgba(10,36,56,0.07))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 14,
+                  }}
+                >
+                  <div
+                    aria-hidden
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: d.visited
+                        ? 'var(--gradient-blue, linear-gradient(135deg,#1A5A7F,#2A8ABF))'
+                        : 'transparent',
+                      border: d.visited
+                        ? 'none'
+                        : '1px solid var(--blue-300)',
+                      color: d.visited ? '#fff' : 'var(--blue-500)',
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      letterSpacing: '0.04em',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {d.label}
+                  </div>
 
-          <button
-            type="button"
-            data-press
-            onClick={handleSkipWeek}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: 13,
+                        fontWeight: 500,
+                        color: 'var(--blue-900)',
+                      }}
+                    >
+                      {d.full}
+                      {d.isToday && (
+                        <span
+                          style={{
+                            marginLeft: 8,
+                            fontFamily: "'Inter', sans-serif",
+                            fontSize: 9,
+                            fontWeight: 500,
+                            letterSpacing: '0.18em',
+                            textTransform: 'uppercase',
+                            color: 'var(--rose-700)',
+                          }}
+                        >
+                          {'aujourd’hui'}
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        marginTop: 2,
+                        fontFamily: "'Inter', sans-serif",
+                        fontWeight: 300,
+                        fontSize: 12,
+                        color: 'var(--text-secondary)',
+                      }}
+                    >
+                      {d.visited
+                        ? d.rituels > 0
+                          ? `${d.rituels} rituel${d.rituels > 1 ? 's' : ''}`
+                          : 'Présent·e'
+                        : 'Pas de trace'}
+                    </div>
+                  </div>
+
+                  <div
+                    aria-hidden
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: 24,
+                      fontWeight: 600,
+                      color: d.rituels > 0 ? 'var(--blue-700)' : 'var(--text-muted)',
+                      fontVariantNumeric: 'tabular-nums',
+                      minWidth: 24,
+                      textAlign: 'right',
+                    }}
+                  >
+                    {d.rituels}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Mot de la fin */}
+          <div
             style={{
-              appearance: 'none',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              border: 'none',
-              background: 'transparent',
-              padding: '12px 18px',
-              minHeight: 44,
-              fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: 13,
-              color: 'var(--content-secondary)',
-              textDecoration: 'underline',
-              textDecorationColor: 'var(--hairline-strong)',
-              textUnderlineOffset: '3px',
+              marginTop: 24,
+              padding: '18px 18px',
+              borderRadius: 24,
+              background: 'var(--glass-bg, rgba(255,255,255,0.65))',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid var(--glass-border, rgba(255,255,255,0.85))',
+              boxShadow: 'var(--glass-shadow, 0 4px 24px rgba(10,36,56,0.07))',
+              fontFamily: "'Cormorant Garamond', serif",
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 20,
+              lineHeight: 1.35,
+              color: 'var(--blue-900)',
+              textAlign: 'center',
             }}
           >
-            Passer cette semaine
-          </button>
+            {'« Tu peux laisser la semaine se déposer. »'}
+          </div>
         </div>
-      )}
+      </div>
+
+      {/* CTA bas — Terminer la semaine */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 3,
+          padding: '14px 20px calc(env(safe-area-inset-bottom, 0px) + 18px)',
+          background:
+            'linear-gradient(to top, rgba(238,243,248,0.96), rgba(238,243,248,0))',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <button
+          type="button"
+          data-press
+          onClick={handleFinishWeek}
+          disabled={closing}
+          style={{
+            appearance: 'none',
+            cursor: closing ? 'default' : 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            width: '100%',
+            maxWidth: 440,
+            height: 50,
+            borderRadius: 50,
+            border: 'none',
+            background:
+              'var(--gradient-blue, linear-gradient(135deg,#1A5A7F,#2A8ABF))',
+            color: '#fff',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            boxShadow: '0 8px 24px rgba(26,90,127,0.30)',
+            transition:
+              'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+            opacity: closing ? 0.6 : 1,
+          }}
+        >
+          {alreadyDone ? 'Fermer' : 'Terminer la semaine'}
+        </button>
+      </div>
     </div>
   );
 }
 
-/* ============================================================
-   Helpers
-   ============================================================ */
+/* ─── Sous-composants ──────────────────────────────────────── */
 
-function overlayStyle({ mounted, closing }) {
-  const transform = closing
-    ? 'translateY(100%)'
-    : mounted
-      ? 'translateY(0)'
-      : 'translateY(100%)';
-  const opacity = closing ? 0 : mounted ? 1 : 0;
-  return {
-    position: 'absolute',
-    inset: 0,
-    zIndex: 80,
-    background: 'var(--cream, #FBF6E8)',
-    color: 'var(--ink)',
-    overflow: 'hidden',
-    opacity,
-    transform,
-    transition:
-      'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)',
-    WebkitFontSmoothing: 'antialiased',
-  };
-}
-
-const centerWrap = {
-  position: 'absolute',
-  inset: 0,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  textAlign: 'center',
-  padding: '60px 28px',
-  boxSizing: 'border-box',
-};
-
-function BackButton({ onClick, absolute = false }) {
+function StatCard({ label, value }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      data-press
-      aria-label="Retour"
+    <div
       style={{
-        position: absolute ? 'absolute' : 'relative',
-        top: absolute ? 'calc(env(safe-area-inset-top, 0px) + 12px)' : 'auto',
-        left: absolute ? 12 : 'auto',
-        appearance: 'none',
-        background: 'transparent',
-        border: 'none',
-        cursor: 'pointer',
-        padding: '12px 14px',
-        minWidth: 44,
-        minHeight: 44,
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 4,
-        fontFamily: '"Sora", system-ui, sans-serif',
-        fontSize: 11,
-        fontWeight: 500,
-        letterSpacing: '0.18em',
-        textTransform: 'uppercase',
-        color: 'var(--content-tertiary)',
-        zIndex: 4,
-        WebkitTapHighlightColor: 'transparent',
+        padding: '14px 16px',
+        borderRadius: 16,
+        background: 'var(--glass-bg, rgba(255,255,255,0.65))',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid var(--glass-border, rgba(255,255,255,0.85))',
+        boxShadow: 'var(--glass-shadow, 0 4px 24px rgba(10,36,56,0.07))',
       }}
     >
-      <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
-      Retour
-    </button>
-  );
-}
-
-function CloseButton({ onClick, inline = false }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      data-press
-      aria-label="Fermer"
-      style={{
-        position: inline ? 'relative' : 'absolute',
-        top: inline ? 'auto' : 'calc(env(safe-area-inset-top, 0px) + 8px)',
-        right: inline ? 'auto' : 12,
-        width: 44,
-        height: 44,
-        borderRadius: '50%',
-        border: '1px solid var(--hairline)',
-        background: 'rgba(255, 255, 255, 0.78)',
-        color: 'var(--ink)',
-        fontSize: 15,
-        lineHeight: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        zIndex: 4,
-        WebkitTapHighlightColor: 'transparent',
-      }}
-    >
-      ✕
-    </button>
+      <div
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 9,
+          fontWeight: 500,
+          letterSpacing: '0.22em',
+          textTransform: 'uppercase',
+          color: 'var(--text-muted)',
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          marginTop: 6,
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 600,
+          fontSize: 24,
+          lineHeight: 1.1,
+          color: 'var(--blue-700)',
+          fontVariantNumeric: 'tabular-nums',
+        }}
+      >
+        {value}
+      </div>
+    </div>
   );
 }

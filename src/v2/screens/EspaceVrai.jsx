@@ -1,65 +1,87 @@
 /* ============================================================
-   ÇA VA ? V3 — EspaceVrai (RITUEL signature, LIGHT MODE)
+   ÇA VA ? V4 — EspaceVrai (RITUEL signature, LIGHT MODE refonte)
    ============================================================
    Espace de présence libre : 90s+ minimum, 5 min max.
    Pas de structure imposée — juste BE.
-   Ripples → patience texts (30s) → deep texts (90s).
    Long-press anywhere (800ms) → résumé rituel → onClose.
    ============================================================ */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { WORLDS } from '../worlds';
 import { getProfile, haptic, ls, addMinutes } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import Blobs from '../../components/Blobs';
 
-/* Totem → home world (pour récupérer l'accent selon archétype) */
-const TOTEM_HOME = {
-  lion: 'foret', ours: 'temple', aigle: 'oasis',
-  daim: 'lac', baleine: 'montagne', renard: 'communaute',
-};
-
-/* PATIENCE TEXTS — Fraunces italic, 30s window, fade 1.5s, hold 8s */
+/* PATIENCE TEXTS — Cormorant italic, 30s window, fade 1.5s, hold 8s */
 const PATIENCE_TEXTS = {
-  lion:    ['Tu peux rester.', 'C\'est calme ici.', 'Tu n\'es pas pressée.', 'Rien à prouver.'],
-  ours:    ['Pose-toi.', 'Le froid est dehors.', 'Ici c\'est doux.', 'Tu peux fondre.'],
-  aigle:   ['Tu vois tout.', 'Rien à attraper.', 'L\'air te porte.', 'Tu es libre.'],
-  daim:    ['Tu peux te poser.', 'L\'eau est calme.', 'La lune est là.', 'Tu peux ressentir.'],
-  baleine: ['Tu es immense.', 'Tu vois loin.', 'Le temps est lent.', 'Tu peux remonter.'],
-  renard:  ['Tu n\'es pas seule.', 'L\'aube vient.', 'Tu peux respirer.', 'Tu es vue.'],
+  lion:    ['Tu peux rester ici.', 'C’est calme, maintenant.', 'Tu n’es pas pressée.', 'Rien à prouver, ici.'],
+  ours:    ['Pose-toi, ici.', 'Le froid est dehors.', 'Ici, c’est doux.', 'Tu peux fondre, maintenant.'],
+  aigle:   ['Tu vois tout, d’ici.', 'Rien à attraper, maintenant.', 'L’air te porte, ici.', 'Tu es libre, ici.'],
+  daim:    ['Tu peux te poser ici.', 'L’eau est calme, maintenant.', 'La lune est là, présence douce.', 'Tu peux ressentir, ici.'],
+  baleine: ['Tu es immense, ici.', 'Tu vois loin, maintenant.', 'Le temps est lent, ici.', 'Tu peux remonter, doucement.'],
+  renard:  ['Tu n’es pas seule, ici.', 'L’aube vient, maintenant.', 'Tu peux respirer, ici.', 'Tu es vue, maintenant.'],
 };
 
 /* DEEP TEXTS — apparaissent à 90s, plus profonds */
 const DEEP_TEXTS = {
-  lion:    ['Tu as traversé.', 'Tu peux te reposer.', 'Tu es ici.'],
-  ours:    ['Tu n\'es plus seule.', 'Tu peux te livrer.', 'C\'est dedans.'],
-  aigle:   ['Tu vois clair.', 'Tu peux descendre.', 'Le soleil est là.'],
-  daim:    ['Tu peux pleurer.', 'L\'eau te porte.', 'Tu es douce.'],
-  baleine: ['Tu sais.', 'Tu peux laisser.', 'Le silence parle.'],
-  renard:  ['Tu reviens.', 'Le jour se lève.', 'Tu es légère.'],
+  lion:    ['Tu as traversé.', 'Tu peux te reposer, ici.', 'Tu es ici, maintenant.'],
+  ours:    ['Tu n’es plus seule.', 'Tu peux te livrer, ici.', 'C’est dedans, maintenant.'],
+  aigle:   ['Tu vois clair, maintenant.', 'Tu peux descendre, ici.', 'Le soleil est là.'],
+  daim:    ['Tu peux pleurer, ici.', 'L’eau te porte, maintenant.', 'Tu es douce, ici.'],
+  baleine: ['Tu sais, maintenant.', 'Tu peux laisser, ici.', 'Le silence parle, ici.'],
+  renard:  ['Tu reviens, ici.', 'Le jour se lève, maintenant.', 'Tu es légère, ici.'],
 };
+
+/* Mots-clés à passer en italique Cormorant à l’intérieur des phrases */
+const ITALIC_KEYWORDS = ['présence', 'ici', 'maintenant', 'doucement', 'silence', 'aube'];
 
 const MAX_SECONDS = 300; // 5 min cap
 const LONG_PRESS_MS = 800;
 
-export default function EspaceVrai({ worldKey = 'foret', onClose }) {
+/* Rendu d’une phrase avec mots-clés en italique Cormorant */
+function PhraseInter({ text }) {
+  /* Découpe en préservant la ponctuation autour des mots-clés */
+  const re = new RegExp(`(${ITALIC_KEYWORDS.join('|')})`, 'gi');
+  const parts = text.split(re);
+  return (
+    <span>
+      {parts.map((part, i) => {
+        const isKey = ITALIC_KEYWORDS.includes(part.toLowerCase());
+        if (isKey) {
+          return (
+            <em
+              key={i}
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontStyle: 'italic',
+                fontWeight: 300,
+                color: 'var(--blue-700)',
+              }}
+            >
+              {part}
+            </em>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </span>
+  );
+}
+
+export default function EspaceVrai({ worldKey, onClose }) {
+  /* worldKey conservé pour compat (non utilisé dans la nouvelle DA palette unifiée) */
+  void worldKey;
+
   const profile = getProfile();
   const totemKey = profile?.totem || 'lion';
-  /* Accent = accent du monde lié au totem de l'utilisateur, fallback worldKey */
-  const homeKey = TOTEM_HOME[totemKey] || worldKey;
-  const world = WORLDS[homeKey] || WORLDS[worldKey] || WORLDS.foret;
-  const accent = world.accent;
-  const accentRgb = world.accentRgb;
-  const wash = world.wash || 'wash-dawn';
 
   const [elapsed, setElapsed] = useState(0);
-  const [currentText, setCurrentText] = useState(null); // { text, fadeIn }
-  const [ripples, setRipples] = useState([0, 1, 2]); // ids initiaux phase 1
+  const [currentText, setCurrentText] = useState(null);
   const [longPressing, setLongPressing] = useState(false);
-  const [resume, setResume] = useState(null); // { minutes } | null
+  const [resume, setResume] = useState(null);
   const [exiting, setExiting] = useState(false);
 
   const elapsedRef = useRef(0);
-  const lastTextWindowRef = useRef(-1); // window index (par 30s)
+  const lastTextWindowRef = useRef(-1);
   const longPressTimerRef = useRef(null);
   const exitInFlightRef = useRef(false);
   const textFadeTimerRef = useRef(null);
@@ -67,7 +89,7 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
   const resumeFadeTimerRef = useRef(null);
   const closeTimerRef = useRef(null);
 
-  /* ============ Tick d'horloge ============ */
+  /* ============ Tick d’horloge ============ */
   useEffect(() => {
     const id = setInterval(() => {
       elapsedRef.current += 1;
@@ -88,25 +110,9 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ============ Ripples — phase 1 burst (0-3s) puis lent (toutes les 8s) ============ */
-  useEffect(() => {
-    let rippleId = 3;
-    /* Phase 1 : 3 ripples staggered tous les 800ms — déjà initialisés */
-    /* Après 3s : ripple toutes les 8s */
-    const slowInterval = setInterval(() => {
-      setRipples((r) => {
-        const next = [...r, rippleId++];
-        // keep last 3 only
-        return next.slice(-3);
-      });
-    }, 8000);
-    return () => clearInterval(slowInterval);
-  }, []);
-
   /* ============ Patience / Deep texts par fenêtre 30s ============ */
   useEffect(() => {
     const windowIndex = Math.floor(elapsed / 30);
-    /* Première patience window à 30s (windowIndex >= 1) */
     if (windowIndex >= 1 && windowIndex !== lastTextWindowRef.current) {
       lastTextWindowRef.current = windowIndex;
       const isDeep = elapsed >= 90;
@@ -115,7 +121,6 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
         : (PATIENCE_TEXTS[totemKey] || PATIENCE_TEXTS.lion);
       const pick = pool[Math.floor(Math.random() * pool.length)];
       setCurrentText({ text: pick, fadeIn: Date.now() });
-      /* Fade out après 8s — tracké dans ref pour survivre aux re-runs du useEffect */
       if (textFadeTimerRef.current) clearTimeout(textFadeTimerRef.current);
       textFadeTimerRef.current = setTimeout(() => {
         textFadeTimerRef.current = null;
@@ -124,7 +129,7 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
     }
   }, [elapsed, totemKey]);
 
-  /* Cleanup tous les timers au démontage */
+  /* Cleanup timers */
   useEffect(() => () => {
     if (textFadeTimerRef.current) { clearTimeout(textFadeTimerRef.current); textFadeTimerRef.current = null; }
     if (resumeHoldTimerRef.current) { clearTimeout(resumeHoldTimerRef.current); resumeHoldTimerRef.current = null; }
@@ -147,7 +152,6 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
     if (resume || exitInFlightRef.current) return;
     const mins = Math.floor(elapsedRef.current / 60);
     setResume({ minutes: mins });
-    /* fade in 600ms + hold 4000ms + fade out 600ms → finalize */
     resumeHoldTimerRef.current = setTimeout(() => {
       resumeHoldTimerRef.current = null;
       setExiting(true);
@@ -160,7 +164,6 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
 
   const handleClose = useCallback(() => {
     if (exitInFlightRef.current) return;
-    /* fade-out 280ms then onClose */
     setExiting(true);
     closeTimerRef.current = setTimeout(() => {
       closeTimerRef.current = null;
@@ -194,7 +197,7 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
     }
   }, []);
 
-  /* ============ Format counter (cap displayed : 1:30 target durant phase 2) ============ */
+  /* ============ Format counter ============ */
   const totalCap = MAX_SECONDS;
   const fmt = (s) => {
     const m = Math.floor(s / 60);
@@ -202,7 +205,6 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
     return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
   };
 
-  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
   const { dialogProps, containerRef } = useStandardOverlay({
     open: !exiting,
     onClose: handleClose,
@@ -213,15 +215,15 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
     <div
       ref={containerRef}
       {...dialogProps}
-      className={wash}
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 200,
-        color: 'var(--ink)',
+        background: 'var(--bg)',
+        color: 'var(--blue-900)',
         overflow: 'hidden',
         opacity: exiting ? 0 : 1,
-        transition: 'opacity 280ms var(--ease-out)',
+        transition: 'opacity 280ms ease-out',
         cursor: 'pointer',
         WebkitTapHighlightColor: 'transparent',
         userSelect: 'none',
@@ -235,13 +237,13 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
     >
       {/* Local keyframes */}
       <style>{`
-        @keyframes ev-ripple {
-          from { transform: translate(-50%, -50%) scale(0); opacity: 0.45; }
-          to   { transform: translate(-50%, -50%) scale(2);   opacity: 0;    }
+        @keyframes ev-pulse-rose {
+          0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.55; }
+          50%      { transform: translate(-50%, -50%) scale(1.10); opacity: 0.85; }
         }
-        @keyframes ev-pulse {
-          0%, 100% { transform: scale(1);    opacity: 0.55; }
-          50%      { transform: scale(1.06); opacity: 0.75; }
+        @keyframes ev-pulse-blue {
+          0%, 100% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.45; }
+          50%      { transform: translate(-50%, -50%) scale(1.18); opacity: 0.70; }
         }
         @keyframes ev-fadein {
           from { opacity: 0; transform: translateY(6px); }
@@ -255,18 +257,20 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
         }
         @keyframes ev-press-grow {
           from { transform: translate(-50%, -50%) scale(1);    opacity: 0.0; }
-          to   { transform: translate(-50%, -50%) scale(1.18); opacity: 0.55; }
+          to   { transform: translate(-50%, -50%) scale(1.18); opacity: 0.50; }
         }
       `}</style>
 
-      {/* Close button — top-right (44×44 tap target) */}
+      {/* Blobs décoratifs rose + violet */}
+      <Blobs variant="rose-violet" />
+
+      {/* Close button — top-right (44×44) glass */}
       <button
         type="button"
         aria-label="Fermer"
         onClick={(e) => { e.stopPropagation(); handleClose(); }}
         onMouseDown={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
-        data-press={true}
         style={{
           position: 'absolute',
           top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
@@ -274,11 +278,11 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
           width: 44,
           height: 44,
           borderRadius: '50%',
-          background: 'rgba(255, 252, 245, 0.78)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-          border: '0.5px solid rgba(26, 26, 47, 0.10)',
-          color: 'var(--ink)',
+          background: 'rgba(255, 255, 255, 0.65)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255, 255, 255, 0.85)',
+          color: 'var(--blue-900)',
           fontSize: 15,
           lineHeight: 1,
           cursor: 'pointer',
@@ -287,13 +291,13 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 4,
-          boxShadow: 'var(--shadow-soft)',
+          boxShadow: '0 4px 24px rgba(10,36,56,0.07)',
         }}
       >
         ✕
       </button>
 
-      {/* Phase 1 — title (0s-3s, fade out 3-5s) */}
+      {/* Hero — "Espace de présence" Cormorant italic */}
       <div
         style={{
           position: 'absolute',
@@ -302,40 +306,41 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
           right: 0,
           textAlign: 'center',
           padding: '0 28px',
-          opacity: elapsed < 6 ? 1 : 0,
-          transition: 'opacity 1200ms var(--ease-out)',
           pointerEvents: 'none',
           zIndex: 2,
         }}
       >
-        <div
+        <h1
           style={{
-            fontFamily: 'var(--font-display)',
+            margin: 0,
+            fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
-            fontSize: 'clamp(28px, 7vw, 38px)',
+            fontWeight: 300,
+            fontSize: 'clamp(36px, 9vw, 42px)',
             lineHeight: 1.15,
-            color: 'var(--ink)',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            animation: 'ev-fadein 1200ms var(--ease-out) both',
+            color: 'var(--blue-900)',
+            animation: 'ev-fadein 1200ms ease-out both',
           }}
         >
-          Espace de présence.
-        </div>
+          Espace de présence
+        </h1>
         <div
           style={{
-            marginTop: 10,
-            fontFamily: 'var(--font-body)',
+            marginTop: 14,
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 300,
+            fontStyle: 'italic',
             fontSize: 14,
-            color: 'var(--content-secondary)',
-            lineHeight: 1.5,
-            animation: 'ev-fadein 1400ms 200ms var(--ease-out) both',
+            color: 'var(--text-secondary)',
+            lineHeight: 1.6,
+            animation: 'ev-fadein 1400ms 200ms ease-out both',
           }}
         >
-          Pose-toi. Tu n'as rien à faire.
+          <PhraseInter text="Pose-toi ici. Tu n’as rien à faire, maintenant." />
         </div>
       </div>
 
-      {/* Ripples — emanate from center */}
+      {/* Cercles d’effet doux rose + bleu — pulse 6s */}
       <div
         style={{
           position: 'absolute',
@@ -347,45 +352,32 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
           zIndex: 1,
         }}
       >
-        {ripples.map((id, idx) => (
-          <span
-            key={id}
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              width: 180,
-              height: 180,
-              borderRadius: '50%',
-              border: `1px solid ${accent}`,
-              opacity: 0,
-              animation: `ev-ripple 3000ms linear ${idx * 800}ms forwards`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Center pulsating circle — apparait après 2s */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          pointerEvents: 'none',
-          zIndex: 1,
-          opacity: elapsed >= 2 ? 1 : 0,
-          transition: 'opacity 1600ms var(--ease-out)',
-        }}
-      >
+        {/* Cercle rose externe */}
         <div
           style={{
-            width: 120,
-            height: 120,
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: 280,
+            height: 280,
             borderRadius: '50%',
-            background: `radial-gradient(circle, ${accentRgb}, 0.28) 0%, ${accentRgb}, 0.10) 55%, transparent 80%)`,
-            animation: 'ev-pulse 4000ms var(--ease-in-out) infinite',
+            background: 'radial-gradient(circle, rgba(200,112,144,0.22) 0%, rgba(200,112,144,0.06) 55%, transparent 78%)',
+            filter: 'blur(8px)',
+            animation: 'ev-pulse-rose 6000ms ease-in-out infinite',
+          }}
+        />
+        {/* Cercle bleu interne décalé */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: 200,
+            height: 200,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(26,90,127,0.18) 0%, rgba(26,90,127,0.05) 55%, transparent 78%)',
+            filter: 'blur(6px)',
+            animation: 'ev-pulse-blue 6000ms ease-in-out infinite 1200ms',
           }}
         />
         {/* Long-press visual feedback */}
@@ -395,23 +387,23 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
               position: 'absolute',
               top: '50%',
               left: '50%',
-              width: 120,
-              height: 120,
+              width: 200,
+              height: 200,
               borderRadius: '50%',
-              border: `1px solid ${accent}`,
-              animation: `ev-press-grow ${LONG_PRESS_MS}ms var(--ease-out) forwards`,
+              border: '1px solid var(--rose-500)',
+              animation: `ev-press-grow ${LONG_PRESS_MS}ms ease-out forwards`,
             }}
           />
         )}
       </div>
 
-      {/* Patience / Deep texts — middle/bottom area */}
+      {/* Patience / Deep texts — milieu/bas */}
       {currentText && (
         <div
           key={currentText.fadeIn}
           style={{
             position: 'absolute',
-            bottom: '28%',
+            bottom: '32%',
             left: 0,
             right: 0,
             textAlign: 'center',
@@ -422,67 +414,106 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
         >
           <div
             style={{
-              fontFamily: 'var(--font-display)',
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 300,
               fontStyle: 'italic',
               fontSize: 18,
-              lineHeight: 1.4,
-              color: 'var(--content-secondary)',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              animation: 'ev-textfade 8000ms var(--ease-out) both',
+              lineHeight: 1.5,
+              color: 'var(--text-secondary)',
+              animation: 'ev-textfade 8000ms ease-out both',
             }}
           >
-            {currentText.text}
+            <PhraseInter text={currentText.text} />
           </div>
         </div>
       )}
 
-      {/* Bottom — caps label + counter */}
+      {/* Compteur discret + label */}
       <div
         style={{
           position: 'absolute',
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 38px)',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 110px)',
           left: 0,
           right: 0,
           textAlign: 'center',
           pointerEvents: 'none',
           zIndex: 2,
           opacity: elapsed >= 3 ? 1 : 0,
-          transition: 'opacity 1200ms var(--ease-out)',
+          transition: 'opacity 1200ms ease-out',
         }}
       >
         <div
-          className="neya-mark"
           style={{
-            color: 'var(--content-tertiary)',
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 500,
+            fontSize: 10,
+            color: 'var(--text-muted)',
             letterSpacing: '0.22em',
+            textTransform: 'uppercase',
           }}
         >
-          ESPACE DE PRÉSENCE
+          Espace de présence
         </div>
         <div
           style={{
             marginTop: 6,
-            fontFamily: 'var(--font-ui)',
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 400,
             fontSize: 12,
-            color: 'var(--content-secondary)',
+            color: 'var(--text-secondary)',
             letterSpacing: '0.06em',
             fontVariantNumeric: 'tabular-nums',
           }}
         >
           {fmt(elapsed)} / {fmt(totalCap)}
         </div>
-        <div
+      </div>
+
+      {/* Bouton "Sortir doucement" — pill glass + chevron */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 38px)',
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          zIndex: 3,
+        }}
+      >
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); handleClose(); }}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          aria-label="Sortir doucement"
           style={{
-            marginTop: 8,
-            fontFamily: 'var(--font-body)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '13px 22px',
+            borderRadius: 50,
+            background: 'rgba(255, 255, 255, 0.65)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            border: '1px solid rgba(255, 255, 255, 0.85)',
+            color: 'var(--blue-700)',
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 500,
             fontSize: 11,
-            color: 'var(--content-secondary)',
-            opacity: 0.95,
-            letterSpacing: '0.04em',
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            boxShadow: '0 4px 24px rgba(10,36,56,0.07)',
+            minHeight: 44,
           }}
         >
-          Reste appuyée pour terminer
-        </div>
+          <span>Sortir doucement</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M5 3L9 7L5 11" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </div>
 
       {/* Résumé overlay */}
@@ -492,9 +523,9 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
             position: 'absolute',
             inset: 0,
             zIndex: 5,
-            background: 'rgba(251, 246, 232, 0.86)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
+            background: 'rgba(238, 243, 248, 0.88)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -503,31 +534,34 @@ export default function EspaceVrai({ worldKey = 'foret', onClose }) {
             padding: '0 32px',
             gap: 14,
             animation: exiting
-              ? 'ev-fadein 600ms reverse var(--ease-out) forwards'
-              : 'ev-fadein 600ms var(--ease-out) both',
+              ? 'ev-fadein 600ms reverse ease-out forwards'
+              : 'ev-fadein 600ms ease-out both',
             pointerEvents: 'none',
           }}
         >
           <div
             style={{
-              fontFamily: 'var(--font-display)',
+              fontFamily: "'Cormorant Garamond', serif",
               fontStyle: 'italic',
-              fontSize: 22,
+              fontWeight: 300,
+              fontSize: 26,
               lineHeight: 1.3,
-              color: 'var(--ink)',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
+              color: 'var(--blue-900)',
             }}
           >
             Tu es restée {resume.minutes} {resume.minutes <= 1 ? 'minute' : 'minutes'}.
           </div>
           <div
-            className="neya-mark"
             style={{
-              color: accent,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 500,
+              fontSize: 10,
+              color: 'var(--rose-700)',
               letterSpacing: '0.28em',
+              textTransform: 'uppercase',
             }}
           >
-            MERCI
+            Merci
           </div>
         </div>
       )}

@@ -1,12 +1,11 @@
 /* ============================================================
-   ÇA VA ? V3 — Méditation (LIGHT MODE, wash + halo accent)
+   ÇA VA ? V4 — Méditation (light glass, blobs, violet accent)
    ============================================================
-   Wash pastel monde + BreathingCircle centré + ink controls.
-   Complétion : marque le monde exploré + avance currentWorld
-   + toast italique 2.2s avant onClose.
+   Bg clair var(--bg) + Blobs rose-violet + BreathingCircle 4·7·8
+   centré (160px, violet) + dust particles + bottom row glass.
    ============================================================ */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { WORLDS } from '../worlds';
 import {
   haptic,
@@ -15,134 +14,54 @@ import {
   getOnboardingTargetMinutes,
   addSouvenir,
 } from '../state';
-import BreathingCircle from '../../components/BreathingCircle';
+import Blobs from '../../components/Blobs';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
-const TOTEM_HOME = {
-  lion: 'foret', ours: 'temple', aigle: 'oasis',
-  daim: 'lac', baleine: 'montagne', renard: 'communaute',
-};
+// 4-7-8 breathing cycle = 19 seconds
+const CYCLE_MS = 19000;
+const PHASES = [
+  { key: 'inspire', label: 'Inspire',  duration: 4 },
+  { key: 'retiens', label: 'Retiens',  duration: 7 },
+  { key: 'expire',  label: 'Expire',   duration: 8 },
+];
 
-// Ambient audio presets — procedural Web Audio (no mp3 dependencies)
-const AUDIO_PRESETS = {
-  foret:      { name: 'Forêt',    desc: 'Vent dans les feuilles',   type: 'wind',  filter: 800,  q: 1 },
-  temple:     { name: 'Temple',   desc: 'Vent froid sur la pierre', type: 'wind',  filter: 400,  q: 0.7 },
-  oasis:      { name: 'Oasis',    desc: 'Brise tiède du désert',    type: 'wind',  filter: 1200, q: 0.8 },
-  lac:        { name: 'Lac',      desc: 'Eau qui clapote doucement',type: 'water', filter: 600,  q: 2 },
-  montagne:   { name: 'Montagne', desc: 'Vent d’altitude',          type: 'wind',  filter: 300,  q: 0.5 },
-  communaute: { name: 'Brume',    desc: 'Souffle de l’aube',        type: 'wind',  filter: 700,  q: 1 },
-};
-
-function createAmbience(preset) {
-  try {
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return null;
-    const ctx = new Ctx();
-    const bufferSize = ctx.sampleRate * 3;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
-
-    const src = ctx.createBufferSource();
-    src.buffer = buffer;
-    src.loop = true;
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = preset.filter;
-    filter.Q.value = preset.q;
-
-    const gain = ctx.createGain();
-    gain.gain.value = 0;
-
-    src.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-    src.start();
-    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 1.5);
-
-    let osc = null;
-    let oscGain = null;
-    if (preset.type === 'water') {
-      osc = ctx.createOscillator();
-      osc.frequency.value = 0.3;
-      oscGain = ctx.createGain();
-      oscGain.gain.value = 200;
-      osc.connect(oscGain);
-      oscGain.connect(filter.frequency);
-      osc.start();
-    }
-
-    return {
-      stop() {
-        try {
-          gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.6);
-        } catch (_) { /* noop */ }
-        setTimeout(() => {
-          try { src.stop(); } catch (_) { /* noop */ }
-          try { if (osc) osc.stop(); } catch (_) { /* noop */ }
-          try { ctx.close(); } catch (_) { /* noop */ }
-        }, 700);
-      },
-    };
-  } catch (_) {
-    return null;
-  }
+function getPhase(tMs) {
+  const t = (tMs % CYCLE_MS) / 1000; // 0..19
+  if (t < 4) return { ...PHASES[0], remaining: Math.ceil(4 - t) };
+  if (t < 11) return { ...PHASES[1], remaining: Math.ceil(11 - t) };
+  return { ...PHASES[2], remaining: Math.ceil(19 - t) };
 }
 
 export default function Meditation({ worldKey = 'foret', onClose }) {
   const profile = getProfile();
   const world = WORLDS[worldKey] || WORLDS.foret;
-  // Halo color = totem's world accent (personnalisation Agent C)
-  const totemHome = WORLDS[TOTEM_HOME[profile.totem] || 'foret'];
-  const haloAccent = totemHome.accent;
-  const target = getOnboardingTargetMinutes(); // 5 | 10 | 15 | 999
+  const target = getOnboardingTargetMinutes();
+
   const [paused, setPaused] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
+  const [breathMs, setBreathMs] = useState(0);
   const [show, setShow] = useState(false);
-  const [pop, setPop] = useState(false);
-  const [toast, setToast] = useState(null); // { minutes, wasNew }
-  const [reachedShow, setReachedShow] = useState(false);
-  const targetReachedRef = useRef(false);
-  const popTimerRef = useRef(null);
+  const [toast, setToast] = useState(null);
 
-  // Ambient audio — OPT-IN only
-  const [audioOn, setAudioOn] = useState(false);
-  const audioEngineRef = useRef(null);
-  const audioPreset = AUDIO_PRESETS[worldKey] || AUDIO_PRESETS.foret;
+  const targetReachedRef = useRef(false);
   const closingRef = useRef(false);
   const closeTimerRef = useRef(null);
 
-  const toggleAudio = () => {
-    haptic(3);
-    setAudioOn((on) => {
-      if (on) {
-        if (audioEngineRef.current) {
-          audioEngineRef.current.stop();
-          audioEngineRef.current = null;
-        }
-        return false;
-      }
-      const engine = createAmbience(audioPreset);
-      if (!engine) return false;
-      audioEngineRef.current = engine;
-      return true;
-    });
-  };
+  // Fade-in on mount
+  useEffect(() => {
+    const t = setTimeout(() => setShow(true), 60);
+    return () => clearTimeout(t);
+  }, []);
 
-  // Free audio resources + pending close timer on unmount
+  // Cleanup pending close timer
   useEffect(() => () => {
-    if (audioEngineRef.current) {
-      audioEngineRef.current.stop();
-      audioEngineRef.current = null;
-    }
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
     }
   }, []);
 
-  // Signale au shell qu'un overlay plein écran est ouvert (masque BottomNav, lock scroll, etc.)
+  // Notify shell that overlay is open
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: true } }));
@@ -154,9 +73,7 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
     };
   }, []);
 
-  useEffect(() => { const t = setTimeout(() => setShow(true), 60); return () => clearTimeout(t); }, []);
-
-  // Drift-resistant tick : anchor sur performance.now() et calcule un delta réel
+  // Elapsed timer — 1Hz, drift-resistant
   useEffect(() => {
     if (paused) return;
     const start = (typeof performance !== 'undefined' ? performance.now() : Date.now());
@@ -170,52 +87,62 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paused]);
 
+  // Breath sub-timer — 50ms for smooth phase tracking
+  useEffect(() => {
+    if (paused) return;
+    const start = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    const baseline = breathMs;
+    const tick = setInterval(() => {
+      const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+      const dt = now - start;
+      setBreathMs(baseline + dt);
+    }, 50);
+    return () => clearInterval(tick);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paused]);
+
   const minutes = Math.floor(elapsedMs / 60000);
   const seconds = Math.floor((elapsedMs % 60000) / 1000);
+  const phase = getPhase(breathMs);
   const reached = target !== 999 && minutes >= target;
 
-  // Fade-in caption "Tu y es" — 300ms delay overlap avec tilleul-pop end
-  useEffect(() => {
-    if (!reached) { setReachedShow(false); return; }
-    const t = setTimeout(() => setReachedShow(true), 300);
-    return () => clearTimeout(t);
-  }, [reached]);
-
-  // One-shot pop quand on atteint la cible (skip si target illimité)
+  // Reached pulse haptic
   useEffect(() => {
     if (target === 999) return;
     if (targetReachedRef.current) return;
     if (minutes >= target) {
       targetReachedRef.current = true;
-      setPop(true);
       haptic([6, 40, 6]);
-      popTimerRef.current = setTimeout(() => setPop(false), 420);
     }
   }, [minutes, target]);
 
-  useEffect(() => () => { if (popTimerRef.current) clearTimeout(popTimerRef.current); }, []);
+  // Dust particles drift outward only during expire
+  const dust = useMemo(
+    () => Array.from({ length: 7 }).map((_, i) => ({
+      angle: (i / 7) * Math.PI * 2 + (i * 0.4),
+      delay: i * 0.25,
+      duration: 7.5 + (i % 3) * 0.6,
+      offset: 6 + (i % 4) * 3,
+    })),
+    [],
+  );
 
   const handleClose = () => {
-    // Guard: empêche double-tap / re-entry → completeMeditation x2
     if (closingRef.current) return;
     closingRef.current = true;
-    if (audioEngineRef.current) {
-      audioEngineRef.current.stop();
-      audioEngineRef.current = null;
-    }
     if (minutes >= 1) {
       const { wasNew } = completeMeditation(worldKey, minutes);
       addSouvenir({
         type: 'meditation',
         world: worldKey,
-        label: `${minutes} minute${minutes > 1 ? 's' : ''} à la ${world.name}`,
-        detail: wasNew ? 'Première fois ici.' : null,
+        label: `${minutes} minute${minutes > 1 ? 's' : ''} a la ${world.name}`,
+        detail: wasNew ? 'Premiere fois ici.' : null,
       });
       if (wasNew) {
         addSouvenir({
           type: 'world-unlock',
           world: worldKey,
-          label: `Découverte de ${world.name}`,
+          label: `Decouverte de ${world.name}`,
           detail: world.totem,
         });
       }
@@ -233,89 +160,50 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
 
   const objectifLabel = target === 999 ? 'Objectif libre' : `Objectif ${target} min`;
 
-  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
   const { dialogProps, containerRef } = useStandardOverlay({
     open: !toast,
     onClose: handleClose,
-    labelText: 'Méditation guidée',
+    labelText: 'Meditation guidee',
   });
+
+  const isExpire = phase.key === 'expire' && !paused;
 
   return (
     <div
       ref={containerRef}
       {...dialogProps}
-      className={world.wash}
       style={{
         position: 'absolute',
         inset: 0,
+        background: 'var(--bg)',
         opacity: show ? 1 : 0,
-        transition: 'opacity 600ms var(--ease-out)',
+        transition: 'opacity 600ms ease-out',
         zIndex: 60,
+        overflow: 'hidden',
       }}
     >
-      {/* Atmospheric bg overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${world.bg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.08,
-          mixBlendMode: 'multiply',
-          pointerEvents: 'none',
-        }}
-      />
+      <Blobs variant="rose-violet" />
 
-      {/* Halo accent — couleur du TOTEM, pas du chapitre (Agent C) */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: '50%',
-          width: 340,
-          height: 340,
-          transform: 'translate(-50%, -50%)',
-          borderRadius: '50%',
-          background: `radial-gradient(circle, ${haloAccent}${reached ? '5A' : '3D'} 0%, transparent 70%)`,
-          pointerEvents: 'none',
-          animation: 'ray-oscillate 8s var(--ease-in-out) infinite',
-          transition: 'background 800ms var(--ease-out)',
-        }}
-      />
+      {/* Local CSS — breathing scale + dust drift */}
+      <style>{`
+        @keyframes cv-breathe-circle {
+          0%   { transform: translate(-50%, -50%) scale(1); }
+          21%  { transform: translate(-50%, -50%) scale(1.4); }
+          57.9%{ transform: translate(-50%, -50%) scale(1.4); }
+          100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        @keyframes cv-dust-drift {
+          0%   { opacity: 0; transform: translate(-50%, -50%) translate(0px, 0px); }
+          15%  { opacity: 0.7; }
+          100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--dx), var(--dy)); }
+        }
+        @keyframes cv-fade-in {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
 
-      {/* Close TOP-LEFT — accessible, discret, pearl glass */}
-      <button
-        type="button"
-        onClick={handleClose}
-        aria-label="Fermer la méditation"
-        data-press
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-          left: 14,
-          width: 44,
-          height: 44,
-          borderRadius: 22,
-          background: 'rgba(255, 252, 245, 0.82)',
-          border: '0.5px solid rgba(26, 26, 47, 0.10)',
-          color: 'var(--ink)',
-          fontSize: 18,
-          cursor: 'pointer',
-          WebkitTapHighlightColor: 'transparent',
-          zIndex: 3,
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 4px 14px rgba(26, 26, 47, 0.08)',
-        }}
-      >
-        ✕
-      </button>
-
-      {/* Top — chapter mark */}
+      {/* Top header — chapter + world name */}
       <div
         style={{
           position: 'absolute',
@@ -325,21 +213,42 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'space-between',
+          zIndex: 2,
         }}
       >
-        <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
-          {`N É Y A`}
+        <div
+          style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: 10,
+            fontWeight: 500,
+            letterSpacing: '0.20em',
+            textTransform: 'uppercase',
+            color: 'var(--text-muted)',
+          }}
+        >
+          MEDITATION
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-          <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
+          <div
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 10,
+              fontWeight: 500,
+              letterSpacing: '0.20em',
+              textTransform: 'uppercase',
+              color: 'var(--text-muted)',
+            }}
+          >
             CHAPITRE {String(world.chapter).padStart(2, '0')}
           </div>
           <div
             style={{
-              fontFamily: 'var(--font-ui)',
+              fontFamily: 'Inter, sans-serif',
               fontSize: 9,
               fontWeight: 500,
-              color: world.accent,
+              color: 'var(--violet)',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
             }}
           >
             {world.name}
@@ -347,111 +256,35 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         </div>
       </div>
 
-      {/* Audio toggle — discrete floating icon, OPT-IN only */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 70px)',
-          right: 22,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
-          gap: 4,
-          zIndex: 5,
-        }}
-      >
-        <button
-          data-press
-          onClick={toggleAudio}
-          aria-label={audioOn ? 'Couper l’ambiance' : 'Activer l’ambiance'}
-          aria-pressed={audioOn}
-          style={{
-            appearance: 'none',
-            width: 36,
-            height: 36,
-            borderRadius: '50%',
-            background: 'rgba(255, 252, 245, 0.82)',
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            border: '0.5px solid rgba(26, 26, 47, 0.10)',
-            color: audioOn ? world.accent : 'var(--content-tertiary)',
-            fontFamily: 'var(--font-ui)',
-            fontSize: 14,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            WebkitTapHighlightColor: 'transparent',
-            boxShadow: '0 4px 14px rgba(26, 26, 47, 0.08)',
-            transition: 'color 240ms var(--ease-out)',
-          }}
-        >
-          {audioOn ? '♫' : '♪'}
-        </button>
-        {audioOn && (
-          <div
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontSize: 10,
-              fontStyle: 'italic',
-              opacity: 0.6,
-              color: 'var(--ink)',
-              maxWidth: 120,
-              textAlign: 'right',
-              lineHeight: 1.3,
-            }}
-          >
-            {audioPreset.desc}
-          </div>
-        )}
-      </div>
-
-      {/* Title hint top */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 84px)',
-          left: 0,
-          right: 0,
-          textAlign: 'center',
-          padding: '0 22px',
-        }}
-      >
-        <h2
-          className="neya-h2"
-          style={{
-            color: 'var(--ink)',
-            margin: 0,
-          }}
-        >
-          {profile.mantra ? (
-            <em className="neya-key" style={{ fontStyle: 'italic' }}>« {profile.mantra} »</em>
-          ) : (
-            <>Pose-toi. <em className="neya-key">Respire.</em></>
-          )}
-        </h2>
-      </div>
-
-      {/* Reached — outer tilleul ring (vital presence completion) */}
-      {reached && (
+      {/* Mantra hint */}
+      {profile.mantra && (
         <div
           style={{
             position: 'absolute',
-            left: '50%',
-            top: '50%',
-            width: 260,
-            height: 260,
-            transform: 'translate(-50%, -50%)',
-            borderRadius: '50%',
-            border: '1px solid rgba(212, 224, 140, 0.45)',
-            pointerEvents: 'none',
-            opacity: reachedShow ? 1 : 0,
-            transition: 'opacity 600ms var(--ease-out)',
+            top: 'calc(env(safe-area-inset-top, 0px) + 78px)',
+            left: 22,
+            right: 22,
+            textAlign: 'center',
+            zIndex: 2,
           }}
-        />
+        >
+          <div
+            style={{
+              fontFamily: '"Cormorant Garamond", serif',
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 20,
+              lineHeight: 1.35,
+              color: 'var(--text-primary)',
+              opacity: 0.88,
+            }}
+          >
+            « {profile.mantra} »
+          </div>
+        </div>
       )}
 
-      {/* Centered breathing — opacity dims on pause */}
+      {/* Centered breathing zone */}
       <div
         style={{
           position: 'absolute',
@@ -460,55 +293,128 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           alignItems: 'center',
           justifyContent: 'center',
           opacity: paused ? 0.55 : 1,
-          transition: 'opacity 320ms var(--ease-out)',
+          transition: 'opacity 320ms ease-out',
+          zIndex: 1,
         }}
       >
-        <BreathingCircle size={220} autoStart={!paused} />
-        {paused && (
+        <div
+          style={{
+            position: 'relative',
+            width: 240,
+            height: 240,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {/* Breathing circle 160px — animates 1 → 1.4 → 1 over 19s */}
           <div
+            aria-hidden
             style={{
               position: 'absolute',
-              top: '32%',
-              left: 0,
-              right: 0,
-              textAlign: 'center',
-              fontFamily: 'var(--font-ui)',
-              fontSize: 9,
-              fontWeight: 500,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'var(--content-tertiary)',
+              left: '50%',
+              top: '50%',
+              width: 160,
+              height: 160,
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(127,90,138,0.30) 0%, transparent 70%)',
+              border: '0.5px solid rgba(127,90,138,0.60)',
+              transform: 'translate(-50%, -50%) scale(1)',
+              animation: paused ? 'none' : `cv-breathe-circle ${CYCLE_MS}ms ease-in-out infinite`,
+              boxShadow: '0 0 40px rgba(127,90,138,0.15)',
+            }}
+          />
+
+          {/* Dust particles — only visible during expire phase */}
+          {isExpire && dust.map((d, i) => {
+            const dx = Math.cos(d.angle) * 80;
+            const dy = Math.sin(d.angle) * 80;
+            return (
+              <span
+                key={i}
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  left: '50%',
+                  top: '50%',
+                  width: 4,
+                  height: 4,
+                  borderRadius: '50%',
+                  background: 'rgba(127,90,138,0.55)',
+                  pointerEvents: 'none',
+                  '--dx': `${dx}px`,
+                  '--dy': `${dy}px`,
+                  animation: `cv-dust-drift ${d.duration}s ease-out ${d.delay}s infinite`,
+                }}
+              />
+            );
+          })}
+
+          {/* Phase label + seconds (center) */}
+          <div
+            style={{
+              position: 'relative',
+              zIndex: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 6,
+              pointerEvents: 'none',
+              animation: 'cv-fade-in 600ms ease-out',
             }}
           >
-            EN PAUSE
+            <div
+              style={{
+                fontFamily: '"Cormorant Garamond", serif',
+                fontStyle: 'italic',
+                fontWeight: 300,
+                fontSize: 14,
+                color: 'var(--text-secondary)',
+                letterSpacing: '0.02em',
+              }}
+            >
+              {paused ? 'En pause' : phase.label}
+            </div>
+            <div
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: 24,
+                fontWeight: 600,
+                color: 'var(--violet)',
+                fontVariantNumeric: 'tabular-nums',
+                lineHeight: 1,
+              }}
+            >
+              {paused ? '—' : phase.remaining}
+            </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Reached — caption fade-in entre cercle et controls */}
+      {/* Reached caption */}
       {reached && (
         <div
           style={{
             position: 'absolute',
-            bottom: '38%',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 130px)',
             left: 0,
             right: 0,
             textAlign: 'center',
-            opacity: reachedShow ? 1 : 0,
-            transition: 'opacity 600ms var(--ease-out)',
-            fontFamily: 'var(--font-display)',
+            zIndex: 2,
+            fontFamily: '"Cormorant Garamond", serif',
             fontStyle: 'italic',
+            fontWeight: 300,
             fontSize: 18,
-            color: 'var(--emerald)',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            color: 'var(--violet)',
             pointerEvents: 'none',
+            animation: 'cv-fade-in 600ms ease-out',
           }}
         >
           Tu y es. Tu peux fermer.
         </div>
       )}
 
-      {/* Bottom controls */}
+      {/* Bottom row — Pause/Play · Timer · Close */}
       <div
         style={{
           position: 'absolute',
@@ -520,40 +426,50 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           justifyContent: 'space-between',
           padding: '0 32px',
           gap: 12,
+          zIndex: 2,
         }}
       >
         <button
+          type="button"
           data-press
           onClick={() => { haptic(4); setPaused((p) => !p); }}
           aria-label={paused ? 'Reprendre' : 'Pause'}
-          style={iconBtnStyle}
+          style={glassBtnStyle}
         >
           {paused ? '▶' : '❚❚'}
         </button>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-          <div className="neya-mark" style={{ color: 'var(--content-tertiary)' }}>
-            DURÉE
+          <div
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 10,
+              fontWeight: 500,
+              letterSpacing: '0.20em',
+              textTransform: 'uppercase',
+              color: 'var(--text-muted)',
+            }}
+          >
+            DUREE
           </div>
           <div
             style={{
-              fontFamily: 'var(--font-ui)',
-              fontSize: 'var(--type-stat)',
-              fontWeight: 'var(--weight-semibold)',
-              lineHeight: 'var(--lh-stat)',
-              letterSpacing: 'var(--ls-stat)',
-              color: 'var(--ink)',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 28,
+              fontWeight: 600,
+              color: 'var(--text-primary)',
               fontVariantNumeric: 'tabular-nums',
+              lineHeight: 1.1,
             }}
           >
             {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
           </div>
           <div
             style={{
-              fontFamily: 'var(--font-ui)',
+              fontFamily: 'Inter, sans-serif',
               fontSize: 11,
-              fontWeight: 500,
-              color: 'var(--content-secondary)',
+              fontWeight: 400,
+              color: 'var(--text-secondary)',
               marginTop: 2,
             }}
           >
@@ -562,23 +478,23 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         </div>
 
         <button
+          type="button"
           data-press
           onClick={handleClose}
           aria-label="Fermer"
-          className={pop ? 'tilleul-pop' : undefined}
-          style={iconBtnStyle}
+          style={glassBtnStyle}
         >
           ✕
         </button>
       </div>
 
-      {/* Completion toast — full bleed overlay 2.2s */}
+      {/* Completion toast */}
       {toast && (
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'rgba(251, 246, 232, 0.95)',
+            background: 'rgba(238, 243, 248, 0.95)',
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
             display: 'flex',
@@ -588,32 +504,33 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             padding: '0 32px',
             gap: 14,
             zIndex: 80,
-            animation: 'fade-in 360ms var(--ease-narrative) both',
+            animation: 'cv-fade-in 360ms ease-out both',
           }}
         >
           <div
             style={{
-              fontFamily: 'var(--font-display, "Fraunces", serif)',
+              fontFamily: '"Cormorant Garamond", serif',
               fontStyle: 'italic',
+              fontWeight: 300,
               fontSize: 26,
               lineHeight: 1.32,
-              color: 'var(--ink)',
+              color: 'var(--text-primary)',
               textAlign: 'center',
               maxWidth: 320,
             }}
           >
             {toast.wasNew
-              ? `« Tu as exploré la ${world.name}. »`
-              : `« Tu es passé·e par là. »`}
+              ? `« Tu as explore la ${world.name}. »`
+              : `« Tu es passe par la. »`}
           </div>
           <div
             style={{
-              fontFamily: 'var(--font-ui)',
+              fontFamily: 'Inter, sans-serif',
               fontSize: 10,
               fontWeight: 600,
               letterSpacing: '0.222em',
               textTransform: 'uppercase',
-              color: 'var(--emerald)',
+              color: 'var(--violet)',
             }}
           >
             +{toast.minutes} MIN
@@ -624,21 +541,21 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
   );
 }
 
-const iconBtnStyle = {
+const glassBtnStyle = {
   appearance: 'none',
-  width: 44,
-  height: 44,
+  width: 40,
+  height: 40,
   borderRadius: '50%',
-  background: 'rgba(255, 252, 245, 0.82)',
-  backdropFilter: 'blur(14px)',
-  WebkitBackdropFilter: 'blur(14px)',
-  border: '0.5px solid rgba(26, 26, 47, 0.10)',
-  color: 'var(--ink)',
-  fontSize: 14,
+  background: 'rgba(255,255,255,0.65)',
+  backdropFilter: 'blur(24px)',
+  WebkitBackdropFilter: 'blur(24px)',
+  border: '1px solid rgba(255,255,255,0.85)',
+  color: 'var(--text-primary)',
+  fontSize: 13,
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   WebkitTapHighlightColor: 'transparent',
-  boxShadow: '0 4px 14px rgba(26, 26, 47, 0.08)',
+  boxShadow: '0 4px 24px rgba(10,36,56,0.07)',
 };

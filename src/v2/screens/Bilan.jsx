@@ -1,6 +1,7 @@
 /* ============================================================
-   ÇA VA ? V2 — Bilan du soir (overlay contemplatif nocturne)
+   ÇA VA ? V4 — Bilan du soir (overlay contemplatif)
    ============================================================
+   Glassmorphism · Blobs rose-blue · Cormorant + Inter
    5 questions séquentielles, posées une à une.
    Pas d'analyse externe. Pas de comparaison. Pas de musique.
    Daily-lock : un seul bilan par soir.
@@ -8,28 +9,15 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { ls, getProfile, haptic } from '../state';
-import { WORLDS } from '../worlds';
 import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
 import useStandardOverlay from '../hooks/useStandardOverlay';
-
-const TOTEM_HOME = {
-  lion: 'foret',
-  ours: 'temple',
-  aigle: 'oasis',
-  daim: 'lac',
-  baleine: 'montagne',
-  renard: 'communaute',
-};
-
-const TILLEUL = '#d4e08c';
-// Le vrai terracotta D.A. (#9F584C → 4.7:1 sur cream). #c29051 = ochre (FAIL 2.7:1).
-const TERRACOTTA = '#9F584C';
+import Blobs from '../../components/Blobs';
 
 const BILAN_QUESTIONS = [
   {
     id: 'mood',
     eyebrow: "L'ÉTAT",
-    title: 'Comment ça allait, vraiment ?',
+    title: 'Comment ça allait, vraiment ?',
     type: 'choice',
     choices: [
       { value: 'lourd',  label: 'Lourd',   glyph: '◐' },
@@ -41,14 +29,14 @@ const BILAN_QUESTIONS = [
   {
     id: 'moment',
     eyebrow: 'LE MOMENT',
-    title: 'Un instant qui a compté ?',
+    title: 'Un instant qui a compté ?',
     type: 'text',
     placeholder: 'Une seule phrase suffit…',
   },
   {
     id: 'soi',
     eyebrow: 'TOI',
-    title: 'Tu as été quoi pour toi aujourd’hui ?',
+    title: "Tu as été quoi pour toi aujourd'hui ?",
     type: 'choice',
     choices: [
       { value: 'dur',     label: 'Dur·e' },
@@ -60,14 +48,14 @@ const BILAN_QUESTIONS = [
   {
     id: 'reste',
     eyebrow: 'CE QUI RESTE',
-    title: 'Une chose à laisser ce soir ?',
+    title: 'Une chose à laisser ce soir ?',
     type: 'text',
     placeholder: 'Tu peux laisser ici.',
   },
   {
     id: 'demain',
     eyebrow: 'DEMAIN',
-    title: 'Que veux-tu apporter à demain ?',
+    title: 'Que veux-tu apporter à demain ?',
     type: 'choice',
     choices: [
       { value: 'douceur',  label: 'De la douceur' },
@@ -88,11 +76,9 @@ function hasSeenBilanToday(date) {
 }
 
 export default function Bilan({ onClose }) {
+  // Profile lu pour compat (props préservés)
+  // eslint-disable-next-line no-unused-vars
   const profile = getProfile();
-  const totemKey = profile?.totem || 'lion';
-  const worldKey = TOTEM_HOME[totemKey] || 'lac';
-  const world = WORLDS[worldKey] || WORLDS.lac;
-  const accent = world.accent;
 
   const today = todayKey();
   const alreadyDone = hasSeenBilanToday(today);
@@ -137,7 +123,6 @@ export default function Bilan({ onClose }) {
   // Autofocus textarea when text question appears
   useEffect(() => {
     if (!alreadyDone && !reveal && q?.type === 'text') {
-      // Pre-fill currentText from existing answer if present
       const existing = answers[q.id];
       setCurrentText(typeof existing === 'string' ? existing : '');
       const t = setTimeout(() => {
@@ -161,12 +146,12 @@ export default function Bilan({ onClose }) {
     safeTimeout(() => onClose?.(), 420);
   };
 
-  // Swipe-to-dismiss (iOS HIG : drag-handle down)
+  // Swipe-to-dismiss
   const { bindHandle, translateY, isDragging } = useSwipeToDismiss({
     onClose: doClose,
   });
 
-  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
+  // Comportement iOS standard
   const { dialogProps, containerRef } = useStandardOverlay({
     open: !closing,
     onClose: doClose,
@@ -195,7 +180,6 @@ export default function Bilan({ onClose }) {
 
     if (isLast) {
       commitAnswers(nextAnswers);
-      // Fade then reveal
       setFadingQ(true);
       safeTimeout(() => setReveal(true), 320);
       return;
@@ -222,12 +206,10 @@ export default function Bilan({ onClose }) {
     advanceFrom(val);
   };
 
-  const handleSkip = () => {
-    // "Passer ce soir" — saves what's filled so far, marks date
+  const handleResumeLater = () => {
     haptic(2);
-    commitAnswers(answers);
-    setFadingQ(true);
-    safeTimeout(() => setReveal(true), 280);
+    persistDraft(answers, qIdx);
+    doClose();
   };
 
   // ============================================================
@@ -238,46 +220,53 @@ export default function Bilan({ onClose }) {
       <div
         ref={containerRef}
         {...dialogProps}
-        className="wash-lac"
         style={overlayStyle({ mounted, closing, dragY: translateY, isDragging })}
       >
+        <Blobs variant="rose-blue" />
         <DragHandle bind={bindHandle} isDragging={isDragging} />
-        <BackButton onClick={doClose} absolute />
-        <CloseButton onClick={doClose} />
+
+        <TopBar onBack={doClose} />
+
         <div style={centerWrap}>
           <div
             style={{
-              fontFamily: '"Sora", system-ui, sans-serif',
+              fontFamily: "'Inter', sans-serif",
               fontSize: 9,
               fontWeight: 500,
-              letterSpacing: '0.222em',
+              letterSpacing: '0.22em',
               textTransform: 'uppercase',
-              color: TERRACOTTA,
+              color: 'var(--blue-700)',
               marginBottom: 14,
+              position: 'relative',
+              zIndex: 1,
             }}
           >
-            BILAN DU SOIR
+            CE SOIR
           </div>
           <div
             style={{
-              fontFamily: '"Fraunces", Georgia, serif',
+              fontFamily: "'Cormorant Garamond', serif",
               fontStyle: 'italic',
-              fontWeight: 400,
-              fontSize: 26,
+              fontWeight: 300,
+              fontSize: 28,
               lineHeight: 1.25,
-              color: 'var(--ink)',
+              color: 'var(--blue-900)',
               maxWidth: 320,
               margin: '0 auto 14px',
+              position: 'relative',
+              zIndex: 1,
             }}
           >
             Tu as déjà posé ce soir.
           </div>
           <div
             style={{
-              fontFamily: 'Inter, system-ui, sans-serif',
+              fontFamily: "'Inter', sans-serif",
               fontSize: 14,
-              color: 'var(--content-secondary)',
+              color: 'var(--text-secondary)',
               lineHeight: 1.5,
+              position: 'relative',
+              zIndex: 1,
             }}
           >
             À demain.
@@ -287,23 +276,12 @@ export default function Bilan({ onClose }) {
             data-press
             onClick={doClose}
             style={{
+              ...primaryButtonStyle,
               marginTop: 32,
-              appearance: 'none',
-              border: '1px solid var(--hairline)',
-              background: 'var(--ink, #1a1a2f)',
-              color: 'var(--cream, #FBF6E8)',
-              padding: '14px 28px',
-              minHeight: 48,
-              borderRadius: 999,
-              fontFamily: '"Sora", system-ui, sans-serif',
-              fontSize: 13,
-              fontWeight: 500,
-              letterSpacing: '0.02em',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
+              maxWidth: 220,
             }}
           >
-            Fermer
+            FERMER
           </button>
         </div>
       </div>
@@ -317,61 +295,20 @@ export default function Bilan({ onClose }) {
     <div
       ref={containerRef}
       {...dialogProps}
-      className="wash-lac"
       style={overlayStyle({ mounted, closing, dragY: translateY, isDragging })}
     >
+      <Blobs variant="rose-blue" />
       <DragHandle bind={bindHandle} isDragging={isDragging} />
-      {/* Halo accent */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: '-25%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '130%',
-          height: '60%',
-          background: `radial-gradient(ellipse at center, ${world.accentRgb || 'rgba(123, 111, 168'}, 0.12) 0%, transparent 65%)`,
-          pointerEvents: 'none',
-        }}
-      />
 
-      {/* Top bar */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          padding: 'calc(env(safe-area-inset-top, 0px) + 4px) 12px 14px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          zIndex: 3,
-        }}
-      >
-        <BackButton onClick={doClose} />
-        <div
-          style={{
-            fontFamily: '"Sora", system-ui, sans-serif',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: 'var(--content-tertiary)',
-          }}
-        >
-          BILAN DU SOIR
-        </div>
-        <CloseButton onClick={doClose} inline />
-      </div>
+      {/* Top bar : back + titre Cormorant italique */}
+      <TopBar onBack={doClose} />
 
       {/* Progression dots */}
       {!reveal && (
         <div
           style={{
             position: 'absolute',
-            top: 'calc(env(safe-area-inset-top, 0px) + 56px)',
+            top: 'calc(env(safe-area-inset-top, 0px) + 88px)',
             left: 0,
             right: 0,
             display: 'flex',
@@ -390,15 +327,15 @@ export default function Bilan({ onClose }) {
                 style={{
                   display: 'inline-block',
                   height: 3,
-                  width: isCurrent ? 20 : 8,
+                  width: isCurrent ? 22 : 8,
                   borderRadius: 999,
                   background: isPast
-                    ? TILLEUL
+                    ? 'var(--blue-500)'
                     : isCurrent
-                      ? 'var(--ink)'
+                      ? 'var(--blue-700)'
                       : 'transparent',
-                  border: isPast || isCurrent ? 'none' : '1px solid var(--hairline)',
-                  transition: 'width 320ms var(--ease-out-ios), background 320ms var(--ease-out-ios)',
+                  border: isPast || isCurrent ? 'none' : '1px solid var(--blue-300)',
+                  transition: 'width 320ms cubic-bezier(0.16, 1, 0.3, 1), background 320ms cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               />
             );
@@ -411,7 +348,7 @@ export default function Bilan({ onClose }) {
         style={{
           position: 'absolute',
           inset: 0,
-          padding: 'calc(env(safe-area-inset-top, 0px) + 104px) 24px calc(env(safe-area-inset-bottom, 0px) + 140px)',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 130px) 20px calc(env(safe-area-inset-bottom, 0px) + 150px)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -426,7 +363,7 @@ export default function Bilan({ onClose }) {
             style={{
               opacity: fadingQ ? 0 : 1,
               transform: fadingQ ? 'translateY(6px)' : 'translateY(0)',
-              transition: 'opacity 220ms var(--ease-out-ios), transform 220ms var(--ease-out-ios)',
+              transition: 'opacity 220ms cubic-bezier(0.16, 1, 0.3, 1), transform 220ms cubic-bezier(0.16, 1, 0.3, 1)',
               width: '100%',
               maxWidth: 420,
             }}
@@ -434,27 +371,27 @@ export default function Bilan({ onClose }) {
             {/* Eyebrow */}
             <div
               style={{
-                fontFamily: '"Sora", system-ui, sans-serif',
+                fontFamily: "'Inter', sans-serif",
                 fontSize: 9,
                 fontWeight: 500,
-                letterSpacing: '0.222em',
+                letterSpacing: '0.22em',
                 textTransform: 'uppercase',
-                color: TERRACOTTA,
+                color: 'var(--blue-700)',
                 marginBottom: 14,
               }}
             >
               {q.eyebrow}
             </div>
 
-            {/* Title */}
+            {/* Title — Cormorant italic */}
             <h1
               style={{
-                fontFamily: '"Fraunces", Georgia, serif',
+                fontFamily: "'Cormorant Garamond', serif",
                 fontStyle: 'italic',
-                fontWeight: 400,
-                fontSize: 'clamp(24px, 6vw, 30px)',
+                fontWeight: 300,
+                fontSize: 'clamp(26px, 7vw, 32px)',
                 lineHeight: 1.2,
-                color: 'var(--ink)',
+                color: 'var(--blue-900)',
                 margin: '0 0 28px',
                 letterSpacing: '-0.005em',
               }}
@@ -484,29 +421,30 @@ export default function Bilan({ onClose }) {
                       WebkitTapHighlightColor: 'transparent',
                       padding: '16px 14px',
                       borderRadius: 18,
-                      border: '1px solid var(--hairline)',
-                      background: 'rgba(255, 252, 245, 0.55)',
-                      backdropFilter: 'blur(10px)',
-                      WebkitBackdropFilter: 'blur(10px)',
-                      boxShadow: '0 1px 2px rgba(26, 26, 47, 0.04)',
-                      color: 'var(--ink)',
+                      border: '1px solid rgba(255, 255, 255, 0.85)',
+                      borderLeft: '3px solid var(--blue-700)',
+                      background: 'rgba(255, 255, 255, 0.65)',
+                      backdropFilter: 'blur(24px)',
+                      WebkitBackdropFilter: 'blur(24px)',
+                      boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+                      color: 'var(--blue-900)',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 6,
                       minHeight: 64,
-                      transition: 'transform 200ms var(--ease-out-ios), background 200ms var(--ease-out-ios)',
+                      transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), background 200ms cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
                   >
                     {c.glyph && (
                       <span
                         aria-hidden
                         style={{
-                          fontFamily: '"Sora", system-ui, sans-serif',
+                          fontFamily: "'Inter', sans-serif",
                           fontSize: 18,
                           lineHeight: 1,
-                          color: accent,
+                          color: 'var(--blue-700)',
                         }}
                       >
                         {c.glyph}
@@ -514,7 +452,7 @@ export default function Bilan({ onClose }) {
                     )}
                     <span
                       style={{
-                        fontFamily: 'Inter, system-ui, sans-serif',
+                        fontFamily: "'Inter', sans-serif",
                         fontSize: 13,
                         fontWeight: 500,
                         letterSpacing: '0.005em',
@@ -529,23 +467,27 @@ export default function Bilan({ onClose }) {
               <div style={{ position: 'relative', width: '100%' }}>
                 <textarea
                   ref={textRef}
-                  rows={3}
+                  rows={4}
                   value={currentText}
                   onChange={(e) => setCurrentText(e.target.value.slice(0, 200))}
                   placeholder={q.placeholder}
                   style={{
                     width: '100%',
                     boxSizing: 'border-box',
-                    padding: '14px 16px',
+                    padding: '16px 18px 16px 22px',
+                    minHeight: 120,
                     borderRadius: 16,
-                    border: '1px solid var(--hairline)',
-                    background: 'rgba(255, 252, 245, 0.62)',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)',
-                    fontFamily: 'Inter, system-ui, sans-serif',
+                    border: '1px solid rgba(255, 255, 255, 0.85)',
+                    borderLeft: '3px solid var(--blue-700)',
+                    background: 'rgba(255, 255, 255, 0.65)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: 300,
                     fontSize: 14,
-                    lineHeight: 1.5,
-                    color: 'var(--ink)',
+                    lineHeight: 1.6,
+                    color: 'var(--blue-900)',
                     resize: 'none',
                     outline: 'none',
                     textAlign: 'left',
@@ -554,11 +496,11 @@ export default function Bilan({ onClose }) {
                 <div
                   style={{
                     position: 'absolute',
-                    bottom: 8,
-                    right: 12,
-                    fontFamily: 'Inter, system-ui, sans-serif',
+                    bottom: 10,
+                    right: 14,
+                    fontFamily: "'Inter', sans-serif",
                     fontSize: 10,
-                    color: 'var(--content-tertiary)',
+                    color: 'var(--text-muted)',
                     fontVariantNumeric: 'tabular-nums',
                     pointerEvents: 'none',
                   }}
@@ -575,7 +517,7 @@ export default function Bilan({ onClose }) {
           <div
             style={{
               opacity: 1,
-              animation: 'fadeIn 600ms var(--ease-out-ios) both',
+              animation: 'fadeIn 600ms cubic-bezier(0.16, 1, 0.3, 1) both',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -583,25 +525,28 @@ export default function Bilan({ onClose }) {
             }}
           >
             <div
-              className="tilleul-pop"
               style={{
-                fontFamily: '"Fraunces", Georgia, serif',
+                fontFamily: "'Cormorant Garamond', serif",
                 fontStyle: 'italic',
+                fontWeight: 300,
                 fontSize: 56,
                 lineHeight: 1,
-                color: TILLEUL,
+                background: 'var(--gradient-blue)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
               }}
             >
               ✓
             </div>
             <div
               style={{
-                fontFamily: '"Fraunces", Georgia, serif',
+                fontFamily: "'Cormorant Garamond', serif",
                 fontStyle: 'italic',
-                fontWeight: 400,
-                fontSize: 26,
+                fontWeight: 300,
+                fontSize: 28,
                 lineHeight: 1.2,
-                color: 'var(--ink)',
+                color: 'var(--blue-900)',
                 margin: 0,
               }}
             >
@@ -609,9 +554,9 @@ export default function Bilan({ onClose }) {
             </div>
             <div
               style={{
-                fontFamily: 'Inter, system-ui, sans-serif',
+                fontFamily: "'Inter', sans-serif",
                 fontSize: 14,
-                color: 'var(--content-secondary)',
+                color: 'var(--text-secondary)',
                 lineHeight: 1.5,
                 maxWidth: 280,
               }}
@@ -634,9 +579,9 @@ export default function Bilan({ onClose }) {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 10,
+            gap: 8,
             zIndex: 2,
-            background: 'linear-gradient(to top, rgba(251, 246, 232, 0.85), rgba(251, 246, 232, 0))',
+            background: 'linear-gradient(to top, rgba(238, 243, 248, 0.92), rgba(238, 243, 248, 0))',
           }}
         >
           {q?.type === 'text' && (
@@ -646,32 +591,20 @@ export default function Bilan({ onClose }) {
               onClick={handleNextText}
               disabled={fadingQ}
               style={{
-                appearance: 'none',
-                cursor: 'pointer',
-                WebkitTapHighlightColor: 'transparent',
+                ...primaryButtonStyle,
+                opacity: fadingQ ? 0.6 : 1,
                 width: '100%',
                 maxWidth: 360,
-                padding: '14px 22px',
-                borderRadius: 999,
-                border: 'none',
-                background: 'var(--ink, #1a1a2f)',
-                color: 'var(--cream, #FBF6E8)',
-                fontFamily: '"Sora", system-ui, sans-serif',
-                fontSize: 14,
-                fontWeight: 500,
-                letterSpacing: '0.01em',
-                transition: 'transform 200ms var(--ease-out-ios), opacity 200ms var(--ease-out-ios)',
-                opacity: fadingQ ? 0.6 : 1,
               }}
             >
-              {isLast ? 'Garder ce soir' : 'Suivant →'}
+              {isLast ? 'TERMINER' : 'SUIVANT'}
             </button>
           )}
 
           <button
             type="button"
             data-press
-            onClick={handleSkip}
+            onClick={handleResumeLater}
             style={{
               appearance: 'none',
               cursor: 'pointer',
@@ -680,15 +613,14 @@ export default function Bilan({ onClose }) {
               background: 'transparent',
               padding: '12px 18px',
               minHeight: 44,
-              fontFamily: 'Inter, system-ui, sans-serif',
+              fontFamily: "'Inter', sans-serif",
               fontSize: 13,
-              color: 'var(--content-secondary)',
-              textDecoration: 'underline',
-              textDecorationColor: 'var(--hairline-strong)',
-              textUnderlineOffset: '3px',
+              fontWeight: 400,
+              color: 'var(--text-secondary)',
+              letterSpacing: '0.02em',
             }}
           >
-            Passer ce soir
+            Reprendre plus tard
           </button>
         </div>
       )}
@@ -709,18 +641,18 @@ function overlayStyle({ mounted, closing, dragY = 0, isDragging = false }) {
 
   const opacity = closing ? 0 : mounted ? 1 : 0;
   const transition = isDragging
-    ? 'opacity 420ms var(--ease-out-ios)'
+    ? 'opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)'
     : closing
-      ? 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)'
+      ? 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)'
       : dragY === 0
-        ? 'transform 320ms var(--ease-spring-ios), opacity 420ms var(--ease-out-ios)'
-        : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)';
+        ? 'transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)'
+        : 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)';
   return {
-    position: 'absolute',
+    position: 'fixed',
     inset: 0,
-    zIndex: 80,
-    background: 'var(--cream, #FBF6E8)',
-    color: 'var(--ink)',
+    zIndex: 200,
+    background: 'var(--bg)',
+    color: 'var(--text-primary)',
     overflow: 'hidden',
     opacity,
     transform,
@@ -728,6 +660,25 @@ function overlayStyle({ mounted, closing, dragY = 0, isDragging = false }) {
     WebkitFontSmoothing: 'antialiased',
   };
 }
+
+const primaryButtonStyle = {
+  appearance: 'none',
+  cursor: 'pointer',
+  WebkitTapHighlightColor: 'transparent',
+  padding: '15px 24px',
+  minHeight: 50,
+  background: 'var(--gradient-blue)',
+  color: 'white',
+  border: 'none',
+  borderRadius: 50,
+  fontFamily: "'Inter', sans-serif",
+  fontSize: 11,
+  fontWeight: 600,
+  letterSpacing: '0.16em',
+  textTransform: 'uppercase',
+  boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30), 0 2px 12px rgba(200, 112, 144, 0.18)',
+  transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+};
 
 function DragHandle({ bind, isDragging }) {
   return (
@@ -757,10 +708,10 @@ function DragHandle({ bind, isDragging }) {
           height: isDragging ? 6 : 5,
           borderRadius: 999,
           background: isDragging
-            ? 'var(--ink-soft)'
-            : 'rgba(26, 26, 47, 0.18)',
+            ? 'rgba(10, 36, 56, 0.35)'
+            : 'rgba(10, 36, 56, 0.18)',
           transition:
-            'width 180ms var(--ease-out-ios), height 180ms var(--ease-out-ios), background 180ms var(--ease-out-ios)',
+            'width 180ms cubic-bezier(0.16, 1, 0.3, 1), height 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       />
     </div>
@@ -777,75 +728,61 @@ const centerWrap = {
   textAlign: 'center',
   padding: '60px 28px',
   boxSizing: 'border-box',
+  zIndex: 1,
 };
 
-function BackButton({ onClick, absolute = false }) {
+function TopBar({ onBack }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      data-press
-      aria-label="Retour"
+    <div
       style={{
-        position: absolute ? 'absolute' : 'relative',
-        top: absolute ? 'calc(env(safe-area-inset-top, 0px) + 12px)' : 'auto',
-        left: absolute ? 12 : 'auto',
-        appearance: 'none',
-        background: 'transparent',
-        border: 'none',
-        cursor: 'pointer',
-        padding: '12px 14px',
-        minWidth: 44,
-        minHeight: 44,
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 4,
-        fontFamily: '"Sora", system-ui, sans-serif',
-        fontSize: 11,
-        fontWeight: 500,
-        letterSpacing: '0.18em',
-        textTransform: 'uppercase',
-        color: 'var(--content-tertiary)',
-        zIndex: 4,
-        WebkitTapHighlightColor: 'transparent',
-      }}
-    >
-      <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
-      Retour
-    </button>
-  );
-}
-
-function CloseButton({ onClick, inline = false }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      data-press
-      aria-label="Fermer"
-      style={{
-        position: inline ? 'relative' : 'absolute',
-        top: inline ? 'auto' : 'calc(env(safe-area-inset-top, 0px) + 8px)',
-        right: inline ? 'auto' : 12,
-        width: 44,
-        height: 44,
-        borderRadius: '50%',
-        border: '1px solid var(--hairline)',
-        background: 'rgba(255, 255, 255, 0.78)',
-        color: 'var(--ink)',
-        fontSize: 15,
-        lineHeight: 1,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        padding: 'calc(env(safe-area-inset-top, 0px) + 22px) 16px 14px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        zIndex: 4,
-        WebkitTapHighlightColor: 'transparent',
+        justifyContent: 'space-between',
+        zIndex: 3,
       }}
     >
-      ✕
-    </button>
+      <button
+        type="button"
+        data-press
+        onClick={onBack}
+        aria-label="Retour"
+        style={{
+          appearance: 'none',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '10px 14px 10px 4px',
+          minHeight: 44,
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 12,
+          fontWeight: 500,
+          letterSpacing: '0.04em',
+          color: 'var(--text-primary)',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        {'‹ Retour'}
+      </button>
+      <h1
+        style={{
+          margin: 0,
+          fontFamily: "'Cormorant Garamond', serif",
+          fontStyle: 'italic',
+          fontWeight: 300,
+          fontSize: 'clamp(28px, 7vw, 32px)',
+          lineHeight: 1.1,
+          color: 'var(--blue-900)',
+          letterSpacing: '-0.01em',
+        }}
+      >
+        Bilan du soir
+      </h1>
+      <span aria-hidden style={{ width: 44, height: 44 }} />
+    </div>
   );
 }
