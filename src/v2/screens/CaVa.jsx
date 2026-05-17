@@ -1,24 +1,15 @@
 /* ============================================================
-   ÇA VA ? V9 — Storytelling éditorial de la marque (Mai 2026)
+   ÇA VA ? V10 — Storytelling éditorial + nav templates + viewer collection
    ============================================================
-   Refonte : la galerie devient un récit en 6 chapitres
-   pour faire comprendre la marque entière, pas juste montrer
-   des photos en vrac.
-
-   Structure (storytelling) :
-     1. TopBar glass clair sticky
-     2. Hero dark plein largeur (SEUL bloc dark plein largeur)
-     3. CHAPITRE I  — Le manifeste
-     4. CHAPITRE II — Notre raison d'être (split image + texte)
-     5. CHAPITRE III — Les pièces qui parlent (3 hero cards)
-     6. CHAPITRE IV — La collection complète (grid 2 col, 6 cards)
-     7. CHAPITRE V — Voix de celles et ceux qui portent (3 col)
-     8. CHAPITRE VI — Final dark + CTA
-   ============================================================
-   Palette : bleu / rose / violet · Fonts : Cormorant + Inter
+   Itérations sprint Will :
+   - Hero dark réduit de moitié (220-320px clamp)
+   - Tagline "mensongère" déplacée en eyebrow émotionnel Manifeste
+   - Photos collections cliquables → viewer plein écran
+   - Copy raccourci (1 phrase percutante par card)
+   - Mini-nav templates sticky (5 anchors)
    ============================================================ */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { haptic } from '../state';
 import CaVaPhotoViewer from './CaVaPhotoViewer';
 import Blobs from '../../components/Blobs';
@@ -37,7 +28,7 @@ const PIECES = [
     eyebrow: 'La pièce victoire',
     title: 'Chaque pas est une victoire',
     quote: 'Pour celles et ceux qui avancent quand c’est dur.',
-    body: 'Un t-shirt cream porté comme un drapeau. Au dos, la phrase. Devant, la question. Entre les deux, ton chemin.',
+    body: 'La phrase au dos, la question devant.',
   },
   {
     id: 'sensibilite',
@@ -45,15 +36,15 @@ const PIECES = [
     eyebrow: 'La pièce manifeste',
     title: 'Ma sensibilité est mon super-pouvoir',
     quote: 'Pour celles et ceux qui ressentent fort.',
-    body: 'Trop sensible, on te l’a dit toute ta vie. ÇA VA? renverse la phrase. Ce qui te fragilise est ce qui te rend vivant.',
+    body: 'Ce qui fragilise est ce qui rend vivant.',
   },
   {
     id: 'prevert',
     src: SEL('sel-03-prevert.jpeg'),
     eyebrow: 'La pièce poésie',
     title: 'Prenez soin de vous',
-    quote: 'Même si le bonheur vous oublie un peu, ne l’oubliez jamais complètement.',
-    body: 'Jacques Prévert imprimé sur un vêtement. Une affiche qui se porte. Une douceur qu’on emmène avec soi.',
+    quote: 'Même si le bonheur vous oublie un peu, ne l’oubliez jamais.',
+    body: 'Une douceur qu’on emmène avec soi.',
   },
 ];
 
@@ -151,14 +142,16 @@ const COLLECTION_ESSENTIELS = [
     id: 'ess-tee',
     src: SEL('sel-04-noir-coeur.jpeg'),
     title: 'T-shirt cœur',
-    desc: 'Le noir signature. Cœur doré minimaliste.',
+    desc: 'Le noir signature.',
+    quote: 'Le noir signature, cœur doré.',
     price: '39 €',
   },
   {
     id: 'ess-hoodie',
     src: SEL('ess-01-hoodie-noir.jpeg'),
     title: 'Hoodie cœur',
-    desc: 'Le hoodie cocon. Cœur doré minimaliste.',
+    desc: 'Le hoodie cocon.',
+    quote: 'Le hoodie cocon, cœur doré.',
     price: '79 €',
   },
 ];
@@ -166,7 +159,7 @@ const COLLECTION_ESSENTIELS = [
 /* ─── Les voix (Chapitre V) ─── */
 
 const VOIX = [
-  { idx: 7,   quote: 'Je vais bien en version limitée.' },
+  { idx: 7,   quote: 'Je vais bien, version limitée.' },
   { idx: 75,  quote: 'Certaines tempêtes portent des fleurs.' },
   { idx: 105, quote: 'Le masque tombe quand personne regarde.' },
 ];
@@ -176,12 +169,32 @@ const CAPTION_MAP = VOIX.reduce((acc, v) => {
   return acc;
 }, {});
 
+const COLLECTIONS_MAP = {
+  anxiete: COLLECTION_ANXIETE,
+  fruits: COLLECTION_FRUITS,
+  essentiels: COLLECTION_ESSENTIELS,
+};
+
 export default function CaVa() {
   const [viewer, setViewer] = useState(null);
+  const [viewerCollection, setViewerCollection] = useState(null);
+
   const openViewer = useCallback((idx) => { haptic(3); setViewer({ idx }); }, []);
   const closeViewer = useCallback(() => setViewer(null), []);
   const getPhotoSrc = useCallback((idx) => PHOTO(idx), []);
   const getCaption = useCallback((idx) => CAPTION_MAP[idx] || null, []);
+
+  const openCollection = useCallback((collection, index) => {
+    haptic(3);
+    setViewerCollection({ collection, index });
+  }, []);
+  const closeCollection = useCallback(() => setViewerCollection(null), []);
+
+  const scrollToAnchor = useCallback((id) => {
+    haptic(2);
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   return (
     <>
@@ -199,10 +212,13 @@ export default function CaVa() {
         <Blobs variant="rose-blue" />
         <TopBar />
         <Hero />
+        <MiniNav onJump={scrollToAnchor} />
         <ChapitreManifeste />
         <ChapitreRaisonEtre />
         <ChapitrePieces />
-        <ChapitreCollection />
+        <ChapitreCollectionAnxiete onOpen={openCollection} />
+        <ChapitreCollectionFruits onOpen={openCollection} />
+        <ChapitreCollectionEssentiels onOpen={openCollection} />
         <ChapitreVoix onOpen={openViewer} />
         <ChapitreFinal />
       </div>
@@ -214,6 +230,15 @@ export default function CaVa() {
           onClose={closeViewer}
           getPhotoSrc={getPhotoSrc}
           getCaption={getCaption}
+        />
+      )}
+
+      {viewerCollection && (
+        <CavaCollectionViewer
+          collection={viewerCollection.collection}
+          index={viewerCollection.index}
+          items={COLLECTIONS_MAP[viewerCollection.collection]}
+          onClose={closeCollection}
         />
       )}
     </>
@@ -284,7 +309,7 @@ function TopBar() {
 }
 
 /* ============================================================
-   2. Hero dark (SEUL bloc dark plein largeur autorisé)
+   2. Hero dark RÉDUIT (clamp 220-320, sans tagline)
    ============================================================ */
 
 function Hero() {
@@ -293,7 +318,7 @@ function Hero() {
       style={{
         position: 'relative',
         width: '100%',
-        height: 'clamp(480px, 70vh, 560px)',
+        height: 'clamp(220px, 32vh, 320px)',
         overflow: 'hidden',
         background: 'linear-gradient(135deg, #0A2438, #1A5A7F)',
         display: 'flex',
@@ -301,9 +326,9 @@ function Hero() {
         justifyContent: 'center',
       }}
     >
-      <div aria-hidden style={{ position: 'absolute', top: -60, right: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,112,144,0.55) 0%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none' }} />
-      <div aria-hidden style={{ position: 'absolute', bottom: -80, left: -70, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(42,138,191,0.55) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none' }} />
-      <div aria-hidden style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 340, height: 340, borderRadius: '50%', background: 'radial-gradient(circle, rgba(127,90,138,0.40) 0%, transparent 70%)', filter: 'blur(90px)', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,112,144,0.55) 0%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', bottom: -50, left: -45, width: 190, height: 190, borderRadius: '50%', background: 'radial-gradient(circle, rgba(42,138,191,0.55) 0%, transparent 70%)', filter: 'blur(55px)', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle, rgba(127,90,138,0.40) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none' }} />
 
       <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 22px', color: '#FFFFFF' }}>
         <h1
@@ -312,7 +337,7 @@ function Hero() {
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 'clamp(72px, 18vw, 96px)',
+            fontSize: 'clamp(56px, 13vw, 72px)',
             lineHeight: 0.95,
             letterSpacing: '-0.02em',
             color: '#FFFFFF',
@@ -320,22 +345,70 @@ function Hero() {
         >
           ÇA VA?
         </h1>
-        <p
-          style={{
-            margin: '24px auto 0',
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 300,
-            fontSize: 'clamp(14px, 4vw, 17px)',
-            lineHeight: 1.5,
-            letterSpacing: '0.01em',
-            color: 'rgba(255,255,255,0.92)',
-            maxWidth: 340,
-          }}
-        >
-          La phrase la plus mensongère du monde.
-        </p>
       </div>
     </section>
+  );
+}
+
+/* ============================================================
+   2bis. Mini-nav templates (5 anchors, sticky)
+   ============================================================ */
+
+function MiniNav({ onJump }) {
+  const tabs = [
+    { id: 'chap-manifeste', label: 'Manifeste' },
+    { id: 'chap-anxiete', label: 'Anxiété' },
+    { id: 'chap-fruits', label: 'Fruits' },
+    { id: 'chap-essentiels', label: 'Essentiels' },
+    { id: 'chap-voix', label: 'Voix' },
+  ];
+  return (
+    <nav
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '12px 16px',
+        background: 'rgba(255, 255, 255, 0.85)',
+        backdropFilter: 'blur(20px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+        borderBottom: '0.5px solid var(--blue-300)',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        scrollbarWidth: 'none',
+        WebkitOverflowScrolling: 'touch',
+      }}
+    >
+      {tabs.map((t) => (
+        <button
+          key={t.id}
+          data-press
+          onClick={() => onJump(t.id)}
+          style={{
+            appearance: 'none',
+            border: '1px solid var(--blue-300)',
+            background: 'transparent',
+            color: 'var(--blue-700)',
+            borderRadius: 999,
+            padding: '8px 14px',
+            minHeight: 36,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.04em',
+            whiteSpace: 'nowrap',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            flexShrink: 0,
+          }}
+        >
+          {t.label}
+        </button>
+      ))}
+    </nav>
   );
 }
 
@@ -362,12 +435,13 @@ function Eyebrow({ children }) {
 }
 
 /* ============================================================
-   3. CHAPITRE I — Le manifeste
+   3. CHAPITRE I — Le manifeste (avec eyebrow émotionnel)
    ============================================================ */
 
 function ChapitreManifeste() {
   return (
     <section
+      id="chap-manifeste"
       style={{
         position: 'relative',
         zIndex: 1,
@@ -376,12 +450,36 @@ function ChapitreManifeste() {
         textAlign: 'center',
       }}
     >
+      <p
+        style={{
+          margin: '0 auto 18px',
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontStyle: 'italic',
+          fontWeight: 300,
+          fontSize: 'clamp(20px, 5.5vw, 24px)',
+          lineHeight: 1.3,
+          letterSpacing: '-0.005em',
+          color: 'var(--rose-700)',
+          maxWidth: 460,
+        }}
+      >
+        « ça va » — la phrase la plus mensongère du monde.
+      </p>
+      <div
+        aria-hidden
+        style={{
+          width: 48,
+          height: 0.5,
+          background: 'var(--blue-300)',
+          margin: '0 auto 22px',
+        }}
+      />
       <div style={{ marginBottom: 22 }}>
         <Eyebrow>I · Manifeste</Eyebrow>
       </div>
       <p
         style={{
-          margin: '0 auto 22px',
+          margin: '0 auto 18px',
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
           fontWeight: 300,
@@ -392,29 +490,27 @@ function ChapitreManifeste() {
           maxWidth: 540,
         }}
       >
-        Nous existons pour briser le masque du « ça va ».
+        Nous existons pour briser le masque du « ça va ».
       </p>
       <p
         style={{
           margin: '0 auto',
           fontFamily: "'Inter', sans-serif",
           fontWeight: 300,
-          fontSize: 14,
-          lineHeight: 1.72,
+          fontSize: 15,
+          lineHeight: 1.6,
           color: 'var(--blue-700)',
-          maxWidth: 440,
+          maxWidth: 380,
         }}
       >
-        Pas née pour vendre. Née parce que trop de gens souffrent en silence.
-        ÇA VA? est une marque de vêtements pensée comme un support de présence —
-        chaque pièce porte une phrase, une voix, une fissure assumée.
+        Deux mots. Pour cacher tout.
       </p>
     </section>
   );
 }
 
 /* ============================================================
-   4. CHAPITRE II — Notre raison d'être (split image + texte)
+   4. CHAPITRE II — Notre raison d'être
    ============================================================ */
 
 function ChapitreRaisonEtre() {
@@ -487,19 +583,6 @@ function ChapitreRaisonEtre() {
           >
             Faire de la mode un langage qui libère la parole sur la santé mentale.
           </p>
-          <p
-            style={{
-              margin: 0,
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 300,
-              fontSize: 12.5,
-              lineHeight: 1.65,
-              color: 'var(--blue-700)',
-            }}
-          >
-            Un vêtement qui ouvre la conversation, sans forcer.
-            Une phrase qui suffit parfois à briser un silence.
-          </p>
         </div>
       </div>
     </section>
@@ -507,7 +590,7 @@ function ChapitreRaisonEtre() {
 }
 
 /* ============================================================
-   5. CHAPITRE III — Les pièces qui parlent (3 hero cards)
+   5. CHAPITRE III — Les pièces qui parlent
    ============================================================ */
 
 function ChapitrePieces() {
@@ -605,7 +688,7 @@ function PieceCard({ piece }) {
             color: '#FFFFFF',
           }}
         >
-          « {piece.title} »
+          « {piece.title} »
         </h3>
         <p
           style={{
@@ -613,21 +696,9 @@ function PieceCard({ piece }) {
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 16,
+            fontSize: 15,
             lineHeight: 1.4,
-            color: 'rgba(255,255,255,0.92)',
-          }}
-        >
-          {piece.quote}
-        </p>
-        <p
-          style={{
-            margin: '4px 0 0',
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 300,
-            fontSize: 13,
-            lineHeight: 1.55,
-            color: 'rgba(255,255,255,0.82)',
+            color: 'rgba(255,255,255,0.88)',
           }}
         >
           {piece.body}
@@ -638,24 +709,13 @@ function PieceCard({ piece }) {
 }
 
 /* ============================================================
-   6. CHAPITRE IV — Les collections (3 sous-sections : A / B / C)
+   6. CHAPITRE IV.A — Ma belle anxiété (carousel)
    ============================================================ */
 
-function ChapitreCollection() {
-  return (
-    <>
-      <ChapitreCollectionAnxiete />
-      <ChapitreCollectionFruits />
-      <ChapitreCollectionEssentiels />
-    </>
-  );
-}
-
-/* ─── IV.A — Ma belle anxiété (carousel horizontal scroll-snap) ─── */
-
-function ChapitreCollectionAnxiete() {
+function ChapitreCollectionAnxiete({ onOpen }) {
   return (
     <section
+      id="chap-anxiete"
       style={{
         position: 'relative',
         zIndex: 1,
@@ -701,7 +761,7 @@ function ChapitreCollectionAnxiete() {
             color: 'var(--text-secondary)',
           }}
         >
-          Des citations à porter quand les mots manquent.
+          Des mots à porter.
         </p>
         <p
           style={{
@@ -732,49 +792,22 @@ function ChapitreCollectionAnxiete() {
           scrollbarWidth: 'none',
         }}
       >
-        {COLLECTION_ANXIETE.map((c) => (
-          <PieceQuoteCard key={c.id} item={c} />
+        {COLLECTION_ANXIETE.map((c, i) => (
+          <PieceQuoteCard key={c.id} item={c} onClick={() => onOpen('anxiete', i)} />
         ))}
-      </div>
-      <div style={{ padding: '14px 6px 0', display: 'flex', justifyContent: 'center' }}>
-        <a
-          href={EXTERNAL_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => haptic(4)}
-          data-press
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-            padding: '14px 24px',
-            minHeight: 44,
-            border: '1px solid var(--blue-300)',
-            background: 'transparent',
-            color: 'var(--blue-700)',
-            borderRadius: 999,
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            textDecoration: 'none',
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
-          Voir la collection complète <span style={{ opacity: 0.7 }} aria-hidden>↗</span>
-        </a>
       </div>
     </section>
   );
 }
 
-/* ─── IV.B — Fruits & métaphores (grid 2 col) ─── */
+/* ============================================================
+   6. CHAPITRE IV.B — Fruits & métaphores
+   ============================================================ */
 
-function ChapitreCollectionFruits() {
+function ChapitreCollectionFruits({ onOpen }) {
   return (
     <section
+      id="chap-fruits"
       style={{
         position: 'relative',
         zIndex: 1,
@@ -820,7 +853,7 @@ function ChapitreCollectionFruits() {
             color: 'var(--text-secondary)',
           }}
         >
-          Quand on a plus la banane mais qu’on sourit quand même.
+          Sourire dehors, craquer dedans.
         </p>
         <p
           style={{
@@ -843,49 +876,22 @@ function ChapitreCollectionFruits() {
           gap: 14,
         }}
       >
-        {COLLECTION_FRUITS.map((c) => (
-          <FruitCard key={c.id} item={c} />
+        {COLLECTION_FRUITS.map((c, i) => (
+          <FruitCard key={c.id} item={c} onClick={() => onOpen('fruits', i)} />
         ))}
-      </div>
-      <div style={{ padding: '20px 6px 0', display: 'flex', justifyContent: 'center' }}>
-        <a
-          href={EXTERNAL_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => haptic(4)}
-          data-press
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-            padding: '14px 24px',
-            minHeight: 44,
-            border: '1px solid var(--violet)',
-            background: 'transparent',
-            color: 'var(--violet)',
-            borderRadius: 999,
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            textDecoration: 'none',
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
-          Explorer la collection <span style={{ opacity: 0.7 }} aria-hidden>↗</span>
-        </a>
       </div>
     </section>
   );
 }
 
-/* ─── IV.C — Essentiels intemporels (grid 2 col) ─── */
+/* ============================================================
+   6. CHAPITRE IV.C — Essentiels intemporels
+   ============================================================ */
 
-function ChapitreCollectionEssentiels() {
+function ChapitreCollectionEssentiels({ onOpen }) {
   return (
     <section
+      id="chap-essentiels"
       style={{
         position: 'relative',
         zIndex: 1,
@@ -919,7 +925,7 @@ function ChapitreCollectionEssentiels() {
             maxWidth: 420,
           }}
         >
-          Le cœur doré, signature ÇA VA?, sur les pièces qu’on porte tout le temps.
+          Le cœur doré sur les pièces qu’on porte tout le temps.
         </p>
       </div>
       <div
@@ -929,24 +935,22 @@ function ChapitreCollectionEssentiels() {
           gap: 14,
         }}
       >
-        {COLLECTION_ESSENTIELS.map((c) => (
-          <EssentielCard key={c.id} item={c} />
+        {COLLECTION_ESSENTIELS.map((c, i) => (
+          <EssentielCard key={c.id} item={c} onClick={() => onOpen('essentiels', i)} />
         ))}
       </div>
     </section>
   );
 }
 
-/* ─── Card "Ma belle anxiété" (citation overlay sur image 3/4) ─── */
+/* ─── Card "Ma belle anxiété" cliquable ─── */
 
-function PieceQuoteCard({ item }) {
+function PieceQuoteCard({ item, onClick }) {
   return (
-    <a
-      href={EXTERNAL_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={() => haptic(3)}
+    <button
+      type="button"
       data-press
+      onClick={onClick}
       style={{
         flex: '0 0 78%',
         maxWidth: 300,
@@ -965,9 +969,11 @@ function PieceQuoteCard({ item }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
-        textDecoration: 'none',
         color: 'inherit',
+        transition: 'transform 220ms ease',
       }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.02)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
     >
       <div
         style={{
@@ -1007,7 +1013,7 @@ function PieceQuoteCard({ item }) {
             textShadow: '0 1px 6px rgba(0,0,0,0.45)',
           }}
         >
-          « {item.quote} »
+          « {item.quote} »
         </p>
       </div>
       <div
@@ -1043,20 +1049,18 @@ function PieceQuoteCard({ item }) {
           {item.price}
         </span>
       </div>
-    </a>
+    </button>
   );
 }
 
-/* ─── Card "Fruits & métaphores" (image 4/5 + citation sous l'image) ─── */
+/* ─── Card "Fruits" cliquable ─── */
 
-function FruitCard({ item }) {
+function FruitCard({ item, onClick }) {
   return (
-    <a
-      href={EXTERNAL_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={() => haptic(3)}
+    <button
+      type="button"
       data-press
+      onClick={onClick}
       style={{
         appearance: 'none',
         border: '1px solid rgba(255, 255, 255, 0.85)',
@@ -1072,9 +1076,11 @@ function FruitCard({ item }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 12,
-        textDecoration: 'none',
         color: 'inherit',
+        transition: 'transform 220ms ease',
       }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.02)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
     >
       <div
         style={{
@@ -1095,12 +1101,12 @@ function FruitCard({ item }) {
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
           fontWeight: 400,
-          fontSize: 16,
+          fontSize: 15,
           lineHeight: 1.3,
           color: 'var(--blue-900)',
         }}
       >
-        « {item.quote} »
+        « {item.quote} »
       </p>
       <div
         style={{
@@ -1135,20 +1141,18 @@ function FruitCard({ item }) {
           {item.price}
         </span>
       </div>
-    </a>
+    </button>
   );
 }
 
-/* ─── Card "Essentiels" (image + nom + desc + prix) ─── */
+/* ─── Card "Essentiels" cliquable ─── */
 
-function EssentielCard({ item }) {
+function EssentielCard({ item, onClick }) {
   return (
-    <a
-      href={EXTERNAL_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={() => haptic(3)}
+    <button
+      type="button"
       data-press
+      onClick={onClick}
       style={{
         appearance: 'none',
         border: '1px solid rgba(255, 255, 255, 0.85)',
@@ -1164,9 +1168,11 @@ function EssentielCard({ item }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 12,
-        textDecoration: 'none',
         color: 'inherit',
+        transition: 'transform 220ms ease',
       }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.02)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
     >
       <div
         style={{
@@ -1235,17 +1241,18 @@ function EssentielCard({ item }) {
           {item.desc}
         </p>
       </div>
-    </a>
+    </button>
   );
 }
 
 /* ============================================================
-   7. CHAPITRE VII — Les voix (3 col)
+   7. CHAPITRE VII — Les voix
    ============================================================ */
 
 function ChapitreVoix({ onOpen }) {
   return (
     <section
+      id="chap-voix"
       style={{
         position: 'relative',
         zIndex: 1,
@@ -1331,7 +1338,7 @@ function ChapitreVoix({ onOpen }) {
                 textShadow: '0 1px 6px rgba(0,0,0,0.45)',
               }}
             >
-              « {v.quote} »
+              « {v.quote} »
             </p>
           </button>
         ))}
@@ -1341,7 +1348,7 @@ function ChapitreVoix({ onOpen }) {
 }
 
 /* ============================================================
-   8. CHAPITRE VIII — Final (dark gradient bleu-violet, radius 28)
+   8. CHAPITRE VIII — Final
    ============================================================ */
 
 function ChapitreFinal() {
@@ -1407,7 +1414,7 @@ function ChapitreFinal() {
           maxWidth: 360,
         }}
       >
-        Chaque pièce ÇA VA? est une voix dans le silence.
+        Chaque pièce ÇA VA? est une voix.
       </p>
       <a
         href={EXTERNAL_URL}
@@ -1438,5 +1445,235 @@ function ChapitreFinal() {
         Voir toute la collection <span style={{ opacity: 0.85 }}>↗</span>
       </a>
     </section>
+  );
+}
+
+/* ============================================================
+   9. CavaCollectionViewer — viewer plein écran pour collections
+   ============================================================
+   Image plein écran (object-fit: contain, padding 16px)
+   Fond noir rgba(10,36,56,0.92) + blur
+   Citation Cormorant italic + prix + nom Inter
+   Bouton X close 44×44 glass top-right
+   Swipe horizontal (scroll-snap)
+   Tap dehors = close · ESC = close
+   ============================================================ */
+
+function CavaCollectionViewer({ collection, index, items, onClose }) {
+  const [currentIdx, setCurrentIdx] = useState(index);
+  const setScrollerRef = useCallback((el) => {
+    if (el && index > 0 && el.scrollLeft === 0) {
+      el.scrollLeft = el.clientWidth * index;
+    }
+  }, [index]);
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === 'Escape') {
+        haptic(2);
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  const handleScroll = useCallback((e) => {
+    const w = e.currentTarget.clientWidth;
+    if (!w) return;
+    const i = Math.round(e.currentTarget.scrollLeft / w);
+    if (i !== currentIdx && i >= 0 && i < items.length) {
+      setCurrentIdx(i);
+      haptic(2);
+    }
+  }, [currentIdx, items.length]);
+
+  const handleBackdropClick = useCallback((e) => {
+    if (e.target === e.currentTarget) {
+      haptic(2);
+      onClose();
+    }
+  }, [onClose]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      onClick={handleBackdropClick}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        background: 'rgba(10, 36, 56, 0.92)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        display: 'flex',
+        flexDirection: 'column',
+        animation: 'cavaCollFade 280ms ease',
+      }}
+    >
+      <style>{`
+        @keyframes cavaCollFade {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
+
+      {/* Close button */}
+      <button
+        type="button"
+        onClick={() => { haptic(3); onClose(); }}
+        aria-label="Fermer"
+        data-press
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          right: 14,
+          width: 44,
+          height: 44,
+          borderRadius: '50%',
+          border: '1px solid rgba(255,255,255,0.25)',
+          background: 'rgba(255,255,255,0.12)',
+          backdropFilter: 'blur(18px)',
+          WebkitBackdropFilter: 'blur(18px)',
+          color: '#FFFFFF',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 18,
+          fontWeight: 300,
+          cursor: 'pointer',
+          WebkitTapHighlightColor: 'transparent',
+          zIndex: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        ✕
+      </button>
+
+      {/* Counter */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 22px)',
+          left: 22,
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 11,
+          fontWeight: 500,
+          letterSpacing: '0.22em',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.7)',
+          zIndex: 2,
+        }}
+      >
+        {currentIdx + 1} / {items.length}
+      </div>
+
+      {/* Scroll-snap horizontal */}
+      <div
+        ref={setScrollerRef}
+        onScroll={handleScroll}
+        style={{
+          flex: 1,
+          display: 'flex',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none',
+        }}
+      >
+        {items.map((item) => (
+          <div
+            key={item.id}
+            style={{
+              flex: '0 0 100%',
+              width: '100%',
+              height: '100%',
+              scrollSnapAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 'calc(env(safe-area-inset-top, 0px) + 64px) 16px calc(env(safe-area-inset-bottom, 0px) + 24px)',
+              boxSizing: 'border-box',
+            }}
+          >
+            <img
+              src={item.src}
+              alt={item.title}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '65vh',
+                objectFit: 'contain',
+                borderRadius: 12,
+                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.45)',
+              }}
+            />
+            <div
+              style={{
+                marginTop: 22,
+                textAlign: 'center',
+                maxWidth: 520,
+                width: '100%',
+                padding: '0 8px',
+              }}
+            >
+              <p
+                style={{
+                  margin: '0 0 14px',
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontStyle: 'italic',
+                  fontWeight: 300,
+                  fontSize: 'clamp(20px, 5.5vw, 28px)',
+                  lineHeight: 1.3,
+                  letterSpacing: '-0.005em',
+                  color: '#FFFFFF',
+                }}
+              >
+                « {item.quote || item.desc} »
+              </p>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  justifyContent: 'center',
+                  gap: 14,
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 500,
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.78)',
+                  }}
+                >
+                  {item.title}
+                </span>
+                <span aria-hidden style={{ color: 'rgba(255,255,255,0.4)' }}>·</span>
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: '#FFFFFF',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {item.price}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
