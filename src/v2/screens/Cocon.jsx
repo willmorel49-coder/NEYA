@@ -310,12 +310,12 @@ export default function Cocon() {
         <div
           style={{
             fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.22em',
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: '0.18em',
             textTransform: 'uppercase',
             color: 'var(--rose-700)',
-            marginBottom: 12,
+            marginBottom: 14,
           }}
         >
           Ton cocon
@@ -326,9 +326,9 @@ export default function Cocon() {
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 42,
-            lineHeight: 1.1,
-            letterSpacing: '-0.018em',
+            fontSize: 'clamp(36px, 9vw, 52px)',
+            lineHeight: 1.05,
+            letterSpacing: 0,
             color: 'var(--blue-900)',
           }}
         >
@@ -336,14 +336,14 @@ export default function Cocon() {
         </h1>
         <p
           style={{
-            margin: '14px auto 0',
+            margin: '16px auto 0',
             fontFamily: 'var(--font-body)',
             fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 13,
-            lineHeight: 1.55,
+            fontWeight: 400,
+            fontSize: 15,
+            lineHeight: 1.6,
             color: 'var(--text-secondary)',
-            maxWidth: 280,
+            maxWidth: 320,
           }}
         >
           {hourWhisper}
@@ -369,12 +369,12 @@ export default function Cocon() {
                 fontFamily: 'var(--font-display)',
                 fontStyle: 'italic',
                 fontWeight: 300,
-                fontSize: 17,
-                lineHeight: 1.45,
+                fontSize: 20,
+                lineHeight: 1.4,
                 color: 'var(--violet)',
                 animation: 'cocon-mantra-breathe 8s ease-in-out infinite',
                 display: 'inline-block',
-                maxWidth: 280,
+                maxWidth: 320,
               }}
             >
               « {profile.mantra} »
@@ -398,9 +398,9 @@ export default function Cocon() {
             border: 'none',
             borderRadius: 50,
             fontFamily: 'var(--font-ui)',
-            fontSize: 11,
+            fontSize: 12,
             fontWeight: 600,
-            letterSpacing: '0.16em',
+            letterSpacing: '0.14em',
             textTransform: 'uppercase',
             cursor: 'pointer',
             WebkitTapHighlightColor: 'transparent',
@@ -568,7 +568,7 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 14,
+            fontSize: 18,
             color: 'var(--blue-900)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -580,10 +580,11 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
         </div>
         <div
           style={{
-            marginTop: 2,
+            marginTop: 4,
             fontFamily: 'var(--font-body)',
-            fontSize: 11,
-            fontWeight: 300,
+            fontSize: 13,
+            fontWeight: 400,
+            lineHeight: 1.5,
             color: 'var(--text-secondary)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -797,7 +798,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               fontFamily: 'var(--font-display)',
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 24,
+              fontSize: 'clamp(26px, 6.5vw, 30px)',
+              lineHeight: 1.15,
               color: 'var(--blue-900)',
             }}
           >
@@ -833,7 +835,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   border: active ? 'none' : '1px solid var(--blue-300)',
                   borderRadius: 999,
                   fontFamily: 'var(--font-ui)',
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: 600,
                   letterSpacing: '0.04em',
                   cursor: 'pointer',
@@ -862,10 +864,11 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 13,
-                  fontWeight: 300,
+                  fontSize: 15,
+                  fontWeight: 400,
+                  lineHeight: 1.6,
                   color: 'var(--text-secondary)',
-                  marginBottom: 14,
+                  marginBottom: 16,
                 }}
               >
                 Le décor de ton sanctuaire.
@@ -900,13 +903,14 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          padding: '24px 10px 10px',
-                          background: 'linear-gradient(0deg, rgba(10, 36, 56, 0.75) 0%, transparent 100%)',
+                          padding: '24px 10px 12px',
+                          background: 'linear-gradient(0deg, rgba(10, 36, 56, 0.80) 0%, transparent 100%)',
                           color: '#FFFFFF',
                           fontFamily: 'var(--font-display)',
                           fontStyle: 'italic',
                           fontWeight: 300,
-                          fontSize: 13,
+                          fontSize: 16,
+                          lineHeight: 1.2,
                         }}
                       >
                         {img.label}
@@ -923,10 +927,11 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 13,
-                  fontWeight: 300,
+                  fontSize: 15,
+                  fontWeight: 400,
+                  lineHeight: 1.6,
                   color: 'var(--text-secondary)',
-                  marginBottom: 14,
+                  marginBottom: 16,
                 }}
               >
                 La petite vie qui danse sur ton cocon.
@@ -963,8 +968,10 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         <div
                           style={{
                             fontFamily: 'var(--font-ui)',
-                            fontSize: 14,
-                            fontWeight: 500,
+                            fontSize: 15,
+                            fontWeight: 600,
+                            lineHeight: 1.3,
+                            letterSpacing: '-0.01em',
                             color: 'var(--blue-900)',
                           }}
                         >
@@ -973,10 +980,11 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         <div
                           style={{
                             fontFamily: 'var(--font-body)',
-                            fontSize: 12,
-                            fontWeight: 300,
+                            fontSize: 13,
+                            fontWeight: 400,
+                            lineHeight: 1.5,
                             color: 'var(--text-secondary)',
-                            marginTop: 2,
+                            marginTop: 4,
                           }}
                         >
                           {a.hint}
@@ -1005,10 +1013,11 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 13,
-                  fontWeight: 300,
+                  fontSize: 15,
+                  fontWeight: 400,
+                  lineHeight: 1.6,
                   color: 'var(--text-secondary)',
-                  marginBottom: 14,
+                  marginBottom: 16,
                 }}
               >
                 La musique qui accompagne ton retour à toi.
@@ -1036,7 +1045,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 }}
                 aria-pressed={!currentMusic}
               >
-                <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--blue-900)' }}>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 500, color: 'var(--blue-900)' }}>
                   Silence
                 </span>
                 <span
@@ -1081,9 +1090,10 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     minWidth: 30,
                     textAlign: 'right',
                     fontFamily: 'var(--font-ui)',
-                    fontSize: 11,
+                    fontSize: 12,
+                    fontWeight: 500,
                     fontVariantNumeric: 'tabular-nums',
-                    color: 'var(--text-muted)',
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   {Math.round((cocon.musicVolume || 0.45) * 100)}
@@ -1121,7 +1131,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           fontFamily: 'var(--font-display)',
                           fontStyle: 'italic',
                           fontWeight: 300,
-                          fontSize: 14,
+                          fontSize: 17,
+                          lineHeight: 1.3,
                           color: 'var(--blue-900)',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -1136,8 +1147,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           aria-hidden
                           style={{
                             fontFamily: 'var(--font-ui)',
-                            fontSize: 9,
-                            letterSpacing: '0.22em',
+                            fontSize: 10,
+                            letterSpacing: '0.18em',
                             textTransform: 'uppercase',
                             fontWeight: 600,
                             color: 'var(--blue-700)',
@@ -1159,10 +1170,11 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 13,
-                  fontWeight: 300,
+                  fontSize: 15,
+                  fontWeight: 400,
+                  lineHeight: 1.6,
                   color: 'var(--text-secondary)',
-                  marginBottom: 18,
+                  marginBottom: 20,
                 }}
               >
                 Qui tu es dans cet espace.
@@ -1173,13 +1185,13 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 <label
                   style={{
                     display: 'block',
-                    marginBottom: 8,
+                    marginBottom: 10,
                     fontFamily: 'var(--font-ui)',
                     fontSize: 10,
-                    fontWeight: 500,
-                    letterSpacing: '0.2em',
+                    fontWeight: 600,
+                    letterSpacing: '0.18em',
                     textTransform: 'uppercase',
-                    color: 'var(--text-muted)',
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   Prénom
@@ -1212,13 +1224,13 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 <label
                   style={{
                     display: 'block',
-                    marginBottom: 8,
+                    marginBottom: 10,
                     fontFamily: 'var(--font-ui)',
                     fontSize: 10,
-                    fontWeight: 500,
-                    letterSpacing: '0.2em',
+                    fontWeight: 600,
+                    letterSpacing: '0.18em',
                     textTransform: 'uppercase',
-                    color: 'var(--text-muted)',
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   Mantra du moment
@@ -1240,7 +1252,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     fontFamily: 'var(--font-display)',
                     fontStyle: 'italic',
                     fontWeight: 300,
-                    fontSize: 16,
+                    fontSize: 18,
                     lineHeight: 1.4,
                     color: 'var(--blue-900)',
                     outline: 'none',
@@ -1250,12 +1262,13 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 />
                 <div
                   style={{
-                    marginTop: 4,
+                    marginTop: 6,
                     textAlign: 'right',
                     fontFamily: 'var(--font-ui)',
-                    fontSize: 10,
+                    fontSize: 11,
+                    fontWeight: 500,
                     fontVariantNumeric: 'tabular-nums',
-                    color: tempMantra.length >= 130 ? 'var(--rose-700)' : 'var(--text-muted)',
+                    color: tempMantra.length >= 130 ? 'var(--rose-700)' : 'var(--text-secondary)',
                   }}
                 >
                   {140 - tempMantra.length}
@@ -1267,13 +1280,13 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 <label
                   style={{
                     display: 'block',
-                    marginBottom: 8,
+                    marginBottom: 10,
                     fontFamily: 'var(--font-ui)',
                     fontSize: 10,
-                    fontWeight: 500,
-                    letterSpacing: '0.2em',
+                    fontWeight: 600,
+                    letterSpacing: '0.18em',
                     textTransform: 'uppercase',
-                    color: 'var(--text-muted)',
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   Mon totem
@@ -1296,8 +1309,9 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           borderRadius: 10,
                           cursor: 'pointer',
                           fontFamily: 'var(--font-ui)',
-                          fontSize: 13,
+                          fontSize: 14,
                           fontWeight: active ? 600 : 500,
+                          lineHeight: 1.3,
                           color: 'var(--blue-900)',
                           textAlign: 'left',
                           WebkitTapHighlightColor: 'transparent',
@@ -1325,9 +1339,9 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   border: 'none',
                   borderRadius: 999,
                   fontFamily: 'var(--font-ui)',
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: 600,
-                  letterSpacing: '0.16em',
+                  letterSpacing: '0.14em',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
                   WebkitTapHighlightColor: 'transparent',
@@ -1356,9 +1370,9 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 border: '1.5px solid var(--blue-300)',
                 borderRadius: 50,
                 fontFamily: 'var(--font-ui)',
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: 600,
-                letterSpacing: '0.16em',
+                letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 color: 'var(--blue-700)',
                 cursor: 'pointer',

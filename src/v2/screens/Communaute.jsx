@@ -279,11 +279,11 @@ export default function Communaute() {
               style={{
                 fontFamily: 'var(--font-ui)',
                 fontSize: 10,
-                fontWeight: 500,
-                letterSpacing: '0.20em',
+                fontWeight: 600,
+                letterSpacing: '0.18em',
                 textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.86)',
-                marginBottom: 10,
+                color: 'rgba(255,255,255,0.92)',
+                marginBottom: 12,
                 textShadow: '0 1px 4px rgba(0,0,0,0.4)',
               }}
             >
@@ -295,9 +295,9 @@ export default function Communaute() {
                 fontFamily: 'var(--font-display)',
                 fontStyle: 'italic',
                 fontWeight: 300,
-                fontSize: 'clamp(32px, 9vw, 42px)',
-                lineHeight: 1.0,
-                letterSpacing: '-0.018em',
+                fontSize: 'clamp(36px, 9vw, 52px)',
+                lineHeight: 1.05,
+                letterSpacing: 0,
                 color: '#FFFFFF',
                 textShadow: '0 2px 14px rgba(0,0,0,0.40)',
               }}
@@ -313,27 +313,27 @@ export default function Communaute() {
             style={{
               fontFamily: 'var(--font-ui)',
               fontSize: 10,
-              fontWeight: 500,
-              letterSpacing: '0.20em',
+              fontWeight: 600,
+              letterSpacing: '0.18em',
               textTransform: 'uppercase',
               color: 'var(--rose-700)',
-              marginBottom: 12,
+              marginBottom: 14,
             }}
           >
             Question du jour
           </div>
 
-          <div style={{ ...GLASS_CARD, padding: '22px 22px 20px' }}>
+          <div style={{ ...GLASS_CARD, padding: '24px 22px 22px' }}>
             <p
               style={{
                 margin: 0,
                 fontFamily: 'var(--font-display)',
                 fontStyle: 'italic',
                 fontWeight: 300,
-                fontSize: 'clamp(22px, 6.2vw, 28px)',
-                lineHeight: 1.32,
+                fontSize: 'clamp(22px, 5.5vw, 28px)',
+                lineHeight: 1.25,
                 color: 'var(--blue-900)',
-                letterSpacing: '-0.012em',
+                letterSpacing: 0,
               }}
             >
               {dailyPrompt.text}
@@ -351,12 +351,12 @@ export default function Communaute() {
                 <div
                   style={{
                     fontFamily: 'var(--font-ui)',
-                    fontSize: 9,
-                    fontWeight: 500,
-                    letterSpacing: '0.22em',
+                    fontSize: 10,
+                    fontWeight: 600,
+                    letterSpacing: '0.18em',
                     textTransform: 'uppercase',
-                    color: 'var(--text-muted)',
-                    marginBottom: 4,
+                    color: 'var(--text-secondary)',
+                    marginBottom: 6,
                   }}
                 >
                   Ta réponse · {promptResponses.length}
@@ -365,16 +365,16 @@ export default function Communaute() {
                   <div
                     key={p.id}
                     style={{
-                      padding: '10px 14px',
+                      padding: '12px 16px',
                       background: 'rgba(255,255,255,0.55)',
                       backdropFilter: 'blur(12px)',
                       WebkitBackdropFilter: 'blur(12px)',
                       border: '1px solid rgba(255,255,255,0.75)',
                       borderRadius: 14,
                       fontFamily: 'var(--font-body)',
-                      fontWeight: 300,
-                      fontSize: 13,
-                      lineHeight: 1.55,
+                      fontWeight: 400,
+                      fontSize: 15,
+                      lineHeight: 1.6,
                       color: 'var(--text-secondary)',
                       fontStyle: 'italic',
                     }}
@@ -390,19 +390,19 @@ export default function Communaute() {
               data-press
               onClick={() => { haptic(4); setComposerOpen({ promptId: dailyPrompt.id }); }}
               style={{
-                marginTop: 18,
+                marginTop: 20,
                 appearance: 'none',
                 width: '100%',
                 padding: '15px 24px',
-                minHeight: 48,
+                minHeight: 50,
                 background: 'var(--gradient-blue)',
                 color: '#FFFFFF',
                 border: 'none',
                 borderRadius: 50,
                 fontFamily: 'var(--font-ui)',
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: 600,
-                letterSpacing: '0.16em',
+                letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
                 boxShadow: '0 8px 24px rgba(26,90,127,0.30)',
@@ -421,8 +421,8 @@ export default function Communaute() {
               style={{
                 fontFamily: 'var(--font-ui)',
                 fontSize: 10,
-                fontWeight: 500,
-                letterSpacing: '0.20em',
+                fontWeight: 600,
+                letterSpacing: '0.18em',
                 textTransform: 'uppercase',
                 color: 'var(--blue-700)',
               }}
@@ -442,7 +442,7 @@ export default function Communaute() {
                 padding: '6px 4px',
                 fontFamily: 'var(--font-ui)',
                 fontSize: 10,
-                fontWeight: 500,
+                fontWeight: 600,
                 letterSpacing: '0.18em',
                 textTransform: 'uppercase',
                 WebkitTapHighlightColor: 'transparent',
@@ -467,13 +467,14 @@ export default function Communaute() {
               <div
                 style={{
                   ...GLASS_CARD,
-                  padding: '24px 16px',
+                  padding: '28px 18px',
                   textAlign: 'center',
                   fontFamily: 'var(--font-display)',
                   fontStyle: 'italic',
                   fontWeight: 300,
-                  fontSize: 15,
-                  color: 'var(--text-muted)',
+                  fontSize: 18,
+                  lineHeight: 1.4,
+                  color: 'var(--text-secondary)',
                 }}
               >
                 Les premières voix arrivent.
@@ -486,7 +487,7 @@ export default function Communaute() {
             data-press
             onClick={() => { haptic(4); setComposerOpen({ promptId: null }); }}
             style={{
-              marginTop: 14,
+              marginTop: 16,
               appearance: 'none',
               width: '100%',
               padding: '13px 24px',
@@ -496,9 +497,9 @@ export default function Communaute() {
               border: '1.5px solid var(--blue-300)',
               borderRadius: 50,
               fontFamily: 'var(--font-ui)',
-              fontSize: 11,
-              fontWeight: 500,
-              letterSpacing: '0.16em',
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
@@ -515,8 +516,8 @@ export default function Communaute() {
               style={{
                 fontFamily: 'var(--font-ui)',
                 fontSize: 10,
-                fontWeight: 500,
-                letterSpacing: '0.20em',
+                fontWeight: 600,
+                letterSpacing: '0.18em',
                 textTransform: 'uppercase',
                 color: 'var(--blue-700)',
               }}
@@ -526,9 +527,9 @@ export default function Communaute() {
             <span
               style={{
                 fontFamily: 'var(--font-ui)',
-                fontSize: 10,
-                fontWeight: 500,
-                color: 'var(--text-muted)',
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'var(--text-secondary)',
                 fontVariantNumeric: 'tabular-nums',
               }}
             >
@@ -559,7 +560,7 @@ export default function Communaute() {
                       fontFamily: 'var(--font-display)',
                       fontStyle: 'italic',
                       fontWeight: 300,
-                      fontSize: 14,
+                      fontSize: 17,
                       color: 'var(--blue-900)',
                     }}
                   >
@@ -572,8 +573,8 @@ export default function Communaute() {
                     fontFamily: 'var(--font-display)',
                     fontStyle: 'italic',
                     fontWeight: 300,
-                    fontSize: 15,
-                    color: 'var(--text-muted)',
+                    fontSize: 18,
+                    color: 'var(--text-secondary)',
                     padding: '4px 0',
                   }}
                 >
@@ -588,9 +589,9 @@ export default function Communaute() {
                     border: '1px dashed var(--blue-300)',
                     borderRadius: 50,
                     fontFamily: 'var(--font-ui)',
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: 'var(--text-muted)',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   +{cercleCount - 3}
@@ -611,9 +612,9 @@ export default function Communaute() {
                 border: '1.5px solid var(--blue-300)',
                 borderRadius: 50,
                 fontFamily: 'var(--font-ui)',
-                fontSize: 11,
-                fontWeight: 500,
-                letterSpacing: '0.16em',
+                fontSize: 12,
+                fontWeight: 600,
+                letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
@@ -630,11 +631,11 @@ export default function Communaute() {
             style={{
               fontFamily: 'var(--font-ui)',
               fontSize: 10,
-              fontWeight: 500,
-              letterSpacing: '0.20em',
+              fontWeight: 600,
+              letterSpacing: '0.18em',
               textTransform: 'uppercase',
               color: 'var(--rose-700)',
-              marginBottom: 8,
+              marginBottom: 10,
             }}
           >
             Témoignages
@@ -642,11 +643,11 @@ export default function Communaute() {
           <div
             style={{
               fontFamily: 'var(--font-body)',
-              fontWeight: 300,
-              fontSize: 12,
-              lineHeight: 1.5,
+              fontWeight: 400,
+              fontSize: 15,
+              lineHeight: 1.6,
               color: 'var(--text-secondary)',
-              marginBottom: 14,
+              marginBottom: 16,
             }}
           >
             Des histoires vécues, écrites par d'autres.
@@ -665,12 +666,12 @@ export default function Communaute() {
         {/* Footer manifesto */}
         <p
           style={{
-            margin: '44px 0 0',
+            margin: '48px 0 0',
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 14,
-            lineHeight: 1.55,
+            fontSize: 18,
+            lineHeight: 1.5,
             color: 'var(--text-secondary)',
             textAlign: 'center',
           }}
@@ -795,13 +796,14 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
           borderRadius: '0 2px 2px 0',
         }}
       />
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
         <span
           style={{
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 16,
+            fontSize: 19,
+            lineHeight: 1.2,
             color: 'var(--blue-900)',
           }}
         >
@@ -810,9 +812,9 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
         <span
           style={{
             fontFamily: 'var(--font-ui)',
-            fontWeight: 300,
-            fontSize: 10,
-            color: 'var(--text-muted)',
+            fontWeight: 500,
+            fontSize: 12,
+            color: 'var(--text-secondary)',
             fontVariantNumeric: 'tabular-nums',
           }}
         >
@@ -821,11 +823,11 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
       </div>
       <p
         style={{
-          margin: '8px 0 12px',
+          margin: '10px 0 14px',
           fontFamily: 'var(--font-body)',
-          fontWeight: 300,
-          fontSize: 13,
-          lineHeight: 1.72,
+          fontWeight: 400,
+          fontSize: 15,
+          lineHeight: 1.6,
           color: 'var(--text-secondary)',
         }}
       >
@@ -849,10 +851,10 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
                 minWidth: 32,
                 background: 'transparent',
                 border: 'none',
-                color: active ? 'var(--rose-700)' : 'var(--blue-300)',
+                color: active ? 'var(--rose-700)' : 'var(--blue-500)',
                 fontFamily: 'var(--font-body)',
-                fontWeight: 400,
-                fontSize: 13,
+                fontWeight: 500,
+                fontSize: 16,
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
                 transition: 'color 200ms ease',
@@ -915,12 +917,12 @@ function TemoignageCard({ temoignage, onOpen }) {
       <div
         style={{
           fontFamily: 'var(--font-ui)',
-          fontSize: 9,
-          fontWeight: 500,
-          letterSpacing: '0.22em',
+          fontSize: 10,
+          fontWeight: 600,
+          letterSpacing: '0.18em',
           textTransform: 'uppercase',
-          color: 'var(--text-muted)',
-          marginBottom: 8,
+          color: 'var(--text-secondary)',
+          marginBottom: 10,
         }}
       >
         {t.name} · {t.city}
@@ -930,11 +932,11 @@ function TemoignageCard({ temoignage, onOpen }) {
           fontFamily: 'var(--font-display)',
           fontStyle: 'italic',
           fontWeight: 300,
-          fontSize: 17,
-          lineHeight: 1.4,
+          fontSize: 21,
+          lineHeight: 1.3,
           color: 'var(--blue-900)',
-          marginBottom: 12,
-          letterSpacing: '-0.008em',
+          marginBottom: 14,
+          letterSpacing: 0,
         }}
       >
         {t.title}
@@ -946,8 +948,8 @@ function TemoignageCard({ temoignage, onOpen }) {
           gap: 8,
           fontFamily: 'var(--font-ui)',
           fontSize: 10,
-          fontWeight: 500,
-          letterSpacing: '0.20em',
+          fontWeight: 600,
+          letterSpacing: '0.18em',
           textTransform: 'uppercase',
           color: t.accent,
         }}
@@ -1058,14 +1060,14 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
         {promptText && (
           <p
             style={{
-              margin: '0 0 18px',
+              margin: '0 0 22px',
               fontFamily: 'var(--font-display)',
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 17,
-              lineHeight: 1.4,
+              fontSize: 20,
+              lineHeight: 1.35,
               color: 'var(--blue-900)',
-              padding: '14px 16px',
+              padding: '16px 18px',
               background: 'rgba(255, 255, 255, 0.55)',
               borderLeft: '3px solid var(--rose-700)',
               borderRadius: 8,
@@ -1078,13 +1080,13 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
         <label
           style={{
             display: 'block',
-            marginBottom: 8,
+            marginBottom: 10,
             fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.22em',
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: 'var(--text-muted)',
+            color: 'var(--text-secondary)',
           }}
         >
           Ta voix
@@ -1107,25 +1109,25 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
             border: '1px solid var(--blue-300)',
             borderRadius: 14,
             fontFamily: 'var(--font-body)',
-            fontWeight: 300,
-            fontSize: 15,
-            lineHeight: 1.55,
+            fontWeight: 400,
+            fontSize: 16,
+            lineHeight: 1.6,
             color: 'var(--blue-900)',
             outline: 'none',
             resize: 'none',
             boxSizing: 'border-box',
-            marginBottom: 6,
+            marginBottom: 8,
           }}
         />
         <div
           style={{
             textAlign: 'right',
             fontFamily: 'var(--font-ui)',
-            fontWeight: 400,
-            fontSize: 10,
-            color: body.length >= 260 ? 'var(--rose-700)' : 'var(--text-muted)',
+            fontWeight: 500,
+            fontSize: 11,
+            color: body.length >= 260 ? 'var(--rose-700)' : 'var(--text-secondary)',
             fontVariantNumeric: 'tabular-nums',
-            marginBottom: 18,
+            marginBottom: 20,
           }}
         >
           {280 - body.length}
@@ -1145,9 +1147,9 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
               border: '1.5px solid var(--blue-300)',
               borderRadius: 50,
               fontFamily: 'var(--font-ui)',
-              fontSize: 11,
-              fontWeight: 500,
-              letterSpacing: '0.16em',
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
               color: 'var(--blue-700)',
               cursor: 'pointer',
@@ -1167,13 +1169,13 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
               padding: '14px 16px',
               minHeight: 48,
               background: body.trim() ? 'var(--gradient-blue)' : 'rgba(10, 36, 56, 0.10)',
-              color: body.trim() ? '#FFFFFF' : 'var(--text-muted)',
+              color: body.trim() ? '#FFFFFF' : 'var(--text-secondary)',
               border: 'none',
               borderRadius: 50,
               fontFamily: 'var(--font-ui)',
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: 600,
-              letterSpacing: '0.16em',
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
               cursor: body.trim() ? 'pointer' : 'not-allowed',
               boxShadow: body.trim() ? '0 8px 24px rgba(26,90,127,0.30)' : 'none',
@@ -1274,9 +1276,9 @@ function AllVoicesOverlay({ posts, reactions, onReact, onMore, onCompose, onClos
             padding: '10px 12px',
             minHeight: 44,
             fontFamily: 'var(--font-ui)',
-            fontSize: 11,
+            fontSize: 14,
             fontWeight: 500,
-            letterSpacing: '0.04em',
+            letterSpacing: 0,
             WebkitTapHighlightColor: 'transparent',
           }}
         >
@@ -1287,7 +1289,7 @@ function AllVoicesOverlay({ posts, reactions, onReact, onMore, onCompose, onClos
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 17,
+            fontSize: 22,
             color: 'var(--blue-900)',
           }}
         >
@@ -1436,9 +1438,9 @@ function TemoignageReader({ temoignage, onClose }) {
             padding: '10px 12px',
             minHeight: 44,
             fontFamily: 'var(--font-ui)',
-            fontSize: 11,
+            fontSize: 14,
             fontWeight: 500,
-            letterSpacing: '0.04em',
+            letterSpacing: 0,
             WebkitTapHighlightColor: 'transparent',
           }}
         >
@@ -1462,12 +1464,12 @@ function TemoignageReader({ temoignage, onClose }) {
           style={{
             textAlign: 'center',
             fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.22em',
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: 'var(--text-muted)',
-            marginBottom: 18,
+            color: 'var(--text-secondary)',
+            marginBottom: 22,
           }}
         >
           <span
@@ -1487,14 +1489,14 @@ function TemoignageReader({ temoignage, onClose }) {
 
         <h2
           style={{
-            margin: '0 0 28px',
+            margin: '0 0 32px',
             textAlign: 'center',
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 'clamp(22px, 6vw, 28px)',
-            lineHeight: 1.32,
-            letterSpacing: '-0.012em',
+            fontSize: 'clamp(26px, 6.5vw, 34px)',
+            lineHeight: 1.2,
+            letterSpacing: 0,
             color: 'var(--blue-900)',
             maxWidth: 540,
             marginInline: 'auto',
@@ -1508,11 +1510,11 @@ function TemoignageReader({ temoignage, onClose }) {
             <p
               key={i}
               style={{
-                margin: '0 0 18px',
+                margin: '0 0 20px',
                 fontFamily: 'var(--font-body)',
-                fontWeight: 300,
-                fontSize: 15,
-                lineHeight: 1.72,
+                fontWeight: 400,
+                fontSize: 16,
+                lineHeight: 1.7,
                 color: 'var(--text-secondary)',
               }}
             >
@@ -1523,14 +1525,15 @@ function TemoignageReader({ temoignage, onClose }) {
 
         <div
           style={{
-            marginTop: 40,
-            paddingTop: 24,
+            marginTop: 44,
+            paddingTop: 28,
             borderTop: '1px solid rgba(10, 36, 56, 0.10)',
             textAlign: 'center',
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 14,
+            fontSize: 18,
+            lineHeight: 1.5,
             color: 'var(--text-secondary)',
           }}
         >

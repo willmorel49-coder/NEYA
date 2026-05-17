@@ -733,56 +733,77 @@ const centerWrap = {
 
 function TopBar({ onBack }) {
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        padding: 'calc(env(safe-area-inset-top, 0px) + 22px) 16px 14px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        zIndex: 3,
-      }}
-    >
+    <>
+      {/* Glass pill back button — fixed top-left, z-index 80 */}
       <button
         type="button"
         data-press
         onClick={onBack}
         aria-label="Retour"
         style={{
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          left: 16,
+          zIndex: 80,
           appearance: 'none',
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          padding: '10px 14px 10px 4px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
           minHeight: 44,
+          padding: '10px 14px',
+          borderRadius: 999,
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          color: 'var(--blue-700)',
           fontFamily: "'Inter', sans-serif",
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: 500,
-          letterSpacing: '0.04em',
-          color: 'var(--text-primary)',
+          letterSpacing: '0.02em',
+          lineHeight: 1,
+          cursor: 'pointer',
+          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
           WebkitTapHighlightColor: 'transparent',
+          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        {'‹ Retour'}
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        </svg>
+        Retour
       </button>
-      <h1
+
+      {/* Title row */}
+      <div
         style={{
-          margin: 0,
-          fontFamily: "'Cormorant Garamond', serif",
-          fontStyle: 'italic',
-          fontWeight: 300,
-          fontSize: 'clamp(28px, 7vw, 32px)',
-          lineHeight: 1.1,
-          color: 'var(--blue-900)',
-          letterSpacing: '-0.01em',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          padding: 'calc(env(safe-area-inset-top, 0px) + 22px) 90px 14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 3,
         }}
       >
-        Bilan du soir
-      </h1>
-      <span aria-hidden style={{ width: 44, height: 44 }} />
-    </div>
+        <h1
+          style={{
+            margin: 0,
+            fontFamily: "'Cormorant Garamond', serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 'clamp(28px, 7vw, 32px)',
+            lineHeight: 1.1,
+            color: 'var(--blue-900)',
+            letterSpacing: '-0.01em',
+            textAlign: 'center',
+          }}
+        >
+          Bilan du soir
+        </h1>
+      </div>
+    </>
   );
 }

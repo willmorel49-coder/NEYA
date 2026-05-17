@@ -264,37 +264,45 @@ export default function EspaceVrai({ worldKey, onClose }) {
       {/* Blobs décoratifs rose + violet */}
       <Blobs variant="rose-violet" />
 
-      {/* Close button — top-right (44×44) glass */}
+      {/* Glass pill back button — fixed top-left, z-index 80 (sous SOS qui est 100) */}
       <button
         type="button"
-        aria-label="Fermer"
+        aria-label="Retour"
         onClick={(e) => { e.stopPropagation(); handleClose(); }}
         onMouseDown={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
         style={{
-          position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
-          right: 12,
-          width: 44,
-          height: 44,
-          borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.65)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255, 255, 255, 0.85)',
-          color: 'var(--blue-900)',
-          fontSize: 15,
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          left: 16,
+          zIndex: 80,
+          appearance: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          minHeight: 44,
+          padding: '10px 14px',
+          borderRadius: 999,
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          color: 'var(--blue-700)',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 13,
+          fontWeight: 500,
+          letterSpacing: '0.02em',
           lineHeight: 1,
           cursor: 'pointer',
+          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
           WebkitTapHighlightColor: 'transparent',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 4,
-          boxShadow: '0 4px 24px rgba(10,36,56,0.07)',
+          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        ✕
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        </svg>
+        Retour
       </button>
 
       {/* Hero — "Espace de présence" Cormorant italic */}

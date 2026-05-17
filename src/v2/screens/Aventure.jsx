@@ -407,11 +407,11 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           style={{
             fontFamily: '"Inter", sans-serif',
             fontSize: 10,
-            letterSpacing: '0.22em',
+            letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            fontWeight: 500,
-            color: 'var(--blue-500)',
-            marginBottom: 12,
+            fontWeight: 600,
+            color: 'var(--blue-700)',
+            marginBottom: 14,
           }}
         >
           Mon aventure
@@ -422,9 +422,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             fontFamily: 'Cormorant Garamond, var(--font-display), serif',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 'clamp(42px, 12vw, 52px)',
+            fontSize: 'clamp(36px, 9vw, 52px)',
             lineHeight: 1.05,
-            letterSpacing: '-0.01em',
+            letterSpacing: 0,
             color: 'var(--blue-900)',
           }}
         >
@@ -432,13 +432,13 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         </h1>
         <p
           style={{
-            margin: '12px 0 0',
+            margin: '14px 0 0',
             fontFamily: '"Inter", sans-serif',
-            fontSize: 14,
-            fontWeight: 300,
-            lineHeight: 1.5,
+            fontSize: 15,
+            fontWeight: 400,
+            lineHeight: 1.6,
             color: 'var(--text-secondary)',
-            maxWidth: 320,
+            maxWidth: 340,
           }}
         >
           {hourPhrase}
@@ -461,11 +461,11 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             style={{
               fontFamily: '"Inter", sans-serif',
               fontSize: 10,
-              letterSpacing: '0.22em',
+              letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              fontWeight: 500,
-              color: 'var(--blue-500)',
-              marginBottom: 8,
+              fontWeight: 600,
+              color: 'var(--blue-700)',
+              marginBottom: 10,
             }}
           >
             Séance du jour · {questOfDay.eyebrow || ''}
@@ -475,10 +475,10 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               fontFamily: 'Cormorant Garamond, var(--font-display), serif',
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 24,
+              fontSize: 'clamp(22px, 5.5vw, 26px)',
               lineHeight: 1.2,
               color: 'var(--blue-900)',
-              marginBottom: 6,
+              marginBottom: 8,
             }}
           >
             {questOfDay.title}
@@ -486,11 +486,11 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           <div
             style={{
               fontFamily: '"Inter", sans-serif',
-              fontSize: 13,
-              fontWeight: 300,
-              lineHeight: 1.5,
+              fontSize: 15,
+              fontWeight: 400,
+              lineHeight: 1.6,
               color: 'var(--text-secondary)',
-              marginBottom: 18,
+              marginBottom: 20,
             }}
           >
             {questOfDay.desc}
@@ -509,9 +509,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               border: 'none',
               borderRadius: 50,
               fontFamily: '"Inter", sans-serif',
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: 600,
-              letterSpacing: '0.16em',
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
               cursor: 'pointer',
               boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
@@ -526,10 +526,10 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         <div
           style={{
             fontFamily: '"Inter", sans-serif',
-            fontSize: 9,
-            letterSpacing: '0.22em',
+            fontSize: 10,
+            letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            fontWeight: 500,
+            fontWeight: 600,
             color: 'var(--rose-700)',
             marginTop: 36,
             marginBottom: 14,
@@ -806,20 +806,21 @@ function PilierCard({ mark, label, desc, pilier, onClick }) {
             fontFamily: 'Cormorant Garamond, var(--font-display), serif',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 21,
+            fontSize: 22,
             color: 'var(--blue-900)',
             lineHeight: 1.2,
+            letterSpacing: 0,
           }}
         >
           {label}
         </div>
         <div
           style={{
-            marginTop: 4,
+            marginTop: 5,
             fontFamily: '"Inter", sans-serif',
-            fontSize: 11,
-            fontWeight: 300,
-            lineHeight: 1.4,
+            fontSize: 13,
+            fontWeight: 400,
+            lineHeight: 1.5,
             color: 'var(--text-secondary)',
           }}
         >
@@ -882,7 +883,7 @@ function BilanCard({ glyph, label, onClick }) {
             fontFamily: 'Cormorant Garamond, var(--font-display), serif',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 19,
+            fontSize: 22,
             color: 'var(--blue-900)',
             lineHeight: 1.2,
           }}
@@ -890,7 +891,7 @@ function BilanCard({ glyph, label, onClick }) {
           {label}
         </div>
       </div>
-      <span aria-hidden style={{ color: 'var(--blue-500)', fontSize: 18, flexShrink: 0 }}>›</span>
+      <span aria-hidden style={{ color: 'var(--blue-700)', fontSize: 18, flexShrink: 0 }}>›</span>
     </button>
   );
 }
@@ -979,7 +980,8 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
               fontFamily: 'Cormorant Garamond, var(--font-display), serif',
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 24,
+              fontSize: 'clamp(26px, 6.5vw, 30px)',
+              lineHeight: 1.15,
               color: 'var(--blue-900)',
             }}
           >
@@ -988,11 +990,11 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
           {subtitle && (
             <div
               style={{
-                marginTop: 8,
+                marginTop: 10,
                 fontFamily: '"Inter", sans-serif',
-                fontSize: 13,
-                fontWeight: 300,
-                lineHeight: 1.5,
+                fontSize: 14,
+                fontWeight: 400,
+                lineHeight: 1.55,
                 color: 'var(--text-secondary)',
               }}
             >
@@ -1024,9 +1026,9 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
               border: '1.5px solid var(--blue-300)',
               borderRadius: 50,
               fontFamily: '"Inter", sans-serif',
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: 600,
-              letterSpacing: '0.16em',
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
               color: 'var(--blue-700)',
               cursor: 'pointer',
@@ -1113,13 +1115,13 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
               </span>
 
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 2 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
                   <div
                     style={{
                       fontFamily: 'Cormorant Garamond, var(--font-display), serif',
                       fontStyle: 'italic',
                       fontWeight: 300,
-                      fontSize: 17,
+                      fontSize: 20,
                       color: 'var(--blue-900)',
                       lineHeight: 1.2,
                     }}
@@ -1130,10 +1132,10 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                     <span
                       style={{
                         fontFamily: '"Inter", sans-serif',
-                        fontSize: 9,
-                        letterSpacing: '0.22em',
+                        fontSize: 10,
+                        letterSpacing: '0.18em',
                         textTransform: 'uppercase',
-                        fontWeight: 500,
+                        fontWeight: 600,
                         color: accent,
                         flexShrink: 0,
                       }}
@@ -1145,10 +1147,10 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                 <div
                   style={{
                     fontFamily: '"Inter", sans-serif',
-                    fontSize: 12,
-                    fontWeight: 300,
+                    fontSize: 13,
+                    fontWeight: 400,
                     color: 'var(--text-secondary)',
-                    lineHeight: 1.4,
+                    lineHeight: 1.5,
                   }}
                 >
                   {m.totem} · {m.emotion}
@@ -1177,7 +1179,7 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                     <span
                       style={{
                         fontFamily: '"Inter", sans-serif',
-                        fontSize: 9,
+                        fontSize: 10,
                         letterSpacing: '0.18em',
                         textTransform: 'uppercase',
                         fontWeight: 600,
@@ -1194,10 +1196,10 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                 {m.available && progress === 0 && (
                   <div
                     style={{
-                      marginTop: 8,
+                      marginTop: 10,
                       fontFamily: '"Inter", sans-serif',
                       fontSize: 10,
-                      letterSpacing: '0.22em',
+                      letterSpacing: '0.18em',
                       textTransform: 'uppercase',
                       fontWeight: 600,
                       color: accent,
@@ -1209,10 +1211,10 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                 {!m.available && (
                   <div
                     style={{
-                      marginTop: 8,
+                      marginTop: 10,
                       fontFamily: '"Inter", sans-serif',
                       fontSize: 10,
-                      letterSpacing: '0.22em',
+                      letterSpacing: '0.18em',
                       textTransform: 'uppercase',
                       fontWeight: 600,
                       color: 'var(--text-muted)',
@@ -1300,19 +1302,20 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
                     fontFamily: 'Cormorant Garamond, var(--font-display), serif',
                     fontStyle: 'italic',
                     fontWeight: 300,
-                    fontSize: 17,
+                    fontSize: 20,
                     color: 'var(--blue-900)',
-                    lineHeight: 1.25,
+                    lineHeight: 1.2,
                   }}
                 >
                   {l.title}
                 </div>
                 <div
                   style={{
-                    marginTop: 4,
+                    marginTop: 5,
                     fontFamily: '"Inter", sans-serif',
-                    fontSize: 12,
-                    fontWeight: 300,
+                    fontSize: 13,
+                    fontWeight: 400,
+                    lineHeight: 1.5,
                     color: 'var(--text-secondary)',
                   }}
                 >
@@ -1364,7 +1367,7 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                 border: active ? 'none' : '1.5px solid var(--blue-300)',
                 borderRadius: 50,
                 fontFamily: '"Inter", sans-serif',
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: 600,
                 letterSpacing: '0.04em',
                 cursor: 'pointer',
@@ -1400,14 +1403,15 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
           boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
           <div
             style={{
               fontFamily: 'Cormorant Garamond, var(--font-display), serif',
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 19,
+              fontSize: 22,
               color: 'var(--blue-900)',
+              lineHeight: 1.2,
             }}
           >
             {tempsCurrent.label}
@@ -1416,9 +1420,9 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
             style={{
               fontFamily: '"Inter", sans-serif',
               fontSize: 10,
-              letterSpacing: '0.22em',
+              letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              fontWeight: 500,
+              fontWeight: 600,
               color: accent,
               fontVariantNumeric: 'tabular-nums',
             }}
@@ -1429,9 +1433,9 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
         <div
           style={{
             fontFamily: '"Inter", sans-serif',
-            fontSize: 13,
-            fontWeight: 300,
-            lineHeight: 1.5,
+            fontSize: 15,
+            fontWeight: 400,
+            lineHeight: 1.6,
             color: 'var(--text-secondary)',
           }}
         >
@@ -1493,7 +1497,7 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                     fontFamily: 'Cormorant Garamond, var(--font-display), serif',
                     fontStyle: 'italic',
                     fontWeight: 300,
-                    fontSize: 16,
+                    fontSize: 19,
                     color: 'var(--blue-900)',
                     lineHeight: 1.25,
                   }}
@@ -1502,10 +1506,11 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                 </div>
                 <div
                   style={{
-                    marginTop: 3,
+                    marginTop: 5,
                     fontFamily: '"Inter", sans-serif',
-                    fontSize: 12,
-                    fontWeight: 300,
+                    fontSize: 13,
+                    fontWeight: 400,
+                    lineHeight: 1.5,
                     color: 'var(--text-secondary)',
                   }}
                 >
@@ -1634,7 +1639,8 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
               fontFamily: 'Cormorant Garamond, var(--font-display), serif',
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 24,
+              fontSize: 'clamp(26px, 6.5vw, 30px)',
+              lineHeight: 1.15,
               color: 'var(--blue-900)',
             }}
           >
@@ -1660,7 +1666,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                   border: active ? 'none' : '1.5px solid var(--blue-300)',
                   borderRadius: 50,
                   fontFamily: '"Inter", sans-serif',
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: 600,
                   letterSpacing: '0.04em',
                   cursor: 'pointer',
@@ -1679,7 +1685,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
         <div style={{ padding: '4px 22px 8px', overflowY: 'auto', flex: 1, WebkitOverflowScrolling: 'touch' }}>
           {tab === 'image' && (
             <div>
-              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 13, fontWeight: 300, color: 'var(--text-secondary)', marginBottom: 14 }}>
+              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 15, fontWeight: 400, lineHeight: 1.6, color: 'var(--text-secondary)', marginBottom: 16 }}>
                 Le décor de ton aventure.
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -1732,7 +1738,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
 
           {tab === 'ambiance' && (
             <div>
-              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 13, fontWeight: 300, color: 'var(--text-secondary)', marginBottom: 14 }}>
+              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 15, fontWeight: 400, lineHeight: 1.6, color: 'var(--text-secondary)', marginBottom: 16 }}>
                 La petite vie qui danse dans le décor.
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -1765,8 +1771,8 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                       aria-pressed={active}
                     >
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 14, fontWeight: 500, color: 'var(--blue-900)' }}>{a.label}</div>
-                        <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 11.5, fontWeight: 300, color: 'var(--text-secondary)', marginTop: 2 }}>{a.hint}</div>
+                        <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 15, fontWeight: 600, lineHeight: 1.3, color: 'var(--blue-900)', letterSpacing: '-0.01em' }}>{a.label}</div>
+                        <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 13, fontWeight: 400, lineHeight: 1.5, color: 'var(--text-secondary)', marginTop: 4 }}>{a.hint}</div>
                       </div>
                       <span
                         style={{
@@ -1786,7 +1792,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
 
           {tab === 'musique' && (
             <div>
-              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 13, fontWeight: 300, color: 'var(--text-secondary)', marginBottom: 14 }}>
+              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 15, fontWeight: 400, lineHeight: 1.6, color: 'var(--text-secondary)', marginBottom: 16 }}>
                 La musique qui t'accompagne dans ton voyage.
               </div>
               <button
@@ -1811,7 +1817,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                   WebkitTapHighlightColor: 'transparent',
                 }}
               >
-                <span style={{ fontFamily: '"Inter", sans-serif', fontSize: 14, color: 'var(--blue-900)' }}>Silence</span>
+                <span style={{ fontFamily: '"Inter", sans-serif', fontSize: 15, fontWeight: 500, color: 'var(--blue-900)' }}>Silence</span>
                 <span style={{ width: 14, height: 14, borderRadius: '50%', border: !currentMusic ? '4px solid var(--blue-700)' : '1px solid var(--blue-300)', flexShrink: 0 }} />
               </button>
 
@@ -1840,7 +1846,7 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                   aria-label="Volume"
                   style={{ flex: 1, accentColor: 'var(--blue-700)' }}
                 />
-                <span style={{ minWidth: 30, textAlign: 'right', fontFamily: '"Inter", sans-serif', fontSize: 11, fontVariantNumeric: 'tabular-nums', color: 'var(--text-muted)' }}>
+                <span style={{ minWidth: 30, textAlign: 'right', fontFamily: '"Inter", sans-serif', fontSize: 12, fontWeight: 500, fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }}>
                   {Math.round((av.musicVolume || 0.4) * 100)}
                 </span>
               </div>
@@ -1876,8 +1882,9 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                           fontFamily: 'Cormorant Garamond, var(--font-display), serif',
                           fontStyle: 'italic',
                           fontWeight: 300,
-                          fontSize: 15,
+                          fontSize: 17,
                           color: 'var(--blue-900)',
+                          lineHeight: 1.3,
                         }}
                       >
                         {t.title}
@@ -1887,11 +1894,11 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                           aria-hidden
                           style={{
                             fontFamily: '"Inter", sans-serif',
-                            fontSize: 9,
-                            letterSpacing: '0.22em',
+                            fontSize: 10,
+                            letterSpacing: '0.18em',
                             textTransform: 'uppercase',
                             fontWeight: 600,
-                            color: 'var(--blue-500)',
+                            color: 'var(--blue-700)',
                           }}
                         >
                           en cours
@@ -1914,13 +1921,13 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                 <label
                   style={{
                     display: 'block',
-                    marginBottom: 8,
+                    marginBottom: 10,
                     fontFamily: '"Inter", sans-serif',
-                    fontSize: 9,
-                    letterSpacing: '0.22em',
+                    fontSize: 10,
+                    letterSpacing: '0.18em',
                     textTransform: 'uppercase',
-                    fontWeight: 500,
-                    color: 'var(--text-muted)',
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   Prénom
@@ -1955,13 +1962,13 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                 <label
                   style={{
                     display: 'block',
-                    marginBottom: 8,
+                    marginBottom: 10,
                     fontFamily: '"Inter", sans-serif',
-                    fontSize: 9,
-                    letterSpacing: '0.22em',
+                    fontSize: 10,
+                    letterSpacing: '0.18em',
                     textTransform: 'uppercase',
-                    fontWeight: 500,
-                    color: 'var(--text-muted)',
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   Mon totem
@@ -1986,8 +1993,9 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                           borderRadius: 12,
                           cursor: 'pointer',
                           fontFamily: '"Inter", sans-serif',
-                          fontSize: 13,
-                          fontWeight: active ? 600 : 400,
+                          fontSize: 14,
+                          fontWeight: active ? 600 : 500,
+                          lineHeight: 1.3,
                           color: 'var(--blue-900)',
                           textAlign: 'left',
                           WebkitTapHighlightColor: 'transparent',
@@ -2014,9 +2022,9 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                   border: 'none',
                   borderRadius: 50,
                   fontFamily: '"Inter", sans-serif',
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: 600,
-                  letterSpacing: '0.16em',
+                  letterSpacing: '0.14em',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
                   boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
@@ -2044,9 +2052,9 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                 border: '1.5px solid var(--blue-300)',
                 borderRadius: 50,
                 fontFamily: '"Inter", sans-serif',
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: 600,
-                letterSpacing: '0.16em',
+                letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 color: 'var(--blue-700)',
                 cursor: 'pointer',

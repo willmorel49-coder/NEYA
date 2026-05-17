@@ -51,6 +51,17 @@ export default function V2App() {
   // Patronus + Tour supprimés du flow post-onboarding (v30) :
   // l'onboarding visuel pré-app suffit, on entre direct dans l'app.
 
+  // ──────────────────────────────────────────────────────────────
+  // Z-INDEX HIERARCHY (single source of truth pour V2App shell)
+  //   BottomNav .................... 30
+  //   Back buttons (in-screen) ..... 80
+  //   SOS button (FAB) ............. 100
+  //   Menu hamburger (top-left) .... 100
+  //   ActionSheets ................. 200 (cf. ActionSheet.jsx interne)
+  //   Modals plein écran ........... 9999 (Meditation, Crise, EspaceVrai)
+  //   Onboarding ................... 9999
+  // ──────────────────────────────────────────────────────────────
+
   // Écoute les overlays fullscreen (AventurePlayer, etc.) pour cacher
   // BottomNav + SOS — évite que la barre cache les CTA en bas (Safari).
   useEffect(() => {
@@ -387,40 +398,9 @@ export default function V2App() {
         </button>
       )}
 
-      {/* Permanent SOS button — rose plein top-right (CLAUDE.md v3) */}
-      {showSosButton && (
-        <button
-          type="button"
-          onClick={() => { haptic(4); setSosMenuOpen(true); }}
-          aria-label="SOS — soutien et ressources"
-          data-no-crisis-press="true"
-          style={{
-            position: 'fixed',
-            top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-            right: 16,
-            minWidth: 44,
-            height: 44,
-            padding: '0 18px',
-            borderRadius: 50,
-            border: 'none',
-            background: 'var(--rose-700)',
-            color: 'white',
-            fontFamily: 'var(--font-ui)',
-            fontSize: 10,
-            fontWeight: 700,
-            letterSpacing: '0.12em',
-            cursor: 'pointer',
-            boxShadow: '0 4px 16px rgba(200,112,144,0.35)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
-          SOS
-        </button>
-      )}
+      {/* Permanent SOS button — FAB bas-droite (au-dessus BottomNav)
+          z-index 100 · pill 52x52 · rose plein · fade+rise mount */}
+      <SosFab visible={showSosButton} onTap={() => { haptic(4); setSosMenuOpen(true); }} />
 
       {meditationOpen && (
         <Meditation
@@ -526,6 +506,96 @@ export default function V2App() {
 
       {milestoneDay !== null && <MilestoneToast day={milestoneDay} onClose={handleMilestoneClose} />}
     </div>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────
+// SosFab — Floating Action Button bas-droite (au-dessus BottomNav)
+//   · pill 52x52 · rose plein · ombre marquée
+//   · mount : fade-in + translateY(20→0) sur 400ms ease-out
+//   · unmount : fade-out 200ms ease-in
+//   · z-index 100 (cf. hierarchy doc dans V2App)
+// ──────────────────────────────────────────────────────────────
+function SosFab({ visible, onTap }) {
+  const [render, setRender] = useState(visible);
+  const [shown, setShown] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      setRender(true);
+      const id = requestAnimationFrame(() => {
+        setTimeout(() => setShown(true), 16);
+      });
+      return () => cancelAnimationFrame(id);
+    }
+    setShown(false);
+    setPressed(false);
+    const t = setTimeout(() => setRender(false), 220);
+    return () => clearTimeout(t);
+  }, [visible]);
+
+  if (!render) return null;
+
+  // Compose transform : translateY (mount/unmount) + scale (press)
+  const baseY = shown ? 0 : 20;
+  const scale = pressed ? 0.95 : 1;
+  const transform = `translateY(${baseY}px) scale(${scale})`;
+
+  // Transitions : mount/unmount drive opacity+transform ; press uses fast scale
+  const transition = pressed
+    ? 'transform 90ms cubic-bezier(0.32, 0.72, 0, 1), box-shadow 90ms ease-out'
+    : shown
+      ? 'opacity 400ms cubic-bezier(0.16,1,0.3,1), transform 400ms cubic-bezier(0.16,1,0.3,1), box-shadow 240ms ease-out'
+      : 'opacity 200ms ease-in, transform 200ms ease-in';
+
+  const releasePress = () => setPressed(false);
+
+  return (
+    <button
+      type="button"
+      onClick={onTap}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={releasePress}
+      onPointerCancel={releasePress}
+      onPointerLeave={releasePress}
+      aria-label="SOS — soutien et ressources"
+      data-no-crisis-press="true"
+      style={{
+        position: 'fixed',
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 90px)',
+        right: 16,
+        width: 52,
+        height: 52,
+        padding: 0,
+        borderRadius: 50,
+        border: 'none',
+        background: 'var(--rose-700)',
+        color: 'white',
+        fontFamily: 'var(--font-ui)',
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        cursor: 'pointer',
+        boxShadow: pressed
+          ? '0 4px 12px rgba(200,112,144,0.25)'
+          : shown
+            ? '0 8px 24px rgba(200,112,144,0.40)'
+            : '0 4px 12px rgba(200,112,144,0.20)',
+        zIndex: 100,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        WebkitTapHighlightColor: 'transparent',
+        opacity: shown ? 1 : 0,
+        transform,
+        transition,
+        willChange: 'transform, opacity',
+      }}
+    >
+      SOS
+    </button>
   );
 }
 

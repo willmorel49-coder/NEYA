@@ -167,40 +167,58 @@ export default function BilanSemaine({ onClose }) {
       {/* Décor */}
       <Blobs variant="blue-rose" />
 
-      {/* Topbar */}
+      {/* Glass pill back button — fixed top-left, z-index 80 */}
+      <button
+        type="button"
+        data-press
+        onClick={doClose}
+        aria-label="Retour"
+        style={{
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          left: 16,
+          zIndex: 80,
+          appearance: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          minHeight: 44,
+          padding: '10px 14px',
+          borderRadius: 999,
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          color: 'var(--blue-700)',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 13,
+          fontWeight: 500,
+          letterSpacing: '0.02em',
+          lineHeight: 1,
+          cursor: 'pointer',
+          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
+          WebkitTapHighlightColor: 'transparent',
+          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        </svg>
+        Retour
+      </button>
+
+      {/* Topbar : label semaine (back déplacé en position fixed) */}
       <div
         style={{
           position: 'relative',
           zIndex: 2,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
           padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 16px 10px',
           flexShrink: 0,
         }}
       >
-        <button
-          type="button"
-          data-press
-          onClick={doClose}
-          aria-label="Retour"
-          style={{
-            appearance: 'none',
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--blue-700)',
-            cursor: 'pointer',
-            padding: '10px 14px 10px 4px',
-            minHeight: 44,
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 12,
-            fontWeight: 500,
-            letterSpacing: '0.04em',
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
-          {'‹ Retour'}
-        </button>
         <div
           aria-hidden
           style={{
@@ -210,7 +228,7 @@ export default function BilanSemaine({ onClose }) {
             color: 'var(--text-muted)',
             letterSpacing: '0.22em',
             textTransform: 'uppercase',
-            paddingRight: 12,
+            paddingRight: 70,
           }}
         >
           {'Semaine'}

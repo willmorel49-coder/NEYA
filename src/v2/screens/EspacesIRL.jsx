@@ -262,7 +262,47 @@ export default function EspacesIRL({ onClose }) {
       className="wash-renard"
       style={overlayStyle({ mounted, closing })}
     >
-      {/* Top bar */}
+      {/* Glass pill back button — fixed top-left, z-index 80 */}
+      <button
+        type="button"
+        data-press
+        onClick={doClose}
+        aria-label="Retour"
+        style={{
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          left: 16,
+          zIndex: 80,
+          appearance: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          minHeight: 44,
+          padding: '10px 14px',
+          borderRadius: 999,
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          color: 'var(--blue-700)',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 13,
+          fontWeight: 500,
+          letterSpacing: '0.02em',
+          lineHeight: 1,
+          cursor: 'pointer',
+          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
+          WebkitTapHighlightColor: 'transparent',
+          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        </svg>
+        Retour
+      </button>
+
+      {/* Top bar : label centré (back déplacé en position fixed) */}
       <div
         style={{
           position: 'absolute',
@@ -271,83 +311,25 @@ export default function EspacesIRL({ onClose }) {
           right: 0,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 4px) 12px 14px',
-          gap: 8,
+          justifyContent: 'center',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 90px 14px',
           zIndex: 4,
         }}
       >
-        <button
-          type="button"
-          data-press
-          onClick={doClose}
-          aria-label="Retour"
-          style={{
-            appearance: 'none',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '12px 14px',
-            minWidth: 44,
-            minHeight: 44,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 4,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 11,
-            fontWeight: 500,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: 'var(--content-tertiary)',
-            WebkitTapHighlightColor: 'transparent',
-            flexShrink: 0,
-          }}
-        >
-          <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
-          Retour
-        </button>
         <div
           className="neya-mark"
           style={{
-            color: 'var(--content-tertiary)',
+            color: 'var(--blue-700)',
             fontFamily: 'var(--font-ui)',
             fontSize: 9,
             fontWeight: 500,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             textAlign: 'center',
-            flex: '1 1 auto',
-            minWidth: 0,
           }}
         >
           ESPACES IRL · ICI ET MAINTENANT
         </div>
-        <button
-          type="button"
-          data-press
-          onClick={doClose}
-          aria-label="Fermer"
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: '50%',
-            border: '0.5px solid var(--hairline)',
-            background: 'rgba(255, 255, 255, 0.78)',
-            color: 'var(--ink)',
-            fontSize: 14,
-            lineHeight: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            WebkitTapHighlightColor: 'transparent',
-            flexShrink: 0,
-          }}
-        >
-          ✕
-        </button>
       </div>
 
       {/* Scrollable content */}

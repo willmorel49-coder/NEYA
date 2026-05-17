@@ -183,45 +183,57 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
         />
       </div>
 
-      {/* Topbar : back + titre centré */}
+      {/* Glass pill back button — fixed top-left, z-index 80 (sous SOS qui est 100) */}
+      <button
+        type="button"
+        onClick={handleClose}
+        data-press
+        aria-label="Retour"
+        style={{
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          left: 16,
+          zIndex: 80,
+          appearance: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          minHeight: 44,
+          padding: '10px 14px',
+          borderRadius: 999,
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          color: 'var(--blue-700)',
+          fontFamily: '"Inter", sans-serif',
+          fontSize: 13,
+          fontWeight: 500,
+          letterSpacing: '0.02em',
+          lineHeight: 1,
+          cursor: 'pointer',
+          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
+          WebkitTapHighlightColor: 'transparent',
+          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        </svg>
+        Retour
+      </button>
+
+      {/* Topbar : titre centré (back déplacé en position fixed) */}
       <div
         style={{
           position: 'relative',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 14px 6px',
+          justifyContent: 'center',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 90px 6px',
           zIndex: 2,
         }}
       >
-        <button
-          type="button"
-          onClick={handleClose}
-          data-press
-          aria-label="Retour"
-          style={{
-            appearance: 'none',
-            background: 'rgba(255, 255, 255, 0.65)',
-            border: '1px solid rgba(255, 255, 255, 0.85)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            minWidth: 44,
-            minHeight: 44,
-            borderRadius: '50%',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--blue-900)',
-            fontSize: 18,
-            lineHeight: 1,
-            boxShadow: '0 4px 14px rgba(10, 36, 56, 0.06)',
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
-          ‹
-        </button>
-
         <h1
           style={{
             margin: 0,
@@ -237,9 +249,6 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
         >
           Tes habitudes
         </h1>
-
-        {/* Spacer pour équilibrer le bouton back */}
-        <div aria-hidden style={{ width: 44, height: 44 }} />
       </div>
 
       {/* Scrollable content */}

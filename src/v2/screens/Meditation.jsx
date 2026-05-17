@@ -184,6 +184,46 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
     >
       <Blobs variant="rose-violet" />
 
+      {/* Glass pill back button — fixed top-left, z-index 80 */}
+      <button
+        type="button"
+        data-press
+        onClick={handleClose}
+        aria-label="Retour"
+        style={{
+          position: 'fixed',
+          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          left: 16,
+          zIndex: 80,
+          appearance: 'none',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          minHeight: 44,
+          padding: '10px 14px',
+          borderRadius: 999,
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.9)',
+          color: 'var(--blue-700)',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 13,
+          fontWeight: 500,
+          letterSpacing: '0.02em',
+          lineHeight: 1,
+          cursor: 'pointer',
+          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
+          WebkitTapHighlightColor: 'transparent',
+          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        </svg>
+        Retour
+      </button>
+
       {/* Local CSS — breathing scale + dust drift */}
       <style>{`
         @keyframes cv-breathe-circle {
@@ -203,31 +243,19 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         }
       `}</style>
 
-      {/* Top header — chapter + world name */}
+      {/* Top header — chapter + world name (le label MEDITATION est retiré : le bouton Retour glass pill prend sa place top-left) */}
       <div
         style={{
           position: 'absolute',
           top: 'calc(env(safe-area-inset-top, 0px) + 22px)',
-          left: 22,
+          left: 110,
           right: 22,
           display: 'flex',
           alignItems: 'flex-start',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
           zIndex: 2,
         }}
       >
-        <div
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: 10,
-            fontWeight: 500,
-            letterSpacing: '0.20em',
-            textTransform: 'uppercase',
-            color: 'var(--text-muted)',
-          }}
-        >
-          MEDITATION
-        </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
           <div
             style={{

@@ -297,7 +297,10 @@ function TopBar() {
           alignItems: 'center',
           gap: 6,
           WebkitTapHighlightColor: 'transparent',
+          transition: 'opacity 240ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
         }}
+        onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(0)'; }}
       >
         Boutique <span style={{ opacity: 0.6 }} aria-hidden>↗</span>
       </a>
@@ -696,10 +699,13 @@ function PieceQuoteCard({ item, onClick }) {
         flexDirection: 'column',
         gap: 8,
         color: 'inherit',
-        transition: 'transform 220ms ease',
+        transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+        willChange: 'transform',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.02)'; }}
-      onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(10, 36, 56, 0.16)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0) scale(1)'; e.currentTarget.style.boxShadow = '0 6px 28px rgba(10, 36, 56, 0.10)'; }}
+      onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+      onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)'; }}
     >
       <div
         style={{
@@ -803,10 +809,13 @@ function FruitCard({ item, onClick }) {
         flexDirection: 'column',
         gap: 12,
         color: 'inherit',
-        transition: 'transform 220ms ease',
+        transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+        willChange: 'transform',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.02)'; }}
-      onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(10, 36, 56, 0.14)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0) scale(1)'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(10, 36, 56, 0.07)'; }}
+      onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+      onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)'; }}
     >
       <div
         style={{
@@ -895,10 +904,13 @@ function EssentielCard({ item, onClick }) {
         flexDirection: 'column',
         gap: 12,
         color: 'inherit',
-        transition: 'transform 220ms ease',
+        transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+        willChange: 'transform',
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.02)'; }}
-      onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(10, 36, 56, 0.14)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0) scale(1)'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(10, 36, 56, 0.07)'; }}
+      onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+      onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)'; }}
     >
       <div
         style={{
@@ -1028,7 +1040,13 @@ function ChapitreVoix({ onOpen }) {
               position: 'relative',
               aspectRatio: '1 / 1',
               boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+              transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+              willChange: 'transform',
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(10, 36, 56, 0.16)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0) scale(1)'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(10, 36, 56, 0.07)'; }}
+            onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+            onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)'; }}
           >
             <div
               style={{
@@ -1163,10 +1181,16 @@ function ChapitreFinal() {
           letterSpacing: '0.22em',
           textTransform: 'uppercase',
           textDecoration: 'none',
-          boxShadow: '0 8px 24px rgba(200,112,144,0.35)',
+          boxShadow: '0 10px 28px rgba(200,112,144,0.40)',
           WebkitTapHighlightColor: 'transparent',
           textAlign: 'center',
+          transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+          willChange: 'transform',
         }}
+        onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 16px 38px rgba(200,112,144,0.52)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(200,112,144,0.40)'; }}
+        onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+        onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
       >
         Voir toute la collection <span style={{ opacity: 0.85 }}>↗</span>
       </a>
@@ -1240,13 +1264,21 @@ function CavaCollectionViewer({ collection, index, items, onClose }) {
         WebkitBackdropFilter: 'blur(24px)',
         display: 'flex',
         flexDirection: 'column',
-        animation: 'cavaCollFade 280ms ease',
+        animation: 'cavaCollFade 480ms cubic-bezier(0.22, 0.61, 0.36, 1)',
       }}
     >
       <style>{`
         @keyframes cavaCollFade {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+        @keyframes cavaImgRise {
+          from { opacity: 0; transform: scale(0.96) translateY(8px); }
+          to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes cavaTextRise {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
@@ -1277,7 +1309,12 @@ function CavaCollectionViewer({ collection, index, items, onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          transition: 'background 240ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
         }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.22)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+        onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+        onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
       >
         ✕
       </button>
@@ -1338,7 +1375,8 @@ function CavaCollectionViewer({ collection, index, items, onClose }) {
                 maxHeight: '65vh',
                 objectFit: 'contain',
                 borderRadius: 12,
-                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.45)',
+                boxShadow: '0 18px 56px rgba(0, 0, 0, 0.55)',
+                animation: 'cavaImgRise 480ms cubic-bezier(0.22, 0.61, 0.36, 1) both',
               }}
             />
             <div
@@ -1348,6 +1386,7 @@ function CavaCollectionViewer({ collection, index, items, onClose }) {
                 maxWidth: 520,
                 width: '100%',
                 padding: '0 8px',
+                animation: 'cavaTextRise 480ms cubic-bezier(0.22, 0.61, 0.36, 1) 140ms both',
               }}
             >
               <p
