@@ -13,6 +13,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { haptic } from '../state';
 import CaVaPhotoViewer from './CaVaPhotoViewer';
 import Blobs from '../../components/Blobs';
+import { MARQUE_IMAGES } from '../data/marque-manifest';
 
 const TOTAL = 120;
 const PHOTO = (n) => `/cava/brand/cava-${String(n).padStart(3, '0')}.jpg`;
@@ -184,6 +185,8 @@ const COLLECTIONS_MAP = {
 export default function CaVa() {
   const [viewer, setViewer] = useState(null);
   const [viewerCollection, setViewerCollection] = useState(null);
+  const [marqueViewer, setMarqueViewer] = useState(null);
+  const [marqueVisible, setMarqueVisible] = useState(30);
 
   const openViewer = useCallback((idx) => { haptic(3); setViewer({ idx }); }, []);
   const closeViewer = useCallback(() => setViewer(null), []);
@@ -195,6 +198,13 @@ export default function CaVa() {
     setViewerCollection({ collection, index });
   }, []);
   const closeCollection = useCallback(() => setViewerCollection(null), []);
+
+  const openMarqueViewer = useCallback((idx) => { haptic(3); setMarqueViewer(idx); }, []);
+  const closeMarqueViewer = useCallback(() => setMarqueViewer(null), []);
+  const loadMoreMarque = useCallback(() => {
+    haptic(2);
+    setMarqueVisible((v) => Math.min(v + 30, MARQUE_IMAGES.length));
+  }, []);
 
   return (
     <>
@@ -216,6 +226,11 @@ export default function CaVa() {
         <ChapitreCollectionAnxiete onOpen={openCollection} />
         <ChapitreCollectionFruits onOpen={openCollection} />
         <ChapitreCollectionEssentiels onOpen={openCollection} />
+        <ChapitreUnivers
+          visible={marqueVisible}
+          onOpenImage={openMarqueViewer}
+          onLoadMore={loadMoreMarque}
+        />
         <ChapitreVoix onOpen={openViewer} />
         <ChapitreFinal />
       </div>
@@ -236,6 +251,14 @@ export default function CaVa() {
           index={viewerCollection.index}
           items={COLLECTIONS_MAP[viewerCollection.collection]}
           onClose={closeCollection}
+        />
+      )}
+
+      {marqueViewer !== null && (
+        <MarqueImageViewer
+          index={marqueViewer}
+          images={MARQUE_IMAGES}
+          onClose={closeMarqueViewer}
         />
       )}
     </>
@@ -984,7 +1007,147 @@ function EssentielCard({ item, onClick }) {
 }
 
 /* ============================================================
-   7. CHAPITRE VII — Les voix
+   7. CHAPITRE VII — Univers ÇA VA? (mosaïque marque)
+   ============================================================ */
+
+function ChapitreUnivers({ visible, onOpenImage, onLoadMore }) {
+  const total = MARQUE_IMAGES.length;
+  const shown = Math.min(visible, total);
+  const slice = MARQUE_IMAGES.slice(0, shown);
+  const hasMore = shown < total;
+
+  return (
+    <section
+      id="chap-univers"
+      style={{
+        position: 'relative',
+        zIndex: 1,
+        padding: '16px 16px 48px',
+      }}
+    >
+      <div style={{ padding: '0 6px 18px' }}>
+        <span
+          style={{
+            display: 'inline-block',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--rose-700)',
+          }}
+        >
+          VII · L’univers
+        </span>
+        <p
+          style={{
+            margin: '12px 0 8px',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 'clamp(28px, 7vw, 36px)',
+            lineHeight: 1.15,
+            letterSpacing: '-0.01em',
+            color: 'var(--blue-900)',
+          }}
+        >
+          Toute la marque, en images.
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 400,
+            fontSize: 15,
+            lineHeight: 1.55,
+            color: 'var(--text-secondary)',
+          }}
+        >
+          {total} instants qui racontent ÇA VA?.
+        </p>
+      </div>
+
+      <style>{`
+        @media (min-width: 640px) {
+          .cava-marque-mosaic { columns: 3 !important; }
+        }
+        @media (min-width: 960px) {
+          .cava-marque-mosaic { columns: 4 !important; }
+        }
+      `}</style>
+
+      <div
+        className="cava-marque-mosaic"
+        style={{
+          columns: 2,
+          columnGap: 8,
+          padding: '0 0',
+        }}
+      >
+        {slice.map((src, idx) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            loading={idx < 6 ? 'eager' : 'lazy'}
+            decoding="async"
+            onClick={() => onOpenImage(idx)}
+            style={{
+              width: '100%',
+              display: 'block',
+              marginBottom: 8,
+              borderRadius: 12,
+              cursor: 'pointer',
+              breakInside: 'avoid',
+              transition: 'transform 240ms cubic-bezier(0.22,0.61,0.36,1)',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.02)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+          />
+        ))}
+      </div>
+
+      {hasMore && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
+          <button
+            type="button"
+            data-press
+            onClick={onLoadMore}
+            style={{
+              appearance: 'none',
+              border: '1px solid rgba(10, 36, 56, 0.14)',
+              padding: '14px 26px',
+              minHeight: 44,
+              background: 'rgba(255, 255, 255, 0.65)',
+              backdropFilter: 'blur(18px)',
+              WebkitBackdropFilter: 'blur(18px)',
+              borderRadius: 999,
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'var(--blue-900)',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              transition: 'transform 240ms cubic-bezier(0.22,0.61,0.36,1), box-shadow 240ms cubic-bezier(0.22,0.61,0.36,1)',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(10, 36, 56, 0.10)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+            onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+            onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+          >
+            Voir plus ({shown} / {total})
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ============================================================
+   7.b CHAPITRE VIII — Les voix
    ============================================================ */
 
 function ChapitreVoix({ onOpen }) {
@@ -998,7 +1161,7 @@ function ChapitreVoix({ onOpen }) {
       }}
     >
       <div style={{ padding: '0 6px 18px' }}>
-        <Eyebrow>VII · Les voix</Eyebrow>
+        <Eyebrow>VIII · Les voix</Eyebrow>
         <p
           style={{
             margin: '10px 0 0',
@@ -1092,7 +1255,7 @@ function ChapitreVoix({ onOpen }) {
 }
 
 /* ============================================================
-   8. CHAPITRE VIII — Final
+   8. CHAPITRE IX — Final
    ============================================================ */
 
 function ChapitreFinal() {
@@ -1124,7 +1287,7 @@ function ChapitreFinal() {
             color: '#F3B8CC',
           }}
         >
-          VIII · Final
+          IX · Final
         </span>
       </div>
 
@@ -1438,6 +1601,199 @@ function CavaCollectionViewer({ collection, index, items, onClose }) {
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   10. MarqueImageViewer — viewer plein écran pour la mosaïque univers
+   ============================================================
+   Image pleine (object-fit: contain, padding 20px)
+   Fond rgba(10,36,56,0.92) + blur 24px
+   Swipe horizontal scroll-snap entre photos
+   Compteur "n / total" top-left · X close top-right
+   ESC + tap backdrop = close · Aucun texte (vitrine pure)
+   ============================================================ */
+
+function MarqueImageViewer({ index, images, onClose }) {
+  const [currentIdx, setCurrentIdx] = useState(index);
+
+  const setScrollerRef = useCallback((el) => {
+    if (el && index > 0 && el.scrollLeft === 0) {
+      el.scrollLeft = el.clientWidth * index;
+    }
+  }, [index]);
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === 'Escape') {
+        haptic(2);
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  const handleScroll = useCallback((e) => {
+    const w = e.currentTarget.clientWidth;
+    if (!w) return;
+    const i = Math.round(e.currentTarget.scrollLeft / w);
+    if (i !== currentIdx && i >= 0 && i < images.length) {
+      setCurrentIdx(i);
+      haptic(2);
+    }
+  }, [currentIdx, images.length]);
+
+  const handleBackdropClick = useCallback((e) => {
+    if (e.target === e.currentTarget) {
+      haptic(2);
+      onClose();
+    }
+  }, [onClose]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      onClick={handleBackdropClick}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        background: 'rgba(10, 36, 56, 0.92)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        display: 'flex',
+        flexDirection: 'column',
+        animation: 'marqueFade 380ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+      }}
+    >
+      <style>{`
+        @keyframes marqueFade {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes marqueImgRise {
+          from { opacity: 0; transform: scale(0.96); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+
+      {/* Counter top-left */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 22px)',
+          left: 22,
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 12,
+          fontWeight: 600,
+          letterSpacing: '0.04em',
+          color: '#FFFFFF',
+          zIndex: 2,
+          fontVariantNumeric: 'tabular-nums',
+        }}
+      >
+        {currentIdx + 1} / {images.length}
+      </div>
+
+      {/* Close button top-right */}
+      <button
+        type="button"
+        onClick={() => { haptic(3); onClose(); }}
+        aria-label="Fermer"
+        data-press
+        style={{
+          position: 'absolute',
+          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          right: 14,
+          width: 44,
+          height: 44,
+          borderRadius: '50%',
+          border: '1px solid rgba(255,255,255,0.25)',
+          background: 'rgba(255,255,255,0.12)',
+          backdropFilter: 'blur(18px)',
+          WebkitBackdropFilter: 'blur(18px)',
+          color: '#FFFFFF',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 18,
+          fontWeight: 300,
+          cursor: 'pointer',
+          WebkitTapHighlightColor: 'transparent',
+          zIndex: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'background 240ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.22)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+        onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
+        onMouseUp={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+      >
+        ✕
+      </button>
+
+      {/* Scroll-snap horizontal */}
+      <div
+        ref={setScrollerRef}
+        onScroll={handleScroll}
+        onClick={handleBackdropClick}
+        style={{
+          flex: 1,
+          display: 'flex',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none',
+        }}
+      >
+        {images.map((src, i) => {
+          const isActive = i === currentIdx;
+          const isNear = Math.abs(i - currentIdx) <= 1;
+          return (
+            <div
+              key={src}
+              onClick={handleBackdropClick}
+              style={{
+                flex: '0 0 100%',
+                width: '100%',
+                height: '100%',
+                scrollSnapAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 20,
+                boxSizing: 'border-box',
+              }}
+            >
+              <img
+                src={src}
+                alt=""
+                loading={isActive ? 'eager' : 'lazy'}
+                decoding="async"
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '90vh',
+                  objectFit: 'contain',
+                  borderRadius: 12,
+                  boxShadow: '0 18px 56px rgba(0, 0, 0, 0.55)',
+                  animation: isActive ? 'marqueImgRise 380ms cubic-bezier(0.22, 0.61, 0.36, 1) both' : 'none',
+                  visibility: isNear ? 'visible' : 'hidden',
+                }}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
