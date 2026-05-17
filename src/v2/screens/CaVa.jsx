@@ -1,19 +1,21 @@
 /* ============================================================
-   ÇA VA ? V8 — Boutique éditoriale (refonte DA Mai 2026)
+   ÇA VA ? V9 — Storytelling éditorial de la marque (Mai 2026)
    ============================================================
-   Structure (CLAUDE.md §9 TAB 4) :
-     1. Topbar glass clair
-     2. Hero dark plein largeur (SEUL endroit autorisé)
-     3. Manifeste fond clair (3 lignes Cormorant)
-     4. QuoteBlock — citation glass card barre accent gradient
-     5. Collections grid 2 col — 6 cards glass
-     6. QuoteBlock — citation 2
-     7. VoixRow — grid 3 col photos cava-brand
-     8. Final dark + CTA "VOIR LA COLLECTION" gradient rose
+   Refonte : la galerie devient un récit en 6 chapitres
+   pour faire comprendre la marque entière, pas juste montrer
+   des photos en vrac.
+
+   Structure (storytelling) :
+     1. TopBar glass clair sticky
+     2. Hero dark plein largeur (SEUL bloc dark plein largeur)
+     3. CHAPITRE I  — Le manifeste
+     4. CHAPITRE II — Notre raison d'être (split image + texte)
+     5. CHAPITRE III — Les pièces qui parlent (3 hero cards)
+     6. CHAPITRE IV — La collection complète (grid 2 col, 6 cards)
+     7. CHAPITRE V — Voix de celles et ceux qui portent (3 col)
+     8. CHAPITRE VI — Final dark + CTA
    ============================================================
-   Palette : bleu/rose/violet · Fonts : Cormorant + Inter
-   Photos brand : HERO=1, BREATH=22/33, VOIX=[7,75,105],
-                  COLL=[12,48,67,84,96,118]
+   Palette : bleu / rose / violet · Fonts : Cormorant + Inter
    ============================================================ */
 
 import { useState, useCallback } from 'react';
@@ -23,25 +25,55 @@ import Blobs from '../../components/Blobs';
 
 const TOTAL = 120;
 const PHOTO = (n) => `/cava/brand/cava-${String(n).padStart(3, '0')}.jpg`;
+const SEL = (name) => `/cava/selection/${name}`;
 const EXTERNAL_URL = 'https://www.cava-brand.com';
 
-const HERO_PHOTO = 1;
-const BREATH_1 = 22;
-const BREATH_2 = 33;
+/* ─── Pièces phares (Chapitre III) ─── */
+
+const PIECES = [
+  {
+    id: 'pas',
+    src: SEL('sel-01-pas.jpeg'),
+    eyebrow: 'La pièce victoire',
+    title: 'Chaque pas est une victoire',
+    quote: 'Pour celles et ceux qui avancent quand c’est dur.',
+    body: 'Un t-shirt cream porté comme un drapeau. Au dos, la phrase. Devant, la question. Entre les deux, ton chemin.',
+  },
+  {
+    id: 'sensibilite',
+    src: SEL('sel-02-sensibilite.jpeg'),
+    eyebrow: 'La pièce manifeste',
+    title: 'Ma sensibilité est mon super-pouvoir',
+    quote: 'Pour celles et ceux qui ressentent fort.',
+    body: 'Trop sensible, on te l’a dit toute ta vie. ÇA VA? renverse la phrase. Ce qui te fragilise est ce qui te rend vivant.',
+  },
+  {
+    id: 'prevert',
+    src: SEL('sel-03-prevert.jpeg'),
+    eyebrow: 'La pièce poésie',
+    title: 'Prenez soin de vous',
+    quote: 'Même si le bonheur vous oublie un peu, ne l’oubliez jamais complètement.',
+    body: 'Jacques Prévert imprimé sur un vêtement. Une affiche qui se porte. Une douceur qu’on emmène avec soi.',
+  },
+];
+
+/* ─── Collection complète (Chapitre IV) ─── */
+
+const COLLECTION = [
+  { id: 'sel-04', src: SEL('sel-04-noir-coeur.jpeg'), title: 'Cœur',     price: '39 €', tag: 'Tee',    tagColor: '#1A5A7F' },
+  { id: 'sel-05', src: SEL('sel-05.jpeg'),            title: 'Brume',    price: '79 €', tag: 'Hoodie', tagColor: '#C87090' },
+  { id: 'sel-06', src: SEL('sel-06.jpeg'),            title: 'Murmure',  price: '69 €', tag: 'Sweat',  tagColor: '#7F5A8A' },
+  { id: 'sel-07', src: SEL('sel-07.jpeg'),            title: 'Lueur',    price: '39 €', tag: 'Tee',    tagColor: '#C87090' },
+  { id: 'sel-08', src: SEL('sel-08.jpeg'),            title: 'Silence',  price: '79 €', tag: 'Hoodie', tagColor: '#1A5A7F' },
+  { id: 'cava-48', srcBrand: 48,                      title: 'Aube',     price: '69 €', tag: 'Sweat',  tagColor: '#7F5A8A' },
+];
+
+/* ─── Les voix (Chapitre V) ─── */
 
 const VOIX = [
   { idx: 7,   quote: 'Je vais bien en version limitée.' },
   { idx: 75,  quote: 'Certaines tempêtes portent des fleurs.' },
   { idx: 105, quote: 'Le masque tombe quand personne regarde.' },
-];
-
-const COLLECTIONS = [
-  { idx: 12,  title: 'Brume',     price: '79 €',  tag: 'Bleu',    tagColor: '#1A5A7F' },
-  { idx: 48,  title: 'Murmure',   price: '89 €',  tag: 'Rose',    tagColor: '#C87090' },
-  { idx: 67,  title: 'Silence',   price: '94 €',  tag: 'Violet',  tagColor: '#7F5A8A' },
-  { idx: 84,  title: 'Lueur',     price: '79 €',  tag: 'Rose',    tagColor: '#C87090' },
-  { idx: 96,  title: 'Marée',     price: '105 €', tag: 'Bleu',    tagColor: '#1A5A7F' },
-  { idx: 118, title: 'Aube',      price: '89 €',  tag: 'Violet',  tagColor: '#7F5A8A' },
 ];
 
 const CAPTION_MAP = VOIX.reduce((acc, v) => {
@@ -72,12 +104,12 @@ export default function CaVa() {
         <Blobs variant="rose-blue" />
         <TopBar />
         <Hero />
-        <Manifeste />
-        <QuoteBlock quote="Tout le monde demande « ça va ? ». Très peu sont prêts à entendre la vraie réponse." />
-        <Collections onOpen={openViewer} />
-        <QuoteBlock quote="Tu peux souffrir et rester beau, humain, vivant." />
-        <VoixRow onOpen={openViewer} />
-        <Final />
+        <ChapitreManifeste />
+        <ChapitreRaisonEtre />
+        <ChapitrePieces />
+        <ChapitreCollection />
+        <ChapitreVoix onOpen={openViewer} />
+        <ChapitreFinal />
       </div>
 
       {viewer && (
@@ -93,7 +125,9 @@ export default function CaVa() {
   );
 }
 
-/* ─── 1. Top bar (glass clair) ─── */
+/* ============================================================
+   1. TopBar (glass clair sticky)
+   ============================================================ */
 
 function TopBar() {
   return (
@@ -154,7 +188,9 @@ function TopBar() {
   );
 }
 
-/* ─── 2. Hero dark (SEUL bloc dark plein largeur autorisé) ─── */
+/* ============================================================
+   2. Hero dark (SEUL bloc dark plein largeur autorisé)
+   ============================================================ */
 
 function Hero() {
   return (
@@ -170,60 +206,11 @@ function Hero() {
         justifyContent: 'center',
       }}
     >
-      {/* 3 blobs glow internes */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: -60,
-          right: -60,
-          width: 320,
-          height: 320,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(200,112,144,0.55) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          bottom: -80,
-          left: -70,
-          width: 300,
-          height: 300,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(42,138,191,0.55) 0%, transparent 70%)',
-          filter: 'blur(70px)',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 340,
-          height: 340,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(127,90,138,0.40) 0%, transparent 70%)',
-          filter: 'blur(90px)',
-          pointerEvents: 'none',
-        }}
-      />
+      <div aria-hidden style={{ position: 'absolute', top: -60, right: -60, width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,112,144,0.55) 0%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', bottom: -80, left: -70, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(42,138,191,0.55) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 340, height: 340, borderRadius: '50%', background: 'radial-gradient(circle, rgba(127,90,138,0.40) 0%, transparent 70%)', filter: 'blur(90px)', pointerEvents: 'none' }} />
 
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 2,
-          textAlign: 'center',
-          padding: '0 22px',
-          color: '#FFFFFF',
-        }}
-      >
+      <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: '0 22px', color: '#FFFFFF' }}>
         <h1
           style={{
             margin: 0,
@@ -257,124 +244,332 @@ function Hero() {
   );
 }
 
-/* ─── 3. Manifeste (3 lignes Cormorant italic centré) ─── */
+/* ============================================================
+   Helpers UI
+   ============================================================ */
 
-function Manifeste() {
+function Eyebrow({ children }) {
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        fontFamily: "'Inter', sans-serif",
+        fontSize: 9,
+        fontWeight: 600,
+        letterSpacing: '0.22em',
+        textTransform: 'uppercase',
+        color: '#C87090',
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+/* ============================================================
+   3. CHAPITRE I — Le manifeste
+   ============================================================ */
+
+function ChapitreManifeste() {
   return (
     <section
       style={{
         position: 'relative',
         zIndex: 1,
-        padding: '72px 28px 64px',
+        padding: '80px 28px 56px',
         background: 'var(--bg)',
         textAlign: 'center',
       }}
     >
+      <div style={{ marginBottom: 22 }}>
+        <Eyebrow>I · Manifeste</Eyebrow>
+      </div>
       <p
         style={{
-          margin: '0 auto',
+          margin: '0 auto 22px',
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
           fontWeight: 300,
-          fontSize: 'clamp(18px, 5vw, 22px)',
-          lineHeight: 1.6,
-          letterSpacing: '0.005em',
+          fontSize: 'clamp(26px, 7vw, 36px)',
+          lineHeight: 1.25,
+          letterSpacing: '-0.005em',
           color: 'var(--blue-900)',
-          maxWidth: 480,
+          maxWidth: 540,
         }}
       >
-        Pas née pour vendre.<br />
-        Née parce que trop de gens souffrent en silence.<br />
-        Le vêtement comme support de présence.
+        Nous existons pour briser le masque du « ça va ».
+      </p>
+      <p
+        style={{
+          margin: '0 auto',
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 300,
+          fontSize: 14,
+          lineHeight: 1.72,
+          color: 'var(--blue-700)',
+          maxWidth: 440,
+        }}
+      >
+        Pas née pour vendre. Née parce que trop de gens souffrent en silence.
+        ÇA VA? est une marque de vêtements pensée comme un support de présence —
+        chaque pièce porte une phrase, une voix, une fissure assumée.
       </p>
     </section>
   );
 }
 
-/* ─── 4 & 6. QuoteBlock (glass card barre accent gradient bleu→rose) ─── */
+/* ============================================================
+   4. CHAPITRE II — Notre raison d'être (split image + texte)
+   ============================================================ */
 
-function QuoteBlock({ quote }) {
+function ChapitreRaisonEtre() {
   return (
     <section
       style={{
         position: 'relative',
         zIndex: 1,
-        padding: '8px 16px 32px',
+        padding: '24px 16px 56px',
       }}
     >
       <div
         style={{
-          position: 'relative',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1.2fr',
+          gap: 16,
+          alignItems: 'stretch',
           background: 'rgba(255, 255, 255, 0.65)',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
           border: '1px solid rgba(255, 255, 255, 0.85)',
           borderRadius: 24,
           boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-          padding: '28px 24px 28px 28px',
+          padding: 12,
           overflow: 'hidden',
         }}
       >
-        {/* Barre accent gauche : gradient bleu→rose */}
         <div
-          aria-hidden
           style={{
-            position: 'absolute',
-            left: 0,
-            top: 16,
-            bottom: 16,
-            width: 3,
-            background: 'linear-gradient(180deg, #1A5A7F 0%, #C87090 100%)',
-            borderRadius: '0 2px 2px 0',
+            position: 'relative',
+            width: '100%',
+            minHeight: 220,
+            borderRadius: 16,
+            overflow: 'hidden',
+            backgroundImage: `url(${PHOTO(7)})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
-        />
+        >
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to bottom, transparent 30%, rgba(10,36,56,0.65) 100%)',
+            }}
+          />
+        </div>
+        <div
+          style={{
+            padding: '14px 8px 14px 6px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            gap: 12,
+          }}
+        >
+          <Eyebrow>II · Raison d&rsquo;être</Eyebrow>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 'clamp(20px, 5.5vw, 26px)',
+              lineHeight: 1.25,
+              letterSpacing: '-0.005em',
+              color: 'var(--blue-900)',
+            }}
+          >
+            Faire de la mode un langage qui libère la parole sur la santé mentale.
+          </p>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 300,
+              fontSize: 12.5,
+              lineHeight: 1.65,
+              color: 'var(--blue-700)',
+            }}
+          >
+            Un vêtement qui ouvre la conversation, sans forcer.
+            Une phrase qui suffit parfois à briser un silence.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   5. CHAPITRE III — Les pièces qui parlent (3 hero cards)
+   ============================================================ */
+
+function ChapitrePieces() {
+  return (
+    <section
+      style={{
+        position: 'relative',
+        zIndex: 1,
+        padding: '16px 16px 48px',
+      }}
+    >
+      <div style={{ padding: '0 6px 18px' }}>
+        <Eyebrow>III · Les pièces</Eyebrow>
+        <p
+          style={{
+            margin: '10px 0 0',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 22,
+            lineHeight: 1.3,
+            color: 'var(--blue-900)',
+          }}
+        >
+          Trois pièces, trois voix qui osent.
+        </p>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        {PIECES.map((p) => (
+          <PieceCard key={p.id} piece={p} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PieceCard({ piece }) {
+  return (
+    <article
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: 420,
+        borderRadius: 24,
+        overflow: 'hidden',
+        backgroundImage: `url(${piece.src})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundColor: 'rgba(10,36,56,0.04)',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        boxShadow: '0 6px 28px rgba(10, 36, 56, 0.10)',
+      }}
+    >
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to bottom, transparent 30%, rgba(10,36,56,0.78) 100%)',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          left: 18,
+          right: 18,
+          bottom: 20,
+          color: '#FFFFFF',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 9,
+            fontWeight: 600,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: '#F3B8CC',
+          }}
+        >
+          {piece.eyebrow}
+        </span>
+        <h3
+          style={{
+            margin: 0,
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 'clamp(22px, 6vw, 28px)',
+            lineHeight: 1.2,
+            letterSpacing: '-0.005em',
+            color: '#FFFFFF',
+          }}
+        >
+          « {piece.title} »
+        </h3>
         <p
           style={{
             margin: 0,
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 'clamp(16px, 4.5vw, 18px)',
-            lineHeight: 1.55,
-            letterSpacing: '0.003em',
-            color: 'var(--blue-900)',
+            fontSize: 16,
+            lineHeight: 1.4,
+            color: 'rgba(255,255,255,0.92)',
           }}
         >
-          « {quote} »
+          {piece.quote}
+        </p>
+        <p
+          style={{
+            margin: '4px 0 0',
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 300,
+            fontSize: 13,
+            lineHeight: 1.55,
+            color: 'rgba(255,255,255,0.82)',
+          }}
+        >
+          {piece.body}
         </p>
       </div>
-    </section>
+    </article>
   );
 }
 
-/* ─── 5. Collections grid 2 col — 6 cards glass ─── */
+/* ============================================================
+   6. CHAPITRE IV — La collection complète (grid 2 col)
+   ============================================================ */
 
-function Collections({ onOpen }) {
+function ChapitreCollection() {
   return (
     <section
       style={{
         position: 'relative',
         zIndex: 1,
-        padding: '24px 16px 16px',
+        padding: '16px 16px 48px',
       }}
     >
-      <div
-        style={{
-          padding: '0 6px 16px',
-        }}
-      >
-        <span
+      <div style={{ padding: '0 6px 18px' }}>
+        <Eyebrow>IV · La collection</Eyebrow>
+        <p
           style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            color: 'var(--blue-700)',
+            margin: '10px 0 0',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 22,
+            lineHeight: 1.3,
+            color: 'var(--blue-900)',
           }}
         >
-          La collection
-        </span>
+          Chaque pièce, une présence qui s&rsquo;assume.
+        </p>
       </div>
       <div
         style={{
@@ -383,20 +578,23 @@ function Collections({ onOpen }) {
           gap: 16,
         }}
       >
-        {COLLECTIONS.map((c) => (
-          <CollectionCard key={c.idx} item={c} onOpen={onOpen} />
+        {COLLECTION.map((c) => (
+          <CollectionCard key={c.id} item={c} />
         ))}
       </div>
     </section>
   );
 }
 
-function CollectionCard({ item, onOpen }) {
+function CollectionCard({ item }) {
+  const src = item.src || PHOTO(item.srcBrand);
   return (
-    <button
+    <a
+      href={EXTERNAL_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => haptic(3)}
       data-press
-      onClick={() => onOpen(item.idx)}
-      aria-label={`${item.title} — ${item.price}`}
       style={{
         appearance: 'none',
         border: '1px solid rgba(255, 255, 255, 0.85)',
@@ -412,6 +610,8 @@ function CollectionCard({ item, onOpen }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 12,
+        textDecoration: 'none',
+        color: 'inherit',
       }}
     >
       <div
@@ -422,7 +622,7 @@ function CollectionCard({ item, onOpen }) {
           borderRadius: 16,
           overflow: 'hidden',
           backgroundColor: 'rgba(10,36,56,0.04)',
-          backgroundImage: `url(${PHOTO(item.idx)})`,
+          backgroundImage: `url(${src})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -482,34 +682,38 @@ function CollectionCard({ item, onOpen }) {
           {item.price}
         </span>
       </div>
-    </button>
+    </a>
   );
 }
 
-/* ─── 7. VoixRow (3 col 1/1 photos cava-brand) ─── */
+/* ============================================================
+   7. CHAPITRE V — Les voix (3 col)
+   ============================================================ */
 
-function VoixRow({ onOpen }) {
+function ChapitreVoix({ onOpen }) {
   return (
     <section
       style={{
         position: 'relative',
         zIndex: 1,
-        padding: '16px 16px 32px',
+        padding: '16px 16px 48px',
       }}
     >
-      <div style={{ padding: '0 6px 16px' }}>
-        <span
+      <div style={{ padding: '0 6px 18px' }}>
+        <Eyebrow>V · Les voix</Eyebrow>
+        <p
           style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            color: 'var(--blue-700)',
+            margin: '10px 0 0',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 22,
+            lineHeight: 1.3,
+            color: 'var(--blue-900)',
           }}
         >
-          Les voix
-        </span>
+          Celles et ceux qui portent.
+        </p>
       </div>
       <div
         style={{
@@ -554,7 +758,7 @@ function VoixRow({ onOpen }) {
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(180deg, rgba(10,36,56,0) 45%, rgba(10,36,56,0.78) 100%)',
+                background: 'linear-gradient(to bottom, transparent 30%, rgba(10,36,56,0.78) 100%)',
               }}
             />
             <p
@@ -583,48 +787,42 @@ function VoixRow({ onOpen }) {
   );
 }
 
-/* ─── 8. Final bloc dark gradient + CTA "VOIR LA COLLECTION" gradient rose ─── */
+/* ============================================================
+   8. CHAPITRE VI — Final (dark gradient bleu-violet, radius 28)
+   ============================================================ */
 
-function Final() {
+function ChapitreFinal() {
   return (
     <section
       style={{
         position: 'relative',
-        background: 'linear-gradient(135deg, #0A2438, #1A5A7F)',
-        color: '#FFFFFF',
-        padding: '80px 22px calc(env(safe-area-inset-bottom, 0px) + 140px)',
-        textAlign: 'center',
+        margin: '16px',
+        borderRadius: 28,
         overflow: 'hidden',
+        background: 'linear-gradient(135deg, #0A2438 0%, #1A5A7F 55%, #7F5A8A 100%)',
+        color: '#FFFFFF',
+        padding: '72px 24px calc(env(safe-area-inset-bottom, 0px) + 140px)',
+        textAlign: 'center',
+        boxShadow: '0 12px 40px rgba(10, 36, 56, 0.18)',
       }}
     >
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: -50,
-          right: -60,
-          width: 240,
-          height: 240,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(200,112,144,0.40) 0%, transparent 70%)',
-          filter: 'blur(70px)',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          bottom: 40,
-          left: -60,
-          width: 220,
-          height: 220,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(127,90,138,0.42) 0%, transparent 70%)',
-          filter: 'blur(70px)',
-          pointerEvents: 'none',
-        }}
-      />
+      <div aria-hidden style={{ position: 'absolute', top: -50, right: -60, width: 240, height: 240, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,112,144,0.40) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', bottom: 40, left: -60, width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle, rgba(127,90,138,0.42) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none' }} />
+
+      <div style={{ position: 'relative', zIndex: 2, marginBottom: 16 }}>
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 9,
+            fontWeight: 600,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: '#F3B8CC',
+          }}
+        >
+          VI · Final
+        </span>
+      </div>
 
       <p
         style={{
@@ -634,31 +832,29 @@ function Final() {
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
           fontWeight: 300,
-          fontSize: 'clamp(24px, 6.5vw, 30px)',
+          fontSize: 'clamp(26px, 7vw, 32px)',
           lineHeight: 1.3,
           letterSpacing: '-0.012em',
           color: '#FFFFFF',
           maxWidth: 420,
         }}
       >
-        Derrière chaque visage<br />
-        peut se cacher<br />
-        une bataille invisible.
+        Quelque chose à dire ?
       </p>
       <p
         style={{
           position: 'relative',
           zIndex: 2,
-          margin: '0 auto 44px',
+          margin: '0 auto 36px',
           fontFamily: "'Inter', sans-serif",
           fontWeight: 300,
           fontSize: 14,
           lineHeight: 1.6,
-          color: 'rgba(255,255,255,0.78)',
+          color: 'rgba(255,255,255,0.82)',
           maxWidth: 360,
         }}
       >
-        Parfois, se sentir compris suffit à tout changer.
+        Chaque pièce ÇA VA? est une voix dans le silence.
       </p>
       <a
         href={EXTERNAL_URL}
@@ -669,10 +865,8 @@ function Final() {
         style={{
           position: 'relative',
           zIndex: 2,
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 10,
-          padding: '15px 28px',
+          display: 'block',
+          padding: '17px 28px',
           minHeight: 44,
           background: 'linear-gradient(135deg, #C87090, #E080A8)',
           color: '#FFFFFF',
@@ -680,14 +874,15 @@ function Final() {
           fontFamily: "'Inter', sans-serif",
           fontSize: 11,
           fontWeight: 600,
-          letterSpacing: '0.18em',
+          letterSpacing: '0.22em',
           textTransform: 'uppercase',
           textDecoration: 'none',
           boxShadow: '0 8px 24px rgba(200,112,144,0.35)',
           WebkitTapHighlightColor: 'transparent',
+          textAlign: 'center',
         }}
       >
-        Voir la collection <span style={{ opacity: 0.85 }}>↗</span>
+        Voir toute la collection <span style={{ opacity: 0.85 }}>↗</span>
       </a>
     </section>
   );
