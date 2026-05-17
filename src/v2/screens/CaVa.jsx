@@ -57,15 +57,110 @@ const PIECES = [
   },
 ];
 
-/* ─── Collection complète (Chapitre IV) ─── */
+/* ─── Collection I — Ma belle anxiété (Chapitre IV.A) ─── */
 
-const COLLECTION = [
-  { id: 'sel-04', src: SEL('sel-04-noir-coeur.jpeg'), title: 'Cœur',     price: '39 €', tag: 'Tee',    tagColor: '#1A5A7F' },
-  { id: 'sel-05', src: SEL('sel-05.jpeg'),            title: 'Brume',    price: '79 €', tag: 'Hoodie', tagColor: '#C87090' },
-  { id: 'sel-06', src: SEL('sel-06.jpeg'),            title: 'Murmure',  price: '69 €', tag: 'Sweat',  tagColor: '#7F5A8A' },
-  { id: 'sel-07', src: SEL('sel-07.jpeg'),            title: 'Lueur',    price: '39 €', tag: 'Tee',    tagColor: '#C87090' },
-  { id: 'sel-08', src: SEL('sel-08.jpeg'),            title: 'Silence',  price: '79 €', tag: 'Hoodie', tagColor: '#1A5A7F' },
-  { id: 'cava-48', srcBrand: 48,                      title: 'Aube',     price: '69 €', tag: 'Sweat',  tagColor: '#7F5A8A' },
+const COLLECTION_ANXIETE = [
+  {
+    id: 'anx-01',
+    src: SEL('anx-01-super-pouvoir.jpeg'),
+    title: 'Super-pouvoir',
+    quote: 'Mon anxiété est mon super-pouvoir.',
+    price: '39 €',
+  },
+  {
+    id: 'anx-02',
+    src: SEL('anx-02-camus.jpeg'),
+    title: 'Camus',
+    quote: 'Au milieu de l’hiver, j’apprenais enfin qu’il y avait en moi un été invincible.',
+    price: '39 €',
+  },
+  {
+    id: 'anx-03',
+    src: SEL('anx-03-train.jpeg'),
+    title: 'Le train',
+    quote: 'Le monde avance trop vite pour moi.',
+    price: '39 €',
+  },
+  {
+    id: 'anx-04',
+    src: SEL('anx-04-matt-haig.jpeg'),
+    title: 'Matt Haig',
+    quote: 'L’anxiété est une bête irrationnelle.',
+    price: '39 €',
+  },
+  {
+    id: 'anx-05',
+    src: SEL('anx-05-prevert-bis.jpeg'),
+    title: 'Prévert · Fleur',
+    quote: 'Même si le bonheur vous oublie un peu, ne l’oubliez jamais complètement.',
+    price: '39 €',
+  },
+  {
+    id: 'anx-06',
+    src: SEL('anx-06-soleil.jpeg'),
+    title: 'Soleil',
+    quote: 'Le soleil reviendra, je le sais.',
+    price: '39 €',
+  },
+  {
+    id: 'anx-07',
+    src: SEL('anx-07-fatigue.jpeg'),
+    title: 'Fatigue',
+    quote: 'Fatigué d’être fatigué.',
+    price: '39 €',
+  },
+  {
+    id: 'sel-02',
+    src: SEL('sel-02-sensibilite.jpeg'),
+    title: 'Sensibilité',
+    quote: 'Ma sensibilité est mon super-pouvoir.',
+    price: '39 €',
+  },
+  {
+    id: 'sel-03',
+    src: SEL('sel-03-prevert.jpeg'),
+    title: 'Prévert',
+    quote: 'Prenez soin de vous.',
+    price: '39 €',
+  },
+];
+
+/* ─── Collection II — Fruits & métaphores (Chapitre IV.B) ─── */
+
+const COLLECTION_FRUITS = [
+  {
+    id: 'fruit-01',
+    src: SEL('fruit-01-banane.jpeg'),
+    title: 'La banane',
+    quote: 'J’ai plus la banane, mais je souris quand même.',
+    price: '39 €',
+  },
+  {
+    id: 'fruit-02',
+    src: SEL('fruit-02-peche.jpeg'),
+    title: 'La pêche',
+    quote: 'J’garde la pêche en public, je craque en silence.',
+    price: '39 €',
+  },
+];
+
+/* ─── Essentiels intemporels (Chapitre IV.C) ─── */
+
+const COLLECTION_ESSENTIELS = [
+  {
+    id: 'ess-tee',
+    src: SEL('sel-04-noir-coeur.jpeg'),
+    title: 'T-shirt cœur',
+    desc: 'Le noir signature. Cœur doré minimaliste.',
+    price: '39 €',
+  },
+  {
+    id: 'ess-hoodie',
+    src: SEL('ess-01-hoodie-noir.jpeg'),
+    title: 'Hoodie cœur',
+    desc: 'Le hoodie cocon. Cœur doré minimaliste.',
+    price: '79 €',
+  },
 ];
 
 /* ─── Les voix (Chapitre V) ─── */
@@ -543,10 +638,252 @@ function PieceCard({ piece }) {
 }
 
 /* ============================================================
-   6. CHAPITRE IV — La collection complète (grid 2 col)
+   6. CHAPITRE IV — Les collections (3 sous-sections : A / B / C)
    ============================================================ */
 
 function ChapitreCollection() {
+  return (
+    <>
+      <ChapitreCollectionAnxiete />
+      <ChapitreCollectionFruits />
+      <ChapitreCollectionEssentiels />
+    </>
+  );
+}
+
+/* ─── IV.A — Ma belle anxiété (carousel horizontal scroll-snap) ─── */
+
+function ChapitreCollectionAnxiete() {
+  return (
+    <section
+      style={{
+        position: 'relative',
+        zIndex: 1,
+        padding: '16px 16px 36px',
+      }}
+    >
+      <div style={{ padding: '0 6px 8px' }}>
+        <span
+          style={{
+            display: 'inline-block',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 9,
+            fontWeight: 600,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: '#BE185D',
+          }}
+        >
+          IV · Collection
+        </span>
+        <p
+          style={{
+            margin: '12px 0 6px',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 'clamp(32px, 8.5vw, 42px)',
+            lineHeight: 1.1,
+            letterSpacing: '-0.01em',
+            color: 'var(--blue-900)',
+          }}
+        >
+          Ma belle anxiété
+        </p>
+        <p
+          style={{
+            margin: '0 0 8px',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 16,
+            lineHeight: 1.4,
+            color: 'var(--text-secondary)',
+          }}
+        >
+          Des citations à porter quand les mots manquent.
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--text-muted)',
+          }}
+        >
+          9 pièces · 39-79 €
+        </p>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          gap: 14,
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          padding: '14px 6px 14px',
+          margin: '0 -16px',
+          paddingLeft: 22,
+          paddingRight: 22,
+          scrollbarWidth: 'none',
+        }}
+      >
+        {COLLECTION_ANXIETE.map((c) => (
+          <PieceQuoteCard key={c.id} item={c} />
+        ))}
+      </div>
+      <div style={{ padding: '14px 6px 0', display: 'flex', justifyContent: 'center' }}>
+        <a
+          href={EXTERNAL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => haptic(4)}
+          data-press
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            padding: '14px 24px',
+            minHeight: 44,
+            border: '1px solid var(--blue-300)',
+            background: 'transparent',
+            color: 'var(--blue-700)',
+            borderRadius: 999,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            textDecoration: 'none',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          Voir la collection complète <span style={{ opacity: 0.7 }} aria-hidden>↗</span>
+        </a>
+      </div>
+    </section>
+  );
+}
+
+/* ─── IV.B — Fruits & métaphores (grid 2 col) ─── */
+
+function ChapitreCollectionFruits() {
+  return (
+    <section
+      style={{
+        position: 'relative',
+        zIndex: 1,
+        padding: '16px 16px 36px',
+      }}
+    >
+      <div style={{ padding: '0 6px 14px' }}>
+        <span
+          style={{
+            display: 'inline-block',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 9,
+            fontWeight: 600,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'var(--violet)',
+          }}
+        >
+          V · Collection
+        </span>
+        <p
+          style={{
+            margin: '12px 0 6px',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 'clamp(32px, 8.5vw, 42px)',
+            lineHeight: 1.1,
+            letterSpacing: '-0.01em',
+            color: 'var(--blue-900)',
+          }}
+        >
+          Fruits & métaphores
+        </p>
+        <p
+          style={{
+            margin: '0 0 8px',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 16,
+            lineHeight: 1.4,
+            color: 'var(--text-secondary)',
+          }}
+        >
+          Quand on a plus la banane mais qu’on sourit quand même.
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--text-muted)',
+          }}
+        >
+          2 pièces · 39 €
+        </p>
+      </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 14,
+        }}
+      >
+        {COLLECTION_FRUITS.map((c) => (
+          <FruitCard key={c.id} item={c} />
+        ))}
+      </div>
+      <div style={{ padding: '20px 6px 0', display: 'flex', justifyContent: 'center' }}>
+        <a
+          href={EXTERNAL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => haptic(4)}
+          data-press
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            padding: '14px 24px',
+            minHeight: 44,
+            border: '1px solid var(--violet)',
+            background: 'transparent',
+            color: 'var(--violet)',
+            borderRadius: 999,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            textDecoration: 'none',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          Explorer la collection <span style={{ opacity: 0.7 }} aria-hidden>↗</span>
+        </a>
+      </div>
+    </section>
+  );
+}
+
+/* ─── IV.C — Essentiels intemporels (grid 2 col) ─── */
+
+function ChapitreCollectionEssentiels() {
   return (
     <section
       style={{
@@ -555,39 +892,164 @@ function ChapitreCollection() {
         padding: '16px 16px 48px',
       }}
     >
-      <div style={{ padding: '0 6px 18px' }}>
-        <Eyebrow>IV · La collection</Eyebrow>
+      <div style={{ padding: '0 6px 14px' }}>
+        <Eyebrow>VI · Essentiels</Eyebrow>
         <p
           style={{
-            margin: '10px 0 0',
+            margin: '12px 0 6px',
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 22,
-            lineHeight: 1.3,
+            fontSize: 24,
+            lineHeight: 1.2,
+            letterSpacing: '-0.005em',
             color: 'var(--blue-900)',
           }}
         >
-          Chaque pièce, une présence qui s&rsquo;assume.
+          Les essentiels
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 300,
+            fontSize: 14,
+            lineHeight: 1.55,
+            color: 'var(--blue-700)',
+            maxWidth: 420,
+          }}
+        >
+          Le cœur doré, signature ÇA VA?, sur les pièces qu’on porte tout le temps.
         </p>
       </div>
       <div
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 16,
+          gap: 14,
         }}
       >
-        {COLLECTION.map((c) => (
-          <CollectionCard key={c.id} item={c} />
+        {COLLECTION_ESSENTIELS.map((c) => (
+          <EssentielCard key={c.id} item={c} />
         ))}
       </div>
     </section>
   );
 }
 
-function CollectionCard({ item }) {
-  const src = item.src || PHOTO(item.srcBrand);
+/* ─── Card "Ma belle anxiété" (citation overlay sur image 3/4) ─── */
+
+function PieceQuoteCard({ item }) {
+  return (
+    <a
+      href={EXTERNAL_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => haptic(3)}
+      data-press
+      style={{
+        flex: '0 0 78%',
+        maxWidth: 300,
+        scrollSnapAlign: 'start',
+        appearance: 'none',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        padding: 10,
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderRadius: 24,
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+        cursor: 'pointer',
+        WebkitTapHighlightColor: 'transparent',
+        textAlign: 'left',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
+        textDecoration: 'none',
+        color: 'inherit',
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '3 / 4',
+          borderRadius: 16,
+          overflow: 'hidden',
+          backgroundColor: 'rgba(10,36,56,0.04)',
+          backgroundImage: `url(${item.src})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(to bottom, transparent 30%, rgba(10,36,56,0.55) 100%)',
+          }}
+        />
+        <p
+          style={{
+            position: 'absolute',
+            left: 12,
+            right: 12,
+            bottom: 12,
+            margin: 0,
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 15,
+            lineHeight: 1.3,
+            color: '#FFFFFF',
+            textShadow: '0 1px 6px rgba(0,0,0,0.45)',
+          }}
+        >
+          « {item.quote} »
+        </p>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 8,
+          padding: '0 4px 4px',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.04em',
+            color: 'var(--blue-900)',
+          }}
+        >
+          {item.title}
+        </span>
+        <span
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 14,
+            fontWeight: 500,
+            letterSpacing: '0.01em',
+            color: 'var(--blue-700)',
+            fontVariantNumeric: 'tabular-nums',
+          }}
+        >
+          {item.price}
+        </span>
+      </div>
+    </a>
+  );
+}
+
+/* ─── Card "Fruits & métaphores" (image 4/5 + citation sous l'image) ─── */
+
+function FruitCard({ item }) {
   return (
     <a
       href={EXTERNAL_URL}
@@ -622,32 +1084,24 @@ function CollectionCard({ item }) {
           borderRadius: 16,
           overflow: 'hidden',
           backgroundColor: 'rgba(10,36,56,0.04)',
-          backgroundImage: `url(${src})`,
+          backgroundImage: `url(${item.src})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
+      />
+      <p
+        style={{
+          margin: '0 2px',
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontStyle: 'italic',
+          fontWeight: 400,
+          fontSize: 16,
+          lineHeight: 1.3,
+          color: 'var(--blue-900)',
+        }}
       >
-        <span
-          style={{
-            position: 'absolute',
-            top: 10,
-            left: 10,
-            padding: '5px 10px',
-            background: 'rgba(255, 255, 255, 0.88)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            borderRadius: 999,
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 9,
-            fontWeight: 600,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: item.tagColor,
-          }}
-        >
-          {item.tag}
-        </span>
-      </div>
+        « {item.quote} »
+      </p>
       <div
         style={{
           display: 'flex',
@@ -659,11 +1113,10 @@ function CollectionCard({ item }) {
       >
         <span
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: 18,
-            lineHeight: 1.1,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
+            fontWeight: 500,
+            letterSpacing: '0.04em',
             color: 'var(--blue-900)',
           }}
         >
@@ -686,8 +1139,108 @@ function CollectionCard({ item }) {
   );
 }
 
+/* ─── Card "Essentiels" (image + nom + desc + prix) ─── */
+
+function EssentielCard({ item }) {
+  return (
+    <a
+      href={EXTERNAL_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => haptic(3)}
+      data-press
+      style={{
+        appearance: 'none',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        padding: 12,
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderRadius: 24,
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+        cursor: 'pointer',
+        WebkitTapHighlightColor: 'transparent',
+        textAlign: 'left',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+        textDecoration: 'none',
+        color: 'inherit',
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '4 / 5',
+          borderRadius: 16,
+          overflow: 'hidden',
+          backgroundColor: 'rgba(10,36,56,0.04)',
+          backgroundImage: `url(${item.src})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+          padding: '0 2px 4px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            justifyContent: 'space-between',
+            gap: 8,
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontStyle: 'italic',
+              fontWeight: 400,
+              fontSize: 18,
+              lineHeight: 1.1,
+              color: 'var(--blue-900)',
+            }}
+          >
+            {item.title}
+          </span>
+          <span
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 14,
+              fontWeight: 500,
+              letterSpacing: '0.01em',
+              color: 'var(--blue-700)',
+              fontVariantNumeric: 'tabular-nums',
+            }}
+          >
+            {item.price}
+          </span>
+        </div>
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 300,
+            fontSize: 12,
+            lineHeight: 1.5,
+            color: 'var(--blue-700)',
+          }}
+        >
+          {item.desc}
+        </p>
+      </div>
+    </a>
+  );
+}
+
 /* ============================================================
-   7. CHAPITRE V — Les voix (3 col)
+   7. CHAPITRE VII — Les voix (3 col)
    ============================================================ */
 
 function ChapitreVoix({ onOpen }) {
@@ -700,7 +1253,7 @@ function ChapitreVoix({ onOpen }) {
       }}
     >
       <div style={{ padding: '0 6px 18px' }}>
-        <Eyebrow>V · Les voix</Eyebrow>
+        <Eyebrow>VII · Les voix</Eyebrow>
         <p
           style={{
             margin: '10px 0 0',
@@ -788,7 +1341,7 @@ function ChapitreVoix({ onOpen }) {
 }
 
 /* ============================================================
-   8. CHAPITRE VI — Final (dark gradient bleu-violet, radius 28)
+   8. CHAPITRE VIII — Final (dark gradient bleu-violet, radius 28)
    ============================================================ */
 
 function ChapitreFinal() {
@@ -820,7 +1373,7 @@ function ChapitreFinal() {
             color: '#F3B8CC',
           }}
         >
-          VI · Final
+          VIII · Final
         </span>
       </div>
 
