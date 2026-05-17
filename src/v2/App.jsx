@@ -488,29 +488,25 @@ export default function V2App() {
 
       {sosMenuOpen && (
         <ActionSheet
-          title="Soutien et ressources"
-          description="Trouve ce dont tu as besoin maintenant."
+          title="Urgence"
+          description="Si tu en as besoin, maintenant."
           actions={[
             {
-              label: 'Je suis en crise maintenant',
+              label: 'Suicide Écoute · 3114',
               role: 'destructive',
+              icon: '✆',
+              onTap: () => { setSosMenuOpen(false); window.location.href = 'tel:3114'; },
+            },
+            {
+              label: 'SAMU · 15',
+              role: 'destructive',
+              icon: '✆',
+              onTap: () => { setSosMenuOpen(false); window.location.href = 'tel:15'; },
+            },
+            {
+              label: 'Mode crise — respirer 90s',
               icon: '✦',
               onTap: () => { setSosMenuOpen(false); setCriseOpen(true); },
-            },
-            {
-              label: 'Trouver de l\'aide',
-              icon: '◇',
-              onTap: () => { setSosMenuOpen(false); setAideOpen(true); },
-            },
-            {
-              label: 'Espaces de soutien',
-              icon: '○',
-              onTap: () => { setSosMenuOpen(false); setEspacesIRLOpen(true); },
-            },
-            {
-              label: 'Personnaliser mon refuge',
-              icon: '✧',
-              onTap: () => { setSosMenuOpen(false); setCriseSettingsOpen(true); },
             },
           ]}
           onClose={() => setSosMenuOpen(false)}

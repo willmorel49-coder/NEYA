@@ -82,10 +82,11 @@ export default function BottomNav({ active, onChange, badges = {} }) {
             <span style={{ position: 'relative', display: 'inline-flex' }}>
               <span
                 style={{
-                  fontSize: 17,
+                  fontSize: 20,
                   lineHeight: 1,
-                  color: isActive ? '#1A5A7F' : '#C2D8E8',
+                  color: isActive ? '#1A5A7F' : '#6F9DB5',
                   transition: 'color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  fontWeight: isActive ? 600 : 400,
                 }}
               >
                 {t.icon}
@@ -108,11 +109,11 @@ export default function BottomNav({ active, onChange, badges = {} }) {
             </span>
             <span
               style={{
-                fontSize: 8.5,
-                fontWeight: 500,
-                letterSpacing: '0.1em',
+                fontSize: 10.5,
+                fontWeight: isActive ? 600 : 500,
+                letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                color: isActive ? '#1A5A7F' : '#C2D8E8',
+                color: isActive ? '#0A2438' : '#4A6070',
                 transition: 'color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
                 whiteSpace: 'nowrap',
                 lineHeight: 1,

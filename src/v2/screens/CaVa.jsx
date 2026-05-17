@@ -19,35 +19,6 @@ const PHOTO = (n) => `/cava/brand/cava-${String(n).padStart(3, '0')}.jpg`;
 const SEL = (name) => `/cava/selection/${name}`;
 const EXTERNAL_URL = 'https://www.cava-brand.com';
 
-/* ─── Pièces phares (Chapitre III) ─── */
-
-const PIECES = [
-  {
-    id: 'pas',
-    src: SEL('sel-01-pas.jpeg'),
-    eyebrow: 'La pièce victoire',
-    title: 'Chaque pas est une victoire',
-    quote: 'Pour celles et ceux qui avancent quand c’est dur.',
-    body: 'La phrase au dos, la question devant.',
-  },
-  {
-    id: 'sensibilite',
-    src: SEL('sel-02-sensibilite.jpeg'),
-    eyebrow: 'La pièce manifeste',
-    title: 'Ma sensibilité est mon super-pouvoir',
-    quote: 'Pour celles et ceux qui ressentent fort.',
-    body: 'Ce qui fragilise est ce qui rend vivant.',
-  },
-  {
-    id: 'prevert',
-    src: SEL('sel-03-prevert.jpeg'),
-    eyebrow: 'La pièce poésie',
-    title: 'Prenez soin de vous',
-    quote: 'Même si le bonheur vous oublie un peu, ne l’oubliez jamais.',
-    body: 'Une douceur qu’on emmène avec soi.',
-  },
-];
-
 /* ─── Collection I — Ma belle anxiété (Chapitre IV.A) ─── */
 
 const COLLECTION_ANXIETE = [
@@ -99,6 +70,41 @@ const COLLECTION_ANXIETE = [
     title: 'Fatigue',
     quote: 'Fatigué d’être fatigué.',
     price: '39 €',
+  },
+  {
+    id: 'anx-08',
+    src: SEL('anx-08-courage.jpeg'),
+    title: 'Courage',
+    quote: 'J’ai eu le courage de demander de l’aide.',
+    price: '39 €',
+  },
+  {
+    id: 'anx-09',
+    src: SEL('anx-09-cicatrice.jpeg'),
+    title: 'Cicatrice vivante',
+    quote: 'Mon anxiété n’est pas une faiblesse, c’est une cicatrice vivante.',
+    price: '39 €',
+  },
+  {
+    id: 'anx-10',
+    src: SEL('anx-10-combats.jpeg'),
+    title: 'Combats',
+    quote: 'Je combats en silence.',
+    price: '39 €',
+  },
+  {
+    id: 'anx-11',
+    src: SEL('anx-11-sourire.jpeg'),
+    title: 'Sourire forcé',
+    quote: 'Pourquoi tu forces un sourire ?',
+    price: '39 €',
+  },
+  {
+    id: 'anx-12',
+    src: SEL('anx-12-mandela.jpeg'),
+    title: 'Mandela',
+    quote: 'Le courage n’est pas l’absence de peur, mais la capacité de la vaincre.',
+    price: '49 €',
   },
   {
     id: 'sel-02',
@@ -190,12 +196,6 @@ export default function CaVa() {
   }, []);
   const closeCollection = useCallback(() => setViewerCollection(null), []);
 
-  const scrollToAnchor = useCallback((id) => {
-    haptic(2);
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, []);
-
   return (
     <>
       <div
@@ -212,10 +212,7 @@ export default function CaVa() {
         <Blobs variant="rose-blue" />
         <TopBar />
         <Hero />
-        <MiniNav onJump={scrollToAnchor} />
         <ChapitreManifeste />
-        <ChapitreRaisonEtre />
-        <ChapitrePieces />
         <ChapitreCollectionAnxiete onOpen={openCollection} />
         <ChapitreCollectionFruits onOpen={openCollection} />
         <ChapitreCollectionEssentiels onOpen={openCollection} />
@@ -309,7 +306,7 @@ function TopBar() {
 }
 
 /* ============================================================
-   2. Hero dark RÉDUIT (clamp 220-320, sans tagline)
+   2. Hero dark ULTRA-COMPACT (clamp 180-240, accroche directe)
    ============================================================ */
 
 function Hero() {
@@ -318,7 +315,7 @@ function Hero() {
       style={{
         position: 'relative',
         width: '100%',
-        height: 'clamp(220px, 32vh, 320px)',
+        height: 'clamp(180px, 26vh, 240px)',
         overflow: 'hidden',
         background: 'linear-gradient(135deg, #0A2438, #1A5A7F)',
         display: 'flex',
@@ -337,7 +334,7 @@ function Hero() {
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 'clamp(56px, 13vw, 72px)',
+            fontSize: 'clamp(48px, 11vw, 64px)',
             lineHeight: 0.95,
             letterSpacing: '-0.02em',
             color: '#FFFFFF',
@@ -347,68 +344,6 @@ function Hero() {
         </h1>
       </div>
     </section>
-  );
-}
-
-/* ============================================================
-   2bis. Mini-nav templates (5 anchors, sticky)
-   ============================================================ */
-
-function MiniNav({ onJump }) {
-  const tabs = [
-    { id: 'chap-manifeste', label: 'Manifeste' },
-    { id: 'chap-anxiete', label: 'Anxiété' },
-    { id: 'chap-fruits', label: 'Fruits' },
-    { id: 'chap-essentiels', label: 'Essentiels' },
-    { id: 'chap-voix', label: 'Voix' },
-  ];
-  return (
-    <nav
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '12px 16px',
-        background: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(20px) saturate(160%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-        borderBottom: '0.5px solid var(--blue-300)',
-        overflowX: 'auto',
-        overflowY: 'hidden',
-        scrollbarWidth: 'none',
-        WebkitOverflowScrolling: 'touch',
-      }}
-    >
-      {tabs.map((t) => (
-        <button
-          key={t.id}
-          data-press
-          onClick={() => onJump(t.id)}
-          style={{
-            appearance: 'none',
-            border: '1px solid var(--blue-300)',
-            background: 'transparent',
-            color: 'var(--blue-700)',
-            borderRadius: 999,
-            padding: '8px 14px',
-            minHeight: 36,
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 11,
-            fontWeight: 500,
-            letterSpacing: '0.04em',
-            whiteSpace: 'nowrap',
-            cursor: 'pointer',
-            WebkitTapHighlightColor: 'transparent',
-            flexShrink: 0,
-          }}
-        >
-          {t.label}
-        </button>
-      ))}
-    </nav>
   );
 }
 
@@ -435,29 +370,31 @@ function Eyebrow({ children }) {
 }
 
 /* ============================================================
-   3. CHAPITRE I — Le manifeste (avec eyebrow émotionnel)
+   3. CHAPITRE I — Manifeste ULTRA-COMPACT (max 140px)
    ============================================================ */
 
 function ChapitreManifeste() {
   return (
     <section
-      id="chap-manifeste"
       style={{
         position: 'relative',
         zIndex: 1,
-        padding: '80px 28px 56px',
+        padding: '22px 28px 24px',
         background: 'var(--bg)',
         textAlign: 'center',
       }}
     >
+      <div style={{ marginBottom: 10 }}>
+        <Eyebrow>I · Manifeste</Eyebrow>
+      </div>
       <p
         style={{
-          margin: '0 auto 18px',
+          margin: '0 auto 10px',
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
           fontWeight: 300,
-          fontSize: 'clamp(20px, 5.5vw, 24px)',
-          lineHeight: 1.3,
+          fontSize: 'clamp(18px, 5vw, 22px)',
+          lineHeight: 1.25,
           letterSpacing: '-0.005em',
           color: 'var(--rose-700)',
           maxWidth: 460,
@@ -465,246 +402,21 @@ function ChapitreManifeste() {
       >
         « ça va » — la phrase la plus mensongère du monde.
       </p>
-      <div
-        aria-hidden
-        style={{
-          width: 48,
-          height: 0.5,
-          background: 'var(--blue-300)',
-          margin: '0 auto 22px',
-        }}
-      />
-      <div style={{ marginBottom: 22 }}>
-        <Eyebrow>I · Manifeste</Eyebrow>
-      </div>
       <p
         style={{
-          margin: '0 auto 18px',
+          margin: 0,
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontStyle: 'italic',
           fontWeight: 300,
-          fontSize: 'clamp(26px, 7vw, 36px)',
-          lineHeight: 1.25,
-          letterSpacing: '-0.005em',
+          fontSize: 'clamp(28px, 7.5vw, 36px)',
+          lineHeight: 1.15,
+          letterSpacing: '-0.01em',
           color: 'var(--blue-900)',
-          maxWidth: 540,
         }}
       >
-        Nous existons pour briser le masque du « ça va ».
-      </p>
-      <p
-        style={{
-          margin: '0 auto',
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 300,
-          fontSize: 15,
-          lineHeight: 1.6,
-          color: 'var(--blue-700)',
-          maxWidth: 380,
-        }}
-      >
-        Deux mots. Pour cacher tout.
+        Briser le masque.
       </p>
     </section>
-  );
-}
-
-/* ============================================================
-   4. CHAPITRE II — Notre raison d'être
-   ============================================================ */
-
-function ChapitreRaisonEtre() {
-  return (
-    <section
-      style={{
-        position: 'relative',
-        zIndex: 1,
-        padding: '24px 16px 56px',
-      }}
-    >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1.2fr',
-          gap: 16,
-          alignItems: 'stretch',
-          background: 'rgba(255, 255, 255, 0.65)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255, 255, 255, 0.85)',
-          borderRadius: 24,
-          boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-          padding: 12,
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            position: 'relative',
-            width: '100%',
-            minHeight: 220,
-            borderRadius: 16,
-            overflow: 'hidden',
-            backgroundImage: `url(${PHOTO(7)})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div
-            aria-hidden
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(to bottom, transparent 30%, rgba(10,36,56,0.65) 100%)',
-            }}
-          />
-        </div>
-        <div
-          style={{
-            padding: '14px 8px 14px 6px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: 12,
-          }}
-        >
-          <Eyebrow>II · Raison d&rsquo;être</Eyebrow>
-          <p
-            style={{
-              margin: 0,
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 'clamp(20px, 5.5vw, 26px)',
-              lineHeight: 1.25,
-              letterSpacing: '-0.005em',
-              color: 'var(--blue-900)',
-            }}
-          >
-            Faire de la mode un langage qui libère la parole sur la santé mentale.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ============================================================
-   5. CHAPITRE III — Les pièces qui parlent
-   ============================================================ */
-
-function ChapitrePieces() {
-  return (
-    <section
-      style={{
-        position: 'relative',
-        zIndex: 1,
-        padding: '16px 16px 48px',
-      }}
-    >
-      <div style={{ padding: '0 6px 18px' }}>
-        <Eyebrow>III · Les pièces</Eyebrow>
-        <p
-          style={{
-            margin: '10px 0 0',
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 22,
-            lineHeight: 1.3,
-            color: 'var(--blue-900)',
-          }}
-        >
-          Trois pièces, trois voix qui osent.
-        </p>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        {PIECES.map((p) => (
-          <PieceCard key={p.id} piece={p} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function PieceCard({ piece }) {
-  return (
-    <article
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: 420,
-        borderRadius: 24,
-        overflow: 'hidden',
-        backgroundImage: `url(${piece.src})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundColor: 'rgba(10,36,56,0.04)',
-        border: '1px solid rgba(255, 255, 255, 0.85)',
-        boxShadow: '0 6px 28px rgba(10, 36, 56, 0.10)',
-      }}
-    >
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(to bottom, transparent 30%, rgba(10,36,56,0.78) 100%)',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          left: 18,
-          right: 18,
-          bottom: 20,
-          color: '#FFFFFF',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 9,
-            fontWeight: 600,
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            color: '#F3B8CC',
-          }}
-        >
-          {piece.eyebrow}
-        </span>
-        <h3
-          style={{
-            margin: 0,
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: 'clamp(22px, 6vw, 28px)',
-            lineHeight: 1.2,
-            letterSpacing: '-0.005em',
-            color: '#FFFFFF',
-          }}
-        >
-          « {piece.title} »
-        </h3>
-        <p
-          style={{
-            margin: 0,
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 15,
-            lineHeight: 1.4,
-            color: 'rgba(255,255,255,0.88)',
-          }}
-        >
-          {piece.body}
-        </p>
-      </div>
-    </article>
   );
 }
 
@@ -774,7 +486,7 @@ function ChapitreCollectionAnxiete({ onOpen }) {
             color: 'var(--text-muted)',
           }}
         >
-          9 pièces · 39-79 €
+          14 pièces · 39-79 €
         </p>
       </div>
       <div
@@ -880,6 +592,20 @@ function ChapitreCollectionFruits({ onOpen }) {
           <FruitCard key={c.id} item={c} onClick={() => onOpen('fruits', i)} />
         ))}
       </div>
+      <p
+        style={{
+          margin: '20px 0 0',
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontStyle: 'italic',
+          fontWeight: 300,
+          fontSize: 14,
+          lineHeight: 1.4,
+          color: 'var(--text-muted)',
+          textAlign: 'center',
+        }}
+      >
+        D&rsquo;autres fruits arrivent bientôt.
+      </p>
     </section>
   );
 }
@@ -952,23 +678,23 @@ function PieceQuoteCard({ item, onClick }) {
       data-press
       onClick={onClick}
       style={{
-        flex: '0 0 78%',
-        maxWidth: 300,
+        flex: '0 0 86%',
+        maxWidth: 360,
         scrollSnapAlign: 'start',
         appearance: 'none',
         border: '1px solid rgba(255, 255, 255, 0.85)',
-        padding: 10,
+        padding: 6,
         background: 'rgba(255, 255, 255, 0.65)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         borderRadius: 24,
-        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+        boxShadow: '0 6px 28px rgba(10, 36, 56, 0.10)',
         cursor: 'pointer',
         WebkitTapHighlightColor: 'transparent',
         textAlign: 'left',
         display: 'flex',
         flexDirection: 'column',
-        gap: 10,
+        gap: 8,
         color: 'inherit',
         transition: 'transform 220ms ease',
       }}
@@ -979,8 +705,8 @@ function PieceQuoteCard({ item, onClick }) {
         style={{
           position: 'relative',
           width: '100%',
-          aspectRatio: '3 / 4',
-          borderRadius: 16,
+          aspectRatio: '4 / 5',
+          borderRadius: 18,
           overflow: 'hidden',
           backgroundColor: 'rgba(10,36,56,0.04)',
           backgroundImage: `url(${item.src})`,
@@ -1000,17 +726,17 @@ function PieceQuoteCard({ item, onClick }) {
         <p
           style={{
             position: 'absolute',
-            left: 12,
-            right: 12,
-            bottom: 12,
+            left: 16,
+            right: 16,
+            bottom: 16,
             margin: 0,
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
             fontWeight: 400,
-            fontSize: 15,
+            fontSize: 17,
             lineHeight: 1.3,
             color: '#FFFFFF',
-            textShadow: '0 1px 6px rgba(0,0,0,0.45)',
+            textShadow: '0 1px 6px rgba(0,0,0,0.5)',
           }}
         >
           « {item.quote} »
