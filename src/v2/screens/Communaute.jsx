@@ -34,7 +34,9 @@ import {
   SectionTitle,
   Body,
   CTA,
+  Textarea,
   tokens,
+  useToast,
 } from '../../components/ui';
 
 /* ─── Données ─── */
@@ -133,6 +135,7 @@ const SECTION_GAP = 48;
    ============================================================ */
 
 export default function Communaute() {
+  const toast = useToast();
   const profile = getProfile();
   // BUG-03 fix : prompt par défaut si le store ne renvoie rien d’exploitable.
   const DEFAULT_PROMPT = "Qu’est-ce qui t’a fait du bien aujourd’hui, même un petit truc ?";
@@ -234,6 +237,7 @@ export default function Communaute() {
     saveOwnPosts(next);
     setOwnPosts(next);
     haptic([6, 30, 6]);
+    toast.show({ message: 'Ta voix est partagée.', variant: 'success' });
     setComposerOpen(false);
   };
 
@@ -1058,48 +1062,19 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
         <Eyebrow color="secondary" style={{ display: 'block', marginBottom: 10 }}>
           Ta voix
         </Eyebrow>
-        <textarea
+        <Textarea
           autoFocus
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="Ce que tu portes, ce que tu vis. C’est anonyme."
           rows={5}
           maxLength={280}
+          accent="blue"
+          showCounter
           aria-label="Ta voix"
-          style={{
-            width: '100%',
-            padding: 18,
-            minHeight: 120,
-            background: 'rgba(255, 255, 255, 0.55)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255, 255, 255, 0.85)',
-            borderLeft: '4px solid var(--blue-700)',
-            borderRadius: 16,
-            fontFamily: tokens.fonts.body,
-            fontWeight: 400,
-            fontSize: 16,
-            lineHeight: 1.6,
-            color: tokens.blue900,
-            outline: 'none',
-            resize: 'none',
-            boxSizing: 'border-box',
-            marginBottom: 8,
-          }}
+          textareaStyle={{ minHeight: 120, fontSize: 16 }}
+          style={{ marginBottom: 20 }}
         />
-        <div
-          style={{
-            textAlign: 'right',
-            fontFamily: tokens.fonts.ui,
-            fontWeight: 500,
-            fontSize: 11,
-            color: body.length >= 260 ? tokens.rose700 : tokens.textMuted,
-            fontVariantNumeric: 'tabular-nums',
-            marginBottom: 20,
-          }}
-        >
-          {280 - body.length}
-        </div>
 
         <div style={{ display: 'flex', gap: 12 }}>
           <CTA

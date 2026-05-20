@@ -19,7 +19,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { recordCrisisEntry, recordCrisisExit, getProfile, haptic } from '../state';
-import useStandardOverlay from '../hooks/useStandardOverlay';
+import { Overlay, HeroTitle, CTA } from '../../components/ui';
 
 const PHONE_NUMBER = '3114'; // Numéro national prévention suicide FR (24/7, gratuit)
 
@@ -100,13 +100,6 @@ export default function Crise({ onClose }) {
       if (aliveRef.current) onClose?.();
     }, 380);
   };
-
-  const { dialogProps, containerRef } = useStandardOverlay({
-    open: !exiting,
-    onClose: handleClose,
-    labelText: 'Espace de soutien',
-    escapeCloses: false,
-  });
 
   // Cycle respiration — support 2 ou 3 phases (inspire / hold / expire)
   useEffect(() => {
@@ -199,15 +192,13 @@ export default function Crise({ onClose }) {
   };
 
   return (
-    <div
-      ref={containerRef}
-      {...dialogProps}
+    <Overlay
+      backdrop="light"
+      onClose={handleClose}
+      closeOnBackdrop={false}
+      ariaLabel="Espace de soutien"
       style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
         overflow: 'hidden',
-        background: 'var(--bg)',
         opacity: exiting ? 0 : mounted ? 1 : 0,
         transition: 'opacity 380ms cubic-bezier(0.16, 1, 0.3, 1)',
       }}
@@ -433,22 +424,18 @@ export default function Crise({ onClose }) {
             pointerEvents: 'none',
           }}
         >
-          <span
+          <HeroTitle
             key={phase}
+            size="sm"
             style={{
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
               fontSize: 30,
-              letterSpacing: '-0.014em',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              color: 'var(--blue-900)',
               opacity: 0.96,
               textShadow: '0 1px 12px rgba(0, 0, 0, 0.3)',
               animation: 'crise-label-fade 800ms cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
             {phase === 'inspire' ? 'Inspire' : phase === 'hold' ? 'Retiens' : 'Expire'}
-          </span>
+          </HeroTitle>
         </div>
       </div>
 
@@ -463,23 +450,20 @@ export default function Crise({ onClose }) {
           zIndex: 2,
         }}
       >
-        <p
+        <HeroTitle
           key={lineIdx}
+          size="sm"
           style={{
-            margin: 0,
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
             fontSize: 17,
             lineHeight: 1.45,
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            color: 'var(--blue-900)',
             opacity: 0.92,
             textShadow: '0 1px 10px rgba(0, 0, 0, 0.42)',
             animation: 'crise-line-fade 1400ms cubic-bezier(0.16, 1, 0.3, 1)',
+            textAlign: 'center',
           }}
         >
           {COMFORT_LINES[lineIdx]}
-        </p>
+        </HeroTitle>
       </div>
 
       {/* Indicateur rythme */}
@@ -510,38 +494,32 @@ export default function Crise({ onClose }) {
       </div>
 
       {/* Bouton "Je vais mieux" */}
-      <button
-        type="button"
-        onClick={handleClose}
-        data-press
-        aria-label="Je vais mieux, fermer"
+      <div
         style={{
           position: 'absolute',
           left: '50%',
           transform: 'translateX(-50%)',
           bottom: 'max(96px, calc(env(safe-area-inset-bottom, 0px) + 60px))',
-          appearance: 'none',
-          padding: '14px 32px',
-          minHeight: 48,
-          background: 'rgba(255, 255, 255, 0.80)',
-          color: 'var(--blue-900)',
-          border: '1px solid rgba(251, 246, 232, 0.58)',
-          borderRadius: 999,
-          fontFamily: 'var(--font-ui)',
-          fontSize: 12,
-          fontWeight: 600,
-          letterSpacing: '0.222em',
-          textTransform: 'uppercase',
-          cursor: 'pointer',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          WebkitTapHighlightColor: 'transparent',
           zIndex: 3,
-          textShadow: '0 1px 8px rgba(0, 0, 0, 0.45)',
         }}
       >
-        Je vais mieux
-      </button>
+        <CTA
+          variant="outline"
+          size="md"
+          onClick={handleClose}
+          aria-label="Je vais mieux, fermer"
+          style={{
+            background: 'rgba(255, 255, 255, 0.80)',
+            border: '1px solid rgba(251, 246, 232, 0.58)',
+            color: 'var(--blue-900)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            textShadow: '0 1px 8px rgba(0, 0, 0, 0.45)',
+          }}
+        >
+          Je vais mieux
+        </CTA>
+      </div>
 
       {/* Audio */}
       {musicSrc && <audio ref={audioRef} src={musicSrc} loop preload="auto" />}
@@ -563,6 +541,6 @@ export default function Crise({ onClose }) {
           100% { opacity: 0; transform: translateY(-6px); }
         }
       `}</style>
-    </div>
+    </Overlay>
   );
 }

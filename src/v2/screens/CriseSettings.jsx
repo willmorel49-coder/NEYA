@@ -10,9 +10,9 @@ import { getProfile, patchProfile, haptic } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import {
   BackButton,
-  GlassCard,
   Body,
   CTA,
+  Choice,
   tokens,
 } from '../../components/ui';
 
@@ -352,21 +352,20 @@ export default function CriseSettings({ onClose }) {
                 {RHYTHMS.map((r) => {
                   const active = r.key === currentRhythm;
                   return (
-                    <GlassCard
+                    <Choice
                       key={r.key}
+                      selected={active}
+                      accent={active ? 'rose' : 'blue'}
                       radius="lg"
-                      elevation="soft"
                       padding="18px 20px"
                       onClick={() => updateCrise({ rhythm: r.key })}
                       style={{
                         minHeight: 84,
-                        borderLeft: active ? `3px solid ${tokens.rose700}` : `3px solid ${tokens.blue700}`,
                         display: 'flex',
                         alignItems: 'flex-start',
                         justifyContent: 'space-between',
                         gap: 14,
                       }}
-                      aria-pressed={active}
                     >
                       <div style={{ minWidth: 0, flex: 1 }}>
                         <div
@@ -401,7 +400,7 @@ export default function CriseSettings({ onClose }) {
                         </div>
                       </div>
                       <RadioDot active={active} />
-                    </GlassCard>
+                    </Choice>
                   );
                 })}
               </div>
@@ -425,21 +424,20 @@ export default function CriseSettings({ onClose }) {
    ============================================================ */
 function RefugeRow({ active, onClick, title, hint, titleSerif = true, style }) {
   return (
-    <GlassCard
+    <Choice
+      selected={active}
+      accent={active ? 'rose' : 'blue'}
       radius="lg"
-      elevation="soft"
       padding="16px 18px"
       onClick={onClick}
       style={{
         minHeight: 64,
-        borderLeft: active ? `3px solid ${tokens.rose700}` : `3px solid ${tokens.blue700}`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 14,
         ...(style || {}),
       }}
-      aria-pressed={active}
     >
       <div style={{ minWidth: 0, flex: 1 }}>
         <div
@@ -466,7 +464,7 @@ function RefugeRow({ active, onClick, title, hint, titleSerif = true, style }) {
         </div>
       </div>
       <RadioDot active={active} />
-    </GlassCard>
+    </Choice>
   );
 }
 

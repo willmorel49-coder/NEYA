@@ -6,12 +6,13 @@
    ============================================================ */
 
 import { haptic } from '../v2/state';
+import { Icon } from './ui';
 
 const TABS = [
-  { key: 'aventure',   label: 'Aventure',   icon: '↑' },
-  { key: 'cocon',      label: 'Cocon',      icon: '◇' },
-  { key: 'communaute', label: 'Communauté', icon: '○' },
-  { key: 'cava',       label: 'ÇA VA?',     icon: '♡' },
+  { key: 'aventure',   label: 'Aventure',   icon: 'arrow-up' },
+  { key: 'cocon',      label: 'Cocon',      icon: 'sparkle' },
+  { key: 'communaute', label: 'Communauté', icon: 'circle' },
+  { key: 'cava',       label: 'ÇA VA?',     icon: 'heart' },
 ];
 
 export default function BottomNav({ active, onChange, badges = {} }) {
@@ -82,14 +83,17 @@ export default function BottomNav({ active, onChange, badges = {} }) {
             <span style={{ position: 'relative', display: 'inline-flex' }}>
               <span
                 style={{
-                  fontSize: 20,
                   lineHeight: 1,
                   color: isActive ? '#1A5A7F' : '#6F9DB5',
                   transition: 'color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  fontWeight: isActive ? 600 : 400,
+                  display: 'inline-flex',
                 }}
               >
-                {t.icon}
+                <Icon
+                  name={t.icon}
+                  size={20}
+                  strokeWidth={isActive ? 1.8 : 1.5}
+                />
               </span>
               {hasBadge && (
                 <span

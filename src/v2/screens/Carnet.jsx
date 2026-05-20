@@ -18,7 +18,9 @@ import {
   HeroTitle,
   Body,
   CTA,
+  Textarea,
   tokens,
+  useToast,
 } from '../../components/ui';
 
 const STORAGE_KEY = 'carnet_entries';
@@ -61,6 +63,7 @@ function truncate(body) {
 }
 
 export default function Carnet({ onClose }) {
+  const toast = useToast();
   const [entries, setEntries] = useState(() => {
     const raw = ls.get(STORAGE_KEY, []);
     return Array.isArray(raw) ? raw : [];
@@ -168,6 +171,7 @@ export default function Carnet({ onClose }) {
     setEntries(next);
     setSaved(true);
     haptic([6, 30, 6]);
+    toast.show({ message: 'Entrée du carnet sauvegardée.', variant: 'success' });
 
     safeTimeout(() => setSaved(false), 800);
     safeTimeout(() => onClose?.(), 700);
@@ -309,33 +313,16 @@ export default function Carnet({ onClose }) {
           </div>
 
           {/* Today's entry editor */}
-          <GlassCard
-            radius="lg"
-            elevation="soft"
-            padding="18px 16px"
-            style={{ marginBottom: 28 }}
-          >
-            <textarea
+          <div style={{ marginBottom: 28 }}>
+            <Textarea
               ref={textareaRef}
               autoFocus
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={6}
               placeholder="Ce qui me traverse maintenant…"
-              style={{
-                width: '100%',
-                boxSizing: 'border-box',
-                border: 'none',
-                outline: 'none',
-                background: 'transparent',
-                resize: 'vertical',
-                fontFamily: tokens.fonts.body,
-                fontSize: 15,
-                lineHeight: 1.55,
-                color: tokens.textPrimary,
-                minHeight: 140,
-                padding: 0,
-              }}
+              accent="rose"
+              textareaStyle={{ minHeight: 140 }}
             />
 
             {/* Bottom row : counter + save */}
@@ -378,7 +365,7 @@ export default function Carnet({ onClose }) {
                 </CTA>
               </div>
             </div>
-          </GlassCard>
+          </div>
 
           {/* Past entries section */}
           <div style={{ marginBottom: 12 }}>

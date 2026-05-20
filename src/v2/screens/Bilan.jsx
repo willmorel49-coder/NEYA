@@ -14,11 +14,13 @@ import useStandardOverlay from '../hooks/useStandardOverlay';
 import Blobs from '../../components/Blobs';
 import {
   BackButton,
-  GlassCard,
   Eyebrow,
   HeroTitle,
   Body,
   CTA,
+  Textarea,
+  Choice,
+  useToast,
 } from '../../components/ui';
 
 const BILAN_QUESTIONS = [
@@ -87,6 +89,7 @@ export default function Bilan({ onClose }) {
   // Profile lu pour compat (props préservés)
   // eslint-disable-next-line no-unused-vars
   const profile = getProfile();
+  const toast = useToast();
 
   const today = todayKey();
   const alreadyDone = hasSeenBilanToday(today);
@@ -188,6 +191,7 @@ export default function Bilan({ onClose }) {
 
     if (isLast) {
       commitAnswers(nextAnswers);
+      toast.show({ message: 'Bilan gardé.', variant: 'success' });
       setFadingQ(true);
       safeTimeout(() => setReveal(true), 320);
       return;
@@ -371,11 +375,10 @@ export default function Bilan({ onClose }) {
                 }}
               >
                 {q.choices.map((c) => (
-                  <GlassCard
+                  <Choice
                     key={c.value}
                     accent="blue"
                     radius={18}
-                    elevation="soft"
                     padding="16px 14px"
                     onClick={() => handleChoice(c.value)}
                     style={{
@@ -412,54 +415,20 @@ export default function Bilan({ onClose }) {
                     >
                       {c.label}
                     </span>
-                  </GlassCard>
+                  </Choice>
                 ))}
               </div>
             ) : (
-              <div style={{ position: 'relative', width: '100%' }}>
-                <textarea
-                  ref={textRef}
-                  rows={4}
-                  value={currentText}
-                  onChange={(e) => setCurrentText(e.target.value.slice(0, 200))}
-                  placeholder={q.placeholder}
-                  style={{
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    padding: '16px 18px 16px 22px',
-                    minHeight: 120,
-                    borderRadius: 16,
-                    border: '1px solid rgba(255, 255, 255, 0.85)',
-                    borderLeft: '3px solid var(--blue-700)',
-                    background: 'rgba(255, 255, 255, 0.65)',
-                    backdropFilter: 'blur(24px)',
-                    WebkitBackdropFilter: 'blur(24px)',
-                    boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-                    fontFamily: "'Inter', system-ui, sans-serif",
-                    fontWeight: 300,
-                    fontSize: 14,
-                    lineHeight: 1.6,
-                    color: 'var(--blue-900)',
-                    resize: 'none',
-                    outline: 'none',
-                    textAlign: 'left',
-                  }}
-                />
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: 10,
-                    right: 14,
-                    fontFamily: "'Inter', system-ui, sans-serif",
-                    fontSize: 10,
-                    color: 'var(--text-muted)',
-                    fontVariantNumeric: 'tabular-nums',
-                    pointerEvents: 'none',
-                  }}
-                >
-                  {(currentText || '').length}/200
-                </div>
-              </div>
+              <Textarea
+                ref={textRef}
+                rows={4}
+                value={currentText}
+                onChange={(e) => setCurrentText(e.target.value.slice(0, 200))}
+                placeholder={q.placeholder}
+                accent="blue"
+                showCounter
+                maxLength={200}
+              />
             )}
           </div>
         )}

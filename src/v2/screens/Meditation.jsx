@@ -15,8 +15,7 @@ import {
   addSouvenir,
 } from '../state';
 import Blobs from '../../components/Blobs';
-import useStandardOverlay from '../hooks/useStandardOverlay';
-import { BackButton, Eyebrow, HeroTitle, Body } from '../../components/ui';
+import { BackButton, Eyebrow, HeroTitle, Body, Overlay, useToast } from '../../components/ui';
 
 // 4-7-8 breathing cycle = 19 seconds
 const CYCLE_MS = 19000;
@@ -34,6 +33,7 @@ function getPhase(tMs) {
 }
 
 export default function Meditation({ worldKey = 'foret', onClose }) {
+  const toast = useToast();
   const profile = getProfile();
   const world = WORLDS[worldKey] || WORLDS.foret;
   const target = getOnboardingTargetMinutes();
@@ -42,7 +42,7 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [breathMs, setBreathMs] = useState(0);
   const [show, setShow] = useState(false);
-  const [toast, setToast] = useState(null);
+  const [completion, setCompletion] = useState(null);
 
   const targetReachedRef = useRef(false);
   const closingRef = useRef(false);
@@ -148,7 +148,11 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         });
       }
       haptic([8, 60, 8]);
-      setToast({ minutes, wasNew });
+      toast.show({
+        message: `Tu as posé ${minutes} minute${minutes > 1 ? 's' : ''}.`,
+        variant: 'success',
+      });
+      setCompletion({ minutes, wasNew });
       closeTimerRef.current = setTimeout(() => {
         closeTimerRef.current = null;
         onClose?.();
@@ -161,25 +165,19 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
 
   const objectifLabel = target === 999 ? 'Objectif libre' : `Objectif ${target} min`;
 
-  const { dialogProps, containerRef } = useStandardOverlay({
-    open: !toast,
-    onClose: handleClose,
-    labelText: 'Meditation guidee',
-  });
-
   const isExpire = phase.key === 'expire' && !paused;
 
   return (
-    <div
-      ref={containerRef}
-      {...dialogProps}
+    <Overlay
+      backdrop="light"
+      onClose={handleClose}
+      closeOnBackdrop={!completion}
+      ariaLabel="Meditation guidee"
+      zIndex={60}
       style={{
         position: 'absolute',
-        inset: 0,
-        background: 'var(--bg)',
         opacity: show ? 1 : 0,
         transition: 'opacity 600ms ease-out',
-        zIndex: 60,
         overflow: 'hidden',
       }}
     >
@@ -434,8 +432,8 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         </button>
       </div>
 
-      {/* Completion toast */}
-      {toast && (
+      {/* Completion overlay */}
+      {completion && (
         <div
           style={{
             position: 'absolute',
@@ -462,7 +460,7 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
               maxWidth: 320,
             }}
           >
-            {toast.wasNew
+            {completion.wasNew
               ? `« Tu as explore la ${world.name}. »`
               : `« Tu es passe par la. »`}
           </HeroTitle>
@@ -476,11 +474,11 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
               color: 'var(--violet)',
             }}
           >
-            +{toast.minutes} MIN
+            +{completion.minutes} MIN
           </div>
         </div>
       )}
-    </div>
+    </Overlay>
   );
 }
 

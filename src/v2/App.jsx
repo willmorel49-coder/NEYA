@@ -28,8 +28,17 @@ import BilanSemaine from './screens/BilanSemaine';
 import MilestoneToast from './screens/MilestoneToast';
 import BottomNav from '../components/BottomNav';
 import ActionSheet from '../components/ActionSheet';
+import { ToastProvider } from '../components/ui';
 
 export default function V2App() {
+  return (
+    <ToastProvider>
+      <V2AppInner />
+    </ToastProvider>
+  );
+}
+
+function V2AppInner() {
   const [splashDone, setSplashDone] = useState(false);
   const [onboarded, setOnboarded] = useState(() => isOnboarded());
   const [activeTab, setActiveTab] = useState(() => ls.get('active_tab', 'aventure'));

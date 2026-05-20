@@ -21,6 +21,7 @@ import {
   HeroTitle,
   Body,
   CTA,
+  useToast,
 } from '../../components/ui';
 
 const HABITS = [
@@ -45,6 +46,7 @@ function formatTodayFr() {
 }
 
 export default function Habitudes({ onClose, onOpenMeditation }) {
+  const toast = useToast();
   const [habits, setHabits] = useState(() => getHabitsToday());
   const [popping, setPopping] = useState(null);
   const [mounted, setMounted] = useState(false);
@@ -122,6 +124,7 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
       setHabits({ ...next });
       setPopping(habit.id);
       haptic([4, 30, 4]);
+      toast.show({ message: 'Habit gardée.', variant: 'success' });
       if (popTimerRef.current) clearTimeout(popTimerRef.current);
       popTimerRef.current = setTimeout(() => {
         popTimerRef.current = null;

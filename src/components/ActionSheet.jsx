@@ -25,7 +25,7 @@
 
 import { useState, useEffect } from 'react';
 import { haptic } from '../v2/state';
-import useStandardOverlay from '../v2/hooks/useStandardOverlay';
+import { Overlay } from './ui';
 
 const EASE_OUT_IOS = 'cubic-bezier(0.32, 0.72, 0, 1)';
 const EASE_IN_IOS  = 'cubic-bezier(0.32, 0, 0.72, 1)';
@@ -75,31 +75,7 @@ export default function ActionSheet({
     triggerClose();
   };
 
-  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
-  const { dialogProps, containerRef } = useStandardOverlay({
-    open: !closing,
-    onClose: triggerClose,
-    labelText: title || 'Confirmer une action',
-  });
-
   // ── STYLES ──────────────────────────────────────────────
-  const backdrop = {
-    position: 'fixed',
-    inset: 0,
-    background: 'rgba(26, 26, 47, 0.40)',
-    backdropFilter: 'blur(8px)',
-    WebkitBackdropFilter: 'blur(8px)',
-    zIndex: 1000,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    pointerEvents: 'auto',
-    opacity: mounted ? 1 : 0,
-    transition: `opacity 240ms ${closing ? EASE_IN_IOS : 'ease'}`,
-    padding: '0 8px calc(env(safe-area-inset-bottom, 0px) + 12px)',
-  };
-
   const sheetWrap = {
     width: '100%',
     maxWidth: 520,
@@ -110,10 +86,10 @@ export default function ActionSheet({
   };
 
   const group = {
-    background: 'var(--cream-light)',
-    borderRadius: 'var(--radius-lg, 22px)',
+    background: 'var(--bg)',
+    borderRadius: 22,
     overflow: 'hidden',
-    boxShadow: '0 8px 32px rgba(26, 26, 47, 0.10)',
+    boxShadow: '0 8px 32px rgba(10, 36, 56, 0.10)',
   };
 
   const groupActionsStyle = {
@@ -131,26 +107,26 @@ export default function ActionSheet({
 
   const headerStyle = {
     padding: description ? '14px 22px 4px 22px' : '14px 22px 12px 22px',
-    fontFamily: 'var(--font-ui, Sora)',
+    fontFamily: "'Inter', system-ui, sans-serif",
     fontSize: 13,
     fontWeight: 500,
-    color: 'var(--ink-soft)',
+    color: 'var(--text-secondary)',
     textAlign: 'center',
     lineHeight: 1.3,
   };
 
   const descStyle = {
     padding: '0 22px 14px 22px',
-    fontFamily: 'var(--font-body, Inter)',
+    fontFamily: "'Inter', system-ui, sans-serif",
     fontSize: 12,
-    color: 'var(--ink-soft)',
+    color: 'var(--text-secondary)',
     textAlign: 'center',
     lineHeight: 1.4,
   };
 
   const hairline = {
     height: '0.5px',
-    background: 'rgba(26, 26, 47, 0.08)',
+    background: 'rgba(10, 36, 56, 0.08)',
     width: '100%',
   };
 
@@ -165,10 +141,10 @@ export default function ActionSheet({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    fontFamily: 'var(--font-ui, Sora)',
+    fontFamily: "'Inter', system-ui, sans-serif",
     fontSize: 17,
-    fontWeight: role === 'destructive' ? 500 : 500,
-    color: role === 'destructive' ? 'var(--crisis)' : 'var(--ink)',
+    fontWeight: 500,
+    color: role === 'destructive' ? 'var(--rose-700)' : 'var(--blue-900)',
     cursor: 'pointer',
     WebkitTapHighlightColor: 'transparent',
     letterSpacing: '-0.01em',
@@ -185,10 +161,10 @@ export default function ActionSheet({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontFamily: 'var(--font-ui, Sora)',
+    fontFamily: "'Inter', system-ui, sans-serif",
     fontSize: 17,
     fontWeight: 600,
-    color: 'var(--ink)',
+    color: 'var(--blue-900)',
     cursor: 'pointer',
     WebkitTapHighlightColor: 'transparent',
     letterSpacing: '-0.01em',
@@ -209,14 +185,19 @@ export default function ActionSheet({
   const hasHeader = Boolean(title || description);
 
   return (
-    <div
-      style={backdrop}
-      onClick={handleBackdrop}
-      role="presentation"
+    <Overlay
+      backdrop="dark"
+      onClose={triggerClose}
+      ariaLabel={title || 'Confirmer une action'}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        padding: '0 8px calc(env(safe-area-inset-bottom, 0px) + 12px)',
+      }}
     >
       <div
-        ref={containerRef}
-        {...dialogProps}
         style={sheetWrap}
         onClick={(e) => e.stopPropagation()}
       >
@@ -261,6 +242,6 @@ export default function ActionSheet({
           </button>
         </div>
       </div>
-    </div>
+    </Overlay>
   );
 }

@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { haptic } from '../state';
-import { useToast, TOAST_PRESETS } from '../../components/Toast';
+import { useToast } from '../../components/ui';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import Blobs from '../../components/Blobs';
 import {
@@ -183,7 +183,7 @@ export default function EspacesIRL({ onClose }) {
   const [closing, setClosing] = useState(false);
   const [filter, setFilter] = useState('all');
   const [revealCount, setRevealCount] = useState(0);
-  const showToast = useToast();
+  const toast = useToast();
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
@@ -249,7 +249,7 @@ export default function EspacesIRL({ onClose }) {
     try {
       navigator.clipboard?.writeText(espace.address);
     } catch {}
-    showToast({ ...TOAST_PRESETS.copied, message: 'Adresse copiée.' });
+    toast.show({ message: 'Adresse copiée.', variant: 'success' });
   };
 
   const filtered = useMemo(

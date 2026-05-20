@@ -41,6 +41,7 @@ import {
   SectionTitle,
   Body,
   CTA,
+  Icon,
   tokens,
 } from '../../components/ui';
 
@@ -806,13 +807,11 @@ function PilierCard({ mark, label, desc, pilier, onClick }) {
         aria-hidden
         style={{
           color: 'var(--blue-300)',
-          fontSize: 16,
           flexShrink: 0,
-          fontFamily: '"Inter", sans-serif',
-          fontWeight: 400,
+          display: 'inline-flex',
         }}
       >
-        ›
+        <Icon name="chevron-right" size={20} />
       </span>
     </button>
   );
@@ -858,12 +857,10 @@ function BilanCard({ glyph, label, onClick }) {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 28,
-          lineHeight: 1,
           flexShrink: 0,
         }}
       >
-        {glyph}
+        <Icon name="moon" size={24} />
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <SectionTitle style={{ fontSize: 22 }}>{label}</SectionTitle>
@@ -872,13 +869,11 @@ function BilanCard({ glyph, label, onClick }) {
         aria-hidden
         style={{
           color: 'var(--blue-300)',
-          fontSize: 16,
           flexShrink: 0,
-          fontFamily: '"Inter", sans-serif',
-          fontWeight: 400,
+          display: 'inline-flex',
         }}
       >
-        ›
+        <Icon name="chevron-right" size={20} />
       </span>
     </button>
   );
@@ -1111,7 +1106,7 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
               </div>
 
               {m.available && (
-                <span aria-hidden style={{ color: 'var(--blue-500)', fontSize: 16, flexShrink: 0 }}>›</span>
+                <span aria-hidden style={{ color: 'var(--blue-500)', flexShrink: 0, display: 'inline-flex' }}><Icon name="chevron-right" size={18} /></span>
               )}
             </button>
           );

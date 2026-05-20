@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import PreviewV2 from './v2/Preview';
 import V2App from './v2/App';
-import { ToastProvider } from './components/Toast';
+import { ToastProvider } from './components/ui';
 
 // ════════════════════════════════════════════════════════════
 // ÇA VA ? — Router
