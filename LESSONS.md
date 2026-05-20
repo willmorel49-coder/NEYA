@@ -6,6 +6,7 @@ Catégories : `stack`, `produit`, `process`, `bug`, `sécurité`, `ux`, `perf`, 
 
 ---
 
+2026-05-20 | produit | Première feature : cohérence cardiaque guidée (5 min, 6/min, opt-in clair, pauseable, respecte prefers-reduced-motion) | logique pure isolée dans lib/ et testée ; persistance Supabase optionnelle, silencieuse si non configurée
 2026-05-20 | stack | Scaffold Next.js 15 + Supabase SSR + Tailwind v4 — alias `@/*`, middleware refresh de session, Vitest + Playwright | `pnpm install` génère le lockfile ; CI sans `--frozen-lockfile` tant qu'il n'est pas commité
 2026-05-20 | process | 4 sous-agents Claude Code installés (.claude/agents/) : stress-anxiety-expert, a11y-reviewer, privacy-rgpd-reviewer, supabase-architect | renforce la qualité produit dès la pré-MVP
 2026-05-06 | process | Figer stack, conventions et format des leçons dans ROBOT.md avant d'écrire du code applicatif | bootstrap initial du dépôt
