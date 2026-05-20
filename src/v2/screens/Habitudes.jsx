@@ -1,9 +1,8 @@
 /* ============================================================
-   ÇA VA ? V4 — Habitudes (overlay rituels du jour)
+   ÇA VA ? V4 — Habitudes (overlay rituels du jour) [DS V4]
    ============================================================
-   Palette bleu/rose · Glassmorphism · Cormorant italic.
-   Liste de gestes simples : tap CTA "Démarrer" → toggle done.
-   Respiration → ouvre BreathingCircle via onOpenMeditation.
+   Migré vers /components/ui : BackButton, GlassCard, Eyebrow,
+   HeroTitle, Body, CTA.
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
@@ -15,6 +14,14 @@ import {
 } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import Blobs from '../../components/Blobs';
+import {
+  BackButton,
+  GlassCard,
+  Eyebrow,
+  HeroTitle,
+  Body,
+  CTA,
+} from '../../components/ui';
 
 const HABITS = [
   { id: 'respiration', icon: '◯', title: 'Respiration consciente', subtitle: 'Souffle · 5 min',        minutes: 5  },
@@ -183,47 +190,10 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
         />
       </div>
 
-      {/* Glass pill back button — fixed top-left, z-index 80 (sous SOS qui est 100) */}
-      <button
-        type="button"
-        onClick={handleClose}
-        data-press
-        aria-label="Retour"
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-          left: 16,
-          zIndex: 80,
-          appearance: 'none',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          minHeight: 44,
-          padding: '10px 14px',
-          borderRadius: 999,
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          color: 'var(--blue-700)',
-          fontFamily: '"Inter", sans-serif',
-          fontSize: 13,
-          fontWeight: 500,
-          letterSpacing: '0.02em',
-          lineHeight: 1,
-          cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
-          WebkitTapHighlightColor: 'transparent',
-          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        </svg>
-        Retour
-      </button>
+      {/* BackButton DS V4 */}
+      <BackButton onClick={handleClose} />
 
-      {/* Topbar : titre centré (back déplacé en position fixed) */}
+      {/* Topbar : titre centré */}
       <div
         style={{
           position: 'relative',
@@ -234,21 +204,9 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
           zIndex: 2,
         }}
       >
-        <h1
-          style={{
-            margin: 0,
-            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 30,
-            lineHeight: 1.05,
-            color: 'var(--blue-900)',
-            letterSpacing: '-0.01em',
-            textAlign: 'center',
-          }}
-        >
+        <HeroTitle size="sm" style={{ textAlign: 'center' }}>
           Tes habitudes
-        </h1>
+        </HeroTitle>
       </div>
 
       {/* Scrollable content */}
@@ -272,50 +230,33 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
             padding: '0 4px',
           }}
         >
-          <div
-            style={{
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 12,
-              fontWeight: 300,
-              color: 'var(--text-secondary)',
-              textTransform: 'lowercase',
-              fontVariantNumeric: 'tabular-nums',
-            }}
+          <Body
+            variant="caption"
+            style={{ textTransform: 'lowercase', fontVariantNumeric: 'tabular-nums' }}
           >
             {dateLine}
-          </div>
-          <div
-            style={{
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 10,
-              fontWeight: 500,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'var(--text-muted)',
-              fontVariantNumeric: 'tabular-nums',
-            }}
-          >
+          </Body>
+          <Eyebrow color="muted" style={{ fontVariantNumeric: 'tabular-nums' }}>
             {doneCount} / {total}
-          </div>
+          </Eyebrow>
         </div>
 
         {/* Sub-header microline */}
-        <div
+        <Body
+          italic
           style={{
-            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-            fontStyle: 'italic',
-            fontWeight: 300,
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontSize: 16,
-            color: 'var(--text-secondary)',
+            fontWeight: 300,
             marginBottom: 18,
             padding: '0 4px',
             lineHeight: 1.4,
           }}
         >
           Cinq gestes simples pour ce qui compte.
-        </div>
+        </Body>
 
-        {/* Habit list — glass cards */}
+        {/* Habit list — GlassCard list */}
         <div
           style={{
             display: 'flex',
@@ -327,138 +268,107 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
             const done = !!habits[h.id];
             const isPopping = popping === h.id;
             return (
-              <div
-                key={h.id}
-                className={isPopping ? 'tilleul-pop' : undefined}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 14,
-                  padding: '16px 16px',
-                  minHeight: 72,
-                  borderRadius: 24,
-                  background: 'rgba(255, 255, 255, 0.65)',
-                  backdropFilter: 'blur(24px)',
-                  WebkitBackdropFilter: 'blur(24px)',
-                  border: '1px solid rgba(255, 255, 255, 0.85)',
-                  boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-                  transition: 'background 240ms cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-              >
-                {/* Leading icon — 24px var(--blue-700) */}
-                <div
-                  aria-hidden
+              <div key={h.id} className={isPopping ? 'tilleul-pop' : undefined}>
+                <GlassCard
+                  radius="xxl"
+                  elevation="soft"
+                  padding="16px 16px"
                   style={{
-                    width: 24,
-                    height: 24,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 22,
-                    lineHeight: 1,
-                    color: 'var(--blue-700)',
-                    flexShrink: 0,
+                    gap: 14,
+                    minHeight: 72,
                   }}
                 >
-                  {h.icon}
-                </div>
-
-                {/* Text block */}
-                <div style={{ flex: 1, minWidth: 0 }}>
+                  {/* Leading icon — 24px var(--blue-700) */}
                   <div
+                    aria-hidden
                     style={{
-                      fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-                      fontStyle: 'italic',
-                      fontWeight: 400,
-                      fontSize: 14,
-                      color: 'var(--blue-900)',
-                      lineHeight: 1.3,
-                      letterSpacing: '-0.005em',
-                    }}
-                  >
-                    {h.title}
-                  </div>
-                  <div
-                    style={{
-                      marginTop: 4,
-                      fontFamily: '"Inter", sans-serif',
-                      fontWeight: 300,
-                      fontSize: 12,
-                      color: 'var(--text-muted)',
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {h.subtitle}
-                  </div>
-                </div>
-
-                {/* Trailing : status chip si done, CTA pill bleu si pending */}
-                {done ? (
-                  <button
-                    type="button"
-                    data-press
-                    onClick={(e) => toggle(h, e)}
-                    aria-label={`${h.title} — complété, retirer`}
-                    style={{
-                      appearance: 'none',
-                      cursor: 'pointer',
-                      fontFamily: '"Inter", sans-serif',
-                      fontSize: 10,
-                      fontWeight: 500,
-                      letterSpacing: '0.16em',
-                      textTransform: 'uppercase',
-                      padding: '7px 12px',
-                      borderRadius: 999,
-                      background: 'rgba(26, 90, 127, 0.10)',
+                      width: 24,
+                      height: 24,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 22,
+                      lineHeight: 1,
                       color: 'var(--blue-700)',
-                      border: '1px solid rgba(26, 90, 127, 0.18)',
-                      whiteSpace: 'nowrap',
                       flexShrink: 0,
-                      WebkitTapHighlightColor: 'transparent',
                     }}
                   >
-                    Fait
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    data-press
-                    onClick={(e) => toggle(h, e)}
-                    aria-label={`Démarrer ${h.title}`}
-                    style={{
-                      appearance: 'none',
-                      cursor: 'pointer',
-                      fontFamily: '"Inter", sans-serif',
-                      fontSize: 10,
-                      fontWeight: 600,
-                      letterSpacing: '0.16em',
-                      textTransform: 'uppercase',
-                      padding: '10px 16px',
-                      borderRadius: 50,
-                      background: 'var(--gradient-blue)',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      boxShadow: '0 4px 14px rgba(26, 90, 127, 0.25)',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                      WebkitTapHighlightColor: 'transparent',
-                    }}
-                  >
-                    Démarrer
-                  </button>
-                )}
+                    {h.icon}
+                  </div>
+
+                  {/* Text block */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontFamily: "'Cormorant Garamond', Georgia, serif",
+                        fontStyle: 'italic',
+                        fontWeight: 400,
+                        fontSize: 14,
+                        color: 'var(--blue-900)',
+                        lineHeight: 1.3,
+                        letterSpacing: '-0.005em',
+                      }}
+                    >
+                      {h.title}
+                    </div>
+                    <Body variant="caption" style={{ marginTop: 4, fontWeight: 300 }}>
+                      {h.subtitle}
+                    </Body>
+                  </div>
+
+                  {/* Trailing : status chip si done, CTA pill si pending */}
+                  {done ? (
+                    <button
+                      type="button"
+                      data-press
+                      onClick={(e) => toggle(h, e)}
+                      aria-label={`${h.title} — complété, retirer`}
+                      style={{
+                        appearance: 'none',
+                        cursor: 'pointer',
+                        fontFamily: "'Inter', system-ui, sans-serif",
+                        fontSize: 10,
+                        fontWeight: 500,
+                        letterSpacing: '0.16em',
+                        textTransform: 'uppercase',
+                        padding: '7px 12px',
+                        borderRadius: 999,
+                        background: 'rgba(26, 90, 127, 0.10)',
+                        color: 'var(--blue-700)',
+                        border: '1px solid rgba(26, 90, 127, 0.18)',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0,
+                        WebkitTapHighlightColor: 'transparent',
+                      }}
+                    >
+                      Fait
+                    </button>
+                  ) : (
+                    <CTA
+                      size="sm"
+                      variant="primary"
+                      onClick={(e) => toggle(h, e)}
+                      aria-label={`Démarrer ${h.title}`}
+                      style={{ flexShrink: 0 }}
+                    >
+                      Démarrer
+                    </CTA>
+                  )}
+                </GlassCard>
               </div>
             );
           })}
         </div>
 
         {/* Footer whisper */}
-        <div
+        <Body
+          variant="whisper"
           style={{
             marginTop: 32,
             textAlign: 'center',
-            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-            fontStyle: 'italic',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontWeight: 300,
             fontSize: 14,
             color: 'var(--text-secondary)',
@@ -467,7 +377,7 @@ export default function Habitudes({ onClose, onOpenMeditation }) {
           }}
         >
           Tu n{'’'}as rien à prouver. Touche ce qui t{'’'}appelle.
-        </div>
+        </Body>
       </div>
     </div>
   );

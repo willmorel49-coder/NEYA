@@ -1,13 +1,20 @@
 /* ============================================================
-   CriseSettings — personnaliser le refuge pour la prochaine crise
+   ÇA VA ? V4 — CriseSettings (Design System unifié)
    ============================================================
+   Personnaliser le refuge pour la prochaine crise.
    3 sections : Image · Musique · Rythme respiration.
-   Préparé en avance, prêt pour le moment critique.
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
 import { getProfile, patchProfile, haptic } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import {
+  BackButton,
+  GlassCard,
+  Body,
+  CTA,
+  tokens,
+} from '../../components/ui';
 
 const REFUGE_IMAGES = [
   { key: 'oasis',  label: 'Oasis du Souffle',  hint: 'Palmiers · eau dorée',     src: '/img/world-oasis.png' },
@@ -26,7 +33,7 @@ const REFUGE_TRACKS = [
 const RHYTHMS = [
   { key: '4-6',   label: 'Apaisant',   desc: 'Inspire 4s · Expire 6s',                hint: 'Le plus simple pour calmer une crise.' },
   { key: '5-5',   label: 'Cohérence',  desc: 'Inspire 5s · Expire 5s',                hint: 'Cohérence cardiaque, équilibre du rythme.' },
-  { key: '4-7-8', label: 'Profond',    desc: 'Inspire 4s · Retiens 7s · Expire 8s',   hint: 'Relaxation profonde. Demande un peu d\'entraînement.' },
+  { key: '4-7-8', label: 'Profond',    desc: 'Inspire 4s · Retiens 7s · Expire 8s',   hint: 'Relaxation profonde. Demande un peu d’entraînement.' },
 ];
 
 export default function CriseSettings({ onClose }) {
@@ -108,47 +115,8 @@ export default function CriseSettings({ onClose }) {
           transition: 'opacity 320ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       />
-      {/* Glass pill back button — fixed top-left, z-index 80 (le bottom sheet est zIndex 201,
-          mais le back doit être visible et tap-able pour fermer le sheet) */}
-      <button
-        type="button"
-        data-press
-        onClick={handleClose}
-        aria-label="Retour"
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-          left: 16,
-          zIndex: 202,
-          appearance: 'none',
-          display: closing ? 'none' : 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          minHeight: 44,
-          padding: '10px 14px',
-          borderRadius: 999,
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          color: 'var(--blue-700)',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 13,
-          fontWeight: 500,
-          letterSpacing: '0.02em',
-          lineHeight: 1,
-          cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
-          WebkitTapHighlightColor: 'transparent',
-          opacity: mounted && !closing ? 1 : 0,
-          transition: 'opacity 280ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        </svg>
-        Retour
-      </button>
+
+      {!closing && <BackButton onClick={handleClose} />}
 
       <div
         ref={containerRef}
@@ -159,8 +127,8 @@ export default function CriseSettings({ onClose }) {
           right: 0,
           bottom: 0,
           zIndex: 201,
-          background: 'var(--bg)',
-          color: 'var(--blue-900)',
+          background: tokens.bg,
+          color: tokens.textPrimary,
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           padding: '12px 0 calc(env(safe-area-inset-bottom, 0px) + 24px)',
@@ -191,34 +159,25 @@ export default function CriseSettings({ onClose }) {
           <h1
             style={{
               margin: 0,
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: tokens.fonts.display,
               fontStyle: 'italic',
               fontWeight: 300,
               fontSize: 'clamp(22px, 5.5vw, 26px)',
               lineHeight: 1.1,
-              color: 'var(--blue-900)',
+              color: tokens.textPrimary,
               letterSpacing: '-0.01em',
             }}
           >
             Mon refuge
           </h1>
-          <div
-            style={{
-              marginTop: 8,
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 13,
-              fontWeight: 400,
-              color: 'var(--text-secondary)',
-              maxWidth: 340,
-              marginInline: 'auto',
-              lineHeight: 1.55,
-            }}
-          >
-            Préparé pour le moment où tu en auras besoin.
+          <div style={{ marginTop: 8, maxWidth: 340, marginInline: 'auto' }}>
+            <Body variant="body-sm" style={{ textAlign: 'center' }}>
+              Préparé pour le moment où tu en auras besoin.
+            </Body>
           </div>
         </div>
 
-        {/* Tabs — glass pills, rose accent for active (mode crise) */}
+        {/* Tabs — glass pills, rose accent for active */}
         <div
           style={{
             display: 'flex',
@@ -240,13 +199,13 @@ export default function CriseSettings({ onClose }) {
                   appearance: 'none',
                   padding: '10px 18px',
                   minHeight: 38,
-                  background: active ? 'var(--gradient-rose)' : 'rgba(255, 255, 255, 0.65)',
-                  backdropFilter: 'blur(24px)',
-                  WebkitBackdropFilter: 'blur(24px)',
-                  color: active ? '#FFFFFF' : 'var(--blue-700)',
-                  border: active ? '1px solid var(--rose-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                  background: active ? tokens.gradientRose : 'rgba(255, 255, 255, 0.65)',
+                  backdropFilter: tokens.glass.blur,
+                  WebkitBackdropFilter: tokens.glass.blur,
+                  color: active ? '#FFFFFF' : tokens.blue700,
+                  border: active ? `1px solid ${tokens.rose700}` : '1px solid rgba(255, 255, 255, 0.85)',
                   borderRadius: 999,
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: tokens.fonts.ui,
                   fontSize: 11,
                   fontWeight: 600,
                   letterSpacing: '0.12em',
@@ -275,17 +234,8 @@ export default function CriseSettings({ onClose }) {
         >
           {tab === 'image' && (
             <div>
-              <div
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: 13,
-                  fontWeight: 400,
-                  color: 'var(--text-secondary)',
-                  marginBottom: 14,
-                  lineHeight: 1.55,
-                }}
-              >
-                Le décor de ton refuge.
+              <div style={{ marginBottom: 14 }}>
+                <Body variant="body-sm">Le décor de ton refuge.</Body>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 {REFUGE_IMAGES.map((img) => {
@@ -299,7 +249,7 @@ export default function CriseSettings({ onClose }) {
                       style={{
                         appearance: 'none',
                         padding: 0,
-                        border: active ? '2px solid var(--rose-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                        border: active ? `2px solid ${tokens.rose700}` : '1px solid rgba(255, 255, 255, 0.85)',
                         borderRadius: 16,
                         cursor: 'pointer',
                         overflow: 'hidden',
@@ -328,7 +278,7 @@ export default function CriseSettings({ onClose }) {
                       >
                         <div
                           style={{
-                            fontFamily: "'Cormorant Garamond', serif",
+                            fontFamily: tokens.fonts.display,
                             fontStyle: 'italic',
                             fontWeight: 300,
                             fontSize: 16,
@@ -341,7 +291,7 @@ export default function CriseSettings({ onClose }) {
                         <div
                           style={{
                             marginTop: 4,
-                            fontFamily: "'Inter', sans-serif",
+                            fontFamily: tokens.fonts.ui,
                             fontSize: 9,
                             fontWeight: 500,
                             letterSpacing: '0.18em',
@@ -361,17 +311,10 @@ export default function CriseSettings({ onClose }) {
 
           {tab === 'musique' && (
             <div>
-              <div
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: 13,
-                  fontWeight: 400,
-                  color: 'var(--text-secondary)',
-                  marginBottom: 14,
-                  lineHeight: 1.55,
-                }}
-              >
-                La musique qui t’accompagne dans la traversée.
+              <div style={{ marginBottom: 14 }}>
+                <Body variant="body-sm">
+                  La musique qui t’accompagne dans la traversée.
+                </Body>
               </div>
 
               {/* Silence */}
@@ -402,57 +345,37 @@ export default function CriseSettings({ onClose }) {
 
           {tab === 'rythme' && (
             <div>
-              <div
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: 13,
-                  fontWeight: 400,
-                  color: 'var(--text-secondary)',
-                  marginBottom: 14,
-                  lineHeight: 1.55,
-                }}
-              >
-                Ta façon de respirer.
+              <div style={{ marginBottom: 14 }}>
+                <Body variant="body-sm">Ta façon de respirer.</Body>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {RHYTHMS.map((r) => {
                   const active = r.key === currentRhythm;
                   return (
-                    <button
+                    <GlassCard
                       key={r.key}
-                      type="button"
-                      data-press
+                      radius="lg"
+                      elevation="soft"
+                      padding="18px 20px"
                       onClick={() => updateCrise({ rhythm: r.key })}
                       style={{
-                        appearance: 'none',
-                        padding: '18px 20px',
                         minHeight: 84,
-                        background: 'rgba(255, 255, 255, 0.65)',
-                        backdropFilter: 'blur(24px)',
-                        WebkitBackdropFilter: 'blur(24px)',
-                        border: '1px solid rgba(255, 255, 255, 0.85)',
-                        borderLeft: active ? '3px solid var(--rose-700)' : '3px solid var(--blue-700)',
-                        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-                        borderRadius: 20,
-                        cursor: 'pointer',
+                        borderLeft: active ? `3px solid ${tokens.rose700}` : `3px solid ${tokens.blue700}`,
                         display: 'flex',
                         alignItems: 'flex-start',
                         justifyContent: 'space-between',
                         gap: 14,
-                        textAlign: 'left',
-                        WebkitTapHighlightColor: 'transparent',
-                        transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), border 200ms cubic-bezier(0.16, 1, 0.3, 1)',
                       }}
                       aria-pressed={active}
                     >
                       <div style={{ minWidth: 0, flex: 1 }}>
                         <div
                           style={{
-                            fontFamily: "'Cormorant Garamond', serif",
+                            fontFamily: tokens.fonts.display,
                             fontStyle: 'italic',
                             fontWeight: 300,
                             fontSize: 20,
-                            color: 'var(--blue-900)',
+                            color: tokens.textPrimary,
                             lineHeight: 1.2,
                             letterSpacing: '-0.005em',
                           }}
@@ -462,32 +385,23 @@ export default function CriseSettings({ onClose }) {
                         <div
                           style={{
                             marginTop: 6,
-                            fontFamily: "'Inter', sans-serif",
+                            fontFamily: tokens.fonts.ui,
                             fontSize: 10,
                             letterSpacing: '0.18em',
                             textTransform: 'uppercase',
                             fontWeight: 600,
-                            color: 'var(--blue-700)',
+                            color: tokens.blue700,
                             fontVariantNumeric: 'tabular-nums',
                           }}
                         >
                           {r.desc}
                         </div>
-                        <div
-                          style={{
-                            marginTop: 6,
-                            fontFamily: "'Inter', sans-serif",
-                            fontSize: 13,
-                            fontWeight: 400,
-                            color: 'var(--text-secondary)',
-                            lineHeight: 1.5,
-                          }}
-                        >
-                          {r.hint}
+                        <div style={{ marginTop: 6 }}>
+                          <Body variant="body-sm">{r.hint}</Body>
                         </div>
                       </div>
                       <RadioDot active={active} />
-                    </button>
+                    </GlassCard>
                   );
                 })}
               </div>
@@ -497,32 +411,9 @@ export default function CriseSettings({ onClose }) {
 
         {/* Footer close — gradient rose (mode crise) */}
         <div style={{ padding: '14px 22px 0', flexShrink: 0 }}>
-          <button
-            type="button"
-            data-press
-            onClick={handleClose}
-            style={{
-              appearance: 'none',
-              width: '100%',
-              padding: '15px 24px',
-              minHeight: 50,
-              background: 'var(--gradient-rose)',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: 50,
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: '0.16em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              boxShadow: '0 8px 24px rgba(200, 112, 144, 0.30)',
-              transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
-          >
+          <CTA variant="rose" size="md" full onClick={handleClose}>
             C’est prêt
-          </button>
+          </CTA>
         </div>
       </div>
     </>
@@ -530,73 +421,52 @@ export default function CriseSettings({ onClose }) {
 }
 
 /* ============================================================
-   RefugeRow — glass card with title + hint + radio dot
+   RefugeRow — GlassCard avec titre + hint + radio dot
    ============================================================ */
 function RefugeRow({ active, onClick, title, hint, titleSerif = true, style }) {
   return (
-    <button
-      type="button"
-      data-press
+    <GlassCard
+      radius="lg"
+      elevation="soft"
+      padding="16px 18px"
       onClick={onClick}
-      aria-pressed={active}
       style={{
-        appearance: 'none',
-        width: '100%',
-        padding: '16px 18px',
         minHeight: 64,
-        background: 'rgba(255, 255, 255, 0.65)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255, 255, 255, 0.85)',
-        borderLeft: active ? '3px solid var(--rose-700)' : '3px solid var(--blue-700)',
-        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-        borderRadius: 20,
-        cursor: 'pointer',
+        borderLeft: active ? `3px solid ${tokens.rose700}` : `3px solid ${tokens.blue700}`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 14,
-        textAlign: 'left',
-        WebkitTapHighlightColor: 'transparent',
-        transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), border 200ms cubic-bezier(0.16, 1, 0.3, 1)',
         ...(style || {}),
       }}
+      aria-pressed={active}
     >
       <div style={{ minWidth: 0, flex: 1 }}>
         <div
           style={titleSerif ? {
-            fontFamily: "'Cormorant Garamond', serif",
+            fontFamily: tokens.fonts.display,
             fontStyle: 'italic',
             fontWeight: 300,
             fontSize: 18,
-            color: 'var(--blue-900)',
+            color: tokens.textPrimary,
             lineHeight: 1.2,
             letterSpacing: '-0.005em',
           } : {
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: tokens.fonts.ui,
             fontSize: 15,
             fontWeight: 600,
-            color: 'var(--blue-900)',
+            color: tokens.textPrimary,
             lineHeight: 1.2,
           }}
         >
           {title}
         </div>
-        <div
-          style={{
-            marginTop: 4,
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 13,
-            fontWeight: 400,
-            color: 'var(--text-secondary)',
-            lineHeight: 1.5,
-          }}
-        >
-          {hint}
+        <div style={{ marginTop: 4 }}>
+          <Body variant="body-sm">{hint}</Body>
         </div>
       </div>
       <RadioDot active={active} />
-    </button>
+    </GlassCard>
   );
 }
 
@@ -607,7 +477,7 @@ function RadioDot({ active }) {
         width: 18,
         height: 18,
         borderRadius: '50%',
-        border: active ? '5px solid var(--rose-700)' : '1px solid var(--blue-300)',
+        border: active ? `5px solid ${tokens.rose700}` : `1px solid ${tokens.blue300}`,
         flexShrink: 0,
         marginTop: 2,
         transition: 'border 200ms cubic-bezier(0.16, 1, 0.3, 1)',

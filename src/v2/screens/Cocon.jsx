@@ -1,10 +1,9 @@
 /* ============================================================
    ÇA VA ? V6 — Cocon · refonte premium Apple Health / Calm
    ============================================================
-   Topbar sticky glass · image personnage 343×260 (BUG-05 préservé)
-   halo teal animé · hero text serif italic · CTA gradient-rose
-   3 ActionCards glass (Musique / Mantra / Personnaliser).
-   Espace géométrique 4-8-12-16-24-32-48-64.
+   Migration Design System V4 — Eyebrow / HeroTitle / Body / CTA
+   / GlassCard / tokens. Cas spéciaux préservés : topbar brand
+   custom + image card (halo teal animé, BUG-05).
    ============================================================ */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
@@ -15,6 +14,15 @@ import CoconAmbiance from './CoconAmbiance';
 import Musique, { getTrackCover } from './Musique';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import Blobs from '../../components/Blobs';
+import {
+  Header,
+  GlassCard,
+  Eyebrow,
+  HeroTitle,
+  Body,
+  CTA,
+  tokens,
+} from '../../components/ui';
 
 const TOTEMS = [
   { key: 'lion',    label: 'Lion blanc',    world: 'foret' },
@@ -197,16 +205,16 @@ export default function Cocon() {
         overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        background: 'var(--bg)',
+        background: tokens.bg,
       }}
       data-world={currentTotem.world}
     >
-      {/* Painterly blobs atténués (opacity 0.10 max via Blobs variant) */}
+      {/* Painterly blobs atténués */}
       <div style={{ opacity: 0.55, pointerEvents: 'none' }}>
         <Blobs variant="rose-violet" />
       </div>
 
-      {/* ── Topbar sticky premium glass ─────────────────────── */}
+      {/* ── Topbar sticky brand glass (cas spécial — pas de Header standard) */}
       <div
         style={{
           position: 'sticky',
@@ -231,11 +239,11 @@ export default function Cocon() {
           <span style={{ width: 44, height: 44 }} />
           <span
             style={{
-              fontFamily: 'var(--font-display)',
+              fontFamily: tokens.fonts.display,
               fontStyle: 'italic',
               fontWeight: 300,
               fontSize: 22,
-              color: 'var(--blue-900)',
+              color: tokens.blue900,
               letterSpacing: '-0.01em',
             }}
           >
@@ -250,16 +258,16 @@ export default function Cocon() {
               appearance: 'none',
               width: 44,
               height: 44,
-              background: 'rgba(255, 255, 255, 0.65)',
-              border: '1px solid rgba(255, 255, 255, 0.85)',
+              background: tokens.glass.bg,
+              border: tokens.glass.border,
               borderRadius: '50%',
-              color: 'var(--blue-900)',
+              color: tokens.blue900,
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
+              backdropFilter: tokens.glass.blur,
+              WebkitBackdropFilter: tokens.glass.blur,
               WebkitTapHighlightColor: 'transparent',
               fontSize: 18,
               padding: 0,
@@ -271,7 +279,7 @@ export default function Cocon() {
         </div>
       </div>
 
-      {/* ── Image personnage card — 343×260 (BUG-05 préservé) ── */}
+      {/* ── Image personnage card — 343×260 (BUG-05 préservé — cas spécial) */}
       <div
         style={{
           position: 'relative',
@@ -280,7 +288,7 @@ export default function Cocon() {
           borderRadius: 28,
           overflow: 'hidden',
           flexShrink: 0,
-          boxShadow: '0 12px 40px rgba(10, 36, 56, 0.12)',
+          boxShadow: tokens.glass.shadowDeep,
           zIndex: 2,
         }}
       >
@@ -328,7 +336,7 @@ export default function Cocon() {
         <CoconAmbiance type={cocon.ambiance || 'fireflies'} accent={accent} />
       </div>
 
-      {/* ── Hero text ───────────────────────────────────────── */}
+      {/* ── Hero text — Eyebrow + HeroTitle + Body whisper ─── */}
       <div
         style={{
           position: 'relative',
@@ -337,47 +345,15 @@ export default function Cocon() {
           zIndex: 2,
         }}
       >
-        <div
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: 'var(--rose-700)',
-            marginBottom: 12,
-          }}
-        >
-          Ton cocon
+        <div style={{ marginBottom: 12 }}>
+          <Eyebrow color="rose">Ton cocon</Eyebrow>
         </div>
-        <h1
-          style={{
-            margin: 0,
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 'clamp(36px, 9vw, 52px)',
-            lineHeight: 1.05,
-            letterSpacing: 0,
-            color: 'var(--blue-900)',
-          }}
-        >
-          {getGreeting(profile.pseudo)}
-        </h1>
-        <p
-          style={{
-            margin: '16px auto 0',
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 16,
-            lineHeight: 1.5,
-            color: 'var(--text-secondary)',
-            maxWidth: 320,
-          }}
-        >
-          {hourWhisper}
-        </p>
+        <HeroTitle size="lg">{getGreeting(profile.pseudo)}</HeroTitle>
+        <div style={{ margin: '16px auto 0', maxWidth: 320 }}>
+          <Body variant="whisper" italic style={{ fontSize: 16, lineHeight: 1.5 }}>
+            {hourWhisper}
+          </Body>
+        </div>
 
         {profile.mantra && (
           <button
@@ -395,12 +371,12 @@ export default function Cocon() {
           >
             <span
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: tokens.fonts.display,
                 fontStyle: 'italic',
                 fontWeight: 300,
                 fontSize: 20,
                 lineHeight: 1.4,
-                color: 'var(--violet)',
+                color: tokens.violet,
                 animation: 'cocon-mantra-breathe 8s ease-in-out infinite',
                 display: 'inline-block',
                 maxWidth: 320,
@@ -412,38 +388,20 @@ export default function Cocon() {
         )}
       </div>
 
-      {/* ── CTA gradient-rose premium ───────────────────────── */}
+      {/* ── CTA gradient-rose premium ── */}
       <div style={{ position: 'relative', margin: '40px 16px 0', zIndex: 2 }}>
-        <button
-          type="button"
+        <CTA
+          variant="rose"
+          size="lg"
+          full
+          haptic={false}
           onClick={() => { haptic(6); setBreathingOpen(true); }}
-          data-press
-          className="cocon-cta-primary"
-          style={{
-            appearance: 'none',
-            width: '100%',
-            minHeight: 52,
-            padding: '16px 28px',
-            background: 'var(--gradient-rose)',
-            color: '#FFFFFF',
-            border: 'none',
-            borderRadius: 50,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 12,
-            fontWeight: 600,
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            cursor: 'pointer',
-            WebkitTapHighlightColor: 'transparent',
-            boxShadow: '0 8px 24px rgba(200, 112, 144, 0.35)',
-            transition: 'transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease-out',
-          }}
         >
           Me poser 2 minutes
-        </button>
+        </CTA>
       </div>
 
-      {/* ── ActionCards grid ────────────────────────────────── */}
+      {/* ── ActionCards grid ── */}
       <div
         style={{
           position: 'relative',
@@ -458,7 +416,7 @@ export default function Cocon() {
         <ActionCard
           onClick={() => { haptic(4); setMusiqueOpen(true); }}
           icon={(
-            <ActionIcon gradient="var(--gradient-blue)">
+            <ActionIcon gradient={tokens.gradientBlue}>
               <IconMusic />
             </ActionIcon>
           )}
@@ -471,7 +429,7 @@ export default function Cocon() {
         <ActionCard
           onClick={() => { haptic(2); setPersonalizeOpen(true); }}
           icon={(
-            <ActionIcon gradient="var(--gradient-rose)">
+            <ActionIcon gradient={tokens.gradientRose}>
               <IconMantra />
             </ActionIcon>
           )}
@@ -481,7 +439,7 @@ export default function Cocon() {
         <ActionCard
           onClick={() => { haptic(2); setPersonalizeOpen(true); }}
           icon={(
-            <ActionIcon gradient="var(--gradient-violet)">
+            <ActionIcon gradient={tokens.gradientViolet}>
               <IconSettings />
             </ActionIcon>
           )}
@@ -520,7 +478,7 @@ export default function Cocon() {
         <Musique onClose={() => setMusiqueOpen(false)} />
       )}
 
-      {/* ── Keyframes locales + interactions ─────────────────── */}
+      {/* ── Keyframes locales + interactions ── */}
       <style>{`
         .cocon-halo {
           transform: translateX(-50%);
@@ -535,34 +493,8 @@ export default function Cocon() {
           50%      { opacity: 1; }
         }
 
-        .cocon-cta-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 32px rgba(200, 112, 144, 0.45);
-        }
-        .cocon-cta-primary:active {
-          transform: scale(0.97);
-          transition: transform 120ms ease-out;
-        }
-
-        .cocon-action-card {
-          transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
-                      box-shadow 220ms ease-out;
-        }
-        .cocon-action-card:hover {
-          transform: translateY(-1px) scale(1.005);
-          box-shadow: 0 10px 30px rgba(10, 36, 56, 0.10);
-        }
-        .cocon-action-card:active {
-          transform: scale(0.985);
-          transition: transform 120ms ease-out;
-        }
-
         @media (prefers-reduced-motion: reduce) {
           .cocon-halo { animation: none !important; }
-          .cocon-cta-primary,
-          .cocon-action-card { transition: none !important; }
-          .cocon-cta-primary:hover,
-          .cocon-action-card:hover { transform: none !important; }
         }
       `}</style>
     </div>
@@ -570,134 +502,115 @@ export default function Cocon() {
 }
 
 /* ============================================================
-   ActionCard — glass blur 24 + icône gradient + label serif
+   ActionCard — GlassCard hoverable + icône/cover + texte serif
    ============================================================ */
 
 function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPlaying }) {
   return (
-    <button
-      type="button"
+    <GlassCard
+      hoverable
+      radius="lg"
+      elevation="soft"
+      padding="16px 18px"
       onClick={onClick}
-      data-press
-      className="cocon-action-card"
-      style={{
-        appearance: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 14,
-        width: '100%',
-        padding: '16px 18px',
-        minHeight: 76,
-        background: 'rgba(255, 255, 255, 0.65)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255, 255, 255, 0.85)',
-        borderRadius: 20,
-        cursor: 'pointer',
-        textAlign: 'left',
-        WebkitTapHighlightColor: 'transparent',
-        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-      }}
+      style={{ minHeight: 76 }}
     >
-      {/* Icône / cover */}
-      {cover ? (
-        <div
-          aria-hidden
-          style={{
-            width: 40,
-            height: 40,
-            flexShrink: 0,
-            borderRadius: 10,
-            overflow: 'hidden',
-            boxShadow: '0 2px 6px rgba(10, 36, 56, 0.18)',
-            background: 'var(--blue-100)',
-          }}
-        >
-          <img
-            src={cover}
-            alt=""
-            draggable={false}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', userSelect: 'none' }}
-          />
-        </div>
-      ) : (
-        icon
-      )}
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 17,
-            color: 'var(--blue-900)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            lineHeight: 1.2,
-          }}
-        >
-          {label}
-        </div>
-        <div
-          style={{
-            marginTop: 4,
-            fontFamily: 'var(--font-body)',
-            fontSize: 12,
-            fontWeight: 400,
-            lineHeight: 1.5,
-            color: 'var(--text-muted)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {subtitle}
-        </div>
-      </div>
-
-      {onPlayToggle && (
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); onPlayToggle(); }}
-          data-press
-          aria-label={isPlaying ? 'Mettre en pause' : 'Lancer'}
-          style={{
-            appearance: 'none',
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
-            background: 'var(--gradient-blue)',
-            color: '#FFFFFF',
-            border: 'none',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            padding: 0,
-            fontSize: 11,
-            WebkitTapHighlightColor: 'transparent',
-            boxShadow: '0 4px 12px rgba(26, 90, 127, 0.30)',
-          }}
-        >
-          {isPlaying ? '❚❚' : '▶'}
-        </button>
-      )}
-
-      <span
-        aria-hidden
+      <div
         style={{
-          color: 'var(--blue-300)',
-          fontSize: 18,
-          flexShrink: 0,
-          padding: '0 2px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          width: '100%',
         }}
       >
-        ›
-      </span>
-    </button>
+        {/* Icône / cover */}
+        {cover ? (
+          <div
+            aria-hidden
+            style={{
+              width: 40,
+              height: 40,
+              flexShrink: 0,
+              borderRadius: 10,
+              overflow: 'hidden',
+              boxShadow: '0 2px 6px rgba(10, 36, 56, 0.18)',
+              background: tokens.blueLight,
+            }}
+          >
+            <img
+              src={cover}
+              alt=""
+              draggable={false}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', userSelect: 'none' }}
+            />
+          </div>
+        ) : (
+          icon
+        )}
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              fontFamily: tokens.fonts.display,
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 17,
+              color: tokens.blue900,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              lineHeight: 1.2,
+            }}
+          >
+            {label}
+          </div>
+          <div style={{ marginTop: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Body variant="caption">{subtitle}</Body>
+          </div>
+        </div>
+
+        {onPlayToggle && (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onPlayToggle(); }}
+            data-press
+            aria-label={isPlaying ? 'Mettre en pause' : 'Lancer'}
+            style={{
+              appearance: 'none',
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              background: tokens.gradientBlue,
+              color: '#FFFFFF',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              padding: 0,
+              fontSize: 11,
+              WebkitTapHighlightColor: 'transparent',
+              boxShadow: '0 4px 12px rgba(26, 90, 127, 0.30)',
+            }}
+          >
+            {isPlaying ? '❚❚' : '▶'}
+          </button>
+        )}
+
+        <span
+          aria-hidden
+          style={{
+            color: tokens.blue300,
+            fontSize: 18,
+            flexShrink: 0,
+            padding: '0 2px',
+          }}
+        >
+          ›
+        </span>
+      </div>
+    </GlassCard>
   );
 }
 
@@ -827,8 +740,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
           right: 0,
           bottom: 0,
           zIndex: 151,
-          background: 'var(--bg)',
-          color: 'var(--blue-900)',
+          background: tokens.bg,
+          color: tokens.blue900,
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           padding: '12px 0 calc(env(safe-area-inset-bottom, 0px) + 24px)',
@@ -853,61 +766,9 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
           }}
         />
 
-        {/* Header glass cohérent */}
-        <div
-          style={{
-            position: 'relative',
-            padding: '0 22px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-            flexShrink: 0,
-          }}
-        >
-          <button
-            type="button"
-            onClick={handleClose}
-            aria-label="Fermer"
-            data-press
-            style={{
-              appearance: 'none',
-              width: 44,
-              height: 44,
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.65)',
-              border: '1px solid rgba(255, 255, 255, 0.85)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              color: 'var(--blue-900)',
-              fontSize: 20,
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 0,
-              WebkitTapHighlightColor: 'transparent',
-              boxShadow: '0 4px 14px rgba(10, 36, 56, 0.08)',
-              flexShrink: 0,
-            }}
-          >
-            ‹
-          </button>
-          <div
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 'clamp(24px, 6vw, 28px)',
-              lineHeight: 1.15,
-              color: 'var(--blue-900)',
-            }}
-          >
-            Mon cocon
-          </div>
-          <span style={{ width: 44, height: 44, flexShrink: 0 }} />
+        {/* Header standard V4 */}
+        <div style={{ flexShrink: 0 }}>
+          <Header title="Mon cocon" onBack={handleClose} />
         </div>
 
         {/* Tabs */}
@@ -915,7 +776,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
           style={{
             display: 'flex',
             gap: 6,
-            padding: '0 22px 16px',
+            padding: '16px 22px 16px',
             overflowX: 'auto',
             scrollbarWidth: 'none',
             flexShrink: 0,
@@ -933,11 +794,11 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   appearance: 'none',
                   padding: '8px 16px',
                   minHeight: 36,
-                  background: active ? 'var(--gradient-blue)' : 'transparent',
-                  color: active ? '#FFFFFF' : 'var(--text-secondary)',
-                  border: active ? 'none' : '1px solid var(--blue-300)',
+                  background: active ? tokens.gradientBlue : 'transparent',
+                  color: active ? '#FFFFFF' : tokens.textSecondary,
+                  border: active ? 'none' : `1px solid ${tokens.blue300}`,
                   borderRadius: 999,
-                  fontFamily: 'var(--font-ui)',
+                  fontFamily: tokens.fonts.ui,
                   fontSize: 12,
                   fontWeight: 600,
                   letterSpacing: '0.04em',
@@ -965,17 +826,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
         >
           {tab === 'image' && (
             <div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 14,
-                  fontWeight: 400,
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
-                  marginBottom: 16,
-                }}
-              >
-                Le décor de ton sanctuaire.
+              <div style={{ marginBottom: 16 }}>
+                <Body variant="body-sm">Le décor de ton sanctuaire.</Body>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 {COCON_IMAGES.map((img) => {
@@ -989,13 +841,13 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                       style={{
                         appearance: 'none',
                         padding: 0,
-                        border: active ? '2px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                        border: active ? `2px solid ${tokens.blue700}` : tokens.glass.border,
                         borderRadius: 16,
                         cursor: 'pointer',
                         overflow: 'hidden',
                         position: 'relative',
                         aspectRatio: '4 / 5',
-                        background: `var(--bg) url(${img.src}) center / cover no-repeat`,
+                        background: `${tokens.bg} url(${img.src}) center / cover no-repeat`,
                         WebkitTapHighlightColor: 'transparent',
                         boxShadow: active ? '0 8px 24px rgba(26, 90, 127, 0.25)' : '0 4px 14px rgba(10, 36, 56, 0.08)',
                       }}
@@ -1010,7 +862,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           padding: '24px 12px 12px',
                           background: 'linear-gradient(0deg, rgba(10, 36, 56, 0.80) 0%, transparent 100%)',
                           color: '#FFFFFF',
-                          fontFamily: 'var(--font-display)',
+                          fontFamily: tokens.fonts.display,
                           fontStyle: 'italic',
                           fontWeight: 300,
                           fontSize: 16,
@@ -1028,86 +880,67 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
 
           {tab === 'ambiance' && (
             <div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 14,
-                  fontWeight: 400,
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
-                  marginBottom: 16,
-                }}
-              >
-                La petite vie qui danse sur ton cocon.
+              <div style={{ marginBottom: 16 }}>
+                <Body variant="body-sm">La petite vie qui danse sur ton cocon.</Body>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {AMBIANCES.map((a) => {
                   const active = a.key === currentAmbiance;
                   return (
-                    <button
+                    <GlassCard
                       key={a.key}
-                      type="button"
-                      data-press
+                      radius="md"
+                      elevation="soft"
+                      padding="14px 16px"
+                      hoverable
                       onClick={() => { haptic(2); onUpdateCocon({ ambiance: a.key }); }}
-                      style={{
-                        appearance: 'none',
-                        padding: '14px 16px',
-                        minHeight: 60,
-                        background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.65)',
-                        border: active ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
-                        borderRadius: 16,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: 14,
-                        textAlign: 'left',
-                        WebkitTapHighlightColor: 'transparent',
-                        backdropFilter: 'blur(24px)',
-                        WebkitBackdropFilter: 'blur(24px)',
-                        boxShadow: '0 4px 14px rgba(10, 36, 56, 0.06)',
-                      }}
                       aria-pressed={active}
+                      style={{
+                        minHeight: 60,
+                        background: active ? 'rgba(26, 90, 127, 0.08)' : tokens.glass.bg,
+                        border: active ? `1px solid ${tokens.blue700}` : tokens.glass.border,
+                      }}
                     >
-                      <div style={{ minWidth: 0 }}>
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-display)',
-                            fontStyle: 'italic',
-                            fontWeight: 300,
-                            fontSize: 17,
-                            lineHeight: 1.3,
-                            letterSpacing: '-0.01em',
-                            color: 'var(--blue-900)',
-                          }}
-                        >
-                          {a.label}
-                        </div>
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-body)',
-                            fontSize: 12,
-                            fontWeight: 400,
-                            lineHeight: 1.5,
-                            color: 'var(--text-muted)',
-                            marginTop: 4,
-                          }}
-                        >
-                          {a.hint}
-                        </div>
-                      </div>
-                      <span
+                      <div
                         style={{
-                          width: 18,
-                          height: 18,
-                          borderRadius: '50%',
-                          border: active ? '5px solid var(--blue-700)' : '1px solid var(--blue-300)',
-                          background: 'transparent',
-                          flexShrink: 0,
-                          transition: 'all 200ms ease-out',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 14,
+                          width: '100%',
                         }}
-                      />
-                    </button>
+                      >
+                        <div style={{ minWidth: 0 }}>
+                          <div
+                            style={{
+                              fontFamily: tokens.fonts.display,
+                              fontStyle: 'italic',
+                              fontWeight: 300,
+                              fontSize: 17,
+                              lineHeight: 1.3,
+                              letterSpacing: '-0.01em',
+                              color: tokens.blue900,
+                            }}
+                          >
+                            {a.label}
+                          </div>
+                          <div style={{ marginTop: 4 }}>
+                            <Body variant="caption">{a.hint}</Body>
+                          </div>
+                        </div>
+                        <span
+                          style={{
+                            width: 18,
+                            height: 18,
+                            borderRadius: '50%',
+                            border: active ? `5px solid ${tokens.blue700}` : `1px solid ${tokens.blue300}`,
+                            background: 'transparent',
+                            flexShrink: 0,
+                            transition: 'all 200ms ease-out',
+                          }}
+                        />
+                      </div>
+                    </GlassCard>
                   );
                 })}
               </div>
@@ -1116,159 +949,128 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
 
           {tab === 'musique' && (
             <div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 14,
-                  fontWeight: 400,
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
-                  marginBottom: 16,
-                }}
-              >
-                La musique qui accompagne ton retour à toi.
+              <div style={{ marginBottom: 16 }}>
+                <Body variant="body-sm">La musique qui accompagne ton retour à toi.</Body>
               </div>
 
-              <button
-                type="button"
-                data-press
+              <GlassCard
+                radius="sm"
+                elevation="soft"
+                padding="12px 16px"
+                hoverable
                 onClick={() => { haptic(2); onUpdateCocon({ music: null }); }}
-                style={{
-                  appearance: 'none',
-                  width: '100%',
-                  padding: '12px 16px',
-                  minHeight: 48,
-                  background: !currentMusic ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.65)',
-                  border: !currentMusic ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
-                  borderRadius: 14,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 12,
-                  WebkitTapHighlightColor: 'transparent',
-                  backdropFilter: 'blur(24px)',
-                  WebkitBackdropFilter: 'blur(24px)',
-                }}
                 aria-pressed={!currentMusic}
-              >
-                <span style={{ fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 500, color: 'var(--blue-900)' }}>
-                  Silence
-                </span>
-                <span
-                  style={{
-                    width: 14,
-                    height: 14,
-                    borderRadius: '50%',
-                    border: !currentMusic ? '4px solid var(--blue-700)' : '1px solid var(--blue-300)',
-                    flexShrink: 0,
-                  }}
-                />
-              </button>
-
-              <div
                 style={{
-                  padding: '12px 16px',
-                  background: 'rgba(255, 255, 255, 0.65)',
-                  border: '1px solid rgba(255, 255, 255, 0.85)',
-                  borderRadius: 14,
-                  marginBottom: 16,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  backdropFilter: 'blur(24px)',
-                  WebkitBackdropFilter: 'blur(24px)',
+                  minHeight: 48,
+                  marginBottom: 12,
+                  background: !currentMusic ? 'rgba(26, 90, 127, 0.08)' : tokens.glass.bg,
+                  border: !currentMusic ? `1px solid ${tokens.blue700}` : tokens.glass.border,
                 }}
               >
-                <span style={{ fontSize: 13 }} aria-hidden>🔉</span>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="5"
-                  value={Math.round((cocon.musicVolume || 0.45) * 100)}
-                  onChange={(e) => onUpdateCocon({ musicVolume: Number(e.target.value) / 100 })}
-                  aria-label="Volume"
+                <div
                   style={{
-                    flex: 1,
-                    accentColor: 'var(--blue-700)',
-                  }}
-                />
-                <span
-                  style={{
-                    minWidth: 30,
-                    textAlign: 'right',
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 12,
-                    fontWeight: 500,
-                    fontVariantNumeric: 'tabular-nums',
-                    color: 'var(--text-secondary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
                   }}
                 >
-                  {Math.round((cocon.musicVolume || 0.45) * 100)}
-                </span>
-              </div>
+                  <span style={{ fontFamily: tokens.fonts.body, fontSize: 15, fontWeight: 500, color: tokens.blue900 }}>
+                    Silence
+                  </span>
+                  <span
+                    style={{
+                      width: 14,
+                      height: 14,
+                      borderRadius: '50%',
+                      border: !currentMusic ? `4px solid ${tokens.blue700}` : `1px solid ${tokens.blue300}`,
+                      flexShrink: 0,
+                    }}
+                  />
+                </div>
+              </GlassCard>
+
+              <GlassCard radius="sm" elevation="soft" padding="12px 16px" style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
+                  <span style={{ fontSize: 13 }} aria-hidden>🔉</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={Math.round((cocon.musicVolume || 0.45) * 100)}
+                    onChange={(e) => onUpdateCocon({ musicVolume: Number(e.target.value) / 100 })}
+                    aria-label="Volume"
+                    style={{
+                      flex: 1,
+                      accentColor: tokens.blue700,
+                    }}
+                  />
+                  <span
+                    style={{
+                      minWidth: 30,
+                      textAlign: 'right',
+                      fontFamily: tokens.fonts.ui,
+                      fontSize: 12,
+                      fontWeight: 500,
+                      fontVariantNumeric: 'tabular-nums',
+                      color: tokens.textSecondary,
+                    }}
+                  >
+                    {Math.round((cocon.musicVolume || 0.45) * 100)}
+                  </span>
+                </div>
+              </GlassCard>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {TRACKS.map((t) => {
                   const active = t.key === currentMusic;
                   return (
-                    <button
+                    <GlassCard
                       key={t.key}
-                      type="button"
-                      data-press
+                      radius="sm"
+                      elevation="soft"
+                      padding="12px 14px"
+                      hoverable
                       onClick={() => { haptic(2); onUpdateCocon({ music: t.key }); }}
-                      style={{
-                        appearance: 'none',
-                        padding: '12px 14px',
-                        minHeight: 48,
-                        background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.65)',
-                        border: active ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
-                        borderRadius: 12,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        textAlign: 'left',
-                        WebkitTapHighlightColor: 'transparent',
-                        backdropFilter: 'blur(24px)',
-                        WebkitBackdropFilter: 'blur(24px)',
-                      }}
                       aria-pressed={active}
+                      style={{
+                        minHeight: 48,
+                        background: active ? 'rgba(26, 90, 127, 0.08)' : tokens.glass.bg,
+                        border: active ? `1px solid ${tokens.blue700}` : tokens.glass.border,
+                      }}
                     >
-                      <span
+                      <div
                         style={{
-                          fontFamily: 'var(--font-display)',
-                          fontStyle: 'italic',
-                          fontWeight: 300,
-                          fontSize: 17,
-                          lineHeight: 1.3,
-                          color: 'var(--blue-900)',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                          marginRight: 8,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          width: '100%',
                         }}
                       >
-                        {t.title}
-                      </span>
-                      {active && (
                         <span
-                          aria-hidden
                           style={{
-                            fontFamily: 'var(--font-ui)',
-                            fontSize: 10,
-                            letterSpacing: '0.18em',
-                            textTransform: 'uppercase',
-                            fontWeight: 600,
-                            color: 'var(--blue-700)',
-                            flexShrink: 0,
+                            fontFamily: tokens.fonts.display,
+                            fontStyle: 'italic',
+                            fontWeight: 300,
+                            fontSize: 17,
+                            lineHeight: 1.3,
+                            color: tokens.blue900,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            marginRight: 8,
                           }}
                         >
-                          en cours
+                          {t.title}
                         </span>
-                      )}
-                    </button>
+                        {active && (
+                          <span aria-hidden style={{ flexShrink: 0 }}>
+                            <Eyebrow color="blue" style={{ fontSize: 10 }}>en cours</Eyebrow>
+                          </span>
+                        )}
+                      </div>
+                    </GlassCard>
                   );
                 })}
               </div>
@@ -1277,33 +1079,13 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
 
           {tab === 'identite' && (
             <div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: 14,
-                  fontWeight: 400,
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
-                  marginBottom: 24,
-                }}
-              >
-                Qui tu es dans cet espace.
+              <div style={{ marginBottom: 24 }}>
+                <Body variant="body-sm">Qui tu es dans cet espace.</Body>
               </div>
 
               <div style={{ marginBottom: 24 }}>
-                <label
-                  style={{
-                    display: 'block',
-                    marginBottom: 12,
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 10,
-                    fontWeight: 600,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  Prénom
+                <label style={{ display: 'block', marginBottom: 12 }}>
+                  <Eyebrow color="secondary">Prénom</Eyebrow>
                 </label>
                 <input
                   type="text"
@@ -1316,34 +1098,23 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     width: '100%',
                     padding: '14px 16px',
                     minHeight: 48,
-                    background: 'rgba(255, 255, 255, 0.65)',
-                    border: '1px solid rgba(255, 255, 255, 0.85)',
+                    background: tokens.glass.bg,
+                    border: tokens.glass.border,
                     borderRadius: 14,
-                    fontFamily: 'var(--font-body)',
+                    fontFamily: tokens.fonts.body,
                     fontSize: 15,
-                    color: 'var(--blue-900)',
+                    color: tokens.blue900,
                     outline: 'none',
                     boxSizing: 'border-box',
-                    backdropFilter: 'blur(24px)',
-                    WebkitBackdropFilter: 'blur(24px)',
+                    backdropFilter: tokens.glass.blur,
+                    WebkitBackdropFilter: tokens.glass.blur,
                   }}
                 />
               </div>
 
               <div style={{ marginBottom: 24 }}>
-                <label
-                  style={{
-                    display: 'block',
-                    marginBottom: 12,
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 10,
-                    fontWeight: 600,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  Mantra du moment
+                <label style={{ display: 'block', marginBottom: 12 }}>
+                  <Eyebrow color="secondary">Mantra du moment</Eyebrow>
                 </label>
                 <textarea
                   value={tempMantra}
@@ -1356,31 +1127,31 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     width: '100%',
                     padding: '14px 16px',
                     minHeight: 64,
-                    background: 'rgba(255, 255, 255, 0.65)',
-                    border: '1px solid rgba(255, 255, 255, 0.85)',
+                    background: tokens.glass.bg,
+                    border: tokens.glass.border,
                     borderRadius: 14,
-                    fontFamily: 'var(--font-display)',
+                    fontFamily: tokens.fonts.display,
                     fontStyle: 'italic',
                     fontWeight: 300,
                     fontSize: 18,
                     lineHeight: 1.4,
-                    color: 'var(--blue-900)',
+                    color: tokens.blue900,
                     outline: 'none',
                     resize: 'none',
                     boxSizing: 'border-box',
-                    backdropFilter: 'blur(24px)',
-                    WebkitBackdropFilter: 'blur(24px)',
+                    backdropFilter: tokens.glass.blur,
+                    WebkitBackdropFilter: tokens.glass.blur,
                   }}
                 />
                 <div
                   style={{
                     marginTop: 6,
                     textAlign: 'right',
-                    fontFamily: 'var(--font-ui)',
+                    fontFamily: tokens.fonts.ui,
                     fontSize: 11,
                     fontWeight: 500,
                     fontVariantNumeric: 'tabular-nums',
-                    color: tempMantra.length >= 130 ? 'var(--rose-700)' : 'var(--text-secondary)',
+                    color: tempMantra.length >= 130 ? tokens.rose700 : tokens.textSecondary,
                   }}
                 >
                   {140 - tempMantra.length}
@@ -1388,112 +1159,69 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               </div>
 
               <div style={{ marginBottom: 24 }}>
-                <label
-                  style={{
-                    display: 'block',
-                    marginBottom: 12,
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 10,
-                    fontWeight: 600,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  Mon totem
+                <label style={{ display: 'block', marginBottom: 12 }}>
+                  <Eyebrow color="secondary">Mon totem</Eyebrow>
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                   {TOTEMS.map((t) => {
                     const active = t.key === currentTotem;
                     return (
-                      <button
+                      <GlassCard
                         key={t.key}
-                        type="button"
-                        data-press
+                        radius="sm"
+                        elevation="soft"
+                        padding="12px 14px"
+                        hoverable
                         onClick={() => { haptic(2); onUpdate({ totem: t.key }); }}
-                        style={{
-                          appearance: 'none',
-                          padding: '12px 14px',
-                          minHeight: 48,
-                          background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.65)',
-                          border: active ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
-                          borderRadius: 12,
-                          cursor: 'pointer',
-                          fontFamily: 'var(--font-ui)',
-                          fontSize: 14,
-                          fontWeight: active ? 600 : 500,
-                          lineHeight: 1.3,
-                          color: 'var(--blue-900)',
-                          textAlign: 'left',
-                          WebkitTapHighlightColor: 'transparent',
-                          backdropFilter: 'blur(24px)',
-                          WebkitBackdropFilter: 'blur(24px)',
-                        }}
                         aria-pressed={active}
+                        style={{
+                          minHeight: 48,
+                          background: active ? 'rgba(26, 90, 127, 0.08)' : tokens.glass.bg,
+                          border: active ? `1px solid ${tokens.blue700}` : tokens.glass.border,
+                        }}
                       >
-                        {t.label}
-                      </button>
+                        <span
+                          style={{
+                            fontFamily: tokens.fonts.ui,
+                            fontSize: 14,
+                            fontWeight: active ? 600 : 500,
+                            lineHeight: 1.3,
+                            color: tokens.blue900,
+                          }}
+                        >
+                          {t.label}
+                        </span>
+                      </GlassCard>
                     );
                   })}
                 </div>
               </div>
 
-              <button
-                type="button"
-                data-press
+              <CTA
+                variant="primary"
+                size="lg"
+                full
+                haptic={false}
                 onClick={handleSaveIdentite}
-                style={{
-                  appearance: 'none',
-                  width: '100%',
-                  padding: '16px 28px',
-                  minHeight: 52,
-                  background: 'var(--gradient-blue)',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  borderRadius: 999,
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  WebkitTapHighlightColor: 'transparent',
-                  boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
-                }}
               >
                 Garder
-              </button>
+              </CTA>
             </div>
           )}
         </div>
 
-        {/* Footer close — outline blue-300 */}
+        {/* Footer close */}
         {tab !== 'identite' && (
           <div style={{ padding: '12px 22px 0', flexShrink: 0 }}>
-            <button
-              type="button"
-              data-press
+            <CTA
+              variant="outline"
+              size="md"
+              full
+              haptic={false}
               onClick={handleClose}
-              style={{
-                appearance: 'none',
-                width: '100%',
-                padding: '14px 28px',
-                minHeight: 48,
-                background: 'transparent',
-                border: '1.5px solid var(--blue-300)',
-                borderRadius: 50,
-                fontFamily: 'var(--font-ui)',
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: 'var(--blue-700)',
-                cursor: 'pointer',
-                WebkitTapHighlightColor: 'transparent',
-              }}
             >
               Fermer
-            </button>
+            </CTA>
           </div>
         )}
       </div>

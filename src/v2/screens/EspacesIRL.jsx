@@ -1,10 +1,8 @@
 /* ============================================================
-   ÇA VA ? V3 — Espaces IRL (annuaire d'espaces réels)
+   ÇA VA ? V4 — Espaces IRL (Design System unifié)
    ============================================================
    Le digital est un pont — le but est la vie réelle.
    Annuaire d'espaces où venir seul·e sans être jugé·e.
-   Refonte V3 : Blobs blue-rose, glass cards, Cormorant italic,
-   filter chips glass, CTA blue ghost.
    ============================================================ */
 
 import { useState, useEffect, useMemo } from 'react';
@@ -12,6 +10,15 @@ import { haptic } from '../state';
 import { useToast, TOAST_PRESETS } from '../../components/Toast';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import Blobs from '../../components/Blobs';
+import {
+  Header,
+  GlassCard,
+  Eyebrow,
+  HeroTitle,
+  Body,
+  CTA,
+  tokens,
+} from '../../components/ui';
 
 /* ============================================================
    HARDCODED LIST — V1 illustrative
@@ -25,7 +32,7 @@ const ESPACES = [
     type: 'café solidaire',
     desc: 'Café-discussion ouvert. Tu peux venir seul·e, t’asseoir, dire bonjour. Personne ne juge.',
     icon: '☕',
-    accent: 'var(--blue-700)',
+    accent: tokens.blue700,
     times: 'Lun-ven · 9h-19h',
     address: '14 rue du Faubourg du Temple, 75011',
     url: null,
@@ -37,7 +44,7 @@ const ESPACES = [
     type: 'groupe de marche',
     desc: 'Marche silencieuse de 8km tous les dimanches. Inscris-toi, viens, marche. Aucun mot obligé.',
     icon: '↗',
-    accent: 'var(--violet)',
+    accent: tokens.violet,
     times: 'Dim · 10h précises',
     address: 'Pont Saint-Louis · Métro Pont Marie',
     url: 'https://marche-du-dimanche.fr',
@@ -49,7 +56,7 @@ const ESPACES = [
     type: 'atelier de parole',
     desc: 'Groupes de parole hebdomadaires, max 8 personnes. Animé par une psychologue. Gratuit.',
     icon: '◯',
-    accent: 'var(--blue-700)',
+    accent: tokens.blue700,
     times: 'Mar · 18h-20h',
     address: '12 place des Terreaux, 69001',
     url: null,
@@ -61,7 +68,7 @@ const ESPACES = [
     type: 'jardin solidaire',
     desc: 'Jardin associatif. Plante, arrose, observe. Personne ne te demande pourquoi tu es là.',
     icon: '❦',
-    accent: 'var(--violet)',
+    accent: tokens.violet,
     times: 'Sam · 14h-18h',
     address: 'Friche La Belle de Mai',
     url: null,
@@ -73,7 +80,7 @@ const ESPACES = [
     type: 'café-débat',
     desc: 'Café mensuel autour d’un thème (solitude, deuil, sommeil…). Première fois = bienvenue.',
     icon: '☕',
-    accent: 'var(--blue-700)',
+    accent: tokens.blue700,
     times: '1er jeudi · 19h-21h',
     address: 'Café Solidaire 31',
     url: null,
@@ -85,7 +92,7 @@ const ESPACES = [
     type: 'tchat anonyme',
     desc: 'Tchat en ligne anonyme. Réponse rapide. Pour 18-25 ans en majorité, ouvert à tous.',
     icon: '◇',
-    accent: 'var(--blue-500)',
+    accent: tokens.blue500,
     times: 'Tous les jours · 9h-23h',
     address: 'https://e-enfance.org',
     url: 'https://e-enfance.org/numero-3018/',
@@ -97,7 +104,7 @@ const ESPACES = [
     type: 'pair-aidance',
     desc: 'Groupes de soutien par les pairs (personnes qui ont vécu la même chose que toi). Animés en ligne ou présentiel selon ville.',
     icon: '✦',
-    accent: 'var(--violet)',
+    accent: tokens.violet,
     times: 'Variables · Inscription',
     address: 'esemble.org',
     url: 'https://esemble.org',
@@ -109,7 +116,7 @@ const ESPACES = [
     type: 'cours collectif',
     desc: 'Cours de yoga doux à prix libre (donne ce que tu peux, même 0). Pas de niveau requis.',
     icon: '◓',
-    accent: 'var(--rose-700)',
+    accent: tokens.rose700,
     times: 'Mer + Sam · 18h30',
     address: 'Centre Maraichers 75020',
     url: null,
@@ -121,7 +128,7 @@ const ESPACES = [
     type: 'groupe AA',
     desc: 'Réunions ouvertes ou fermées partout en France. Anonymat absolu. Tu n’as qu’à dire ton prénom (ou pas).',
     icon: '◯',
-    accent: 'var(--blue-500)',
+    accent: tokens.blue500,
     times: 'Plusieurs/jour · alcooliques-anonymes.fr',
     address: 'alcooliques-anonymes.fr',
     url: 'https://www.alcooliques-anonymes.fr',
@@ -133,7 +140,7 @@ const ESPACES = [
     type: 'groupe OA',
     desc: 'Réunions par téléphone, Zoom, ou en présentiel. Trouble alimentaire = pas honte, accueil sans condition.',
     icon: '◐',
-    accent: 'var(--rose-700)',
+    accent: tokens.rose700,
     times: 'Plusieurs/jour · outremangeurs.org',
     address: 'outremangeurs.org',
     url: 'https://outremangeurs.org',
@@ -258,8 +265,8 @@ export default function EspacesIRL({ onClose }) {
         position: 'fixed',
         inset: 0,
         zIndex: 240,
-        background: 'var(--bg)',
-        color: 'var(--blue-900)',
+        background: tokens.bg,
+        color: tokens.textPrimary,
         overflow: 'hidden',
         opacity: closing ? 0 : mounted ? 1 : 0,
         transform: closing
@@ -273,82 +280,7 @@ export default function EspacesIRL({ onClose }) {
     >
       <Blobs variant="blue-rose" />
 
-      {/* Glass pill back button */}
-      <button
-        type="button"
-        data-press
-        onClick={doClose}
-        aria-label="Retour"
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-          left: 16,
-          zIndex: 80,
-          appearance: 'none',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          minHeight: 44,
-          padding: '10px 14px',
-          borderRadius: 999,
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          color: 'var(--blue-700)',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 13,
-          fontWeight: 500,
-          letterSpacing: '0.02em',
-          lineHeight: 1,
-          cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
-          WebkitTapHighlightColor: 'transparent',
-          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        </svg>
-        Retour
-      </button>
-
-      {/* Sticky header with title */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 4,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 90px 12px',
-          background: 'rgba(238, 243, 248, 0.78)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderBottom: '0.5px solid rgba(194, 216, 232, 0.25)',
-        }}
-      >
-        <h1
-          style={{
-            margin: 0,
-            fontFamily: "'Cormorant Garamond', serif",
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 'clamp(22px, 5.5vw, 26px)',
-            lineHeight: 1.1,
-            color: 'var(--blue-900)',
-            letterSpacing: '-0.01em',
-            textAlign: 'center',
-          }}
-        >
-          Espaces IRL
-        </h1>
-      </div>
-
-      {/* Scrollable content */}
+      {/* Scrollable content with sticky header */}
       <div
         style={{
           position: 'relative',
@@ -356,197 +288,172 @@ export default function EspacesIRL({ onClose }) {
           height: '100%',
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding:
-            'calc(env(safe-area-inset-top, 0px) + 76px) 22px calc(env(safe-area-inset-bottom, 0px) + 60px)',
         }}
       >
-        {/* Hero */}
-        <h2
-          style={{
-            margin: 0,
-            fontFamily: "'Cormorant Garamond', serif",
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 'clamp(26px, 7vw, 32px)',
-            lineHeight: 1.18,
-            color: 'var(--blue-900)',
-            letterSpacing: '-0.01em',
-            maxWidth: 360,
-          }}
-        >
-          « Sors. Personne ne te <span style={{ color: 'var(--rose-700)' }}>verra trembler</span>. »
-        </h2>
-        <p
-          style={{
-            margin: '14px 0 26px',
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 14,
-            fontWeight: 400,
-            lineHeight: 1.6,
-            color: 'var(--text-secondary)',
-            maxWidth: 360,
-          }}
-        >
-          Des endroits où on accueille sans poser de question. Tu peux venir
-          seul·e.
-        </p>
+        <Header title="Espaces IRL" onBack={doClose} />
 
-        {/* Filter chips — glass */}
         <div
           style={{
-            display: 'flex',
-            gap: 8,
-            flexWrap: 'wrap',
-            marginBottom: 22,
+            padding:
+              '12px 22px calc(env(safe-area-inset-bottom, 0px) + 60px)',
           }}
         >
-          {FILTERS.map((f) => {
-            const active = filter === f.key;
-            const disabled = !f.enabled;
-            return (
-              <button
-                key={f.key}
-                type="button"
-                data-press={!disabled || undefined}
-                onClick={() => switchFilter(f.key, f.enabled)}
-                disabled={disabled}
+          {/* Hero */}
+          <div style={{ maxWidth: 360 }}>
+            <HeroTitle size="md">
+              « Sors. Personne ne te <span style={{ color: tokens.rose700 }}>verra trembler</span>. »
+            </HeroTitle>
+            <div style={{ marginTop: 14, marginBottom: 26 }}>
+              <Body variant="body-sm">
+                Des endroits où on accueille sans poser de question. Tu peux venir
+                seul·e.
+              </Body>
+            </div>
+          </div>
+
+          {/* Filter chips — glass */}
+          <div
+            style={{
+              display: 'flex',
+              gap: 8,
+              flexWrap: 'wrap',
+              marginBottom: 22,
+            }}
+          >
+            {FILTERS.map((f) => {
+              const active = filter === f.key;
+              const disabled = !f.enabled;
+              return (
+                <button
+                  key={f.key}
+                  type="button"
+                  data-press={!disabled || undefined}
+                  onClick={() => switchFilter(f.key, f.enabled)}
+                  disabled={disabled}
+                  style={{
+                    appearance: 'none',
+                    padding: '8px 16px',
+                    borderRadius: 999,
+                    border: active
+                      ? `1px solid ${tokens.blue700}`
+                      : '1px solid rgba(255, 255, 255, 0.85)',
+                    background: active
+                      ? tokens.gradientBlue
+                      : 'rgba(255, 255, 255, 0.65)',
+                    backdropFilter: tokens.glass.blur,
+                    WebkitBackdropFilter: tokens.glass.blur,
+                    color: active
+                      ? '#FFFFFF'
+                      : disabled
+                        ? tokens.textMuted
+                        : tokens.blue700,
+                    fontFamily: tokens.fonts.ui,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    letterSpacing: '0.06em',
+                    cursor: disabled ? 'not-allowed' : 'pointer',
+                    opacity: disabled ? 0.45 : 1,
+                    WebkitTapHighlightColor: 'transparent',
+                    boxShadow: active ? '0 4px 14px rgba(26, 90, 127, 0.25)' : 'none',
+                    transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), background 220ms cubic-bezier(0.16, 1, 0.3, 1), color 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                >
+                  {f.label}
+                  {disabled && (
+                    <span
+                      style={{
+                        marginLeft: 6,
+                        fontSize: 9,
+                        opacity: 0.6,
+                        letterSpacing: '0.12em',
+                      }}
+                    >
+                      bientôt
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Cards list */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 12,
+            }}
+          >
+            {filtered.length === 0 && (
+              <div
                 style={{
-                  appearance: 'none',
-                  padding: '8px 16px',
-                  borderRadius: 999,
-                  border: active
-                    ? '1px solid var(--blue-700)'
-                    : '1px solid rgba(255, 255, 255, 0.85)',
-                  background: active
-                    ? 'var(--gradient-blue)'
-                    : 'rgba(255, 255, 255, 0.65)',
-                  backdropFilter: 'blur(24px)',
-                  WebkitBackdropFilter: 'blur(24px)',
-                  color: active
-                    ? '#FFFFFF'
-                    : disabled
-                      ? 'var(--text-muted)'
-                      : 'var(--blue-700)',
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: '0.06em',
-                  cursor: disabled ? 'not-allowed' : 'pointer',
-                  opacity: disabled ? 0.45 : 1,
-                  WebkitTapHighlightColor: 'transparent',
-                  boxShadow: active ? '0 4px 14px rgba(26, 90, 127, 0.25)' : 'none',
-                  transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), background 220ms cubic-bezier(0.16, 1, 0.3, 1), color 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+                  padding: '28px 18px',
+                  borderRadius: 20,
+                  border: `1px dashed ${tokens.blue300}`,
+                  background: 'rgba(255, 255, 255, 0.45)',
+                  backdropFilter: tokens.glass.blur,
+                  WebkitBackdropFilter: tokens.glass.blur,
+                  color: tokens.textSecondary,
+                  fontFamily: tokens.fonts.body,
+                  fontSize: 14,
+                  lineHeight: 1.6,
+                  textAlign: 'center',
                 }}
               >
-                {f.label}
-                {disabled && (
-                  <span
-                    style={{
-                      marginLeft: 6,
-                      fontSize: 9,
-                      opacity: 0.6,
-                      letterSpacing: '0.12em',
-                    }}
-                  >
-                    bientôt
-                  </span>
-                )}
-              </button>
-            );
-          })}
+                Aucun espace pour ce filtre. La liste s’enrichira.
+              </div>
+            )}
+
+            {filtered.map((espace) => {
+              const originalIdx = ESPACES.findIndex((e) => e.id === espace.id);
+              const visible = revealCount > originalIdx;
+              return (
+                <EspaceCard
+                  key={espace.id}
+                  espace={espace}
+                  visible={visible}
+                  onGo={() => handleGo(espace)}
+                />
+              );
+            })}
+          </div>
+
+          {/* Footer */}
+          <p
+            style={{
+              margin: '30px 0 4px',
+              fontFamily: tokens.fonts.display,
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 15,
+              lineHeight: 1.55,
+              color: tokens.textSecondary,
+              maxWidth: 360,
+            }}
+          >
+            Cette liste s’enrichira. Si tu connais un espace, écris-nous. (Pour
+            l’instant, en local seulement.)
+          </p>
+          <div style={{ marginTop: 8 }}>
+            <Eyebrow color="muted">À enrichir avec partenaires ÇA VA ?</Eyebrow>
+          </div>
         </div>
-
-        {/* Cards list */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 12,
-          }}
-        >
-          {filtered.length === 0 && (
-            <div
-              style={{
-                padding: '28px 18px',
-                borderRadius: 20,
-                border: '1px dashed var(--blue-300)',
-                background: 'rgba(255, 255, 255, 0.45)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
-                color: 'var(--text-secondary)',
-                fontFamily: "'Inter', sans-serif",
-                fontSize: 14,
-                lineHeight: 1.6,
-                textAlign: 'center',
-              }}
-            >
-              Aucun espace pour ce filtre. La liste s’enrichira.
-            </div>
-          )}
-
-          {filtered.map((espace) => {
-            const originalIdx = ESPACES.findIndex((e) => e.id === espace.id);
-            const visible = revealCount > originalIdx;
-            return (
-              <EspaceCard
-                key={espace.id}
-                espace={espace}
-                visible={visible}
-                onGo={() => handleGo(espace)}
-              />
-            );
-          })}
-        </div>
-
-        {/* Footer */}
-        <p
-          style={{
-            margin: '30px 0 4px',
-            fontFamily: "'Cormorant Garamond', serif",
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 15,
-            lineHeight: 1.55,
-            color: 'var(--text-secondary)',
-            maxWidth: 360,
-          }}
-        >
-          Cette liste s’enrichira. Si tu connais un espace, écris-nous. (Pour
-          l’instant, en local seulement.)
-        </p>
-        <p
-          style={{
-            margin: '8px 0 0',
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 10,
-            fontWeight: 500,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: 'var(--text-muted)',
-          }}
-        >
-          À enrichir avec partenaires ÇA VA ?
-        </p>
       </div>
     </div>
   );
 }
 
 /* ============================================================
-   ESPACE CARD — glass V3
+   ESPACE CARD — GlassCard V4
    ============================================================ */
 
 function EspaceCard({ espace, visible, onGo }) {
   return (
-    <article
+    <GlassCard
+      radius="lg"
+      elevation="soft"
+      padding="18px 20px"
       style={{
-        padding: '18px 20px',
-        borderRadius: 20,
-        background: 'rgba(255, 255, 255, 0.65)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255, 255, 255, 0.85)',
-        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(14px)',
         transition: 'opacity 360ms cubic-bezier(0.16, 1, 0.3, 1), transform 360ms cubic-bezier(0.16, 1, 0.3, 1)',
@@ -582,12 +489,12 @@ function EspaceCard({ espace, visible, onGo }) {
         </div>
         <div
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: tokens.fonts.ui,
             fontSize: 10,
             fontWeight: 500,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: 'var(--text-muted)',
+            color: tokens.textMuted,
             textAlign: 'right',
             lineHeight: 1.3,
           }}
@@ -614,12 +521,12 @@ function EspaceCard({ espace, visible, onGo }) {
         <h3
           style={{
             margin: 0,
-            fontFamily: "'Cormorant Garamond', serif",
+            fontFamily: tokens.fonts.display,
             fontStyle: 'italic',
             fontWeight: 300,
             fontSize: 20,
             lineHeight: 1.25,
-            color: 'var(--blue-900)',
+            color: tokens.textPrimary,
             letterSpacing: '-0.005em',
           }}
         >
@@ -627,7 +534,7 @@ function EspaceCard({ espace, visible, onGo }) {
         </h3>
         <span
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: tokens.fonts.ui,
             fontSize: 11,
             fontWeight: 600,
             color: espace.accent,
@@ -639,18 +546,7 @@ function EspaceCard({ espace, visible, onGo }) {
       </div>
 
       {/* Description */}
-      <p
-        style={{
-          margin: 0,
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 14,
-          fontWeight: 400,
-          lineHeight: 1.55,
-          color: 'var(--text-secondary)',
-        }}
-      >
-        {espace.desc}
-      </p>
+      <Body variant="body-sm">{espace.desc}</Body>
 
       {/* Bottom row : times + address */}
       <div
@@ -661,17 +557,17 @@ function EspaceCard({ espace, visible, onGo }) {
           gap: 12,
           marginTop: 2,
           paddingTop: 12,
-          borderTop: '0.5px solid var(--blue-300)',
+          borderTop: `0.5px solid ${tokens.blue300}`,
         }}
       >
         <div
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: tokens.fonts.ui,
             fontSize: 11,
             fontWeight: 600,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            color: 'var(--blue-700)',
+            color: tokens.blue700,
             flex: '1 1 auto',
             minWidth: 0,
           }}
@@ -680,11 +576,11 @@ function EspaceCard({ espace, visible, onGo }) {
         </div>
         <div
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: tokens.fonts.ui,
             fontSize: 11,
             fontWeight: 400,
             letterSpacing: '0.02em',
-            color: 'var(--text-secondary)',
+            color: tokens.textSecondary,
             textAlign: 'right',
             flex: '0 1 auto',
             wordBreak: 'break-word',
@@ -695,36 +591,12 @@ function EspaceCard({ espace, visible, onGo }) {
         </div>
       </div>
 
-      {/* CTA — outline blue ghost */}
+      {/* CTA — outline blue */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
-        <button
-          type="button"
-          data-press
-          onClick={onGo}
-          style={{
-            appearance: 'none',
-            background: 'transparent',
-            border: '1.5px solid var(--blue-300)',
-            borderRadius: 999,
-            padding: '10px 18px',
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: 'var(--blue-700)',
-            cursor: 'pointer',
-            WebkitTapHighlightColor: 'transparent',
-            transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), background 220ms cubic-bezier(0.16, 1, 0.3, 1)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-          }}
-        >
-          Y aller
-          <span aria-hidden style={{ fontSize: 13, opacity: 0.8 }}>→</span>
-        </button>
+        <CTA variant="outline" size="sm" onClick={onGo}>
+          Y aller <span aria-hidden style={{ fontSize: 13, opacity: 0.8 }}>→</span>
+        </CTA>
       </div>
-    </article>
+    </GlassCard>
   );
 }

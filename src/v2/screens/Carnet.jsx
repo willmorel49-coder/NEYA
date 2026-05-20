@@ -1,9 +1,9 @@
 /* ============================================================
-   ÇA VA ? V2 — Carnet (journal privé, LIGHT MODE)
+   ÇA VA ? V4 — Carnet (Design System unifié)
    ============================================================
    Espace d'écriture privé. Une entrée par jour, mergeable.
    Aucune analyse, aucun envoi. localStorage uniquement.
-   Storage : neya_v2_carnet_entries = [{ id, date, body }]
+   Storage : carnet_entries = [{ id, date, body }]
    ============================================================ */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -11,11 +11,19 @@ import { ls, haptic } from '../state';
 import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
 import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import {
+  Header,
+  GlassCard,
+  Eyebrow,
+  HeroTitle,
+  Body,
+  CTA,
+  tokens,
+} from '../../components/ui';
 
 const STORAGE_KEY = 'carnet_entries';
 const MAX_ENTRIES = 30;
 const TRUNCATE_BODY = 180;
-const TILLEUL = '#D4E08C';
 
 function formatTodayFr() {
   try {
@@ -75,7 +83,6 @@ export default function Carnet({ onClose }) {
 
   const today = todayKey();
 
-  // Find today's entry (if any) to pre-fill
   useEffect(() => {
     const t = entries.find((e) => e?.date?.split('T')[0] === today);
     if (t && typeof t.body === 'string') {
@@ -84,7 +91,6 @@ export default function Carnet({ onClose }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Slide-up reveal + unmount cleanup
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
     return () => {
@@ -108,19 +114,16 @@ export default function Carnet({ onClose }) {
     safeTimeout(() => onClose?.(), 320);
   };
 
-  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
-  const { dialogProps, containerRef, titleId } = useStandardOverlay({
+  const { dialogProps, containerRef } = useStandardOverlay({
     open: !closing,
     onClose: handleClose,
     labelText: 'Mon carnet',
   });
 
-  // Swipe-to-dismiss (iOS HIG) — vertical handle drag
   const { bindHandle, translateY, isDragging } = useSwipeToDismiss({
     onClose: handleClose,
   });
 
-  // Edge swipe-back (iOS HIG) — horizontal left-edge drag
   const {
     bindContainer: bindEdge,
     translateX: edgeX,
@@ -139,7 +142,6 @@ export default function Carnet({ onClose }) {
 
     let next;
     if (existingIdx >= 0) {
-      // Merge : concat le nouveau body avec l'ancien si différent
       const prev = entries[existingIdx];
       const prevBody = (prev.body || '').trim();
       let mergedBody = trimmed;
@@ -156,7 +158,6 @@ export default function Carnet({ onClose }) {
       ];
     }
 
-    // Cap total entries — sort desc by id, keep MAX_ENTRIES most recent
     if (next.length > MAX_ENTRIES) {
       next = [...next]
         .sort((a, b) => (b.id || 0) - (a.id || 0))
@@ -182,7 +183,6 @@ export default function Carnet({ onClose }) {
       : 'translateY(100%)';
   const backdropOpacity = closing ? 0 : mounted ? 1 : 0;
 
-  // Compose translateY : mount/closing transform + live drag offset
   const verticalTranslate =
     isDragging || translateY !== 0
       ? `translateY(${translateY}px)`
@@ -193,23 +193,22 @@ export default function Carnet({ onClose }) {
     : isDragging
       ? 'none'
       : closing
-        ? 'transform 320ms var(--ease-out-ios), opacity 320ms var(--ease-out-ios)'
+        ? 'transform 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 320ms cubic-bezier(0.16, 1, 0.3, 1)'
         : translateY === 0
-          ? 'transform 320ms var(--ease-spring-ios), opacity 420ms var(--ease-out-ios)'
-          : 'transform 420ms var(--ease-out-ios), opacity 420ms var(--ease-out-ios)';
+          ? 'transform 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)'
+          : 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)';
 
   return (
     <div
       ref={containerRef}
       {...dialogProps}
       {...bindEdge}
-      className="wash-temple"
       style={{
-        position: 'absolute',
+        position: 'fixed',
         inset: 0,
-        zIndex: 80,
-        background: 'var(--cream)',
-        color: 'var(--ink)',
+        zIndex: 240,
+        background: tokens.bg,
+        color: tokens.textPrimary,
         overflow: 'hidden',
         opacity: backdropOpacity,
         transform: composedTransform,
@@ -217,7 +216,7 @@ export default function Carnet({ onClose }) {
         WebkitFontSmoothing: 'antialiased',
       }}
     >
-      {/* Edge swipe-back hint — discreet left hairline */}
+      {/* Edge swipe-back hint */}
       <div
         aria-hidden
         style={{
@@ -227,14 +226,14 @@ export default function Carnet({ onClose }) {
           width: 1,
           height: 80,
           transform: 'translateY(-50%)',
-          background: 'var(--ink-faint, rgba(26, 26, 47, 0.18))',
+          background: 'rgba(26, 90, 127, 0.20)',
           opacity: edgeDragging ? 0.5 : 0,
-          transition: 'opacity 180ms var(--ease-out-ios)',
+          transition: 'opacity 180ms cubic-bezier(0.16, 1, 0.3, 1)',
           pointerEvents: 'none',
           zIndex: 5,
         }}
       />
-      {/* Drag handle — grab zone iOS HIG */}
+      {/* Drag handle */}
       <div
         {...bindHandle}
         style={{
@@ -251,7 +250,7 @@ export default function Carnet({ onClose }) {
           cursor: 'grab',
           touchAction: 'none',
           WebkitTapHighlightColor: 'transparent',
-          zIndex: 4,
+          zIndex: 90,
         }}
         aria-hidden
       >
@@ -261,366 +260,207 @@ export default function Carnet({ onClose }) {
             height: isDragging ? 6 : 5,
             borderRadius: 999,
             background: isDragging
-              ? 'var(--ink-soft)'
-              : 'rgba(26, 26, 47, 0.18)',
-            transition: 'width 180ms var(--ease-out-ios), height 180ms var(--ease-out-ios), background 180ms var(--ease-out-ios)',
+              ? 'rgba(10, 36, 56, 0.32)'
+              : 'rgba(10, 36, 56, 0.18)',
+            transition: 'width 180ms cubic-bezier(0.16, 1, 0.3, 1), height 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         />
       </div>
 
-      {/* Back button — top-left, 44×44 hit zone (iOS HIG nav) */}
-      <button
-        type="button"
-        onClick={handleClose}
-        data-press
-        aria-label="Retour"
-        style={{
-          position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
-          left: 12,
-          appearance: 'none',
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          padding: '12px 14px',
-          minWidth: 44,
-          minHeight: 44,
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 4,
-          fontFamily: '"Sora", system-ui, sans-serif',
-          fontSize: 11,
-          fontWeight: 500,
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: 'var(--content-tertiary)',
-          zIndex: 3,
-          WebkitTapHighlightColor: 'transparent',
-        }}
-      >
-        <span style={{ fontSize: 16, lineHeight: 1, marginRight: 2 }}>‹</span>
-        Retour
-      </button>
-
-      {/* Close button — 44×44 tap target (Apple HIG) */}
-      <button
-        type="button"
-        onClick={handleClose}
-        data-press
-        aria-label="Fermer"
-        style={{
-          position: 'absolute',
-          top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
-          right: 12,
-          width: 44,
-          height: 44,
-          borderRadius: '50%',
-          border: '1px solid var(--hairline)',
-          background: 'rgba(255, 255, 255, 0.78)',
-          color: 'var(--ink)',
-          fontSize: 15,
-          lineHeight: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
-          zIndex: 3,
-          WebkitTapHighlightColor: 'transparent',
-        }}
-      >
-        ✕
-      </button>
-
-      {/* Scrollable content */}
+      {/* Scrollable content with sticky Header */}
       <div
         style={{
           position: 'relative',
           height: '100%',
           overflowY: 'auto',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 64px) 22px calc(env(safe-area-inset-bottom, 0px) + 48px)',
           boxSizing: 'border-box',
           zIndex: 1,
         }}
       >
-        {/* Top bar — centered caps + date */}
-        <div style={{ marginBottom: 18, textAlign: 'center' }}>
-          <div
-            style={{
-              fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: 11,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'var(--content-tertiary)',
-              fontWeight: 500,
-              marginBottom: 6,
-            }}
-          >
-            Mon Carnet
-          </div>
-          <div
-            style={{
-              fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: 12,
-              color: 'var(--content-secondary)',
-              fontVariantNumeric: 'tabular-nums',
-              textTransform: 'lowercase',
-            }}
-          >
-            {dateLine}
-          </div>
-        </div>
+        <Header title="Mon carnet" onBack={handleClose} />
 
-        {/* Hero zone */}
-        <div style={{ marginBottom: 16 }}>
-          <h1
-            style={{
-              fontFamily: '"Fraunces", Georgia, serif',
-              fontStyle: 'italic',
-              fontWeight: 400,
-              fontSize: 'clamp(26px, 7vw, 32px)',
-              lineHeight: 1.05,
-              color: 'var(--ink)',
-              margin: 0,
-              letterSpacing: '-0.01em',
-            }}
-          >
-            Aujourd’hui.
-          </h1>
-          <div
-            style={{
-              marginTop: 8,
-              fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: 13,
-              color: 'var(--ink-soft)',
-              lineHeight: 1.45,
-            }}
-          >
-            Tu écris pour toi. Rien ne sort d’ici.
-          </div>
-        </div>
-
-        {/* Today's entry editor */}
         <div
           style={{
-            background: 'var(--cream-light)',
-            border: '1px solid var(--hairline)',
-            borderRadius: 18,
-            padding: '18px 16px',
-            boxShadow: 'var(--shadow-soft)',
-            marginBottom: 28,
+            padding: '8px 22px calc(env(safe-area-inset-bottom, 0px) + 48px)',
+            boxSizing: 'border-box',
           }}
         >
-          <textarea
-            ref={textareaRef}
-            autoFocus
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            rows={6}
-            placeholder="Ce qui me traverse maintenant…"
-            style={{
-              width: '100%',
-              boxSizing: 'border-box',
-              border: 'none',
-              outline: 'none',
-              background: 'transparent',
-              resize: 'vertical',
-              fontFamily: 'Inter, system-ui, sans-serif',
-              fontSize: 15,
-              lineHeight: 1.55,
-              color: 'var(--ink)',
-              minHeight: 140,
-              padding: 0,
-            }}
-          />
-
-          {/* Bottom row : counter + save */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginTop: 14,
-              gap: 12,
-            }}
-          >
+          {/* Top date */}
+          <div style={{ marginBottom: 18, textAlign: 'center' }}>
             <div
               style={{
-                fontFamily: '"Sora", system-ui, sans-serif',
-                fontSize: 9,
-                fontWeight: 500,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: 'var(--content-tertiary)',
+                fontFamily: tokens.fonts.ui,
+                fontSize: 12,
+                color: tokens.textSecondary,
                 fontVariantNumeric: 'tabular-nums',
+                textTransform: 'lowercase',
               }}
             >
-              {charCount} caractère{charCount > 1 ? 's' : ''}
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              {saved && (
-                <span
-                  className="tilleul-pop"
-                  aria-label="Sauvegardé"
-                  style={{
-                    fontFamily: '"Fraunces", Georgia, serif',
-                    fontStyle: 'italic',
-                    fontSize: 18,
-                    lineHeight: 1,
-                    color: TILLEUL,
-                  }}
-                >
-                  ✓
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={handleSave}
-                data-press
-                disabled={!body.trim()}
-                style={{
-                  appearance: 'none',
-                  border: 'none',
-                  background: body.trim() ? 'var(--ink)' : 'var(--hairline)',
-                  color: body.trim() ? 'var(--cream-light)' : 'var(--content-tertiary)',
-                  fontFamily: '"Sora", system-ui, sans-serif',
-                  fontWeight: 500,
-                  fontSize: 13,
-                  letterSpacing: '0.01em',
-                  padding: '14px 24px',
-                  minHeight: 48,
-                  borderRadius: 999,
-                  cursor: body.trim() ? 'pointer' : 'default',
-                  transition: 'background 240ms var(--ease-out-ios), color 240ms var(--ease-out-ios)',
-                  WebkitTapHighlightColor: 'transparent',
-                }}
-              >
-                Garder
-              </button>
+              {dateLine}
             </div>
           </div>
-        </div>
 
-        {/* Past entries section */}
-        <div
-          style={{
-            fontFamily: 'Inter, system-ui, sans-serif',
-            fontSize: 11,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: 'var(--content-tertiary)',
-            fontWeight: 500,
-            marginBottom: 12,
-          }}
-        >
-          Mes traces
-        </div>
+          {/* Hero zone */}
+          <div style={{ marginBottom: 16 }}>
+            <HeroTitle size="md">Aujourd’hui.</HeroTitle>
+            <div style={{ marginTop: 8 }}>
+              <Body variant="body-sm">Tu écris pour toi. Rien ne sort d’ici.</Body>
+            </div>
+          </div>
 
-        {pastEntries.length === 0 ? (
+          {/* Today's entry editor */}
+          <GlassCard
+            radius="lg"
+            elevation="soft"
+            padding="18px 16px"
+            style={{ marginBottom: 28 }}
+          >
+            <textarea
+              ref={textareaRef}
+              autoFocus
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={6}
+              placeholder="Ce qui me traverse maintenant…"
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                border: 'none',
+                outline: 'none',
+                background: 'transparent',
+                resize: 'vertical',
+                fontFamily: tokens.fonts.body,
+                fontSize: 15,
+                lineHeight: 1.55,
+                color: tokens.textPrimary,
+                minHeight: 140,
+                padding: 0,
+              }}
+            />
+
+            {/* Bottom row : counter + save */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: 14,
+                gap: 12,
+              }}
+            >
+              <Eyebrow color="muted">
+                {charCount} caractère{charCount > 1 ? 's' : ''}
+              </Eyebrow>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {saved && (
+                  <span
+                    aria-label="Sauvegardé"
+                    style={{
+                      fontFamily: tokens.fonts.display,
+                      fontStyle: 'italic',
+                      fontSize: 18,
+                      lineHeight: 1,
+                      color: tokens.rose700,
+                    }}
+                  >
+                    ✓
+                  </span>
+                )}
+                <CTA
+                  variant="rose"
+                  size="sm"
+                  onClick={handleSave}
+                  disabled={!body.trim()}
+                  haptic={false}
+                >
+                  Garder
+                </CTA>
+              </div>
+            </div>
+          </GlassCard>
+
+          {/* Past entries section */}
+          <div style={{ marginBottom: 12 }}>
+            <Eyebrow color="muted">Mes traces</Eyebrow>
+          </div>
+
+          {pastEntries.length === 0 ? (
+            <div
+              style={{
+                fontFamily: tokens.fonts.display,
+                fontStyle: 'italic',
+                fontSize: 13,
+                color: tokens.textSecondary,
+                lineHeight: 1.5,
+                padding: '8px 4px',
+              }}
+            >
+              Tes traces apparaîtront ici.
+            </div>
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 10,
+              }}
+            >
+              {pastEntries.map((entry) => {
+                const bodyText = (entry.body || '').trim();
+                const count = bodyText.length;
+                return (
+                  <GlassCard
+                    key={entry.id}
+                    radius="md"
+                    elevation="soft"
+                    padding="14px 16px"
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 10,
+                        marginBottom: 8,
+                      }}
+                    >
+                      <Eyebrow color="secondary">{formatPastDateFr(entry.date)}</Eyebrow>
+                      <Eyebrow color="muted">{count} car.</Eyebrow>
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: tokens.fonts.body,
+                        fontSize: 14,
+                        lineHeight: 1.55,
+                        color: tokens.textPrimary,
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      {truncate(bodyText)}
+                    </div>
+                  </GlassCard>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Whisper footer */}
           <div
             style={{
-              fontFamily: '"Sora", system-ui, sans-serif',
+              marginTop: 32,
+              textAlign: 'center',
+              fontFamily: tokens.fonts.display,
               fontStyle: 'italic',
-              fontSize: 12,
-              color: 'var(--content-secondary)',
+              fontSize: 13,
+              color: tokens.textSecondary,
               lineHeight: 1.5,
-              padding: '8px 4px',
+              padding: '0 12px',
             }}
           >
-            Tes traces apparaîtront ici.
+            Tu peux écrire chaque jour. Ou pas.
           </div>
-        ) : (
-          <div
-            className="stagger"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 10,
-            }}
-          >
-            {pastEntries.map((entry) => {
-              const bodyText = (entry.body || '').trim();
-              const count = bodyText.length;
-              return (
-                <div
-                  key={entry.id}
-                  style={{
-                    background: 'var(--cream-light)',
-                    border: '1px solid var(--hairline)',
-                    borderRadius: 16,
-                    padding: '14px 16px',
-                    boxShadow: 'var(--shadow-soft)',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: 10,
-                      marginBottom: 8,
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: '"Sora", system-ui, sans-serif',
-                        fontSize: 9,
-                        fontWeight: 500,
-                        letterSpacing: '0.18em',
-                        textTransform: 'uppercase',
-                        color: 'var(--ink-soft)',
-                      }}
-                    >
-                      {formatPastDateFr(entry.date)}
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: '"Sora", system-ui, sans-serif',
-                        fontSize: 9,
-                        fontWeight: 500,
-                        letterSpacing: '0.12em',
-                        textTransform: 'uppercase',
-                        color: 'var(--content-tertiary)',
-                        fontVariantNumeric: 'tabular-nums',
-                      }}
-                    >
-                      {count} car.
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: 'Inter, system-ui, sans-serif',
-                      fontSize: 14,
-                      lineHeight: 1.55,
-                      color: 'var(--ink)',
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {truncate(bodyText)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Whisper footer */}
-        <div
-          style={{
-            marginTop: 32,
-            textAlign: 'center',
-            fontFamily: '"Fraunces", Georgia, serif',
-            fontStyle: 'italic',
-            fontSize: 13,
-            color: 'var(--content-secondary)',
-            lineHeight: 1.5,
-            padding: '0 12px',
-          }}
-        >
-          Tu peux écrire chaque jour. Ou pas.
         </div>
       </div>
     </div>

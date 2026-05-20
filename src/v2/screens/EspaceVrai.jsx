@@ -1,17 +1,17 @@
 /* ============================================================
-   ÇA VA ? V4 — EspaceVrai (RITUEL signature, LIGHT MODE refonte)
+   ÇA VA ? V4 — EspaceVrai (RITUEL signature) [DS V4]
    ============================================================
-   Espace de présence libre : 90s+ minimum, 5 min max.
-   Pas de structure imposée — juste BE.
-   Long-press anywhere (800ms) → résumé rituel → onClose.
+   Migré vers /components/ui : BackButton, HeroTitle, Body.
+   Préserve : pulses rose/bleu + long-press (sortie en douceur).
    ============================================================ */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getProfile, haptic, ls, addMinutes } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import Blobs from '../../components/Blobs';
+import { BackButton, HeroTitle, Body } from '../../components/ui';
 
-/* PATIENCE TEXTS — Cormorant italic, 30s window, fade 1.5s, hold 8s */
+/* PATIENCE TEXTS — 30s window, fade 1.5s, hold 8s */
 const PATIENCE_TEXTS = {
   lion:    ['Tu peux rester ici.', 'C’est calme, maintenant.', 'Tu n’es pas pressée.', 'Rien à prouver, ici.'],
   ours:    ['Pose-toi, ici.', 'Le froid est dehors.', 'Ici, c’est doux.', 'Tu peux fondre, maintenant.'],
@@ -39,7 +39,6 @@ const LONG_PRESS_MS = 800;
 
 /* Rendu d’une phrase avec mots-clés en italique Cormorant */
 function PhraseInter({ text }) {
-  /* Découpe en préservant la ponctuation autour des mots-clés */
   const re = new RegExp(`(${ITALIC_KEYWORDS.join('|')})`, 'gi');
   const parts = text.split(re);
   return (
@@ -51,7 +50,7 @@ function PhraseInter({ text }) {
             <em
               key={i}
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontStyle: 'italic',
                 fontWeight: 300,
                 color: 'var(--blue-700)',
@@ -68,7 +67,7 @@ function PhraseInter({ text }) {
 }
 
 export default function EspaceVrai({ worldKey, onClose }) {
-  /* worldKey conservé pour compat (non utilisé dans la nouvelle DA palette unifiée) */
+  /* worldKey conservé pour compat */
   void worldKey;
 
   const profile = getProfile();
@@ -235,7 +234,7 @@ export default function EspaceVrai({ worldKey, onClose }) {
       onTouchEnd={cancelLongPress}
       onTouchCancel={cancelLongPress}
     >
-      {/* Local keyframes */}
+      {/* Local keyframes — pulses rose/bleu + press feedback */}
       <style>{`
         @keyframes ev-pulse-rose {
           0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.55; }
@@ -264,48 +263,16 @@ export default function EspaceVrai({ worldKey, onClose }) {
       {/* Blobs décoratifs rose + violet */}
       <Blobs variant="rose-violet" />
 
-      {/* Glass pill back button — fixed top-left, z-index 80 (sous SOS qui est 100) */}
-      <button
-        type="button"
-        aria-label="Retour"
-        onClick={(e) => { e.stopPropagation(); handleClose(); }}
+      {/* BackButton DS V4 — wrapper stoppe la propagation pour ne pas déclencher long-press */}
+      <div
         onMouseDown={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-          left: 16,
-          zIndex: 80,
-          appearance: 'none',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          minHeight: 44,
-          padding: '10px 14px',
-          borderRadius: 999,
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          color: 'var(--blue-700)',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 13,
-          fontWeight: 500,
-          letterSpacing: '0.02em',
-          lineHeight: 1,
-          cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
-          WebkitTapHighlightColor: 'transparent',
-          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
+        onClick={(e) => e.stopPropagation()}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        </svg>
-        Retour
-      </button>
+        <BackButton onClick={handleClose} />
+      </div>
 
-      {/* Hero — "Espace de présence" Cormorant italic */}
+      {/* Hero — "Espace de présence" */}
       <div
         style={{
           position: 'absolute',
@@ -318,34 +285,25 @@ export default function EspaceVrai({ worldKey, onClose }) {
           zIndex: 2,
         }}
       >
-        <h1
+        <HeroTitle
+          size="lg"
           style={{
-            margin: 0,
-            fontFamily: "'Cormorant Garamond', serif",
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 'clamp(36px, 9vw, 42px)',
-            lineHeight: 1.15,
-            color: 'var(--blue-900)',
             animation: 'ev-fadein 1200ms ease-out both',
+            textAlign: 'center',
           }}
         >
           Espace de présence
-        </h1>
-        <div
+        </HeroTitle>
+        <Body
+          variant="whisper"
           style={{
             marginTop: 14,
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 300,
-            fontStyle: 'italic',
             fontSize: 14,
-            color: 'var(--text-secondary)',
-            lineHeight: 1.6,
             animation: 'ev-fadein 1400ms 200ms ease-out both',
           }}
         >
           <PhraseInter text="Pose-toi ici. Tu n’as rien à faire, maintenant." />
-        </div>
+        </Body>
       </div>
 
       {/* Cercles d’effet doux rose + bleu — pulse 6s */}
@@ -420,19 +378,17 @@ export default function EspaceVrai({ worldKey, onClose }) {
             zIndex: 2,
           }}
         >
-          <div
+          <Body
+            italic
             style={{
-              fontFamily: "'Inter', sans-serif",
               fontWeight: 300,
-              fontStyle: 'italic',
               fontSize: 18,
               lineHeight: 1.5,
-              color: 'var(--text-secondary)',
               animation: 'ev-textfade 8000ms ease-out both',
             }}
           >
             <PhraseInter text={currentText.text} />
-          </div>
+          </Body>
         </div>
       )}
 
@@ -452,7 +408,7 @@ export default function EspaceVrai({ worldKey, onClose }) {
       >
         <div
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Inter', system-ui, sans-serif",
             fontWeight: 500,
             fontSize: 10,
             color: 'var(--text-muted)',
@@ -465,7 +421,7 @@ export default function EspaceVrai({ worldKey, onClose }) {
         <div
           style={{
             marginTop: 6,
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Inter', system-ui, sans-serif",
             fontWeight: 400,
             fontSize: 12,
             color: 'var(--text-secondary)',
@@ -506,7 +462,7 @@ export default function EspaceVrai({ worldKey, onClose }) {
             WebkitBackdropFilter: 'blur(24px)',
             border: '1px solid rgba(255, 255, 255, 0.85)',
             color: 'var(--blue-700)',
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Inter', system-ui, sans-serif",
             fontWeight: 500,
             fontSize: 11,
             letterSpacing: '0.16em',
@@ -547,21 +503,12 @@ export default function EspaceVrai({ worldKey, onClose }) {
             pointerEvents: 'none',
           }}
         >
-          <div
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 26,
-              lineHeight: 1.3,
-              color: 'var(--blue-900)',
-            }}
-          >
+          <HeroTitle size="md" style={{ textAlign: 'center' }}>
             Tu es restée {resume.minutes} {resume.minutes <= 1 ? 'minute' : 'minutes'}.
-          </div>
+          </HeroTitle>
           <div
             style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Inter', system-ui, sans-serif",
               fontWeight: 500,
               fontSize: 10,
               color: 'var(--rose-700)',

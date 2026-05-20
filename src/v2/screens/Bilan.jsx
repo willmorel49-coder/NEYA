@@ -1,9 +1,9 @@
 /* ============================================================
-   ÇA VA ? V4 — Bilan du soir (overlay contemplatif)
+   ÇA VA ? V4 — Bilan du soir (overlay contemplatif) [DS V4]
    ============================================================
-   Glassmorphism · Blobs rose-blue · Cormorant + Inter
+   Migré vers /components/ui : BackButton, GlassCard, Eyebrow,
+   HeroTitle, Body, CTA.
    5 questions séquentielles, posées une à une.
-   Pas d'analyse externe. Pas de comparaison. Pas de musique.
    Daily-lock : un seul bilan par soir.
    ============================================================ */
 
@@ -12,6 +12,14 @@ import { ls, getProfile, haptic } from '../state';
 import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import Blobs from '../../components/Blobs';
+import {
+  BackButton,
+  GlassCard,
+  Eyebrow,
+  HeroTitle,
+  Body,
+  CTA,
+} from '../../components/ui';
 
 const BILAN_QUESTIONS = [
   {
@@ -228,61 +236,32 @@ export default function Bilan({ onClose }) {
         <TopBar onBack={doClose} />
 
         <div style={centerWrap}>
-          <div
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 9,
-              fontWeight: 500,
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              color: 'var(--blue-700)',
-              marginBottom: 14,
-              position: 'relative',
-              zIndex: 1,
-            }}
-          >
+          <Eyebrow color="blue" style={{ marginBottom: 14, position: 'relative', zIndex: 1 }}>
             CE SOIR
-          </div>
-          <div
+          </Eyebrow>
+          <HeroTitle
+            size="md"
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 28,
-              lineHeight: 1.25,
-              color: 'var(--blue-900)',
               maxWidth: 320,
               margin: '0 auto 14px',
               position: 'relative',
               zIndex: 1,
+              textAlign: 'center',
             }}
           >
             Tu as déjà posé ce soir.
-          </div>
-          <div
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 14,
-              color: 'var(--text-secondary)',
-              lineHeight: 1.5,
-              position: 'relative',
-              zIndex: 1,
-            }}
-          >
+          </HeroTitle>
+          <Body style={{ position: 'relative', zIndex: 1 }}>
             À demain.
-          </div>
-          <button
-            type="button"
-            data-press
+          </Body>
+          <CTA
+            variant="primary"
+            size="md"
             onClick={doClose}
-            style={{
-              ...primaryButtonStyle,
-              marginTop: 32,
-              maxWidth: 220,
-            }}
+            style={{ marginTop: 32, maxWidth: 220 }}
           >
             FERMER
-          </button>
+          </CTA>
         </div>
       </div>
     );
@@ -300,7 +279,7 @@ export default function Bilan({ onClose }) {
       <Blobs variant="rose-blue" />
       <DragHandle bind={bindHandle} isDragging={isDragging} />
 
-      {/* Top bar : back + titre Cormorant italique */}
+      {/* Top bar : back + titre */}
       <TopBar onBack={doClose} />
 
       {/* Progression dots */}
@@ -369,35 +348,17 @@ export default function Bilan({ onClose }) {
             }}
           >
             {/* Eyebrow */}
-            <div
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: 9,
-                fontWeight: 500,
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                color: 'var(--blue-700)',
-                marginBottom: 14,
-              }}
-            >
+            <Eyebrow color="blue" style={{ marginBottom: 14 }}>
               {q.eyebrow}
-            </div>
+            </Eyebrow>
 
-            {/* Title — Cormorant italic */}
-            <h1
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontStyle: 'italic',
-                fontWeight: 300,
-                fontSize: 'clamp(26px, 7vw, 32px)',
-                lineHeight: 1.2,
-                color: 'var(--blue-900)',
-                margin: '0 0 28px',
-                letterSpacing: '-0.005em',
-              }}
+            {/* Title */}
+            <HeroTitle
+              size="md"
+              style={{ margin: '0 0 28px', textAlign: 'center' }}
             >
               {q.title}
-            </h1>
+            </HeroTitle>
 
             {/* Choice or text */}
             {q.type === 'choice' ? (
@@ -410,38 +371,28 @@ export default function Bilan({ onClose }) {
                 }}
               >
                 {q.choices.map((c) => (
-                  <button
+                  <GlassCard
                     key={c.value}
-                    type="button"
-                    data-press
+                    accent="blue"
+                    radius={18}
+                    elevation="soft"
+                    padding="16px 14px"
                     onClick={() => handleChoice(c.value)}
                     style={{
-                      appearance: 'none',
-                      cursor: 'pointer',
-                      WebkitTapHighlightColor: 'transparent',
-                      padding: '16px 14px',
-                      borderRadius: 18,
-                      border: '1px solid rgba(255, 255, 255, 0.85)',
-                      borderLeft: '3px solid var(--blue-700)',
-                      background: 'rgba(255, 255, 255, 0.65)',
-                      backdropFilter: 'blur(24px)',
-                      WebkitBackdropFilter: 'blur(24px)',
-                      boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-                      color: 'var(--blue-900)',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 6,
                       minHeight: 64,
-                      transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), background 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+                      textAlign: 'center',
                     }}
                   >
                     {c.glyph && (
                       <span
                         aria-hidden
                         style={{
-                          fontFamily: "'Inter', sans-serif",
+                          fontFamily: "'Inter', system-ui, sans-serif",
                           fontSize: 18,
                           lineHeight: 1,
                           color: 'var(--blue-700)',
@@ -452,15 +403,16 @@ export default function Bilan({ onClose }) {
                     )}
                     <span
                       style={{
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: "'Inter', system-ui, sans-serif",
                         fontSize: 13,
                         fontWeight: 500,
                         letterSpacing: '0.005em',
+                        color: 'var(--blue-900)',
                       }}
                     >
                       {c.label}
                     </span>
-                  </button>
+                  </GlassCard>
                 ))}
               </div>
             ) : (
@@ -483,7 +435,7 @@ export default function Bilan({ onClose }) {
                     backdropFilter: 'blur(24px)',
                     WebkitBackdropFilter: 'blur(24px)',
                     boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'Inter', system-ui, sans-serif",
                     fontWeight: 300,
                     fontSize: 14,
                     lineHeight: 1.6,
@@ -498,7 +450,7 @@ export default function Bilan({ onClose }) {
                     position: 'absolute',
                     bottom: 10,
                     right: 14,
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "'Inter', system-ui, sans-serif",
                     fontSize: 10,
                     color: 'var(--text-muted)',
                     fontVariantNumeric: 'tabular-nums',
@@ -526,7 +478,7 @@ export default function Bilan({ onClose }) {
           >
             <div
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontStyle: 'italic',
                 fontWeight: 300,
                 fontSize: 56,
@@ -539,30 +491,12 @@ export default function Bilan({ onClose }) {
             >
               ✓
             </div>
-            <div
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontStyle: 'italic',
-                fontWeight: 300,
-                fontSize: 28,
-                lineHeight: 1.2,
-                color: 'var(--blue-900)',
-                margin: 0,
-              }}
-            >
+            <HeroTitle size="md" style={{ textAlign: 'center' }}>
               «&nbsp;Bonne nuit.&nbsp;»
-            </div>
-            <div
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: 14,
-                color: 'var(--text-secondary)',
-                lineHeight: 1.5,
-                maxWidth: 280,
-              }}
-            >
+            </HeroTitle>
+            <Body style={{ maxWidth: 280, textAlign: 'center' }}>
               Ton bilan est posé. Tu peux dormir.
-            </div>
+            </Body>
           </div>
         )}
       </div>
@@ -585,43 +519,33 @@ export default function Bilan({ onClose }) {
           }}
         >
           {q?.type === 'text' && (
-            <button
-              type="button"
-              data-press
+            <CTA
+              variant="primary"
+              size="md"
               onClick={handleNextText}
               disabled={fadingQ}
-              style={{
-                ...primaryButtonStyle,
-                opacity: fadingQ ? 0.6 : 1,
-                width: '100%',
-                maxWidth: 360,
-              }}
+              full
+              style={{ maxWidth: 360 }}
             >
               {isLast ? 'TERMINER' : 'SUIVANT'}
-            </button>
+            </CTA>
           )}
 
-          <button
-            type="button"
-            data-press
+          <CTA
+            variant="ghost"
+            size="sm"
             onClick={handleResumeLater}
+            haptic={false}
             style={{
-              appearance: 'none',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              border: 'none',
-              background: 'transparent',
-              padding: '12px 18px',
-              minHeight: 44,
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 13,
-              fontWeight: 400,
-              color: 'var(--text-secondary)',
+              textTransform: 'none',
               letterSpacing: '0.02em',
+              fontWeight: 400,
+              fontSize: 13,
+              color: 'var(--text-secondary)',
             }}
           >
             Reprendre plus tard
-          </button>
+          </CTA>
         </div>
       )}
     </div>
@@ -660,25 +584,6 @@ function overlayStyle({ mounted, closing, dragY = 0, isDragging = false }) {
     WebkitFontSmoothing: 'antialiased',
   };
 }
-
-const primaryButtonStyle = {
-  appearance: 'none',
-  cursor: 'pointer',
-  WebkitTapHighlightColor: 'transparent',
-  padding: '15px 24px',
-  minHeight: 50,
-  background: 'var(--gradient-blue)',
-  color: 'white',
-  border: 'none',
-  borderRadius: 50,
-  fontFamily: "'Inter', sans-serif",
-  fontSize: 11,
-  fontWeight: 600,
-  letterSpacing: '0.16em',
-  textTransform: 'uppercase',
-  boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30), 0 2px 12px rgba(200, 112, 144, 0.18)',
-  transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)',
-};
 
 function DragHandle({ bind, isDragging }) {
   return (
@@ -734,45 +639,7 @@ const centerWrap = {
 function TopBar({ onBack }) {
   return (
     <>
-      {/* Glass pill back button — fixed top-left, z-index 80 */}
-      <button
-        type="button"
-        data-press
-        onClick={onBack}
-        aria-label="Retour"
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-          left: 16,
-          zIndex: 80,
-          appearance: 'none',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          minHeight: 44,
-          padding: '10px 14px',
-          borderRadius: 999,
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          color: 'var(--blue-700)',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 13,
-          fontWeight: 500,
-          letterSpacing: '0.02em',
-          lineHeight: 1,
-          cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
-          WebkitTapHighlightColor: 'transparent',
-          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        </svg>
-        Retour
-      </button>
+      <BackButton onClick={onBack} />
 
       {/* Title row */}
       <div
@@ -788,21 +655,9 @@ function TopBar({ onBack }) {
           zIndex: 3,
         }}
       >
-        <h1
-          style={{
-            margin: 0,
-            fontFamily: "'Cormorant Garamond', serif",
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 'clamp(28px, 7vw, 32px)',
-            lineHeight: 1.1,
-            color: 'var(--blue-900)',
-            letterSpacing: '-0.01em',
-            textAlign: 'center',
-          }}
-        >
+        <HeroTitle size="md" style={{ textAlign: 'center' }}>
           Bilan du soir
-        </h1>
+        </HeroTitle>
       </div>
     </>
   );

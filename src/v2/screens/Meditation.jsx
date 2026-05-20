@@ -1,8 +1,8 @@
 /* ============================================================
-   ÇA VA ? V4 — Méditation (light glass, blobs, violet accent)
+   ÇA VA ? V4 — Méditation (DS V4)
    ============================================================
-   Bg clair var(--bg) + Blobs rose-violet + BreathingCircle 4·7·8
-   centré (160px, violet) + dust particles + bottom row glass.
+   Migré vers /components/ui : BackButton, Eyebrow, HeroTitle,
+   Body. BreathingCircle 160px violet + dust particles préservés.
    ============================================================ */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -16,6 +16,7 @@ import {
 } from '../state';
 import Blobs from '../../components/Blobs';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import { BackButton, Eyebrow, HeroTitle, Body } from '../../components/ui';
 
 // 4-7-8 breathing cycle = 19 seconds
 const CYCLE_MS = 19000;
@@ -184,45 +185,8 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
     >
       <Blobs variant="rose-violet" />
 
-      {/* Glass pill back button — fixed top-left, z-index 80 */}
-      <button
-        type="button"
-        data-press
-        onClick={handleClose}
-        aria-label="Retour"
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-          left: 16,
-          zIndex: 80,
-          appearance: 'none',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          minHeight: 44,
-          padding: '10px 14px',
-          borderRadius: 999,
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          color: 'var(--blue-700)',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 13,
-          fontWeight: 500,
-          letterSpacing: '0.02em',
-          lineHeight: 1,
-          cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
-          WebkitTapHighlightColor: 'transparent',
-          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        </svg>
-        Retour
-      </button>
+      {/* BackButton DS V4 */}
+      <BackButton onClick={handleClose} />
 
       {/* Local CSS — breathing scale + dust drift */}
       <style>{`
@@ -243,7 +207,7 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         }
       `}</style>
 
-      {/* Top header — chapter + world name (le label MEDITATION est retiré : le bouton Retour glass pill prend sa place top-left) */}
+      {/* Top header — chapter + world name */}
       <div
         style={{
           position: 'absolute',
@@ -257,30 +221,12 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-          <div
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: 10,
-              fontWeight: 500,
-              letterSpacing: '0.20em',
-              textTransform: 'uppercase',
-              color: 'var(--text-muted)',
-            }}
-          >
+          <Eyebrow color="muted">
             CHAPITRE {String(world.chapter).padStart(2, '0')}
-          </div>
-          <div
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: 9,
-              fontWeight: 500,
-              color: 'var(--violet)',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-            }}
-          >
+          </Eyebrow>
+          <Eyebrow color="violet" style={{ letterSpacing: '0.12em', fontSize: 9 }}>
             {world.name}
-          </div>
+          </Eyebrow>
         </div>
       </div>
 
@@ -296,19 +242,9 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             zIndex: 2,
           }}
         >
-          <div
-            style={{
-              fontFamily: '"Cormorant Garamond", serif',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 20,
-              lineHeight: 1.35,
-              color: 'var(--text-primary)',
-              opacity: 0.88,
-            }}
-          >
+          <HeroTitle size="sm" style={{ fontSize: 20, opacity: 0.88, textAlign: 'center' }}>
             « {profile.mantra} »
-          </div>
+          </HeroTitle>
         </div>
       )}
 
@@ -335,7 +271,7 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             justifyContent: 'center',
           }}
         >
-          {/* Breathing circle 160px — animates 1 → 1.4 → 1 over 19s */}
+          {/* Breathing circle 160px violet — animates 1 → 1.4 → 1 over 19s */}
           <div
             aria-hidden
             style={{
@@ -393,7 +329,7 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           >
             <div
               style={{
-                fontFamily: '"Cormorant Garamond", serif',
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontStyle: 'italic',
                 fontWeight: 300,
                 fontSize: 14,
@@ -405,7 +341,7 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             </div>
             <div
               style={{
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: "'Inter', system-ui, sans-serif",
                 fontSize: 24,
                 fontWeight: 600,
                 color: 'var(--violet)',
@@ -429,16 +365,17 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             right: 0,
             textAlign: 'center',
             zIndex: 2,
-            fontFamily: '"Cormorant Garamond", serif',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 18,
-            color: 'var(--violet)',
             pointerEvents: 'none',
             animation: 'cv-fade-in 600ms ease-out',
           }}
         >
-          Tu y es. Tu peux fermer.
+          <HeroTitle
+            size="sm"
+            color="violet"
+            style={{ fontSize: 18, textAlign: 'center' }}
+          >
+            Tu y es. Tu peux fermer.
+          </HeroTitle>
         </div>
       )}
 
@@ -468,21 +405,10 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         </button>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <Eyebrow color="muted">DUREE</Eyebrow>
           <div
             style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: 10,
-              fontWeight: 500,
-              letterSpacing: '0.20em',
-              textTransform: 'uppercase',
-              color: 'var(--text-muted)',
-            }}
-          >
-            DUREE
-          </div>
-          <div
-            style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: "'Inter', system-ui, sans-serif",
               fontSize: 28,
               fontWeight: 600,
               color: 'var(--text-primary)',
@@ -492,17 +418,9 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
           >
             {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
           </div>
-          <div
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: 11,
-              fontWeight: 400,
-              color: 'var(--text-secondary)',
-              marginTop: 2,
-            }}
-          >
+          <Body variant="caption" style={{ marginTop: 2, fontSize: 11, color: 'var(--text-secondary)' }}>
             {objectifLabel}
-          </div>
+          </Body>
         </div>
 
         <button
@@ -535,14 +453,11 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             animation: 'cv-fade-in 360ms ease-out both',
           }}
         >
-          <div
+          <HeroTitle
+            size="md"
             style={{
-              fontFamily: '"Cormorant Garamond", serif',
-              fontStyle: 'italic',
-              fontWeight: 300,
               fontSize: 26,
               lineHeight: 1.32,
-              color: 'var(--text-primary)',
               textAlign: 'center',
               maxWidth: 320,
             }}
@@ -550,10 +465,10 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
             {toast.wasNew
               ? `« Tu as explore la ${world.name}. »`
               : `« Tu es passe par la. »`}
-          </div>
+          </HeroTitle>
           <div
             style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: "'Inter', system-ui, sans-serif",
               fontSize: 10,
               fontWeight: 600,
               letterSpacing: '0.222em',

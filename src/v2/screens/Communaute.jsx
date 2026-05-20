@@ -1,15 +1,18 @@
 /* ============================================================
-   ÇA VA ? V7 — Communauté · Premium Apple/Calm/Threads
+   ÇA VA ? V7 — Communauté · Design System V4 unifié
    ============================================================
+   Migration vers les composants atomiques de
+   src/components/ui : Header / GlassCard / Eyebrow / HeroTitle
+   / SectionTitle / Body / CTA / tokens.
+
    Structure :
-     1. Topbar glass sticky premium
+     1. Topbar glass sticky (titre ÇA VA ?)
      2. Hero glass card 343×280 image + gradient overlay
      3. Question du jour + 3 réponses preview glass mini-cards
-     4. Les voix qui passent (feed glass + accent border-left 4px)
+     4. Les voix qui passent (GlassCard accent bleu/rose alterné)
      5. Mon cercle horizontal scroll-snap + avatars gradient
      6. Témoignages cards éditoriales avec initiales 56×56
      7. Composer modal premium glass overlay
-     8. Spacing géométrique strict (4,8,12,16,24,32,48,64)
    ============================================================ */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
@@ -24,6 +27,15 @@ import ActionSheet from '../../components/ActionSheet';
 import Cercle from './Cercle';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import Blobs from '../../components/Blobs';
+import {
+  GlassCard,
+  Eyebrow,
+  HeroTitle,
+  SectionTitle,
+  Body,
+  CTA,
+  tokens,
+} from '../../components/ui';
 
 /* ─── Données ─── */
 
@@ -36,11 +48,11 @@ const REACTIONS = [
 ];
 
 const SEEDED_POSTS = [
-  { id: 'seed-1', pseudo: 'Sève',  totem: 'ours',    body: "Je suis fatiguée depuis si longtemps que j'ai oublié à quoi ressemble la fatigue normale.", createdAt: Date.now() - 86400000 * 2, seeded: true },
-  { id: 'seed-2', pseudo: 'Élio',  totem: 'aigle',   body: "Le matin c'est le plus dur. Sortir du lit demande tout ce que je n'ai pas.", createdAt: Date.now() - 86400000, seeded: true },
-  { id: 'seed-3', pseudo: 'Naïs',  totem: 'daim',    body: "Aujourd'hui j'ai dit non. Pour la première fois depuis longtemps. Et ça m'a fait pleurer.", createdAt: Date.now() - 86400000 * 3, seeded: true },
-  { id: 'seed-4', pseudo: 'Rune',  totem: 'baleine', body: "On m'a demandé comment j'allais. J'ai répondu \"ça va\" mais j'avais envie d'autre chose.", createdAt: Date.now() - 86400000 * 4, seeded: true },
-  { id: 'seed-5', pseudo: 'Anya',  totem: 'lion',    body: "Mon corps me parle. Il dit qu'il a besoin que je l'écoute. Je commence juste.", createdAt: Date.now() - 86400000 * 5, seeded: true },
+  { id: 'seed-1', pseudo: 'Sève',  totem: 'ours',    body: "Je suis fatiguée depuis si longtemps que j’ai oublié à quoi ressemble la fatigue normale.", createdAt: Date.now() - 86400000 * 2, seeded: true },
+  { id: 'seed-2', pseudo: 'Élio',  totem: 'aigle',   body: "Le matin c’est le plus dur. Sortir du lit demande tout ce que je n’ai pas.", createdAt: Date.now() - 86400000, seeded: true },
+  { id: 'seed-3', pseudo: 'Naïs',  totem: 'daim',    body: "Aujourd’hui j’ai dit non. Pour la première fois depuis longtemps. Et ça m’a fait pleurer.", createdAt: Date.now() - 86400000 * 3, seeded: true },
+  { id: 'seed-4', pseudo: 'Rune',  totem: 'baleine', body: "On m’a demandé comment j’allais. J’ai répondu “ça va” mais j’avais envie d’autre chose.", createdAt: Date.now() - 86400000 * 4, seeded: true },
+  { id: 'seed-5', pseudo: 'Anya',  totem: 'lion',    body: "Mon corps me parle. Il dit qu’il a besoin que je l’écoute. Je commence juste.", createdAt: Date.now() - 86400000 * 5, seeded: true },
 ];
 
 const TEMOIGNAGES = [
@@ -49,40 +61,44 @@ const TEMOIGNAGES = [
     initials: 'L',
     name: 'Léa, 28 ans',
     city: 'Marseille',
-    accent: 'var(--blue-700)',
+    accent: 'blue',
+    accentColor: 'var(--blue-700)',
     avatarGradient: 'var(--gradient-blue)',
-    title: "J'ai cru longtemps que demander de l'aide, c'était abandonner.",
-    body: "Pendant des années, j'ai porté seule mon anxiété. Je pensais que c'était ma force, ma manière de tenir.\n\nUn jour, j'ai accepté de m'asseoir face à quelqu'un. Pas pour qu'on me sauve. Juste pour qu'on m'écoute.\n\nCe jour-là, je n'ai pas perdu. J'ai posé un poids que je portais depuis l'enfance, sans même savoir qu'il était là.\n\nAujourd'hui je sais : demander de l'aide, c'est commencer à se prendre au sérieux.",
+    title: "J’ai cru longtemps que demander de l’aide, c’était abandonner.",
+    body: "Pendant des années, j’ai porté seule mon anxiété. Je pensais que c’était ma force, ma manière de tenir.\n\nUn jour, j’ai accepté de m’asseoir face à quelqu’un. Pas pour qu’on me sauve. Juste pour qu’on m’écoute.\n\nCe jour-là, je n’ai pas perdu. J’ai posé un poids que je portais depuis l’enfance, sans même savoir qu’il était là.\n\nAujourd’hui je sais : demander de l’aide, c’est commencer à se prendre au sérieux.",
   },
   {
     id: 't2',
     initials: 'T',
     name: 'Théo, 34 ans',
     city: 'Lyon',
-    accent: 'var(--rose-700)',
+    accent: 'rose',
+    accentColor: 'var(--rose-700)',
     avatarGradient: 'var(--gradient-rose)',
-    title: "Le burn-out ne s'est pas annoncé. Il est arrivé un mardi matin.",
-    body: "J'étais en train de me brosser les dents. Et je n'ai pas pu cracher.\n\nMon corps avait dit stop avant que ma tête comprenne. Pendant six mois je n'ai pas pu retravailler.\n\nCe que personne ne m'avait dit, c'est que reconstruire prend du temps. Pas en semaines. En saisons.\n\nJ'ai appris à doser. À dire non. À ne pas reprendre tout d'un coup parce qu'on me croyait \"guéri\".\n\nLa fatigue mentale n'est pas une faiblesse. C'est un signal que j'ai mis trente-quatre ans à entendre.",
+    title: "Le burn-out ne s’est pas annoncé. Il est arrivé un mardi matin.",
+    body: "J’étais en train de me brosser les dents. Et je n’ai pas pu cracher.\n\nMon corps avait dit stop avant que ma tête comprenne. Pendant six mois je n’ai pas pu retravailler.\n\nCe que personne ne m’avait dit, c’est que reconstruire prend du temps. Pas en semaines. En saisons.\n\nJ’ai appris à doser. À dire non. À ne pas reprendre tout d’un coup parce qu’on me croyait “guéri”.\n\nLa fatigue mentale n’est pas une faiblesse. C’est un signal que j’ai mis trente-quatre ans à entendre.",
   },
   {
     id: 't3',
     initials: 'I',
     name: 'Inès, 22 ans',
     city: 'Paris',
-    accent: 'var(--violet)',
+    accent: 'violet',
+    accentColor: 'var(--violet)',
     avatarGradient: 'var(--gradient-violet)',
-    title: "Mon corps avait essayé de me parler. J'ai mis cinq ans à l'entendre.",
-    body: "Migraines. Estomac. Insomnies. Je consultais médecin après médecin. Tout allait \"normalement\".\n\nC'est une psy qui m'a posé la bonne question : \"Et qu'est-ce qui ne va pas, dans ta vie ?\"\n\nJ'ai pleuré pendant une heure. Je ne savais pas que j'avais autant de choses à dire.\n\nLes symptômes étaient le langage de ce que je n'osais pas formuler. Le corps tient le sac quand l'esprit refuse de regarder.\n\nAujourd'hui j'écoute. Pas toujours bien. Mais j'écoute.",
+    title: "Mon corps avait essayé de me parler. J’ai mis cinq ans à l’entendre.",
+    body: "Migraines. Estomac. Insomnies. Je consultais médecin après médecin. Tout allait “normalement”.\n\nC’est une psy qui m’a posé la bonne question : “Et qu’est-ce qui ne va pas, dans ta vie ?”\n\nJ’ai pleuré pendant une heure. Je ne savais pas que j’avais autant de choses à dire.\n\nLes symptômes étaient le langage de ce que je n’osais pas formuler. Le corps tient le sac quand l’esprit refuse de regarder.\n\nAujourd’hui j’écoute. Pas toujours bien. Mais j’écoute.",
   },
   {
     id: 't4',
     initials: 'M',
     name: 'Marc, 41 ans',
     city: 'Bordeaux',
-    accent: 'var(--rose-500)',
+    accent: 'rose',
+    accentColor: 'var(--rose-500)',
     avatarGradient: 'linear-gradient(135deg, var(--rose-500), var(--rose-700))',
-    title: "Devenir père m'a confronté à un vide que je ne savais pas nommer.",
-    body: "On parle beaucoup du baby blues des mères. Personne ne m'avait préparé à ce que ça pouvait remuer chez le père.\n\nJ'avais 41 ans. Une vie carrée. Une carrière. Et soudain, face à ce petit être, j'ai eu peur. Pas peur de mal faire. Peur de moi-même.\n\nDes émotions sont remontées que je croyais réglées depuis longtemps. Mon propre père. Mon enfance.\n\nJ'ai cherché un homme à qui parler. Ça m'a pris du temps. On nous a tellement appris à ne pas demander.\n\nJ'apprends aujourd'hui à ressentir avant d'agir. C'est neuf. C'est étrange. C'est juste.",
+    title: "Devenir père m’a confronté à un vide que je ne savais pas nommer.",
+    body: "On parle beaucoup du baby blues des mères. Personne ne m’avait préparé à ce que ça pouvait remuer chez le père.\n\nJ’avais 41 ans. Une vie carrée. Une carrière. Et soudain, face à ce petit être, j’ai eu peur. Pas peur de mal faire. Peur de moi-même.\n\nDes émotions sont remontées que je croyais réglées depuis longtemps. Mon propre père. Mon enfance.\n\nJ’ai cherché un homme à qui parler. Ça m’a pris du temps. On nous a tellement appris à ne pas demander.\n\nJ’apprends aujourd’hui à ressentir avant d’agir. C’est neuf. C’est étrange. C’est juste.",
   },
 ];
 
@@ -98,7 +114,7 @@ const loadCercle = () => ls.get('cercle', []);
 function timeAgo(ts) {
   const diff = Date.now() - ts;
   const m = Math.floor(diff / 60000);
-  if (m < 1) return "à l'instant";
+  if (m < 1) return "à l’instant";
   if (m < 60) return `il y a ${m} min`;
   const h = Math.floor(m / 60);
   if (h < 24) return `il y a ${h} h`;
@@ -110,33 +126,6 @@ function wordCount(s = '') {
   return s.trim().split(/\s+/).filter(Boolean).length;
 }
 
-/* ─── Styles glass partagés ─── */
-
-const GLASS_CARD = {
-  background: 'var(--glass-bg)',
-  backdropFilter: 'var(--glass-blur)',
-  WebkitBackdropFilter: 'var(--glass-blur)',
-  border: '1px solid var(--glass-border)',
-  borderRadius: 24,
-  boxShadow: 'var(--glass-shadow)',
-};
-
-const GLASS_MINI = {
-  background: 'rgba(255,255,255,0.65)',
-  backdropFilter: 'blur(24px)',
-  WebkitBackdropFilter: 'blur(24px)',
-  border: '1px solid rgba(255,255,255,0.75)',
-  borderRadius: 16,
-};
-
-const EYEBROW_BASE = {
-  fontFamily: 'var(--font-ui)',
-  fontSize: 10,
-  fontWeight: 600,
-  letterSpacing: '0.18em',
-  textTransform: 'uppercase',
-};
-
 const SECTION_GAP = 48;
 
 /* ============================================================
@@ -145,7 +134,8 @@ const SECTION_GAP = 48;
 
 export default function Communaute() {
   const profile = getProfile();
-  const DEFAULT_PROMPT = "Qu'est-ce qui t'a fait du bien aujourd'hui, même un petit truc ?";
+  // BUG-03 fix : prompt par défaut si le store ne renvoie rien d’exploitable.
+  const DEFAULT_PROMPT = "Qu’est-ce qui t’a fait du bien aujourd’hui, même un petit truc ?";
   const dailyPrompt = useMemo(() => {
     const p = getDailyPrompt();
     return { ...p, text: p?.q || p?.text || DEFAULT_PROMPT };
@@ -172,7 +162,7 @@ export default function Communaute() {
     return ownPosts.filter((p) => p.promptId === dailyPrompt.id).slice(0, 3);
   }, [ownPosts, dailyPrompt.id]);
 
-  // Réponses preview pour la question du jour : 3 propositions (les propres + seeds en fallback)
+  // Réponses preview pour la question du jour : 3 propositions (propres + seeds en fallback)
   const promptPreviewCards = useMemo(() => {
     const fromOwn = promptResponses.slice(0, 3);
     if (fromOwn.length >= 3) return fromOwn;
@@ -255,13 +245,13 @@ export default function Communaute() {
         overflowY: 'auto',
         overflowX: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        background: 'var(--bg)',
+        background: tokens.bg,
       }}
       data-world="communaute"
     >
       <Blobs variant="blue-rose" />
 
-      {/* ═══ 1. TOPBAR GLASS STICKY PREMIUM ═══ */}
+      {/* ═══ 1. TOPBAR GLASS STICKY ═══ */}
       <header
         style={{
           position: 'sticky',
@@ -275,20 +265,9 @@ export default function Communaute() {
           textAlign: 'center',
         }}
       >
-        <h1
-          style={{
-            margin: 0,
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: 22,
-            lineHeight: 1,
-            letterSpacing: 0,
-            color: 'var(--blue-900)',
-          }}
-        >
+        <HeroTitle size="sm" color="primary" style={{ fontSize: 22, lineHeight: 1 }}>
           ÇA VA ?
-        </h1>
+        </HeroTitle>
       </header>
 
       {/* Body */}
@@ -299,7 +278,6 @@ export default function Communaute() {
           padding: `24px 16px calc(env(safe-area-inset-bottom, 0px) + 130px)`,
         }}
       >
-
         {/* ═══ 2. HERO GLASS CARD 343×280 ═══ */}
         <section
           aria-label="Communauté"
@@ -307,10 +285,10 @@ export default function Communaute() {
             position: 'relative',
             height: 280,
             margin: '0 0 32px',
-            borderRadius: 28,
+            borderRadius: tokens.radius.xxl,
             overflow: 'hidden',
             boxShadow: '0 12px 40px rgba(10,36,56,0.12)',
-            border: '1px solid var(--glass-border)',
+            border: '1px solid rgba(255, 255, 255, 0.85)',
           }}
         >
           <div
@@ -338,124 +316,70 @@ export default function Communaute() {
               left: 24,
               right: 24,
               bottom: 24,
-              color: '#FFFFFF',
               zIndex: 2,
               textAlign: 'center',
             }}
           >
-            <h2
+            <HeroTitle
+              color="white"
+              size="md"
               style={{
-                margin: 0,
-                fontFamily: 'var(--font-display)',
-                fontStyle: 'italic',
-                fontWeight: 400,
-                fontSize: 'clamp(28px, 7vw, 36px)',
-                lineHeight: 1.1,
-                letterSpacing: 0,
-                color: '#FFFFFF',
                 textShadow: '0 2px 14px rgba(0,0,0,0.40)',
               }}
             >
-              Tu n'es pas seul·e.
-            </h2>
-            <p
+              Tu n’es pas seul·e.
+            </HeroTitle>
+            <Body
+              variant="body-sm"
               style={{
-                margin: '12px 0 0',
-                fontFamily: 'var(--font-ui)',
-                fontWeight: 400,
-                fontSize: 14,
-                lineHeight: 1.5,
+                marginTop: 12,
                 color: 'rgba(255,255,255,0.85)',
+                textAlign: 'center',
               }}
             >
               On peut tout porter, mais pas tout seuls.
-            </p>
+            </Body>
           </div>
         </section>
 
         {/* ═══ 3. QUESTION DU JOUR ═══ */}
         <section style={{ marginBottom: SECTION_GAP }}>
-          <div style={{ ...EYEBROW_BASE, color: 'var(--rose-700)', marginBottom: 12 }}>
+          <Eyebrow color="rose" style={{ marginBottom: 12 }}>
             Question du jour
-          </div>
+          </Eyebrow>
 
-          <p
-            style={{
-              margin: '0 0 24px',
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontWeight: 400,
-              fontSize: 'clamp(22px, 5.5vw, 28px)',
-              lineHeight: 1.25,
-              color: 'var(--blue-900)',
-              letterSpacing: 0,
-            }}
-          >
+          <SectionTitle style={{ marginBottom: 24 }}>
             {dailyPrompt.text}
-          </p>
+          </SectionTitle>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
             {promptPreviewCards.map((p) => (
-              <div
-                key={p.id}
-                style={{
-                  ...GLASS_MINI,
-                  padding: '14px 16px',
-                }}
-              >
-                <div
+              <GlassCard key={p.id} radius="md" padding="14px 16px">
+                <Body
+                  italic
                   style={{
-                    fontFamily: 'var(--font-display)',
-                    fontStyle: 'italic',
-                    fontWeight: 400,
+                    fontFamily: tokens.fonts.display,
                     fontSize: 14,
                     lineHeight: 1.2,
-                    color: 'var(--blue-700)',
+                    color: tokens.blue700,
                     marginBottom: 6,
                   }}
                 >
                   {p.pseudo}
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontWeight: 400,
-                    fontSize: 13,
-                    lineHeight: 1.55,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  {p.body}
-                </div>
-              </div>
+                </Body>
+                <Body variant="body-sm">{p.body}</Body>
+              </GlassCard>
             ))}
           </div>
 
-          <button
-            type="button"
-            data-press
-            onClick={() => { haptic(4); setComposerOpen({ promptId: dailyPrompt.id }); }}
-            style={{
-              appearance: 'none',
-              width: '100%',
-              padding: '14px 24px',
-              minHeight: 48,
-              background: 'var(--gradient-blue)',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: 50,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              boxShadow: '0 8px 24px rgba(26,90,127,0.30)',
-              WebkitTapHighlightColor: 'transparent',
-            }}
+          <CTA
+            variant="primary"
+            size="md"
+            full
+            onClick={() => setComposerOpen({ promptId: dailyPrompt.id })}
           >
             {promptResponses.length > 0 ? 'Ajouter une réponse' : 'Répondre'}
-          </button>
+          </CTA>
         </section>
 
         {/* ═══ 4. LES VOIX QUI PASSENT ═══ */}
@@ -468,26 +392,21 @@ export default function Communaute() {
               marginBottom: 16,
             }}
           >
-            <div style={{ ...EYEBROW_BASE, color: 'var(--blue-500)' }}>
-              Les voix qui passent
-            </div>
-            <button
-              type="button"
-              data-press
+            <Eyebrow color="blue">Les voix qui passent</Eyebrow>
+            <CTA
+              variant="ghost"
+              size="sm"
+              haptic={false}
               onClick={() => { haptic(2); setAllVoicesOpen(true); }}
               style={{
-                appearance: 'none',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--blue-700)',
-                cursor: 'pointer',
                 padding: '6px 4px',
-                ...EYEBROW_BASE,
-                WebkitTapHighlightColor: 'transparent',
+                minHeight: 'auto',
+                color: tokens.blue700,
+                letterSpacing: '0.18em',
               }}
             >
               Toutes ›
-            </button>
+            </CTA>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -502,49 +421,32 @@ export default function Communaute() {
               />
             ))}
             {previewPosts.length === 0 && (
-              <div
-                style={{
-                  ...GLASS_CARD,
-                  padding: '32px 24px',
-                  textAlign: 'center',
-                  fontFamily: 'var(--font-display)',
-                  fontStyle: 'italic',
-                  fontWeight: 400,
-                  fontSize: 18,
-                  lineHeight: 1.4,
-                  color: 'var(--text-secondary)',
-                }}
-              >
-                Les premières voix arrivent.
-              </div>
+              <GlassCard radius="xl" padding="32px 24px">
+                <Body
+                  italic
+                  style={{
+                    fontFamily: tokens.fonts.display,
+                    fontSize: 18,
+                    lineHeight: 1.4,
+                    textAlign: 'center',
+                  }}
+                >
+                  Les premières voix arrivent.
+                </Body>
+              </GlassCard>
             )}
           </div>
 
-          <button
-            type="button"
-            data-press
-            onClick={() => { haptic(4); setComposerOpen({ promptId: null }); }}
-            style={{
-              marginTop: 16,
-              appearance: 'none',
-              width: '100%',
-              padding: '13px 24px',
-              minHeight: 44,
-              background: 'transparent',
-              color: 'var(--blue-700)',
-              border: '1.5px solid var(--blue-300)',
-              borderRadius: 50,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            + Partager une voix
-          </button>
+          <div style={{ marginTop: 16 }}>
+            <CTA
+              variant="outline"
+              size="md"
+              full
+              onClick={() => setComposerOpen({ promptId: null })}
+            >
+              + Partager une voix
+            </CTA>
+          </div>
         </section>
 
         {/* ═══ 5. MON CERCLE ═══ */}
@@ -557,15 +459,13 @@ export default function Communaute() {
               marginBottom: 16,
             }}
           >
-            <div style={{ ...EYEBROW_BASE, color: 'var(--violet)' }}>
-              Mon cercle
-            </div>
+            <Eyebrow color="violet">Mon cercle</Eyebrow>
             <span
               style={{
-                fontFamily: 'var(--font-ui)',
+                fontFamily: tokens.fonts.ui,
                 fontSize: 12,
                 fontWeight: 600,
-                color: 'var(--text-secondary)',
+                color: tokens.textSecondary,
                 fontVariantNumeric: 'tabular-nums',
               }}
             >
@@ -581,21 +481,12 @@ export default function Communaute() {
 
         {/* ═══ 6. TÉMOIGNAGES ═══ */}
         <section style={{ marginBottom: SECTION_GAP }}>
-          <div style={{ ...EYEBROW_BASE, color: 'var(--rose-700)', marginBottom: 12 }}>
+          <Eyebrow color="rose" style={{ marginBottom: 12 }}>
             Témoignages
-          </div>
-          <div
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontWeight: 400,
-              fontSize: 15,
-              lineHeight: 1.6,
-              color: 'var(--text-secondary)',
-              marginBottom: 24,
-            }}
-          >
-            Des histoires vécues, écrites par d'autres.
-          </div>
+          </Eyebrow>
+          <Body style={{ marginBottom: 24 }}>
+            Des histoires vécues, écrites par d’autres.
+          </Body>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {TEMOIGNAGES.map((t) => (
               <TemoignageCard
@@ -608,21 +499,20 @@ export default function Communaute() {
         </section>
 
         {/* Footer manifesto */}
-        <p
+        <Body
+          italic
           style={{
-            margin: '32px 0 0',
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 400,
+            fontFamily: tokens.fonts.display,
             fontSize: 18,
             lineHeight: 1.5,
-            color: 'var(--text-secondary)',
             textAlign: 'center',
+            marginTop: 32,
           }}
         >
-          Ce que tu partages reste anonyme.<br />
+          Ce que tu partages reste anonyme.
+          <br />
           Ce que tu lis est offert.
-        </p>
+        </Body>
       </div>
 
       {/* Overlays */}
@@ -727,15 +617,15 @@ function CercleRow({ cercle, onComposeOpen }) {
           }}
         >
           {preview.map((m, i) => {
-            const grad = i % 2 === 0 ? 'var(--gradient-blue)' : 'var(--gradient-rose)';
+            const grad = i % 2 === 0 ? tokens.gradientBlue : tokens.gradientRose;
             const initial = (m.pseudo || '?').charAt(0).toUpperCase();
             return (
-              <div
+              <GlassCard
                 key={i}
+                radius="lg"
+                hoverable
+                padding="16px 14px"
                 style={{
-                  ...GLASS_CARD,
-                  borderRadius: 20,
-                  padding: '16px 14px',
                   minWidth: 116,
                   scrollSnapAlign: 'start',
                   display: 'flex',
@@ -743,6 +633,7 @@ function CercleRow({ cercle, onComposeOpen }) {
                   alignItems: 'center',
                   gap: 8,
                   flexShrink: 0,
+                  width: 'auto',
                 }}
               >
                 <div
@@ -756,7 +647,7 @@ function CercleRow({ cercle, onComposeOpen }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#FFFFFF',
-                    fontFamily: 'var(--font-display)',
+                    fontFamily: tokens.fonts.display,
                     fontStyle: 'italic',
                     fontWeight: 400,
                     fontSize: 20,
@@ -767,11 +658,11 @@ function CercleRow({ cercle, onComposeOpen }) {
                 </div>
                 <span
                   style={{
-                    fontFamily: 'var(--font-display)',
+                    fontFamily: tokens.fonts.display,
                     fontStyle: 'italic',
                     fontWeight: 400,
                     fontSize: 16,
-                    color: 'var(--blue-900)',
+                    color: tokens.blue900,
                     textAlign: 'center',
                     lineHeight: 1.1,
                     maxWidth: '100%',
@@ -784,103 +675,57 @@ function CercleRow({ cercle, onComposeOpen }) {
                 </span>
                 <span
                   style={{
-                    fontFamily: 'var(--font-ui)',
+                    fontFamily: tokens.fonts.ui,
                     fontWeight: 500,
                     fontSize: 11,
-                    color: 'var(--text-muted)',
+                    color: tokens.textMuted,
                   }}
                 >
                   proche
                 </span>
-              </div>
+              </GlassCard>
             );
           })}
         </div>
       ) : (
-        <div
-          style={{
-            ...GLASS_CARD,
-            padding: '24px 20px',
-            textAlign: 'center',
-            marginBottom: 16,
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: 18,
-            color: 'var(--text-secondary)',
-          }}
+        <GlassCard
+          radius="xl"
+          padding="24px 20px"
+          style={{ marginBottom: 16, textAlign: 'center' }}
         >
-          Ton cercle est encore vide.
-        </div>
+          <Body
+            italic
+            style={{
+              fontFamily: tokens.fonts.display,
+              fontSize: 18,
+              textAlign: 'center',
+            }}
+          >
+            Ton cercle est encore vide.
+          </Body>
+        </GlassCard>
       )}
 
-      <button
-        type="button"
-        data-press
-        onClick={onComposeOpen}
-        style={{
-          appearance: 'none',
-          width: '100%',
-          padding: '13px 24px',
-          minHeight: 44,
-          background: 'transparent',
-          color: 'var(--blue-700)',
-          border: '1.5px solid var(--blue-300)',
-          borderRadius: 50,
-          fontFamily: 'var(--font-ui)',
-          fontSize: 12,
-          fontWeight: 600,
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
-          cursor: 'pointer',
-          WebkitTapHighlightColor: 'transparent',
-        }}
-      >
+      <CTA variant="outline" size="md" full onClick={onComposeOpen} haptic={false}>
         {cercle.length === 0 ? 'Composer mon cercle' : 'Voir tout le cercle'}
-      </button>
+      </CTA>
     </div>
   );
 }
 
-/* ─── VoicePost — feed glass + accent border-left 4px ─── */
+/* ─── VoicePost — GlassCard accent bleu/rose alterné ─── */
 
 function VoicePost({ post, index, reactions, onReact, onMore }) {
-  const [hover, setHover] = useState(false);
-  const isRose = index % 2 === 1;
-  const accentGradient = isRose ? 'var(--gradient-rose)' : 'var(--gradient-blue)';
+  const accent = index % 2 === 1 ? 'rose' : 'blue';
   const isShort = wordCount(post.body) < 20;
 
   return (
-    <article
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        position: 'relative',
-        padding: '18px 20px 16px 24px',
-        background: 'var(--glass-bg)',
-        backdropFilter: 'var(--glass-blur)',
-        WebkitBackdropFilter: 'var(--glass-blur)',
-        border: '1px solid var(--glass-border)',
-        borderRadius: 20,
-        boxShadow: hover ? '0 12px 32px rgba(10,36,56,0.14)' : 'var(--glass-shadow)',
-        overflow: 'hidden',
-        transform: hover ? 'translateY(-2px)' : 'translateY(0)',
-        transition: 'transform 240ms cubic-bezier(0.16,1,0.3,1), box-shadow 240ms cubic-bezier(0.16,1,0.3,1)',
-      }}
+    <GlassCard
+      radius="lg"
+      accent={accent}
+      hoverable
+      padding="18px 20px 16px 24px"
     >
-      {/* Accent border-left 4px */}
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          bottom: 0,
-          width: 4,
-          background: accentGradient,
-          borderRadius: '0 2px 2px 0',
-        }}
-      />
       <div
         style={{
           display: 'flex',
@@ -892,22 +737,22 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
       >
         <span
           style={{
-            fontFamily: 'var(--font-display)',
+            fontFamily: tokens.fonts.display,
             fontStyle: 'italic',
             fontWeight: 400,
             fontSize: 18,
             lineHeight: 1.2,
-            color: 'var(--blue-900)',
+            color: tokens.blue900,
           }}
         >
           {post.pseudo}
         </span>
         <span
           style={{
-            fontFamily: 'var(--font-ui)',
+            fontFamily: tokens.fonts.ui,
             fontWeight: 500,
             fontSize: 11,
-            color: 'var(--text-muted)',
+            color: tokens.textMuted,
             fontVariantNumeric: 'tabular-nums',
           }}
         >
@@ -917,12 +762,12 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
       <p
         style={{
           margin: '8px 0 14px',
-          fontFamily: isShort ? 'var(--font-display)' : 'var(--font-body)',
+          fontFamily: isShort ? tokens.fonts.display : tokens.fonts.body,
           fontStyle: isShort ? 'italic' : 'normal',
           fontWeight: 400,
           fontSize: isShort ? 16 : 15,
           lineHeight: 1.6,
-          color: 'var(--text-secondary)',
+          color: tokens.textSecondary,
         }}
       >
         {post.body}
@@ -945,8 +790,8 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
                 background: active ? 'rgba(200,112,144,0.10)' : 'rgba(255,255,255,0.5)',
                 border: 'none',
                 borderRadius: 50,
-                color: active ? 'var(--rose-700)' : 'var(--blue-300)',
-                fontFamily: 'var(--font-ui)',
+                color: active ? tokens.rose700 : tokens.blue300,
+                fontFamily: tokens.fonts.ui,
                 fontWeight: 500,
                 fontSize: 11,
                 cursor: 'pointer',
@@ -966,7 +811,7 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
           type="button"
           onClick={onMore}
           data-press
-          aria-label="Plus d'options"
+          aria-label="Plus d’options"
           style={{
             marginLeft: 'auto',
             appearance: 'none',
@@ -974,7 +819,7 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
             height: 32,
             background: 'transparent',
             border: 'none',
-            color: 'var(--text-muted)',
+            color: tokens.textMuted,
             cursor: 'pointer',
             fontSize: 14,
             WebkitTapHighlightColor: 'transparent',
@@ -983,40 +828,22 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
           ⋯
         </button>
       </div>
-    </article>
+    </GlassCard>
   );
 }
 
-/* ─── TemoignageCard — éditorial avec initiales 56×56 ─── */
+/* ─── TemoignageCard — GlassCard accent + initiales 56×56 ─── */
 
 function TemoignageCard({ temoignage, onOpen }) {
-  const [hover, setHover] = useState(false);
   const t = temoignage;
 
   return (
-    <button
-      type="button"
-      data-press
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+    <GlassCard
+      radius="xl"
+      accent={t.accent}
+      hoverable
       onClick={onOpen}
-      style={{
-        appearance: 'none',
-        width: '100%',
-        padding: '22px 24px',
-        background: 'var(--glass-bg)',
-        backdropFilter: 'var(--glass-blur)',
-        WebkitBackdropFilter: 'var(--glass-blur)',
-        border: '1px solid var(--glass-border)',
-        borderLeft: `4px solid ${t.accent}`,
-        borderRadius: 24,
-        boxShadow: hover ? '0 12px 32px rgba(10,36,56,0.14)' : 'var(--glass-shadow)',
-        cursor: 'pointer',
-        textAlign: 'left',
-        WebkitTapHighlightColor: 'transparent',
-        transform: hover ? 'translateY(-2px)' : 'translateY(0)',
-        transition: 'transform 240ms cubic-bezier(0.16,1,0.3,1), box-shadow 240ms cubic-bezier(0.16,1,0.3,1)',
-      }}
+      padding="22px 24px"
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <div
@@ -1031,7 +858,7 @@ function TemoignageCard({ temoignage, onOpen }) {
             alignItems: 'center',
             justifyContent: 'center',
             color: '#FFFFFF',
-            fontFamily: 'var(--font-display)',
+            fontFamily: tokens.fonts.display,
             fontStyle: 'italic',
             fontWeight: 400,
             fontSize: 22,
@@ -1043,10 +870,10 @@ function TemoignageCard({ temoignage, onOpen }) {
         <div style={{ minWidth: 0 }}>
           <div
             style={{
-              fontFamily: 'var(--font-ui)',
+              fontFamily: tokens.fonts.ui,
               fontSize: 12,
               fontWeight: 600,
-              color: 'var(--blue-900)',
+              color: tokens.blue900,
               lineHeight: 1.3,
             }}
           >
@@ -1055,10 +882,10 @@ function TemoignageCard({ temoignage, onOpen }) {
           <div
             style={{
               marginTop: 2,
-              fontFamily: 'var(--font-ui)',
+              fontFamily: tokens.fonts.ui,
               fontSize: 10,
               fontWeight: 500,
-              color: 'var(--text-muted)',
+              color: tokens.textMuted,
               letterSpacing: '0.04em',
             }}
           >
@@ -1070,12 +897,12 @@ function TemoignageCard({ temoignage, onOpen }) {
       <div
         style={{
           marginTop: 12,
-          fontFamily: 'var(--font-display)',
+          fontFamily: tokens.fonts.display,
           fontStyle: 'italic',
           fontWeight: 400,
           fontSize: 20,
           lineHeight: 1.3,
-          color: 'var(--blue-900)',
+          color: tokens.blue900,
           letterSpacing: 0,
         }}
       >
@@ -1085,11 +912,11 @@ function TemoignageCard({ temoignage, onOpen }) {
       <div
         style={{
           marginTop: 12,
-          fontFamily: 'var(--font-body)',
+          fontFamily: tokens.fonts.body,
           fontWeight: 400,
           fontSize: 14,
           lineHeight: 1.6,
-          color: 'var(--text-secondary)',
+          color: tokens.textSecondary,
           display: '-webkit-box',
           WebkitLineClamp: 3,
           WebkitBoxOrient: 'vertical',
@@ -1100,16 +927,10 @@ function TemoignageCard({ temoignage, onOpen }) {
         {t.body.split('\n\n')[0]}
       </div>
 
-      <div
-        style={{
-          marginTop: 14,
-          ...EYEBROW_BASE,
-          color: t.accent,
-        }}
-      >
+      <Eyebrow style={{ marginTop: 14, color: t.accentColor }}>
         Lire ›
-      </div>
-    </button>
+      </Eyebrow>
+    </GlassCard>
   );
 }
 
@@ -1186,10 +1007,10 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
           background: 'rgba(238, 243, 248, 0.96)',
           backdropFilter: 'blur(28px)',
           WebkitBackdropFilter: 'blur(28px)',
-          color: 'var(--blue-900)',
+          color: tokens.blue900,
           borderTopLeftRadius: 28,
           borderTopRightRadius: 28,
-          border: '1px solid var(--glass-border)',
+          border: '1px solid rgba(255, 255, 255, 0.85)',
           borderBottom: 'none',
           padding: '12px 24px calc(env(safe-area-inset-bottom, 0px) + 24px)',
           transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
@@ -1210,31 +1031,20 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
           }}
         />
 
-        <h3
-          style={{
-            margin: '0 0 20px',
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: 24,
-            lineHeight: 1.2,
-            color: 'var(--blue-900)',
-            letterSpacing: 0,
-          }}
-        >
+        <SectionTitle style={{ marginBottom: 20, fontSize: 24, lineHeight: 1.2 }}>
           Partager une voix
-        </h3>
+        </SectionTitle>
 
         {promptText && (
           <p
             style={{
               margin: '0 0 20px',
-              fontFamily: 'var(--font-display)',
+              fontFamily: tokens.fonts.display,
               fontStyle: 'italic',
               fontWeight: 400,
               fontSize: 18,
               lineHeight: 1.35,
-              color: 'var(--blue-900)',
+              color: tokens.blue900,
               padding: '14px 16px',
               background: 'rgba(255, 255, 255, 0.55)',
               borderLeft: '3px solid var(--rose-700)',
@@ -1245,21 +1055,14 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
           </p>
         )}
 
-        <label
-          style={{
-            display: 'block',
-            marginBottom: 10,
-            ...EYEBROW_BASE,
-            color: 'var(--text-secondary)',
-          }}
-        >
+        <Eyebrow color="secondary" style={{ display: 'block', marginBottom: 10 }}>
           Ta voix
-        </label>
+        </Eyebrow>
         <textarea
           autoFocus
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder="Ce que tu portes, ce que tu vis. C'est anonyme."
+          placeholder="Ce que tu portes, ce que tu vis. C’est anonyme."
           rows={5}
           maxLength={280}
           aria-label="Ta voix"
@@ -1270,14 +1073,14 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
             background: 'rgba(255, 255, 255, 0.55)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
-            border: '1px solid var(--glass-border)',
+            border: '1px solid rgba(255, 255, 255, 0.85)',
             borderLeft: '4px solid var(--blue-700)',
             borderRadius: 16,
-            fontFamily: 'var(--font-body)',
+            fontFamily: tokens.fonts.body,
             fontWeight: 400,
             fontSize: 16,
             lineHeight: 1.6,
-            color: 'var(--blue-900)',
+            color: tokens.blue900,
             outline: 'none',
             resize: 'none',
             boxSizing: 'border-box',
@@ -1287,10 +1090,10 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
         <div
           style={{
             textAlign: 'right',
-            fontFamily: 'var(--font-ui)',
+            fontFamily: tokens.fonts.ui,
             fontWeight: 500,
             fontSize: 11,
-            color: body.length >= 260 ? 'var(--rose-700)' : 'var(--text-muted)',
+            color: body.length >= 260 ? tokens.rose700 : tokens.textMuted,
             fontVariantNumeric: 'tabular-nums',
             marginBottom: 20,
           }}
@@ -1299,56 +1102,23 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
         </div>
 
         <div style={{ display: 'flex', gap: 12 }}>
-          <button
-            type="button"
-            data-press
+          <CTA
+            variant="ghost"
+            size="md"
             onClick={handleClose}
-            style={{
-              appearance: 'none',
-              flex: 1,
-              padding: '14px 16px',
-              minHeight: 48,
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 50,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'var(--text-secondary)',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-            }}
+            style={{ flex: 1 }}
           >
             Annuler
-          </button>
-          <button
-            type="button"
-            data-press
+          </CTA>
+          <CTA
+            variant="primary"
+            size="md"
             onClick={handleSubmit}
             disabled={!body.trim()}
-            style={{
-              appearance: 'none',
-              flex: 1,
-              padding: '14px 16px',
-              minHeight: 48,
-              background: body.trim() ? 'var(--gradient-blue)' : 'rgba(10, 36, 56, 0.10)',
-              color: body.trim() ? '#FFFFFF' : 'var(--text-secondary)',
-              border: 'none',
-              borderRadius: 50,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              cursor: body.trim() ? 'pointer' : 'not-allowed',
-              boxShadow: body.trim() ? '0 8px 24px rgba(26,90,127,0.30)' : 'none',
-              WebkitTapHighlightColor: 'transparent',
-            }}
+            style={{ flex: 1 }}
           >
             Envoyer
-          </button>
+          </CTA>
         </div>
       </div>
     </>
@@ -1402,8 +1172,8 @@ function AllVoicesOverlay({ posts, reactions, onReact, onMore, onCompose, onClos
         position: 'fixed',
         inset: 0,
         zIndex: 200,
-        background: 'var(--bg)',
-        color: 'var(--blue-900)',
+        background: tokens.bg,
+        color: tokens.blue900,
         transform: closing ? 'translateX(100%)' : mounted ? 'translateX(0)' : 'translateX(100%)',
         transition: 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
         display: 'flex',
@@ -1427,35 +1197,30 @@ function AllVoicesOverlay({ posts, reactions, onReact, onMore, onCompose, onClos
           WebkitBackdropFilter: 'blur(24px)',
         }}
       >
-        <button
-          type="button"
-          data-press
+        <CTA
+          variant="ghost"
+          size="sm"
+          haptic={false}
           onClick={handleClose}
           aria-label="Retour"
           style={{
-            appearance: 'none',
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--blue-700)',
-            cursor: 'pointer',
-            padding: '10px 12px',
-            minHeight: 44,
-            fontFamily: 'var(--font-ui)',
+            color: tokens.blue700,
             fontSize: 14,
             fontWeight: 500,
             letterSpacing: 0,
-            WebkitTapHighlightColor: 'transparent',
+            textTransform: 'none',
+            padding: '10px 12px',
           }}
         >
           ‹ Retour
-        </button>
+        </CTA>
         <span
           style={{
-            fontFamily: 'var(--font-display)',
+            fontFamily: tokens.fonts.display,
             fontStyle: 'italic',
             fontWeight: 400,
             fontSize: 22,
-            color: 'var(--blue-900)',
+            color: tokens.blue900,
           }}
         >
           Toutes les voix
@@ -1502,7 +1267,7 @@ function AllVoicesOverlay({ posts, reactions, onReact, onMore, onCompose, onClos
           width: 56,
           height: 56,
           borderRadius: '50%',
-          background: 'var(--gradient-blue)',
+          background: tokens.gradientBlue,
           color: '#FFFFFF',
           border: 'none',
           cursor: 'pointer',
@@ -1568,8 +1333,8 @@ function TemoignageReader({ temoignage, onClose }) {
         position: 'fixed',
         inset: 0,
         zIndex: 200,
-        background: 'var(--bg)',
-        color: 'var(--blue-900)',
+        background: tokens.bg,
+        color: tokens.blue900,
         transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1)',
         display: 'flex',
@@ -1589,28 +1354,23 @@ function TemoignageReader({ temoignage, onClose }) {
           flexShrink: 0,
         }}
       >
-        <button
-          type="button"
-          data-press
+        <CTA
+          variant="ghost"
+          size="sm"
+          haptic={false}
           onClick={handleClose}
           aria-label="Retour"
           style={{
-            appearance: 'none',
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--blue-700)',
-            cursor: 'pointer',
-            padding: '10px 12px',
-            minHeight: 44,
-            fontFamily: 'var(--font-ui)',
+            color: tokens.blue700,
             fontSize: 14,
             fontWeight: 500,
             letterSpacing: 0,
-            WebkitTapHighlightColor: 'transparent',
+            textTransform: 'none',
+            padding: '10px 12px',
           }}
         >
           ‹ Témoignages
-        </button>
+        </CTA>
         <span style={{ width: 60 }} />
       </div>
 
@@ -1645,7 +1405,7 @@ function TemoignageReader({ temoignage, onClose }) {
               alignItems: 'center',
               justifyContent: 'center',
               color: '#FFFFFF',
-              fontFamily: 'var(--font-display)',
+              fontFamily: tokens.fonts.display,
               fontStyle: 'italic',
               fontWeight: 400,
               fontSize: 22,
@@ -1658,10 +1418,10 @@ function TemoignageReader({ temoignage, onClose }) {
           <div>
             <div
               style={{
-                fontFamily: 'var(--font-ui)',
+                fontFamily: tokens.fonts.ui,
                 fontSize: 12,
                 fontWeight: 600,
-                color: 'var(--blue-900)',
+                color: tokens.blue900,
                 lineHeight: 1.3,
               }}
             >
@@ -1670,10 +1430,10 @@ function TemoignageReader({ temoignage, onClose }) {
             <div
               style={{
                 marginTop: 2,
-                fontFamily: 'var(--font-ui)',
+                fontFamily: tokens.fonts.ui,
                 fontSize: 10,
                 fontWeight: 500,
-                color: 'var(--text-muted)',
+                color: tokens.textMuted,
               }}
             >
               {t.city}
@@ -1681,58 +1441,49 @@ function TemoignageReader({ temoignage, onClose }) {
           </div>
         </div>
 
-        <h2
+        <HeroTitle
+          size="md"
+          color="primary"
           style={{
-            margin: '0 0 32px',
+            margin: '0 auto 32px',
+            maxWidth: 540,
             textAlign: 'center',
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 400,
             fontSize: 'clamp(26px, 6.5vw, 34px)',
             lineHeight: 1.2,
-            letterSpacing: 0,
-            color: 'var(--blue-900)',
-            maxWidth: 540,
-            marginInline: 'auto',
           }}
         >
           {t.title}
-        </h2>
+        </HeroTitle>
 
         <div style={{ maxWidth: 580, marginInline: 'auto' }}>
           {t.body.split('\n\n').map((para, i) => (
-            <p
+            <Body
               key={i}
               style={{
-                margin: '0 0 20px',
-                fontFamily: 'var(--font-body)',
-                fontWeight: 400,
+                marginBottom: 20,
                 fontSize: 16,
                 lineHeight: 1.7,
-                color: 'var(--text-secondary)',
               }}
             >
               {para}
-            </p>
+            </Body>
           ))}
         </div>
 
-        <div
+        <Body
+          italic
           style={{
+            fontFamily: tokens.fonts.display,
+            fontSize: 18,
+            lineHeight: 1.5,
+            textAlign: 'center',
             marginTop: 48,
             paddingTop: 32,
             borderTop: '1px solid rgba(10, 36, 56, 0.10)',
-            textAlign: 'center',
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: 18,
-            lineHeight: 1.5,
-            color: 'var(--text-secondary)',
           }}
         >
-          Une voix parmi d'autres. Tu n'es pas seul·e.
-        </div>
+          Une voix parmi d’autres. Tu n’es pas seul·e.
+        </Body>
       </div>
     </div>
   );

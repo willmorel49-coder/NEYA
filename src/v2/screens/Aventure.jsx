@@ -34,6 +34,15 @@ import MondeReader from './MondeReader';
 import AventurePlayer from './AventurePlayer';
 import AventureOnboarding from './AventureOnboarding';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import {
+  GlassCard,
+  Eyebrow,
+  HeroTitle,
+  SectionTitle,
+  Body,
+  CTA,
+  tokens,
+} from '../../components/ui';
 
 /* ─── Données ─── */
 
@@ -474,181 +483,65 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             transition: 'opacity 480ms cubic-bezier(0.22, 0.61, 0.36, 1) 80ms, transform 480ms cubic-bezier(0.22, 0.61, 0.36, 1) 80ms',
           }}
         >
-          <span
-            style={{
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 10,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              color: 'var(--rose-700)',
-            }}
-          >
-            Mon aventure
-          </span>
+          <Eyebrow color="rose">Mon aventure</Eyebrow>
           <span aria-hidden style={{ color: 'var(--rose-500)', fontSize: 9, opacity: 0.6, lineHeight: 1 }}>✻</span>
-          <span
-            style={{
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 10,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              fontWeight: 500,
-              color: 'var(--text-muted)',
-            }}
-          >
-            Aujourd&apos;hui
-          </span>
+          <Eyebrow color="muted" style={{ fontWeight: 500 }}>Aujourd’hui</Eyebrow>
         </div>
-        <h1
+        <div
           style={{
-            margin: 0,
-            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 'clamp(36px, 9vw, 52px)',
-            lineHeight: 1.05,
-            letterSpacing: 0,
-            color: 'var(--blue-900)',
             opacity: mounted ? 1 : 0,
             transform: mounted ? 'translateY(0)' : 'translateY(8px)',
             transition: 'opacity 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 140ms, transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 140ms',
           }}
         >
-          {getGreeting(profile.pseudo)}
-        </h1>
-        <p
+          <HeroTitle size="lg">{getGreeting(profile.pseudo)}</HeroTitle>
+        </div>
+        <div
           style={{
-            margin: '14px 0 0',
-            fontFamily: '"Inter", sans-serif',
-            fontSize: 15,
-            fontWeight: 400,
-            lineHeight: 1.6,
-            color: 'var(--text-secondary)',
+            marginTop: 14,
             maxWidth: '28ch',
             opacity: mounted ? 1 : 0,
             transform: mounted ? 'translateY(0)' : 'translateY(8px)',
             transition: 'opacity 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 220ms, transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 220ms',
           }}
         >
-          {hourPhrase}
-        </p>
+          <Body>{hourPhrase}</Body>
+        </div>
 
         {/* GLASS CARD — SÉANCE DU JOUR premium */}
-        <section
-          className="seance-card"
+        <div
           style={{
             marginTop: 28,
-            padding: '20px 24px',
-            background: 'rgba(255, 255, 255, 0.65)',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-            border: '1px solid rgba(255, 255, 255, 0.85)',
-            borderRadius: 24,
-            boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-            transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
             opacity: mounted ? 1 : 0,
             transform: mounted ? 'translateY(0)' : 'translateY(12px)',
-            transitionProperty: 'opacity, transform, box-shadow',
-            transitionDuration: '520ms, 520ms, 240ms',
-            transitionTimingFunction: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
-            transitionDelay: '300ms, 300ms, 0ms',
+            transition: 'opacity 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 300ms, transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 300ms',
           }}
         >
-          <div
-            style={{
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 10,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              color: 'var(--rose-700)',
-              marginBottom: 10,
-            }}
-          >
-            Séance du jour · {questOfDay.eyebrow || ''}
-          </div>
-          <div
-            style={{
-              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 24,
-              lineHeight: 1.2,
-              color: 'var(--blue-900)',
-              marginBottom: 10,
-            }}
-          >
-            {questOfDay.title}
-          </div>
-          <div
-            style={{
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 14,
-              fontWeight: 400,
-              lineHeight: 1.6,
-              color: 'var(--text-secondary)',
-              marginBottom: 20,
-            }}
-          >
-            {questOfDay.desc}
-          </div>
-          <button
-            type="button"
-            data-press
-            className="seance-cta"
-            onClick={() => { haptic(6); questOfDay.onAction?.(); }}
-            style={{
-              appearance: 'none',
-              width: '100%',
-              padding: '14px 24px',
-              minHeight: 48,
-              background: 'linear-gradient(135deg, #1A5A7F, #2A8ABF)',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: 50,
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
-              WebkitTapHighlightColor: 'transparent',
-              transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
-            }}
-          >
-            {questOfDay.cta}
-          </button>
-        </section>
+          <GlassCard radius="xl" elevation="soft" padding="20px 24px" hoverable>
+            <Eyebrow color="rose" style={{ marginBottom: 10 }}>
+              Séance du jour · {questOfDay.eyebrow || ''}
+            </Eyebrow>
+            <SectionTitle style={{ fontSize: 24, marginBottom: 10 }}>
+              {questOfDay.title}
+            </SectionTitle>
+            <Body style={{ fontSize: 14, marginBottom: 20 }}>
+              {questOfDay.desc}
+            </Body>
+            <CTA
+              variant="primary"
+              size="md"
+              full
+              onClick={() => { haptic(6); questOfDay.onAction?.(); }}
+            >
+              {questOfDay.cta}
+            </CTA>
+          </GlassCard>
+        </div>
 
         {/* SECTION HEADER — Tes piliers */}
         <div style={{ marginTop: 48, marginBottom: 24 }}>
-          <div
-            style={{
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 10,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              color: 'var(--rose-700)',
-              marginBottom: 6,
-            }}
-          >
-            Tes piliers
-          </div>
-          <div
-            style={{
-              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 28,
-              lineHeight: 1.15,
-              color: 'var(--blue-900)',
-            }}
-          >
-            Trois portes pour avancer
-          </div>
+          <Eyebrow color="rose" style={{ marginBottom: 6 }}>Tes piliers</Eyebrow>
+          <SectionTitle style={{ fontSize: 28 }}>Trois portes pour avancer</SectionTitle>
         </div>
 
         {/* 3 PILIERS */}
@@ -698,64 +591,51 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
 
         {/* Mini player musique */}
         {currentTrack && (
-          <div
-            style={{
-              marginTop: 24,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: 8,
-              minHeight: 56,
-              background: 'rgba(255, 255, 255, 0.65)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(255, 255, 255, 0.85)',
-              borderRadius: 999,
-              boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-            }}
-          >
-            <button
-              type="button"
-              onClick={togglePlay}
-              data-press
-              aria-label={musicPlaying ? 'Pause' : 'Lancer'}
-              style={{
-                appearance: 'none',
-                width: 44,
-                height: 44,
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #1A5A7F, #2A8ABF)',
-                color: '#FFFFFF',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                padding: 0,
-                fontSize: 13,
-                boxShadow: '0 4px 12px rgba(26, 90, 127, 0.30)',
-                WebkitTapHighlightColor: 'transparent',
-              }}
-            >
-              {musicPlaying ? '❚❚' : '▶'}
-            </button>
-            <span
-              style={{
-                flex: 1,
-                paddingRight: 14,
-                fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-                fontStyle: 'italic',
-                fontWeight: 300,
-                fontSize: 14,
-                color: 'var(--blue-900)',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {currentTrack.title}
-            </span>
+          <div style={{ marginTop: 24 }}>
+            <GlassCard radius={999} elevation="soft" padding="8px" style={{ display: 'flex', alignItems: 'center', gap: 12, minHeight: 56 }}>
+              <button
+                type="button"
+                onClick={togglePlay}
+                data-press
+                aria-label={musicPlaying ? 'Pause' : 'Lancer'}
+                style={{
+                  appearance: 'none',
+                  width: 44,
+                  height: 44,
+                  borderRadius: '50%',
+                  background: tokens.gradientBlue,
+                  color: '#FFFFFF',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  padding: 0,
+                  fontSize: 13,
+                  boxShadow: tokens.shadow.blue,
+                  WebkitTapHighlightColor: 'transparent',
+                }}
+              >
+                {musicPlaying ? '❚❚' : '▶'}
+              </button>
+              <span
+                style={{
+                  flex: 1,
+                  paddingRight: 14,
+                  fontFamily: tokens.fonts.display,
+                  fontStyle: 'italic',
+                  fontWeight: 300,
+                  fontSize: 14,
+                  color: tokens.textPrimary,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {currentTrack.title}
+              </span>
+            </GlassCard>
           </div>
         )}
       </div>
@@ -916,30 +796,9 @@ function PilierCard({ mark, label, desc, pilier, onClick }) {
       </span>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 22,
-            color: 'var(--blue-900)',
-            lineHeight: 1.2,
-            letterSpacing: 0,
-          }}
-        >
-          {label}
-        </div>
-        <div
-          style={{
-            marginTop: 5,
-            fontFamily: '"Inter", sans-serif',
-            fontSize: 13,
-            fontWeight: 400,
-            lineHeight: 1.5,
-            color: 'var(--text-secondary)',
-          }}
-        >
-          {desc}
+        <SectionTitle style={{ fontSize: 22, letterSpacing: 0 }}>{label}</SectionTitle>
+        <div style={{ marginTop: 5 }}>
+          <Body variant="body-sm">{desc}</Body>
         </div>
       </div>
 
@@ -1007,18 +866,7 @@ function BilanCard({ glyph, label, onClick }) {
         {glyph}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 22,
-            color: 'var(--blue-900)',
-            lineHeight: 1.2,
-          }}
-        >
-          {label}
-        </div>
+        <SectionTitle style={{ fontSize: 22 }}>{label}</SectionTitle>
       </div>
       <span
         aria-hidden
@@ -1115,30 +963,12 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
       >
         <div aria-hidden style={{ width: 36, height: 5, borderRadius: 999, background: 'rgba(10, 36, 56, 0.18)', margin: '0 auto 14px', flexShrink: 0 }} />
         <div style={{ padding: '0 22px', textAlign: 'center', marginBottom: 18, flexShrink: 0 }}>
-          <div
-            style={{
-              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 'clamp(26px, 6.5vw, 30px)',
-              lineHeight: 1.15,
-              color: 'var(--blue-900)',
-            }}
-          >
+          <SectionTitle style={{ fontSize: 'clamp(26px, 6.5vw, 30px)', lineHeight: 1.15 }}>
             {title}
-          </div>
+          </SectionTitle>
           {subtitle && (
-            <div
-              style={{
-                marginTop: 10,
-                fontFamily: '"Inter", sans-serif',
-                fontSize: 14,
-                fontWeight: 400,
-                lineHeight: 1.55,
-                color: 'var(--text-secondary)',
-              }}
-            >
-              {subtitle}
+            <div style={{ marginTop: 10 }}>
+              <Body style={{ fontSize: 14, lineHeight: 1.55 }}>{subtitle}</Body>
             </div>
           )}
         </div>
@@ -1153,30 +983,9 @@ function SheetWrap({ title, subtitle, labelText, onClose, children }) {
           {children}
         </div>
         <div style={{ padding: '12px 22px 0', flexShrink: 0 }}>
-          <button
-            type="button"
-            data-press
-            onClick={handleClose}
-            style={{
-              appearance: 'none',
-              width: '100%',
-              padding: '13px 24px',
-              minHeight: 44,
-              background: 'transparent',
-              border: '1.5px solid var(--blue-300)',
-              borderRadius: 50,
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'var(--blue-700)',
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
+          <CTA variant="outline" size="md" full onClick={handleClose}>
             Fermer
-          </button>
+          </CTA>
         </div>
       </div>
     </>
@@ -1256,45 +1065,12 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
 
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
-                  <div
-                    style={{
-                      fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-                      fontStyle: 'italic',
-                      fontWeight: 300,
-                      fontSize: 20,
-                      color: 'var(--blue-900)',
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {m.name}
-                  </div>
+                  <SectionTitle style={{ fontSize: 20 }}>{m.name}</SectionTitle>
                   {isCurrent && m.available && (
-                    <span
-                      style={{
-                        fontFamily: '"Inter", sans-serif',
-                        fontSize: 10,
-                        letterSpacing: '0.18em',
-                        textTransform: 'uppercase',
-                        fontWeight: 600,
-                        color: accent,
-                        flexShrink: 0,
-                      }}
-                    >
-                      Ton totem
-                    </span>
+                    <Eyebrow color={accent} style={{ flexShrink: 0 }}>Ton totem</Eyebrow>
                   )}
                 </div>
-                <div
-                  style={{
-                    fontFamily: '"Inter", sans-serif',
-                    fontSize: 13,
-                    fontWeight: 400,
-                    color: 'var(--text-secondary)',
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {m.totem} · {m.emotion}
-                </div>
+                <Body variant="body-sm">{m.totem} · {m.emotion}</Body>
 
                 {m.available && progress > 0 && (
                   <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1316,51 +1092,20 @@ function AventureWorldsSheet({ mondes, mondesProgress, currentTotem, onPickMonde
                         }}
                       />
                     </div>
-                    <span
-                      style={{
-                        fontFamily: '"Inter", sans-serif',
-                        fontSize: 10,
-                        letterSpacing: '0.18em',
-                        textTransform: 'uppercase',
-                        fontWeight: 600,
-                        color: 'var(--text-secondary)',
-                        fontVariantNumeric: 'tabular-nums',
-                        flexShrink: 0,
-                      }}
-                    >
+                    <Eyebrow color="secondary" style={{ fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>
                       {progress}/{totalEtapes}
-                    </span>
+                    </Eyebrow>
                   </div>
                 )}
 
                 {m.available && progress === 0 && (
-                  <div
-                    style={{
-                      marginTop: 10,
-                      fontFamily: '"Inter", sans-serif',
-                      fontSize: 10,
-                      letterSpacing: '0.18em',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                      color: accent,
-                    }}
-                  >
-                    Commencer le voyage
+                  <div style={{ marginTop: 10 }}>
+                    <Eyebrow color={accent}>Commencer le voyage</Eyebrow>
                   </div>
                 )}
                 {!m.available && (
-                  <div
-                    style={{
-                      marginTop: 10,
-                      fontFamily: '"Inter", sans-serif',
-                      fontSize: 10,
-                      letterSpacing: '0.18em',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                      color: 'var(--text-muted)',
-                    }}
-                  >
-                    Bientôt
+                  <div style={{ marginTop: 10 }}>
+                    <Eyebrow color="muted">Bientôt</Eyebrow>
                   </div>
                 )}
               </div>
@@ -1437,29 +1182,9 @@ function ConnaissanceSheet({ lecons, leconsLues, onPick, onClose }) {
                 {lue ? '✓' : String(i + 1).padStart(2, '0')}
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-                    fontStyle: 'italic',
-                    fontWeight: 300,
-                    fontSize: 20,
-                    color: 'var(--blue-900)',
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {l.title}
-                </div>
-                <div
-                  style={{
-                    marginTop: 5,
-                    fontFamily: '"Inter", sans-serif',
-                    fontSize: 13,
-                    fontWeight: 400,
-                    lineHeight: 1.5,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  {l.subtitle} · {l.duration} min
+                <SectionTitle style={{ fontSize: 20 }}>{l.title}</SectionTitle>
+                <div style={{ marginTop: 5 }}>
+                  <Body variant="body-sm">{l.subtitle} · {l.duration} min</Body>
                 </div>
               </div>
               <span aria-hidden style={{ color: 'var(--blue-500)', fontSize: 14, flexShrink: 0 }}>›</span>
@@ -1544,43 +1269,12 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 8 }}>
-          <div
-            style={{
-              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 22,
-              color: 'var(--blue-900)',
-              lineHeight: 1.2,
-            }}
-          >
-            {tempsCurrent.label}
-          </div>
-          <div
-            style={{
-              fontFamily: '"Inter", sans-serif',
-              fontSize: 10,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              color: accent,
-              fontVariantNumeric: 'tabular-nums',
-            }}
-          >
+          <SectionTitle style={{ fontSize: 22 }}>{tempsCurrent.label}</SectionTitle>
+          <Eyebrow color={accent} style={{ fontVariantNumeric: 'tabular-nums' }}>
             {doneCount}/{rituels.length}
-          </div>
+          </Eyebrow>
         </div>
-        <div
-          style={{
-            fontFamily: '"Inter", sans-serif',
-            fontSize: 15,
-            fontWeight: 400,
-            lineHeight: 1.6,
-            color: 'var(--text-secondary)',
-          }}
-        >
-          {tempsCurrent.intro}
-        </div>
+        <Body>{tempsCurrent.intro}</Body>
       </div>
 
       {/* Rituels */}
@@ -1632,29 +1326,9 @@ function TempsSoiSheet({ temps, rituelsFaits, onPickRituel, onClose }) {
                 {done ? '✓' : '·'}
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-                    fontStyle: 'italic',
-                    fontWeight: 300,
-                    fontSize: 19,
-                    color: 'var(--blue-900)',
-                    lineHeight: 1.25,
-                  }}
-                >
-                  {r.title}
-                </div>
-                <div
-                  style={{
-                    marginTop: 5,
-                    fontFamily: '"Inter", sans-serif',
-                    fontSize: 13,
-                    fontWeight: 400,
-                    lineHeight: 1.5,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  {r.subtitle} · {r.duration} min
+                <SectionTitle style={{ fontSize: 19, lineHeight: 1.25 }}>{r.title}</SectionTitle>
+                <div style={{ marginTop: 5 }}>
+                  <Body variant="body-sm">{r.subtitle} · {r.duration} min</Body>
                 </div>
               </div>
               <span aria-hidden style={{ color: 'var(--blue-500)', fontSize: 14, flexShrink: 0 }}>›</span>
@@ -1774,18 +1448,9 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
       >
         <div aria-hidden style={{ width: 36, height: 5, borderRadius: 999, background: 'rgba(10, 36, 56, 0.18)', margin: '0 auto 18px', flexShrink: 0 }} />
         <div style={{ padding: '0 22px', textAlign: 'center', marginBottom: 18, flexShrink: 0 }}>
-          <div
-            style={{
-              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 'clamp(26px, 6.5vw, 30px)',
-              lineHeight: 1.15,
-              color: 'var(--blue-900)',
-            }}
-          >
+          <SectionTitle style={{ fontSize: 'clamp(26px, 6.5vw, 30px)', lineHeight: 1.15 }}>
             Mon aventure
-          </div>
+          </SectionTitle>
         </div>
 
         <div style={{ display: 'flex', gap: 6, padding: '0 22px 16px', overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 0 }}>
@@ -1825,8 +1490,8 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
         <div style={{ padding: '4px 22px 8px', overflowY: 'auto', flex: 1, WebkitOverflowScrolling: 'touch' }}>
           {tab === 'image' && (
             <div>
-              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 15, fontWeight: 400, lineHeight: 1.6, color: 'var(--text-secondary)', marginBottom: 16 }}>
-                Le décor de ton aventure.
+              <div style={{ marginBottom: 16 }}>
+                <Body>Le décor de ton aventure.</Body>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {COCON_IMAGES.map((img) => {
@@ -1878,8 +1543,8 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
 
           {tab === 'ambiance' && (
             <div>
-              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 15, fontWeight: 400, lineHeight: 1.6, color: 'var(--text-secondary)', marginBottom: 16 }}>
-                La petite vie qui danse dans le décor.
+              <div style={{ marginBottom: 16 }}>
+                <Body>La petite vie qui danse dans le décor.</Body>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {AMBIANCES.map((a) => {
@@ -1932,8 +1597,8 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
 
           {tab === 'musique' && (
             <div>
-              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 15, fontWeight: 400, lineHeight: 1.6, color: 'var(--text-secondary)', marginBottom: 16 }}>
-                La musique qui t'accompagne dans ton voyage.
+              <div style={{ marginBottom: 16 }}>
+                <Body>La musique qui t’accompagne dans ton voyage.</Body>
               </div>
               <button
                 type="button"
@@ -2053,24 +1718,13 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
 
           {tab === 'identite' && (
             <div>
-              <div style={{ fontFamily: '"Inter", sans-serif', fontSize: 13, fontWeight: 300, color: 'var(--text-secondary)', marginBottom: 18 }}>
-                Qui tu es dans cette aventure.
+              <div style={{ marginBottom: 18 }}>
+                <Body variant="body-sm">Qui tu es dans cette aventure.</Body>
               </div>
 
               <div style={{ marginBottom: 18 }}>
-                <label
-                  style={{
-                    display: 'block',
-                    marginBottom: 10,
-                    fontFamily: '"Inter", sans-serif',
-                    fontSize: 10,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    fontWeight: 600,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  Prénom
+                <label style={{ display: 'block', marginBottom: 10 }}>
+                  <Eyebrow color="secondary">Prénom</Eyebrow>
                 </label>
                 <input
                   type="text"
@@ -2099,19 +1753,8 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
               </div>
 
               <div style={{ marginBottom: 18 }}>
-                <label
-                  style={{
-                    display: 'block',
-                    marginBottom: 10,
-                    fontFamily: '"Inter", sans-serif',
-                    fontSize: 10,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    fontWeight: 600,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  Mon totem
+                <label style={{ display: 'block', marginBottom: 10 }}>
+                  <Eyebrow color="secondary">Mon totem</Eyebrow>
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                   {TOTEMS.map((t) => {
@@ -2148,61 +1791,18 @@ function AventurePersonalizeSheet({ profile, onUpdate, onUpdateAventure, onClose
                 </div>
               </div>
 
-              <button
-                type="button"
-                data-press
-                onClick={handleSaveIdentite}
-                style={{
-                  appearance: 'none',
-                  width: '100%',
-                  padding: '15px 24px',
-                  minHeight: 50,
-                  background: 'linear-gradient(135deg, #1A5A7F, #2A8ABF)',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  borderRadius: 50,
-                  fontFamily: '"Inter", sans-serif',
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
-                  WebkitTapHighlightColor: 'transparent',
-                }}
-              >
+              <CTA variant="primary" size="md" full onClick={handleSaveIdentite}>
                 Garder
-              </button>
+              </CTA>
             </div>
           )}
         </div>
 
         {tab !== 'identite' && (
           <div style={{ padding: '12px 22px 0', flexShrink: 0 }}>
-            <button
-              type="button"
-              data-press
-              onClick={handleClose}
-              style={{
-                appearance: 'none',
-                width: '100%',
-                padding: '13px 24px',
-                minHeight: 44,
-                background: 'transparent',
-                border: '1.5px solid var(--blue-300)',
-                borderRadius: 50,
-                fontFamily: '"Inter", sans-serif',
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: 'var(--blue-700)',
-                cursor: 'pointer',
-                WebkitTapHighlightColor: 'transparent',
-              }}
-            >
+            <CTA variant="outline" size="md" full onClick={handleClose}>
               Fermer
-            </button>
+            </CTA>
           </div>
         )}
       </div>

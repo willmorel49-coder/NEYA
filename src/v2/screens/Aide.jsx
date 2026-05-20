@@ -1,9 +1,8 @@
 /* ============================================================
-   ÇA VA ? V3 — Aide & Ressources (palette bleu/rose · glass)
+   ÇA VA ? V4 — Aide & Ressources (Design System unifié)
    ============================================================
    Push vers vraie aide pro (3114, SOS Amitié, 3919) sans honte.
-   Refonte V3 : Blobs rose-blue, glass cards, Cormorant italic,
-   CTA gradient bleu, Urgence accent rose.
+   Migré V4 : composants atomiques ../../components/ui.
    ============================================================ */
 
 import { useState, useEffect } from 'react';
@@ -11,6 +10,15 @@ import { haptic } from '../state';
 import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import Blobs from '../../components/Blobs';
+import {
+  Header,
+  GlassCard,
+  Eyebrow,
+  HeroTitle,
+  Body,
+  CTA,
+  tokens,
+} from '../../components/ui';
 
 const URGENCE = [
   {
@@ -132,8 +140,8 @@ export default function Aide({ onClose }) {
         position: 'fixed',
         inset: 0,
         zIndex: 240,
-        background: 'var(--bg)',
-        color: 'var(--blue-900)',
+        background: tokens.bg,
+        color: tokens.textPrimary,
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
         transform: `translate(${edgeX}px, ${translateY})`,
@@ -164,114 +172,25 @@ export default function Aide({ onClose }) {
         }}
       />
 
-      {/* Glass pill back button */}
-      <button
-        type="button"
-        data-press
-        onClick={handleClose}
-        aria-label="Retour"
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-          left: 16,
-          zIndex: 80,
-          appearance: 'none',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 6,
-          minHeight: 44,
-          padding: '10px 14px',
-          borderRadius: 999,
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.9)',
-          color: 'var(--blue-700)',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 13,
-          fontWeight: 500,
-          letterSpacing: '0.02em',
-          lineHeight: 1,
-          cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(10, 36, 56, 0.10)',
-          WebkitTapHighlightColor: 'transparent',
-          transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        </svg>
-        Retour
-      </button>
-
-      {/* Sticky header */}
-      <div
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 5,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 90px 12px',
-          background: 'rgba(238, 243, 248, 0.78)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderBottom: '0.5px solid rgba(194, 216, 232, 0.25)',
-        }}
-      >
-        <h1
-          style={{
-            margin: 0,
-            fontFamily: "'Cormorant Garamond', serif",
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 'clamp(22px, 5.5vw, 26px)',
-            lineHeight: 1.1,
-            color: 'var(--blue-900)',
-            letterSpacing: '-0.01em',
-          }}
-        >
-          Aide & ressources
-        </h1>
-      </div>
+      <Header title="Aide & ressources" onBack={handleClose} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         {/* HERO */}
         <section style={{ padding: '24px 22px 28px' }}>
-          <h2
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 'clamp(26px, 7vw, 32px)',
-              lineHeight: 1.18,
-              margin: 0,
-              color: 'var(--blue-900)',
-              letterSpacing: '-0.01em',
-            }}
-          >
-            « Tu n’as pas à porter ça <span style={{ color: 'var(--rose-700)' }}>seul·e</span>. »
-          </h2>
-          <p
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 14,
-              fontWeight: 400,
-              color: 'var(--text-secondary)',
-              margin: '14px 0 0',
-              lineHeight: 1.6,
-              maxWidth: 460,
-            }}
-          >
-            Tu peux parler à quelqu’un. Maintenant. Gratuitement. Sans rendez-vous.
-            Ces lignes répondent.
-          </p>
+          <HeroTitle size="md">
+            « Tu n’as pas à porter ça <span style={{ color: tokens.rose700 }}>seul·e</span>. »
+          </HeroTitle>
+          <div style={{ marginTop: 14, maxWidth: 460 }}>
+            <Body variant="body-sm">
+              Tu peux parler à quelqu’un. Maintenant. Gratuitement. Sans rendez-vous.
+              Ces lignes répondent.
+            </Body>
+          </div>
         </section>
 
         {/* URGENCE — accent rose */}
         <section style={{ padding: '0 22px 28px' }}>
-          <SectionTitle label="Écoute 24h/24" />
+          <Eyebrow color="primary" style={{ color: tokens.textPrimary }}>Écoute 24h/24</Eyebrow>
           <div
             style={{
               display: 'flex',
@@ -288,28 +207,17 @@ export default function Aide({ onClose }) {
 
         {/* TROUVER UN·E THÉRAPEUTE */}
         <section style={{ padding: '0 22px 28px' }}>
-          <SectionTitle label="Trouver quelqu’un" />
-          <article
-            style={{
-              marginTop: 14,
-              padding: '18px 20px 20px',
-              borderRadius: 20,
-              background: 'rgba(255, 255, 255, 0.65)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(255, 255, 255, 0.85)',
-              boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-            }}
-          >
+          <Eyebrow color="primary" style={{ color: tokens.textPrimary }}>Trouver quelqu’un</Eyebrow>
+          <GlassCard radius="lg" elevation="soft" padding="18px 20px 20px" style={{ marginTop: 14 }}>
             <h3
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: tokens.fonts.display,
                 fontStyle: 'italic',
                 fontWeight: 300,
                 fontSize: 22,
                 lineHeight: 1.25,
                 margin: '0 0 14px',
-                color: 'var(--blue-900)',
+                color: tokens.textPrimary,
               }}
             >
               « Comment trouver le ou la bonne ? »
@@ -331,17 +239,17 @@ export default function Aide({ onClose }) {
                     display: 'flex',
                     gap: 10,
                     alignItems: 'flex-start',
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: tokens.fonts.body,
                     fontSize: 14,
                     fontWeight: 400,
-                    color: 'var(--text-secondary)',
+                    color: tokens.textSecondary,
                     lineHeight: 1.55,
                   }}
                 >
                   <span
                     aria-hidden
                     style={{
-                      color: 'var(--violet)',
+                      color: tokens.violet,
                       fontSize: 13,
                       lineHeight: 1.55,
                       flexShrink: 0,
@@ -352,7 +260,7 @@ export default function Aide({ onClose }) {
                   <span>
                     <strong
                       style={{
-                        color: 'var(--blue-900)',
+                        color: tokens.textPrimary,
                         fontWeight: 600,
                       }}
                     >
@@ -364,37 +272,21 @@ export default function Aide({ onClose }) {
               ))}
             </ul>
 
-            <button
-              type="button"
-              data-press
-              onClick={() =>
-                openExternal('https://monsoutienpsy.sante.gouv.fr/')
-              }
-              style={{
-                appearance: 'none',
-                border: 'none',
-                background: 'transparent',
-                color: 'var(--blue-700)',
-                fontFamily: "'Inter', sans-serif",
-                fontSize: 13,
-                fontWeight: 500,
-                letterSpacing: '0.02em',
-                padding: '12px 0 0',
-                marginTop: 8,
-                cursor: 'pointer',
-                WebkitTapHighlightColor: 'transparent',
-                textAlign: 'left',
-                display: 'inline-block',
-              }}
-            >
-              Voir Mon Soutien Psy →
-            </button>
-          </article>
+            <div style={{ marginTop: 12 }}>
+              <CTA
+                variant="ghost"
+                size="sm"
+                onClick={() => openExternal('https://monsoutienpsy.sante.gouv.fr/')}
+              >
+                Voir Mon Soutien Psy →
+              </CTA>
+            </div>
+          </GlassCard>
         </section>
 
         {/* LIGNES SPÉCIALISÉES */}
         <section style={{ padding: '0 22px 28px' }}>
-          <SectionTitle label="Autres lignes" />
+          <Eyebrow color="primary" style={{ color: tokens.textPrimary }}>Autres lignes</Eyebrow>
           <div
             style={{
               marginTop: 14,
@@ -411,7 +303,7 @@ export default function Aide({ onClose }) {
 
         {/* TÉMOIGNAGES */}
         <section style={{ padding: '0 22px 24px' }}>
-          <SectionTitle label="Ils s’en sont sortis" />
+          <Eyebrow color="primary" style={{ color: tokens.textPrimary }}>Ils s’en sont sortis</Eyebrow>
           <div
             style={{
               marginTop: 14,
@@ -426,34 +318,24 @@ export default function Aide({ onClose }) {
                 style={{
                   margin: 0,
                   paddingLeft: 14,
-                  borderLeft: '2px solid var(--rose-500)',
+                  borderLeft: `2px solid ${tokens.rose500}`,
                 }}
               >
                 <blockquote
                   style={{
-                    fontFamily: "'Cormorant Garamond', serif",
+                    fontFamily: tokens.fonts.display,
                     fontStyle: 'italic',
                     fontWeight: 300,
                     fontSize: 16,
-                    color: 'var(--blue-900)',
+                    color: tokens.textPrimary,
                     lineHeight: 1.5,
                     margin: 0,
                   }}
                 >
                   « {t.quote} »
                 </blockquote>
-                <figcaption
-                  style={{
-                    marginTop: 8,
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: 10,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: 'var(--text-muted)',
-                    fontWeight: 500,
-                  }}
-                >
-                  · {t.author}
+                <figcaption style={{ marginTop: 8 }}>
+                  <Eyebrow color="muted">· {t.author}</Eyebrow>
                 </figcaption>
               </figure>
             ))}
@@ -469,11 +351,11 @@ export default function Aide({ onClose }) {
         >
           <p
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: tokens.fonts.display,
               fontStyle: 'italic',
               fontWeight: 300,
               fontSize: 16,
-              color: 'var(--text-secondary)',
+              color: tokens.textSecondary,
               lineHeight: 1.55,
               margin: 0,
               maxWidth: 320,
@@ -489,40 +371,16 @@ export default function Aide({ onClose }) {
 }
 
 /* ============================================================
-   SectionTitle — Inter uppercase 14/600 blue-900
-   ============================================================ */
-function SectionTitle({ label }) {
-  return (
-    <div
-      style={{
-        fontFamily: "'Inter', sans-serif",
-        fontSize: 11,
-        fontWeight: 600,
-        letterSpacing: '0.18em',
-        textTransform: 'uppercase',
-        color: 'var(--blue-900)',
-      }}
-    >
-      {label}
-    </div>
-  );
-}
-
-/* ============================================================
-   UrgenceCard — glass card, rose CTA (urgence)
+   UrgenceCard — GlassCard avec accent rose + CTA rose
    ============================================================ */
 function UrgenceCard({ line, onCall }) {
   return (
-    <article
+    <GlassCard
+      radius="lg"
+      elevation="soft"
+      padding="18px 20px"
       style={{
-        padding: '18px 20px',
-        borderRadius: 20,
-        background: 'rgba(255, 255, 255, 0.65)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255, 255, 255, 0.85)',
-        borderLeft: '3px solid var(--rose-700)',
-        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+        borderLeft: `3px solid ${tokens.rose700}`,
         display: 'flex',
         flexDirection: 'column',
         gap: 6,
@@ -530,10 +388,10 @@ function UrgenceCard({ line, onCall }) {
     >
       <div
         style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: tokens.fonts.ui,
           fontSize: 16,
           fontWeight: 600,
-          color: 'var(--blue-900)',
+          color: tokens.textPrimary,
           lineHeight: 1.2,
         }}
       >
@@ -541,92 +399,52 @@ function UrgenceCard({ line, onCall }) {
       </div>
       <div
         style={{
-          fontFamily: "'Cormorant Garamond', serif",
+          fontFamily: tokens.fonts.display,
           fontStyle: 'italic',
           fontWeight: 300,
           fontSize: 16,
-          color: 'var(--text-secondary)',
+          color: tokens.textSecondary,
           lineHeight: 1.35,
         }}
       >
         {line.italic}
       </div>
-      <p
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 13,
-          fontWeight: 400,
-          color: 'var(--text-secondary)',
-          margin: '4px 0 14px',
-          lineHeight: 1.55,
-        }}
-      >
-        {line.desc}
-      </p>
+      <div style={{ margin: '4px 0 14px' }}>
+        <Body variant="body-sm">{line.desc}</Body>
+      </div>
 
-      <button
-        type="button"
-        data-press
-        onClick={() => onCall(line.tel)}
-        style={{
-          appearance: 'none',
-          alignSelf: 'flex-start',
-          border: 'none',
-          background: 'var(--gradient-rose)',
-          color: '#FFFFFF',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 11,
-          fontWeight: 600,
-          letterSpacing: '0.16em',
-          textTransform: 'uppercase',
-          padding: '12px 22px',
-          borderRadius: 999,
-          cursor: 'pointer',
-          WebkitTapHighlightColor: 'transparent',
-          boxShadow: '0 4px 14px rgba(200, 112, 144, 0.30)',
-          transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
-      >
-        Appeler →
-      </button>
-    </article>
+      <div>
+        <CTA variant="rose" size="sm" onClick={() => onCall(line.tel)}>
+          Appeler →
+        </CTA>
+      </div>
+    </GlassCard>
   );
 }
 
 /* ============================================================
-   LigneMini — small glass card, blue tone
+   LigneMini — GlassCard small, ton bleu
    ============================================================ */
 function LigneMini({ line, onCall }) {
   return (
-    <button
-      type="button"
-      data-press
+    <GlassCard
+      radius="md"
+      elevation="soft"
+      padding="14px 16px"
       onClick={() => onCall(line.tel)}
       style={{
-        appearance: 'none',
-        textAlign: 'left',
-        padding: '14px 16px',
-        borderRadius: 16,
-        background: 'rgba(255, 255, 255, 0.65)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255, 255, 255, 0.85)',
-        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
-        cursor: 'pointer',
-        WebkitTapHighlightColor: 'transparent',
         display: 'flex',
         flexDirection: 'column',
         gap: 4,
-        color: 'var(--blue-900)',
-        transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+        color: tokens.textPrimary,
       }}
     >
       <div
         style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: tokens.fonts.ui,
           fontSize: 14,
           fontWeight: 600,
-          color: 'var(--blue-700)',
+          color: tokens.blue700,
           fontVariantNumeric: 'tabular-nums',
           lineHeight: 1.2,
         }}
@@ -635,30 +453,20 @@ function LigneMini({ line, onCall }) {
       </div>
       <div
         style={{
-          fontFamily: "'Cormorant Garamond', serif",
+          fontFamily: tokens.fonts.display,
           fontStyle: 'italic',
           fontWeight: 300,
           fontSize: 15,
-          color: 'var(--blue-900)',
+          color: tokens.textPrimary,
           lineHeight: 1.3,
         }}
       >
         {line.name}
       </div>
-      <div
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 10,
-          fontWeight: 500,
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: 'var(--text-muted)',
-          marginTop: 2,
-        }}
-      >
-        {line.desc}
+      <div style={{ marginTop: 2 }}>
+        <Eyebrow color="muted">{line.desc}</Eyebrow>
       </div>
-    </button>
+    </GlassCard>
   );
 }
 
