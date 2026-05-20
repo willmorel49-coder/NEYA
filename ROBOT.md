@@ -9,6 +9,7 @@ Lis ce fichier en entier avant toute modification.
 
 - **Nom** : NEYA
 - **Pitch** : application de bien-être émotionnel — aider l'utilisateur à reconnaître, nommer et réguler ses émotions au quotidien.
+- **Focus produit initial** : anxiété et stress (techniques de respiration, ancrage, TCC légère).
 - **Propriétaire** : @willmorel49-coder
 - **Langue produit (UI/UX)** : français
 - **Langue code, commits, docs techniques** : anglais
@@ -73,7 +74,7 @@ Le corps explique le **pourquoi** (pas le quoi).
 ### 4.3 Pull Requests
 
 - Titre = même format que le commit principal.
-- Description : contexte, captures (si UI), checklist de test.
+- Description : contexte, captures (si UI), checklist de test, et mention explicite des sous-agents qui ont relu (voir §7).
 - Pas de merge sans CI verte.
 - Squash merge par défaut.
 
@@ -101,11 +102,6 @@ YYYY-MM-DD | <catégorie> | <leçon, une phrase> | <contexte ou lien>
 
 Catégories : `stack`, `produit`, `process`, `bug`, `sécurité`, `ux`, `perf`, `outillage`.
 
-Exemple :
-```
-2026-05-06 | process | Toujours figer la stack dans ROBOT.md avant d'écrire du code | bootstrap initial
-```
-
 ## 6. Boucle d'agent
 
 À chaque session, l'agent **doit** :
@@ -113,11 +109,25 @@ Exemple :
 1. Lire `ROBOT.md` et `LESSONS.md`.
 2. Vérifier l'état du dépôt (`git status`, branche courante).
 3. Travailler sur la branche désignée par l'utilisateur (jamais directement sur `main`).
-4. Commiter en Conventional Commits.
-5. À la fin de la session, ajouter au moins une ligne à `LESSONS.md` si quelque chose de non-trivial a été appris.
-6. Pousser, puis s'arrêter — **pas de PR** sans demande explicite de l'utilisateur.
+4. Solliciter les sous-agents pertinents (voir §7) selon la nature de la modification.
+5. Commiter en Conventional Commits.
+6. À la fin de la session, ajouter au moins une ligne à `LESSONS.md` si quelque chose de non-trivial a été appris.
+7. Pousser, puis s'arrêter — **pas de PR** sans demande explicite de l'utilisateur.
 
-## 7. Hors-scope (pour l'instant)
+## 7. Sous-agents Claude Code
+
+Disponibles dans `.claude/agents/`. À invoquer via la commande `Task` (ou `@<name>` selon le client).
+
+| Agent | Rôle | Obligatoire pour |
+|---|---|---|
+| `stress-anxiety-expert` | Relecture clinique et linguistique de tout contenu touchant l'anxiété, le stress, la crise. Garde-fou sécurité (3114, non-substitution). | Tout flux lié à une émotion intense ou un signal de crise. |
+| `a11y-reviewer` | Conformité WCAG 2.2 AA — clavier, contraste, motion, lecteur d'écran. | Tout nouveau composant UI. |
+| `privacy-rgpd-reviewer` | RGPD art. 9, CNIL, RLS Supabase, télémétrie. | Toute migration DB, nouvelle intégration tierce, changement de logging. |
+| `supabase-architect` | Schéma, RLS, Edge Functions, Auth, Storage. | Tout travail Supabase. |
+
+Toute PR touchant un domaine couvert par un agent **doit** mentionner dans sa description : `relu par <agent>`.
+
+## 8. Hors-scope (pour l'instant)
 
 - App mobile native.
 - IA générative côté produit.

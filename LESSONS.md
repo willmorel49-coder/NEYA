@@ -6,4 +6,5 @@ Catégories : `stack`, `produit`, `process`, `bug`, `sécurité`, `ux`, `perf`, 
 
 ---
 
+2026-05-20 | process | 4 sous-agents Claude Code installés (.claude/agents/) : stress-anxiety-expert, a11y-reviewer, privacy-rgpd-reviewer, supabase-architect | renforce la qualité produit dès la pré-MVP
 2026-05-06 | process | Figer stack, conventions et format des leçons dans ROBOT.md avant d'écrire du code applicatif | bootstrap initial du dépôt
