@@ -154,6 +154,13 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
   const currentTrack = useMemo(() => TRACKS.find((t) => t.key === av.music) || null, [av.music]);
   const hourPhrase = useMemo(() => getHourPhrase(), []);
 
+  // Mount animation pour illustration card + hero
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   useEffect(() => {
     const id = setInterval(() => forceTick((n) => (n + 1) % 1000), 60_000);
     return () => clearInterval(id);
@@ -300,17 +307,66 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
       }}
       data-world={currentTotem.world}
     >
+      <style>{`
+        @media (hover: hover) {
+          .pilier-card:hover,
+          .bilan-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(10, 36, 56, 0.12);
+          }
+          .seance-card:hover {
+            transform: scale(1.005);
+            box-shadow: 0 8px 32px rgba(10, 36, 56, 0.10);
+          }
+          .seance-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(26, 90, 127, 0.40);
+          }
+        }
+        .pilier-card:active,
+        .bilan-card:active {
+          transform: scale(0.985);
+          transition: transform 120ms ease-out;
+        }
+        .seance-cta:active {
+          transform: scale(0.97);
+          transition: transform 120ms ease-out;
+        }
+      `}</style>
+
       <Blobs variant="rose-blue" />
 
-      {/* TOPBAR */}
+      {/* Blob violet additionnel pour profondeur (milieu droit) */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: '38%',
+          right: -100,
+          width: 280,
+          height: 280,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(127,90,138,0.15) 0%, transparent 70%)',
+          filter: 'blur(80px)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+
+      {/* TOPBAR — sticky glass premium */}
       <div
         style={{
-          position: 'relative',
-          zIndex: 3,
+          position: 'sticky',
+          top: 0,
+          zIndex: 5,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 22px 6px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 16px) 22px 12px',
+          background: 'rgba(238, 243, 248, 0.72)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '0.5px solid rgba(194, 216, 232, 0.30)',
         }}
       >
         <span style={{ width: 44, height: 44, flexShrink: 0 }} aria-hidden />
@@ -357,17 +413,20 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
         </button>
       </div>
 
-      {/* ILLUSTRATION CARD 343×220 */}
+      {/* ILLUSTRATION CARD 343×220 — premium polish */}
       <div
         style={{
           position: 'relative',
-          margin: '12px 16px 0',
-          borderRadius: 24,
+          margin: '14px 16px 0',
+          borderRadius: 28,
           overflow: 'hidden',
           height: 220,
           flexShrink: 0,
-          boxShadow: '0 8px 32px rgba(10, 36, 56, 0.12)',
+          boxShadow: '0 8px 32px rgba(10, 36, 56, 0.10)',
           zIndex: 1,
+          opacity: mounted ? 1 : 0,
+          transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+          transition: 'opacity 480ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 480ms cubic-bezier(0.22, 0.61, 0.36, 1)',
         }}
       >
         <img
@@ -383,12 +442,13 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             objectFit: 'cover',
           }}
         />
+        {/* Overlay subtle pour contraste */}
         <div
           aria-hidden
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to bottom, transparent 30%, rgba(10, 36, 56, 0.65) 100%)',
+            background: 'linear-gradient(to bottom, rgba(10, 36, 56, 0.10) 0%, transparent 35%, rgba(10, 36, 56, 0.55) 100%)',
           }}
         />
         <CoconAmbiance type={av.ambiance || 'fireflies'} accent="#C2D8E8" />
@@ -402,19 +462,43 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           padding: '24px 16px calc(env(safe-area-inset-bottom, 0px) + 130px)',
         }}
       >
-        {/* HERO TEXT */}
+        {/* HERO TEXT — premium */}
         <div
           style={{
-            fontFamily: '"Inter", sans-serif',
-            fontSize: 10,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            fontWeight: 600,
-            color: 'var(--blue-700)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
             marginBottom: 14,
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+            transition: 'opacity 480ms cubic-bezier(0.22, 0.61, 0.36, 1) 80ms, transform 480ms cubic-bezier(0.22, 0.61, 0.36, 1) 80ms',
           }}
         >
-          Mon aventure
+          <span
+            style={{
+              fontFamily: '"Inter", sans-serif',
+              fontSize: 10,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              fontWeight: 600,
+              color: 'var(--rose-700)',
+            }}
+          >
+            Mon aventure
+          </span>
+          <span aria-hidden style={{ color: 'var(--rose-500)', fontSize: 9, opacity: 0.6, lineHeight: 1 }}>✻</span>
+          <span
+            style={{
+              fontFamily: '"Inter", sans-serif',
+              fontSize: 10,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              color: 'var(--text-muted)',
+            }}
+          >
+            Aujourd&apos;hui
+          </span>
         </div>
         <h1
           style={{
@@ -426,6 +510,9 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             lineHeight: 1.05,
             letterSpacing: 0,
             color: 'var(--blue-900)',
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+            transition: 'opacity 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 140ms, transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 140ms',
           }}
         >
           {getGreeting(profile.pseudo)}
@@ -438,23 +525,34 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
             fontWeight: 400,
             lineHeight: 1.6,
             color: 'var(--text-secondary)',
-            maxWidth: 340,
+            maxWidth: '28ch',
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+            transition: 'opacity 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 220ms, transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 220ms',
           }}
         >
           {hourPhrase}
         </p>
 
-        {/* GLASS CARD — SÉANCE DU JOUR */}
+        {/* GLASS CARD — SÉANCE DU JOUR premium */}
         <section
+          className="seance-card"
           style={{
             marginTop: 28,
-            padding: '20px 22px',
+            padding: '20px 24px',
             background: 'rgba(255, 255, 255, 0.65)',
             backdropFilter: 'blur(24px)',
             WebkitBackdropFilter: 'blur(24px)',
             border: '1px solid rgba(255, 255, 255, 0.85)',
             borderRadius: 24,
             boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+            transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+            opacity: mounted ? 1 : 0,
+            transform: mounted ? 'translateY(0)' : 'translateY(12px)',
+            transitionProperty: 'opacity, transform, box-shadow',
+            transitionDuration: '520ms, 520ms, 240ms',
+            transitionTimingFunction: 'cubic-bezier(0.22, 0.61, 0.36, 1)',
+            transitionDelay: '300ms, 300ms, 0ms',
           }}
         >
           <div
@@ -464,7 +562,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
               fontWeight: 600,
-              color: 'var(--blue-700)',
+              color: 'var(--rose-700)',
               marginBottom: 10,
             }}
           >
@@ -475,10 +573,10 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               fontFamily: 'Cormorant Garamond, var(--font-display), serif',
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 'clamp(22px, 5.5vw, 26px)',
+              fontSize: 24,
               lineHeight: 1.2,
               color: 'var(--blue-900)',
-              marginBottom: 8,
+              marginBottom: 10,
             }}
           >
             {questOfDay.title}
@@ -486,7 +584,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           <div
             style={{
               fontFamily: '"Inter", sans-serif',
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: 400,
               lineHeight: 1.6,
               color: 'var(--text-secondary)',
@@ -498,12 +596,13 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
           <button
             type="button"
             data-press
+            className="seance-cta"
             onClick={() => { haptic(6); questOfDay.onAction?.(); }}
             style={{
               appearance: 'none',
               width: '100%',
-              padding: '15px 24px',
-              minHeight: 50,
+              padding: '14px 24px',
+              minHeight: 48,
               background: 'linear-gradient(135deg, #1A5A7F, #2A8ABF)',
               color: '#FFFFFF',
               border: 'none',
@@ -516,30 +615,44 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
               cursor: 'pointer',
               boxShadow: '0 8px 24px rgba(26, 90, 127, 0.30)',
               WebkitTapHighlightColor: 'transparent',
+              transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
             }}
           >
             {questOfDay.cta}
           </button>
         </section>
 
-        {/* SECTION LABEL */}
-        <div
-          style={{
-            fontFamily: '"Inter", sans-serif',
-            fontSize: 10,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            fontWeight: 600,
-            color: 'var(--rose-700)',
-            marginTop: 36,
-            marginBottom: 14,
-          }}
-        >
-          Tes piliers
+        {/* SECTION HEADER — Tes piliers */}
+        <div style={{ marginTop: 48, marginBottom: 24 }}>
+          <div
+            style={{
+              fontFamily: '"Inter", sans-serif',
+              fontSize: 10,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              fontWeight: 600,
+              color: 'var(--rose-700)',
+              marginBottom: 6,
+            }}
+          >
+            Tes piliers
+          </div>
+          <div
+            style={{
+              fontFamily: 'Cormorant Garamond, var(--font-display), serif',
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 28,
+              lineHeight: 1.15,
+              color: 'var(--blue-900)',
+            }}
+          >
+            Trois portes pour avancer
+          </div>
         </div>
 
         {/* 3 PILIERS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <PilierCard
             mark="01"
             label="L'Aventure"
@@ -565,7 +678,7 @@ export default function Aventure({ onOpenMeditation, onOpenWorld, onOpenHabitude
 
         {/* BILAN — glass card sans numéro (BUG-06) */}
         {(isEvening || isSundayEvening) && (
-          <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
             {isEvening && !isSundayEvening && (
               <BilanCard
                 glyph="☾"
@@ -743,10 +856,11 @@ function PilierCard({ mark, label, desc, pilier, onClick }) {
       type="button"
       data-press
       onClick={onClick}
+      className="pilier-card"
       style={{
         appearance: 'none',
         width: '100%',
-        padding: '18px 20px 18px 22px',
+        padding: '18px 20px 18px 24px',
         background: 'rgba(255, 255, 255, 0.65)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
@@ -760,10 +874,11 @@ function PilierCard({ mark, label, desc, pilier, onClick }) {
         boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
         display: 'flex',
         alignItems: 'center',
-        gap: 16,
+        gap: 14,
+        transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
       }}
     >
-      {/* Barre accent gauche 3px */}
+      {/* Barre accent gauche 4px */}
       <span
         aria-hidden
         style={{
@@ -771,17 +886,17 @@ function PilierCard({ mark, label, desc, pilier, onClick }) {
           left: 0,
           top: 0,
           bottom: 0,
-          width: 3,
+          width: 4,
           background: pilier.gradient,
           borderRadius: '0 2px 2px 0',
         }}
       />
 
-      {/* Numéro pilier 44×44 */}
+      {/* Numéro pilier 48×48 */}
       <span
         style={{
-          width: 44,
-          height: 44,
+          width: 48,
+          height: 48,
           borderRadius: 14,
           background: pilier.gradient,
           color: '#FFFFFF',
@@ -794,7 +909,7 @@ function PilierCard({ mark, label, desc, pilier, onClick }) {
           letterSpacing: '0.04em',
           fontVariantNumeric: 'tabular-nums',
           flexShrink: 0,
-          boxShadow: `0 4px 12px ${pilier.accent}33`,
+          boxShadow: `0 4px 14px ${pilier.accent}40`,
         }}
       >
         {mark}
@@ -828,7 +943,18 @@ function PilierCard({ mark, label, desc, pilier, onClick }) {
         </div>
       </div>
 
-      <span aria-hidden style={{ color: pilier.accent, fontSize: 18, flexShrink: 0, opacity: 0.7 }}>›</span>
+      <span
+        aria-hidden
+        style={{
+          color: 'var(--blue-300)',
+          fontSize: 16,
+          flexShrink: 0,
+          fontFamily: '"Inter", sans-serif',
+          fontWeight: 400,
+        }}
+      >
+        ›
+      </span>
     </button>
   );
 }
@@ -841,6 +967,7 @@ function BilanCard({ glyph, label, onClick }) {
       type="button"
       data-press
       onClick={onClick}
+      className="bilan-card"
       style={{
         appearance: 'none',
         width: '100%',
@@ -857,21 +984,23 @@ function BilanCard({ glyph, label, onClick }) {
         opacity: 0.92,
         display: 'flex',
         alignItems: 'center',
-        gap: 16,
+        gap: 14,
+        transition: 'transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
       }}
     >
       <span
         aria-hidden
         style={{
-          width: 44,
-          height: 44,
+          width: 48,
+          height: 48,
           borderRadius: 14,
           background: 'rgba(127, 90, 138, 0.10)',
           color: 'var(--violet)',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 20,
+          fontSize: 28,
+          lineHeight: 1,
           flexShrink: 0,
         }}
       >
@@ -891,7 +1020,18 @@ function BilanCard({ glyph, label, onClick }) {
           {label}
         </div>
       </div>
-      <span aria-hidden style={{ color: 'var(--blue-700)', fontSize: 18, flexShrink: 0 }}>›</span>
+      <span
+        aria-hidden
+        style={{
+          color: 'var(--blue-300)',
+          fontSize: 16,
+          flexShrink: 0,
+          fontFamily: '"Inter", sans-serif',
+          fontWeight: 400,
+        }}
+      >
+        ›
+      </span>
     </button>
   );
 }

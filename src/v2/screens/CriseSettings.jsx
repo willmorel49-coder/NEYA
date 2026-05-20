@@ -159,14 +159,15 @@ export default function CriseSettings({ onClose }) {
           right: 0,
           bottom: 0,
           zIndex: 201,
-          background: 'var(--cream)',
-          color: 'var(--ink)',
+          background: 'var(--bg)',
+          color: 'var(--blue-900)',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           padding: '12px 0 calc(env(safe-area-inset-bottom, 0px) + 24px)',
           transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
-          boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.18)',
+          boxShadow: '0 -8px 32px rgba(10, 36, 56, 0.18)',
+          borderTop: '0.5px solid rgba(255, 255, 255, 0.85)',
           maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
@@ -179,7 +180,7 @@ export default function CriseSettings({ onClose }) {
             width: 36,
             height: 5,
             borderRadius: 999,
-            background: 'rgba(26, 26, 47, 0.18)',
+            background: 'rgba(10, 36, 56, 0.18)',
             margin: '0 auto 18px',
             flexShrink: 0,
           }}
@@ -187,33 +188,37 @@ export default function CriseSettings({ onClose }) {
 
         {/* Title */}
         <div style={{ padding: '0 22px', textAlign: 'center', marginBottom: 6, flexShrink: 0 }}>
-          <div
+          <h1
             style={{
-              fontFamily: 'var(--font-display)',
+              margin: 0,
+              fontFamily: "'Cormorant Garamond', serif",
               fontStyle: 'italic',
-              fontVariationSettings: 'var(--fraunces-italic-soft)',
-              fontSize: 22,
-              color: 'var(--ink)',
+              fontWeight: 300,
+              fontSize: 'clamp(22px, 5.5vw, 26px)',
+              lineHeight: 1.1,
+              color: 'var(--blue-900)',
+              letterSpacing: '-0.01em',
             }}
           >
             Mon refuge
-          </div>
+          </h1>
           <div
             style={{
-              marginTop: 6,
-              fontFamily: 'var(--font-body)',
-              fontSize: 12.5,
-              color: 'var(--content-secondary)',
+              marginTop: 8,
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 13,
+              fontWeight: 400,
+              color: 'var(--text-secondary)',
               maxWidth: 340,
               marginInline: 'auto',
-              lineHeight: 1.5,
+              lineHeight: 1.55,
             }}
           >
             Préparé pour le moment où tu en auras besoin.
           </div>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs — glass pills, rose accent for active (mode crise) */}
         <div
           style={{
             display: 'flex',
@@ -233,19 +238,24 @@ export default function CriseSettings({ onClose }) {
                 data-press
                 style={{
                   appearance: 'none',
-                  padding: '8px 16px',
-                  minHeight: 36,
-                  background: active ? 'var(--ink)' : 'transparent',
-                  color: active ? 'var(--cream)' : 'var(--content-secondary)',
-                  border: active ? 'none' : '0.5px solid rgba(26, 26, 47, 0.14)',
+                  padding: '10px 18px',
+                  minHeight: 38,
+                  background: active ? 'var(--gradient-rose)' : 'rgba(255, 255, 255, 0.65)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
+                  color: active ? '#FFFFFF' : 'var(--blue-700)',
+                  border: active ? '1px solid var(--rose-700)' : '1px solid rgba(255, 255, 255, 0.85)',
                   borderRadius: 999,
-                  fontFamily: 'var(--font-ui)',
+                  fontFamily: "'Inter', sans-serif",
                   fontSize: 11,
                   fontWeight: 600,
-                  letterSpacing: '0.04em',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
                   cursor: 'pointer',
                   WebkitTapHighlightColor: 'transparent',
                   flexShrink: 0,
+                  boxShadow: active ? '0 4px 14px rgba(200, 112, 144, 0.25)' : 'none',
+                  transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), background 200ms cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
                 {t.label}
@@ -265,10 +275,19 @@ export default function CriseSettings({ onClose }) {
         >
           {tab === 'image' && (
             <div>
-              <div className="neya-body-sm" style={{ color: 'var(--content-secondary)', marginBottom: 14 }}>
+              <div
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 13,
+                  fontWeight: 400,
+                  color: 'var(--text-secondary)',
+                  marginBottom: 14,
+                  lineHeight: 1.55,
+                }}
+              >
                 Le décor de ton refuge.
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 {REFUGE_IMAGES.map((img) => {
                   const active = img.key === currentImage;
                   return (
@@ -280,15 +299,18 @@ export default function CriseSettings({ onClose }) {
                       style={{
                         appearance: 'none',
                         padding: 0,
-                        border: active ? '2px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
-                        borderRadius: 12,
+                        border: active ? '2px solid var(--rose-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                        borderRadius: 16,
                         cursor: 'pointer',
                         overflow: 'hidden',
                         position: 'relative',
                         aspectRatio: '4 / 5',
                         background: `#0a0c14 url(${img.src}) center / cover no-repeat`,
                         WebkitTapHighlightColor: 'transparent',
-                        boxShadow: active ? '0 4px 14px rgba(0,0,0,0.18)' : 'none',
+                        boxShadow: active
+                          ? '0 4px 18px rgba(200, 112, 144, 0.30)'
+                          : '0 4px 24px rgba(10, 36, 56, 0.07)',
+                        transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
                       }}
                       aria-pressed={active}
                     >
@@ -298,32 +320,33 @@ export default function CriseSettings({ onClose }) {
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          padding: '28px 12px 12px',
-                          background: 'linear-gradient(0deg, rgba(0,0,0,0.78) 0%, transparent 100%)',
-                          color: 'var(--blue-900)',
+                          padding: '28px 14px 14px',
+                          background: 'linear-gradient(0deg, rgba(10, 36, 56, 0.78) 0%, transparent 100%)',
+                          color: '#FFFFFF',
                           textAlign: 'left',
                         }}
                       >
                         <div
                           style={{
-                            fontFamily: 'var(--font-display)',
+                            fontFamily: "'Cormorant Garamond', serif",
                             fontStyle: 'italic',
-                            fontVariationSettings: 'var(--fraunces-italic-soft)',
-                            fontSize: 13,
+                            fontWeight: 300,
+                            fontSize: 16,
                             lineHeight: 1.2,
-                            textShadow: '0 1px 4px rgba(0,0,0,0.5)',
+                            textShadow: '0 1px 4px rgba(10, 36, 56, 0.5)',
                           }}
                         >
                           {img.label}
                         </div>
                         <div
                           style={{
-                            marginTop: 2,
-                            fontFamily: 'var(--font-ui)',
+                            marginTop: 4,
+                            fontFamily: "'Inter', sans-serif",
                             fontSize: 9,
+                            fontWeight: 500,
                             letterSpacing: '0.18em',
                             textTransform: 'uppercase',
-                            opacity: 0.78,
+                            opacity: 0.85,
                           }}
                         >
                           {img.hint}
@@ -338,121 +361,57 @@ export default function CriseSettings({ onClose }) {
 
           {tab === 'musique' && (
             <div>
-              <div className="neya-body-sm" style={{ color: 'var(--content-secondary)', marginBottom: 14 }}>
-                La musique qui t'accompagne dans la traversée.
+              <div
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 13,
+                  fontWeight: 400,
+                  color: 'var(--text-secondary)',
+                  marginBottom: 14,
+                  lineHeight: 1.55,
+                }}
+              >
+                La musique qui t’accompagne dans la traversée.
               </div>
 
               {/* Silence */}
-              <button
-                type="button"
-                data-press
+              <RefugeRow
+                active={!currentMusic}
                 onClick={() => updateCrise({ music: null })}
-                style={{
-                  appearance: 'none',
-                  width: '100%',
-                  padding: '14px 16px',
-                  minHeight: 56,
-                  background: !currentMusic ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                  border: !currentMusic ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
-                  borderRadius: 14,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 10,
-                  textAlign: 'left',
-                  WebkitTapHighlightColor: 'transparent',
-                }}
-                aria-pressed={!currentMusic}
-              >
-                <div>
-                  <div style={{ fontFamily: 'var(--font-ui)', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>
-                    Silence
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--content-secondary)', marginTop: 2 }}>
-                    Juste le souffle.
-                  </div>
-                </div>
-                <span
-                  style={{
-                    width: 18,
-                    height: 18,
-                    borderRadius: '50%',
-                    border: !currentMusic ? '5px solid var(--ink)' : '1px solid rgba(26, 26, 47, 0.20)',
-                    flexShrink: 0,
-                  }}
-                />
-              </button>
+                title="Silence"
+                hint="Juste le souffle."
+                titleSerif={false}
+                style={{ marginBottom: 10 }}
+              />
 
               {/* Tracks */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {REFUGE_TRACKS.map((t) => {
-                  const active = t.key === currentMusic;
-                  return (
-                    <button
-                      key={t.key}
-                      type="button"
-                      data-press
-                      onClick={() => updateCrise({ music: t.key })}
-                      style={{
-                        appearance: 'none',
-                        padding: '14px 16px',
-                        minHeight: 56,
-                        background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                        border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
-                        borderRadius: 14,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        textAlign: 'left',
-                        WebkitTapHighlightColor: 'transparent',
-                      }}
-                      aria-pressed={active}
-                    >
-                      <div style={{ minWidth: 0 }}>
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-display)',
-                            fontStyle: 'italic',
-                            fontVariationSettings: 'var(--fraunces-italic-soft)',
-                            fontSize: 15,
-                            color: 'var(--ink)',
-                            lineHeight: 1.2,
-                          }}
-                        >
-                          {t.title}
-                        </div>
-                        <div
-                          style={{
-                            marginTop: 4,
-                            fontFamily: 'var(--font-body)',
-                            fontSize: 12,
-                            color: 'var(--content-secondary)',
-                          }}
-                        >
-                          {t.hint}
-                        </div>
-                      </div>
-                      <span
-                        style={{
-                          width: 18,
-                          height: 18,
-                          borderRadius: '50%',
-                          border: active ? '5px solid var(--ink)' : '1px solid rgba(26, 26, 47, 0.20)',
-                          flexShrink: 0,
-                        }}
-                      />
-                    </button>
-                  );
-                })}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {REFUGE_TRACKS.map((t) => (
+                  <RefugeRow
+                    key={t.key}
+                    active={t.key === currentMusic}
+                    onClick={() => updateCrise({ music: t.key })}
+                    title={t.title}
+                    hint={t.hint}
+                    titleSerif
+                  />
+                ))}
               </div>
             </div>
           )}
 
           {tab === 'rythme' && (
             <div>
-              <div className="neya-body-sm" style={{ color: 'var(--content-secondary)', marginBottom: 14 }}>
+              <div
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 13,
+                  fontWeight: 400,
+                  color: 'var(--text-secondary)',
+                  marginBottom: 14,
+                  lineHeight: 1.55,
+                }}
+              >
                 Ta façon de respirer.
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -466,11 +425,15 @@ export default function CriseSettings({ onClose }) {
                       onClick={() => updateCrise({ rhythm: r.key })}
                       style={{
                         appearance: 'none',
-                        padding: '16px 18px',
-                        minHeight: 78,
-                        background: active ? 'rgba(26, 26, 47, 0.06)' : 'transparent',
-                        border: active ? '0.5px solid var(--ink)' : '0.5px solid rgba(26, 26, 47, 0.10)',
-                        borderRadius: 14,
+                        padding: '18px 20px',
+                        minHeight: 84,
+                        background: 'rgba(255, 255, 255, 0.65)',
+                        backdropFilter: 'blur(24px)',
+                        WebkitBackdropFilter: 'blur(24px)',
+                        border: '1px solid rgba(255, 255, 255, 0.85)',
+                        borderLeft: active ? '3px solid var(--rose-700)' : '3px solid var(--blue-700)',
+                        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+                        borderRadius: 20,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'flex-start',
@@ -478,31 +441,34 @@ export default function CriseSettings({ onClose }) {
                         gap: 14,
                         textAlign: 'left',
                         WebkitTapHighlightColor: 'transparent',
+                        transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), border 200ms cubic-bezier(0.16, 1, 0.3, 1)',
                       }}
                       aria-pressed={active}
                     >
                       <div style={{ minWidth: 0, flex: 1 }}>
                         <div
                           style={{
-                            fontFamily: 'var(--font-display)',
+                            fontFamily: "'Cormorant Garamond', serif",
                             fontStyle: 'italic',
-                            fontVariationSettings: 'var(--fraunces-italic-soft)',
-                            fontSize: 16,
-                            color: 'var(--ink)',
+                            fontWeight: 300,
+                            fontSize: 20,
+                            color: 'var(--blue-900)',
                             lineHeight: 1.2,
+                            letterSpacing: '-0.005em',
                           }}
                         >
                           {r.label}
                         </div>
                         <div
                           style={{
-                            marginTop: 4,
-                            fontFamily: 'var(--font-ui)',
+                            marginTop: 6,
+                            fontFamily: "'Inter', sans-serif",
                             fontSize: 10,
-                            letterSpacing: '0.222em',
+                            letterSpacing: '0.18em',
                             textTransform: 'uppercase',
                             fontWeight: 600,
-                            color: 'var(--content-secondary)',
+                            color: 'var(--blue-700)',
+                            fontVariantNumeric: 'tabular-nums',
                           }}
                         >
                           {r.desc}
@@ -510,25 +476,17 @@ export default function CriseSettings({ onClose }) {
                         <div
                           style={{
                             marginTop: 6,
-                            fontFamily: 'var(--font-body)',
-                            fontSize: 12.5,
-                            color: 'var(--content-secondary)',
-                            lineHeight: 1.45,
+                            fontFamily: "'Inter', sans-serif",
+                            fontSize: 13,
+                            fontWeight: 400,
+                            color: 'var(--text-secondary)',
+                            lineHeight: 1.5,
                           }}
                         >
                           {r.hint}
                         </div>
                       </div>
-                      <span
-                        style={{
-                          width: 18,
-                          height: 18,
-                          borderRadius: '50%',
-                          border: active ? '5px solid var(--ink)' : '1px solid rgba(26, 26, 47, 0.20)',
-                          flexShrink: 0,
-                          marginTop: 4,
-                        }}
-                      />
+                      <RadioDot active={active} />
                     </button>
                   );
                 })}
@@ -537,8 +495,8 @@ export default function CriseSettings({ onClose }) {
           )}
         </div>
 
-        {/* Footer close */}
-        <div style={{ padding: '12px 22px 0', flexShrink: 0 }}>
+        {/* Footer close — gradient rose (mode crise) */}
+        <div style={{ padding: '14px 22px 0', flexShrink: 0 }}>
           <button
             type="button"
             data-press
@@ -546,25 +504,114 @@ export default function CriseSettings({ onClose }) {
             style={{
               appearance: 'none',
               width: '100%',
-              padding: '14px 16px',
-              minHeight: 48,
-              background: 'var(--gradient-blue)',
-              color: 'var(--cream)',
+              padding: '15px 24px',
+              minHeight: 50,
+              background: 'var(--gradient-rose)',
+              color: '#FFFFFF',
               border: 'none',
-              borderRadius: 999,
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
+              borderRadius: 50,
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 11,
               fontWeight: 600,
-              letterSpacing: '0.18em',
+              letterSpacing: '0.16em',
               textTransform: 'uppercase',
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
+              boxShadow: '0 8px 24px rgba(200, 112, 144, 0.30)',
+              transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
-            C'est prêt
+            C’est prêt
           </button>
         </div>
       </div>
     </>
+  );
+}
+
+/* ============================================================
+   RefugeRow — glass card with title + hint + radio dot
+   ============================================================ */
+function RefugeRow({ active, onClick, title, hint, titleSerif = true, style }) {
+  return (
+    <button
+      type="button"
+      data-press
+      onClick={onClick}
+      aria-pressed={active}
+      style={{
+        appearance: 'none',
+        width: '100%',
+        padding: '16px 18px',
+        minHeight: 64,
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        borderLeft: active ? '3px solid var(--rose-700)' : '3px solid var(--blue-700)',
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+        borderRadius: 20,
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 14,
+        textAlign: 'left',
+        WebkitTapHighlightColor: 'transparent',
+        transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), border 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+        ...(style || {}),
+      }}
+    >
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <div
+          style={titleSerif ? {
+            fontFamily: "'Cormorant Garamond', serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 18,
+            color: 'var(--blue-900)',
+            lineHeight: 1.2,
+            letterSpacing: '-0.005em',
+          } : {
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 15,
+            fontWeight: 600,
+            color: 'var(--blue-900)',
+            lineHeight: 1.2,
+          }}
+        >
+          {title}
+        </div>
+        <div
+          style={{
+            marginTop: 4,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 13,
+            fontWeight: 400,
+            color: 'var(--text-secondary)',
+            lineHeight: 1.5,
+          }}
+        >
+          {hint}
+        </div>
+      </div>
+      <RadioDot active={active} />
+    </button>
+  );
+}
+
+function RadioDot({ active }) {
+  return (
+    <span
+      style={{
+        width: 18,
+        height: 18,
+        borderRadius: '50%',
+        border: active ? '5px solid var(--rose-700)' : '1px solid var(--blue-300)',
+        flexShrink: 0,
+        marginTop: 2,
+        transition: 'border 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+      }}
+    />
   );
 }

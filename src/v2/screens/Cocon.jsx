@@ -1,10 +1,10 @@
 /* ============================================================
-   ÇA VA ? V6 — Cocon · refonte palette bleu/rose + glassmorphism
+   ÇA VA ? V6 — Cocon · refonte premium Apple Health / Calm
    ============================================================
-   Sanctuaire éditorial : conteneur image délimité, halo teal sous
-   personnage, hero text serif italic, CTA rose pleine largeur,
-   3 actions glass (Musique / Mantra / Personnaliser).
-   Vision Will / CLAUDE.md sections 4-9.
+   Topbar sticky glass · image personnage 343×260 (BUG-05 préservé)
+   halo teal animé · hero text serif italic · CTA gradient-rose
+   3 ActionCards glass (Musique / Mantra / Personnaliser).
+   Espace géométrique 4-8-12-16-24-32-48-64.
    ============================================================ */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
@@ -60,10 +60,10 @@ const TRACKS = [
 
 function getHourPhrase() {
   const h = new Date().getHours();
-  if (h >= 5 && h < 8)   return 'L\'aube est douce. Pose-toi.';
+  if (h >= 5 && h < 8)   return 'L’aube est douce. Pose-toi.';
   if (h >= 8 && h < 12)  return 'Le jour est là. Respire.';
   if (h >= 12 && h < 17) return 'Chaque souffle te recentre.';
-  if (h >= 17 && h < 20) return 'Le jour s\'apaise. Reviens à toi.';
+  if (h >= 17 && h < 20) return 'Le jour s’apaise. Reviens à toi.';
   if (h >= 20 && h < 23) return 'La nuit veille. Repose-toi.';
   return 'Chaque respiration te rapproche de toi-même.';
 }
@@ -85,6 +85,29 @@ function resolveImage(profile) {
 function trackSrc(key) {
   if (!key) return null;
   return `/musique/${encodeURIComponent(key)}.mp3`;
+}
+
+/* ─── Icône-gradient pour ActionCard ─── */
+function ActionIcon({ gradient, children }) {
+  return (
+    <div
+      aria-hidden
+      style={{
+        width: 32,
+        height: 32,
+        flexShrink: 0,
+        borderRadius: '50%',
+        background: gradient,
+        color: '#FFFFFF',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: '0 4px 10px rgba(10, 36, 56, 0.18)',
+      }}
+    >
+      {children}
+    </div>
+  );
 }
 
 /* ============================================================
@@ -109,13 +132,11 @@ export default function Cocon() {
   const hourWhisper = useMemo(() => getHourPhrase(), []);
   const currentTrack = useMemo(() => TRACKS.find((t) => t.key === cocon.music) || null, [cocon.music]);
 
-  // Re-évalue l'heure
   useEffect(() => {
     const id = setInterval(() => forceTick((n) => (n + 1) % 1000), 60_000);
     return () => clearInterval(id);
   }, []);
 
-  // Refresh profil depuis localStorage
   useEffect(() => {
     const refresh = () => setLocalProfile(getProfile());
     window.addEventListener('neya:profile-changed', refresh);
@@ -126,14 +147,12 @@ export default function Cocon() {
     };
   }, []);
 
-  // Audio : appliquer volume
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
     a.volume = typeof cocon.musicVolume === 'number' ? cocon.musicVolume : 0.45;
   }, [cocon.musicVolume]);
 
-  // Track change → stop
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
@@ -141,7 +160,6 @@ export default function Cocon() {
     setMusicPlaying(false);
   }, [currentTrack?.key]);
 
-  // Auto-pause à l'unmount
   useEffect(() => {
     return () => {
       const a = audioRef.current;
@@ -183,71 +201,86 @@ export default function Cocon() {
       }}
       data-world={currentTotem.world}
     >
-      <Blobs variant="rose-violet" />
-
-      {/* Top bar — brand ÇA VA? + bouton ⋯ */}
-      <div
-        style={{
-          position: 'relative',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 22px 8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          zIndex: 3,
-        }}
-      >
-        <span style={{ width: 44, height: 44 }} />
-        <span
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 22,
-            color: 'var(--blue-900)',
-            letterSpacing: '-0.01em',
-          }}
-        >
-          ÇA VA ?
-        </span>
-        <button
-          type="button"
-          onClick={() => { haptic(2); setPersonalizeOpen(true); }}
-          data-press
-          aria-label="Personnaliser mon cocon"
-          style={{
-            appearance: 'none',
-            width: 44,
-            height: 44,
-            background: 'rgba(255, 255, 255, 0.65)',
-            border: '0.5px solid rgba(26, 90, 127, 0.30)',
-            borderRadius: '50%',
-            color: 'var(--blue-900)',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            WebkitTapHighlightColor: 'transparent',
-            fontSize: 18,
-            padding: 0,
-            boxShadow: '0 4px 14px rgba(10, 36, 56, 0.06)',
-          }}
-        >
-          ⋯
-        </button>
+      {/* Painterly blobs atténués (opacity 0.10 max via Blobs variant) */}
+      <div style={{ opacity: 0.55, pointerEvents: 'none' }}>
+        <Blobs variant="rose-violet" />
       </div>
 
-      {/* Conteneur image illustrative — 343×220 max, jamais plein écran */}
+      {/* ── Topbar sticky premium glass ─────────────────────── */}
+      <div
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          paddingTop: 'env(safe-area-inset-top, 0px)',
+          background: 'rgba(238, 243, 248, 0.72)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '0.5px solid rgba(255, 255, 255, 0.85)',
+        }}
+      >
+        <div
+          style={{
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            minHeight: 56,
+          }}
+        >
+          <span style={{ width: 44, height: 44 }} />
+          <span
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 22,
+              color: 'var(--blue-900)',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            ÇA VA ?
+          </span>
+          <button
+            type="button"
+            onClick={() => { haptic(2); setPersonalizeOpen(true); }}
+            data-press
+            aria-label="Personnaliser mon cocon"
+            style={{
+              appearance: 'none',
+              width: 44,
+              height: 44,
+              background: 'rgba(255, 255, 255, 0.65)',
+              border: '1px solid rgba(255, 255, 255, 0.85)',
+              borderRadius: '50%',
+              color: 'var(--blue-900)',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              WebkitTapHighlightColor: 'transparent',
+              fontSize: 18,
+              padding: 0,
+              boxShadow: '0 4px 14px rgba(10, 36, 56, 0.08)',
+            }}
+          >
+            ⋯
+          </button>
+        </div>
+      </div>
+
+      {/* ── Image personnage card — 343×260 (BUG-05 préservé) ── */}
       <div
         style={{
           position: 'relative',
-          margin: '8px 16px 0',
-          height: 220,
-          borderRadius: 24,
+          margin: '24px 16px 0',
+          height: 260,
+          borderRadius: 28,
           overflow: 'hidden',
           flexShrink: 0,
-          boxShadow: '0 8px 28px rgba(10, 36, 56, 0.10)',
+          boxShadow: '0 12px 40px rgba(10, 36, 56, 0.12)',
           zIndex: 2,
         }}
       >
@@ -267,42 +300,39 @@ export default function Cocon() {
             display: 'block',
           }}
         />
-        {/* Overlay gradient sombre pour lisibilité */}
         <div
           aria-hidden
           style={{
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(to bottom, transparent 30%, rgba(10, 36, 56, 0.65) 100%)',
+              'linear-gradient(to bottom, transparent 40%, rgba(10, 36, 56, 0.55) 100%)',
             pointerEvents: 'none',
           }}
         />
-        {/* Halo teal sous personnage */}
+        {/* Halo teal animé premium */}
         <div
           aria-hidden
+          className="cocon-halo"
           style={{
             position: 'absolute',
-            bottom: -10,
+            bottom: -8,
             left: '50%',
-            transform: 'translateX(-50%)',
-            width: 80,
-            height: 40,
-            background: 'radial-gradient(ellipse, rgba(18, 196, 176, 0.30) 0%, transparent 70%)',
+            width: 100,
+            height: 50,
+            background: 'radial-gradient(ellipse, rgba(18, 196, 176, 0.35) 0%, transparent 70%)',
             borderRadius: '50%',
-            animation: 'cocon-halo-pulse 4s ease-in-out infinite',
             pointerEvents: 'none',
           }}
         />
-        {/* Ambiance dynamique cantonnée dans la carte */}
         <CoconAmbiance type={cocon.ambiance || 'fireflies'} accent={accent} />
       </div>
 
-      {/* Hero text */}
+      {/* ── Hero text ───────────────────────────────────────── */}
       <div
         style={{
           position: 'relative',
-          margin: '28px 22px 0',
+          margin: '32px 24px 0',
           textAlign: 'center',
           zIndex: 2,
         }}
@@ -315,7 +345,7 @@ export default function Cocon() {
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
             color: 'var(--rose-700)',
-            marginBottom: 14,
+            marginBottom: 12,
           }}
         >
           Ton cocon
@@ -337,11 +367,11 @@ export default function Cocon() {
         <p
           style={{
             margin: '16px auto 0',
-            fontFamily: 'var(--font-body)',
+            fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: 15,
-            lineHeight: 1.6,
+            fontWeight: 300,
+            fontSize: 16,
+            lineHeight: 1.5,
             color: 'var(--text-secondary)',
             maxWidth: 320,
           }}
@@ -349,7 +379,6 @@ export default function Cocon() {
           {hourWhisper}
         </p>
 
-        {/* Mantra optionnel */}
         {profile.mantra && (
           <button
             type="button"
@@ -383,16 +412,18 @@ export default function Cocon() {
         )}
       </div>
 
-      {/* CTA rose principal — pleine largeur */}
-      <div style={{ position: 'relative', margin: '26px 16px 0', zIndex: 2 }}>
+      {/* ── CTA gradient-rose premium ───────────────────────── */}
+      <div style={{ position: 'relative', margin: '40px 16px 0', zIndex: 2 }}>
         <button
           type="button"
           onClick={() => { haptic(6); setBreathingOpen(true); }}
           data-press
+          className="cocon-cta-primary"
           style={{
             appearance: 'none',
             width: '100%',
-            height: 50,
+            minHeight: 52,
+            padding: '16px 28px',
             background: 'var(--gradient-rose)',
             color: '#FFFFFF',
             border: 'none',
@@ -404,28 +435,33 @@ export default function Cocon() {
             textTransform: 'uppercase',
             cursor: 'pointer',
             WebkitTapHighlightColor: 'transparent',
-            boxShadow: '0 8px 24px rgba(200, 112, 144, 0.30)',
+            boxShadow: '0 8px 24px rgba(200, 112, 144, 0.35)',
+            transition: 'transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease-out',
           }}
         >
           Me poser 2 minutes
         </button>
       </div>
 
-      {/* Liste 3 ActionCards glass : Musique · Mantra · Personnaliser */}
+      {/* ── ActionCards grid ────────────────────────────────── */}
       <div
         style={{
           position: 'relative',
-          margin: '20px 16px 0',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 10,
+          margin: '40px 16px 0',
+          display: 'grid',
+          gridTemplateColumns: '1fr',
+          gap: 12,
           paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 130px)',
           zIndex: 2,
         }}
       >
         <ActionCard
           onClick={() => { haptic(4); setMusiqueOpen(true); }}
-          icon={<IconMusic />}
+          icon={(
+            <ActionIcon gradient="var(--gradient-blue)">
+              <IconMusic />
+            </ActionIcon>
+          )}
           label={currentTrack ? currentTrack.title : 'Musique'}
           subtitle={currentTrack ? (musicPlaying ? 'En lecture…' : 'Touche pour ouvrir') : 'Choisis ta piste'}
           cover={currentTrack ? getTrackCover(currentTrack.key) : null}
@@ -434,19 +470,26 @@ export default function Cocon() {
         />
         <ActionCard
           onClick={() => { haptic(2); setPersonalizeOpen(true); }}
-          icon={<IconMantra />}
+          icon={(
+            <ActionIcon gradient="var(--gradient-rose)">
+              <IconMantra />
+            </ActionIcon>
+          )}
           label={profile.mantra ? 'Modifier ton mantra' : 'Poser un mantra'}
           subtitle={profile.mantra ? 'Une phrase pour toi' : 'Quelques mots qui te recentrent'}
         />
         <ActionCard
           onClick={() => { haptic(2); setPersonalizeOpen(true); }}
-          icon={<IconSettings />}
+          icon={(
+            <ActionIcon gradient="var(--gradient-violet)">
+              <IconSettings />
+            </ActionIcon>
+          )}
           label="Personnaliser"
           subtitle="Image, ambiance, identité"
         />
       </div>
 
-      {/* Audio element */}
       {currentTrack && (
         <audio
           ref={audioRef}
@@ -459,7 +502,6 @@ export default function Cocon() {
         />
       )}
 
-      {/* Overlays */}
       {breathingOpen && (
         <BreathingPause
           accent={accent}
@@ -478,15 +520,49 @@ export default function Cocon() {
         <Musique onClose={() => setMusiqueOpen(false)} />
       )}
 
-      {/* Keyframes locales */}
+      {/* ── Keyframes locales + interactions ─────────────────── */}
       <style>{`
+        .cocon-halo {
+          transform: translateX(-50%);
+          animation: cocon-halo-pulse 4.2s ease-in-out infinite;
+        }
         @keyframes cocon-halo-pulse {
           0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-          50%      { opacity: 1;   transform: translateX(-50%) scale(1.15); }
+          50%      { opacity: 1;   transform: translateX(-50%) scale(1.18); }
         }
         @keyframes cocon-mantra-breathe {
           0%, 100% { opacity: 0.86; }
           50%      { opacity: 1; }
+        }
+
+        .cocon-cta-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 32px rgba(200, 112, 144, 0.45);
+        }
+        .cocon-cta-primary:active {
+          transform: scale(0.97);
+          transition: transform 120ms ease-out;
+        }
+
+        .cocon-action-card {
+          transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+                      box-shadow 220ms ease-out;
+        }
+        .cocon-action-card:hover {
+          transform: translateY(-1px) scale(1.005);
+          box-shadow: 0 10px 30px rgba(10, 36, 56, 0.10);
+        }
+        .cocon-action-card:active {
+          transform: scale(0.985);
+          transition: transform 120ms ease-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .cocon-halo { animation: none !important; }
+          .cocon-cta-primary,
+          .cocon-action-card { transition: none !important; }
+          .cocon-cta-primary:hover,
+          .cocon-action-card:hover { transform: none !important; }
         }
       `}</style>
     </div>
@@ -494,7 +570,7 @@ export default function Cocon() {
 }
 
 /* ============================================================
-   ActionCard — pill glass blur 24 + icône bleue + label serif italic
+   ActionCard — glass blur 24 + icône gradient + label serif
    ============================================================ */
 
 function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPlaying }) {
@@ -503,14 +579,15 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
       type="button"
       onClick={onClick}
       data-press
+      className="cocon-action-card"
       style={{
         appearance: 'none',
         display: 'flex',
         alignItems: 'center',
         gap: 14,
         width: '100%',
-        padding: '14px 16px',
-        minHeight: 64,
+        padding: '16px 18px',
+        minHeight: 76,
         background: 'rgba(255, 255, 255, 0.65)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
@@ -544,22 +621,7 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
           />
         </div>
       ) : (
-        <div
-          aria-hidden
-          style={{
-            width: 40,
-            height: 40,
-            flexShrink: 0,
-            borderRadius: 10,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'rgba(26, 90, 127, 0.08)',
-            color: 'var(--blue-700)',
-          }}
-        >
-          {icon}
-        </div>
+        icon
       )}
 
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -568,7 +630,7 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 18,
+            fontSize: 17,
             color: 'var(--blue-900)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -582,10 +644,10 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
           style={{
             marginTop: 4,
             fontFamily: 'var(--font-body)',
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: 400,
             lineHeight: 1.5,
-            color: 'var(--text-secondary)',
+            color: 'var(--text-muted)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -627,7 +689,7 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
       <span
         aria-hidden
         style={{
-          color: 'var(--blue-500)',
+          color: 'var(--blue-300)',
           fontSize: 18,
           flexShrink: 0,
           padding: '0 2px',
@@ -639,32 +701,32 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
   );
 }
 
-/* ─── Icônes SVG inline (24px, blue-700) ─── */
+/* ─── Icônes SVG inline (18px, white) ─── */
 
 function IconMusic() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M9 18V5l12-2v13" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="6" cy="18" r="3" stroke="currentColor" strokeWidth="1.4" />
-      <circle cx="18" cy="16" r="3" stroke="currentColor" strokeWidth="1.4" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M9 18V5l12-2v13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="6" cy="18" r="3" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="18" cy="16" r="3" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   );
 }
 
 function IconMantra() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M7 8h10M7 12h10M7 16h6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.4" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M7 8h10M7 12h10M7 16h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   );
 }
 
 function IconSettings() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.03-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9c.21.51.74.86 1.55 1.03H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1.03Z" stroke="currentColor" strokeWidth="1.4" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.03-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9c.21.51.74.86 1.55 1.03H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1.03Z" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   );
 }
@@ -786,25 +848,66 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
             height: 5,
             borderRadius: 999,
             background: 'rgba(10, 36, 56, 0.18)',
-            margin: '0 auto 18px',
+            margin: '0 auto 16px',
             flexShrink: 0,
           }}
         />
 
-        {/* Title */}
-        <div style={{ padding: '0 22px', textAlign: 'center', marginBottom: 18, flexShrink: 0 }}>
+        {/* Header glass cohérent */}
+        <div
+          style={{
+            position: 'relative',
+            padding: '0 22px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            flexShrink: 0,
+          }}
+        >
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label="Fermer"
+            data-press
+            style={{
+              appearance: 'none',
+              width: 44,
+              height: 44,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.65)',
+              border: '1px solid rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              color: 'var(--blue-900)',
+              fontSize: 20,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+              WebkitTapHighlightColor: 'transparent',
+              boxShadow: '0 4px 14px rgba(10, 36, 56, 0.08)',
+              flexShrink: 0,
+            }}
+          >
+            ‹
+          </button>
           <div
             style={{
+              flex: 1,
+              textAlign: 'center',
               fontFamily: 'var(--font-display)',
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 'clamp(26px, 6.5vw, 30px)',
+              fontSize: 'clamp(24px, 6vw, 28px)',
               lineHeight: 1.15,
               color: 'var(--blue-900)',
             }}
           >
             Mon cocon
           </div>
+          <span style={{ width: 44, height: 44, flexShrink: 0 }} />
         </div>
 
         {/* Tabs */}
@@ -828,9 +931,9 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 data-press
                 style={{
                   appearance: 'none',
-                  padding: '8px 14px',
+                  padding: '8px 16px',
                   minHeight: 36,
-                  background: active ? 'var(--blue-700)' : 'transparent',
+                  background: active ? 'var(--gradient-blue)' : 'transparent',
                   color: active ? '#FFFFFF' : 'var(--text-secondary)',
                   border: active ? 'none' : '1px solid var(--blue-300)',
                   borderRadius: 999,
@@ -842,6 +945,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   whiteSpace: 'nowrap',
                   WebkitTapHighlightColor: 'transparent',
                   flexShrink: 0,
+                  boxShadow: active ? '0 4px 14px rgba(26, 90, 127, 0.25)' : 'none',
                 }}
               >
                 {t.label}
@@ -864,7 +968,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: 400,
                   lineHeight: 1.6,
                   color: 'var(--text-secondary)',
@@ -873,7 +977,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               >
                 Le décor de ton sanctuaire.
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 {COCON_IMAGES.map((img) => {
                   const active = currentImage.key === img.key;
                   return (
@@ -885,15 +989,15 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                       style={{
                         appearance: 'none',
                         padding: 0,
-                        border: active ? '2px solid var(--blue-700)' : '1px solid var(--blue-300)',
-                        borderRadius: 14,
+                        border: active ? '2px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                        borderRadius: 16,
                         cursor: 'pointer',
                         overflow: 'hidden',
                         position: 'relative',
                         aspectRatio: '4 / 5',
                         background: `var(--bg) url(${img.src}) center / cover no-repeat`,
                         WebkitTapHighlightColor: 'transparent',
-                        boxShadow: active ? '0 4px 14px rgba(10, 36, 56, 0.18)' : 'none',
+                        boxShadow: active ? '0 8px 24px rgba(26, 90, 127, 0.25)' : '0 4px 14px rgba(10, 36, 56, 0.08)',
                       }}
                       aria-pressed={active}
                     >
@@ -903,7 +1007,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          padding: '24px 10px 12px',
+                          padding: '24px 12px 12px',
                           background: 'linear-gradient(0deg, rgba(10, 36, 56, 0.80) 0%, transparent 100%)',
                           color: '#FFFFFF',
                           fontFamily: 'var(--font-display)',
@@ -927,7 +1031,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: 400,
                   lineHeight: 1.6,
                   color: 'var(--text-secondary)',
@@ -936,7 +1040,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               >
                 La petite vie qui danse sur ton cocon.
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {AMBIANCES.map((a) => {
                   const active = a.key === currentAmbiance;
                   return (
@@ -948,10 +1052,10 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                       style={{
                         appearance: 'none',
                         padding: '14px 16px',
-                        minHeight: 56,
-                        background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.55)',
-                        border: active ? '1px solid var(--blue-700)' : '1px solid var(--blue-300)',
-                        borderRadius: 14,
+                        minHeight: 60,
+                        background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.65)',
+                        border: active ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                        borderRadius: 16,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -959,17 +1063,19 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         gap: 14,
                         textAlign: 'left',
                         WebkitTapHighlightColor: 'transparent',
-                        backdropFilter: 'blur(12px)',
-                        WebkitBackdropFilter: 'blur(12px)',
+                        backdropFilter: 'blur(24px)',
+                        WebkitBackdropFilter: 'blur(24px)',
+                        boxShadow: '0 4px 14px rgba(10, 36, 56, 0.06)',
                       }}
                       aria-pressed={active}
                     >
                       <div style={{ minWidth: 0 }}>
                         <div
                           style={{
-                            fontFamily: 'var(--font-ui)',
-                            fontSize: 15,
-                            fontWeight: 600,
+                            fontFamily: 'var(--font-display)',
+                            fontStyle: 'italic',
+                            fontWeight: 300,
+                            fontSize: 17,
                             lineHeight: 1.3,
                             letterSpacing: '-0.01em',
                             color: 'var(--blue-900)',
@@ -980,10 +1086,10 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         <div
                           style={{
                             fontFamily: 'var(--font-body)',
-                            fontSize: 13,
+                            fontSize: 12,
                             fontWeight: 400,
                             lineHeight: 1.5,
-                            color: 'var(--text-secondary)',
+                            color: 'var(--text-muted)',
                             marginTop: 4,
                           }}
                         >
@@ -1013,7 +1119,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: 400,
                   lineHeight: 1.6,
                   color: 'var(--text-secondary)',
@@ -1023,7 +1129,6 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 La musique qui accompagne ton retour à toi.
               </div>
 
-              {/* Aucune musique */}
               <button
                 type="button"
                 data-press
@@ -1033,15 +1138,17 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   width: '100%',
                   padding: '12px 16px',
                   minHeight: 48,
-                  background: !currentMusic ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.55)',
-                  border: !currentMusic ? '1px solid var(--blue-700)' : '1px solid var(--blue-300)',
-                  borderRadius: 12,
+                  background: !currentMusic ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.65)',
+                  border: !currentMusic ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                  borderRadius: 14,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   marginBottom: 12,
                   WebkitTapHighlightColor: 'transparent',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
                 }}
                 aria-pressed={!currentMusic}
               >
@@ -1059,16 +1166,18 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 />
               </button>
 
-              {/* Volume slider */}
               <div
                 style={{
                   padding: '12px 16px',
-                  background: 'rgba(26, 90, 127, 0.05)',
-                  borderRadius: 12,
+                  background: 'rgba(255, 255, 255, 0.65)',
+                  border: '1px solid rgba(255, 255, 255, 0.85)',
+                  borderRadius: 14,
                   marginBottom: 16,
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
                 }}
               >
                 <span style={{ fontSize: 13 }} aria-hidden>🔉</span>
@@ -1100,8 +1209,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 </span>
               </div>
 
-              {/* Tracks */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {TRACKS.map((t) => {
                   const active = t.key === currentMusic;
                   return (
@@ -1113,16 +1221,18 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                       style={{
                         appearance: 'none',
                         padding: '12px 14px',
-                        minHeight: 44,
-                        background: active ? 'rgba(26, 90, 127, 0.08)' : 'transparent',
-                        border: active ? '1px solid var(--blue-700)' : '1px solid var(--blue-300)',
-                        borderRadius: 10,
+                        minHeight: 48,
+                        background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.65)',
+                        border: active ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                        borderRadius: 12,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         textAlign: 'left',
                         WebkitTapHighlightColor: 'transparent',
+                        backdropFilter: 'blur(24px)',
+                        WebkitBackdropFilter: 'blur(24px)',
                       }}
                       aria-pressed={active}
                     >
@@ -1170,22 +1280,21 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: 400,
                   lineHeight: 1.6,
                   color: 'var(--text-secondary)',
-                  marginBottom: 20,
+                  marginBottom: 24,
                 }}
               >
                 Qui tu es dans cet espace.
               </div>
 
-              {/* Prénom */}
-              <div style={{ marginBottom: 18 }}>
+              <div style={{ marginBottom: 24 }}>
                 <label
                   style={{
                     display: 'block',
-                    marginBottom: 10,
+                    marginBottom: 12,
                     fontFamily: 'var(--font-ui)',
                     fontSize: 10,
                     fontWeight: 600,
@@ -1208,23 +1317,24 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     padding: '14px 16px',
                     minHeight: 48,
                     background: 'rgba(255, 255, 255, 0.65)',
-                    border: '1px solid var(--blue-300)',
-                    borderRadius: 12,
+                    border: '1px solid rgba(255, 255, 255, 0.85)',
+                    borderRadius: 14,
                     fontFamily: 'var(--font-body)',
                     fontSize: 15,
                     color: 'var(--blue-900)',
                     outline: 'none',
                     boxSizing: 'border-box',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
                   }}
                 />
               </div>
 
-              {/* Mantra */}
-              <div style={{ marginBottom: 18 }}>
+              <div style={{ marginBottom: 24 }}>
                 <label
                   style={{
                     display: 'block',
-                    marginBottom: 10,
+                    marginBottom: 12,
                     fontFamily: 'var(--font-ui)',
                     fontSize: 10,
                     fontWeight: 600,
@@ -1247,8 +1357,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     padding: '14px 16px',
                     minHeight: 64,
                     background: 'rgba(255, 255, 255, 0.65)',
-                    border: '1px solid var(--blue-300)',
-                    borderRadius: 12,
+                    border: '1px solid rgba(255, 255, 255, 0.85)',
+                    borderRadius: 14,
                     fontFamily: 'var(--font-display)',
                     fontStyle: 'italic',
                     fontWeight: 300,
@@ -1258,6 +1368,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     outline: 'none',
                     resize: 'none',
                     boxSizing: 'border-box',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
                   }}
                 />
                 <div
@@ -1275,12 +1387,11 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 </div>
               </div>
 
-              {/* Totem */}
-              <div style={{ marginBottom: 18 }}>
+              <div style={{ marginBottom: 24 }}>
                 <label
                   style={{
                     display: 'block',
-                    marginBottom: 10,
+                    marginBottom: 12,
                     fontFamily: 'var(--font-ui)',
                     fontSize: 10,
                     fontWeight: 600,
@@ -1291,7 +1402,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 >
                   Mon totem
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                   {TOTEMS.map((t) => {
                     const active = t.key === currentTotem;
                     return (
@@ -1304,9 +1415,9 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           appearance: 'none',
                           padding: '12px 14px',
                           minHeight: 48,
-                          background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.55)',
-                          border: active ? '1px solid var(--blue-700)' : '1px solid var(--blue-300)',
-                          borderRadius: 10,
+                          background: active ? 'rgba(26, 90, 127, 0.08)' : 'rgba(255, 255, 255, 0.65)',
+                          border: active ? '1px solid var(--blue-700)' : '1px solid rgba(255, 255, 255, 0.85)',
+                          borderRadius: 12,
                           cursor: 'pointer',
                           fontFamily: 'var(--font-ui)',
                           fontSize: 14,
@@ -1315,6 +1426,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           color: 'var(--blue-900)',
                           textAlign: 'left',
                           WebkitTapHighlightColor: 'transparent',
+                          backdropFilter: 'blur(24px)',
+                          WebkitBackdropFilter: 'blur(24px)',
                         }}
                         aria-pressed={active}
                       >
@@ -1332,8 +1445,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                 style={{
                   appearance: 'none',
                   width: '100%',
-                  padding: '14px 16px',
-                  minHeight: 50,
+                  padding: '16px 28px',
+                  minHeight: 52,
                   background: 'var(--gradient-blue)',
                   color: '#FFFFFF',
                   border: 'none',
@@ -1354,7 +1467,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
           )}
         </div>
 
-        {/* Footer close */}
+        {/* Footer close — outline blue-300 */}
         {tab !== 'identite' && (
           <div style={{ padding: '12px 22px 0', flexShrink: 0 }}>
             <button
@@ -1364,8 +1477,8 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
               style={{
                 appearance: 'none',
                 width: '100%',
-                padding: '13px 24px',
-                minHeight: 44,
+                padding: '14px 28px',
+                minHeight: 48,
                 background: 'transparent',
                 border: '1.5px solid var(--blue-300)',
                 borderRadius: 50,

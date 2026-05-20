@@ -1,26 +1,16 @@
 /* ============================================================
-   ÇA VA ? V2 — Aide & Ressources
+   ÇA VA ? V3 — Aide & Ressources (palette bleu/rose · glass)
    ============================================================
-   Premise : users may be mentally suffering. Push toward real
-   professional help (3114, SOS Amitié, 3919) without shaming
-   digital comfort. No tracking, no analytics, no judgment.
-
-   Sections :
-     Hero       — italic Fraunces, opening softness
-     Urgence    — 3 cards 24h/24 (3114, SOS Amitié, 3919)
-     Thérapeute — comment trouver + Mon Soutien Psy
-     Lignes     — 5 lignes spécialisées (suicide, drogues, alcool…)
-     Témoignages — 3 voix anonymes
-     Footer     — whisper "tu peux revenir"
-
-   Style : LIGHT cream + ink · wash-temple background
-   Animations : slide-up 420ms / slide-down 320ms
+   Push vers vraie aide pro (3114, SOS Amitié, 3919) sans honte.
+   Refonte V3 : Blobs rose-blue, glass cards, Cormorant italic,
+   CTA gradient bleu, Urgence accent rose.
    ============================================================ */
 
 import { useState, useEffect } from 'react';
 import { haptic } from '../state';
 import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import Blobs from '../../components/Blobs';
 
 const URGENCE = [
   {
@@ -38,7 +28,7 @@ const URGENCE = [
   {
     name: '3919',
     italic: 'Violences conjugales, famille',
-    desc: '24h/24, anonyme, gratuit. Pour toi ou pour quelqu\'un.',
+    desc: '24h/24, anonyme, gratuit. Pour toi ou pour quelqu’un.',
     tel: '3919',
   },
 ];
@@ -54,17 +44,17 @@ const LIGNES = [
 const TEMOIGNAGES = [
   {
     quote:
-      'J\'ai attendu trois ans avant d\'appeler le 3114. Vingt minutes de discussion. Tout n\'a pas changé. Mais j\'ai respiré.',
+      'J’ai attendu trois ans avant d’appeler le 3114. Vingt minutes de discussion. Tout n’a pas changé. Mais j’ai respiré.',
     author: 'A., 31 ans',
   },
   {
     quote:
-      'Je voulais une psy parfaite. J\'en ai vu cinq. La sixième m\'a écoutée vraiment. C\'est ok de chercher.',
+      'Je voulais une psy parfaite. J’en ai vu cinq. La sixième m’a écoutée vraiment. C’est ok de chercher.',
     author: 'M., 27 ans',
   },
   {
     quote:
-      'Le truc qui m\'a aidé : dire à mon frère que ça allait pas. C\'est lui qui a appelé pour moi.',
+      'Le truc qui m’a aidé : dire à mon frère que ça allait pas. C’est lui qui a appelé pour moi.',
     author: 'L., 34 ans',
   },
 ];
@@ -87,9 +77,8 @@ const TROUVER = [
 
 export default function Aide({ onClose }) {
   const [closing, setClosing] = useState(false);
-
-  // Slide-up enter
   const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
     if (typeof window !== 'undefined') {
@@ -109,14 +98,12 @@ export default function Aide({ onClose }) {
     setTimeout(() => onClose?.(), 320);
   };
 
-  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
   const { dialogProps, containerRef } = useStandardOverlay({
     open: !closing,
     onClose: handleClose,
     labelText: 'Aide & support',
   });
 
-  // Edge swipe-back (iOS HIG) — horizontal left-edge drag
   const {
     bindContainer: bindEdge,
     translateX: edgeX,
@@ -125,16 +112,12 @@ export default function Aide({ onClose }) {
 
   const callTel = (tel) => {
     haptic(6);
-    try {
-      window.location.href = `tel:${tel}`;
-    } catch {}
+    try { window.location.href = `tel:${tel}`; } catch {}
   };
 
   const openExternal = (url) => {
     haptic(4);
-    try {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } catch {}
+    try { window.open(url, '_blank', 'noopener,noreferrer'); } catch {}
   };
 
   const translateY = closing ? '100%' : mounted ? '0%' : '100%';
@@ -145,22 +128,25 @@ export default function Aide({ onClose }) {
       ref={containerRef}
       {...dialogProps}
       {...bindEdge}
-      className="wash-temple"
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 240,
+        background: 'var(--bg)',
+        color: 'var(--blue-900)',
         overflowY: 'auto',
         WebkitOverflowScrolling: 'touch',
-        color: 'var(--ink)',
         transform: `translate(${edgeX}px, ${translateY})`,
         transition: edgeDragging
           ? 'none'
-          : `transform ${transitionMs}ms var(--ease-out-ios)`,
+          : `transform ${transitionMs}ms cubic-bezier(0.16, 1, 0.3, 1)`,
         willChange: 'transform',
+        WebkitFontSmoothing: 'antialiased',
       }}
     >
-      {/* Edge swipe-back hint — discreet left hairline */}
+      <Blobs variant="rose-blue" />
+
+      {/* Edge swipe-back hint */}
       <div
         aria-hidden
         style={{
@@ -170,14 +156,15 @@ export default function Aide({ onClose }) {
           width: 1,
           height: 80,
           transform: 'translateY(-50%)',
-          background: 'var(--ink-faint, rgba(26, 26, 47, 0.18))',
+          background: 'rgba(26, 90, 127, 0.20)',
           opacity: edgeDragging ? 0.5 : 0,
-          transition: 'opacity 180ms var(--ease-out-ios)',
+          transition: 'opacity 180ms cubic-bezier(0.16, 1, 0.3, 1)',
           pointerEvents: 'none',
           zIndex: 6,
         }}
       />
-      {/* Glass pill back button — fixed top-left, z-index 80 */}
+
+      {/* Glass pill back button */}
       <button
         type="button"
         data-press
@@ -217,7 +204,7 @@ export default function Aide({ onClose }) {
         Retour
       </button>
 
-      {/* Top bar : label centré (back déplacé en position fixed) */}
+      {/* Sticky header */}
       <div
         style={{
           position: 'sticky',
@@ -226,345 +213,316 @@ export default function Aide({ onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 90px 14px',
-          background:
-            'linear-gradient(to bottom, var(--bg, var(--cream)) 70%, rgba(251, 246, 232, 0))',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            letterSpacing: '0.222em',
-            textTransform: 'uppercase',
-            color: 'var(--blue-700)',
-            fontWeight: 500,
-          }}
-        >
-          Aide & Ressources
-        </span>
-      </div>
-
-      {/* ════════════════════════════════════════════════════════
-         HERO
-         ════════════════════════════════════════════════════════ */}
-      <section
-        style={{
-          padding: '20px 24px 36px',
-          textAlign: 'left',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 90px 12px',
+          background: 'rgba(238, 243, 248, 0.78)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '0.5px solid rgba(194, 216, 232, 0.25)',
         }}
       >
         <h1
           style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(28px, 7vw, 36px)',
+            margin: 0,
+            fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
             fontWeight: 300,
-            lineHeight: 1.18,
-            margin: 0,
-            color: 'var(--ink)',
-          }}
-          dangerouslySetInnerHTML={{
-            __html:
-              "« Tu n'as pas à porter ça <em class='neya-key'>seul·e</em>. »",
-          }}
-        />
-        <p
-          style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 13,
-            color: 'var(--ink-soft)',
-            margin: '14px 0 0',
-            lineHeight: 1.55,
-            maxWidth: 460,
+            fontSize: 'clamp(22px, 5.5vw, 26px)',
+            lineHeight: 1.1,
+            color: 'var(--blue-900)',
+            letterSpacing: '-0.01em',
           }}
         >
-          Tu peux parler à quelqu'un. Maintenant. Gratuitement. Sans
-          rendez-vous. Ces lignes répondent.
-        </p>
-      </section>
+          Aide & ressources
+        </h1>
+      </div>
 
-      {/* ════════════════════════════════════════════════════════
-         URGENCE — Lignes d'écoute 24h/24
-         ════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 24px 36px' }}>
-        <SectionTitle label="Écoute 24h/24" accent="var(--terracotta)" />
-
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 12,
-            marginTop: 18,
-          }}
-        >
-          {URGENCE.map((line) => (
-            <UrgenceCard key={line.tel} line={line} onCall={callTel} />
-          ))}
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════
-         TROUVER UN·E THÉRAPEUTE
-         ════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 24px 36px' }}>
-        <SectionTitle label="Trouver quelqu'un" accent="var(--ochre)" />
-
-        <div
-          style={{
-            marginTop: 18,
-            background: 'var(--cream-light)',
-            border: '0.5px solid rgba(194, 144, 81, 0.32)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '18px 20px 20px',
-            boxShadow: 'var(--shadow-soft)',
-          }}
-        >
-          <h3
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* HERO */}
+        <section style={{ padding: '24px 22px 28px' }}>
+          <h2
             style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 22,
+              fontFamily: "'Cormorant Garamond', serif",
               fontStyle: 'italic',
               fontWeight: 300,
-              lineHeight: 1.25,
-              margin: '0 0 14px',
-              color: 'var(--ink)',
+              fontSize: 'clamp(26px, 7vw, 32px)',
+              lineHeight: 1.18,
+              margin: 0,
+              color: 'var(--blue-900)',
+              letterSpacing: '-0.01em',
             }}
           >
-            « Comment trouver le ou la bonne ? »
-          </h3>
-
-          <ul
+            « Tu n’as pas à porter ça <span style={{ color: 'var(--rose-700)' }}>seul·e</span>. »
+          </h2>
+          <p
             style={{
-              listStyle: 'none',
-              padding: 0,
-              margin: 0,
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 14,
+              fontWeight: 400,
+              color: 'var(--text-secondary)',
+              margin: '14px 0 0',
+              lineHeight: 1.6,
+              maxWidth: 460,
+            }}
+          >
+            Tu peux parler à quelqu’un. Maintenant. Gratuitement. Sans rendez-vous.
+            Ces lignes répondent.
+          </p>
+        </section>
+
+        {/* URGENCE — accent rose */}
+        <section style={{ padding: '0 22px 28px' }}>
+          <SectionTitle label="Écoute 24h/24" />
+          <div
+            style={{
               display: 'flex',
               flexDirection: 'column',
+              gap: 12,
+              marginTop: 14,
+            }}
+          >
+            {URGENCE.map((line) => (
+              <UrgenceCard key={line.tel} line={line} onCall={callTel} />
+            ))}
+          </div>
+        </section>
+
+        {/* TROUVER UN·E THÉRAPEUTE */}
+        <section style={{ padding: '0 22px 28px' }}>
+          <SectionTitle label="Trouver quelqu’un" />
+          <article
+            style={{
+              marginTop: 14,
+              padding: '18px 20px 20px',
+              borderRadius: 20,
+              background: 'rgba(255, 255, 255, 0.65)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid rgba(255, 255, 255, 0.85)',
+              boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
+            }}
+          >
+            <h3
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontStyle: 'italic',
+                fontWeight: 300,
+                fontSize: 22,
+                lineHeight: 1.25,
+                margin: '0 0 14px',
+                color: 'var(--blue-900)',
+              }}
+            >
+              « Comment trouver le ou la bonne ? »
+            </h3>
+            <ul
+              style={{
+                listStyle: 'none',
+                padding: 0,
+                margin: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 10,
+              }}
+            >
+              {TROUVER.map((row, i) => (
+                <li
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    gap: 10,
+                    alignItems: 'flex-start',
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 400,
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.55,
+                  }}
+                >
+                  <span
+                    aria-hidden
+                    style={{
+                      color: 'var(--violet)',
+                      fontSize: 13,
+                      lineHeight: 1.55,
+                      flexShrink: 0,
+                    }}
+                  >
+                    ✦
+                  </span>
+                  <span>
+                    <strong
+                      style={{
+                        color: 'var(--blue-900)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {row.strong}
+                    </strong>
+                    {row.tail}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              type="button"
+              data-press
+              onClick={() =>
+                openExternal('https://monsoutienpsy.sante.gouv.fr/')
+              }
+              style={{
+                appearance: 'none',
+                border: 'none',
+                background: 'transparent',
+                color: 'var(--blue-700)',
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 13,
+                fontWeight: 500,
+                letterSpacing: '0.02em',
+                padding: '12px 0 0',
+                marginTop: 8,
+                cursor: 'pointer',
+                WebkitTapHighlightColor: 'transparent',
+                textAlign: 'left',
+                display: 'inline-block',
+              }}
+            >
+              Voir Mon Soutien Psy →
+            </button>
+          </article>
+        </section>
+
+        {/* LIGNES SPÉCIALISÉES */}
+        <section style={{ padding: '0 22px 28px' }}>
+          <SectionTitle label="Autres lignes" />
+          <div
+            style={{
+              marginTop: 14,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
               gap: 10,
             }}
           >
-            {TROUVER.map((row, i) => (
-              <li
-                key={i}
-                style={{
-                  display: 'flex',
-                  gap: 10,
-                  alignItems: 'flex-start',
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: 13,
-                  color: 'var(--ink-soft)',
-                  lineHeight: 1.55,
-                }}
-              >
-                <span
-                  aria-hidden
-                  style={{
-                    color: 'var(--tilleul)',
-                    fontSize: 13,
-                    lineHeight: 1.55,
-                    flexShrink: 0,
-                  }}
-                >
-                  ✦
-                </span>
-                <span>
-                  <strong
-                    style={{
-                      color: 'var(--ink)',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {row.strong}
-                  </strong>
-                  {row.tail}
-                </span>
-              </li>
+            {LIGNES.map((line) => (
+              <LigneMini key={line.tel} line={line} onCall={callTel} />
             ))}
-          </ul>
+          </div>
+        </section>
 
-          <button
-            type="button"
-            data-press
-            onClick={() =>
-              openExternal('https://monsoutienpsy.sante.gouv.fr/')
-            }
+        {/* TÉMOIGNAGES */}
+        <section style={{ padding: '0 22px 24px' }}>
+          <SectionTitle label="Ils s’en sont sortis" />
+          <div
             style={{
-              appearance: 'none',
-              border: 'none',
-              background: 'transparent',
-              color: 'var(--ochre)',
-              fontFamily: 'var(--font-ui)',
-              fontSize: 12,
-              fontWeight: 500,
-              letterSpacing: 0,
-              padding: '10px 0 0',
-              marginTop: 6,
-              cursor: 'pointer',
-              WebkitTapHighlightColor: 'transparent',
-              textAlign: 'left',
-              display: 'inline-block',
+              marginTop: 14,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 18,
             }}
           >
-            Voir Mon Soutien Psy →
-          </button>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════
-         LIGNES SPÉCIALISÉES
-         ════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 24px 36px' }}>
-        <SectionTitle label="Autres lignes" accent="var(--mist-blue)" />
-
-        <div
-          style={{
-            marginTop: 18,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: 10,
-          }}
-        >
-          {LIGNES.map((line) => (
-            <LigneMini key={line.tel} line={line} onCall={callTel} />
-          ))}
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════
-         TÉMOIGNAGES
-         ════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '0 24px 32px' }}>
-        <SectionTitle label="Ils s'en sont sortis" accent="var(--emerald)" />
-
-        <div
-          style={{
-            marginTop: 18,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 18,
-          }}
-        >
-          {TEMOIGNAGES.map((t, i) => (
-            <figure
-              key={i}
-              style={{
-                margin: 0,
-                paddingLeft: 14,
-                borderLeft: '1px solid rgba(52, 145, 127, 0.40)',
-              }}
-            >
-              <blockquote
+            {TEMOIGNAGES.map((t, i) => (
+              <figure
+                key={i}
                 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 14,
-                  fontStyle: 'italic',
-                  fontWeight: 300,
-                  color: 'var(--ink)',
-                  lineHeight: 1.55,
                   margin: 0,
+                  paddingLeft: 14,
+                  borderLeft: '2px solid var(--rose-500)',
                 }}
               >
-                « {t.quote} »
-              </blockquote>
-              <figcaption
-                style={{
-                  marginTop: 8,
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: 9,
-                  letterSpacing: '0.222em',
-                  textTransform: 'uppercase',
-                  color: 'var(--ink-whisper)',
-                  fontWeight: 500,
-                }}
-              >
-                · {t.author}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </section>
+                <blockquote
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontStyle: 'italic',
+                    fontWeight: 300,
+                    fontSize: 16,
+                    color: 'var(--blue-900)',
+                    lineHeight: 1.5,
+                    margin: 0,
+                  }}
+                >
+                  « {t.quote} »
+                </blockquote>
+                <figcaption
+                  style={{
+                    marginTop: 8,
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 10,
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-muted)',
+                    fontWeight: 500,
+                  }}
+                >
+                  · {t.author}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
 
-      {/* ════════════════════════════════════════════════════════
-         FOOTER WHISPER
-         ════════════════════════════════════════════════════════ */}
-      <footer
-        style={{
-          padding: '8px 24px 56px',
-          textAlign: 'center',
-        }}
-      >
-        <p
+        {/* FOOTER WHISPER */}
+        <footer
           style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 14,
-            fontStyle: 'italic',
-            fontWeight: 400,
-            color: 'var(--ink-soft)',
-            lineHeight: 1.55,
-            margin: 0,
-            maxWidth: 320,
-            marginInline: 'auto',
+            padding: '8px 22px calc(env(safe-area-inset-bottom, 0px) + 48px)',
+            textAlign: 'center',
           }}
         >
-          Tu peux revenir ici chaque fois que tu veux. Cette page ne s'efface
-          pas.
-        </p>
-      </footer>
+          <p
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontStyle: 'italic',
+              fontWeight: 300,
+              fontSize: 16,
+              color: 'var(--text-secondary)',
+              lineHeight: 1.55,
+              margin: 0,
+              maxWidth: 320,
+              marginInline: 'auto',
+            }}
+          >
+            Tu peux revenir ici chaque fois que tu veux. Cette page ne s’efface pas.
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }
 
 /* ============================================================
-   SectionTitle — caps 9 + hairline accent
+   SectionTitle — Inter uppercase 14/600 blue-900
    ============================================================ */
-function SectionTitle({ label, accent }) {
+function SectionTitle({ label }) {
   return (
     <div
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
+        fontFamily: "'Inter', sans-serif",
+        fontSize: 11,
+        fontWeight: 600,
+        letterSpacing: '0.18em',
+        textTransform: 'uppercase',
+        color: 'var(--blue-900)',
       }}
     >
-      <span
-        style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 9,
-          letterSpacing: '0.222em',
-          textTransform: 'uppercase',
-          color: 'var(--ink-soft)',
-          fontWeight: 500,
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {label}
-      </span>
-      <span
-        aria-hidden
-        style={{
-          flex: 1,
-          height: 1,
-          background: accent,
-          opacity: 0.45,
-        }}
-      />
+      {label}
     </div>
   );
 }
 
 /* ============================================================
-   UrgenceCard — large card, terracotta hairline, terracotta CTA
+   UrgenceCard — glass card, rose CTA (urgence)
    ============================================================ */
 function UrgenceCard({ line, onCall }) {
   return (
     <article
       style={{
-        background: 'var(--cream-light)',
-        border: '0.5px solid rgba(159, 88, 76, 0.20)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '16px 18px 16px',
-        boxShadow: 'var(--shadow-soft)',
+        padding: '18px 20px',
+        borderRadius: 20,
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        borderLeft: '3px solid var(--rose-700)',
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
         display: 'flex',
         flexDirection: 'column',
         gap: 6,
@@ -572,11 +530,10 @@ function UrgenceCard({ line, onCall }) {
     >
       <div
         style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 14,
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 16,
           fontWeight: 600,
-          color: 'var(--ink)',
-          letterSpacing: 0,
+          color: 'var(--blue-900)',
           lineHeight: 1.2,
         }}
       >
@@ -584,11 +541,11 @@ function UrgenceCard({ line, onCall }) {
       </div>
       <div
         style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 16,
+          fontFamily: "'Cormorant Garamond', serif",
           fontStyle: 'italic',
           fontWeight: 300,
-          color: 'var(--ink-soft)',
+          fontSize: 16,
+          color: 'var(--text-secondary)',
           lineHeight: 1.35,
         }}
       >
@@ -596,11 +553,12 @@ function UrgenceCard({ line, onCall }) {
       </div>
       <p
         style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 12,
-          color: 'var(--ink-soft)',
-          margin: '4px 0 12px',
-          lineHeight: 1.5,
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 13,
+          fontWeight: 400,
+          color: 'var(--text-secondary)',
+          margin: '4px 0 14px',
+          lineHeight: 1.55,
         }}
       >
         {line.desc}
@@ -614,17 +572,19 @@ function UrgenceCard({ line, onCall }) {
           appearance: 'none',
           alignSelf: 'flex-start',
           border: 'none',
-          background: 'var(--terracotta)',
-          color: 'var(--cream)',
-          fontFamily: 'var(--font-ui)',
-          fontSize: 12,
-          fontWeight: 500,
-          letterSpacing: 0,
-          padding: '9px 16px',
+          background: 'var(--gradient-rose)',
+          color: '#FFFFFF',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 11,
+          fontWeight: 600,
+          letterSpacing: '0.16em',
+          textTransform: 'uppercase',
+          padding: '12px 22px',
           borderRadius: 999,
           cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',
-          boxShadow: '0 1px 6px rgba(159, 88, 76, 0.22)',
+          boxShadow: '0 4px 14px rgba(200, 112, 144, 0.30)',
+          transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         Appeler →
@@ -634,7 +594,7 @@ function UrgenceCard({ line, onCall }) {
 }
 
 /* ============================================================
-   LigneMini — small 2-col card, ink CTA (less urgent)
+   LigneMini — small glass card, blue tone
    ============================================================ */
 function LigneMini({ line, onCall }) {
   return (
@@ -645,26 +605,29 @@ function LigneMini({ line, onCall }) {
       style={{
         appearance: 'none',
         textAlign: 'left',
-        background: 'var(--cream-light)',
-        border: '0.5px solid rgba(115, 151, 188, 0.28)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '12px 14px 14px',
-        boxShadow: 'var(--shadow-soft)',
+        padding: '14px 16px',
+        borderRadius: 16,
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
         cursor: 'pointer',
         WebkitTapHighlightColor: 'transparent',
         display: 'flex',
         flexDirection: 'column',
         gap: 4,
-        color: 'var(--ink)',
+        color: 'var(--blue-900)',
+        transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       <div
         style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 13,
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 14,
           fontWeight: 600,
-          color: 'var(--ink)',
-          letterSpacing: 0,
+          color: 'var(--blue-700)',
+          fontVariantNumeric: 'tabular-nums',
           lineHeight: 1.2,
         }}
       >
@@ -672,11 +635,11 @@ function LigneMini({ line, onCall }) {
       </div>
       <div
         style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 14,
+          fontFamily: "'Cormorant Garamond', serif",
           fontStyle: 'italic',
           fontWeight: 300,
-          color: 'var(--ink-soft)',
+          fontSize: 15,
+          color: 'var(--blue-900)',
           lineHeight: 1.3,
         }}
       >
@@ -684,12 +647,12 @@ function LigneMini({ line, onCall }) {
       </div>
       <div
         style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 9,
-          letterSpacing: '0.222em',
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 10,
+          fontWeight: 500,
+          letterSpacing: '0.18em',
           textTransform: 'uppercase',
-          color: 'var(--ink-soft)',
-          fontWeight: 600,
+          color: 'var(--text-muted)',
           marginTop: 2,
         }}
       >
@@ -704,7 +667,7 @@ function LigneMini({ line, onCall }) {
    ============================================================ */
 function formatTel(raw) {
   if (!raw) return '';
-  if (raw.length === 4) return raw; // 3114, 3919
+  if (raw.length === 4) return raw;
   if (raw.length === 10) {
     return raw.match(/.{1,2}/g)?.join(' ') || raw;
   }

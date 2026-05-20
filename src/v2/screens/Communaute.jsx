@@ -1,12 +1,15 @@
 /* ============================================================
-   ÇA VA ? V6 — Communauté · Refonte palette bleu/rose · glass
+   ÇA VA ? V7 — Communauté · Premium Apple/Calm/Threads
    ============================================================
    Structure :
-     1. Hero glass card 343×220 (image contenue, pas plein écran)
-     2. Question du jour (label rose + question Cormorant + CTA bleu)
-     3. Les voix qui passent (feed glass + accent bar bleu/rose)
-     4. Mon cercle proche
-     5. Témoignages (4 cards éditoriales border-left 3px)
+     1. Topbar glass sticky premium
+     2. Hero glass card 343×280 image + gradient overlay
+     3. Question du jour + 3 réponses preview glass mini-cards
+     4. Les voix qui passent (feed glass + accent border-left 4px)
+     5. Mon cercle horizontal scroll-snap + avatars gradient
+     6. Témoignages cards éditoriales avec initiales 56×56
+     7. Composer modal premium glass overlay
+     8. Spacing géométrique strict (4,8,12,16,24,32,48,64)
    ============================================================ */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
@@ -28,8 +31,8 @@ const HERO_IMAGE = '/img/world-communaute.png';
 
 const REACTIONS = [
   { key: 'touche',    icon: '♡', label: 'Touché·e' },
-  { key: 'comprends', icon: '◇', label: 'Je comprends' },
-  { key: 'lis',       icon: '○', label: 'Je te lis' },
+  { key: 'comprends', icon: '◇', label: 'Comprends' },
+  { key: 'lis',       icon: '○', label: 'Lis' },
 ];
 
 const SEEDED_POSTS = [
@@ -47,6 +50,7 @@ const TEMOIGNAGES = [
     name: 'Léa, 28 ans',
     city: 'Marseille',
     accent: 'var(--blue-700)',
+    avatarGradient: 'var(--gradient-blue)',
     title: "J'ai cru longtemps que demander de l'aide, c'était abandonner.",
     body: "Pendant des années, j'ai porté seule mon anxiété. Je pensais que c'était ma force, ma manière de tenir.\n\nUn jour, j'ai accepté de m'asseoir face à quelqu'un. Pas pour qu'on me sauve. Juste pour qu'on m'écoute.\n\nCe jour-là, je n'ai pas perdu. J'ai posé un poids que je portais depuis l'enfance, sans même savoir qu'il était là.\n\nAujourd'hui je sais : demander de l'aide, c'est commencer à se prendre au sérieux.",
   },
@@ -56,6 +60,7 @@ const TEMOIGNAGES = [
     name: 'Théo, 34 ans',
     city: 'Lyon',
     accent: 'var(--rose-700)',
+    avatarGradient: 'var(--gradient-rose)',
     title: "Le burn-out ne s'est pas annoncé. Il est arrivé un mardi matin.",
     body: "J'étais en train de me brosser les dents. Et je n'ai pas pu cracher.\n\nMon corps avait dit stop avant que ma tête comprenne. Pendant six mois je n'ai pas pu retravailler.\n\nCe que personne ne m'avait dit, c'est que reconstruire prend du temps. Pas en semaines. En saisons.\n\nJ'ai appris à doser. À dire non. À ne pas reprendre tout d'un coup parce qu'on me croyait \"guéri\".\n\nLa fatigue mentale n'est pas une faiblesse. C'est un signal que j'ai mis trente-quatre ans à entendre.",
   },
@@ -65,6 +70,7 @@ const TEMOIGNAGES = [
     name: 'Inès, 22 ans',
     city: 'Paris',
     accent: 'var(--violet)',
+    avatarGradient: 'var(--gradient-violet)',
     title: "Mon corps avait essayé de me parler. J'ai mis cinq ans à l'entendre.",
     body: "Migraines. Estomac. Insomnies. Je consultais médecin après médecin. Tout allait \"normalement\".\n\nC'est une psy qui m'a posé la bonne question : \"Et qu'est-ce qui ne va pas, dans ta vie ?\"\n\nJ'ai pleuré pendant une heure. Je ne savais pas que j'avais autant de choses à dire.\n\nLes symptômes étaient le langage de ce que je n'osais pas formuler. Le corps tient le sac quand l'esprit refuse de regarder.\n\nAujourd'hui j'écoute. Pas toujours bien. Mais j'écoute.",
   },
@@ -74,6 +80,7 @@ const TEMOIGNAGES = [
     name: 'Marc, 41 ans',
     city: 'Bordeaux',
     accent: 'var(--rose-500)',
+    avatarGradient: 'linear-gradient(135deg, var(--rose-500), var(--rose-700))',
     title: "Devenir père m'a confronté à un vide que je ne savais pas nommer.",
     body: "On parle beaucoup du baby blues des mères. Personne ne m'avait préparé à ce que ça pouvait remuer chez le père.\n\nJ'avais 41 ans. Une vie carrée. Une carrière. Et soudain, face à ce petit être, j'ai eu peur. Pas peur de mal faire. Peur de moi-même.\n\nDes émotions sont remontées que je croyais réglées depuis longtemps. Mon propre père. Mon enfance.\n\nJ'ai cherché un homme à qui parler. Ça m'a pris du temps. On nous a tellement appris à ne pas demander.\n\nJ'apprends aujourd'hui à ressentir avant d'agir. C'est neuf. C'est étrange. C'est juste.",
   },
@@ -99,6 +106,10 @@ function timeAgo(ts) {
   return `il y a ${d} j`;
 }
 
+function wordCount(s = '') {
+  return s.trim().split(/\s+/).filter(Boolean).length;
+}
+
 /* ─── Styles glass partagés ─── */
 
 const GLASS_CARD = {
@@ -106,9 +117,27 @@ const GLASS_CARD = {
   backdropFilter: 'var(--glass-blur)',
   WebkitBackdropFilter: 'var(--glass-blur)',
   border: '1px solid var(--glass-border)',
-  borderRadius: 22,
+  borderRadius: 24,
   boxShadow: 'var(--glass-shadow)',
 };
+
+const GLASS_MINI = {
+  background: 'rgba(255,255,255,0.65)',
+  backdropFilter: 'blur(24px)',
+  WebkitBackdropFilter: 'blur(24px)',
+  border: '1px solid rgba(255,255,255,0.75)',
+  borderRadius: 16,
+};
+
+const EYEBROW_BASE = {
+  fontFamily: 'var(--font-ui)',
+  fontSize: 10,
+  fontWeight: 600,
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase',
+};
+
+const SECTION_GAP = 48;
 
 /* ============================================================
    Main
@@ -138,11 +167,18 @@ export default function Communaute() {
 
   const previewPosts = allPosts.slice(0, 4);
   const cercleCount = cercle.length;
-  const cerclePreview = cercle.slice(0, 3);
 
   const promptResponses = useMemo(() => {
     return ownPosts.filter((p) => p.promptId === dailyPrompt.id).slice(0, 3);
   }, [ownPosts, dailyPrompt.id]);
+
+  // Réponses preview pour la question du jour : 3 propositions (les propres + seeds en fallback)
+  const promptPreviewCards = useMemo(() => {
+    const fromOwn = promptResponses.slice(0, 3);
+    if (fromOwn.length >= 3) return fromOwn;
+    const seeds = SEEDED_POSTS.slice(0, 3 - fromOwn.length);
+    return [...fromOwn, ...seeds];
+  }, [promptResponses]);
 
   const refresh = () => {
     setOwnPosts(loadOwnPosts());
@@ -225,25 +261,56 @@ export default function Communaute() {
     >
       <Blobs variant="blue-rose" />
 
-      {/* Body padded — toutes les sections vivent dedans, y compris le hero card */}
+      {/* ═══ 1. TOPBAR GLASS STICKY PREMIUM ═══ */}
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          padding: 'calc(env(safe-area-inset-top, 0px) + 16px) 16px 16px',
+          background: 'rgba(238, 243, 248, 0.72)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '1px solid rgba(10, 36, 56, 0.06)',
+          textAlign: 'center',
+        }}
+      >
+        <h1
+          style={{
+            margin: 0,
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 22,
+            lineHeight: 1,
+            letterSpacing: 0,
+            color: 'var(--blue-900)',
+          }}
+        >
+          ÇA VA ?
+        </h1>
+      </header>
+
+      {/* Body */}
       <div
         style={{
           position: 'relative',
           zIndex: 1,
-          padding: 'calc(env(safe-area-inset-top, 0px) + 70px) 16px calc(env(safe-area-inset-bottom, 0px) + 130px)',
+          padding: `24px 16px calc(env(safe-area-inset-bottom, 0px) + 130px)`,
         }}
       >
 
-        {/* ═══ HERO GLASS CARD 343×220 ═══ */}
+        {/* ═══ 2. HERO GLASS CARD 343×280 ═══ */}
         <section
-          aria-label="Communauté ÇA VA ?"
+          aria-label="Communauté"
           style={{
             position: 'relative',
-            height: 220,
-            borderRadius: 24,
+            height: 280,
+            margin: '0 0 32px',
+            borderRadius: 28,
             overflow: 'hidden',
-            ...GLASS_CARD,
-            padding: 0,
+            boxShadow: '0 12px 40px rgba(10,36,56,0.12)',
+            border: '1px solid var(--glass-border)',
           }}
         >
           <div
@@ -262,171 +329,146 @@ export default function Communaute() {
               position: 'absolute',
               inset: 0,
               background:
-                'linear-gradient(to bottom, rgba(10,36,56,0.10) 0%, rgba(10,36,56,0.30) 45%, rgba(10,36,56,0.78) 100%)',
+                'linear-gradient(to bottom, transparent 30%, rgba(10,36,56,0.78) 100%)',
             }}
           />
           <div
             style={{
               position: 'absolute',
-              left: 22,
-              right: 22,
-              bottom: 22,
+              left: 24,
+              right: 24,
+              bottom: 24,
               color: '#FFFFFF',
               zIndex: 2,
+              textAlign: 'center',
             }}
           >
-            <div
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 10,
-                fontWeight: 600,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.92)',
-                marginBottom: 12,
-                textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-              }}
-            >
-              Communauté
-            </div>
-            <h1
+            <h2
               style={{
                 margin: 0,
                 fontFamily: 'var(--font-display)',
                 fontStyle: 'italic',
-                fontWeight: 300,
-                fontSize: 'clamp(36px, 9vw, 52px)',
-                lineHeight: 1.05,
+                fontWeight: 400,
+                fontSize: 'clamp(28px, 7vw, 36px)',
+                lineHeight: 1.1,
                 letterSpacing: 0,
                 color: '#FFFFFF',
                 textShadow: '0 2px 14px rgba(0,0,0,0.40)',
               }}
             >
               Tu n'es pas seul·e.
-            </h1>
+            </h2>
+            <p
+              style={{
+                margin: '12px 0 0',
+                fontFamily: 'var(--font-ui)',
+                fontWeight: 400,
+                fontSize: 14,
+                lineHeight: 1.5,
+                color: 'rgba(255,255,255,0.85)',
+              }}
+            >
+              On peut tout porter, mais pas tout seuls.
+            </p>
           </div>
         </section>
 
-        {/* ═══ 1. QUESTION DU JOUR ═══ */}
-        <section style={{ marginTop: 32 }}>
-          <div
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'var(--rose-700)',
-              marginBottom: 14,
-            }}
-          >
+        {/* ═══ 3. QUESTION DU JOUR ═══ */}
+        <section style={{ marginBottom: SECTION_GAP }}>
+          <div style={{ ...EYEBROW_BASE, color: 'var(--rose-700)', marginBottom: 12 }}>
             Question du jour
           </div>
 
-          <div style={{ ...GLASS_CARD, padding: '24px 22px 22px' }}>
-            <p
-              style={{
-                margin: 0,
-                fontFamily: 'var(--font-display)',
-                fontStyle: 'italic',
-                fontWeight: 300,
-                fontSize: 'clamp(22px, 5.5vw, 28px)',
-                lineHeight: 1.25,
-                color: 'var(--blue-900)',
-                letterSpacing: 0,
-              }}
-            >
-              {dailyPrompt.text}
-            </p>
+          <p
+            style={{
+              margin: '0 0 24px',
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              fontSize: 'clamp(22px, 5.5vw, 28px)',
+              lineHeight: 1.25,
+              color: 'var(--blue-900)',
+              letterSpacing: 0,
+            }}
+          >
+            {dailyPrompt.text}
+          </p>
 
-            {promptResponses.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
+            {promptPreviewCards.map((p) => (
               <div
+                key={p.id}
                 style={{
-                  marginTop: 18,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 8,
+                  ...GLASS_MINI,
+                  padding: '14px 16px',
                 }}
               >
                 <div
                   style={{
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 10,
-                    fontWeight: 600,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: 'var(--text-secondary)',
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontWeight: 400,
+                    fontSize: 14,
+                    lineHeight: 1.2,
+                    color: 'var(--blue-700)',
                     marginBottom: 6,
                   }}
                 >
-                  Ta réponse · {promptResponses.length}
+                  {p.pseudo}
                 </div>
-                {promptResponses.map((p) => (
-                  <div
-                    key={p.id}
-                    style={{
-                      padding: '12px 16px',
-                      background: 'rgba(255,255,255,0.55)',
-                      backdropFilter: 'blur(12px)',
-                      WebkitBackdropFilter: 'blur(12px)',
-                      border: '1px solid rgba(255,255,255,0.75)',
-                      borderRadius: 14,
-                      fontFamily: 'var(--font-body)',
-                      fontWeight: 400,
-                      fontSize: 15,
-                      lineHeight: 1.6,
-                      color: 'var(--text-secondary)',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    {p.body}
-                  </div>
-                ))}
+                <div
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontWeight: 400,
+                    fontSize: 13,
+                    lineHeight: 1.55,
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  {p.body}
+                </div>
               </div>
-            )}
-
-            <button
-              type="button"
-              data-press
-              onClick={() => { haptic(4); setComposerOpen({ promptId: dailyPrompt.id }); }}
-              style={{
-                marginTop: 20,
-                appearance: 'none',
-                width: '100%',
-                padding: '15px 24px',
-                minHeight: 50,
-                background: 'var(--gradient-blue)',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: 50,
-                fontFamily: 'var(--font-ui)',
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                boxShadow: '0 8px 24px rgba(26,90,127,0.30)',
-                WebkitTapHighlightColor: 'transparent',
-              }}
-            >
-              {promptResponses.length > 0 ? 'Ajouter une réponse' : 'Répondre'}
-            </button>
+            ))}
           </div>
+
+          <button
+            type="button"
+            data-press
+            onClick={() => { haptic(4); setComposerOpen({ promptId: dailyPrompt.id }); }}
+            style={{
+              appearance: 'none',
+              width: '100%',
+              padding: '14px 24px',
+              minHeight: 48,
+              background: 'var(--gradient-blue)',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: 50,
+              fontFamily: 'var(--font-ui)',
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              boxShadow: '0 8px 24px rgba(26,90,127,0.30)',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            {promptResponses.length > 0 ? 'Ajouter une réponse' : 'Répondre'}
+          </button>
         </section>
 
-        {/* ═══ 2. LES VOIX QUI PASSENT ═══ */}
-        <section style={{ marginTop: 36 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
-            <div
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 10,
-                fontWeight: 600,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: 'var(--blue-700)',
-              }}
-            >
+        {/* ═══ 4. LES VOIX QUI PASSENT ═══ */}
+        <section style={{ marginBottom: SECTION_GAP }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              justifyContent: 'space-between',
+              marginBottom: 16,
+            }}
+          >
+            <div style={{ ...EYEBROW_BASE, color: 'var(--blue-500)' }}>
               Les voix qui passent
             </div>
             <button
@@ -440,11 +482,7 @@ export default function Communaute() {
                 color: 'var(--blue-700)',
                 cursor: 'pointer',
                 padding: '6px 4px',
-                fontFamily: 'var(--font-ui)',
-                fontSize: 10,
-                fontWeight: 600,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
+                ...EYEBROW_BASE,
                 WebkitTapHighlightColor: 'transparent',
               }}
             >
@@ -467,11 +505,11 @@ export default function Communaute() {
               <div
                 style={{
                   ...GLASS_CARD,
-                  padding: '28px 18px',
+                  padding: '32px 24px',
                   textAlign: 'center',
                   fontFamily: 'var(--font-display)',
                   fontStyle: 'italic',
-                  fontWeight: 300,
+                  fontWeight: 400,
                   fontSize: 18,
                   lineHeight: 1.4,
                   color: 'var(--text-secondary)',
@@ -509,19 +547,17 @@ export default function Communaute() {
           </button>
         </section>
 
-        {/* ═══ 3. MON CERCLE ═══ */}
-        <section style={{ marginTop: 36 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
-            <div
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 10,
-                fontWeight: 600,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: 'var(--blue-700)',
-              }}
-            >
+        {/* ═══ 5. MON CERCLE ═══ */}
+        <section style={{ marginBottom: SECTION_GAP }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              justifyContent: 'space-between',
+              marginBottom: 16,
+            }}
+          >
+            <div style={{ ...EYEBROW_BASE, color: 'var(--violet)' }}>
               Mon cercle
             </div>
             <span
@@ -537,107 +573,15 @@ export default function Communaute() {
             </span>
           </div>
 
-          <div style={{ ...GLASS_CARD, padding: '18px 20px' }}>
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 8,
-                marginBottom: 14,
-              }}
-            >
-              {cerclePreview.length > 0 ? (
-                cerclePreview.map((m, i) => (
-                  <span
-                    key={i}
-                    style={{
-                      padding: '8px 14px',
-                      background: 'rgba(255,255,255,0.55)',
-                      backdropFilter: 'blur(10px)',
-                      WebkitBackdropFilter: 'blur(10px)',
-                      border: '1px solid var(--blue-300)',
-                      borderRadius: 50,
-                      fontFamily: 'var(--font-display)',
-                      fontStyle: 'italic',
-                      fontWeight: 300,
-                      fontSize: 17,
-                      color: 'var(--blue-900)',
-                    }}
-                  >
-                    {m.pseudo}
-                  </span>
-                ))
-              ) : (
-                <span
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontStyle: 'italic',
-                    fontWeight: 300,
-                    fontSize: 18,
-                    color: 'var(--text-secondary)',
-                    padding: '4px 0',
-                  }}
-                >
-                  Ton cercle est encore vide.
-                </span>
-              )}
-              {cercleCount > 3 && (
-                <span
-                  style={{
-                    padding: '8px 14px',
-                    background: 'transparent',
-                    border: '1px dashed var(--blue-300)',
-                    borderRadius: 50,
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  +{cercleCount - 3}
-                </span>
-              )}
-            </div>
-            <button
-              type="button"
-              data-press
-              onClick={() => { haptic(2); setCercleOpen(true); }}
-              style={{
-                appearance: 'none',
-                width: '100%',
-                padding: '13px 24px',
-                minHeight: 44,
-                background: 'transparent',
-                color: 'var(--blue-700)',
-                border: '1.5px solid var(--blue-300)',
-                borderRadius: 50,
-                fontFamily: 'var(--font-ui)',
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                WebkitTapHighlightColor: 'transparent',
-              }}
-            >
-              {cercleCount === 0 ? 'Composer mon cercle' : 'Voir tout mon cercle'}
-            </button>
-          </div>
+          <CercleRow
+            cercle={cercle}
+            onComposeOpen={() => { haptic(2); setCercleOpen(true); }}
+          />
         </section>
 
-        {/* ═══ 4. TÉMOIGNAGES ═══ */}
-        <section style={{ marginTop: 36 }}>
-          <div
-            style={{
-              fontFamily: 'var(--font-ui)',
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'var(--rose-700)',
-              marginBottom: 10,
-            }}
-          >
+        {/* ═══ 6. TÉMOIGNAGES ═══ */}
+        <section style={{ marginBottom: SECTION_GAP }}>
+          <div style={{ ...EYEBROW_BASE, color: 'var(--rose-700)', marginBottom: 12 }}>
             Témoignages
           </div>
           <div
@@ -647,12 +591,12 @@ export default function Communaute() {
               fontSize: 15,
               lineHeight: 1.6,
               color: 'var(--text-secondary)',
-              marginBottom: 16,
+              marginBottom: 24,
             }}
           >
             Des histoires vécues, écrites par d'autres.
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {TEMOIGNAGES.map((t) => (
               <TemoignageCard
                 key={t.id}
@@ -666,10 +610,10 @@ export default function Communaute() {
         {/* Footer manifesto */}
         <p
           style={{
-            margin: '48px 0 0',
+            margin: '32px 0 0',
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
-            fontWeight: 300,
+            fontWeight: 400,
             fontSize: 18,
             lineHeight: 1.5,
             color: 'var(--text-secondary)',
@@ -763,27 +707,168 @@ export default function Communaute() {
   );
 }
 
-/* ─── VoicePost — feed glass + accent bar bleu/rose ─── */
+/* ─── CercleRow — horizontal scroll-snap + avatars gradient ─── */
+
+function CercleRow({ cercle, onComposeOpen }) {
+  const preview = cercle.slice(0, 5);
+
+  return (
+    <div>
+      {preview.length > 0 ? (
+        <div
+          style={{
+            display: 'flex',
+            gap: 12,
+            overflowX: 'auto',
+            scrollSnapType: 'x mandatory',
+            paddingBottom: 8,
+            marginBottom: 16,
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          {preview.map((m, i) => {
+            const grad = i % 2 === 0 ? 'var(--gradient-blue)' : 'var(--gradient-rose)';
+            const initial = (m.pseudo || '?').charAt(0).toUpperCase();
+            return (
+              <div
+                key={i}
+                style={{
+                  ...GLASS_CARD,
+                  borderRadius: 20,
+                  padding: '16px 14px',
+                  minWidth: 116,
+                  scrollSnapAlign: 'start',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 8,
+                  flexShrink: 0,
+                }}
+              >
+                <div
+                  aria-hidden
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: '50%',
+                    background: grad,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#FFFFFF',
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontWeight: 400,
+                    fontSize: 20,
+                    boxShadow: '0 4px 12px rgba(10,36,56,0.15)',
+                  }}
+                >
+                  {initial}
+                </div>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontWeight: 400,
+                    fontSize: 16,
+                    color: 'var(--blue-900)',
+                    textAlign: 'center',
+                    lineHeight: 1.1,
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {m.pseudo}
+                </span>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-ui)',
+                    fontWeight: 500,
+                    fontSize: 11,
+                    color: 'var(--text-muted)',
+                  }}
+                >
+                  proche
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div
+          style={{
+            ...GLASS_CARD,
+            padding: '24px 20px',
+            textAlign: 'center',
+            marginBottom: 16,
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 18,
+            color: 'var(--text-secondary)',
+          }}
+        >
+          Ton cercle est encore vide.
+        </div>
+      )}
+
+      <button
+        type="button"
+        data-press
+        onClick={onComposeOpen}
+        style={{
+          appearance: 'none',
+          width: '100%',
+          padding: '13px 24px',
+          minHeight: 44,
+          background: 'transparent',
+          color: 'var(--blue-700)',
+          border: '1.5px solid var(--blue-300)',
+          borderRadius: 50,
+          fontFamily: 'var(--font-ui)',
+          fontSize: 12,
+          fontWeight: 600,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          cursor: 'pointer',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        {cercle.length === 0 ? 'Composer mon cercle' : 'Voir tout le cercle'}
+      </button>
+    </div>
+  );
+}
+
+/* ─── VoicePost — feed glass + accent border-left 4px ─── */
 
 function VoicePost({ post, index, reactions, onReact, onMore }) {
+  const [hover, setHover] = useState(false);
   const isRose = index % 2 === 1;
   const accentGradient = isRose ? 'var(--gradient-rose)' : 'var(--gradient-blue)';
+  const isShort = wordCount(post.body) < 20;
 
   return (
     <article
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       style={{
         position: 'relative',
-        padding: '16px 18px 14px 22px',
+        padding: '18px 20px 16px 24px',
         background: 'var(--glass-bg)',
         backdropFilter: 'var(--glass-blur)',
         WebkitBackdropFilter: 'var(--glass-blur)',
         border: '1px solid var(--glass-border)',
-        borderRadius: 18,
-        boxShadow: 'var(--glass-shadow)',
+        borderRadius: 20,
+        boxShadow: hover ? '0 12px 32px rgba(10,36,56,0.14)' : 'var(--glass-shadow)',
         overflow: 'hidden',
+        transform: hover ? 'translateY(-2px)' : 'translateY(0)',
+        transition: 'transform 240ms cubic-bezier(0.16,1,0.3,1), box-shadow 240ms cubic-bezier(0.16,1,0.3,1)',
       }}
     >
-      {/* Accent bar 3px gauche */}
+      {/* Accent border-left 4px */}
       <span
         aria-hidden
         style={{
@@ -791,18 +876,26 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
           left: 0,
           top: 0,
           bottom: 0,
-          width: 3,
+          width: 4,
           background: accentGradient,
           borderRadius: '0 2px 2px 0',
         }}
       />
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 12,
+          marginBottom: 8,
+        }}
+      >
         <span
           style={{
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
-            fontWeight: 300,
-            fontSize: 19,
+            fontWeight: 400,
+            fontSize: 18,
             lineHeight: 1.2,
             color: 'var(--blue-900)',
           }}
@@ -813,8 +906,8 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
           style={{
             fontFamily: 'var(--font-ui)',
             fontWeight: 500,
-            fontSize: 12,
-            color: 'var(--text-secondary)',
+            fontSize: 11,
+            color: 'var(--text-muted)',
             fontVariantNumeric: 'tabular-nums',
           }}
         >
@@ -823,17 +916,18 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
       </div>
       <p
         style={{
-          margin: '10px 0 14px',
-          fontFamily: 'var(--font-body)',
+          margin: '8px 0 14px',
+          fontFamily: isShort ? 'var(--font-display)' : 'var(--font-body)',
+          fontStyle: isShort ? 'italic' : 'normal',
           fontWeight: 400,
-          fontSize: 15,
+          fontSize: isShort ? 16 : 15,
           lineHeight: 1.6,
           color: 'var(--text-secondary)',
         }}
       >
         {post.body}
       </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {REACTIONS.map((r) => {
           const active = !!reactions[r.key];
           return (
@@ -846,21 +940,25 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
               aria-pressed={active}
               style={{
                 appearance: 'none',
-                padding: '4px 2px',
+                padding: '6px 12px',
                 minHeight: 32,
-                minWidth: 32,
-                background: 'transparent',
+                background: active ? 'rgba(200,112,144,0.10)' : 'rgba(255,255,255,0.5)',
                 border: 'none',
-                color: active ? 'var(--rose-700)' : 'var(--blue-500)',
-                fontFamily: 'var(--font-body)',
+                borderRadius: 50,
+                color: active ? 'var(--rose-700)' : 'var(--blue-300)',
+                fontFamily: 'var(--font-ui)',
                 fontWeight: 500,
-                fontSize: 16,
+                fontSize: 11,
                 cursor: 'pointer',
                 WebkitTapHighlightColor: 'transparent',
-                transition: 'color 200ms ease',
+                transition: 'color 200ms ease, background 200ms ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
               }}
             >
-              {r.icon}
+              <span aria-hidden style={{ fontSize: 12 }}>{r.icon}</span>
+              <span>{r.label}</span>
             </button>
           );
         })}
@@ -889,68 +987,123 @@ function VoicePost({ post, index, reactions, onReact, onMore }) {
   );
 }
 
-/* ─── TemoignageCard — éditorial border-left 3px ─── */
+/* ─── TemoignageCard — éditorial avec initiales 56×56 ─── */
 
 function TemoignageCard({ temoignage, onOpen }) {
+  const [hover, setHover] = useState(false);
   const t = temoignage;
+
   return (
     <button
       type="button"
       data-press
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       onClick={onOpen}
       style={{
         appearance: 'none',
         width: '100%',
-        padding: '18px 20px 18px 22px',
+        padding: '22px 24px',
         background: 'var(--glass-bg)',
         backdropFilter: 'var(--glass-blur)',
         WebkitBackdropFilter: 'var(--glass-blur)',
         border: '1px solid var(--glass-border)',
-        borderLeft: `3px solid ${t.accent}`,
-        borderRadius: 18,
-        boxShadow: 'var(--glass-shadow)',
+        borderLeft: `4px solid ${t.accent}`,
+        borderRadius: 24,
+        boxShadow: hover ? '0 12px 32px rgba(10,36,56,0.14)' : 'var(--glass-shadow)',
         cursor: 'pointer',
         textAlign: 'left',
         WebkitTapHighlightColor: 'transparent',
+        transform: hover ? 'translateY(-2px)' : 'translateY(0)',
+        transition: 'transform 240ms cubic-bezier(0.16,1,0.3,1), box-shadow 240ms cubic-bezier(0.16,1,0.3,1)',
       }}
     >
-      <div
-        style={{
-          fontFamily: 'var(--font-ui)',
-          fontSize: 10,
-          fontWeight: 600,
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: 'var(--text-secondary)',
-          marginBottom: 10,
-        }}
-      >
-        {t.name} · {t.city}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div
+          aria-hidden
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: '50%',
+            background: t.avatarGradient,
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#FFFFFF',
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 22,
+            boxShadow: '0 4px 12px rgba(10,36,56,0.18)',
+          }}
+        >
+          {t.initials}
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <div
+            style={{
+              fontFamily: 'var(--font-ui)',
+              fontSize: 12,
+              fontWeight: 600,
+              color: 'var(--blue-900)',
+              lineHeight: 1.3,
+            }}
+          >
+            {t.name}
+          </div>
+          <div
+            style={{
+              marginTop: 2,
+              fontFamily: 'var(--font-ui)',
+              fontSize: 10,
+              fontWeight: 500,
+              color: 'var(--text-muted)',
+              letterSpacing: '0.04em',
+            }}
+          >
+            {t.city}
+          </div>
+        </div>
       </div>
+
       <div
         style={{
+          marginTop: 12,
           fontFamily: 'var(--font-display)',
           fontStyle: 'italic',
-          fontWeight: 300,
-          fontSize: 21,
+          fontWeight: 400,
+          fontSize: 20,
           lineHeight: 1.3,
           color: 'var(--blue-900)',
-          marginBottom: 14,
           letterSpacing: 0,
         }}
       >
         {t.title}
       </div>
+
       <div
         style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 8,
-          fontFamily: 'var(--font-ui)',
-          fontSize: 10,
-          fontWeight: 600,
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
+          marginTop: 12,
+          fontFamily: 'var(--font-body)',
+          fontWeight: 400,
+          fontSize: 14,
+          lineHeight: 1.6,
+          color: 'var(--text-secondary)',
+          display: '-webkit-box',
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {t.body.split('\n\n')[0]}
+      </div>
+
+      <div
+        style={{
+          marginTop: 14,
+          ...EYEBROW_BASE,
           color: t.accent,
         }}
       >
@@ -1030,15 +1183,15 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
           right: 0,
           bottom: 0,
           zIndex: 151,
-          background: 'rgba(238, 243, 248, 0.92)',
+          background: 'rgba(238, 243, 248, 0.96)',
           backdropFilter: 'blur(28px)',
           WebkitBackdropFilter: 'blur(28px)',
           color: 'var(--blue-900)',
-          borderTopLeftRadius: 24,
-          borderTopRightRadius: 24,
+          borderTopLeftRadius: 28,
+          borderTopRightRadius: 28,
           border: '1px solid var(--glass-border)',
           borderBottom: 'none',
-          padding: '12px 22px calc(env(safe-area-inset-bottom, 0px) + 24px)',
+          padding: '12px 24px calc(env(safe-area-inset-bottom, 0px) + 24px)',
           transform: closing ? 'translateY(100%)' : mounted ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
           boxShadow: '0 -8px 32px rgba(10, 36, 56, 0.18)',
@@ -1057,20 +1210,35 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
           }}
         />
 
+        <h3
+          style={{
+            margin: '0 0 20px',
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 24,
+            lineHeight: 1.2,
+            color: 'var(--blue-900)',
+            letterSpacing: 0,
+          }}
+        >
+          Partager une voix
+        </h3>
+
         {promptText && (
           <p
             style={{
-              margin: '0 0 22px',
+              margin: '0 0 20px',
               fontFamily: 'var(--font-display)',
               fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 20,
+              fontWeight: 400,
+              fontSize: 18,
               lineHeight: 1.35,
               color: 'var(--blue-900)',
-              padding: '16px 18px',
+              padding: '14px 16px',
               background: 'rgba(255, 255, 255, 0.55)',
               borderLeft: '3px solid var(--rose-700)',
-              borderRadius: 8,
+              borderRadius: 12,
             }}
           >
             {promptText}
@@ -1081,11 +1249,7 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
           style={{
             display: 'block',
             marginBottom: 10,
-            fontFamily: 'var(--font-ui)',
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
+            ...EYEBROW_BASE,
             color: 'var(--text-secondary)',
           }}
         >
@@ -1101,13 +1265,14 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
           aria-label="Ta voix"
           style={{
             width: '100%',
-            padding: '14px 16px',
-            minHeight: 110,
+            padding: 18,
+            minHeight: 120,
             background: 'rgba(255, 255, 255, 0.55)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
-            border: '1px solid var(--blue-300)',
-            borderRadius: 14,
+            border: '1px solid var(--glass-border)',
+            borderLeft: '4px solid var(--blue-700)',
+            borderRadius: 16,
             fontFamily: 'var(--font-body)',
             fontWeight: 400,
             fontSize: 16,
@@ -1125,7 +1290,7 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
             fontFamily: 'var(--font-ui)',
             fontWeight: 500,
             fontSize: 11,
-            color: body.length >= 260 ? 'var(--rose-700)' : 'var(--text-secondary)',
+            color: body.length >= 260 ? 'var(--rose-700)' : 'var(--text-muted)',
             fontVariantNumeric: 'tabular-nums',
             marginBottom: 20,
           }}
@@ -1133,7 +1298,7 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
           {280 - body.length}
         </div>
 
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 12 }}>
           <button
             type="button"
             data-press
@@ -1144,14 +1309,14 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
               padding: '14px 16px',
               minHeight: 48,
               background: 'transparent',
-              border: '1.5px solid var(--blue-300)',
+              border: 'none',
               borderRadius: 50,
               fontFamily: 'var(--font-ui)',
               fontSize: 12,
               fontWeight: 600,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'var(--blue-700)',
+              color: 'var(--text-secondary)',
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
             }}
@@ -1182,7 +1347,7 @@ function Composer({ promptId, promptText, onSubmit, onClose }) {
               WebkitTapHighlightColor: 'transparent',
             }}
           >
-            Partager
+            Envoyer
           </button>
         </div>
       </div>
@@ -1254,12 +1419,12 @@ function AllVoicesOverlay({ posts, reactions, onReact, onMore, onCompose, onClos
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 22px 14px',
-          borderBottom: '1px solid rgba(10, 36, 56, 0.08)',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 24px 14px',
+          borderBottom: '1px solid rgba(10, 36, 56, 0.06)',
           flexShrink: 0,
           background: 'rgba(238, 243, 248, 0.78)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
         }}
       >
         <button
@@ -1288,7 +1453,7 @@ function AllVoicesOverlay({ posts, reactions, onReact, onMore, onCompose, onClos
           style={{
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
-            fontWeight: 300,
+            fontWeight: 400,
             fontSize: 22,
             color: 'var(--blue-900)',
           }}
@@ -1333,7 +1498,7 @@ function AllVoicesOverlay({ posts, reactions, onReact, onMore, onCompose, onClos
         style={{
           position: 'absolute',
           bottom: 'calc(env(safe-area-inset-bottom, 0px) + 24px)',
-          right: 22,
+          right: 24,
           width: 56,
           height: 56,
           borderRadius: '50%',
@@ -1420,7 +1585,7 @@ function TemoignageReader({ temoignage, onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 22px 14px',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 24px 14px',
           flexShrink: 0,
         }}
       >
@@ -1462,29 +1627,58 @@ function TemoignageReader({ temoignage, onClose }) {
       >
         <div
           style={{
-            textAlign: 'center',
-            fontFamily: 'var(--font-ui)',
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: 'var(--text-secondary)',
-            marginBottom: 22,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 14,
+            marginBottom: 24,
           }}
         >
-          <span
+          <div
             aria-hidden
             style={{
-              display: 'inline-block',
-              width: 24,
-              height: 2,
-              background: t.accent,
-              borderRadius: 1,
-              verticalAlign: 'middle',
-              marginRight: 10,
+              width: 56,
+              height: 56,
+              borderRadius: '50%',
+              background: t.avatarGradient,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#FFFFFF',
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              fontSize: 22,
+              boxShadow: '0 4px 12px rgba(10,36,56,0.18)',
+              flexShrink: 0,
             }}
-          />
-          {t.name} · {t.city}
+          >
+            {t.initials}
+          </div>
+          <div>
+            <div
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'var(--blue-900)',
+                lineHeight: 1.3,
+              }}
+            >
+              {t.name}
+            </div>
+            <div
+              style={{
+                marginTop: 2,
+                fontFamily: 'var(--font-ui)',
+                fontSize: 10,
+                fontWeight: 500,
+                color: 'var(--text-muted)',
+              }}
+            >
+              {t.city}
+            </div>
+          </div>
         </div>
 
         <h2
@@ -1493,7 +1687,7 @@ function TemoignageReader({ temoignage, onClose }) {
             textAlign: 'center',
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
-            fontWeight: 300,
+            fontWeight: 400,
             fontSize: 'clamp(26px, 6.5vw, 34px)',
             lineHeight: 1.2,
             letterSpacing: 0,
@@ -1525,13 +1719,13 @@ function TemoignageReader({ temoignage, onClose }) {
 
         <div
           style={{
-            marginTop: 44,
-            paddingTop: 28,
+            marginTop: 48,
+            paddingTop: 32,
             borderTop: '1px solid rgba(10, 36, 56, 0.10)',
             textAlign: 'center',
             fontFamily: 'var(--font-display)',
             fontStyle: 'italic',
-            fontWeight: 300,
+            fontWeight: 400,
             fontSize: 18,
             lineHeight: 1.5,
             color: 'var(--text-secondary)',

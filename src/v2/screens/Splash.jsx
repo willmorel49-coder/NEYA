@@ -1,8 +1,9 @@
 /* ============================================================
-   ÇA VA ? V4 — Splash (palette bleu/rose claire)
+   ÇA VA ? V4 — Splash (palette bleu/rose claire) — premium polish
    ============================================================
-   Fond clair --bg + blobs decoratifs + Cormorant Garamond italic.
-   2.5s autoplay, tap-to-skip.
+   Fond clair --bg + blobs decoratifs (ken-burns) + Cormorant Garamond italic.
+   Mark · Logo · Sous-titre avec stagger Apple-style.
+   2.5s autoplay, tap-to-skip via pill glass premium.
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
@@ -40,6 +41,8 @@ export default function Splash({ onContinue }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const ease = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+
   return (
     <div
       onClick={fire}
@@ -59,37 +62,54 @@ export default function Splash({ onContinue }) {
       }}
     >
       <style>{`
-        @keyframes splashFadeUp {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
         @keyframes splashBreathe {
-          0%, 100% { opacity: 0.78; }
+          0%, 100% { opacity: 0.82; }
           50%      { opacity: 1; }
         }
+        @keyframes splashBlobsKenburns {
+          0%   { transform: scale(1)    translate3d(0,0,0); }
+          100% { transform: scale(1.04) translate3d(0,-4px,0); }
+        }
+        [data-splash-blobs] > * {
+          animation: splashBlobsKenburns 16s ease-in-out infinite alternate;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+        [data-splash-skip]:hover {
+          background: rgba(255,255,255,0.95) !important;
+          box-shadow: 0 6px 22px rgba(10,36,56,0.14) !important;
+        }
+        [data-splash-skip]:active {
+          transform: scale(0.96);
+        }
         @media (prefers-reduced-motion: reduce) {
-          [data-splash-anim] { animation: none !important; transition: none !important; opacity: 1 !important; }
+          [data-splash-anim] { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; }
+          [data-splash-blobs] > * { animation: none !important; }
         }
       `}</style>
 
-      <Blobs variant="rose-blue" />
+      <div data-splash-blobs style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+        <Blobs variant="rose-blue" />
+      </div>
 
-      {/* Top-right skip */}
+      {/* Top-right skip — pill glass premium */}
       <button
         type="button"
         onClick={(e) => { e.stopPropagation(); fire(); }}
         aria-label="Passer"
+        data-splash-skip
+        data-splash-anim
         style={{
           position: 'absolute',
           top: 'calc(env(safe-area-inset-top, 0px) + 16px)',
           right: 18,
           zIndex: 2,
           appearance: 'none',
-          background: 'rgba(255,255,255,0.75)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.85)',
-          padding: '8px 16px',
+          background: 'rgba(255,255,255,0.85)',
+          backdropFilter: 'blur(24px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+          border: '1px solid rgba(255,255,255,0.9)',
+          padding: '9px 16px',
           minHeight: 36,
           borderRadius: 50,
           cursor: 'pointer',
@@ -98,16 +118,16 @@ export default function Splash({ onContinue }) {
           fontSize: 13,
           color: 'var(--blue-700)',
           opacity: mounted ? 1 : 0,
-          transition: 'opacity 800ms cubic-bezier(0.22, 0.61, 0.36, 1) 200ms',
+          transform: mounted ? 'translateY(0)' : 'translateY(6px)',
+          transition: `opacity 800ms ${ease} 200ms, transform 800ms ${ease} 200ms, background 240ms ${ease}, box-shadow 240ms ${ease}`,
           WebkitTapHighlightColor: 'transparent',
-          boxShadow: '0 2px 12px rgba(10,36,56,0.08)',
+          boxShadow: '0 2px 14px rgba(10,36,56,0.08)',
         }}
-        data-splash-anim
       >
         Passer ›
       </button>
 
-      {/* Center stack */}
+      {/* Center stack — Mark · Logo · Sous-titre (stagger Apple-style) */}
       <div
         style={{
           position: 'absolute',
@@ -132,7 +152,8 @@ export default function Splash({ onContinue }) {
             textTransform: 'uppercase',
             color: 'var(--blue-500)',
             opacity: mounted ? 1 : 0,
-            transition: 'opacity 1400ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+            transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+            transition: `opacity 800ms ${ease} 100ms, transform 800ms ${ease} 100ms`,
           }}
         >
           MMXXVI · ÇA VA ?
@@ -144,12 +165,13 @@ export default function Splash({ onContinue }) {
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 'clamp(64px, 18vw, 96px)',
-            letterSpacing: '0.02em',
+            fontSize: 'clamp(72px, 20vw, 112px)',
+            letterSpacing: '0.04em',
             color: 'var(--blue-900)',
             lineHeight: 1,
             opacity: mounted ? 1 : 0,
-            transition: 'opacity 1400ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+            transform: mounted ? 'translateY(0)' : 'translateY(12px)',
+            transition: `opacity 1000ms ${ease} 300ms, transform 1000ms ${ease} 300ms`,
           }}
         >
           ÇA VA ?
@@ -161,11 +183,12 @@ export default function Splash({ onContinue }) {
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontStyle: 'italic',
             fontWeight: 300,
-            fontSize: 'clamp(15px, 4.2vw, 18px)',
+            fontSize: 17,
             color: 'var(--text-secondary)',
             opacity: mounted ? 1 : 0,
-            animation: mounted ? 'splashBreathe 4s ease-in-out infinite' : 'none',
-            transition: 'opacity 1600ms cubic-bezier(0.22, 0.61, 0.36, 1) 400ms',
+            transform: mounted ? 'translateY(0)' : 'translateY(6px)',
+            animation: mounted ? 'splashBreathe 4s ease-in-out infinite 1400ms' : 'none',
+            transition: `opacity 800ms ${ease} 600ms, transform 800ms ${ease} 600ms`,
             maxWidth: 320,
             lineHeight: 1.5,
           }}

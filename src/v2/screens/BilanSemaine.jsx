@@ -207,32 +207,33 @@ export default function BilanSemaine({ onClose }) {
         Retour
       </button>
 
-      {/* Topbar : label semaine (back déplacé en position fixed) */}
+      {/* Topbar : titre centré Cormorant italic (back déplacé en position fixed) */}
       <div
         style={{
           position: 'relative',
           zIndex: 2,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 16px 10px',
+          justifyContent: 'center',
+          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 90px 10px',
           flexShrink: 0,
         }}
       >
-        <div
-          aria-hidden
+        <h1
           style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 10,
-            fontWeight: 500,
-            color: 'var(--text-muted)',
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            paddingRight: 70,
+            margin: 0,
+            fontFamily: "'Cormorant Garamond', serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 'clamp(22px, 5.5vw, 26px)',
+            lineHeight: 1.1,
+            color: 'var(--blue-900)',
+            letterSpacing: '-0.01em',
+            textAlign: 'center',
           }}
         >
-          {'Semaine'}
-        </div>
+          {'Ta semaine'}
+        </h1>
       </div>
 
       {/* Scrollable content */}
@@ -247,29 +248,13 @@ export default function BilanSemaine({ onClose }) {
         }}
       >
         <div style={{ maxWidth: 480, marginInline: 'auto' }}>
-          {/* Titre Cormorant italic 28–32 var(--blue-900) */}
-          <h1
-            style={{
-              margin: 0,
-              fontFamily: "'Cormorant Garamond', serif",
-              fontStyle: 'italic',
-              fontWeight: 300,
-              fontSize: 'clamp(28px, 7vw, 32px)',
-              lineHeight: 1.15,
-              letterSpacing: '-0.01em',
-              color: 'var(--blue-900)',
-            }}
-          >
-            {'Bilan de la semaine'}
-          </h1>
-
           <div
             style={{
-              marginTop: 8,
+              marginTop: 4,
               fontFamily: "'Inter', sans-serif",
               fontWeight: 300,
-              fontSize: 13,
-              lineHeight: 1.55,
+              fontSize: 14,
+              lineHeight: 1.6,
               color: 'var(--text-secondary)',
               maxWidth: 360,
             }}

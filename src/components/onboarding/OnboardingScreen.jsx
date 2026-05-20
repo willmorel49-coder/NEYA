@@ -86,7 +86,20 @@ export default function OnboardingScreen({
         data-animate={isActive ? 'true' : 'false'}
       >
         {screen.eyebrow && (
-          <div className={styles.eyebrow}>{screen.eyebrow}</div>
+          <div className={styles.eyebrow}>
+            {(() => {
+              const parts = String(screen.eyebrow).split(/\s·\s/);
+              if (parts.length === 2) {
+                return (
+                  <>
+                    <em>{parts[0]}</em>
+                    <span> · {parts[1]}</span>
+                  </>
+                );
+              }
+              return screen.eyebrow;
+            })()}
+          </div>
         )}
         <h1 className={styles.title}>
           <RichText tokens={screen.title} />

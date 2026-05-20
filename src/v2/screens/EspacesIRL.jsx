@@ -1,21 +1,20 @@
 /* ============================================================
-   ÇA VA ? V2 — Espaces IRL (overlay : annuaire d'espaces réels)
+   ÇA VA ? V3 — Espaces IRL (annuaire d'espaces réels)
    ============================================================
    Le digital est un pont — le but est la vie réelle.
-   Annuaire curé d'espaces où l'on peut venir seul·e, sans être
-   jugé·e : cafés solidaires, marches, ateliers, groupes de
-   parole, jardins partagés, pair-aidance, etc.
-   Anti-isolation push. Anti-honte ("tu n'as pas à y aller").
-   Données illustratives V1 — à enrichir avec partenaires ÇA VA ?.
+   Annuaire d'espaces où venir seul·e sans être jugé·e.
+   Refonte V3 : Blobs blue-rose, glass cards, Cormorant italic,
+   filter chips glass, CTA blue ghost.
    ============================================================ */
 
 import { useState, useEffect, useMemo } from 'react';
 import { haptic } from '../state';
 import { useToast, TOAST_PRESETS } from '../../components/Toast';
 import useStandardOverlay from '../hooks/useStandardOverlay';
+import Blobs from '../../components/Blobs';
 
 /* ============================================================
-   HARDCODED LIST — V1 illustrative, à enrichir partenaires ÇA VA ?
+   HARDCODED LIST — V1 illustrative
    ============================================================ */
 
 const ESPACES = [
@@ -24,9 +23,9 @@ const ESPACES = [
     city: 'Paris', district: '11e',
     name: 'Café La Vie',
     type: 'café solidaire',
-    desc: 'Café-discussion ouvert. Tu peux venir seul·e, t\'asseoir, dire bonjour. Personne ne juge.',
+    desc: 'Café-discussion ouvert. Tu peux venir seul·e, t’asseoir, dire bonjour. Personne ne juge.',
     icon: '☕',
-    color: 'var(--ochre)',
+    accent: 'var(--blue-700)',
     times: 'Lun-ven · 9h-19h',
     address: '14 rue du Faubourg du Temple, 75011',
     url: null,
@@ -38,7 +37,7 @@ const ESPACES = [
     type: 'groupe de marche',
     desc: 'Marche silencieuse de 8km tous les dimanches. Inscris-toi, viens, marche. Aucun mot obligé.',
     icon: '↗',
-    color: 'var(--emerald)',
+    accent: 'var(--violet)',
     times: 'Dim · 10h précises',
     address: 'Pont Saint-Louis · Métro Pont Marie',
     url: 'https://marche-du-dimanche.fr',
@@ -50,7 +49,7 @@ const ESPACES = [
     type: 'atelier de parole',
     desc: 'Groupes de parole hebdomadaires, max 8 personnes. Animé par une psychologue. Gratuit.',
     icon: '◯',
-    color: 'var(--mist-blue)',
+    accent: 'var(--blue-700)',
     times: 'Mar · 18h-20h',
     address: '12 place des Terreaux, 69001',
     url: null,
@@ -62,7 +61,7 @@ const ESPACES = [
     type: 'jardin solidaire',
     desc: 'Jardin associatif. Plante, arrose, observe. Personne ne te demande pourquoi tu es là.',
     icon: '❦',
-    color: 'var(--emerald)',
+    accent: 'var(--violet)',
     times: 'Sam · 14h-18h',
     address: 'Friche La Belle de Mai',
     url: null,
@@ -72,9 +71,9 @@ const ESPACES = [
     city: 'Toulouse', district: 'Saint-Cyprien',
     name: 'Café-Parole',
     type: 'café-débat',
-    desc: 'Café mensuel autour d\'un thème (solitude, deuil, sommeil…). Première fois = bienvenue.',
+    desc: 'Café mensuel autour d’un thème (solitude, deuil, sommeil…). Première fois = bienvenue.',
     icon: '☕',
-    color: 'var(--ochre)',
+    accent: 'var(--blue-700)',
     times: '1er jeudi · 19h-21h',
     address: 'Café Solidaire 31',
     url: null,
@@ -86,7 +85,7 @@ const ESPACES = [
     type: 'tchat anonyme',
     desc: 'Tchat en ligne anonyme. Réponse rapide. Pour 18-25 ans en majorité, ouvert à tous.',
     icon: '◇',
-    color: 'var(--mist-blue)',
+    accent: 'var(--blue-500)',
     times: 'Tous les jours · 9h-23h',
     address: 'https://e-enfance.org',
     url: 'https://e-enfance.org/numero-3018/',
@@ -98,7 +97,7 @@ const ESPACES = [
     type: 'pair-aidance',
     desc: 'Groupes de soutien par les pairs (personnes qui ont vécu la même chose que toi). Animés en ligne ou présentiel selon ville.',
     icon: '✦',
-    color: 'var(--tilleul)',
+    accent: 'var(--violet)',
     times: 'Variables · Inscription',
     address: 'esemble.org',
     url: 'https://esemble.org',
@@ -110,7 +109,7 @@ const ESPACES = [
     type: 'cours collectif',
     desc: 'Cours de yoga doux à prix libre (donne ce que tu peux, même 0). Pas de niveau requis.',
     icon: '◓',
-    color: 'var(--terracotta)',
+    accent: 'var(--rose-700)',
     times: 'Mer + Sam · 18h30',
     address: 'Centre Maraichers 75020',
     url: null,
@@ -120,9 +119,9 @@ const ESPACES = [
     city: 'National', district: 'AA France',
     name: 'Alcooliques Anonymes',
     type: 'groupe AA',
-    desc: 'Réunions ouvertes ou fermées partout en France. Anonymat absolu. Tu n\'as qu\'à dire ton prénom (ou pas).',
+    desc: 'Réunions ouvertes ou fermées partout en France. Anonymat absolu. Tu n’as qu’à dire ton prénom (ou pas).',
     icon: '◯',
-    color: 'var(--mist-blue)',
+    accent: 'var(--blue-500)',
     times: 'Plusieurs/jour · alcooliques-anonymes.fr',
     address: 'alcooliques-anonymes.fr',
     url: 'https://www.alcooliques-anonymes.fr',
@@ -134,16 +133,12 @@ const ESPACES = [
     type: 'groupe OA',
     desc: 'Réunions par téléphone, Zoom, ou en présentiel. Trouble alimentaire = pas honte, accueil sans condition.',
     icon: '◐',
-    color: 'var(--terracotta)',
+    accent: 'var(--rose-700)',
     times: 'Plusieurs/jour · outremangeurs.org',
     address: 'outremangeurs.org',
     url: 'https://outremangeurs.org',
   },
 ];
-
-/* ============================================================
-   FILTERS
-   ============================================================ */
 
 const FILTERS = [
   { key: 'all',     label: 'Tout',              enabled: true  },
@@ -159,7 +154,7 @@ const FREE_TYPES = new Set([
   'jardin solidaire',
   'tchat anonyme',
   'pair-aidance',
-  'cours collectif', // prix libre
+  'cours collectif',
   'groupe AA',
   'groupe OA',
   'groupe de marche',
@@ -176,10 +171,6 @@ function matchesFilter(espace, filter) {
   return true;
 }
 
-/* ============================================================
-   COMPONENT
-   ============================================================ */
-
 export default function EspacesIRL({ onClose }) {
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -187,13 +178,19 @@ export default function EspacesIRL({ onClose }) {
   const [revealCount, setRevealCount] = useState(0);
   const showToast = useToast();
 
-  // Slide-up reveal
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: true } }));
+    }
+    return () => {
+      cancelAnimationFrame(id);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('neya:fullscreen-overlay', { detail: { open: false } }));
+      }
+    };
   }, []);
 
-  // Stagger card reveal
   useEffect(() => {
     if (!mounted) return;
     let i = 0;
@@ -221,7 +218,6 @@ export default function EspacesIRL({ onClose }) {
     setTimeout(() => onClose?.(), 320);
   };
 
-  // Comportement iOS standard (scroll lock body + ESC + focus trap + ARIA)
   const { dialogProps, containerRef } = useStandardOverlay({
     open: !closing,
     onClose: doClose,
@@ -243,7 +239,6 @@ export default function EspacesIRL({ onClose }) {
       try { window.open(espace.url, '_blank', 'noopener,noreferrer'); } catch {}
       return;
     }
-    // Copy address
     try {
       navigator.clipboard?.writeText(espace.address);
     } catch {}
@@ -259,10 +254,26 @@ export default function EspacesIRL({ onClose }) {
     <div
       ref={containerRef}
       {...dialogProps}
-      className="wash-renard"
-      style={overlayStyle({ mounted, closing })}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 240,
+        background: 'var(--bg)',
+        color: 'var(--blue-900)',
+        overflow: 'hidden',
+        opacity: closing ? 0 : mounted ? 1 : 0,
+        transform: closing
+          ? 'translateY(100%)'
+          : mounted
+            ? 'translateY(0)'
+            : 'translateY(100%)',
+        transition: 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)',
+        WebkitFontSmoothing: 'antialiased',
+      }}
     >
-      {/* Glass pill back button — fixed top-left, z-index 80 */}
+      <Blobs variant="blue-rose" />
+
+      {/* Glass pill back button */}
       <button
         type="button"
         data-press
@@ -302,78 +313,85 @@ export default function EspacesIRL({ onClose }) {
         Retour
       </button>
 
-      {/* Top bar : label centré (back déplacé en position fixed) */}
+      {/* Sticky header with title */}
       <div
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
+          zIndex: 4,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 90px 14px',
-          zIndex: 4,
+          padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 90px 12px',
+          background: 'rgba(238, 243, 248, 0.78)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '0.5px solid rgba(194, 216, 232, 0.25)',
         }}
       >
-        <div
-          className="neya-mark"
+        <h1
           style={{
-            color: 'var(--blue-700)',
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
-            fontWeight: 500,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
+            margin: 0,
+            fontFamily: "'Cormorant Garamond', serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 'clamp(22px, 5.5vw, 26px)',
+            lineHeight: 1.1,
+            color: 'var(--blue-900)',
+            letterSpacing: '-0.01em',
             textAlign: 'center',
           }}
         >
-          ESPACES IRL · ICI ET MAINTENANT
-        </div>
+          Espaces IRL
+        </h1>
       </div>
 
       {/* Scrollable content */}
       <div
         style={{
+          position: 'relative',
+          zIndex: 1,
           height: '100%',
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
           padding:
-            'calc(env(safe-area-inset-top, 0px) + 66px) 22px calc(env(safe-area-inset-bottom, 0px) + 60px)',
+            'calc(env(safe-area-inset-top, 0px) + 76px) 22px calc(env(safe-area-inset-bottom, 0px) + 60px)',
         }}
       >
         {/* Hero */}
-        <h1
+        <h2
           style={{
             margin: 0,
-            fontFamily: 'var(--font-display)',
+            fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
-            fontWeight: 400,
+            fontWeight: 300,
             fontSize: 'clamp(26px, 7vw, 32px)',
-            lineHeight: 1.15,
-            color: 'var(--ink)',
-            letterSpacing: '-0.015em',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            maxWidth: 340,
+            lineHeight: 1.18,
+            color: 'var(--blue-900)',
+            letterSpacing: '-0.01em',
+            maxWidth: 360,
           }}
         >
-          «&nbsp;Sors. Personne ne te <em className="neya-key">verra trembler</em>.&nbsp;»
-        </h1>
+          « Sors. Personne ne te <span style={{ color: 'var(--rose-700)' }}>verra trembler</span>. »
+        </h2>
         <p
           style={{
-            margin: '12px 0 26px',
-            fontFamily: 'var(--font-body)',
-            fontSize: 13,
-            lineHeight: 1.55,
-            color: 'var(--ink-soft)',
-            maxWidth: 340,
+            margin: '14px 0 26px',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 14,
+            fontWeight: 400,
+            lineHeight: 1.6,
+            color: 'var(--text-secondary)',
+            maxWidth: 360,
           }}
         >
           Des endroits où on accueille sans poser de question. Tu peux venir
           seul·e.
         </p>
 
-        {/* Filter chips */}
+        {/* Filter chips — glass */}
         <div
           style={{
             display: 'flex',
@@ -394,27 +412,30 @@ export default function EspacesIRL({ onClose }) {
                 disabled={disabled}
                 style={{
                   appearance: 'none',
-                  padding: '8px 14px',
+                  padding: '8px 16px',
                   borderRadius: 999,
                   border: active
-                    ? '0.5px solid var(--ink)'
-                    : '0.5px solid var(--hairline)',
+                    ? '1px solid var(--blue-700)'
+                    : '1px solid rgba(255, 255, 255, 0.85)',
                   background: active
-                    ? 'var(--ink)'
-                    : 'rgba(251, 246, 232, 0.55)',
+                    ? 'var(--gradient-blue)'
+                    : 'rgba(255, 255, 255, 0.65)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
                   color: active
-                    ? 'var(--cream)'
+                    ? '#FFFFFF'
                     : disabled
-                      ? 'var(--content-tertiary)'
-                      : 'var(--ink-soft)',
-                  fontFamily: 'var(--font-ui)',
+                      ? 'var(--text-muted)'
+                      : 'var(--blue-700)',
+                  fontFamily: "'Inter', sans-serif",
                   fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: '0.04em',
+                  fontWeight: 600,
+                  letterSpacing: '0.06em',
                   cursor: disabled ? 'not-allowed' : 'pointer',
-                  opacity: disabled ? 0.4 : 1,
+                  opacity: disabled ? 0.45 : 1,
                   WebkitTapHighlightColor: 'transparent',
-                  transition: 'transform 180ms var(--ease-out-ios), background 220ms var(--ease-out-ios), color 220ms var(--ease-out-ios)',
+                  boxShadow: active ? '0 4px 14px rgba(26, 90, 127, 0.25)' : 'none',
+                  transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), background 220ms cubic-bezier(0.16, 1, 0.3, 1), color 220ms cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
                 {f.label}
@@ -440,20 +461,22 @@ export default function EspacesIRL({ onClose }) {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 14,
+            gap: 12,
           }}
         >
           {filtered.length === 0 && (
             <div
               style={{
                 padding: '28px 18px',
-                borderRadius: 16,
-                border: '0.5px dashed var(--hairline)',
-                background: 'rgba(251, 246, 232, 0.45)',
-                color: 'var(--ink-soft)',
-                fontFamily: 'var(--font-body)',
-                fontSize: 13,
-                lineHeight: 1.55,
+                borderRadius: 20,
+                border: '1px dashed var(--blue-300)',
+                background: 'rgba(255, 255, 255, 0.45)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                color: 'var(--text-secondary)',
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 14,
+                lineHeight: 1.6,
                 textAlign: 'center',
               }}
             >
@@ -461,8 +484,7 @@ export default function EspacesIRL({ onClose }) {
             </div>
           )}
 
-          {filtered.map((espace, idx) => {
-            // Find the original index for stagger reveal timing
+          {filtered.map((espace) => {
             const originalIdx = ESPACES.findIndex((e) => e.id === espace.id);
             const visible = revealCount > originalIdx;
             return (
@@ -480,13 +502,13 @@ export default function EspacesIRL({ onClose }) {
         <p
           style={{
             margin: '30px 0 4px',
-            fontFamily: 'var(--font-display)',
+            fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
-            fontSize: 13,
+            fontWeight: 300,
+            fontSize: 15,
             lineHeight: 1.55,
-            color: 'var(--content-tertiary)',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
-            maxWidth: 340,
+            color: 'var(--text-secondary)',
+            maxWidth: 360,
           }}
         >
           Cette liste s’enrichira. Si tu connais un espace, écris-nous. (Pour
@@ -495,46 +517,45 @@ export default function EspacesIRL({ onClose }) {
         <p
           style={{
             margin: '8px 0 0',
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 10,
             fontWeight: 500,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: 'var(--content-tertiary)',
-            opacity: 0.7,
+            color: 'var(--text-muted)',
           }}
         >
           À enrichir avec partenaires ÇA VA ?
         </p>
       </div>
-
     </div>
   );
 }
 
 /* ============================================================
-   ESPACE CARD
+   ESPACE CARD — glass V3
    ============================================================ */
 
 function EspaceCard({ espace, visible, onGo }) {
   return (
     <article
       style={{
-        background: 'var(--cream-light)',
-        border: '0.5px solid var(--hairline)',
-        borderRadius: 18,
         padding: '18px 20px',
-        boxShadow: '0 6px 18px rgba(38, 32, 26, 0.06)',
+        borderRadius: 20,
+        background: 'rgba(255, 255, 255, 0.65)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1px solid rgba(255, 255, 255, 0.85)',
+        boxShadow: '0 4px 24px rgba(10, 36, 56, 0.07)',
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(14px)',
-        transition:
-          'opacity 360ms var(--ease-out-ios), transform 360ms var(--ease-out-ios)',
+        transition: 'opacity 360ms cubic-bezier(0.16, 1, 0.3, 1), transform 360ms cubic-bezier(0.16, 1, 0.3, 1)',
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
       }}
     >
-      {/* Top row : icon + city/district */}
+      {/* Top row : icon + city */}
       <div
         style={{
           display: 'flex',
@@ -545,9 +566,14 @@ function EspaceCard({ espace, visible, onGo }) {
       >
         <div
           style={{
-            fontSize: 28,
+            width: 28,
+            height: 28,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 24,
             lineHeight: 1,
-            color: espace.color,
+            color: espace.accent,
             flexShrink: 0,
           }}
           aria-hidden
@@ -556,12 +582,12 @@ function EspaceCard({ espace, visible, onGo }) {
         </div>
         <div
           style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 9,
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 10,
             fontWeight: 500,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: 'var(--content-tertiary)',
+            color: 'var(--text-muted)',
             textAlign: 'right',
             lineHeight: 1.3,
           }}
@@ -585,28 +611,27 @@ function EspaceCard({ espace, visible, onGo }) {
           flexWrap: 'wrap',
         }}
       >
-        <h2
+        <h3
           style={{
             margin: 0,
-            fontFamily: 'var(--font-display)',
+            fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: 18,
+            fontWeight: 300,
+            fontSize: 20,
             lineHeight: 1.25,
-            color: 'var(--ink)',
-            letterSpacing: '-0.01em',
-            fontVariationSettings: 'var(--fraunces-italic-soft)',
+            color: 'var(--blue-900)',
+            letterSpacing: '-0.005em',
           }}
         >
           {espace.name}
-        </h2>
+        </h3>
         <span
           style={{
-            fontFamily: 'var(--font-ui)',
+            fontFamily: "'Inter', sans-serif",
             fontSize: 11,
-            fontWeight: 500,
-            color: espace.color,
-            letterSpacing: '0.01em',
+            fontWeight: 600,
+            color: espace.accent,
+            letterSpacing: '0.04em',
           }}
         >
           · {espace.type}
@@ -617,10 +642,11 @@ function EspaceCard({ espace, visible, onGo }) {
       <p
         style={{
           margin: 0,
-          fontFamily: 'var(--font-body)',
+          fontFamily: "'Inter', sans-serif",
           fontSize: 14,
+          fontWeight: 400,
           lineHeight: 1.55,
-          color: 'var(--ink-soft)',
+          color: 'var(--text-secondary)',
         }}
       >
         {espace.desc}
@@ -634,18 +660,18 @@ function EspaceCard({ espace, visible, onGo }) {
           alignItems: 'flex-start',
           gap: 12,
           marginTop: 2,
-          paddingTop: 10,
-          borderTop: '0.5px solid var(--hairline)',
+          paddingTop: 12,
+          borderTop: '0.5px solid var(--blue-300)',
         }}
       >
         <div
           style={{
-            fontFamily: 'var(--font-ui)',
+            fontFamily: "'Inter', sans-serif",
             fontSize: 11,
             fontWeight: 600,
-            letterSpacing: '0.14em',
+            letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            color: 'var(--ink-soft)',
+            color: 'var(--blue-700)',
             flex: '1 1 auto',
             minWidth: 0,
           }}
@@ -654,11 +680,11 @@ function EspaceCard({ espace, visible, onGo }) {
         </div>
         <div
           style={{
-            fontFamily: 'var(--font-ui)',
+            fontFamily: "'Inter', sans-serif",
             fontSize: 11,
-            fontWeight: 500,
-            letterSpacing: '0.06em',
-            color: 'var(--ink-soft)',
+            fontWeight: 400,
+            letterSpacing: '0.02em',
+            color: 'var(--text-secondary)',
             textAlign: 'right',
             flex: '0 1 auto',
             wordBreak: 'break-word',
@@ -669,7 +695,7 @@ function EspaceCard({ espace, visible, onGo }) {
         </div>
       </div>
 
-      {/* CTA */}
+      {/* CTA — outline blue ghost */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
         <button
           type="button"
@@ -678,51 +704,27 @@ function EspaceCard({ espace, visible, onGo }) {
           style={{
             appearance: 'none',
             background: 'transparent',
-            border: '0.5px solid var(--hairline)',
+            border: '1.5px solid var(--blue-300)',
             borderRadius: 999,
-            padding: '8px 16px',
-            fontFamily: 'var(--font-ui)',
-            fontSize: 12,
+            padding: '10px 18px',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 11,
             fontWeight: 600,
-            letterSpacing: '0.02em',
-            color: 'var(--ink)',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'var(--blue-700)',
             cursor: 'pointer',
             WebkitTapHighlightColor: 'transparent',
-            transition: 'transform 180ms var(--ease-out-ios), background 220ms var(--ease-out-ios)',
+            transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), background 220ms cubic-bezier(0.16, 1, 0.3, 1)',
             display: 'inline-flex',
             alignItems: 'center',
             gap: 6,
           }}
         >
           Y aller
-          <span aria-hidden style={{ fontSize: 13, opacity: 0.7 }}>→</span>
+          <span aria-hidden style={{ fontSize: 13, opacity: 0.8 }}>→</span>
         </button>
       </div>
     </article>
   );
-}
-
-/* ============================================================
-   OVERLAY STYLE — slide-up 420ms, slide-down 320ms
-   ============================================================ */
-
-function overlayStyle({ mounted, closing }) {
-  const transform = closing
-    ? 'translateY(100%)'
-    : mounted
-      ? 'translateY(0)'
-      : 'translateY(100%)';
-  const opacity = closing ? 0 : mounted ? 1 : 0;
-  const dur = closing ? '320ms' : '420ms';
-  return {
-    position: 'absolute',
-    inset: 0,
-    zIndex: 90,
-    color: 'var(--ink)',
-    overflow: 'hidden',
-    opacity,
-    transform,
-    transition: `transform ${dur} var(--ease-out-ios), opacity ${dur} var(--ease-out-ios)`,
-    WebkitFontSmoothing: 'antialiased',
-  };
 }
