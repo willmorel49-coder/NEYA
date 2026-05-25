@@ -242,7 +242,7 @@ export default function Cocon() {
               fontFamily: tokens.fonts.display,
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 22,
+              fontSize: 'var(--type-h2)',
               color: tokens.blue900,
               letterSpacing: '-0.01em',
             }}
@@ -269,7 +269,7 @@ export default function Cocon() {
               backdropFilter: tokens.glass.blur,
               WebkitBackdropFilter: tokens.glass.blur,
               WebkitTapHighlightColor: 'transparent',
-              fontSize: 18,
+              fontSize: 'var(--type-h3)',
               padding: 0,
               boxShadow: '0 4px 14px rgba(10, 36, 56, 0.08)',
             }}
@@ -350,7 +350,7 @@ export default function Cocon() {
         </div>
         <HeroTitle size="lg">{getGreeting(profile.pseudo)}</HeroTitle>
         <div style={{ margin: '16px auto 0', maxWidth: 320 }}>
-          <Body variant="whisper" italic style={{ fontSize: 16, lineHeight: 1.5 }}>
+          <Body variant="whisper" italic style={{ fontSize: 'var(--type-h3)', lineHeight: 1.5 }}>
             {hourWhisper}
           </Body>
         </div>
@@ -374,7 +374,7 @@ export default function Cocon() {
                 fontFamily: tokens.fonts.display,
                 fontStyle: 'italic',
                 fontWeight: 300,
-                fontSize: 20,
+                fontSize: 'var(--type-h2)',
                 lineHeight: 1.4,
                 color: tokens.violet,
                 animation: 'cocon-mantra-breathe 8s ease-in-out infinite',
@@ -554,7 +554,7 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
               fontFamily: tokens.fonts.display,
               fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 17,
+              fontSize: 'var(--type-h3)',
               color: tokens.blue900,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -589,7 +589,7 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
               justifyContent: 'center',
               flexShrink: 0,
               padding: 0,
-              fontSize: 11,
+              fontSize: 'var(--type-label)',
               WebkitTapHighlightColor: 'transparent',
               boxShadow: '0 4px 12px rgba(26, 90, 127, 0.30)',
             }}
@@ -602,7 +602,7 @@ function ActionCard({ onClick, icon, label, subtitle, cover, onPlayToggle, isPla
           aria-hidden
           style={{
             color: tokens.blue300,
-            fontSize: 18,
+            fontSize: 'var(--type-h3)',
             flexShrink: 0,
             padding: '0 2px',
           }}
@@ -799,7 +799,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                   border: active ? 'none' : `1px solid ${tokens.blue300}`,
                   borderRadius: 999,
                   fontFamily: tokens.fonts.ui,
-                  fontSize: 12,
+                  fontSize: 'var(--type-body-sm)',
                   fontWeight: 600,
                   letterSpacing: '0.04em',
                   cursor: 'pointer',
@@ -865,7 +865,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                           fontFamily: tokens.fonts.display,
                           fontStyle: 'italic',
                           fontWeight: 300,
-                          fontSize: 16,
+                          fontSize: 'var(--type-h3)',
                           lineHeight: 1.2,
                         }}
                       >
@@ -916,7 +916,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                               fontFamily: tokens.fonts.display,
                               fontStyle: 'italic',
                               fontWeight: 300,
-                              fontSize: 17,
+                              fontSize: 'var(--type-h3)',
                               lineHeight: 1.3,
                               letterSpacing: '-0.01em',
                               color: tokens.blue900,
@@ -975,7 +975,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     width: '100%',
                   }}
                 >
-                  <span style={{ fontFamily: tokens.fonts.body, fontSize: 15, fontWeight: 500, color: tokens.blue900 }}>
+                  <span style={{ fontFamily: tokens.fonts.body, fontSize: 'var(--type-body)', fontWeight: 500, color: tokens.blue900 }}>
                     Silence
                   </span>
                   <span
@@ -992,7 +992,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
 
               <GlassCard radius="sm" elevation="soft" padding="12px 16px" style={{ marginBottom: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%' }}>
-                  <span style={{ fontSize: 13 }} aria-hidden>🔉</span>
+                  <span style={{ fontSize: 'var(--type-body-sm)' }} aria-hidden>🔉</span>
                   <input
                     type="range"
                     min="0"
@@ -1011,7 +1011,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                       minWidth: 30,
                       textAlign: 'right',
                       fontFamily: tokens.fonts.ui,
-                      fontSize: 12,
+                      fontSize: 'var(--type-body-sm)',
                       fontWeight: 500,
                       fontVariantNumeric: 'tabular-nums',
                       color: tokens.textSecondary,
@@ -1053,7 +1053,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                             fontFamily: tokens.fonts.display,
                             fontStyle: 'italic',
                             fontWeight: 300,
-                            fontSize: 17,
+                            fontSize: 'var(--type-h3)',
                             lineHeight: 1.3,
                             color: tokens.blue900,
                             overflow: 'hidden',
@@ -1066,7 +1066,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         </span>
                         {active && (
                           <span aria-hidden style={{ flexShrink: 0 }}>
-                            <Eyebrow color="blue" style={{ fontSize: 10 }}>en cours</Eyebrow>
+                            <Eyebrow color="blue" style={{ fontSize: 'var(--type-label)' }}>en cours</Eyebrow>
                           </span>
                         )}
                       </div>
@@ -1102,7 +1102,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     border: tokens.glass.border,
                     borderRadius: 14,
                     fontFamily: tokens.fonts.body,
-                    fontSize: 15,
+                    fontSize: 'var(--type-body)',
                     color: tokens.blue900,
                     outline: 'none',
                     boxSizing: 'border-box',
@@ -1133,7 +1133,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     fontFamily: tokens.fonts.display,
                     fontStyle: 'italic',
                     fontWeight: 300,
-                    fontSize: 18,
+                    fontSize: 'var(--type-h3)',
                     lineHeight: 1.4,
                     color: tokens.blue900,
                     outline: 'none',
@@ -1148,7 +1148,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                     marginTop: 6,
                     textAlign: 'right',
                     fontFamily: tokens.fonts.ui,
-                    fontSize: 11,
+                    fontSize: 'var(--type-label)',
                     fontWeight: 500,
                     fontVariantNumeric: 'tabular-nums',
                     color: tempMantra.length >= 130 ? tokens.rose700 : tokens.textSecondary,
@@ -1183,7 +1183,7 @@ function PersonalizeSheet({ profile, onUpdate, onUpdateCocon, onClose }) {
                         <span
                           style={{
                             fontFamily: tokens.fonts.ui,
-                            fontSize: 14,
+                            fontSize: 'var(--type-body)',
                             fontWeight: active ? 600 : 500,
                             lineHeight: 1.3,
                             color: tokens.blue900,
