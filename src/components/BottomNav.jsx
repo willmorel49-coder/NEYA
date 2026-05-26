@@ -9,10 +9,8 @@ import { haptic } from '../v2/state';
 import { Icon } from './ui';
 
 const TABS = [
-  { key: 'aventure',   label: 'Aventure',   icon: 'arrow-up' },
-  { key: 'cocon',      label: 'Cocon',      icon: 'sparkle' },
-  { key: 'communaute', label: 'Communauté', icon: 'circle' },
-  { key: 'cava',       label: 'ÇA VA?',     icon: 'heart' },
+  { key: 'ciel',    label: 'Ciel',    icon: 'sparkle' },
+  { key: 'espaces', label: 'Espaces', icon: 'circle' },
 ];
 
 export default function BottomNav({ active, onChange, badges = {} }) {
