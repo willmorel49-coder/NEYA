@@ -115,4 +115,16 @@ export const ONBOARDING_SCREENS = [
     subBody: [],
     choices: ['Bleu', 'Rose', 'Violet'],
   },
+  {
+    id: 'heure',
+    type: 'preference',
+    preferenceKey: 'heureRituel',
+    eyebrow: '07 · TON RYTHME',
+    image: '/cava/selection/sel-03-prevert.jpeg',
+    alt: 'À quel moment tu te poses',
+    title: ['Quand préfères-tu ', { em: 'te poser' }, ' ?'],
+    body: ["Aucune obligation. Juste pour mieux te connaître."],
+    subBody: [],
+    choices: ['Matin', 'Midi', 'Soir', 'Libre'],
+  },
 ];
