@@ -127,4 +127,15 @@ export const ONBOARDING_SCREENS = [
     subBody: [],
     choices: ['Matin', 'Midi', 'Soir', 'Libre'],
   },
+  {
+    id: 'premiere-etoile',
+    type: 'pose-star',
+    eyebrow: '08 · TON CIEL',
+    image: '/cava/selection/anx-06-soleil.jpeg',
+    alt: 'Pose ta toute première étoile',
+    title: ['Pose ta ', { em: 'première étoile' }, '.'],
+    body: ['C\'est par là que commence ton ciel. Choisis une couleur, écris un mot — ou rien.'],
+    subBody: [],
+    ctaLabel: 'Poser ma première étoile',
+  },
 ];
