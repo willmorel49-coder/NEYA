@@ -365,6 +365,26 @@
   --d-page:    var(--duration-narrative);
 
   --ease-spring-ios: cubic-bezier(0.5, 1.4, 0.3, 1);
+
+  /* ════════════════════════════════════════════════════════════
+     V5 CIEL — Palette nuit (Ciel intérieur dark)
+     ════════════════════════════════════════════════════════════ */
+  --ciel-bg-gradient: linear-gradient(180deg, #050810 0%, #0A2438 45%, #1F1535 100%);
+  --ciel-text:           #FBF6E8;
+  --ciel-text-secondary: rgba(251, 246, 232, 0.65);
+  --ciel-text-muted:     rgba(251, 246, 232, 0.40);
+  --ciel-glow-rose:      rgba(200, 112, 144, 0.20);
+  --ciel-glow-violet:    rgba(127, 90, 138, 0.25);
+  --ciel-glow-blue:      rgba(26, 90, 127, 0.18);
+  --ciel-glass:          rgba(255, 255, 255, 0.06);
+  --ciel-glass-border:   rgba(255, 255, 255, 0.10);
+
+  /* Couleurs d'étoiles selon l'état déposé */
+  --star-bleu:    #6F9DB5;   /* calme, présent */
+  --star-rose:    #E8A0B8;   /* tendre, sensible */
+  --star-violet:  #AF80BA;   /* introspectif, lourd */
+  --star-peche:   #D4A878;   /* fatigue, plat */
+  --star-orage:   #4A6070;   /* orage, crise */
 }
 
 
@@ -864,5 +884,19 @@ html {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 4px;
+}
+
+/* Saisons du Ciel — surcharge dynamique selon Date.now() */
+[data-season="printemps"] {
+  --ciel-glow-accent: var(--ciel-glow-rose);
+}
+[data-season="ete"] {
+  --ciel-glow-accent: rgba(212, 168, 120, 0.28);
+}
+[data-season="automne"] {
+  --ciel-glow-accent: rgba(127, 90, 138, 0.30);
+}
+[data-season="hiver"] {
+  --ciel-glow-accent: rgba(143, 164, 212, 0.25);
 }
 
