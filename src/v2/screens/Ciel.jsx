@@ -68,6 +68,21 @@ export default function Ciel() {
           pointerEvents: 'none',
         }}
       />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          bottom: '20%',
+          right: '15%',
+          width: 240,
+          height: 240,
+          borderRadius: '50%',
+          background: 'var(--ciel-glow-accent, var(--ciel-glow-rose))',
+          filter: 'blur(80px)',
+          pointerEvents: 'none',
+          opacity: 0.7,
+        }}
+      />
 
       {/* Avatar coin haut-gauche */}
       <div style={{ position: 'absolute', top: 'calc(env(safe-area-inset-top, 0px) + 18px)', left: 18, zIndex: 5 }}>
