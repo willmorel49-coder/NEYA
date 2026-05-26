@@ -23,6 +23,7 @@ import { ToastProvider } from '../components/ui';
 import Ciel from './screens/Ciel';
 import Espaces from './screens/Espaces';
 import useSeasonalPalette from './hooks/useSeasonalPalette';
+import { migrateV4ToV5 } from './helpers/migrate-v4-to-v5';
 
 export default function V2App() {
   return (
@@ -34,6 +35,11 @@ export default function V2App() {
 
 function V2AppInner() {
   useSeasonalPalette();
+
+  useEffect(() => {
+    migrateV4ToV5();
+  }, []);
+
   const [splashDone, setSplashDone] = useState(false);
   const [onboarded, setOnboarded] = useState(() => isOnboarded());
   const [activeTab, setActiveTab] = useState(() => ls.get('active_tab', 'ciel'));
