@@ -1,132 +1,82 @@
-# SAVEPOINT — ÇA VA ?
+# SAVEPOINT — ÇA VA ? V5 Constellation
 
-**Date** : 2026-05-25
-**Commit HEAD** : `b85a22c` · feat(v50-pivot/ds-phase3): DS V4 Phase 3 primitives avances (Opus x4)
-**Prod** : https://neya-kappa.vercel.app · HTTP 200
-**Repo** : github.com/willmorel49-coder/NEYA · branche `main`
+**Date** : 2026-05-26
+**Branche** : `feat/v5-constellation` (V4 reste sur `main`)
+**Prod V4** : https://neya-kappa.vercel.app
+**Repo** : github.com/willmorel49-coder/NEYA
 
-## Pivot massif livré (v31 → v50, 20 commits)
+## Refonte V5 en cours
 
-NÉYA → **ÇA VA?** — rebrand complet + nouvelle DA bleu/rose/violet glassmorphism + Cormorant Garamond italic + Inter + Design System V4 unifié.
+Métaphore **Ciel Intérieur** — chaque moment posé devient une étoile dans ta constellation personnelle. 2 onglets (Ciel · Espaces).
 
-## Design System V4 — 26 composants atomiques
+## Avancement plan V5 (33 tâches)
 
-`src/components/ui/` source de vérité visuelle :
+### ✅ Phase 1 Foundation (T1-T6) — DONE
+- T1 tokens.css palette Ciel + saisons (commit `fbd7710`)
+- T2 48 citations Camus/Prévert/Matt Haig/marque (`48b28a5`)
+- T3 state schema stars[] + helpers/stars.js (`c81bf99`)
+- T4 hooks useDailyStarStatus + useCitation + event (`9028303`)
+- T5 useSeasonalPalette (`f4b9d11`)
+- T6 push branche
 
-**Foundation**
-- `Header` (sticky glass + back + titre + action)
-- `BackButton` (pill glass fixed top-left z-80)
-- `GlassCard` (radius/elevation/accent variants)
-- `Eyebrow` (Inter 10/600/0.18em, color pilier)
-- `HeroTitle` (Cormorant italic clamp sm/md/lg/xl)
-- `SectionTitle`
-- `Body` (variants body/body-sm/caption/whisper)
-- `CTA` (primary/rose/outline/ghost · sizes sm/md/lg)
-- `Stat` (tabular-nums)
-- `tokens-ui` (constantes JS pour inline styles)
+### ✅ Phase 2 Ciel (T7-T13) — DONE
+- T7 Star.jsx component (`bca4893`)
+- T8 StarField SVG + algo placement déterministe (`cda0b9c`)
+- T9 PersonAvatar cheveux teal halo pulse (`6034adb`)
+- T10 CielChapter glass scroll (`8f28b6a`)
+- T11 chapter-generator (hier/semaine/mois/mémoire/pièce) (`6a3b954`)
+- T12 PoseEtoileModal 3 étapes (`0acb9be`)
+- T13 écran Ciel.jsx (`d46653d`)
 
-**Phase 3 — Primitives avancés**
-- `Overlay` (backdrop dark/light/clear + ESC + focus trap)
-- `Sheet` (bottom slide-up iOS + snap + drag-to-dismiss)
-- `Modal` (center alert + scale entrance)
-- `Input` (border-left accent + prefix/suffix + error)
-- `Textarea` (counter tabular-nums rouge si max 10%)
-- `FormField` (wrapper accessibilité)
-- `Toggle` (switch iOS 44×26 gradient)
-- `Choice` (card sélectionnable border 3→4px)
-- `Toast` + `ToastProvider` + `useToast` (variants info/success/warning/crisis)
-- `Icon` (20+ icônes Tabler outline 1.5px)
-- `EmptyState` (icon glass + title + description + action)
-- `Skeleton` / `SkeletonText` / `SkeletonCard` (shimmer 1.6s)
-- `Spinner` (rotate 800ms)
-- `Badge` (5 variants)
+### ✅ Phase 3 Espaces (T14-T17) — DONE
+- T14 shell Espaces 3 sous-routes (`47a32d7`)
+- T15 Refuge fusion Méditation/Breath/Carnet/Cocon (`b936b73`)
+- T16 Voix simplifiée + composer (`5d81fc9`)
+- T17 CaVa accepte onClose (`29ffd41`)
 
-## État des onglets
+### ✅ Phase 4 Cleanup (T18-T22) — DONE
+- T18 BottomNav 2 onglets (`16dc6ce`)
+- T19 App.jsx routing 2 onglets + useSeasonalPalette (`c8fb566`)
+- T20 suppression 13 écrans + nettoyage imports (`b9fe131`) → -8721 lignes, bundle -32 kB
+- T21 migration V4→V5 (`2cbbad0`)
+- T22 menu + SAVEPOINT (en cours)
 
-- **Aventure** (1811 lignes) — 3 piliers structurels (01 L'Aventure bleu / 02 La Connaissance rose / 03 Les 3 Temps du Soi violet), glass cards, blobs, BUG-06 fixé
-- **Cocon** (1230 lignes) — glass hero + halo teal `#12C4B0` animé pulse 4.2s, BUG-05 fixé, 3 ActionCards glass
-- **Communauté** — hero glass 343×280, feed voix glass accent alterné bleu/rose, témoignages, composer modal
-- **ÇA VA?** (1281 lignes) — Storytelling 9 chapitres avec 122 images marque en mosaïque (collection "Ma belle anxiété" 14 pièces, Fruits 🍌🍑, Essentiels, L'Univers galerie complète, Voix, Final)
+### ⏳ Phase 5 Magie (T23-T28) — À FAIRE
+- T23 M2 citation flottante animée
+- T24 M4 mémoire qui ressurgit (déjà inclus dans T11)
+- T25 M6 pièce qui résonne (mapping image précis)
+- T26 M7 saisons du ciel wiring final
+- T27 M11 ambiance sonore opt-in
+- T28 M12 toast pose silencieuse
 
-## Fondations
+### ⏳ Phase 6 Onboarding amplifié (T29-T32) — À FAIRE
+- T29 étape mantra (8 citations + libre)
+- T30 étape couleur favorite
+- T31 étape heure rituel
+- T32 1ère étoile pendant onboarding
 
-- **tokens.css** — palette V4 `--bg #EEF3F8 / --blue-* / --rose-* / --violet / --gradient-* / --glass-*` + legacy mapping (`--cream → bg`, `--ink → blue-900`, etc.) pour transition douce
-- **index.html** — Cormorant Garamond + Inter + theme-color #EEF3F8
-- **OnboardingFlow** (pré-app) — 4 diapos photos cava-007/100/040/105, scroll-snap horizontal, ken-burns, Cormorant italic, blobs, CTA gradient bleu
-- **BottomNav** — pill glass blur 20 + indicateur dégradé bleu→rose + Icons Tabler (arrow-up / sparkle / circle / heart)
-- **SOS** — FAB bas-droite rose `--rose-700` 52×52 + ActionSheet "Urgence" (3114 / 15 / Mode crise respirer 90s)
-- **Menu hamburger** — top-left glass blur + Histoire ÇA VA? / Aide / Espaces / Refuge
+### ⏳ Final (T33) — À FAIRE
+- T33 validation DoD + push + preview + merge main
 
-## Bugs fixés
+## Composants UI Design System V4 (26 + 5 nouveaux V5)
 
-| # | Statut | Détail |
-|---|---|---|
-| BUG-01 apostrophes échappées | ✅ | Tous les `\'` → `'` typographiques |
-| BUG-02 CTA TERMINER dark | ✅ | Gradient bleu partout |
-| BUG-03 question du jour vide | ✅ | DEFAULT_PROMPT fallback Communauté |
-| BUG-04 SOS chevauche header | ✅ | FAB bas-droite + z-index hierarchy commentée |
-| BUG-05 personnage Cocon coupé | ✅ | objectPosition center 30% + height 78% |
-| BUG-06 Bilan du soir orphelin | ✅ | Glass card aligné PilierCard |
-| BUG-07 NÉYA dans UI | ✅ | Rebrand global 63 fichiers |
-
-## Photos disponibles
-
-- `/public/cava/brand/` — 120 photos shooting brand (cava-001 à cava-120)
-- `/public/cava/selection/` — 17 photos curées (anx-01 à anx-12 citations + fruit-01 banane + fruit-02 pêche + sel-01 à sel-04 + ess-01 hoodie noir)
-- `/public/cava/marque/` — 122 photos univers complet (marque-001 à marque-123 + marque-special)
-
-## Workflow Claude
-
-- **CLAUDE.md** — pointe vers `/NOUVELLE DA/CLAUDE.md` (palette V3 officielle)
-- **Sub-agents foreground** = permissions OK (Write/Edit)
-- **Sub-agents `run_in_background: true`** = BLOQUÉ par sandbox (limitation harness)
-- **Modèle Opus** explicite recommandé pour cavalry migrations DS
-
-## Z-index hierarchy (commentée dans v2/App.jsx)
-
-```
-BottomNav     30
-Back buttons  80
-SOS button    100
-Menu          100
-ActionSheets  200
-Modals/Onboarding 9999
-```
-
-## Backlog priorisé
-
-1. **Auditer photos cocon** (BUG-05 visuel — l'image personnage tronquée à vérifier sur mobile réel)
-2. **Crise + CriseSettings** : intégrer les nouveaux Overlay/Sheet primitives
-3. **Touts les ActionSheets** : migrer vers le nouveau Sheet primitive
-4. **AventurePlayer / RituelPlayer / LeconReader / MondeReader** : migration DS V4 (non couverts par Phase 2)
-5. **Lookbook / ProductDetail / Cercle / Manifeste** : migration DS V4
-6. **Préfetch images marque** sur entrée onglet CaVa (perf)
-7. **Animation system global** : variants entry/exit/stagger centralisés
-8. **Loading states** : utiliser SkeletonCard sur les overlays qui chargent
-9. **EmptyStates** : intégrer dans Communauté/Souvenirs/Carnet si listes vides
-10. **Theming dynamique** : palette qui s'adapte selon heure (jour/nuit/twilight)
-
-## Volontairement écarté
-
-- shadcn Calendar / DataTable / Carousel
-- magicui Meteors / Sparkles / Globe / Border Beam
-- IBM Carbon density / Material ripple
-- Aceternity Background Beams / Hover Border Gradient
-- Tests unitaires stricts (post-V1)
-- Monorepo
-- React Native (reste PWA web)
+`src/components/ui/` :
+- **V4 Foundation** : Header, BackButton, GlassCard, Eyebrow, HeroTitle, SectionTitle, Body, CTA, Stat, tokens
+- **V4 Primitives** : Overlay, Sheet, Modal, Input, Textarea, FormField, Toggle, Choice, Toast, ToastProvider, Icon, EmptyState, Skeleton, Spinner, Badge
+- **V5 Ciel** : Star, StarField, PersonAvatar, CielChapter, PoseEtoileModal
 
 ## Bundle
 
-- **JS** : 446 kB (110 kB gzip)
-- **CSS** : ~26 kB (6.7 kB gzip)
-- **PWA precache** : 111 entries (~5.85 MB images incluses)
-- Build time : ~1.8s
+- V4 prod : 446 kB / 110 kB gzip
+- V5 actuel : 286 kB / 72 kB gzip (-32% grâce à suppression 13 écrans)
 
-## Pour reprendre sur mobile Claude Code
+## Pour reprendre
 
-1. Ouvrir Claude Code sur ton tel
-2. Branche `main` à jour (commit `b85a22c`)
-3. Tous les composants UI dans `src/components/ui/` (importer via `'../../components/ui'`)
-4. Lire `/NOUVELLE DA/CLAUDE.md` pour les règles design strictes
-5. Lire `ROBOT.md` pour le workflow et anti-patterns
+```bash
+git checkout feat/v5-constellation
+git pull origin feat/v5-constellation
+npm install && npm run dev
+```
+
+Plan détaillé : `docs/superpowers/plans/2026-05-25-ca-va-v5-constellation-plan.md`
+Spec : `docs/superpowers/specs/2026-05-25-ca-va-v5-constellation-design.md`
