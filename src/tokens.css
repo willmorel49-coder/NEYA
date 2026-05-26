@@ -916,3 +916,8 @@ html {
   [class*="star-"] { animation: none !important; }
 }
 
+@keyframes avatar-halo-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.15); }
+}
+
