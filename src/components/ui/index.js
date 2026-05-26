@@ -38,3 +38,4 @@ export { tokens } from './tokens-ui';
 export { default as Star } from './Star';
 export { default as StarField } from './StarField';
 export { default as PersonAvatar } from './PersonAvatar';
+export { default as CielChapter } from './CielChapter';
