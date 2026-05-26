@@ -142,6 +142,7 @@ export default function Ciel() {
             color: 'rgba(251, 246, 232, 0.72)',
             margin: 0,
             lineHeight: 1.5,
+            animation: 'citation-soft-fade 1800ms ease-out 600ms both',
           }}
         >
           « {citation.text} »
