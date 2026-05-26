@@ -33,3 +33,6 @@ export { default as Spinner } from './Spinner';
 export { default as Badge } from './Badge';
 
 export { tokens } from './tokens-ui';
+
+/* V5 — Ciel intérieur */
+export { default as Star } from './Star';
