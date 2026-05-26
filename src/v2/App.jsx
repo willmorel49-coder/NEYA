@@ -1,9 +1,9 @@
 /* ============================================================
-   ÇA VA ? V2 — App Root (Shell + 3 tabs)
+   ÇA VA ? V5 — App Root (Shell + 2 tabs)
    ============================================================
-   Onboarding (premier launch) → Shell avec 3 tabs :
-     Aventure (default) · Cocon · Communauté
-   + Meditation overlay (déclenché depuis Aventure)
+   Onboarding (premier launch) → Shell avec 2 tabs :
+     Ciel (default) · Espaces (Refuge / Voix / Marque)
+   + Meditation overlay
    ============================================================ */
 
 import { useState, useEffect, useRef } from 'react';
@@ -11,20 +11,11 @@ import { isOnboarded, getProfile, patchProfile, ls, haptic, checkMilestone, isMi
 import { WORLDS } from './worlds';
 import Splash from './screens/Splash';
 import OnboardingFlow from '../components/onboarding/OnboardingFlow';
-import Onboarding from './screens/Onboarding';
-import Aventure from './screens/Aventure';
-import Cocon from './screens/Cocon';
-import Communaute from './screens/Communaute';
-import CaVa from './screens/CaVa';
 import Meditation from './screens/Meditation';
 import Crise from './screens/Crise';
 import CriseSettings from './screens/CriseSettings';
 import Aide from './screens/Aide';
 import EspacesIRL from './screens/EspacesIRL';
-import Habitudes from './screens/Habitudes';
-import EspaceVrai from './screens/EspaceVrai';
-import Bilan from './screens/Bilan';
-import BilanSemaine from './screens/BilanSemaine';
 import MilestoneToast from './screens/MilestoneToast';
 import BottomNav from '../components/BottomNav';
 import ActionSheet from '../components/ActionSheet';
@@ -52,10 +43,6 @@ function V2AppInner() {
   const [espacesIRLOpen, setEspacesIRLOpen] = useState(false);
   const [sosMenuOpen, setSosMenuOpen] = useState(false);
   const [criseSettingsOpen, setCriseSettingsOpen] = useState(false);
-  const [habitudesOpen, setHabitudesOpen] = useState(false);
-  const [espaceVraiOpen, setEspaceVraiOpen] = useState(false);
-  const [bilanOpen, setBilanOpen] = useState(false);
-  const [bilanSemaineOpen, setBilanSemaineOpen] = useState(false);
   const [milestoneDay, setMilestoneDay] = useState(null);
   const [fullscreenOverlayOpen, setFullscreenOverlayOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -123,10 +110,6 @@ function V2AppInner() {
   const anyOverlayOpen =
     meditationOpen ||
     criseOpen ||
-    habitudesOpen ||
-    espaceVraiOpen ||
-    bilanOpen ||
-    bilanSemaineOpen ||
     milestoneDay !== null;
 
   const startLongPress = (e) => {
@@ -211,10 +194,6 @@ function V2AppInner() {
   useEffect(() => {
     setMeditationOpen(false);
     setCriseOpen(false);
-    setHabitudesOpen(false);
-    setEspaceVraiOpen(false);
-    setBilanOpen(false);
-    setBilanSemaineOpen(false);
   }, [activeTab]);
 
   // Cross-tab deep-link event — other screens dispatch `neya:switch-tab`
@@ -266,18 +245,6 @@ function V2AppInner() {
     setMilestoneDay(null);
   };
 
-  const handleOpenMeditation = () => setMeditationOpen(true);
-
-  const handleOpenWorld = (worldKey) => {
-    setActiveWorldKey(worldKey);
-    setMeditationOpen(true);
-  };
-
-  const openCrisis = () => {
-    haptic(6);
-    setCriseOpen(true);
-  };
-
   // Determine accent for BottomNav based on active tab/world
   const navAccent =
     activeTab === 'aventure'
@@ -315,7 +282,7 @@ function V2AppInner() {
   }
 
   // SOS / Menu visible only when user is in main shell — hidden during intro overlays
-  const showSosButton = onboarded && splashDone && !criseOpen && !aideOpen && !espacesIRLOpen && !criseSettingsOpen && !habitudesOpen && !espaceVraiOpen && !bilanOpen && !bilanSemaineOpen && !fullscreenOverlayOpen && !onboardingReviewOpen;
+  const showSosButton = onboarded && splashDone && !criseOpen && !aideOpen && !espacesIRLOpen && !criseSettingsOpen && !fullscreenOverlayOpen && !onboardingReviewOpen;
   const showMenuButton = showSosButton;
 
   return (
@@ -408,16 +375,6 @@ function V2AppInner() {
         />
       )}
 
-      {habitudesOpen && (
-        <Habitudes
-          onClose={() => setHabitudesOpen(false)}
-          onOpenMeditation={() => {
-            setHabitudesOpen(false);
-            setMeditationOpen(true);
-          }}
-        />
-      )}
-
       {criseOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
           <Crise onClose={() => setCriseOpen(false)} />
@@ -491,17 +448,6 @@ function V2AppInner() {
           onClose={() => setSosMenuOpen(false)}
         />
       )}
-
-      {espaceVraiOpen && (
-        <EspaceVrai
-          worldKey={activeWorldKey}
-          onClose={() => setEspaceVraiOpen(false)}
-        />
-      )}
-
-      {bilanOpen && <Bilan onClose={() => setBilanOpen(false)} />}
-
-      {bilanSemaineOpen && <BilanSemaine onClose={() => setBilanSemaineOpen(false)} />}
 
       {milestoneDay !== null && <MilestoneToast day={milestoneDay} onClose={handleMilestoneClose} />}
     </div>
