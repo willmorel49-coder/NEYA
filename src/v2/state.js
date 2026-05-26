@@ -104,6 +104,14 @@ export const defaultProfile = () => ({
     music: null,             // ÇA VA? tracks ou null
     musicVolume: 0.4,
   },
+  stars: [],
+  preferences: {
+    prenom: null,
+    mantra: null,
+    couleurFavorite: null,    // 'bleu' | 'rose' | 'violet' | null
+    heureRituel: null,        // 'matin' | 'midi' | 'soir' | 'libre' | null
+    ambianceSonore: false,
+  },
 });
 
 export function getProfile() {
