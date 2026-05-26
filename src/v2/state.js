@@ -122,6 +122,7 @@ export function setProfile(p) {
   ls.set('profile', p);
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('neya:profile-changed'));
+    window.dispatchEvent(new CustomEvent('cava:profile-changed'));
   }
   return p;
 }
