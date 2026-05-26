@@ -11,6 +11,7 @@ import { generateChapters } from '../helpers/chapter-generator';
 import useDailyStarStatus from '../hooks/useDailyStarStatus';
 import useCitation from '../hooks/useCitation';
 import { StarField, PersonAvatar, CielChapter, PoseEtoileModal } from '../../components/ui';
+import AmbianceAudio from '../../components/ciel/AmbianceAudio';
 
 export default function Ciel() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -39,6 +40,7 @@ export default function Ciel() {
         paddingBottom: 90, // BottomNav clearance
       }}
     >
+      <AmbianceAudio />
       {/* Glows ambient */}
       <div
         aria-hidden
