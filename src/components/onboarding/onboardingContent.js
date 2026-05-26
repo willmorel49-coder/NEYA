@@ -103,4 +103,16 @@ export const ONBOARDING_SCREENS = [
       "C'est ok de ne pas être ok.",
     ],
   },
+  {
+    id: 'couleur',
+    type: 'preference',
+    preferenceKey: 'couleurFavorite',
+    eyebrow: '06 · TA COULEUR',
+    image: '/cava/selection/sel-04-noir-coeur.jpeg',
+    alt: 'Quelle teinte porte le mieux ce que tu vis',
+    title: ['Quelle ', { em: 'teinte' }, ' te porte ?'],
+    body: ['Elle nuancera les accents de ton ciel.'],
+    subBody: [],
+    choices: ['Bleu', 'Rose', 'Violet'],
+  },
 ];
