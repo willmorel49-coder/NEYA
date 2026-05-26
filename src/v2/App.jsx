@@ -29,6 +29,9 @@ import MilestoneToast from './screens/MilestoneToast';
 import BottomNav from '../components/BottomNav';
 import ActionSheet from '../components/ActionSheet';
 import { ToastProvider } from '../components/ui';
+import Ciel from './screens/Ciel';
+import Espaces from './screens/Espaces';
+import useSeasonalPalette from './hooks/useSeasonalPalette';
 
 export default function V2App() {
   return (
@@ -39,9 +42,10 @@ export default function V2App() {
 }
 
 function V2AppInner() {
+  useSeasonalPalette();
   const [splashDone, setSplashDone] = useState(false);
   const [onboarded, setOnboarded] = useState(() => isOnboarded());
-  const [activeTab, setActiveTab] = useState(() => ls.get('active_tab', 'aventure'));
+  const [activeTab, setActiveTab] = useState(() => ls.get('active_tab', 'ciel'));
   const [meditationOpen, setMeditationOpen] = useState(false);
   const [criseOpen, setCriseOpen] = useState(false);
   const [aideOpen, setAideOpen] = useState(false);
@@ -113,7 +117,7 @@ function V2AppInner() {
   const longPressWarnRef = useRef(null);
 
   // Horizontal swipe between tabs (iOS HIG paged-tab style)
-  const TAB_ORDER = ['aventure', 'cocon', 'communaute', 'cava'];
+  const TAB_ORDER = ['ciel', 'espaces'];
   const swipeRef = useRef({ x: 0, y: 0, started: false });
 
   const anyOverlayOpen =
@@ -325,27 +329,13 @@ function V2AppInner() {
       onMouseUp={cancelLongPress}
       onMouseLeave={cancelLongPress}
     >
-      {/* All 4 screens mounted permanently — state (filters, scroll, drawers)
+      {/* Both screens mounted permanently — state (filters, scroll, drawers)
           preserved across tab switches. Active screen visible + interactive,
           others faded out + pointer-events disabled. iOS-native tab behavior. */}
       <div style={{ position: 'absolute', inset: 0 }}>
         {[
-          {
-            key: 'aventure',
-            node: (
-              <Aventure
-                onOpenMeditation={handleOpenMeditation}
-                onOpenWorld={handleOpenWorld}
-                onOpenHabitudes={() => setHabitudesOpen(true)}
-                onOpenEspaceVrai={() => setEspaceVraiOpen(true)}
-                onOpenBilan={() => setBilanOpen(true)}
-                onOpenBilanSemaine={() => setBilanSemaineOpen(true)}
-              />
-            ),
-          },
-          { key: 'cocon', node: <Cocon /> },
-          { key: 'communaute', node: <Communaute /> },
-          { key: 'cava', node: <CaVa /> },
+          { key: 'ciel',    node: <Ciel /> },
+          { key: 'espaces', node: <Espaces /> },
         ].map(({ key, node }) => {
           const isActive = activeTab === key;
           return (
