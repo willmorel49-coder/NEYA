@@ -182,7 +182,7 @@ const COLLECTIONS_MAP = {
   essentiels: COLLECTION_ESSENTIELS,
 };
 
-export default function CaVa() {
+export default function CaVa({ onClose } = {}) {
   const [viewer, setViewer] = useState(null);
   const [viewerCollection, setViewerCollection] = useState(null);
   const [marqueViewer, setMarqueViewer] = useState(null);
@@ -220,6 +220,39 @@ export default function CaVa() {
         }}
       >
         <Blobs variant="rose-blue" />
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Retour"
+            style={{
+              position: 'fixed',
+              top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+              left: 16,
+              zIndex: 80,
+              background: 'rgba(255,255,255,0.85)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255,255,255,0.9)',
+              borderRadius: 50,
+              padding: '10px 14px',
+              minHeight: 44,
+              color: 'var(--blue-700)',
+              fontFamily: "'Inter', system-ui, sans-serif",
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(10,36,56,0.10)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            Retour
+          </button>
+        )}
         <TopBar />
         <Hero />
         <ChapitreManifeste />
