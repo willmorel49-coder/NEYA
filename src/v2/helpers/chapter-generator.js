@@ -19,6 +19,26 @@ const COLOR_LABELS = {
 
 const MOIS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 
+// Map id citation → image selection (les 12 citations marque les plus iconiques)
+const CITATION_TO_IMAGE = {
+  1:  '/cava/selection/sel-02-sensibilite.jpeg',
+  2:  '/cava/selection/anx-01-super-pouvoir.jpeg',
+  3:  '/cava/selection/anx-09-cicatrice.jpeg',
+  4:  '/cava/selection/sel-01-pas.jpeg',
+  5:  '/cava/selection/anx-10-combats.jpeg',
+  6:  '/cava/selection/anx-08-courage.jpeg',
+  7:  '/cava/selection/anx-06-soleil.jpeg',
+  8:  '/cava/selection/anx-07-fatigue.jpeg',
+  9:  '/cava/selection/anx-11-sourire.jpeg',
+  10: '/cava/selection/fruit-01-banane.jpeg',
+  11: '/cava/selection/fruit-02-peche.jpeg',
+  12: '/cava/selection/anx-03-train.jpeg',
+  19: '/cava/selection/anx-02-camus.jpeg',
+  20: '/cava/selection/anx-04-matt-haig.jpeg',
+  21: '/cava/selection/anx-05-prevert-bis.jpeg',
+  22: '/cava/selection/anx-12-mandela.jpeg',
+};
+
 /**
  * Retourne un tableau de chapitres à afficher dans le Ciel scroll.
  * Ordre : du plus récent au plus ancien.
@@ -101,14 +121,14 @@ export function generateChapters() {
     const matched = CITATIONS.filter((c) => c.tags.includes(tag) && c.author == null);
     if (matched.length > 0) {
       const c = matched[Math.floor(Math.random() * matched.length)];
-      // Map citation id → image marque (matching simple par id mod 122)
-      const imageIdx = String((c.id * 7) % 122 + 1).padStart(3, '0');
+      // Map citation id → image marque iconique (fallback id mod 122)
+      const imageSrc = CITATION_TO_IMAGE[c.id] || `/cava/marque/marque-${String((c.id * 7) % 122 + 1).padStart(3, '0')}.jpeg`;
       chapters.push({
         type: 'piece',
         eyebrow: 'Une pièce qui te ressemble',
         accent: 'rose',
         text: `« ${c.text} »`,
-        media: { type: 'image', src: `/cava/marque/marque-${imageIdx}.jpeg` },
+        media: { type: 'image', src: imageSrc },
       });
     }
   }
