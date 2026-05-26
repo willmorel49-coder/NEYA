@@ -12,6 +12,7 @@ import { haptic } from '../../v2/state';
 import Overlay from './Overlay';
 import CTA from './CTA';
 import Textarea from './Textarea';
+import { useToast } from './ToastProvider';
 
 const COLORS = [
   { key: 'bleu',   label: 'Calme, présent',         hex: '#6F9DB5', emoji: '🔵' },
@@ -22,6 +23,7 @@ const COLORS = [
 ];
 
 export default function PoseEtoileModal({ open, onClose, onPosed }) {
+  const toast = useToast();
   const [step, setStep] = useState(1);
   const [color, setColor] = useState(null);
   const [note, setNote] = useState('');
@@ -50,6 +52,11 @@ export default function PoseEtoileModal({ open, onClose, onPosed }) {
     const star = addStar({ color, note });
     setBornStar(star);
     setStep(3);
+    toast.show({
+      message: note.trim() ? 'Étoile posée.' : 'Le silence aussi compte.',
+      variant: 'success',
+      duration: 3000,
+    });
     // Auto-close après 4s
     setTimeout(() => {
       onPosed?.(star);
