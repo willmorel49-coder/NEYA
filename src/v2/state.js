@@ -118,6 +118,10 @@ export function getProfile() {
   return ls.get('profile', defaultProfile());
 }
 
+/**
+ * @deprecated Pour mutation, préférer `mutateProfile(updater)` — atomique read-modify-write.
+ * `setProfile` écrit brut sans relecture : risque last-write-wins si un autre handler écrit entre-temps.
+ */
 export function setProfile(p) {
   ls.set('profile', p);
   if (typeof window !== 'undefined') {
@@ -127,11 +131,19 @@ export function setProfile(p) {
   return p;
 }
 
+/**
+ * Mutation atomique du profile (read-modify-write).
+ * Garantit qu'aucune écriture concurrente ne sera perdue : relit le profile juste avant d'écrire.
+ * @param {(p: object) => object} updater - reçoit le profile frais, retourne le profile à écrire.
+ */
+export function mutateProfile(updater) {
+  const fresh = getProfile();
+  const next = updater(fresh);
+  return setProfile(next);
+}
+
 export function patchProfile(patch) {
-  const p = getProfile();
-  const next = { ...p, ...patch };
-  setProfile(next);
-  return next;
+  return mutateProfile((p) => ({ ...p, ...patch }));
 }
 
 export function isOnboarded() {
@@ -139,23 +151,28 @@ export function isOnboarded() {
 }
 
 export function recordVisitToday() {
-  const p = getProfile();
   const today = new Date().toISOString().split('T')[0];
-  const last = p.progress.lastVisit;
-  const isNewDay = last !== today;
-  if (isNewDay) {
-    p.progress.joursConnectes = (p.progress.joursConnectes || 0) + 1;
-    p.progress.lastVisit = today;
-    setProfile(p);
-  }
-  return p;
+  return mutateProfile((p) => {
+    if (p.progress.lastVisit === today) return p;
+    return {
+      ...p,
+      progress: {
+        ...p.progress,
+        joursConnectes: (p.progress.joursConnectes || 0) + 1,
+        lastVisit: today,
+      },
+    };
+  });
 }
 
 export function addMinutes(mins) {
-  const p = getProfile();
-  p.progress.minutesTotales = (p.progress.minutesTotales || 0) + mins;
-  setProfile(p);
-  return p;
+  return mutateProfile((p) => ({
+    ...p,
+    progress: {
+      ...p.progress,
+      minutesTotales: (p.progress.minutesTotales || 0) + mins,
+    },
+  }));
 }
 
 /* ============================================================
@@ -166,26 +183,25 @@ export function addMinutes(mins) {
 const WORLD_PROGRESSION = ['foret', 'temple', 'oasis', 'lac', 'montagne', 'communaute'];
 
 export function completeMeditation(worldKey, minutes) {
-  const p = getProfile();
-  const explored = new Set(p.progress.worldsExplored || []);
-  const wasNew = !explored.has(worldKey);
-  explored.add(worldKey);
-  p.progress.worldsExplored = Array.from(explored);
-
-  // Avance currentWorld au prochain non-exploré dans l'ordre
-  const nextUnexplored = WORLD_PROGRESSION.find((w) => !explored.has(w));
-  if (nextUnexplored) {
-    p.progress.currentWorld = nextUnexplored;
-  } else {
-    // Tous explorés — reste sur le dernier visité
-    p.progress.currentWorld = worldKey;
-  }
-
-  if (minutes >= 1) {
-    p.progress.minutesTotales = (p.progress.minutesTotales || 0) + minutes;
-  }
-  setProfile(p);
-  return { profile: p, wasNew, advancedTo: nextUnexplored };
+  let wasNew = false;
+  let advancedTo = null;
+  const profile = mutateProfile((p) => {
+    const explored = new Set(p.progress.worldsExplored || []);
+    wasNew = !explored.has(worldKey);
+    explored.add(worldKey);
+    const nextUnexplored = WORLD_PROGRESSION.find((w) => !explored.has(w));
+    advancedTo = nextUnexplored || null;
+    return {
+      ...p,
+      progress: {
+        ...p.progress,
+        worldsExplored: Array.from(explored),
+        currentWorld: nextUnexplored || worldKey,
+        minutesTotales: (p.progress.minutesTotales || 0) + (minutes >= 1 ? minutes : 0),
+      },
+    };
+  });
+  return { profile, wasNew, advancedTo };
 }
 
 /* ============================================================
@@ -261,17 +277,17 @@ export function getEtatLine() {
    ============================================================ */
 
 export function recordCrisisEntry() {
-  const p = getProfile();
-  p.crisis = p.crisis || {};
-  p.crisis.lastEntryAt = new Date().toISOString();
-  setProfile(p);
+  mutateProfile((p) => ({
+    ...p,
+    crisis: { ...(p.crisis || {}), lastEntryAt: new Date().toISOString() },
+  }));
 }
 
 export function recordCrisisExit() {
-  const p = getProfile();
-  p.crisis = p.crisis || {};
-  p.crisis.lastExitAt = new Date().toISOString();
-  setProfile(p);
+  mutateProfile((p) => ({
+    ...p,
+    crisis: { ...(p.crisis || {}), lastExitAt: new Date().toISOString() },
+  }));
 }
 
 /* ============================================================

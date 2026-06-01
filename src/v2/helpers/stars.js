@@ -4,8 +4,9 @@
    Toute la logique d'ajout, lecture, hash placement.
    ============================================================ */
 
-import { ls, getProfile, setProfile } from '../state';
+import { ls, getProfile, mutateProfile } from '../state';
 import { pickCitation } from '../data/citations';
+import { positionForStar } from '../data/star-positions';
 
 const STORAGE_KEY = 'cava_v5_uid';
 
@@ -49,14 +50,26 @@ export function hasStarToday() {
   return stars.some((s) => s.date === today);
 }
 
+/** Étoile d'aujourd'hui (ou null si pas encore posée). */
+export function getTodayStar() {
+  const today = toIsoDate();
+  const stars = getProfile().stars || [];
+  return stars.find((s) => s.date === today) || null;
+}
+
 /**
  * Ajoute une étoile au profil.
+ * Idempotent par jour : si une étoile existe déjà pour aujourd'hui, retourne l'existante sans rien écrire.
  * @param {object} args - { color, note?, type }
  *   color : 'bleu' | 'rose' | 'violet' | 'peche' | 'orage'
  *   note  : string optionnel
  *   type  : 'mood' | 'breath' | 'voice' | 'write' (default 'mood')
+ * @returns {object} l'étoile (existante ou nouvellement créée).
  */
 export function addStar({ color, note = '', type = 'mood' }) {
+  const existing = getTodayStar();
+  if (existing) return existing;
+
   const tagMap = {
     bleu:   'calme',
     rose:   'tendre',
@@ -69,20 +82,43 @@ export function addStar({ color, note = '', type = 'mood' }) {
   const seed = dayIndex(today) + hashSeed(getUserId());
   const citation = pickCitation(tag, seed);
 
+  const id = `star-${today}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+  const { x, y } = positionForStar(id, getUserId());
+
   const star = {
-    id: `star-${today}-${Date.now().toString(36)}`,
+    id,
     date: today,
     time: new Date().toTimeString().slice(0, 5),
     color,
     note: note?.trim() || null,
     citation,
     type,
+    x,
+    y,
   };
 
-  const p = getProfile();
-  p.stars = [...(p.stars || []), star];
-  setProfile(p);
+  mutateProfile((p) => ({ ...p, stars: [...(p.stars || []), star] }));
   return star;
+}
+
+/**
+ * Backfill x/y sur les étoiles existantes (migration douce).
+ * Idempotent : ne touche que les étoiles sans x/y.
+ * À appeler une fois au boot.
+ */
+export function backfillStarPositions() {
+  const stars = getProfile().stars || [];
+  const needsBackfill = stars.some((s) => s.x == null || s.y == null);
+  if (!needsBackfill) return;
+  const uid = getUserId();
+  mutateProfile((p) => ({
+    ...p,
+    stars: (p.stars || []).map((s) => {
+      if (s.x != null && s.y != null) return s;
+      const { x, y } = positionForStar(s.id, uid);
+      return { ...s, x, y };
+    }),
+  }));
 }
 
 /** Récupère étoiles dans une plage de dates (inclusive). */

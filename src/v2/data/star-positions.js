@@ -38,14 +38,18 @@ export function generateConnections(stars, userId) {
     byWeek[wk].push(s);
   });
 
+  const posOf = (s) => (s.x != null && s.y != null)
+    ? { x: s.x, y: s.y }
+    : positionForStar(s.id, userId);
+
   const connections = [];
   Object.values(byWeek).forEach((weekStars) => {
     // Trie par date, relie chronologiquement
     const sorted = [...weekStars].sort((a, b) => a.date.localeCompare(b.date));
     for (let i = 0; i < sorted.length - 1; i++) {
       connections.push({
-        from: positionForStar(sorted[i].id, userId),
-        to:   positionForStar(sorted[i + 1].id, userId),
+        from: posOf(sorted[i]),
+        to:   posOf(sorted[i + 1]),
       });
     }
   });

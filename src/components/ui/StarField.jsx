@@ -61,7 +61,10 @@ export default function StarField({ stars, todayStar, onTapToday, onTapStar, use
 
       {/* Étoiles passées */}
       {limited.map((star) => {
-        const pos = positionForStar(star.id, userId);
+        // Priorité aux positions persistées (constellation stable même si userId regénéré)
+        const pos = (star.x != null && star.y != null)
+          ? { x: star.x, y: star.y }
+          : positionForStar(star.id, userId);
         return (
           <Star
             key={star.id}
