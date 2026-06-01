@@ -20,6 +20,7 @@ import {
 import { greet, getProfile, haptic } from '../state';
 import BreathingPause from './BreathingPause';
 import Carnet from './Carnet';
+import Timeline from './Timeline';
 import BoueeModal from '../../components/ui/BoueeModal';
 import CitationKeepModal from '../../components/ui/CitationKeepModal';
 
@@ -41,10 +42,11 @@ const ECHO_MENU = {
   ],
 };
 
-export default function Checkin({ onOpenTimeline }) {
+export default function Checkin() {
   const [step, setStep] = useState(() => (hasCheckinToday() ? 'done' : 'question'));
   const [currentCheckin, setCurrentCheckin] = useState(() => getTodayCheckin());
   const [activeAction, setActiveAction] = useState(null);
+  const [timelineOpen, setTimelineOpen] = useState(false);
 
   useEffect(() => {
     const onChange = () => {
@@ -85,7 +87,8 @@ export default function Checkin({ onOpenTimeline }) {
       {step === 'question' && <QuestionStep onPick={handlePickMood} />}
       {step === 'echo'     && <EchoStep mood={currentCheckin?.mood} citation={currentCheckin?.citation} onPick={handlePickAction} />}
       {step === 'action'   && <ActionStep option={activeAction} mood={currentCheckin?.mood} onDone={handleActionDone} onCancel={() => setStep('echo')} />}
-      {step === 'done'     && <DoneStep checkin={currentCheckin} onContinue={handleContinue} onViewPast={onOpenTimeline} />}
+      {step === 'done'     && <DoneStep checkin={currentCheckin} onContinue={handleContinue} onViewPast={() => setTimelineOpen(true)} />}
+      <Timeline open={timelineOpen} onClose={() => setTimelineOpen(false)} />
     </div>
   );
 }
