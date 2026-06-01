@@ -7,7 +7,11 @@
    ============================================================ */
 
 import { CITATIONS } from '../data/citations';
-import { getStarsRange, toIsoDate, getDominantColor, getAllStars } from './stars';
+import { MARQUE_IMAGES } from '../data/marque-manifest';
+import { getStarsRange, toIsoDate, getDominantColor, getAllStars, hashSeed, getUserId, dayIndex } from './stars';
+
+/** Set des paths d'images marque valides — pour vérif rapide O(1) */
+const MARQUE_IMAGES_SET = new Set(MARQUE_IMAGES);
 
 const COLOR_LABELS = {
   bleu:   'calme',
@@ -120,15 +124,24 @@ export function generateChapters() {
     const tag = tagMap[dominantNow];
     const matched = CITATIONS.filter((c) => c.tags.includes(tag) && c.author == null);
     if (matched.length > 0) {
-      const c = matched[Math.floor(Math.random() * matched.length)];
-      // Map citation id → image marque iconique (fallback id mod 122)
-      const imageSrc = CITATION_TO_IMAGE[c.id] || `/cava/marque/marque-${String((c.id * 7) % 122 + 1).padStart(3, '0')}.jpeg`;
+      // Index déterministe : même citation tant que userId + jour identiques (pas de re-render flicker)
+      const seed = hashSeed(getUserId() + ':' + dayIndex(toIsoDate(today)));
+      const c = matched[seed % matched.length];
+      // Map citation id → image marque iconique ; sinon vérifier que le path existe dans MARQUE_IMAGES
+      const curated = CITATION_TO_IMAGE[c.id];
+      const fallback = `/cava/marque/marque-${String((c.id * 7) % 122 + 1).padStart(3, '0')}.jpeg`;
+      let media = null;
+      if (curated) {
+        media = { type: 'image', src: curated };
+      } else if (MARQUE_IMAGES_SET.has(fallback)) {
+        media = { type: 'image', src: fallback };
+      }
       chapters.push({
         type: 'piece',
         eyebrow: 'Une pièce qui te ressemble',
         accent: 'rose',
         text: `« ${c.text} »`,
-        media: { type: 'image', src: imageSrc },
+        ...(media ? { media } : {}),
       });
     }
   }

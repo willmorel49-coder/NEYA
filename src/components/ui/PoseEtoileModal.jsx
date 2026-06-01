@@ -1,13 +1,16 @@
 /* ============================================================
    PoseEtoileModal — Flow 3 étapes pour poser son étoile du jour
    ============================================================
+   Modes :
+     - 'pose' (default) : flow 3 étapes (couleur → note → naissance)
+     - 'view'           : lecture seule, va direct à StepBorn avec l'étoile du jour
    Étape 1 : choix couleur (5 pastilles)
    Étape 2 : mot libre optionnel
    Étape 3 : étoile naît (animation 2s) + citation
    ============================================================ */
 
 import { useState, useEffect } from 'react';
-import { addStar } from '../../v2/helpers/stars';
+import { addStar, getTodayStar } from '../../v2/helpers/stars';
 import { haptic } from '../../v2/state';
 import Overlay from './Overlay';
 import CTA from './CTA';
@@ -22,22 +25,36 @@ const COLORS = [
   { key: 'orage',  label: 'Orage, crise',           hex: '#4A6070', emoji: '🌧' },
 ];
 
-export default function PoseEtoileModal({ open, onClose, onPosed }) {
+export default function PoseEtoileModal({ open, onClose, onPosed, mode = 'pose' }) {
   const toast = useToast();
   const [step, setStep] = useState(1);
   const [color, setColor] = useState(null);
   const [note, setNote] = useState('');
   const [bornStar, setBornStar] = useState(null);
 
-  // Reset on open
+  // Reset on open — en mode 'view', on bootstrap directement avec l'étoile du jour
   useEffect(() => {
     if (open) {
-      setStep(1);
-      setColor(null);
-      setNote('');
-      setBornStar(null);
+      if (mode === 'view') {
+        const todayStar = getTodayStar();
+        if (todayStar) {
+          setBornStar(todayStar);
+          setStep(3);
+        } else {
+          // Pas d'étoile aujourd'hui — fallback en mode pose (sécurité)
+          setStep(1);
+          setColor(null);
+          setNote('');
+          setBornStar(null);
+        }
+      } else {
+        setStep(1);
+        setColor(null);
+        setNote('');
+        setBornStar(null);
+      }
     }
-  }, [open]);
+  }, [open, mode]);
 
   if (!open) return null;
 
@@ -57,7 +74,7 @@ export default function PoseEtoileModal({ open, onClose, onPosed }) {
       variant: 'success',
       duration: 3000,
     });
-    // Auto-close après 4s
+    // Auto-close après 4s (uniquement en mode pose)
     setTimeout(() => {
       onPosed?.(star);
       onClose?.();
@@ -67,9 +84,9 @@ export default function PoseEtoileModal({ open, onClose, onPosed }) {
   return (
     <Overlay
       backdrop="dark"
-      closeOnBackdrop={step !== 3}
+      closeOnBackdrop={mode === 'view' || step !== 3}
       onClose={onClose}
-      ariaLabel="Pose ton étoile"
+      ariaLabel={mode === 'view' ? "Ton étoile d'aujourd'hui" : 'Pose ton étoile'}
       style={{ background: 'rgba(5, 8, 16, 0.92)', backdropFilter: 'blur(30px)' }}
     >
       <div
@@ -82,12 +99,41 @@ export default function PoseEtoileModal({ open, onClose, onPosed }) {
           flexDirection: 'column',
           justifyContent: 'center',
           color: '#FBF6E8',
+          position: 'relative',
         }}
       >
-        {step === 1 && (
+        {mode === 'view' && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fermer"
+            style={{
+              position: 'absolute',
+              top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
+              right: 14,
+              width: 44,
+              height: 44,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.14)',
+              color: 'rgba(251, 246, 232, 0.85)',
+              fontSize: 20,
+              fontWeight: 300,
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 2,
+            }}
+          >
+            ×
+          </button>
+        )}
+        {step === 1 && mode === 'pose' && (
           <StepColor onPick={handlePickColor} />
         )}
-        {step === 2 && (
+        {step === 2 && mode === 'pose' && (
           <StepNote
             color={color}
             note={note}
@@ -97,7 +143,7 @@ export default function PoseEtoileModal({ open, onClose, onPosed }) {
           />
         )}
         {step === 3 && bornStar && (
-          <StepBorn star={bornStar} />
+          <StepBornSafe star={bornStar} mode={mode} />
         )}
       </div>
     </Overlay>
@@ -267,7 +313,21 @@ function StepNote({ color, note, setNote, onConfirm, onBack }) {
   );
 }
 
-function StepBorn({ star }) {
+/* Wrapper défensif : capture toute exception de render (B2) */
+function StepBornSafe({ star, mode }) {
+  try {
+    return <StepBorn star={star} mode={mode} />;
+  } catch (e) {
+    return <StepBornFallback star={star} mode={mode} />;
+  }
+}
+
+function StepBorn({ star, mode }) {
+  // B2 — guards défensifs : star.citation peut être absent (données pré-V5, migration partielle)
+  const citationText = star?.citation?.text || null;
+  const citationAuthor = star?.citation?.author || null;
+  const starColor = star?.color || 'rose';
+
   return (
     <div
       style={{
@@ -281,9 +341,9 @@ function StepBorn({ star }) {
           width: 60,
           height: 60,
           borderRadius: '50%',
-          background: `var(--star-${star.color}, #E8A0B8)`,
+          background: `var(--star-${starColor}, #E8A0B8)`,
           margin: '0 auto 24px',
-          boxShadow: `0 0 40px var(--star-${star.color}, #E8A0B8), 0 0 80px var(--star-${star.color}, #E8A0B8)`,
+          boxShadow: `0 0 40px var(--star-${starColor}, #E8A0B8), 0 0 80px var(--star-${starColor}, #E8A0B8)`,
           animation: 'star-born 2s cubic-bezier(0.22,0.61,0.36,1) both',
         }}
       />
@@ -298,7 +358,7 @@ function StepBorn({ star }) {
           margin: '0 0 14px',
         }}
       >
-        Posé.
+        {mode === 'view' ? "Ton étoile d'aujourd'hui" : 'Posé.'}
       </p>
       <p
         style={{
@@ -312,9 +372,9 @@ function StepBorn({ star }) {
           margin: '0 auto 14px',
         }}
       >
-        « {star.citation.text} »
+        {citationText ? `« ${citationText} »` : '✦'}
       </p>
-      {star.citation.author && (
+      {citationAuthor && (
         <p
           style={{
             fontFamily: "'Inter', system-ui, sans-serif",
@@ -324,9 +384,64 @@ function StepBorn({ star }) {
             margin: 0,
           }}
         >
-          — {star.citation.author}
+          — {citationAuthor}
         </p>
       )}
+      {star?.note && (
+        <p
+          style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontSize: 15,
+            color: 'rgba(251, 246, 232, 0.70)',
+            margin: '18px auto 0',
+            maxWidth: 340,
+            lineHeight: 1.45,
+          }}
+        >
+          « {star.note} »
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* Fallback ultime — si même StepBorn lève (par exemple var CSS exotique) */
+function StepBornFallback({ star, mode }) {
+  return (
+    <div style={{ textAlign: 'center', animation: 'modal-fade-in 360ms ease-out both' }}>
+      <div
+        style={{
+          width: 60,
+          height: 60,
+          borderRadius: '50%',
+          background: '#E8A0B8',
+          margin: '0 auto 24px',
+          boxShadow: '0 0 40px #E8A0B8',
+        }}
+      />
+      <p
+        style={{
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontStyle: 'italic',
+          fontWeight: 300,
+          fontSize: 22,
+          color: '#FBF6E8',
+          margin: 0,
+        }}
+      >
+        ✦
+      </p>
+      <p
+        style={{
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontSize: 12,
+          color: 'rgba(251, 246, 232, 0.55)',
+          marginTop: 14,
+        }}
+      >
+        {mode === 'view' ? "Ton étoile est là." : 'Posé.'}
+      </p>
     </div>
   );
 }

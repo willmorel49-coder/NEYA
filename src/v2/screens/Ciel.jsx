@@ -15,6 +15,7 @@ import AmbianceAudio from '../../components/ciel/AmbianceAudio';
 
 export default function Ciel() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState('pose'); // 'pose' | 'view'
   const { posed, refresh } = useDailyStarStatus();
   const citation = useCitation();
   const userId = getUserId();
@@ -133,10 +134,7 @@ export default function Ciel() {
         <StarField
           stars={stars}
           todayStar={todayStar}
-          onTapToday={() => setModalOpen(true)}
-          onTapStar={(s) => {
-            // Future: rouvrir l'étoile
-          }}
+          onTapToday={() => { setModalMode('pose'); setModalOpen(true); }}
           userId={userId}
         />
       </div>
@@ -201,36 +199,42 @@ export default function Ciel() {
         ))}
       </div>
 
-      {/* FAB poser étoile si déjà posée mais user veut revenir */}
-      {posed && (
-        <button
-          type="button"
-          onClick={() => setModalOpen(true)}
-          aria-label="Ajouter une étoile"
-          style={{
-            position: 'fixed',
-            bottom: 100,
-            right: 20,
-            width: 56,
-            height: 56,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #C87090, #E080A8)',
-            color: 'white',
-            border: 'none',
-            fontSize: 26,
-            fontWeight: 300,
-            cursor: 'pointer',
-            boxShadow: '0 8px 24px rgba(200, 112, 144, 0.40)',
-            zIndex: 50,
-            WebkitTapHighlightColor: 'transparent',
-          }}
-        >
-          +
-        </button>
-      )}
+      {/* FAB : ouvre la modal en mode pose si pas encore posé, sinon en mode view */}
+      <button
+        type="button"
+        onClick={() => {
+          setModalMode(posed ? 'view' : 'pose');
+          setModalOpen(true);
+        }}
+        aria-label={posed ? 'Voir mon étoile' : 'Poser mon étoile'}
+        title={posed ? 'Voir mon étoile' : 'Poser mon étoile'}
+        style={{
+          position: 'fixed',
+          bottom: 100,
+          right: 20,
+          width: 56,
+          height: 56,
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #C87090, #E080A8)',
+          color: 'white',
+          border: 'none',
+          fontSize: posed ? 22 : 26,
+          fontWeight: 300,
+          cursor: 'pointer',
+          boxShadow: '0 8px 24px rgba(200, 112, 144, 0.40)',
+          zIndex: 50,
+          WebkitTapHighlightColor: 'transparent',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {posed ? '✦' : '+'}
+      </button>
 
       <PoseEtoileModal
         open={modalOpen}
+        mode={modalMode}
         onClose={() => setModalOpen(false)}
         onPosed={() => { setModalOpen(false); refresh(); }}
       />
