@@ -42,7 +42,15 @@ function V2AppInner() {
 
   const [splashDone, setSplashDone] = useState(false);
   const [onboarded, setOnboarded] = useState(() => isOnboarded());
-  const [activeTab, setActiveTab] = useState(() => ls.get('active_tab', 'ciel'));
+  // Tab init : si un hash deeplink est présent au boot, il prime sur localStorage.
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      const raw = (typeof window !== 'undefined' && window.location.hash) || '';
+      const tab = parseHashTab(raw);
+      if (tab) return tab;
+    } catch {}
+    return ls.get('active_tab', 'ciel');
+  });
   const [meditationOpen, setMeditationOpen] = useState(false);
   const [criseOpen, setCriseOpen] = useState(false);
   const [aideOpen, setAideOpen] = useState(false);
@@ -201,6 +209,51 @@ function V2AppInner() {
     setMeditationOpen(false);
     setCriseOpen(false);
   }, [activeTab]);
+
+  // ──────────────────────────────────────────────────────────────
+  // Hash routing — back Android / browser back rejoue l'historique
+  //   #ciel · #espaces · #espaces/refuge · #espaces/voix · #espaces/cava
+  //   Boot : replaceState avec tab courante (déjà parsée du hash ou ls).
+  //   Sync : push #tab quand activeTab change, sauf si on est en train
+  //   de répondre à un popstate (anti-loop : on compare le hash actuel
+  //   avant push pour éviter d'écraser un sub-route déjà aligné).
+  //   Popstate : lit le hash, reapplique tab sans push.
+  // ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    // Boot : replaceState sur l'état initial (ne crée pas d'entrée historique)
+    try {
+      const currentHash = window.location.hash || '';
+      const parsed = parseHashTab(currentHash);
+      const targetHash = parsed ? currentHash : '#' + activeTab;
+      window.history.replaceState({ tab: activeTab }, '', targetHash);
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // Sync hash quand activeTab change. Anti-loop : si le hash en tête
+    // commence déjà par #activeTab (sub-route inclus), on ne push pas —
+    // c'est qu'on vient de répondre à un popstate ou qu'Espaces a déjà
+    // poussé un sub-route plus précis.
+    try {
+      const current = window.location.hash || '';
+      if (current === '#' + activeTab) return;
+      if (current.startsWith('#' + activeTab + '/')) return;
+      window.history.pushState({ tab: activeTab }, '', '#' + activeTab);
+    } catch {}
+  }, [activeTab]);
+
+  useEffect(() => {
+    const onPop = () => {
+      try {
+        const hash = window.location.hash || '';
+        const tab = parseHashTab(hash) || 'ciel';
+        setActiveTab(tab);
+      } catch {}
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   // Cross-tab deep-link event — other screens dispatch `neya:switch-tab`
   useEffect(() => {
@@ -560,4 +613,18 @@ function getTotemWorld(totem) {
     renard: 'communaute',
   };
   return map[totem] || 'foret';
+}
+
+// ──────────────────────────────────────────────────────────────
+// Hash router helper — parse "#tab[/subroute]" → 'ciel' | 'espaces' | null
+// Tolérant : ne retourne une tab valide que si elle existe.
+// Le sub-route est délégué à Espaces.jsx (lui-même écoute popstate).
+// ──────────────────────────────────────────────────────────────
+const HASH_TABS = ['ciel', 'espaces'];
+export function parseHashTab(rawHash) {
+  if (!rawHash || typeof rawHash !== 'string') return null;
+  const h = rawHash.startsWith('#') ? rawHash.slice(1) : rawHash;
+  const seg = h.split('/')[0];
+  if (HASH_TABS.includes(seg)) return seg;
+  return null;
 }

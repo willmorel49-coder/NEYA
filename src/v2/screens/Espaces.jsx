@@ -1,11 +1,16 @@
 /* ============================================================
    Espaces — 3 verbes : Refuge · Voix · Marque
    ============================================================
-   Shell avec sous-navigation par état React. Pas de routing
-   externe pour rester simple (state local).
+   Shell avec sous-navigation par état React. Sync avec hash
+   routing global (App.jsx) pour deeplink + back Android :
+     #espaces           → liste
+     #espaces/refuge    → Refuge
+     #espaces/voix      → Voix
+     #espaces/cava      → CaVa (clé hash 'cava' pour url courte)
+   Le state interne reste 'refuge' | 'voix' | 'marque' (compat).
    ============================================================ */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GlassCard, Eyebrow, HeroTitle, Body, Icon, tokens } from '../../components/ui';
 import Refuge from './Refuge';
 import Voix from './Voix';
@@ -18,8 +23,54 @@ const SPACES = [
   { key: 'marque', label: 'Marque ÇA VA?', icon: 'heart', subtitle: 'L\'univers, les pièces, le manifeste.' },
 ];
 
+// Mapping state ↔ hash sub-route (hash 'cava' plus naturel que 'marque' en URL)
+const STATE_TO_HASH = { refuge: 'refuge', voix: 'voix', marque: 'cava' };
+const HASH_TO_STATE = { refuge: 'refuge', voix: 'voix', cava: 'marque' };
+
+function parseSubroute(rawHash) {
+  if (!rawHash || typeof rawHash !== 'string') return null;
+  const h = rawHash.startsWith('#') ? rawHash.slice(1) : rawHash;
+  const [tab, sub] = h.split('/');
+  if (tab !== 'espaces' || !sub) return null;
+  return HASH_TO_STATE[sub] || null;
+}
+
 export default function Espaces() {
-  const [active, setActive] = useState(null);
+  const [active, setActive] = useState(() => {
+    try { return parseSubroute(window.location.hash); } catch { return null; }
+  });
+
+  // Push hash quand sub-route change (anti-loop : compare au hash courant)
+  useEffect(() => {
+    try {
+      const current = window.location.hash || '';
+      if (active) {
+        const target = '#espaces/' + STATE_TO_HASH[active];
+        if (current !== target) {
+          window.history.pushState({ tab: 'espaces', subroute: STATE_TO_HASH[active] }, '', target);
+        }
+      } else {
+        // Retour à la liste — assurer que le hash est bien #espaces
+        // (ne pas push si on est déjà sur #espaces ou un autre tab,
+        // c'est App.jsx qui pilote la tab en racine).
+        if (current.startsWith('#espaces/')) {
+          window.history.pushState({ tab: 'espaces' }, '', '#espaces');
+        }
+      }
+    } catch {}
+  }, [active]);
+
+  // Écoute popstate pour re-sync sub-route depuis le hash
+  useEffect(() => {
+    const onPop = () => {
+      try {
+        const sub = parseSubroute(window.location.hash);
+        setActive(sub);
+      } catch {}
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   if (active === 'refuge') return <Refuge onClose={() => setActive(null)} />;
   if (active === 'voix')   return <Voix   onClose={() => setActive(null)} />;
