@@ -75,6 +75,7 @@ export default function Carnet({ onClose }) {
   const textareaRef = useRef(null);
   const aliveRef = useRef(true);
   const timeoutsRef = useRef([]);
+  const savingRef = useRef(false);
 
   const safeTimeout = (fn, ms) => {
     const id = setTimeout(() => {
@@ -134,8 +135,10 @@ export default function Carnet({ onClose }) {
   } = useEdgeSwipeBack({ onClose: handleClose });
 
   const handleSave = () => {
+    if (savingRef.current) return; // guard double-tap dans le delai d'auto-close
     const trimmed = (body || '').trim();
     if (!trimmed) return;
+    savingRef.current = true;
 
     const now = Date.now();
     const nowIso = new Date().toISOString();
@@ -173,8 +176,9 @@ export default function Carnet({ onClose }) {
     haptic([6, 30, 6]);
     toast.show({ message: 'Entrée du carnet sauvegardée.', variant: 'success' });
 
-    safeTimeout(() => setSaved(false), 800);
-    safeTimeout(() => onClose?.(), 700);
+    safeTimeout(() => setSaved(false), 1200);
+    // Auto-close laisse le temps de lire le toast (1400ms vs 700ms initial)
+    safeTimeout(() => onClose?.(), 1400);
   };
 
   const charCount = body.length;
@@ -277,6 +281,7 @@ export default function Carnet({ onClose }) {
           position: 'relative',
           height: '100%',
           overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
           boxSizing: 'border-box',
           zIndex: 1,
         }}

@@ -15,7 +15,24 @@ import useStandardOverlay from '../hooks/useStandardOverlay';
 const PHASE_DURATION_MS = 5000;
 const CYCLES = 6;
 
-export default function BreathingPause({ accent = 'var(--terracotta)', onClose }) {
+// Mappe les noms semantiques vers les CSS vars du DS.
+// Si la prop accent est deja une valeur CSS (e.g. 'var(--terracotta)' venant
+// de Cocon via WORLDS[*].accent), on la laisse telle quelle.
+const ACCENT_TOKEN_MAP = {
+  rose: 'var(--rose-700)',
+  violet: 'var(--violet)',
+  blue: 'var(--blue-700)',
+  terracotta: 'var(--terracotta)',
+  gold: 'var(--gold)',
+};
+
+function resolveAccent(value) {
+  if (!value) return ACCENT_TOKEN_MAP.rose;
+  return ACCENT_TOKEN_MAP[value] || value;
+}
+
+export default function BreathingPause({ accent = 'rose', onClose }) {
+  const accentCss = resolveAccent(accent);
   const [phase, setPhase] = useState('inspire'); // 'inspire' | 'expire'
   const [cycle, setCycle] = useState(0);
   const [done, setDone] = useState(false);
@@ -175,11 +192,11 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
               position: 'absolute',
               inset: 0,
               borderRadius: '50%',
-              border: `1px solid ${accent}`,
+              border: `1px solid ${accentCss}`,
               opacity: phase === 'inspire' ? 0.28 - i * 0.06 : 0.55 - i * 0.12,
               transform: phase === 'inspire' ? `scale(${1.0 + i * 0.14})` : `scale(${0.32 + i * 0.10})`,
               transition: `transform ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-              boxShadow: phase === 'inspire' ? `0 0 20px ${accent}25` : 'none',
+              boxShadow: phase === 'inspire' ? `0 0 20px ${accentCss}25` : 'none',
             }}
           />
         ))}
@@ -189,12 +206,12 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
             width: phase === 'inspire' ? 250 : 60,
             height: phase === 'inspire' ? 250 : 60,
             borderRadius: '50%',
-            background: `radial-gradient(circle, ${accent} 0%, ${accent}88 35%, ${accent}33 65%, transparent 100%)`,
+            background: `radial-gradient(circle, ${accentCss} 0%, ${accentCss}88 35%, ${accentCss}33 65%, transparent 100%)`,
             opacity: phase === 'inspire' ? 0.92 : 0.36,
             filter: phase === 'inspire' ? 'blur(1px)' : 'blur(4px)',
             boxShadow: phase === 'inspire'
-              ? `0 0 60px 16px ${accent}55, 0 0 120px 32px ${accent}28`
-              : `0 0 20px 6px ${accent}28`,
+              ? `0 0 60px 16px ${accentCss}55, 0 0 120px 32px ${accentCss}28`
+              : `0 0 20px 6px ${accentCss}28`,
             transition: `width ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), filter ${PHASE_DURATION_MS}ms ease-out, box-shadow ${PHASE_DURATION_MS}ms ease-out`,
           }}
         />
@@ -206,7 +223,7 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
             width: phase === 'inspire' ? 260 : 70,
             height: phase === 'inspire' ? 260 : 70,
             borderRadius: '50%',
-            border: `1.5px solid ${accent}`,
+            border: `1.5px solid ${accentCss}`,
             opacity: phase === 'inspire' ? 0.7 : 0.36,
             transition: `width ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${PHASE_DURATION_MS}ms ease-out`,
           }}
@@ -255,7 +272,7 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
           style={{
             width: `${progressPct}%`,
             height: '100%',
-            background: accent,
+            background: accentCss,
             transition: 'width 700ms cubic-bezier(0.16, 1, 0.3, 1)',
             opacity: 0.85,
           }}
@@ -276,7 +293,7 @@ export default function BreathingPause({ accent = 'var(--terracotta)', onClose }
           appearance: 'none',
           padding: '14px 28px',
           minHeight: 44,
-          background: done ? accent : 'transparent',
+          background: done ? accentCss : 'transparent',
           color: done ? 'var(--cream)' : '#FBF6E8',
           border: done ? 'none' : '0.5px solid rgba(251, 246, 232, 0.32)',
           borderRadius: 999,

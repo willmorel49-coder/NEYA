@@ -21,8 +21,8 @@ const ACTIONS = [
 export default function Refuge({ onClose }) {
   const [active, setActive] = useState(null);
 
-  if (active === 'meditation') return <Meditation worldKey="violet" onClose={() => setActive(null)} />;
-  if (active === 'breath')     return <BreathingPause onClose={() => setActive(null)} />;
+  if (active === 'meditation') return <Meditation mode="free" onClose={() => setActive(null)} />;
+  if (active === 'breath')     return <BreathingPause accent="rose" onClose={() => setActive(null)} />;
   if (active === 'carnet')     return <Carnet onClose={() => setActive(null)} />;
 
   /* Cocon n'accepte pas de prop onClose — on le monte dans un overlay
@@ -40,17 +40,20 @@ export default function Refuge({ onClose }) {
             top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
             left: 12,
             zIndex: 9999,
-            width: 44,
-            height: 44,
-            borderRadius: 22,
-            background: 'rgba(238, 243, 248, 0.82)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            border: '0.5px solid rgba(255, 255, 255, 0.85)',
+            width: 48,
+            height: 48,
+            borderRadius: 24,
+            // Background opaque pour bien se distinguer de la TopBar Cocon (« ⋯ » a droite).
+            background: 'rgba(238, 243, 248, 0.92)',
+            backdropFilter: 'blur(14px) saturate(140%)',
+            WebkitBackdropFilter: 'blur(14px) saturate(140%)',
+            border: '0.5px solid rgba(26, 90, 127, 0.18)',
+            boxShadow: '0 2px 12px rgba(10, 36, 56, 0.08)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            WebkitTapHighlightColor: 'transparent',
           }}
           aria-label="Retour au Refuge"
         >

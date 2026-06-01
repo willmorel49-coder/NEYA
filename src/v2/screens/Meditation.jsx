@@ -32,10 +32,12 @@ function getPhase(tMs) {
   return { ...PHASES[2], remaining: Math.ceil(19 - t) };
 }
 
-export default function Meditation({ worldKey = 'foret', onClose }) {
+export default function Meditation({ worldKey, mode, onClose }) {
   const toast = useToast();
   const profile = getProfile();
-  const world = WORLDS[worldKey] || WORLDS.foret;
+  // Mode neutre : pas d'unlock monde, pas de souvenir attribue a un monde
+  const isFree = mode === 'free' || !worldKey || !WORLDS[worldKey];
+  const world = isFree ? null : WORLDS[worldKey];
   const target = getOnboardingTargetMinutes();
 
   const [paused, setPaused] = useState(false);
@@ -132,6 +134,20 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
     if (closingRef.current) return;
     closingRef.current = true;
     if (minutes >= 1) {
+      if (isFree) {
+        // Mode libre : pas de completeMeditation, pas de souvenir lie a un monde
+        haptic([8, 60, 8]);
+        toast.show({
+          message: `Tu as posé ${minutes} minute${minutes > 1 ? 's' : ''}.`,
+          variant: 'success',
+        });
+        setCompletion({ minutes, wasNew: false });
+        closeTimerRef.current = setTimeout(() => {
+          closeTimerRef.current = null;
+          onClose?.();
+        }, 2200);
+        return;
+      }
       const { wasNew } = completeMeditation(worldKey, minutes);
       addSouvenir({
         type: 'meditation',
@@ -219,12 +235,20 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-          <Eyebrow color="muted">
-            CHAPITRE {String(world.chapter).padStart(2, '0')}
-          </Eyebrow>
-          <Eyebrow color="violet" style={{ letterSpacing: '0.12em', fontSize: 9 }}>
-            {world.name}
-          </Eyebrow>
+          {isFree ? (
+            <Eyebrow color="violet" style={{ letterSpacing: '0.12em', fontSize: 9 }}>
+              Méditation libre
+            </Eyebrow>
+          ) : (
+            <>
+              <Eyebrow color="muted">
+                CHAPITRE {String(world.chapter).padStart(2, '0')}
+              </Eyebrow>
+              <Eyebrow color="violet" style={{ letterSpacing: '0.12em', fontSize: 9 }}>
+                {world.name}
+              </Eyebrow>
+            </>
+          )}
         </div>
       </div>
 
@@ -460,9 +484,11 @@ export default function Meditation({ worldKey = 'foret', onClose }) {
               maxWidth: 320,
             }}
           >
-            {completion.wasNew
-              ? `« Tu as explore la ${world.name}. »`
-              : `« Tu es passe par la. »`}
+            {isFree
+              ? `« Tu t'es posé·e. »`
+              : completion.wasNew
+                ? `« Tu as explore la ${world.name}. »`
+                : `« Tu es passe par la. »`}
           </HeroTitle>
           <div
             style={{
