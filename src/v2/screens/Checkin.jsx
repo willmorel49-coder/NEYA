@@ -18,6 +18,10 @@ import {
   MOOD_LABELS,
 } from '../helpers/checkins';
 import { greet, getProfile, haptic } from '../state';
+import BreathingPause from './BreathingPause';
+import Carnet from './Carnet';
+import BoueeModal from '../../components/ui/BoueeModal';
+import CitationKeepModal from '../../components/ui/CitationKeepModal';
 
 const ECHO_MENU = {
   'pas-terrible': [
@@ -217,23 +221,52 @@ function EchoStep({ mood, citation, onPick }) {
 }
 
 function ActionStep({ option, mood, onDone, onCancel }) {
-  // Phase 3 remplace ce stub par les vrais mini-flows.
-  return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
-      <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: 'italic' }}>
-        [Stub] Mini-flow : {option?.label}
-      </h2>
-      <button
-        onClick={() => onDone({ type: option?.kind || 'unknown' })}
-        style={{ padding: '12px 24px', background: 'var(--rose-700, #BE185D)', color: 'white', border: 'none', borderRadius: 12 }}
-      >
-        Terminer (stub)
-      </button>
-      <button onClick={onCancel} style={{ background: 'transparent', border: 'none', opacity: 0.5 }}>
-        Annuler
-      </button>
-    </div>
-  );
+  if (!option) return null;
+
+  if (option.kind === 'respi-478' || option.kind === 'respi-55' || option.kind === 'respi-46') {
+    const rhythm = option.kind === 'respi-478' ? '4-7-8' : option.kind === 'respi-46' ? '4-6' : '5-5';
+    return (
+      <BreathingPause
+        rhythm={rhythm}
+        accent="rose"
+        onComplete={(payload) => onDone(payload)}
+        onClose={onCancel}
+      />
+    );
+  }
+
+  if (option.kind === 'write') {
+    return (
+      <Carnet
+        mood={mood}
+        onSave={(payload) => onDone(payload)}
+        onClose={onCancel}
+      />
+    );
+  }
+
+  if (option.kind === 'bouee') {
+    return (
+      <BoueeModal
+        open={true}
+        levels={option.boueeLevel}
+        onDone={(payload) => onDone(payload)}
+        onClose={onCancel}
+      />
+    );
+  }
+
+  if (option.kind === 'citation') {
+    return (
+      <CitationKeepModal
+        open={true}
+        onDone={(payload) => onDone(payload)}
+        onClose={onCancel}
+      />
+    );
+  }
+
+  return null;
 }
 
 function DoneStep({ checkin, onContinue, onViewPast }) {

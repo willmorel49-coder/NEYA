@@ -62,7 +62,13 @@ function truncate(body) {
   return body.slice(0, TRUNCATE_BODY).trimEnd() + ' …';
 }
 
-export default function Carnet({ onClose }) {
+const PLACEHOLDER_BY_MOOD = {
+  'pas-terrible':   'Ce qui pèse, sans filtre…',
+  'ca-va-pas-trop': 'Ce qui te traverse…',
+  'ca-va':          "Un mot pour toi, pour aujourd'hui…",
+};
+
+export default function Carnet({ onClose, onSave, mood }) {
   const toast = useToast();
   const [entries, setEntries] = useState(() => {
     const raw = ls.get(STORAGE_KEY, []);
@@ -177,8 +183,12 @@ export default function Carnet({ onClose }) {
     toast.show({ message: 'Entrée du carnet sauvegardée.', variant: 'success' });
 
     safeTimeout(() => setSaved(false), 1200);
-    // Auto-close laisse le temps de lire le toast (1400ms vs 700ms initial)
-    safeTimeout(() => onClose?.(), 1400);
+    // Auto-close laisse le temps de lire le toast (1400ms vs 700ms initial).
+    // Si onSave fourni (Checkin V6), on l'appelle au moment du close pour propager l'action.
+    safeTimeout(() => {
+      onSave?.({ type: 'write', text: trimmed });
+      onClose?.();
+    }, 1400);
   };
 
   const charCount = body.length;
@@ -325,7 +335,7 @@ export default function Carnet({ onClose }) {
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={6}
-              placeholder="Ce qui me traverse maintenant…"
+              placeholder={PLACEHOLDER_BY_MOOD[mood] || 'Ce qui me traverse maintenant…'}
               accent="rose"
               textareaStyle={{ minHeight: 140 }}
             />

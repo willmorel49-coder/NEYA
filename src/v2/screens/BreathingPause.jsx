@@ -1,19 +1,23 @@
 /* ============================================================
-   BreathingPause — mini respiration 60 secondes
+   BreathingPause — mini respiration guidée
    ============================================================
-   Cohérence cardiaque simplifiée : 5s inspire / 5s expire,
-   6 cycles = 60 secondes. Cercle qui respire visuellement,
-   compteur cycles, fermeture par tap ou auto-fin.
+   3 rythmes supportés via prop `rhythm` :
+     - '5-5'   : inspire 5s / expire 5s · 6 cycles (cohérence)
+     - '4-7-8' : inspire 4s / hold 7s / expire 8s · 4 cycles (relax)
+     - '4-6'   : inspire 4s / expire 6s · 6 cycles (apaisant)
 
-   Lancée depuis le Cocon via "Me poser 2 minutes".
+   Lancée depuis Checkin (V6) ou Crise overlay (safety).
    ============================================================ */
 
 import { useEffect, useRef, useState } from 'react';
 import { haptic } from '../state';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 
-const PHASE_DURATION_MS = 5000;
-const CYCLES = 6;
+const RHYTHMS = {
+  '5-5':   { inspire: 5000, hold: 0,    expire: 5000,  cycles: 6, label: '5·5'   },
+  '4-7-8': { inspire: 4000, hold: 7000, expire: 8000,  cycles: 4, label: '4·7·8' },
+  '4-6':   { inspire: 4000, hold: 0,    expire: 6000,  cycles: 6, label: '4·6'   },
+};
 
 // Mappe les noms semantiques vers les CSS vars du DS.
 // Si la prop accent est deja une valeur CSS (e.g. 'var(--terracotta)' venant
@@ -31,9 +35,10 @@ function resolveAccent(value) {
   return ACCENT_TOKEN_MAP[value] || value;
 }
 
-export default function BreathingPause({ accent = 'rose', onClose }) {
+export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClose, onComplete }) {
   const accentCss = resolveAccent(accent);
-  const [phase, setPhase] = useState('inspire'); // 'inspire' | 'expire'
+  const r = RHYTHMS[rhythm] || RHYTHMS['5-5'];
+  const [phase, setPhase] = useState('inspire'); // 'inspire' | 'hold' | 'expire'
   const [cycle, setCycle] = useState(0);
   const [done, setDone] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -53,7 +58,10 @@ export default function BreathingPause({ accent = 'rose', onClose }) {
     if (closing) return;
     haptic(2);
     setClosing(true);
-    safeTimeout(() => onClose?.(), 380);
+    safeTimeout(() => {
+      if (done) onComplete?.({ type: 'breath', rhythm, cycles: r.cycles });
+      onClose?.();
+    }, 380);
   };
 
   const { dialogProps, containerRef } = useStandardOverlay({
@@ -62,15 +70,21 @@ export default function BreathingPause({ accent = 'rose', onClose }) {
     labelText: 'Respiration douce',
   });
 
-  // Cycle inspire/expire toutes les 5s
+  // Phase cycling : inspire -> [hold] -> expire -> inspire (suivant)
   useEffect(() => {
     if (done) return;
-    const id = setInterval(() => {
+    const duration = phase === 'inspire' ? r.inspire : phase === 'hold' ? r.hold : r.expire;
+    const id = setTimeout(() => {
       if (!aliveRef.current) return;
-      setPhase((p) => (p === 'inspire' ? 'expire' : 'inspire'));
-    }, PHASE_DURATION_MS);
-    return () => clearInterval(id);
-  }, [done]);
+      setPhase((p) => {
+        if (p === 'inspire') return r.hold > 0 ? 'hold' : 'expire';
+        if (p === 'hold') return 'expire';
+        return 'inspire';
+      });
+    }, duration);
+    timersRef.current.push(id);
+    return () => clearTimeout(id);
+  }, [phase, done, r.inspire, r.hold, r.expire]);
 
   // Compteur cycles : chaque inspire = nouveau cycle
   useEffect(() => {
@@ -81,7 +95,7 @@ export default function BreathingPause({ accent = 'rose', onClose }) {
     if (phase === 'inspire') {
       setCycle((c) => {
         const next = c + 1;
-        if (next > CYCLES) {
+        if (next > r.cycles) {
           setDone(true);
           haptic([6, 80, 6]);
         }
@@ -109,7 +123,10 @@ export default function BreathingPause({ accent = 'rose', onClose }) {
     };
   }, []);
 
-  const progressPct = Math.min(100, (Math.min(cycle, CYCLES) / CYCLES) * 100);
+  const progressPct = Math.min(100, (Math.min(cycle, r.cycles) / r.cycles) * 100);
+  const isLarge = phase === 'inspire' || phase === 'hold';
+  // Transition matches the duration of the current phase for smooth visual flow.
+  const phaseMs = phase === 'inspire' ? r.inspire : phase === 'hold' ? r.hold : r.expire;
 
   return (
     <div
@@ -168,7 +185,7 @@ export default function BreathingPause({ accent = 'rose', onClose }) {
             fontVariantNumeric: 'tabular-nums',
           }}
         >
-          {Math.min(cycle, CYCLES).toString().padStart(2, '0')} / {CYCLES.toString().padStart(2, '0')}
+          {Math.min(cycle, r.cycles).toString().padStart(2, '0')} / {r.cycles.toString().padStart(2, '0')}
         </span>
       </div>
 
@@ -193,26 +210,26 @@ export default function BreathingPause({ accent = 'rose', onClose }) {
               inset: 0,
               borderRadius: '50%',
               border: `1px solid ${accentCss}`,
-              opacity: phase === 'inspire' ? 0.28 - i * 0.06 : 0.55 - i * 0.12,
-              transform: phase === 'inspire' ? `scale(${1.0 + i * 0.14})` : `scale(${0.32 + i * 0.10})`,
-              transition: `transform ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-              boxShadow: phase === 'inspire' ? `0 0 20px ${accentCss}25` : 'none',
+              opacity: isLarge ? 0.28 - i * 0.06 : 0.55 - i * 0.12,
+              transform: isLarge ? `scale(${1.0 + i * 0.14})` : `scale(${0.32 + i * 0.10})`,
+              transition: `transform ${phaseMs}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${phaseMs}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+              boxShadow: isLarge ? `0 0 20px ${accentCss}25` : 'none',
             }}
           />
         ))}
         {/* Core orb — écart amplifié 250 ↔ 60 */}
         <div
           style={{
-            width: phase === 'inspire' ? 250 : 60,
-            height: phase === 'inspire' ? 250 : 60,
+            width: isLarge ? 250 : 60,
+            height: isLarge ? 250 : 60,
             borderRadius: '50%',
             background: `radial-gradient(circle, ${accentCss} 0%, ${accentCss}88 35%, ${accentCss}33 65%, transparent 100%)`,
-            opacity: phase === 'inspire' ? 0.92 : 0.36,
-            filter: phase === 'inspire' ? 'blur(1px)' : 'blur(4px)',
-            boxShadow: phase === 'inspire'
+            opacity: isLarge ? 0.92 : 0.36,
+            filter: isLarge ? 'blur(1px)' : 'blur(4px)',
+            boxShadow: isLarge
               ? `0 0 60px 16px ${accentCss}55, 0 0 120px 32px ${accentCss}28`
               : `0 0 20px 6px ${accentCss}28`,
-            transition: `width ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${PHASE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), filter ${PHASE_DURATION_MS}ms ease-out, box-shadow ${PHASE_DURATION_MS}ms ease-out`,
+            transition: `width ${phaseMs}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${phaseMs}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${phaseMs}ms cubic-bezier(0.4, 0, 0.2, 1), filter ${phaseMs}ms ease-out, box-shadow ${phaseMs}ms ease-out`,
           }}
         />
         {/* Anneau central plus marqué */}
@@ -220,12 +237,12 @@ export default function BreathingPause({ accent = 'rose', onClose }) {
           aria-hidden
           style={{
             position: 'absolute',
-            width: phase === 'inspire' ? 260 : 70,
-            height: phase === 'inspire' ? 260 : 70,
+            width: isLarge ? 260 : 70,
+            height: isLarge ? 260 : 70,
             borderRadius: '50%',
             border: `1.5px solid ${accentCss}`,
-            opacity: phase === 'inspire' ? 0.7 : 0.36,
-            transition: `width ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${PHASE_DURATION_MS}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${PHASE_DURATION_MS}ms ease-out`,
+            opacity: isLarge ? 0.7 : 0.36,
+            transition: `width ${phaseMs}ms cubic-bezier(0.34, 1.1, 0.64, 1), height ${phaseMs}ms cubic-bezier(0.34, 1.1, 0.64, 1), opacity ${phaseMs}ms ease-out`,
           }}
         />
         {/* Phase label */}
@@ -252,7 +269,7 @@ export default function BreathingPause({ accent = 'rose', onClose }) {
               animation: 'breath-label-fade 700ms cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
-            {done ? 'Posé.' : phase === 'inspire' ? 'Inspire' : 'Expire'}
+            {done ? 'Posé.' : phase === 'inspire' ? 'Inspire' : phase === 'hold' ? 'Tiens' : 'Expire'}
           </span>
         </div>
       </div>
