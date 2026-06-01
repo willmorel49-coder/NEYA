@@ -9,7 +9,7 @@
    - Mini-nav templates sticky (5 anchors)
    ============================================================ */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { haptic } from '../state';
 import CaVaPhotoViewer from './CaVaPhotoViewer';
 import Blobs from '../../components/Blobs';
@@ -182,6 +182,14 @@ const COLLECTIONS_MAP = {
   essentiels: COLLECTION_ESSENTIELS,
 };
 
+const CHAPTER_SECTIONS = [
+  { id: 'chap-anxiete', label: 'anxiété' },
+  { id: 'chap-fruits', label: 'fruits' },
+  { id: 'chap-essentiels', label: 'essentiels' },
+  { id: 'chap-univers', label: 'univers' },
+  { id: 'chap-voix', label: 'voix' },
+];
+
 export default function CaVa({ onClose } = {}) {
   const [viewer, setViewer] = useState(null);
   const [viewerCollection, setViewerCollection] = useState(null);
@@ -206,6 +214,16 @@ export default function CaVa({ onClose } = {}) {
     setMarqueVisible((v) => Math.min(v + 30, MARQUE_IMAGES.length));
   }, []);
 
+  // D1 — viewer ne voit que ce qui a été chargé dans la mosaïque
+  const marqueViewerImages = MARQUE_IMAGES.slice(0, marqueVisible);
+
+  // D1 (optionnel) — auto-load more quand on approche la fin dans le viewer
+  const handleViewerIndexChange = useCallback((idx) => {
+    if (idx >= marqueVisible - 3 && marqueVisible < MARQUE_IMAGES.length) {
+      setMarqueVisible((v) => Math.min(v + 30, MARQUE_IMAGES.length));
+    }
+  }, [marqueVisible]);
+
   return (
     <>
       <div
@@ -220,40 +238,8 @@ export default function CaVa({ onClose } = {}) {
         }}
       >
         <Blobs variant="rose-blue" />
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Retour"
-            style={{
-              position: 'fixed',
-              top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-              left: 16,
-              zIndex: 80,
-              background: 'rgba(255,255,255,0.85)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255,255,255,0.9)',
-              borderRadius: 50,
-              padding: '10px 14px',
-              minHeight: 44,
-              color: 'var(--blue-700)',
-              fontFamily: "'Inter', system-ui, sans-serif",
-              fontSize: 13,
-              fontWeight: 500,
-              cursor: 'pointer',
-              boxShadow: '0 4px 16px rgba(10,36,56,0.10)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            Retour
-          </button>
-        )}
-        <TopBar />
+        <TopBar onBack={onClose} />
+        <ChapterNav sections={CHAPTER_SECTIONS} />
         <Hero />
         <ChapitreManifeste />
         <ChapitreCollectionAnxiete onOpen={openCollection} />
@@ -290,8 +276,9 @@ export default function CaVa({ onClose } = {}) {
       {marqueViewer !== null && (
         <MarqueImageViewer
           index={marqueViewer}
-          images={MARQUE_IMAGES}
+          images={marqueViewerImages}
           onClose={closeMarqueViewer}
+          onIndexChange={handleViewerIndexChange}
         />
       )}
     </>
@@ -302,7 +289,7 @@ export default function CaVa({ onClose } = {}) {
    1. TopBar (glass clair sticky)
    ============================================================ */
 
-function TopBar() {
+function TopBar({ onBack }) {
   return (
     <div
       style={{
@@ -317,20 +304,56 @@ function TopBar() {
         backdropFilter: 'blur(20px) saturate(160%)',
         WebkitBackdropFilter: 'blur(20px) saturate(160%)',
         borderBottom: '0.5px solid rgba(10, 36, 56, 0.08)',
+        gap: 10,
       }}
     >
-      <span
-        style={{
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontStyle: 'italic',
-          fontWeight: 400,
-          fontSize: 20,
-          letterSpacing: '-0.01em',
-          color: 'var(--blue-900)',
-        }}
-      >
-        ÇA VA?
-      </span>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Retour"
+            data-press
+            style={{
+              appearance: 'none',
+              width: 44,
+              height: 44,
+              minWidth: 44,
+              minHeight: 44,
+              padding: 0,
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--blue-900)',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              WebkitTapHighlightColor: 'transparent',
+              transition: 'opacity 240ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.7'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+            onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.92)'; }}
+            onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+              <path d="M12.5 15L7.5 10l5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        )}
+        <span
+          style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 20,
+            letterSpacing: '-0.01em',
+            color: 'var(--blue-900)',
+          }}
+        >
+          ÇA VA?
+        </span>
+      </div>
       <a
         href={EXTERNAL_URL}
         target="_blank"
@@ -361,6 +384,150 @@ function TopBar() {
         Boutique <span style={{ opacity: 0.6 }} aria-hidden>↗</span>
       </a>
     </div>
+  );
+}
+
+/* ============================================================
+   1.b ChapterNav — Mini-nav 5 anchors sticky sous TopBar
+   ============================================================
+   5 pills horizontales scrollables · scrollIntoView smooth
+   Highlight de la pill active via IntersectionObserver
+   ============================================================ */
+
+function ChapterNav({ sections }) {
+  const [activeId, setActiveId] = useState(sections[0]?.id || null);
+  const scrollerRef = useRef(null);
+  const pillRefs = useRef({});
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible.length > 0) {
+          setActiveId(visible[0].target.id);
+        }
+      },
+      {
+        // Bandeau de détection centré dans le viewport pour identifier
+        // la section actuellement "en lecture"
+        rootMargin: '-40% 0px -50% 0px',
+        threshold: [0, 0.1, 0.5, 1],
+      }
+    );
+
+    sections.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [sections]);
+
+  // Garder la pill active visible dans le scroller horizontal
+  useEffect(() => {
+    if (!activeId) return;
+    const pill = pillRefs.current[activeId];
+    const scroller = scrollerRef.current;
+    if (pill && scroller) {
+      const pillLeft = pill.offsetLeft;
+      const pillRight = pillLeft + pill.offsetWidth;
+      const visibleLeft = scroller.scrollLeft;
+      const visibleRight = visibleLeft + scroller.clientWidth;
+      if (pillLeft < visibleLeft + 20 || pillRight > visibleRight - 20) {
+        scroller.scrollTo({
+          left: pillLeft - 20,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [activeId]);
+
+  const handleClick = useCallback((e, id) => {
+    e.preventDefault();
+    haptic(2);
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
+  return (
+    <nav
+      aria-label="Chapitres"
+      style={{
+        position: 'sticky',
+        top: 'calc(env(safe-area-inset-top, 0px) + 72px)',
+        zIndex: 3,
+        background: 'rgba(255, 255, 255, 0.72)',
+        backdropFilter: 'blur(18px) saturate(150%)',
+        WebkitBackdropFilter: 'blur(18px) saturate(150%)',
+        borderBottom: '0.5px solid rgba(10, 36, 56, 0.06)',
+      }}
+    >
+      <div
+        ref={scrollerRef}
+        style={{
+          display: 'flex',
+          gap: 8,
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          padding: '10px 18px',
+          scrollbarWidth: 'none',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        <style>{`
+          nav[aria-label="Chapitres"] > div::-webkit-scrollbar { display: none; }
+        `}</style>
+        {sections.map((s) => {
+          const isActive = s.id === activeId;
+          return (
+            <a
+              key={s.id}
+              ref={(el) => { pillRefs.current[s.id] = el; }}
+              href={`#${s.id}`}
+              onClick={(e) => handleClick(e, s.id)}
+              aria-current={isActive ? 'true' : undefined}
+              data-press
+              style={{
+                flex: '0 0 auto',
+                padding: '10px 16px',
+                minHeight: 44,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 999,
+                border: isActive
+                  ? '1px solid rgba(200, 112, 144, 0.55)'
+                  : '1px solid rgba(10, 36, 56, 0.12)',
+                background: isActive
+                  ? 'rgba(200, 112, 144, 0.14)'
+                  : 'rgba(255, 255, 255, 0.55)',
+                color: isActive ? '#BE185D' : 'var(--blue-900)',
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 11,
+                fontWeight: isActive ? 600 : 500,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+                WebkitTapHighlightColor: 'transparent',
+                transition: 'background 240ms cubic-bezier(0.22, 0.61, 0.36, 1), color 240ms cubic-bezier(0.22, 0.61, 0.36, 1), border-color 240ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 240ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+              }}
+              onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.96)'; }}
+              onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+            >
+              {s.label}
+            </a>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
 
@@ -1649,7 +1816,7 @@ function CavaCollectionViewer({ collection, index, items, onClose }) {
    ESC + tap backdrop = close · Aucun texte (vitrine pure)
    ============================================================ */
 
-function MarqueImageViewer({ index, images, onClose }) {
+function MarqueImageViewer({ index, images, onClose, onIndexChange }) {
   const [currentIdx, setCurrentIdx] = useState(index);
 
   const setScrollerRef = useCallback((el) => {
@@ -1673,6 +1840,11 @@ function MarqueImageViewer({ index, images, onClose }) {
       document.body.style.overflow = prevOverflow;
     };
   }, [onClose]);
+
+  // D1 — notifier le parent du changement d'index pour auto-load more
+  useEffect(() => {
+    if (onIndexChange) onIndexChange(currentIdx);
+  }, [currentIdx, onIndexChange]);
 
   const handleScroll = useCallback((e) => {
     const w = e.currentTarget.clientWidth;
