@@ -1,82 +1,148 @@
-# SAVEPOINT — ÇA VA ? V5 Constellation
+# SAVEPOINT — ÇA VA ? V5 Constellation 🌌
 
-**Date** : 2026-05-26
-**Branche** : `feat/v5-constellation` (V4 reste sur `main`)
-**Prod V4** : https://neya-kappa.vercel.app
+**Date** : 2026-06-01
+**Branche** : `main` (V5 mergé)
+**Prod** : https://neya-kappa.vercel.app · HTTP 200 (V5 live)
 **Repo** : github.com/willmorel49-coder/NEYA
 
-## Refonte V5 en cours
+---
 
-Métaphore **Ciel Intérieur** — chaque moment posé devient une étoile dans ta constellation personnelle. 2 onglets (Ciel · Espaces).
+## ✨ État actuel : V5 Constellation en prod
 
-## Avancement plan V5 (33 tâches)
+Refonte totale livrée. L'app a 2 onglets — **Ciel** (constellation nuit) et **Espaces** (Refuge · Voix · Marque).
 
-### ✅ Phase 1 Foundation (T1-T6) — DONE
-- T1 tokens.css palette Ciel + saisons (commit `fbd7710`)
-- T2 48 citations Camus/Prévert/Matt Haig/marque (`48b28a5`)
-- T3 state schema stars[] + helpers/stars.js (`c81bf99`)
-- T4 hooks useDailyStarStatus + useCitation + event (`9028303`)
-- T5 useSeasonalPalette (`f4b9d11`)
-- T6 push branche
+### Cœur de l'app
+> « ÇA VA? est l'application faite pour ceux qui disent ça va quand ça ne va pas. »
 
-### ✅ Phase 2 Ciel (T7-T13) — DONE
-- T7 Star.jsx component (`bca4893`)
-- T8 StarField SVG + algo placement déterministe (`cda0b9c`)
-- T9 PersonAvatar cheveux teal halo pulse (`6034adb`)
-- T10 CielChapter glass scroll (`8f28b6a`)
-- T11 chapter-generator (hier/semaine/mois/mémoire/pièce) (`6a3b954`)
-- T12 PoseEtoileModal 3 étapes (`0acb9be`)
-- T13 écran Ciel.jsx (`d46653d`)
+### Métaphore
+Chaque moment posé devient une étoile dans la constellation personnelle de l'utilisateur. L'histoire s'écrit étoile par étoile, jamais terminée.
 
-### ✅ Phase 3 Espaces (T14-T17) — DONE
-- T14 shell Espaces 3 sous-routes (`47a32d7`)
-- T15 Refuge fusion Méditation/Breath/Carnet/Cocon (`b936b73`)
-- T16 Voix simplifiée + composer (`5d81fc9`)
-- T17 CaVa accepte onClose (`29ffd41`)
+---
 
-### ✅ Phase 4 Cleanup (T18-T22) — DONE
-- T18 BottomNav 2 onglets (`16dc6ce`)
-- T19 App.jsx routing 2 onglets + useSeasonalPalette (`c8fb566`)
-- T20 suppression 13 écrans + nettoyage imports (`b9fe131`) → -8721 lignes, bundle -32 kB
-- T21 migration V4→V5 (`2cbbad0`)
-- T22 menu + SAVEPOINT (en cours)
+## Architecture V5
 
-### ⏳ Phase 5 Magie (T23-T28) — À FAIRE
-- T23 M2 citation flottante animée
-- T24 M4 mémoire qui ressurgit (déjà inclus dans T11)
-- T25 M6 pièce qui résonne (mapping image précis)
-- T26 M7 saisons du ciel wiring final
-- T27 M11 ambiance sonore opt-in
-- T28 M12 toast pose silencieuse
+### 2 onglets
 
-### ⏳ Phase 6 Onboarding amplifié (T29-T32) — À FAIRE
-- T29 étape mantra (8 citations + libre)
-- T30 étape couleur favorite
-- T31 étape heure rituel
-- T32 1ère étoile pendant onboarding
+**🌌 Ciel** (`src/v2/screens/Ciel.jsx` · fond nuit cosmic)
+- Hero constellation (StarField SVG responsive)
+- Salutation personnalisée Cormorant italic
+- Citation flottante contextuelle (matche état dominant 7j)
+- PersonAvatar cheveux teal #12C4B0 coin haut-gauche
+- Scroll narratif : chapitres auto-générés (Hier, Cette semaine, Mois, Mémoire 30/90/365j, Pièce qui résonne)
+- FAB rose pour reposer une étoile
+- PoseEtoileModal 3 étapes : couleur → mot libre → étoile naît + citation
 
-### ⏳ Final (T33) — À FAIRE
-- T33 validation DoD + push + preview + merge main
+**◇ Espaces** (`src/v2/screens/Espaces.jsx` · fond clair `--bg`)
+- **Refuge** (`Refuge.jsx`) — fusion Méditation + Respirer + Écrire + Cocon
+- **Voix** (`Voix.jsx`) — feed anonyme + composer 280 chars
+- **Marque ÇA VA?** (`CaVa.jsx`) — manifeste + 2 collections + 122 photos
 
-## Composants UI Design System V4 (26 + 5 nouveaux V5)
+### Onboarding amplifié (8 étapes)
+1. Bienvenue · 2. Manifeste · 3. Choix · 4. Engagement
+5. **Mantra** (8 citations marque + libre)
+6. **Couleur favorite** (bleu / rose / violet)
+7. **Heure de rituel** (matin / midi / soir / libre)
+8. **Pose ta première étoile** (PoseEtoileModal final)
 
-`src/components/ui/` :
-- **V4 Foundation** : Header, BackButton, GlassCard, Eyebrow, HeroTitle, SectionTitle, Body, CTA, Stat, tokens
-- **V4 Primitives** : Overlay, Sheet, Modal, Input, Textarea, FormField, Toggle, Choice, Toast, ToastProvider, Icon, EmptyState, Skeleton, Spinner, Badge
-- **V5 Ciel** : Star, StarField, PersonAvatar, CielChapter, PoseEtoileModal
+### 12 magies embarquées
+- **M1** Étoile qui naît (animation 2s halo pulse)
+- **M2** Citation contextuelle (48 citations Camus/Prévert/Matt Haig taggées)
+- **M3** Constellation unique par user (hash(userId+dayIndex))
+- **M4** Mémoire qui ressurgit (étoile à 30/90/365 jours)
+- **M5** Salutation personnalisée prénom + time-of-day
+- **M6** Pièce qui résonne (mapping état → image marque)
+- **M7** Saisons du ciel (data-season dynamic palette)
+- **M8** Fils tracés à la main (SVG lines intra-semaine)
+- **M9** Halo cheveux teal animé pulse 4.2s
+- **M10** Mot du jour Cormorant italic comme manuscrit
+- **M11** Ambiance sonore opt-in (Web Audio drone + vent procedural)
+- **M12** Pose silencieuse (toast « Le silence aussi compte. »)
+
+---
+
+## Composants UI (`src/components/ui/`)
+
+### V4 Foundation (10)
+Header · BackButton · GlassCard · Eyebrow · HeroTitle · SectionTitle · Body · CTA · Stat · tokens
+
+### V4 Primitives (15)
+Overlay · Sheet · Modal · Input · Textarea · FormField · Toggle · Choice · Toast · ToastProvider · Icon · EmptyState · Skeleton · Spinner · Badge
+
+### V5 Ciel (5)
+**Star** · **StarField** · **PersonAvatar** · **CielChapter** · **PoseEtoileModal**
+
+---
+
+## Data model
+
+### `profile.stars[]` (étoiles déposées)
+```js
+{
+  id: "star-2026-05-25-xxxxx",
+  date: "2026-05-25",
+  time: "22:47",
+  color: "bleu | rose | violet | peche | orage",
+  note: "string optional",
+  citation: { id, text, author, tags },
+  type: "mood | breath | voice | write"
+}
+```
+
+### `profile.preferences`
+- `prenom`, `mantra`, `couleurFavorite`, `heureRituel`, `ambianceSonore`
+
+### Stockage
+- `localStorage` only (pas de sync cloud)
+- Migration V4→V5 automatique : `mood_history` + `bilan_history` → étoiles rétroactives
+
+---
+
+## Helpers + hooks (`src/v2/helpers/` + `src/v2/hooks/`)
+
+**Helpers :**
+- `stars.js` — addStar, getStarsRange, getAllStars, getLatestStar, getDominantColor, hashSeed, dayIndex, getUserId, toIsoDate
+- `chapter-generator.js` — generateChapters (Hier, Semaine, Mois, Mémoire, Pièce)
+- `migrate-v4-to-v5.js` — backfill historique
+
+**Hooks :**
+- `useDailyStarStatus` — { posed, refresh }
+- `useCitation` — citation du jour (state-aware)
+- `useSeasonalPalette` — détecte saison → data-season sur `<html>`
+
+---
 
 ## Bundle
 
-- V4 prod : 446 kB / 110 kB gzip
-- V5 actuel : 286 kB / 72 kB gzip (-32% grâce à suppression 13 écrans)
+| Métrique | V4 | V5 |
+|---|---|---|
+| JS bundle | 446 kB | 292 kB (-35%) |
+| Gzip | 110 kB | 75 kB (-32%) |
+| Lignes screens v2 | ~10k | -8.7k supprimées |
+
+---
+
+## Hors scope (volontairement écarté)
+
+- Notifications push
+- Comptes utilisateurs / sync cloud
+- Statistiques avancées / graphiques
+- Partage social externe
+- Multi-langue (FR only)
+
+---
+
+## Documents
+
+- **Spec** : `docs/superpowers/specs/2026-05-25-ca-va-v5-constellation-design.md`
+- **Plan** : `docs/superpowers/plans/2026-05-25-ca-va-v5-constellation-plan.md` (33 tâches détaillées)
+- **D.A** : `NOUVELLE DA/CLAUDE.md` (palette V4 bleu/rose/violet + Cormorant Garamond + Inter)
+- **D.A image** : `ÇA VA?/D.A.JPG` (mood board complet marque)
+
+---
 
 ## Pour reprendre
 
-```bash
-git checkout feat/v5-constellation
-git pull origin feat/v5-constellation
-npm install && npm run dev
-```
+Tout est sur `main`. La V5 est en production. Pas de session pending.
 
-Plan détaillé : `docs/superpowers/plans/2026-05-25-ca-va-v5-constellation-plan.md`
-Spec : `docs/superpowers/specs/2026-05-25-ca-va-v5-constellation-design.md`
+Commande : `git checkout main && git pull && npm install && npm run dev`
+Tester : ouvrir `localStorage.clear()` dans la console pour reset l'onboarding et voir le flow complet.
