@@ -3,9 +3,11 @@ import styles from './onboarding.module.css';
 import { ONBOARDING_SCREENS } from './onboardingContent';
 import OnboardingScreen from './OnboardingScreen';
 import ProgressDots from './ProgressDots';
+import { getProfile } from '../../v2/state';
 
 const STORAGE_KEY = 'neya_onboarded';
 const EXIT_MS = 750;
+const SCROLL_END_MS = 350;
 
 export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
   const trackRef = useRef(null);
@@ -13,6 +15,8 @@ export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
   const [exiting, setExiting] = useState(false);
   const total = ONBOARDING_SCREENS.length;
   const scrollTimerRef = useRef(null);
+  const scrollEndTimerRef = useRef(null);
+  const isScrollingRef = useRef(false);
   const exitTimerRef = useRef(null);
   const finishedRef = useRef(false);
   const isReview = mode === 'review';
@@ -21,11 +25,19 @@ export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
     const el = trackRef.current;
     if (!el) return;
     const next = Math.max(0, Math.min(total - 1, i));
+    if (next === active) return;
+    isScrollingRef.current = true;
     el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' });
-  }, [total]);
+  }, [total, active]);
 
-  const goNext = useCallback(() => scrollToIndex(active + 1), [active, scrollToIndex]);
-  const goPrev = useCallback(() => scrollToIndex(active - 1), [active, scrollToIndex]);
+  const goNext = useCallback(() => {
+    if (isScrollingRef.current) return;
+    scrollToIndex(active + 1);
+  }, [active, scrollToIndex]);
+  const goPrev = useCallback(() => {
+    if (isScrollingRef.current) return;
+    scrollToIndex(active - 1);
+  }, [active, scrollToIndex]);
 
   const finish = useCallback(() => {
     if (finishedRef.current) return;
@@ -39,6 +51,14 @@ export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
     }, EXIT_MS);
   }, [onComplete, isReview]);
 
+  // Avance d'une étape (preferences "Passer cette étape" / pose-star skip n/a).
+  // Ne déclenche pas finish() — utilisé par les boutons contextuels du Skip.
+  const skipOneStep = useCallback(() => {
+    if (active < total - 1) {
+      scrollToIndex(active + 1);
+    }
+  }, [active, total, scrollToIndex]);
+
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
@@ -49,11 +69,17 @@ export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
         const idx = Math.round(el.scrollLeft / w);
         setActive((prev) => (prev === idx ? prev : idx));
       }, 60);
+      // Détection fin de scroll (debounce) — libère le guard isScrolling.
+      if (scrollEndTimerRef.current) clearTimeout(scrollEndTimerRef.current);
+      scrollEndTimerRef.current = setTimeout(() => {
+        isScrollingRef.current = false;
+      }, SCROLL_END_MS);
     };
     el.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       el.removeEventListener('scroll', onScroll);
       if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+      if (scrollEndTimerRef.current) clearTimeout(scrollEndTimerRef.current);
     };
   }, []);
 
@@ -61,6 +87,16 @@ export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
     const onKey = (e) => {
       if (exiting) return;
       if (e.key === 'ArrowRight') {
+        // Cohérent avec handleRightTap : sur pose-star (dernier écran),
+        // ne pas finir l'onboarding au clavier — l'utilisateur doit poser
+        // son étoile via le CTA visible. Sur preference, ne sauter que si choix déjà fait.
+        const current = ONBOARDING_SCREENS[active];
+        if (current?.type === 'pose-star') return;
+        if (current?.type === 'preference') {
+          const prefs = getProfile().preferences || {};
+          const v = prefs[current.preferenceKey];
+          if (v == null || v === '') return;
+        }
         if (active === total - 1) finish();
         else goNext();
       } else if (e.key === 'ArrowLeft') {
@@ -89,6 +125,44 @@ export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
     };
   }, []);
 
+  // Calcule le label + l'action du bouton Skip selon le contexte de l'écran actif.
+  // - mode review : "Fermer" → finish()
+  // - écran pose-star (8) : bouton masqué (user doit poser son étoile)
+  // - écran preference (5/6/7) : "Passer cette étape" → avance d'1 cran
+  // - écrans narratifs (1-4) : "Passer l'introduction" → finish() (confirm si choix préférences déjà faits)
+  const activeScreen = ONBOARDING_SCREENS[active];
+  const activeType = activeScreen?.type;
+  let skipLabel = 'Passer';
+  let skipVisible = true;
+  let onSkip = finish;
+  if (isReview) {
+    skipLabel = 'Fermer';
+    onSkip = finish;
+  } else if (activeType === 'pose-star') {
+    skipVisible = false;
+  } else if (activeType === 'preference') {
+    skipLabel = 'Passer cette étape';
+    onSkip = skipOneStep;
+  } else {
+    skipLabel = "Passer l'introduction";
+    onSkip = () => {
+      try {
+        const prefs = getProfile().preferences || {};
+        const hasChoices = Boolean(
+          prefs.mantra || prefs.couleurFavorite || prefs.heureRituel
+        );
+        if (hasChoices) {
+          // eslint-disable-next-line no-alert
+          const ok = window.confirm(
+            "Tu vas passer l'introduction. Tes choix sont gardés. OK ?"
+          );
+          if (!ok) return;
+        }
+      } catch {}
+      finish();
+    };
+  }
+
   return (
     <div
       className={styles.root}
@@ -102,14 +176,16 @@ export default function OnboardingFlow({ onComplete, mode = 'first-launch' }) {
 
       <div className={styles.topBar}>
         <ProgressDots total={total} active={active} />
-        <button
-          type="button"
-          className={styles.skip}
-          onClick={finish}
-          aria-label={isReview ? 'Fermer' : 'Passer'}
-        >
-          {isReview ? 'Fermer' : 'Passer'}
-        </button>
+        {skipVisible && (
+          <button
+            type="button"
+            className={styles.skip}
+            onClick={onSkip}
+            aria-label={skipLabel}
+          >
+            {skipLabel}
+          </button>
+        )}
       </div>
 
       <div className={styles.track} ref={trackRef}>
