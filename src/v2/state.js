@@ -105,6 +105,7 @@ export const defaultProfile = () => ({
     musicVolume: 0.4,
   },
   stars: [],
+  checkins: [],
   preferences: {
     prenom: null,
     mantra: null,
