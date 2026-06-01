@@ -34,9 +34,7 @@ export { default as Badge } from './Badge';
 
 export { tokens } from './tokens-ui';
 
-/* V5 — Ciel intérieur */
-export { default as Star } from './Star';
-export { default as StarField } from './StarField';
-export { default as PersonAvatar } from './PersonAvatar';
-export { default as CielChapter } from './CielChapter';
-export { default as PoseEtoileModal } from './PoseEtoileModal';
+/* V6 — Check-in du jour */
+export { default as BoueeModal } from './BoueeModal';
+export { default as CitationKeepModal } from './CitationKeepModal';
+export { default as CriseFab } from './CriseFab';
