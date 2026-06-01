@@ -1,13 +1,44 @@
-# SAVEPOINT — ÇA VA ? V5 Constellation 🌌
+# SAVEPOINT — ÇA VA ? V5.1 (cavalry) + V6 design en prep
 
 **Date** : 2026-06-01
-**Branche** : `main` (V5 mergé)
-**Prod** : https://neya-kappa.vercel.app · HTTP 200 (V5 live)
+**Branche** : `main` (V5.1 cavalry mergé, prod live) — V6 design+plan commités, à implémenter
+**Prod** : https://neya-kappa.vercel.app · HTTP 200 (V5.1 live, 23 fixes post-audit)
 **Repo** : github.com/willmorel49-coder/NEYA
 
 ---
 
-## ✨ État actuel : V5 Constellation en prod
+## 🆕 V5.1 cavalry post-audit (commit 10cfb01, prod live)
+
+23 fixes CRITICAL+HIGH livrés en 6 commits atomiques (Groupes E/A/B/C/D/F) :
+- **E** Data integrity — `mutateProfile` atomique, x/y persistés sur étoiles, dedup migration, IDs uniques, addStar idempotent
+- **A** Onboarding — pose-star CTA visible, double-tap guard, preferences modifiables, Passer contextuel
+- **B** Ciel + Touch — hit zones ≥ 44, crash citation guard, FAB inconditionnel + mode view, onTapStar retiré, chapter-generator déterministe
+- **C** Refuge — Méditation libre, Carnet save unique 1400ms, BreathingPause accent rose, bouton retour Cocon distinct, WebkitOverflowScrolling
+- **D** CaVa — viewer slice marqueVisible, bouton retour intégré TopBar, mini-nav 5 anchors + IntersectionObserver
+- **F** Nav + iOS — hash routing back Android + deeplink, theme-color saisonnier
+
+Bundle 302.83 kB / 77.34 kB gzip.
+
+## 🎯 V6 Check-in du jour (design+plan, pas encore implémenté)
+
+Refonte charpente pour rendre l'app comprehensible dès 1er contact. Métaphore Constellation V5 = opaque → remplacée par check-in quotidien direct.
+
+Documents :
+- Spec : `docs/superpowers/specs/2026-06-01-ca-va-v6-checkin-design.md` (commit 882a4ce)
+- Plan : `docs/superpowers/plans/2026-06-01-ca-va-v6-checkin-plan.md` (commit 10cfb01) — 9 phases, ~30 tasks
+
+Architecture cible :
+- 2 onglets : Check-in (charpente "Et toi, ça va vraiment ?" + 3 choix + écho menu 3 options) + Marque (intact)
+- FAB Crise discret toujours visible (overlay safety 4·6 + 3114 + 15)
+- Timeline narrative chronologique
+- Migration V5 stars → V6 checkins
+- Onboarding raccourci 8 écrans → 1 écran
+
+Mode d'exécution choisi : **subagent-driven** (fresh subagent par task + 2-stage review).
+
+---
+
+## ✨ État précédent : V5 Constellation
 
 Refonte totale livrée. L'app a 2 onglets — **Ciel** (constellation nuit) et **Espaces** (Refuge · Voix · Marque).
 
