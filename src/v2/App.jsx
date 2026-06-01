@@ -68,7 +68,7 @@ function V2AppInner() {
   //   Onboarding ................... 9999
   // ──────────────────────────────────────────────────────────────
 
-  // Écoute les overlays fullscreen (AventurePlayer, etc.) pour cacher
+  // Écoute les overlays fullscreen pour cacher
   // BottomNav + SOS — évite que la barre cache les CTA en bas (Safari).
   useEffect(() => {
     const onOverlay = (e) => {
