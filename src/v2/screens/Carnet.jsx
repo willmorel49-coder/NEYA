@@ -6,14 +6,13 @@
    Storage : carnet_entries = [{ id, date, body }]
    ============================================================ */
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ls, haptic } from '../state';
 import useSwipeToDismiss from '../hooks/useSwipeToDismiss';
 import useEdgeSwipeBack from '../hooks/useEdgeSwipeBack';
 import useStandardOverlay from '../hooks/useStandardOverlay';
 import {
   Header,
-  GlassCard,
   Eyebrow,
   HeroTitle,
   Body,
@@ -25,7 +24,6 @@ import {
 
 const STORAGE_KEY = 'carnet_entries';
 const MAX_ENTRIES = 30;
-const TRUNCATE_BODY = 180;
 
 function formatTodayFr() {
   try {
@@ -40,26 +38,8 @@ function formatTodayFr() {
   }
 }
 
-function formatPastDateFr(iso) {
-  try {
-    return new Date(iso).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  } catch {
-    return '';
-  }
-}
-
 function todayKey() {
   return new Date().toISOString().split('T')[0];
-}
-
-function truncate(body) {
-  if (!body) return '';
-  if (body.length <= TRUNCATE_BODY) return body;
-  return body.slice(0, TRUNCATE_BODY).trimEnd() + ' …';
 }
 
 const PLACEHOLDER_BY_MOOD = {
@@ -110,13 +90,6 @@ export default function Carnet({ onClose, onSave, mood }) {
       timeoutsRef.current = [];
     };
   }, []);
-
-  const pastEntries = useMemo(() => {
-    return entries
-      .filter((e) => e?.date?.split('T')[0] !== today)
-      .sort((a, b) => (b.id || 0) - (a.id || 0))
-      .slice(0, MAX_ENTRIES);
-  }, [entries, today]);
 
   const handleClose = () => {
     haptic(3);
@@ -180,7 +153,7 @@ export default function Carnet({ onClose, onSave, mood }) {
     setEntries(next);
     setSaved(true);
     haptic([6, 30, 6]);
-    toast.show({ message: 'Entrée du carnet sauvegardée.', variant: 'success' });
+    toast.show({ message: 'Gardé.', variant: 'success' });
 
     safeTimeout(() => setSaved(false), 1200);
     // Auto-close laisse le temps de lire le toast (1400ms vs 700ms initial).
@@ -320,15 +293,33 @@ export default function Carnet({ onClose, onSave, mood }) {
           </div>
 
           {/* Hero zone */}
-          <div style={{ marginBottom: 16 }}>
-            <HeroTitle size="md">Aujourd’hui.</HeroTitle>
+          <div
+            style={{
+              marginBottom: 16,
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? 'translateY(0)' : 'translateY(6px)',
+              transition: 'opacity 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 80ms, transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1) 80ms',
+            }}
+          >
+            <HeroTitle size="md">Pose-toi.</HeroTitle>
             <div style={{ marginTop: 8 }}>
-              <Body variant="body-sm">Tu écris pour toi. Rien ne sort d’ici.</Body>
+              <Body variant="body-sm">
+                <span style={{ fontFamily: tokens.fonts.display, fontStyle: 'italic' }}>
+                  Ce que tu écris reste ici.
+                </span>
+              </Body>
             </div>
           </div>
 
           {/* Today's entry editor */}
-          <div style={{ marginBottom: 28 }}>
+          <div
+            style={{
+              marginBottom: 28,
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+              transition: 'opacity 600ms cubic-bezier(0.22, 0.61, 0.36, 1) 200ms, transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1) 200ms',
+            }}
+          >
             <Textarea
               ref={textareaRef}
               autoFocus
@@ -337,7 +328,7 @@ export default function Carnet({ onClose, onSave, mood }) {
               rows={6}
               placeholder={PLACEHOLDER_BY_MOOD[mood] || 'Ce qui me traverse maintenant…'}
               accent="rose"
-              textareaStyle={{ minHeight: 140 }}
+              textareaStyle={{ minHeight: 160 }}
             />
 
             {/* Bottom row : counter + save */}
@@ -376,82 +367,16 @@ export default function Carnet({ onClose, onSave, mood }) {
                   disabled={!body.trim()}
                   haptic={false}
                 >
-                  Garder
+                  Garder ce moment
                 </CTA>
               </div>
             </div>
           </div>
 
-          {/* Past entries section */}
-          <div style={{ marginBottom: 12 }}>
-            <Eyebrow color="muted">Mes traces</Eyebrow>
-          </div>
-
-          {pastEntries.length === 0 ? (
-            <div
-              style={{
-                fontFamily: tokens.fonts.display,
-                fontStyle: 'italic',
-                fontSize: 13,
-                color: tokens.textSecondary,
-                lineHeight: 1.5,
-                padding: '8px 4px',
-              }}
-            >
-              Tes traces apparaîtront ici.
-            </div>
-          ) : (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 10,
-              }}
-            >
-              {pastEntries.map((entry) => {
-                const bodyText = (entry.body || '').trim();
-                const count = bodyText.length;
-                return (
-                  <GlassCard
-                    key={entry.id}
-                    radius="md"
-                    elevation="soft"
-                    padding="14px 16px"
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: 10,
-                        marginBottom: 8,
-                      }}
-                    >
-                      <Eyebrow color="secondary">{formatPastDateFr(entry.date)}</Eyebrow>
-                      <Eyebrow color="muted">{count} car.</Eyebrow>
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: tokens.fonts.body,
-                        fontSize: 14,
-                        lineHeight: 1.55,
-                        color: tokens.textPrimary,
-                        whiteSpace: 'pre-wrap',
-                        wordBreak: 'break-word',
-                      }}
-                    >
-                      {truncate(bodyText)}
-                    </div>
-                  </GlassCard>
-                );
-              })}
-            </div>
-          )}
-
           {/* Whisper footer */}
           <div
             style={{
-              marginTop: 32,
+              marginTop: 24,
               textAlign: 'center',
               fontFamily: tokens.fonts.display,
               fontStyle: 'italic',
@@ -459,6 +384,8 @@ export default function Carnet({ onClose, onSave, mood }) {
               color: tokens.textSecondary,
               lineHeight: 1.5,
               padding: '0 12px',
+              opacity: mounted ? 0.85 : 0,
+              transition: 'opacity 700ms cubic-bezier(0.22, 0.61, 0.36, 1) 360ms',
             }}
           >
             Tu peux écrire chaque jour. Ou pas.
