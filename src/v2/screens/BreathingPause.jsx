@@ -54,12 +54,23 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
     return id;
   };
 
+  // Durée totale en secondes (un cycle = inspire + hold + expire) — utile pour persister
+  // dans profile.checkins[i].action (cf. spec V6 §5.1).
+  const totalDurationSec = Math.round(((r.inspire + r.hold + r.expire) * r.cycles) / 1000);
+
   const handleClose = () => {
     if (closing) return;
     haptic(2);
     setClosing(true);
     safeTimeout(() => {
-      if (done) onComplete?.({ type: 'breath', rhythm, cycles: r.cycles });
+      if (done) {
+        onComplete?.({
+          type: 'breath',
+          rhythm,
+          cycles: r.cycles,
+          duration: totalDurationSec,
+        });
+      }
       onClose?.();
     }, 380);
   };
@@ -127,6 +138,7 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
   const isLarge = phase === 'inspire' || phase === 'hold';
   // Transition matches the duration of the current phase for smooth visual flow.
   const phaseMs = phase === 'inspire' ? r.inspire : phase === 'hold' ? r.hold : r.expire;
+  const safeCycle = Math.min(cycle, r.cycles);
 
   return (
     <div
@@ -136,9 +148,10 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
         position: 'fixed',
         inset: 0,
         zIndex: 200,
-        background: 'rgba(8, 10, 24, 0.94)',
-        backdropFilter: 'blur(24px) saturate(140%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(140%)',
+        // Ink profond légèrement bleuté — plus méditatif que noir pur.
+        background: 'radial-gradient(ellipse at 50% 38%, rgba(18, 22, 44, 0.96) 0%, rgba(8, 10, 22, 0.97) 60%, rgba(4, 6, 16, 0.98) 100%)',
+        backdropFilter: 'blur(28px) saturate(140%)',
+        WebkitBackdropFilter: 'blur(28px) saturate(140%)',
         opacity: closing ? 0 : mounted ? 1 : 0,
         transition: 'opacity 380ms cubic-bezier(0.16, 1, 0.3, 1)',
         display: 'flex',
@@ -149,7 +162,7 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
         padding: '22px',
       }}
     >
-      {/* Top eyebrow + counter */}
+      {/* Top eyebrow + cycle dots */}
       <div
         style={{
           position: 'absolute',
@@ -174,19 +187,34 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
         >
           Respiration douce
         </span>
-        <span
+        <div
+          aria-label={`Cycle ${safeCycle} sur ${r.cycles}`}
           style={{
-            fontFamily: 'var(--font-ui)',
-            fontSize: 10,
-            letterSpacing: '0.222em',
-            color: 'var(--blue-900)',
-            opacity: 0.78,
-            fontWeight: 600,
-            fontVariantNumeric: 'tabular-nums',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
           }}
         >
-          {Math.min(cycle, r.cycles).toString().padStart(2, '0')} / {r.cycles.toString().padStart(2, '0')}
-        </span>
+          {Array.from({ length: r.cycles }).map((_, i) => {
+            const filled = i < safeCycle;
+            return (
+              <span
+                key={i}
+                aria-hidden
+                style={{
+                  width: 5,
+                  height: 5,
+                  borderRadius: '50%',
+                  background: filled ? accentCss : 'transparent',
+                  border: `0.5px solid ${filled ? accentCss : 'rgba(251, 246, 232, 0.42)'}`,
+                  opacity: filled ? 0.92 : 0.55,
+                  boxShadow: filled ? `0 0 6px ${accentCss}88` : 'none',
+                  transition: 'background 600ms cubic-bezier(0.16, 1, 0.3, 1), opacity 600ms ease-out, box-shadow 600ms ease-out',
+                }}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {/* Breathing circle — animation accentuée */}
@@ -200,7 +228,7 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
           justifyContent: 'center',
         }}
       >
-        {/* Halo rings — 4 layers, écart amplifié */}
+        {/* Halo rings — 4 layers, écart amplifié + ondulation organique (drift indépendant du cycle) */}
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
@@ -208,14 +236,26 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
             style={{
               position: 'absolute',
               inset: 0,
-              borderRadius: '50%',
-              border: `1px solid ${accentCss}`,
-              opacity: isLarge ? 0.28 - i * 0.06 : 0.55 - i * 0.12,
-              transform: isLarge ? `scale(${1.0 + i * 0.14})` : `scale(${0.32 + i * 0.10})`,
-              transition: `transform ${phaseMs}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${phaseMs}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-              boxShadow: isLarge ? `0 0 20px ${accentCss}25` : 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              animation: `breath-halo-drift ${11000 + i * 1700}ms ease-in-out ${i * 420}ms infinite`,
+              willChange: 'transform',
             }}
-          />
+          >
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '50%',
+                border: `1px solid ${accentCss}`,
+                opacity: isLarge ? 0.28 - i * 0.06 : 0.55 - i * 0.12,
+                transform: isLarge ? `scale(${1.0 + i * 0.14})` : `scale(${0.32 + i * 0.10})`,
+                transition: `transform ${phaseMs}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${phaseMs}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+                boxShadow: isLarge ? `0 0 20px ${accentCss}25` : 'none',
+              }}
+            />
+          </div>
         ))}
         {/* Core orb — écart amplifié 250 ↔ 60 */}
         <div
@@ -269,7 +309,7 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
               animation: 'breath-label-fade 700ms cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
-            {done ? 'Posé.' : phase === 'inspire' ? 'Inspire' : phase === 'hold' ? 'Tiens' : 'Expire'}
+            {done ? 'Posé.' : phase === 'inspire' ? 'Inspire' : phase === 'hold' ? 'Garde' : 'Expire'}
           </span>
         </div>
       </div>
@@ -292,8 +332,26 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
             background: accentCss,
             transition: 'width 700ms cubic-bezier(0.16, 1, 0.3, 1)',
             opacity: 0.85,
+            animation: !done ? 'breath-progress-pulse 5200ms ease-in-out infinite' : 'none',
           }}
         />
+      </div>
+
+      {/* Rhythm label — discret, sous la progress bar */}
+      <div
+        style={{
+          marginTop: 14,
+          fontFamily: 'var(--font-ui)',
+          fontSize: 9,
+          letterSpacing: '0.32em',
+          textTransform: 'uppercase',
+          color: 'var(--blue-900)',
+          opacity: 0.52,
+          fontWeight: 500,
+          fontVariantNumeric: 'tabular-nums',
+        }}
+      >
+        Rythme {r.label}
       </div>
 
       {/* Bottom action — Fermer / Terminer */}
@@ -301,7 +359,7 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
         type="button"
         onClick={handleClose}
         data-press
-        aria-label={done ? 'Terminer la pause' : 'Quitter la respiration'}
+        aria-label={done ? 'Terminer la pause et revenir' : 'Sortir de la respiration'}
         style={{
           position: 'absolute',
           bottom: 'calc(env(safe-area-inset-bottom, 0px) + 36px)',
@@ -325,13 +383,26 @@ export default function BreathingPause({ accent = 'rose', rhythm = '5-5', onClos
           transition: 'all 320ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        {done ? 'Revenir' : 'Quitter'}
+        {done ? "C'est fini" : 'Sortir'}
       </button>
 
       <style>{`
         @keyframes breath-label-fade {
           0%   { opacity: 0; transform: translateY(4px); }
           100% { opacity: 0.96; transform: translateY(0); }
+        }
+        @keyframes breath-halo-drift {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          25%      { transform: translate(2px, -3px) rotate(0.4deg); }
+          50%      { transform: translate(-1px, 2px) rotate(-0.3deg); }
+          75%      { transform: translate(-3px, -1px) rotate(0.2deg); }
+        }
+        @keyframes breath-progress-pulse {
+          0%, 100% { opacity: 0.85; }
+          50%      { opacity: 0.62; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          [aria-label*="Cycle"] span { transition: none !important; }
         }
       `}</style>
     </div>
